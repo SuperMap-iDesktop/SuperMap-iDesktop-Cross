@@ -106,9 +106,7 @@ Export-Package: com.supermap.desktop,
  net.infonode.util.collection.map.base,
  net.infonode.util.collection.notifymap,
  net.infonode.util.math,
- net.infonode.util.signal,
- net.miginfocom.layout,
- net.miginfocom.swing
+ net.infonode.util.signal
 Require-Bundle: Core;bundle-version="1.0.0"
 Bundle-ClassPath: .,
  miglayout15-swing.jar
