@@ -129,7 +129,9 @@ public class FrameMenuManager implements IFrameMenuManager {
 			if (childMenus != null) {
 				for (int i = 0; i < childMenus.size(); i++) {
 					SmMenu menu = (SmMenu) childMenus.get(i);
-					this.frameMenuBar.add(menu);
+					// modify by huchenpu 20151215
+					// 添加的子菜单放到帮助的前面
+					this.frameMenuBar.add(menu, this.frameMenuBar.getMenuCount() - 1);
 				}
 			}
 		} catch (Exception ex) {
@@ -142,8 +144,11 @@ public class FrameMenuManager implements IFrameMenuManager {
 		boolean result = false;
 		try {
 			// 取得总菜单的数目，子菜单的数目=总数目-主菜单的数目，即this.listMenus.size()
+			// modify by huchenpu 20151215
+			// 注意最后一个菜单是帮助，要移除帮助前面的所有子菜单
+			// 所以从 count - 2 开始移除，移除到 this.listMenus.size() - 1 的位置
 			int count = this.frameMenuBar.getMenuCount();
-			for (int index = count - 1; index >= this.listMenus.size(); index--) {
+			for (int index = count - 2; index >= this.listMenus.size() - 1; index--) {
 				this.frameMenuBar.remove(index);
 			}
 		} catch (Exception ex) {
