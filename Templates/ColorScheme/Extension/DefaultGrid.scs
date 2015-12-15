@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>60000</Version>
+    <Name>DefaultGrid</Name>
+    <Author />
+    <Description/>
+    <ColorSystem>1</ColorSystem>
+    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+    <KeyColorCount>32</KeyColorCount>
+    <IntervalColorCount>3</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+	    <Name>Color [A=255, R=170, G=240,B=233]</Name>
+	    <ColorSystem>1</ColorSystem>
+      <Red>170</Red>
+      <Green>240</Green>
+      <Blue>233</Blue>
+    </KeyColor1>
+    <KeyColor2>
+      <Name>Color [A=255, R=176, G=242,B=211]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>176</Red>
+      <Green>242</Green>
+      <Blue>211</Blue>
+    </KeyColor2>
+    <KeyColor3>
+      <Name>Color [A=255, R=176, G=244,B=188]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>176</Red>
+      <Green>244</Green>
+      <Blue>188</Blue>
+    </KeyColor3>
+    <KeyColor4>
+      <Name>Color [A=255, R=191, G=248,B=178]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>191</Red>
+      <Green>248</Green>
+      <Blue>178</Blue>
+    </KeyColor4>
+    <KeyColor5>
+      <Name>Color [A=255, R=218, G=251,B=178]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>218</Red>
+      <Green>251</Green>
+      <Blue>178</Blue>
+    </KeyColor5>
+    <KeyColor6>
+      <Name>Color [A=255, R=237, G=249,B=173]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>237</Red>
+      <Green>249</Green>
+      <Blue>173</Blue>
+    </KeyColor6>
+    <KeyColor7>
+      <Name>Color [A=255, R=220, G=236,B=145]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>220</Red>
+      <Green>236</Green>
+      <Blue>145</Blue>
+    </KeyColor7>
+    <KeyColor8>
+      <Name>Color [A=255, R=160, G=213,B=103]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>160</Red>
+      <Green>213</Green>
+      <Blue>103</Blue>
+    </KeyColor8>
+    <KeyColor9>
+      <Name>Color [A=255, R=96, G=189,B=66]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>96</Red>
+      <Green>189</Green>
+      <Blue>66</Blue>
+    </KeyColor9>
+    <KeyColor10>
+      <Name>Color [A=255, R=44, G=164,B=50]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>44</Red>
+      <Green>164</Green>
+      <Blue>50</Blue>
+    </KeyColor10>
+    <KeyColor11>
+      <Name>Color [A=255, R=20, G=142,B=53]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>20</Red>
+      <Green>142</Green>
+      <Blue>53</Blue>
+    </KeyColor11>
+    <KeyColor12>
+      <Name>Color [A=255, R=32, G=133,B=61]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>32</Red>
+      <Green>133</Green>
+      <Blue>61</Blue>
+    </KeyColor12>
+    <KeyColor13>
+      <Name>Color [A=255, R=85, G=144,B=55]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>85</Red>
+      <Green>144</Green>
+      <Blue>55</Blue>
+    </KeyColor13>
+    <KeyColor14>
+      <Name>Color [A=255, R=129, G=157,B=47]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>129</Red>
+      <Green>157</Green>
+      <Blue>47</Blue>
+    </KeyColor14>
+    <KeyColor15>
+      <Name>Color [A=255, R=171, G=168,B=38]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>171</Red>
+      <Green>168</Green>
+      <Blue>38</Blue>
+    </KeyColor15>
+    <KeyColor16>
+      <Name>Color [A=255, R=215, G=177,B=23]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>215</Red>
+      <Green>177</Green>
+      <Blue>23</Blue>
+    </KeyColor16>
+    <KeyColor17>
+      <Name>Color [A=255, R=235, G=165,B=9]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>235</Red>
+      <Green>165</Green>
+      <Blue>9</Blue>
+    </KeyColor17>
+    <KeyColor18>
+      <Name>Color [A=255, R=225, G=131,B=2]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>225</Red>
+      <Green>131</Green>
+      <Blue>2</Blue>
+    </KeyColor18>
+    <KeyColor19>
+      <Name>Color [A=255, R=203, G=89,B=2]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>203</Red>
+      <Green>89</Green>
+      <Blue>2</Blue>
+    </KeyColor19>
+    <KeyColor20>
+      <Name>Color [A=255, R=197, G=54,B=2]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>197</Red>
+      <Green>54</Green>
+      <Blue>2</Blue>
+    </KeyColor20>
+    <KeyColor21>
+      <Name>Color [A=255, R=157, G=25,B=1]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>157</Red>
+      <Green>54</Green>
+      <Blue>1</Blue>
+    </KeyColor21>
+    <KeyColor22>
+      <Name>Color [A=255, R=130, G=12,B=1]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>130</Red>
+      <Green>12</Green>
+      <Blue>1</Blue>
+    </KeyColor22>
+    <KeyColor23>
+      <Name>Color [A=255, R=118, G=15,B=3]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>118</Red>
+      <Green>15</Green>
+      <Blue>3</Blue>
+    </KeyColor23>
+    <KeyColor24>
+      <Name>Color [A=255, R=114, G=25,B=6]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>114</Red>
+      <Green>25</Green>
+      <Blue>6</Blue>
+    </KeyColor24>
+    <KeyColor25>
+      <Name>Color [A=255, R=112, G=32,B=7]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>112</Red>
+      <Green>32</Green>
+      <Blue>7</Blue>
+    </KeyColor25>
+    <KeyColor26>
+      <Name>Color [A=255, R=110, G=40,B=10]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>110</Red>
+      <Green>40</Green>
+      <Blue>10</Blue>
+    </KeyColor26>
+    <KeyColor27>
+      <Name>Color [A=255, R=106, G=45,B=12]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>106</Red>
+      <Green>45</Green>
+      <Blue>12</Blue>
+    </KeyColor27>
+    <KeyColor28>
+      <Name>Color [A=255, R=115, G=60,B=27]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>115</Red>
+      <Green>60</Green>
+      <Blue>27</Blue>
+    </KeyColor28>
+    <KeyColor29>
+      <Name>Color [A=255, R=129, G=80,B=50]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>129</Red>
+      <Green>80</Green>
+      <Blue>50</Blue>
+    </KeyColor29>
+    <KeyColor30>
+      <Name>Color [A=255, R=142, G=102,B=77]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>142</Red>
+      <Green>102</Green>
+      <Blue>77</Blue>
+    </KeyColor30>
+    <KeyColor31>
+      <Name>Color [A=255, R=153, G=124,B=108]</Name>
+      <ColorSystem>1</ColorSystem>
+      <Red>153</Red>
+      <Green>124</Green>
+      <Blue>108</Blue>
+    </KeyColor31>
+    <KeyColor32>
+    <Name>Color [A=255, R=166, G=153,B=146]</Name>
+    <ColorSystem>1</ColorSystem>
+    <Red>166</Red>
+    <Green>153</Green>
+    <Blue>146</Blue>
+    </KeyColor32>
+  </DataBlock>
+</ColorScheme> 
+

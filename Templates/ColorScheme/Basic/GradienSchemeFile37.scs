@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ColorScheme><FileHeader>
+	<FileType>678370</FileType>
+	<Version>60000</Version>
+	<Name>GradienScheme37</Name>
+	<Author>SuperMap</Author>
+	<Description></Description>
+	<ColorSystem>1</ColorSystem>
+	<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+	<KeyColorCount>3</KeyColorCount>
+	<IntervalColorCount>16</IntervalColorCount>
+</FileHeader>
+	<DataBlock>
+		<KeyColor1>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>13</Red>
+			<Green>13</Green>
+			<Blue>107</Blue>
+		</KeyColor1>
+		<KeyColor2>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>102</Red>
+			<Green>204</Green>
+			<Blue>204</Blue>
+		</KeyColor2>
+		<KeyColor3>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>97</Red>
+			<Green>53</Green>
+			<Blue>13</Blue>
+		</KeyColor3>
+	</DataBlock>
+</ColorScheme>

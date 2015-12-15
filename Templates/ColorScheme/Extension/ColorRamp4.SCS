@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ColorScheme><FileHeader>
+	<FileType>678370</FileType>
+	<Version>60000</Version>
+	<Name>ColorRamp4</Name>
+	<Author></Author>
+	<Description></Description>
+	<ColorSystem>1</ColorSystem>
+	<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+	<KeyColorCount>2</KeyColorCount>
+	<IntervalColorCount>128</IntervalColorCount>
+</FileHeader>
+	<DataBlock>
+		<KeyColor1>
+			<Name>D3E5E8</Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>211</Red>
+			<Green>229</Green>
+			<Blue>232</Blue>
+		</KeyColor1>
+		<KeyColor2>
+			<Name>2E6492</Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>46</Red>
+			<Green>100</Green>
+			<Blue>146</Blue>
+		</KeyColor2>
+	</DataBlock>
+</ColorScheme>

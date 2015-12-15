@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ColorScheme><FileHeader>
+	<FileType>678370</FileType>
+	<Version>60000</Version>
+	<Name>GradienScheme2</Name>
+	<Author>SuperMap</Author>
+	<Description></Description>
+	<ColorSystem>1</ColorSystem>
+	<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+	<KeyColorCount>2</KeyColorCount>
+	<IntervalColorCount>16</IntervalColorCount>
+</FileHeader>
+	<DataBlock>
+		<KeyColor1>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>242</Red>
+			<Green>213</Green>
+			<Blue>229</Blue>
+		</KeyColor1>
+		<KeyColor2>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>112</Red>
+			<Green>44</Green>
+			<Blue>93</Blue>
+		</KeyColor2>
+	</DataBlock>
+</ColorScheme>

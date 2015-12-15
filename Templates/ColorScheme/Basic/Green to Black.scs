@@ -1,0 +1,29 @@
+﻿<ColorScheme>
+  <FileHeader>
+    <FileType>0</FileType>
+    <Version>60000</Version>
+    <Name>Green to Black</Name>
+    <Author>SuperMap</Author>
+    <Description></Description>
+    <ColorSystem>1</ColorSystem>
+    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+    <KeyColorCount>2</KeyColorCount>
+    <IntervalColorCount>64</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>0</Red>
+      <Green>255</Green>
+      <Blue>0</Blue>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>0</Red>
+      <Green>0</Green>
+      <Blue>0</Blue>
+    </KeyColor2>
+  </DataBlock>
+</ColorScheme>

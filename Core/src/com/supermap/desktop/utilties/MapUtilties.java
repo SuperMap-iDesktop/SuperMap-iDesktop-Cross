@@ -1,0 +1,483 @@
+package com.supermap.desktop.utilties;
+
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSettingVector;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+
+public class MapUtilties {
+	private MapUtilties() {
+		// 工具类不提供构造函数
+	}
+
+	public static Layer findLayerByCaption(Map map, String caption) {
+		Layer resultLayer = null;
+		try {
+			Layers layers = map.getLayers();
+			for (int i = 0; i < layers.getCount(); i++) {
+				Layer tempLayer = layers.get(i);
+				resultLayer = getLayer(tempLayer, caption);
+				if (null != resultLayer) {
+					break;
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return resultLayer;
+	}
+
+	/**
+	 * 递归实现通过标题查找专题图图层
+	 * 
+	 * @param layer 当前查找图层
+	 * @param caption 目标图层标题
+	 * @return 目标图层
+	 */
+	public static Layer getLayer(Layer layer, String caption) {
+		Layer resultLayer = null;
+		if (layer instanceof LayerGroup) {
+			LayerGroup tempLayer = (LayerGroup) layer;
+			for (int i = 0; i < tempLayer.getCount(); i++) {
+				resultLayer = getLayer(tempLayer.get(i), caption);
+				if (null != resultLayer) {
+					break;
+				}
+			}
+		} else if (caption.equals(layer.getCaption())) {
+			resultLayer = layer;
+		}
+		return resultLayer;
+	}
+
+	/**
+	 * 通过给定的map和图层名称得到指定的图层
+	 * 
+	 * @param map 当前查找的地图
+	 * @param name 目标图层名称
+	 * @return 目标图层
+	 */
+	public static Layer findLayerByName(Map map, String name) {
+		Layer layer = null;
+		try {
+			if (null != name && null != map) {
+				Layers layers = map.getLayers();
+				for (int i = 0; i < layers.getCount(); i++) {
+					Layer tempLayer = layers.get(i);
+					layer = findLayer(tempLayer, name);
+					if (null != layer) {
+						break;
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layer;
+	}
+
+	/**
+	 * 递归获取指定名称的layer
+	 * 
+	 * @param layer 当前查找图层
+	 * @param name 目标图层名称
+	 * @return 目标图层
+	 */
+	public static Layer findLayer(Layer layer, String name) {
+		Layer resultLayer = null;
+		if (layer instanceof LayerGroup) {
+			LayerGroup tempLayerGroup = (LayerGroup) layer;
+			for (int i = 0; i < tempLayerGroup.getCount(); i++) {
+				resultLayer = findLayer(tempLayerGroup.get(i), name);
+				if (null != resultLayer) {
+					break;
+				}
+			}
+		} else if (name.equals(layer.getName())) {
+			resultLayer = layer;
+		}
+		return resultLayer;
+	}
+
+	public static boolean reomveLayer(Map map, String name) {
+		boolean result = false;
+		try {
+			Layer layer = findLayerByName(map, name);
+			if (layer.getParentGroup() == null) {
+				result = map.getLayers().remove(name);
+			} else {
+				layer.getParentGroup().remove(layer);
+				result = true;
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return result;
+	}
+
+	public static boolean reomveLayer(Map map, Layer layer) {
+		boolean result = false;
+		try {
+			result = map.getLayers().remove(layer);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return result;
+	}
+
+	public static boolean findLayer(Map map, Layer layer) {
+		boolean result = false;
+		try {
+			result = map.getLayers().remove(layer);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 获取地图的所有子图层
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static ArrayList<Layer> getLayers(Map map) {
+		ArrayList<Layer> layers = new ArrayList<Layer>();
+		try {
+			for (int i = 0; i < map.getLayers().getCount(); i++) {
+				Layer layer = map.getLayers().get(i);
+				if (layer instanceof LayerGroup) {
+					layers.addAll(getLayers((LayerGroup) layer));
+				} else {
+					layers.add(layer);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layers;
+	}
+
+	/**
+	 * 获取地图的所有子图层
+	 * 
+	 * @param map
+	 * @param isCoverGroup 是否包含图层分组
+	 * @return
+	 */
+	public static ArrayList<Layer> getLayers(Map map, boolean isCoverGroup) {
+		ArrayList<Layer> layers = new ArrayList<Layer>();
+		try {
+			for (int i = 0; i < map.getLayers().getCount(); i++) {
+				Layer layer = map.getLayers().get(i);
+				if (layer instanceof LayerGroup) {
+					layers.addAll(getLayers((LayerGroup) layer, isCoverGroup));
+					if (isCoverGroup) {
+						layers.add(layer);
+					}
+				} else {
+					layers.add(layer);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layers;
+	}
+
+	/**
+	 * 获取图层分组的所有子图层
+	 * 
+	 * @param layerGroup
+	 * @return
+	 */
+	public static ArrayList<Layer> getLayers(LayerGroup layerGroup) {
+		ArrayList<Layer> layers = new ArrayList<Layer>();
+		try {
+			for (int i = 0; i < layerGroup.getCount(); i++) {
+				Layer layer = layerGroup.get(i);
+				if (layer instanceof LayerGroup) {
+					layers.addAll(getLayers((LayerGroup) layer));
+				} else {
+					layers.add(layer);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return layers;
+	}
+
+	/**
+	 * 获取图层分组的所有子图层
+	 * 
+	 * @param layerGroup
+	 * @param isCoverGroup 是否包含图层分组
+	 * @return
+	 */
+	public static ArrayList<Layer> getLayers(LayerGroup layerGroup, boolean isCoverGroup) {
+		ArrayList<Layer> layers = new ArrayList<Layer>();
+		try {
+			for (int i = 0; i < layerGroup.getCount(); i++) {
+				Layer layer = layerGroup.get(i);
+				if (layer instanceof LayerGroup) {
+					layers.addAll(getLayers((LayerGroup) layer, isCoverGroup));
+					if (isCoverGroup) {
+						layers.add(layer);
+					}
+				} else {
+					layers.add(layer);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return layers;
+	}
+
+	/**
+	 * 获取可用的图层的标题
+	 * 
+	 * @param map 地图
+	 * @param parent 所在的分组，如果是根图层，则为null
+	 * @param caption 指定的图层标题
+	 * @return
+	 */
+	public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
+		String layerCaption = "";
+
+		try {
+			if (parent == null) {
+				layerCaption = map.getLayers().getAvailableCaption(caption);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layerCaption;
+	}
+
+	/**
+	 * 添加指定数据集到地图中
+	 * 
+	 * @param map
+	 * @param dataset
+	 * @param addToHead
+	 * @return
+	 */
+	public static Layer addDatasetToMap(Map map, Dataset dataset, boolean addToHead) {
+		Layer layer = null;
+		try {
+			if (dataset != null) {
+				layer = map.getLayers().add(dataset, addToHead);
+				if (layer == null) {
+					Application.getActiveApplication().getOutput()
+							.output(String.format(CoreProperties.getString("String_DatasetOpenFaild"), dataset.getName()));
+				} else {
+					if (dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.REGION3D
+							|| dataset.getType() == DatasetType.PARAMETRICREGION) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setFillForeColor(GeoStyleUtilties.getFillColor());
+						setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+					} else if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D
+							|| dataset.getType() == DatasetType.PARAMETRICLINE || dataset.getType() == DatasetType.LINEM
+							|| dataset.getType() == DatasetType.LINE3D) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+						if (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D) {
+							map.getLayers().add(((DatasetVector) dataset).getChildDataset(), true);
+						}
+					} else if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+					}
+					if (layer.getSelection() != null) {
+						layer.getSelection().setDefaultStyleEnabled(true);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layer;
+	}
+
+	/**
+	 * 添加指定数据集到地图中
+	 * 
+	 * @param map
+	 * @param dataset
+	 * @param parent
+	 * @param addToHead
+	 * @return
+	 */
+	public static Layer addDatasetToMap(Map map, Dataset dataset, LayerGroup parent, boolean addToHead) {
+		Layer layer = null;
+		try {
+			if (dataset != null) {
+				layer = addDatasetToMap(map, dataset, addToHead);
+
+				// 将图层移动到分组中
+				if (parent != null) {
+					parent.add(layer);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layer;
+	}
+
+	public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
+		try {
+			if (parent == null) {
+				map.getLayers().add(layer);
+			} else {
+				parent.add(layer);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	public static void deleteMaps(String[] mapNames) {
+		try {
+			String message = CoreProperties.getString("String_MapDelete_Confirm");
+			if (mapNames.length == 1) {
+				message = message + "\r\n" + String.format(CoreProperties.getString("String_MapDelete_Confirm_One"), mapNames[0]);
+			} else {
+				message = message + "\r\n" + String.format(CoreProperties.getString("String_MapDelete_Confirm_Multi"), mapNames.length);
+			}
+
+			if (JOptionPane.showConfirmDialog(null, message, CoreProperties.getString("String_MapDelete"), JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+				for (String mapName : mapNames) {
+					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+					for (int i = formManager.getCount() - 1; i >= 0; i--) {
+						if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
+							formManager.close(formManager.get(i));
+						}
+					}
+					Application.getActiveApplication().getWorkspace().getMaps().remove(mapName);
+				}
+			}
+
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	/**
+	 * 判断保存地图时名称是否可用
+	 * 
+	 * @param newMapName 新地图名称
+	 * @param oldMapName 原来的地图名称
+	 * @return true-可用 false-已存在
+	 */
+	public static boolean checkAvailableMapName(String newMapName, String oldMapName) {
+		boolean flag = false;
+		String newAvailableMapName = newMapName.toLowerCase();
+		String oldAvailableMapName = oldMapName.toLowerCase();
+		if (newAvailableMapName == null || newAvailableMapName.length() <= 0) {
+			flag = false;
+		} else {
+			ArrayList<String> allMapNames = new ArrayList<String>();
+			int mapsCount = Application.getActiveApplication().getWorkspace().getMaps().getCount();
+			for (int index = 0; index < mapsCount; index++) {
+				allMapNames.add(Application.getActiveApplication().getWorkspace().getMaps().get(index).toLowerCase());
+			}
+			int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
+			for (int index = 0; index < formManagerCount; index++) {
+				IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
+				if (form instanceof IFormMap && !form.getText().equalsIgnoreCase(oldAvailableMapName)) {
+					allMapNames.add(form.getText().toLowerCase());
+				}
+			}
+			if (!allMapNames.contains(newAvailableMapName)) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+
+	/**
+	 * 获取具有指定前缀的可用地图名称
+	 * 
+	 * @param mapName 地图名称前缀
+	 * @param isNewWindow 是否为新窗体
+	 * @return
+	 */
+	public static String getAvailableMapName(String mapName, boolean isNewWindow) {
+		// 1、获取被检查的地图名称
+		String mapNmaeTemp = mapName;
+		String availableMapName = mapNmaeTemp.toLowerCase();
+		if (mapNmaeTemp == null || mapNmaeTemp.length() <= 0) {
+			mapNmaeTemp = CoreProperties.getString("String_WorkspaceNodeCaptionMap");
+		}
+
+		ArrayList<String> allMapNames = new ArrayList<String>();
+		int mapsCount = Application.getActiveApplication().getWorkspace().getMaps().getCount();
+		for (int index = 0; index < mapsCount; index++) {
+			allMapNames.add(Application.getActiveApplication().getWorkspace().getMaps().get(index).toLowerCase());
+		}
+		int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
+		for (int index = 0; index < formManagerCount; index++) {
+			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
+			if (form instanceof IFormMap) {
+				// 对于新窗口，不能用地图名字作为窗口标题，地图名和窗口标题可能会不一样，直接使用窗口标题
+				if (isNewWindow) {
+					allMapNames.add(form.getText().toLowerCase());
+				} else if (!"".equalsIgnoreCase(form.getText())) {
+					allMapNames.add(form.getText().toLowerCase());
+				}
+			}
+		}
+
+		// 3、检查已有的地图名称中是否包含了被检查的地图名称，如果包含则处理一下
+		if (!allMapNames.contains(availableMapName)) {
+			availableMapName = mapName;
+		} else {
+			int indexMapName = 1;
+			while (true) {
+				availableMapName = String.format("%s%d", mapName, indexMapName);
+				if (!allMapNames.contains(availableMapName.toLowerCase())) {
+					break;
+				}
+
+				indexMapName += 1;
+			}
+		}
+		return availableMapName;
+	}
+
+	public static Layer findLayerByDataset(Map map, Dataset dataset) {
+		ArrayList<Layer> layers = MapUtilties.getLayers(map);
+		for (Layer layer : layers) {
+			if (layer!=null && layer.getDataset() == dataset){
+				return layer;
+			}
+		}
+		return null;
+	}
+}

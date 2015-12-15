@@ -1,0 +1,132 @@
+﻿<ColorSchemeManager>
+  <FileHeader>
+    <Version>60000</Version>
+    <ColorSchemeCount>124</ColorSchemeCount>
+  </FileHeader>
+  <DataBlock>
+    <ColorScheme0>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Black to White.scs</ColorScheme0>
+    <ColorScheme1>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Blue to Black.scs</ColorScheme1>
+    <ColorScheme2>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Blue to White.scs</ColorScheme2>
+    <ColorScheme3>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Blue Vintage.scs</ColorScheme3>
+    <ColorScheme4>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Bunny Love.scs</ColorScheme4>
+    <ColorScheme5>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\By The Beach.scs</ColorScheme5>
+    <ColorScheme6>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Chocolate.scs</ColorScheme6>
+    <ColorScheme7>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp0.scs</ColorScheme7>
+    <ColorScheme8>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp1.scs</ColorScheme8>
+    <ColorScheme9>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp2.scs</ColorScheme9>
+    <ColorScheme10>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp3.scs</ColorScheme10>
+    <ColorScheme11>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp4.scs</ColorScheme11>
+    <ColorScheme12>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp5.scs</ColorScheme12>
+    <ColorScheme13>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp6.scs</ColorScheme13>
+    <ColorScheme14>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp7.scs</ColorScheme14>
+    <ColorScheme15>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp8.scs</ColorScheme15>
+    <ColorScheme16>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp9.scs</ColorScheme16>
+    <ColorScheme17>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp10.scs</ColorScheme17>
+    <ColorScheme18>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\ColorRamp11.scs</ColorScheme18>
+    <ColorScheme19>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Country Tones.scs</ColorScheme19>
+    <ColorScheme20>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Dark Web.scs</ColorScheme20>
+    <ColorScheme21>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\DefaultGrid.scs</ColorScheme21>
+    <ColorScheme22>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Dramatic Web.scs</ColorScheme22>
+    <ColorScheme23>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Easter Time.scs</ColorScheme23>
+    <ColorScheme24>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Fall Tones.scs</ColorScheme24>
+    <ColorScheme25>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Floral 1.scs</ColorScheme25>
+    <ColorScheme26>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Friends.scs</ColorScheme26>
+    <ColorScheme27>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme0.scs</ColorScheme27>
+    <ColorScheme28>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme1.scs</ColorScheme28>
+    <ColorScheme29>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme2.scs</ColorScheme29>
+    <ColorScheme30>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme3.scs</ColorScheme30>
+    <ColorScheme31>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme4.scs</ColorScheme31>
+    <ColorScheme32>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme5.scs</ColorScheme32>
+    <ColorScheme33>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme6.scs</ColorScheme33>
+    <ColorScheme34>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme7.scs</ColorScheme34>
+    <ColorScheme35>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme8.scs</ColorScheme35>
+    <ColorScheme36>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme9.scs</ColorScheme36>
+    <ColorScheme37>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme10.scs</ColorScheme37>
+    <ColorScheme38>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme11.scs</ColorScheme38>
+    <ColorScheme39>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme12.scs</ColorScheme39>
+    <ColorScheme40>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme13.scs</ColorScheme40>
+    <ColorScheme41>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme14.scs</ColorScheme41>
+    <ColorScheme42>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme15.scs</ColorScheme42>
+    <ColorScheme43>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme16.scs</ColorScheme43>
+    <ColorScheme44>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme17.scs</ColorScheme44>
+    <ColorScheme45>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme18.scs</ColorScheme45>
+    <ColorScheme46>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme19.scs</ColorScheme46>
+    <ColorScheme47>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme20.scs</ColorScheme47>
+    <ColorScheme48>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme21.scs</ColorScheme48>
+    <ColorScheme49>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme22.scs</ColorScheme49>
+    <ColorScheme50>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme23.scs</ColorScheme50>
+    <ColorScheme51>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme24.scs</ColorScheme51>
+    <ColorScheme52>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme25.scs</ColorScheme52>
+    <ColorScheme53>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme26.scs</ColorScheme53>
+    <ColorScheme54>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme27.scs</ColorScheme54>
+    <ColorScheme55>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme28.scs</ColorScheme55>
+    <ColorScheme56>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme29.scs</ColorScheme56>
+    <ColorScheme57>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme30.scs</ColorScheme57>
+    <ColorScheme58>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme31.scs</ColorScheme58>
+    <ColorScheme59>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme32.scs</ColorScheme59>
+    <ColorScheme60>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme33.scs</ColorScheme60>
+    <ColorScheme61>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme34.scs</ColorScheme61>
+    <ColorScheme62>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme35.scs</ColorScheme62>
+    <ColorScheme63>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme36.scs</ColorScheme63>
+    <ColorScheme64>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme37.scs</ColorScheme64>
+    <ColorScheme65>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme38.scs</ColorScheme65>
+    <ColorScheme66>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme39.scs</ColorScheme66>
+    <ColorScheme67>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme40.scs</ColorScheme67>
+    <ColorScheme68>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme41.scs</ColorScheme68>
+    <ColorScheme69>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme42.scs</ColorScheme69>
+    <ColorScheme70>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme43.scs</ColorScheme70>
+    <ColorScheme71>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme44.scs</ColorScheme71>
+    <ColorScheme72>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme45.scs</ColorScheme72>
+    <ColorScheme73>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme46.scs</ColorScheme73>
+    <ColorScheme74>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\GradienScheme47.scs</ColorScheme74>
+    <ColorScheme75>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Green to Black.scs</ColorScheme75>
+    <ColorScheme76>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Hottie Pinks.scs</ColorScheme76>
+    <ColorScheme77>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Lipstick Tricks.scs</ColorScheme77>
+    <ColorScheme78>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Mullberry Lane.scs</ColorScheme78>
+    <ColorScheme79>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Natural Tones.scs</ColorScheme79>
+    <ColorScheme80>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Naturals.scs</ColorScheme80>
+    <ColorScheme81>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\New Baby Tones.scs</ColorScheme81>
+    <ColorScheme82>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Pink Chocolate.scs</ColorScheme82>
+    <ColorScheme83>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Purple to Black.scs</ColorScheme83>
+    <ColorScheme84>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Purple to White.scs</ColorScheme84>
+    <ColorScheme85>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme0.scs</ColorScheme85>
+    <ColorScheme86>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme1.scs</ColorScheme86>
+    <ColorScheme87>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme2.scs</ColorScheme87>
+    <ColorScheme88>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme3.scs</ColorScheme88>
+    <ColorScheme89>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme4.scs</ColorScheme89>
+    <ColorScheme90>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme5.scs</ColorScheme90>
+    <ColorScheme91>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme6.scs</ColorScheme91>
+    <ColorScheme92>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme7.scs</ColorScheme92>
+    <ColorScheme93>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme8.scs</ColorScheme93>
+    <ColorScheme94>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme9.scs</ColorScheme94>
+    <ColorScheme95>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme10.scs</ColorScheme95>
+    <ColorScheme96>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme11.scs</ColorScheme96>
+    <ColorScheme97>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme12.scs</ColorScheme97>
+    <ColorScheme98>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme13.scs</ColorScheme98>
+    <ColorScheme99>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme14.scs</ColorScheme99>
+    <ColorScheme100>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme15.scs</ColorScheme100>
+    <ColorScheme101>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme16.scs</ColorScheme101>
+    <ColorScheme102>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme17.scs</ColorScheme102>
+    <ColorScheme103>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\RandomScheme18.scs</ColorScheme103>
+    <ColorScheme104>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Red to Black.scs</ColorScheme104>
+    <ColorScheme105>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Red to White.scs</ColorScheme105>
+    <ColorScheme106>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Relax.scs</ColorScheme106>
+    <ColorScheme107>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Sea Foam.scs</ColorScheme107>
+    <ColorScheme108>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Sepia.scs</ColorScheme108>
+    <ColorScheme109>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Skin Tones.scs</ColorScheme109>
+    <ColorScheme110>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\SuperMapSchemeFile0.scs</ColorScheme110>
+    <ColorScheme111>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\SuperMapSchemeFile1.scs</ColorScheme111>
+    <ColorScheme112>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\SuperMapSchemeFile2.scs</ColorScheme112>
+    <ColorScheme113>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\SuperMapSchemeFile3.scs</ColorScheme113>
+    <ColorScheme114>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Tropical.scs</ColorScheme114>
+    <ColorScheme115>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Vintage Exterior.scs</ColorScheme115>
+    <ColorScheme116>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Vintage Paint.scs</ColorScheme116>
+    <ColorScheme117>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Vintage Quilt.scs</ColorScheme117>
+    <ColorScheme118>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Warm Home.scs</ColorScheme118>
+    <ColorScheme119>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Yellow to Black.scs</ColorScheme119>
+    <ColorScheme120>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Yellow to Blue.scs</ColorScheme120>
+    <ColorScheme121>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Yellow to Red.scs</ColorScheme121>
+    <ColorScheme122>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Yellow to White.scs</ColorScheme122>
+    <ColorScheme123>D:\Program Files\SuperMap\SuperMap iDesktop 7C\Bin\..\Templates\ColorScheme\Basic\Yummy Blues.scs</ColorScheme123>
+  </DataBlock>
+</ColorSchemeManager>

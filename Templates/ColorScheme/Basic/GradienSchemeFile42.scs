@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ColorScheme><FileHeader>
+	<FileType>678370</FileType>
+	<Version>60000</Version>
+	<Name>GradienScheme42</Name>
+	<Author>SuperMap</Author>
+	<Description></Description>
+	<ColorSystem>1</ColorSystem>
+	<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+	<KeyColorCount>5</KeyColorCount>
+	<IntervalColorCount>16</IntervalColorCount>
+</FileHeader>
+	<DataBlock>
+		<KeyColor1>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>42</Red>
+			<Green>77</Green>
+			<Blue>115</Blue>
+		</KeyColor1>
+		<KeyColor2>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>52</Red>
+			<Green>137</Green>
+			<Blue>201</Blue>
+		</KeyColor2>
+		<KeyColor3>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>191</Red>
+			<Green>255</Green>
+			<Blue>255</Blue>
+		</KeyColor3>
+		<KeyColor4>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>176</Red>
+			<Green>63</Green>
+			<Blue>91</Blue>
+		</KeyColor4>
+		<KeyColor5>
+			<Name></Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>97</Red>
+			<Green>13</Green>
+			<Blue>81</Blue>
+		</KeyColor5>
+	</DataBlock>
+</ColorScheme>
