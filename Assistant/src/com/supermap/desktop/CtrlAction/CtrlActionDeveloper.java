@@ -21,7 +21,7 @@ public class CtrlActionDeveloper extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			BrowseUtilties.openUrl("http://git.oschina.net/SuperMapDesktop");
+			BrowseUtilties.openUrl("https://git.oschina.net/supermap/SuperMap-iDesktop-Cross");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

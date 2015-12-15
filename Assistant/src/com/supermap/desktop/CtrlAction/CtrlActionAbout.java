@@ -21,7 +21,7 @@ public class CtrlActionAbout extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			BrowseUtilties.openUrl("http://www.supermap.com/cn/");
+			BrowseUtilties.openUrl("http://www.supermap.com/xhtml/SuperMap-iDesktop-Cross-8C.html");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

@@ -21,7 +21,7 @@ public class CtrlActionTechnicalSupport extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			BrowseUtilties.openUrl("http://www.supermap.com/cn/");
+			BrowseUtilties.openUrl("http://support.supermap.com.cn/product/iDesktop.aspx");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
