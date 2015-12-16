@@ -126,7 +126,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 			if (!StringUtilties.isNullOrEmpty(this.getValueAt(i, 0).toString()) && !StringUtilties.isNullOrEmpty(this.getValueAt(i, 1).toString())) {
 				stringBuilder.append(this.getValueAt(i, 0).toString());
 				stringBuilder.append(" ");
-				stringBuilder.append(this.getValueAt(i, 1).toString());
+				stringBuilder.append(SqlUtilties.covert(this.getValueAt(i, 1).toString()));
 				stringBuilder.append(",");
 			}
 		}

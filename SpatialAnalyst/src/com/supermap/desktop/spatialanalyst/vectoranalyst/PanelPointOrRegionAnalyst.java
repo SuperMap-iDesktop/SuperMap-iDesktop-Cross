@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.concurrent.CancellationException;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -34,21 +35,26 @@ import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Selection;
 import com.supermap.ui.MapControl;
 
 public class PanelPointOrRegionAnalyst extends JPanel {
 
 	/**
-	 * 
-	 */
+     *
+     */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelBufferRadius;
 	private JLabel labelUnit;
@@ -71,6 +77,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean buttonEnabled = false;
 	private boolean bufferSuccess;
 	private LocalItemListener localItemListener = new LocalItemListener();
+	private DatasetVector sourceDatasetVector;
 
 	public boolean isButtonEnabled() {
 		return buttonEnabled;
@@ -149,27 +156,27 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
 
 		//@formatter:off
-		panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelUnit)
-						.addComponent(this.radioButtonNumeric)
-						.addComponent(this.radioButtonField)).addGap(35)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.comboBoxUnit)
-						.addComponent(this.textFieldNumeric)
-						.addComponent(this.comboBoxField)));
-		
-		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit)).addGap(8)
-			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-			    		.addComponent(this.radioButtonNumeric)
-			    		.addComponent(this.textFieldNumeric)).addGap(8)
-			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-			    		.addComponent(this.radioButtonField)
-			    		.addComponent(this.comboBoxField)));
-		//@formatter:on
+          panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
+                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.labelUnit)
+                              .addComponent(this.radioButtonNumeric)
+                              .addComponent(this.radioButtonField)).addGap(35)
+                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.comboBoxUnit)
+                              .addComponent(this.textFieldNumeric)
+                              .addComponent(this.comboBoxField)));
+         
+          panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
+                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.labelUnit)
+                              .addComponent(this.comboBoxUnit)).addGap(8)
+                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                             .addComponent(this.radioButtonNumeric)
+                             .addComponent(this.textFieldNumeric)).addGap(8)
+                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                             .addComponent(this.radioButtonField)
+                             .addComponent(this.comboBoxField)));
+          //@formatter:on
 
 	}
 
@@ -178,17 +185,17 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasic.setLayout(panelBasicLayout);
 
 		//@formatter:off
-	    panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
-	    		.addComponent(this.panelBasicLeft)
-	    		.addComponent(this.panelBasicRight).addContainerGap());
-	    
-	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
-	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
-	    				.addComponent(this.panelBasicLeft)
-	    				.addComponent(this.panelBasicRight)).addGap(50));
-	    //@formatter:on
+         panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
+                   .addContainerGap()
+                   .addComponent(this.panelBasicLeft)
+                   .addComponent(this.panelBasicRight).addContainerGap());
+        
+         panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
+                   .addContainerGap()
+                   .addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
+                             .addComponent(this.panelBasicLeft)
+                             .addComponent(this.panelBasicRight)).addGap(50));
+         //@formatter:on
 		panelBasicLayout.linkSize(panelBasicLeft, panelBasicRight);
 	}
 
@@ -198,14 +205,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
-		panelBasicLeftLayout.setHorizontalGroup(panelBasicLeftLayout.createSequentialGroup()
-				.addGroup(panelBasicLeftLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.panelBufferData)
-						.addComponent(this.panelResultData)));
-		panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-				.addComponent(this.panelBufferData)
-				.addComponent(this.panelResultData).addContainerGap());
-		//@formatter:on
+          panelBasicLeftLayout.setHorizontalGroup(panelBasicLeftLayout.createSequentialGroup()
+                    .addGroup(panelBasicLeftLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.panelBufferData)
+                              .addComponent(this.panelResultData)));
+          panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
+                    .addComponent(this.panelBufferData)
+                    .addComponent(this.panelResultData).addContainerGap());
+          //@formatter:on
 	}
 
 	private void setPanelBasicRightLayout() {
@@ -214,15 +221,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
 
 		//@formatter:off
-		panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.panelBufferRadius)
-						.addComponent(this.panelResultSet)));
-		
-		panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addComponent(this.panelBufferRadius)
-				.addComponent(this.panelResultSet).addContainerGap());
-		//@formatter:on
+          panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
+                    .addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.panelBufferRadius)
+                              .addComponent(this.panelResultSet)));
+         
+          panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
+                    .addComponent(this.panelBufferRadius)
+                    .addComponent(this.panelResultSet).addContainerGap());
+          //@formatter:on
 
 	}
 
@@ -393,6 +400,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
+	private void setComponentEnabled() {
+		this.panelBufferData.getComboBoxBufferDataDataset().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
+		this.panelBufferData.getComboBoxBufferDataDatasource().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
+		this.comboBoxField.setEnabled(this.radioButtonField.isSelected());
+		this.textFieldNumeric.setEnabled(this.radioButtonNumeric.isSelected());
+		this.panelResultSet.getCheckBoxRemainAttributes().setEnabled(!this.panelResultSet.getCheckBoxUnionBuffer().isSelected());
+	}
+
 	/**
 	 * 创建缓冲区分析
 	 */
@@ -408,7 +423,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 		DatasetVector resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
 		if (this.panelBufferData.getComboBoxBufferDataDataset() != null) {
-			DatasetVector sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
+			sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			BufferAnalystParameter bufferAnalystParameter = new BufferAnalystParameter();
 
 			// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
@@ -426,28 +441,78 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
-			if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
-				bufferSuccess = BufferAnalyst.createBuffer(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet.getCheckBoxUnionBuffer()
-						.isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
-			} else {
-				bufferSuccess = BufferAnalyst.createBuffer(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
-			}
+			// if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
+			// bufferSuccess = BufferAnalyst.createBuffer(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet.getCheckBoxUnionBuffer()
+			// .isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
+			// } else {
+			// bufferSuccess = BufferAnalyst.createBuffer(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+			// .getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
+			// }
 
-			if (bufferSuccess) {
-				// 待实现
-				// 打开生成的缓冲区数据集，并将数据集添加到地图上展现
-			}
+			// if (bufferSuccess) {
+			// // 待实现
+			// // 打开生成的缓冲区数据集，并将数据集添加到地图上展现
+			// }
 
+			FormProgress formProgress = new FormProgress(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
+			formProgress.doWork(new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+					.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
 		}
 	}
 
-	private void setComponentEnabled() {
-		this.panelBufferData.getComboBoxBufferDataDataset().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
-		this.panelBufferData.getComboBoxBufferDataDatasource().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
-		this.comboBoxField.setEnabled(this.radioButtonField.isSelected());
-		this.textFieldNumeric.setEnabled(this.radioButtonNumeric.isSelected());
-		this.panelResultSet.getCheckBoxRemainAttributes().setEnabled(!this.panelResultSet.getCheckBoxUnionBuffer().isSelected());
+	class BufferProgressCallable extends UpdateProgressCallable {
+		DatasetVector sourceDatasetVector;
+		DatasetVector resultDatasetVector;
+		BufferAnalystParameter bufferAnalystParameter;
+		boolean union;
+		boolean isAttributeRetained;
+
+		private SteppedListener steppedListener = new SteppedListener() {
+
+			@Override
+			public void stepped(SteppedEvent arg0) {
+				try {
+					updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+				} catch (CancellationException e) {
+					int result = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_Warning_DatasetPrjCoordSysTranslatorCancel"));
+
+					if (result == 0) {
+						arg0.setCancel(true);
+					} else {
+						update.setCancel(false);
+						arg0.setCancel(false);
+					}
+				}
+			}
+		};
+
+		public BufferProgressCallable(DatasetVector sourceDatasetVector, DatasetVector resultDatasetVector, BufferAnalystParameter bufferAnalystParameter,
+				boolean union, boolean isAttributeRetained) {
+			this.sourceDatasetVector = sourceDatasetVector;
+			this.resultDatasetVector = resultDatasetVector;
+			this.bufferAnalystParameter = bufferAnalystParameter;
+			this.union = union;
+			this.isAttributeRetained = isAttributeRetained;
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+
+			Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
+			try {
+				BufferAnalyst.addSteppedListener(steppedListener);
+				bufferSuccess = BufferAnalyst.createBuffer(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, union, isAttributeRetained);
+				if (bufferSuccess) {
+					Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess"));
+				} else {
+					Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
+			}
+			return bufferSuccess;
+		}
+
 	}
 
 	class LocalItemListener implements ItemListener {

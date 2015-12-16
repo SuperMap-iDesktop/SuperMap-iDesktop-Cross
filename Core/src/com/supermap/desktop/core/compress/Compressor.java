@@ -231,7 +231,7 @@ public class Compressor {
 	}
 
 	protected void fireCompressing(CompressEvent e) {
-		Object[] listeners = listenerList.getListenerList();
+		Object[] listeners = this.listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == CompressListener.class) {
