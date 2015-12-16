@@ -17,7 +17,8 @@ public class TreeNodeData {
 		this.data = data;
 		this.type = type;
 	}
-	
+
+	asd
 	//该构造函数仅供LayersTree构造专题图子项时使用
 	TreeNodeData(Object data, NodeDataType type, Layer parentLayer){
 		this.data = data;
