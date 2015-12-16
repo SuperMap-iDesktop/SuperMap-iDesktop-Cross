@@ -27,7 +27,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
@@ -61,7 +60,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -71,7 +69,6 @@ import java.util.ArrayList;
  * @author xiajt
  */
 public class JDialogSQLQuery extends SmDialog {
-
 	// region 定义成员变量
 	/**
 	 * 直接添加
@@ -190,13 +187,6 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化控件状态
 	 */
 	private void initComponentsState() {
-
-		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
-			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
-			setWorkspaceTreeSelectedDataset(currentDataset);
-			// 初始化字段信息表
-			tableFieldInfo.setDataset(currentDataset);
-		}
 		radioButtonQuerySpaceAndProperty.setSelected(true);
 		jComboBoxAggregationFunction.setEnabled(false);
 		buttonGetAllValue.setEnabled(false);
@@ -204,7 +194,16 @@ public class JDialogSQLQuery extends SmDialog {
 		textFieldGroupField.setEnabled(false);
 		checkBoxShowTabular.setSelected(true);
 		buttonQuery.setEnabled(false);
-
+		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
+			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
+			setWorkspaceTreeSelectedDataset(currentDataset);
+			// 初始化字段信息表
+			tableFieldInfo.setDataset(currentDataset);
+			if (currentDataset.getType() == DatasetType.TABULAR) {
+				radioButtonQuerySpaceAndProperty.setEnabled(false);
+				radioButtonQueryAttributeInfo.setSelected(true);
+			}
+		}
 	}
 
 	/**
@@ -229,6 +228,18 @@ public class JDialogSQLQuery extends SmDialog {
 							TreePath path = new TreePath(childDatasetTreeNode.getPath());
 							workspaceTree.setSelectionPath(path);
 							workspaceTree.scrollPathToVisible(path);
+							return;
+						} else if (childDatasetTreeNode.getChildCount() > 0) {
+							for (int k = 0; k < childDatasetTreeNode.getChildCount(); k++) {
+								DefaultMutableTreeNode childTreeNode = (DefaultMutableTreeNode) childDatasetTreeNode.getChildAt(k);
+								TreeNodeData nodeData = (TreeNodeData) childTreeNode.getUserObject();
+								if (null != nodeData && nodeData.getData() instanceof Dataset && nodeData.getData() == dataset) {
+									TreePath path = new TreePath(childTreeNode.getPath());
+									workspaceTree.setSelectionPath(path);
+									workspaceTree.scrollPathToVisible(path);
+									return;
+								}
+							}
 						}
 					}
 				}
@@ -655,6 +666,14 @@ public class JDialogSQLQuery extends SmDialog {
 			if (data instanceof Dataset) {
 				currentDataset = (Dataset) data;
 				tableFieldInfo.setDataset(((Dataset) data));
+				if (currentDataset.getType() == DatasetType.TABULAR) {
+					radioButtonQueryAttributeInfo.setSelected(true);
+					radioButtonQuerySpaceAndProperty.setEnabled(false);
+				} else {
+					radioButtonQuerySpaceAndProperty.setEnabled(true);
+					radioButtonQuerySpaceAndProperty.setSelected(true);
+				}
+
 			} else {
 				currentDataset = null;
 				tableFieldInfo.setDataset(null);
@@ -850,14 +869,15 @@ public class JDialogSQLQuery extends SmDialog {
 			QueryParameter queryParameter = null;
 			Recordset resultRecord = null;
 			try {
+
 				if (!panelSaveSearchResult.isSaveResult() && !checkBoxShowTabular.isSelected() && !checkBoxHighLigthMap.isSelected()
 						&& !checkBoxHighLigthScene.isSelected()) {
 					UICommonToolkit.showMessageDialog(DataViewProperties.getString("string_SQLQueryMessage"));
 					return;
 				}
+				setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				if (currentDataset != null && currentDataset instanceof DatasetVector) {
 					// 构建查询语句
-					CursorUtilties.setWaitCursor();
 					DatasetVector currentDatasetVector = ((DatasetVector) currentDataset);
 					queryParameter = new QueryParameter();
 					queryParameter.setCursorType(CursorType.DYNAMIC);
@@ -918,7 +938,7 @@ public class JDialogSQLQuery extends SmDialog {
 			} catch (Exception e1) {
 				Application.getActiveApplication().getOutput().output(e1);
 			} finally {
-				CursorUtilties.setDefaultCursor();
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				if (queryParameter != null) {
 					queryParameter.dispose();
 				}
@@ -934,10 +954,17 @@ public class JDialogSQLQuery extends SmDialog {
 		Datasource resultDatasource = panelSaveSearchResult.getSelectDatasouce();
 		String datasetName = panelSaveSearchResult.getDatasetName();
 		if (resultDatasource != null && !StringUtilties.isNullOrEmpty(datasetName)) {
-			DatasetVector resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
+			DatasetVector resultDataset = null;
+			try {
+				resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
+			} catch (Exception e) {
+				resultDataset = null;
+			}
 			resultRecord.moveFirst();
 			if (resultDataset == null) {
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SQLQuerySaveAsResultFaield"));
+			} else {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SQLQuerySavaAsResultSucces"), resultDataset.getName()));
 			}
 		}
 
@@ -947,7 +974,7 @@ public class JDialogSQLQuery extends SmDialog {
 		// 属性表中显示
 		IFormTabular formTabular = (IFormTabular) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TABULAR);
 		if (formTabular != null) {
-			formTabular.setText(MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource()));
+			formTabular.setText(MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource().getAlias()));
 			formTabular.setRecordset(resultRecord);
 		}
 	}
@@ -958,14 +985,16 @@ public class JDialogSQLQuery extends SmDialog {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof IFormMap) {
 			formMap = ((IFormMap) activeForm);
-		} else {
-			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
-				if (Application.getActiveApplication().getMainFrame().getFormManager().get(i).getWindowType() == WindowType.MAP) {
-					formMap = ((IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().get(i));
-					Application.getActiveApplication().getMainFrame().getFormManager().setActiveForm(formMap);
-				}
-			}
 		}
+		// 新地图打开
+//		else {
+//			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
+//				if (Application.getActiveApplication().getMainFrame().getFormManager().get(i).getWindowType() == WindowType.MAP) {
+//					formMap = ((IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().get(i));
+//					Application.getActiveApplication().getMainFrame().getFormManager().setActiveForm(formMap);
+//				}
+//			}
+//		}
 		if (formMap == null) {
 			String name = MapUtilties.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource().getAlias()), true);
