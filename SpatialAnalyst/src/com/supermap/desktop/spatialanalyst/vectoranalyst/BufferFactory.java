@@ -69,7 +69,7 @@ public class BufferFactory extends SmDialog {
 		initPanelBufferBasic();
 		setBufferFactory();
 		setLocationRelativeTo(null);
-		setResizable(true);
+		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}

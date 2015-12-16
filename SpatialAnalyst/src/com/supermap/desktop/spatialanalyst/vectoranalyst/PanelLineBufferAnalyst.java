@@ -4,6 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -19,6 +23,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
 
@@ -35,9 +40,11 @@ import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -64,9 +71,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	private JRadioButton radioButtonNumeric;
 	private JRadioButton radioButtonField;
-	private JComboBox<BufferRadiusUnit> comboBoxUnit;
-	private JFormattedTextField textFieldNumericLeft;
-	private JFormattedTextField textFieldNumericRight;
+	private JComboBox<Unit> comboBoxUnit;
+	private JTextField textFieldNumericLeft;
+	private JTextField textFieldNumericRight;
 	private JComboBox<Object> comboBoxFieldLeft;
 	private JComboBox<Object> comboBoxFieldright;
 
@@ -81,6 +88,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private Recordset recordset;
 	private Object radiusLeft;
 	private Object radiusRight;
+	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+	private LocalKeylistener localKeylistener = new LocalKeylistener();
 
 	private boolean buttonEnabled = false;
 	private String resultDatasetName;
@@ -183,14 +192,15 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.labelRightFieldRadius = new JLabel("RightFieldRadius");
 		this.radioButtonNumeric = new JRadioButton("Numeric");
 		this.radioButtonField = new JRadioButton("Field");
-		this.comboBoxUnit = createComboBoxUnit();
+		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
 
-		NumberFormatter numberFormatter = new NumberFormatter();
-		numberFormatter.setValueClass(Integer.class);
-		this.textFieldNumericLeft = new JFormattedTextField(numberFormatter);
-		this.textFieldNumericRight = new JFormattedTextField(numberFormatter);
+		// NumberFormatter numberFormatter = new NumberFormatter();
+		// numberFormatter.setValueClass(Integer.class);
+		this.textFieldNumericLeft = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldNumericRight = new JFormattedTextField(NumberFormat.getInstance());
 		this.textFieldNumericLeft.setText("10");
 		this.textFieldNumericRight.setText("10");
+
 		this.comboBoxFieldLeft = new JComboBox<Object>();
 		this.comboBoxFieldright = new JComboBox<Object>();
 
@@ -373,7 +383,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 			setButtonEnabled(false);
 		}
 		setComponentEnabled();
-		// this.radius = Integer.valueOf(this.textFieldNumeric.getText());
 
 	}
 
@@ -387,14 +396,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(new LocalItemListener());
 		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(new LocalItemListener());
 		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(new LocalItemListener());
-		this.radioButtonBufferTypeFlat.addActionListener(new LocalActioListener());
-		this.radioButtonBufferTypeRound.addActionListener(new LocalActioListener());
-		this.radioButtonNumeric.addActionListener(new LocalActioListener());
-		this.radioButtonField.addActionListener(new LocalActioListener());
-		this.textFieldNumericLeft.addActionListener(new LocalActioListener());
-		this.textFieldNumericRight.addActionListener(new LocalActioListener());
-		this.comboBoxFieldLeft.addActionListener(new LocalActioListener());
-		this.comboBoxFieldright.addActionListener(new LocalActioListener());
+		this.radioButtonBufferTypeFlat.addActionListener(new LocalActionListener());
+		this.radioButtonBufferTypeRound.addActionListener(new LocalActionListener());
+		this.radioButtonNumeric.addActionListener(new LocalActionListener());
+		this.radioButtonField.addActionListener(new LocalActionListener());
+		this.comboBoxFieldLeft.addActionListener(new LocalActionListener());
+		this.comboBoxFieldright.addActionListener(new LocalActionListener());
+		this.textFieldNumericLeft.addKeyListener(localKeylistener);
+		this.textFieldNumericRight.addKeyListener(localKeylistener);
 	}
 
 	private void setComboBoxDatasetType() {
@@ -449,23 +458,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.checkBoxBufferRight.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
 	}
 
-	private JComboBox<BufferRadiusUnit> createComboBoxUnit() {
-		JComboBox<BufferRadiusUnit> comboBox = new JComboBox<BufferRadiusUnit>();
-		comboBox.addItem(BufferRadiusUnit.MiliMeter);
-		comboBox.addItem(BufferRadiusUnit.CentiMeter);
-		comboBox.addItem(BufferRadiusUnit.DeciMeter);
-		comboBox.addItem(BufferRadiusUnit.Meter);
-		comboBox.addItem(BufferRadiusUnit.KiloMeter);
-		comboBox.addItem(BufferRadiusUnit.Inch);
-		comboBox.addItem(BufferRadiusUnit.Foot);
-		comboBox.addItem(BufferRadiusUnit.Mile);
-		comboBox.addItem(BufferRadiusUnit.Yard);
-		comboBox.setSelectedItem(BufferRadiusUnit.Meter);
-		comboBox.setEditable(false);
-		comboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		return comboBox;
-	}
-
 	private void createComboBoxField(Dataset comboBoxDataset) {
 		if (comboBoxDataset instanceof DatasetVector) {
 			DatasetVector comboBoxDatasetVector = (DatasetVector) comboBoxDataset;
@@ -501,12 +493,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 			// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 			if (this.radioButtonNumeric.isSelected()) {
-				this.radiusLeft = Integer.valueOf(this.textFieldNumericLeft.getText());
-				this.radiusRight = Integer.valueOf(this.textFieldNumericRight.getText());
-				if (this.radiusLeft instanceof Integer) {
-					this.radiusLeft = Math.abs((Integer) this.radiusLeft);
-					this.radiusRight = Math.abs((Integer) this.radiusRight);
-				}
+				this.radiusLeft =  Math.abs(Integer.parseInt(this.textFieldNumericLeft.getText().replaceAll(",", "")));
+				this.radiusRight =  Math.abs(Integer.parseInt(this.textFieldNumericRight.getText().replaceAll(",", "")));
 			}
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {
@@ -522,8 +510,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 					bufferAnalystParameter.setRightDistance(this.radiusRight);
 				}
 			}
-			bufferAnalystParameter.setRadiusUnit((BufferRadiusUnit) this.comboBoxUnit.getSelectedItem());
-			bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
+			bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnit.getSelectedItem().toString()));
+			bufferAnalystParameter.setSemicircleLineSegment( Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
 			if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
@@ -585,15 +573,21 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
-	class LocalActioListener implements ActionListener {
+	class LocalActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == radioButtonBufferTypeRound) {
+
+				textFieldNumericLeft.addKeyListener(localKeylistener);
+				textFieldNumericRight.addKeyListener(localKeylistener);
 				setComponentEnabled();
 				checkBoxBufferLeft.setSelected(true);
 				checkBoxBufferRight.setSelected(true);
 			} else if (e.getSource() == radioButtonBufferTypeFlat) {
+				textFieldNumericLeft.removeKeyListener(localKeylistener);
+				textFieldNumericRight.removeKeyListener(localKeylistener);
+
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonField) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
@@ -604,13 +598,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonNumeric) {
-				radiusLeft = Integer.valueOf(textFieldNumericLeft.getText());
-				radiusRight = Integer.valueOf(textFieldNumericRight.getText());
+				radiusLeft = Math.abs(Integer.parseInt(textFieldNumericLeft.getText().replaceAll(",", "")));
+				radiusRight =  Math.abs(Integer.parseInt(textFieldNumericRight.getText().replaceAll(",", "")));
 				setComponentEnabled();
-			} else if (e.getSource() == textFieldNumericLeft) {
-				radiusLeft = Integer.valueOf(textFieldNumericLeft.getText());
-			} else if (e.getSource() == textFieldNumericRight) {
-				radiusRight = Integer.valueOf(textFieldNumericRight.getText());
 			} else if (e.getSource() == comboBoxFieldLeft) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
 					radiusLeft = comboBoxFieldLeft.getSelectedItem().toString();
@@ -621,6 +611,28 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 			}
 		}
+	}
+
+	class LocalKeylistener implements KeyListener {
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			
+
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			textFieldNumericRight.setText(((JTextField) e.getSource()).getText());
+			textFieldNumericLeft.setText(((JTextField) e.getSource()).getText());
+		}
+
 	}
 
 }

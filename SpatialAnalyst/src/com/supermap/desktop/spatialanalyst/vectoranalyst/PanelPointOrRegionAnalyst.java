@@ -37,6 +37,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
@@ -60,7 +61,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private JLabel labelUnit;
 	private JRadioButton radioButtonNumeric;
 	private JRadioButton radioButtonField;
-	private JComboBox<BufferRadiusUnit> comboBoxUnit;
 	private JFormattedTextField textFieldNumeric;
 	private JComboBox<Object> comboBoxField;
 	private JPanel panelBasic;
@@ -78,6 +78,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean bufferSuccess;
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private DatasetVector sourceDatasetVector;
+	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+	
+	private JComboBox<Unit> comboBoxUnitBox;
 
 	public boolean isButtonEnabled() {
 		return buttonEnabled;
@@ -135,8 +138,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.labelUnit = new JLabel("Unit");
 		this.radioButtonNumeric = new JRadioButton("Numeric");
 		this.radioButtonField = new JRadioButton("Field");
-		this.comboBoxUnit = createComboBoxUnit();
-		this.comboBoxUnit.setEditable(false);
+		this.comboBoxUnitBox = initComboBoxUnit.createComboBoxUnit();
+		this.comboBoxUnitBox.setEditable(false);
 		this.comboBoxField = new JComboBox<Object>();
 		this.comboBoxField.setEditable(false);
 
@@ -162,14 +165,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.radioButtonNumeric)
                               .addComponent(this.radioButtonField)).addGap(35)
                     .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-                              .addComponent(this.comboBoxUnit)
+                              .addComponent(this.comboBoxUnitBox)
                               .addComponent(this.textFieldNumeric)
                               .addComponent(this.comboBoxField)));
          
           panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
                     .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
                               .addComponent(this.labelUnit)
-                              .addComponent(this.comboBoxUnit)).addGap(8)
+                              .addComponent(this.comboBoxUnitBox)).addGap(8)
                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
                              .addComponent(this.radioButtonNumeric)
                              .addComponent(this.textFieldNumeric)).addGap(8)
@@ -369,23 +372,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
-	private JComboBox<BufferRadiusUnit> createComboBoxUnit() {
-		JComboBox<BufferRadiusUnit> comboBox = new JComboBox<BufferRadiusUnit>();
-		comboBox.addItem(BufferRadiusUnit.MiliMeter);
-		comboBox.addItem(BufferRadiusUnit.CentiMeter);
-		comboBox.addItem(BufferRadiusUnit.DeciMeter);
-		comboBox.addItem(BufferRadiusUnit.Meter);
-		comboBox.addItem(BufferRadiusUnit.KiloMeter);
-		comboBox.addItem(BufferRadiusUnit.Inch);
-		comboBox.addItem(BufferRadiusUnit.Foot);
-		comboBox.addItem(BufferRadiusUnit.Mile);
-		comboBox.addItem(BufferRadiusUnit.Yard);
-		comboBox.setSelectedItem(BufferRadiusUnit.Meter);
-		comboBox.setEditable(false);
-		comboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		return comboBox;
-	}
-
 	private void createComboBoxField(Dataset comboBoxDataset) {
 		if (comboBoxDataset instanceof DatasetVector) {
 			DatasetVector comboBoxDatasetVector = (DatasetVector) comboBoxDataset;
@@ -437,7 +423,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			}
 			bufferAnalystParameter.setLeftDistance(this.radius);
 			bufferAnalystParameter.setEndType(BufferEndType.ROUND);
-			bufferAnalystParameter.setRadiusUnit((BufferRadiusUnit) this.comboBoxUnit.getSelectedItem());
+
+
+			bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
+
 			bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
