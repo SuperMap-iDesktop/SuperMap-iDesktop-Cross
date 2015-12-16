@@ -1,38 +1,23 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.mapping.Map;
-import com.supermap.data.Enum;
+
+import javax.swing.*;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
 
 public class TextStyleContainer extends JPanel {
 
@@ -101,6 +86,7 @@ public class TextStyleContainer extends JPanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalCheckBoxActionListener checkBoxActionListener = new LocalCheckBoxActionListener();
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
+	private List<TextStyle> list;
 
 	public TextStyleContainer(TextStyle textStyle, Map map) {
 		this.textStyle = textStyle;
@@ -113,8 +99,9 @@ public class TextStyleContainer extends JPanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public TextStyleContainer(TextStyle textStyle) {
-		this.textStyle = textStyle;
+	public TextStyleContainer(List<TextStyle> list, Map map) {
+		this.list = list;
+		this.map = map;
 		initComponent();
 		initResources();
 		registActionListener();
@@ -157,10 +144,14 @@ public class TextStyleContainer extends JPanel {
 			JPanel panelSytleContent = new JPanel();
 			this.add(panelSytleContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 			panelSytleContent.setLayout(new GridBagLayout());
-			
-			this.buttonFontColorSelect = new ColorSelectButton(textStyle.getForeColor());
-			this.buttonBGColorSelect = new ColorSelectButton(textStyle.getBackColor());
-			this.comboBoxFontName.setSelectedItem(textStyle.getFontName());
+			if (null!=textStyle) {
+				this.buttonFontColorSelect = new ColorSelectButton(this.textStyle.getForeColor());
+				this.buttonBGColorSelect = new ColorSelectButton(this.textStyle.getBackColor());
+				this.comboBoxFontName.setSelectedItem(this.textStyle.getFontName());
+			}else {
+				this.buttonFontColorSelect = new ColorSelectButton(list.get(0).getForeColor());
+				this.buttonBGColorSelect =new ColorSelectButton(list.get(0).getBackColor());
+			}
 			initComboBoxAlign();
 			initComboBoxFontSize();
 			initTextFieldFontHeight();
@@ -205,7 +196,9 @@ public class TextStyleContainer extends JPanel {
 		this.spinnerRotationAngl.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerRotationAngl.getEditor();
 		this.textFieldFontRotationAngl = numberEditor.getTextField();
-		this.textFieldFontRotationAngl.setText(new DecimalFormat(numeric).format(textStyle.getRotation()));
+		if (null != this.textStyle) {
+			this.textFieldFontRotationAngl.setText(new DecimalFormat(numeric).format(textStyle.getRotation()));
+		}
 	}
 
 	/**
@@ -216,7 +209,9 @@ public class TextStyleContainer extends JPanel {
 		this.spinnerInclinationAngl.setEnabled(false);
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerInclinationAngl.getEditor();
 		this.textFieldFontItalicAngl = numberEditor.getTextField();
-		this.textFieldFontItalicAngl.setText(new DecimalFormat(numeric).format(textStyle.getItalicAngle()));
+		if (null != this.textStyle) {
+			this.textFieldFontItalicAngl.setText(new DecimalFormat(numeric).format(textStyle.getItalicAngle()));
+		}
 	}
 
 	/**
@@ -226,7 +221,9 @@ public class TextStyleContainer extends JPanel {
 		this.spinnerFontWidth.setModel(new SpinnerNumberModel(new Double(0.0), null, null, new Double(1.0)));
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontWidth.getEditor();
 		this.textFieldFontWidth = numberEditor.getTextField();
-		this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(textStyle.getFontWidth()));
+		if (null != this.textStyle) {
+			this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(textStyle.getFontWidth()));
+		}
 	}
 
 	/**
@@ -236,7 +233,9 @@ public class TextStyleContainer extends JPanel {
 		this.spinnerFontHeight.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
 		this.textFieldFontHeight = numberEditor.getTextField();
-		this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight()));
+		if (null != this.textStyle) {
+			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight()));
+		}
 	}
 
 	/**
@@ -248,8 +247,9 @@ public class TextStyleContainer extends JPanel {
 				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
 		this.comboBoxFontSize.setEditable(true);
 		this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
-		this.textFieldFontSize.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight() / fontPrecision));
-
+		if (null != this.textStyle) {
+			this.textFieldFontSize.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight() / fontPrecision));
+		}
 	}
 
 	/**
@@ -261,18 +261,20 @@ public class TextStyleContainer extends JPanel {
 		Object[] textAlignmentValues = hashMapTextAlignment.values().toArray();
 		Object[] textAlignmentNames = hashMapTextAlignment.keySet().toArray();
 		String alignMent = "";
-		for (int i = 0; i < textAlignmentValues.length; i++) {
-			Integer temp = (Integer) textAlignmentValues[i];
-			if (temp == this.textStyle.getAlignment().value()) {
-				alignMent = (String) textAlignmentNames[i];
+		if (null != this.textStyle) {
+			for (int i = 0; i < textAlignmentValues.length; i++) {
+				Integer temp = (Integer) textAlignmentValues[i];
+				if (temp == this.textStyle.getAlignment().value()) {
+					alignMent = (String) textAlignmentNames[i];
+				}
 			}
+			this.comboBoxAlign.setSelectedItem(alignMent);
 		}
-		this.comboBoxAlign.setSelectedItem(alignMent);
 	}
 
 	/**
 	 * 字体效果界面布局
-	 * 
+	 *
 	 * @param panelFontEffect
 	 */
 	private void initPanelFontEffect(JPanel panelFontEffect) {
@@ -291,15 +293,18 @@ public class TextStyleContainer extends JPanel {
 	}
 
 	private void initCheckBoxState() {
-		this.checkBoxBorder.setSelected(textStyle.getBold());
-		this.checkBoxStrickout.setSelected(textStyle.getStrikeout());
-		this.checkBoxItalic.setSelected(textStyle.getItalic());
-		this.spinnerInclinationAngl.setEnabled(textStyle.getItalic());
-		this.checkBoxUnderline.setSelected(textStyle.getUnderline());
-		this.checkBoxShadow.setSelected(textStyle.getShadow());
-		this.checkBoxFixedSize.setSelected(textStyle.isSizeFixed());
-		this.checkBoxOutlook.setSelected(textStyle.getOutline());
-		this.checkBoxBGTransparent.setSelected(!textStyle.getBackOpaque());
+		if (null != this.textStyle) {
+			this.checkBoxBorder.setSelected(textStyle.getBold());
+			this.checkBoxStrickout.setSelected(textStyle.getStrikeout());
+			this.checkBoxItalic.setSelected(textStyle.getItalic());
+			this.spinnerInclinationAngl.setEnabled(textStyle.getItalic());
+			this.checkBoxUnderline.setSelected(textStyle.getUnderline());
+			this.checkBoxShadow.setSelected(textStyle.getShadow());
+			this.checkBoxFixedSize.setSelected(textStyle.isSizeFixed());
+			this.checkBoxOutlook.setSelected(textStyle.getOutline());
+			this.checkBoxBGTransparent.setSelected(!textStyle.getBackOpaque());
+			this.checkBoxOutlook.setEnabled(!textStyle.getBackOpaque());
+		}
 	}
 
 	/**
@@ -394,7 +399,13 @@ public class TextStyleContainer extends JPanel {
 			String textAlignmentName = comboBoxAlign.getSelectedItem().toString();
 			int value = hashMapTextAlignment.get(textAlignmentName);
 			TextAlignment textAlignment = (TextAlignment) Enum.parse(TextAlignment.class, value);
-			textStyle.setAlignment(textAlignment);
+			if (null != textStyle) {
+				textStyle.setAlignment(textAlignment);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setAlignment(textAlignment);
+				}
+			}
 		}
 
 		/**
@@ -402,7 +413,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setFontName() {
 			String fontName = comboBoxFontName.getSelectedItem().toString();
-			textStyle.setFontName(fontName);
+			if (null != textStyle) {
+				textStyle.setFontName(fontName);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setFontName(fontName);
+				}
+			}
 		}
 
 	}
@@ -493,7 +510,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setBGOpare() {
 			boolean isOpare = checkBoxBGTransparent.isSelected();
-			textStyle.setBackOpaque(!isOpare);
+			if (null != textStyle) {
+				textStyle.setBackOpaque(!isOpare);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setBackOpaque(!isOpare);
+				}
+			}
 			checkBoxOutlook.setEnabled(isOpare);
 			buttonBGColorSelect.setEnabled(!isOpare);
 		}
@@ -503,7 +526,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setOutLook() {
 			boolean isOutlook = checkBoxOutlook.isSelected();
-			textStyle.setOutline(isOutlook);
+			if (null != textStyle) {
+				textStyle.setOutline(isOutlook);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setOutline(isOutlook);
+				}
+			}
 			buttonBGColorSelect.setEnabled(isOutlook);
 		}
 
@@ -512,7 +541,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setFixedSize() {
 			boolean isFixedSize = checkBoxFixedSize.isSelected();
-			textStyle.setSizeFixed(isFixedSize);
+			if (null != textStyle) {
+				textStyle.setSizeFixed(isFixedSize);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setSizeFixed(isFixedSize);
+				}
+			}
 		}
 
 		/**
@@ -520,7 +555,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setShadow() {
 			boolean isShadow = checkBoxShadow.isSelected();
-			textStyle.setShadow(isShadow);
+			if (null != textStyle) {
+				textStyle.setShadow(isShadow);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setShadow(isShadow);
+				}
+			}
 		}
 
 		/**
@@ -528,7 +569,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setUnderline() {
 			boolean isUnderline = checkBoxUnderline.isSelected();
-			textStyle.setUnderline(isUnderline);
+			if (null != textStyle) {
+				textStyle.setUnderline(isUnderline);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setUnderline(isUnderline);
+				}
+			}
 		}
 
 		/**
@@ -537,7 +584,13 @@ public class TextStyleContainer extends JPanel {
 		private void setItalic() {
 			boolean isItalic = checkBoxItalic.isSelected();
 			spinnerInclinationAngl.setEnabled(isItalic);
-			textStyle.setItalic(isItalic);
+			if (null != textStyle) {
+				textStyle.setItalic(isItalic);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setItalic(isItalic);
+				}
+			}
 		}
 
 		/**
@@ -545,7 +598,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setFontStrickout() {
 			boolean isStrickout = checkBoxStrickout.isSelected();
-			textStyle.setStrikeout(isStrickout);
+			if (null != textStyle) {
+				textStyle.setStrikeout(isStrickout);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setStrikeout(isStrickout);
+				}
+			}
 		}
 
 		/**
@@ -553,7 +612,13 @@ public class TextStyleContainer extends JPanel {
 		 */
 		private void setFontBorder() {
 			boolean isBorder = checkBoxBorder.isSelected();
-			textStyle.setBold(isBorder);
+			if (null != textStyle) {
+				textStyle.setBold(isBorder);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setBold(isBorder);
+				}
+			}
 		}
 
 	}
@@ -580,7 +645,13 @@ public class TextStyleContainer extends JPanel {
 		private void setBackgroundColor() {
 			Color color = buttonBGColorSelect.getColor();
 			if (color != null) {
-				textStyle.setBackColor(color);
+				if (null != textStyle) {
+					textStyle.setBackColor(color);
+				} else {
+					for (int i = 0; i < list.size(); i++) {
+						list.get(i).setBackColor(color);
+					}
+				}
 			}
 		}
 
@@ -590,7 +661,13 @@ public class TextStyleContainer extends JPanel {
 		private void setFontColor() {
 			Color color = buttonFontColorSelect.getColor();
 			if (color != null) {
-				textStyle.setForeColor(color);
+				if (null != textStyle) {
+					textStyle.setForeColor(color);
+				} else {
+					for (int i = 0; i < list.size(); i++) {
+						list.get(i).setForeColor(color);
+					}
+				}
 			}
 		}
 
@@ -602,7 +679,13 @@ public class TextStyleContainer extends JPanel {
 	private void setRotationAngl() {
 		if (null != spinnerRotationAngl.getValue()) {
 			double rotationAngl = (double) spinnerRotationAngl.getValue();
-			textStyle.setRotation(rotationAngl);
+			if (null != textStyle) {
+				textStyle.setRotation(rotationAngl);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setRotation(rotationAngl);
+				}
+			}
 		}
 	}
 
@@ -612,7 +695,13 @@ public class TextStyleContainer extends JPanel {
 	private void setFontInclinationAngl() {
 		if (null != spinnerInclinationAngl.getValue()) {
 			double italicAngl = (double) spinnerInclinationAngl.getValue();
-			textStyle.setItalicAngle(italicAngl);
+			if (null != textStyle) {
+				textStyle.setItalicAngle(italicAngl);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setItalicAngle(italicAngl);
+				}
+			}
 		}
 	}
 
@@ -622,7 +711,13 @@ public class TextStyleContainer extends JPanel {
 	private void setFontWidth() {
 		if (null != spinnerFontWidth.getValue()) {
 			double fontWidth = (double) spinnerFontWidth.getValue();
-			textStyle.setFontWidth(fontWidth);
+			if (null != textStyle) {
+				textStyle.setFontWidth(fontWidth);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setFontWidth(fontWidth);
+				}
+			}
 		}
 	}
 
@@ -633,7 +728,13 @@ public class TextStyleContainer extends JPanel {
 		if (null != spinnerFontHeight.getValue()) {
 			double fontHeight = (double) spinnerFontHeight.getValue();
 			if (fontHeight > 0) {
-				textStyle.setFontHeight(fontHeight);
+				if (null != textStyle) {
+					textStyle.setFontHeight(fontHeight);
+				} else {
+					for (int i = 0; i < list.size(); i++) {
+						list.get(i).setFontHeight(fontHeight);
+					}
+				}
 				textFieldFontSize.setText(new DecimalFormat(numeric).format(fontHeight / fontPrecision));
 			}
 		}
@@ -647,7 +748,13 @@ public class TextStyleContainer extends JPanel {
 			double fontHeight = Double.valueOf(textFieldFontSize.getText()) * fontPrecision;
 			if (fontHeight > 0) {
 				textFieldFontHeight.setText(new DecimalFormat(numeric).format(fontHeight));
-				textStyle.setFontHeight(fontHeight);
+				if (null != textStyle) {
+					textStyle.setFontHeight(fontHeight);
+				} else {
+					for (int i = 0; i < list.size(); i++) {
+						list.get(i).setFontHeight(fontHeight);
+					}
+				}
 			}
 		}
 	}

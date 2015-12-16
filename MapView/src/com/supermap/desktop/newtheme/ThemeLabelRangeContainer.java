@@ -1,30 +1,18 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.util.ArrayList;
+import com.supermap.data.*;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.MathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.mapping.*;
+import com.supermap.mapping.Map;
+import com.supermap.ui.MapControl;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
@@ -32,42 +20,20 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.TextStyle;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.TextStyleContainer;
-import com.supermap.desktop.utilties.MathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.ui.MapControl;
-
-import javax.swing.SpinnerNumberModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.List;
 
 public class ThemeLabelRangeContainer extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private transient ThemeLabel themeLabel;
 	private transient Layer themeLabelLayer;
-	private ThemeLabelPropertyPanel panelProperty;
-	private ThemeLabelAdvancePanel panelAdvance;
+	private transient ThemeLabelPropertyPanel panelProperty;
+	private transient ThemeLabelAdvancePanel panelAdvance;
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private JPanel panelSytle = new JPanel();
 
@@ -92,8 +58,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTable tableLabelInfo = new JTable();
 
-	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_RangeValue"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression") };
+	private static String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_RangeValue"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")};
 	private transient DatasetVector datasetVector;
 	private transient Map map;
 	private String rangeExpression = "SmID";
@@ -139,7 +105,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -236,11 +202,10 @@ public class ThemeLabelRangeContainer extends JPanel {
 	 * 初始化分段方法项
 	 */
 	private void initComboBoxRangMethod() {
-		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
+		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
-		this.comboBoxRangeMethod.setEditable(true);
+				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
 		if (themeLabel.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeLabel.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -260,8 +225,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
+		comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
 		comboBoxRangeCount.setEditable(true);
 		int rangeCount = themeLabel.getCount();
 		comboBoxRangeCount.setSelectedIndex(rangeCount - 2);
@@ -269,9 +234,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 	}
 
 	private void initComboBoxRangeFormat() {
-		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
+		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
 		comboBoxRangeFormat.setSelectedIndex(1);
-		comboBoxRangeFormat.setEditable(true);
 	}
 
 	/**
@@ -293,7 +257,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 表格初始化
-	 * 
+	 *
 	 * @return m_table
 	 */
 	private JTable getTable() {
@@ -356,7 +320,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 表达式
-	 * 
+	 *
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
@@ -398,9 +362,9 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 设置文本风格颜色
-	 * 
+	 *
 	 * @param textStyle 需要设置的风格
-	 * @param color 设置的颜色
+	 * @param color     设置的颜色
 	 */
 	private void setTextStyleColor(TextStyle textStyle, Color color) {
 		textStyle.setForeColor(color);
@@ -563,7 +527,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项是否全部不可见
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -583,7 +547,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项中是否存在不可见子项
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -599,7 +563,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		/**
 		 * 重置可见选项
-		 * 
+		 *
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
@@ -626,25 +590,17 @@ public class ThemeLabelRangeContainer extends JPanel {
 			TextStyle textStyle = new TextStyle();
 			if (selectedRow.length == 1) {
 				textStyle = themeLabel.getItem(selectedRow[0]).getStyle();
-				TextStyleDialog textStyleDialog = new TextStyleDialog(textStyle);
+				TextStyleDialog textStyleDialog = new TextStyleDialog(textStyle, map);
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
-				TextStyle resultStyle = null;
-				if (textStyleDialog.getDialogResult() == DialogResult.OK) {
-					resultStyle = textStyleDialog.getTextStyle();
-					themeLabel.getItem(selectedRow[0]).setStyle(resultStyle);
-				}
 			} else {
-				TextStyleDialog textStyleDialog = new TextStyleDialog();
+				List<TextStyle> list = new ArrayList<TextStyle>();
+				for (int i = 0; i < selectedRow.length; i++) {
+					list.add(themeLabel.getItem(selectedRow[i]).getStyle());
+				}
+				TextStyleDialog textStyleDialog = new TextStyleDialog(list, map);
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
-				TextStyle resultStyle = null;
-				if (textStyleDialog.getDialogResult() == DialogResult.OK) {
-					resultStyle = textStyleDialog.getTextStyle();
-					for (int i = 0; i < selectedRow.length; i++) {
-						themeLabel.getItem(selectedRow[i]).setStyle(resultStyle);
-					}
-				}
 			}
 			if (selectedRow.length > 0) {
 				tableLabelInfo.setRowSelectionInterval(selectedRow[0], selectedRow[selectedRow.length - 1]);
@@ -845,7 +801,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		/**
 		 * 获取表达式项
-		 * 
+		 *
 		 * @param jComboBoxField
 		 */
 		private void getSqlExpression(JComboBox<String> jComboBoxField) {
@@ -882,7 +838,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 刷新theme
-	 * 
+	 *
 	 * @param theme
 	 */
 	private void refreshThemeLabel(ThemeLabel theme) {
@@ -937,7 +893,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	/**
 	 * 判断段值是否合法
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRightRangeValue(String rangeValue, int selectRow) {

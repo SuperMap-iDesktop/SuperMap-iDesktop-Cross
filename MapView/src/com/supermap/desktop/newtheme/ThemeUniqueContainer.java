@@ -66,7 +66,7 @@ import javax.swing.DefaultComboBoxModel;
 
 /**
  * 单值专题图容器及属性设置接口类
- * 
+ *
  * @author xie
  *
  */
@@ -153,7 +153,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -411,7 +411,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 表格初始化
-	 * 
+	 *
 	 * @return m_table
 	 */
 	private JTable getTable() {
@@ -480,7 +480,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 表达式
-	 * 
+	 *
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, int type) {
@@ -578,7 +578,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 判断单值项是否已经存在
-	 * 
+	 *
 	 * @param uniqueValue
 	 * @return
 	 */
@@ -617,7 +617,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 根据当前数据集类型设置颜色方案
-	 * 
+	 *
 	 * @param geoStyle 需要设置的风格
 	 * @param color 设置的颜色
 	 */
@@ -662,7 +662,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 下拉项发生变化时的事件处理类
-	 * 
+	 *
 	 * @author Administrator
 	 *
 	 */
@@ -777,7 +777,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 		/**
 		 * 获取表达式项
-		 * 
+		 *
 		 * @param jComboBoxField
 		 */
 		private boolean getSqlExpression(JComboBox<String> jComboBoxField, int type) {
@@ -851,6 +851,7 @@ public class ThemeUniqueContainer extends JPanel {
 						&& !hasUnique(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString())) {
 					String uniqueValue = tableUniqueInfo.getValueAt(selectRow, selectColumn).toString();
 					setUniqueItemUnique(uniqueValue);
+					setUniqueItemCaption(uniqueValue);
 				}
 				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableUniqueInfo.getValueAt(selectRow, selectColumn).toString();
@@ -920,7 +921,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 		/**
 		 * 判断单值项是否需要添加到未添加项中
-		 * 
+		 *
 		 * @param deleteItem
 		 * @return
 		 */
@@ -1015,7 +1016,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 		/**
 		 * 判断选中项是否全部不可见
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -1046,7 +1047,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 		/**
 		 * 判断选中项中是否存在不可见子项
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -1068,7 +1069,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 		/**
 		 * 重置可见选项
-		 * 
+		 *
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
@@ -1140,7 +1141,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 重置文本风格
-	 * 
+	 *
 	 * @param selectRow 要重置文本风格的行
 	 * @param nowGeoStyle 新的文本风格
 	 */
@@ -1153,7 +1154,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 获取是否及时刷新
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRfreshAtOnece() {
@@ -1162,7 +1163,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 设置及时刷新
-	 * 
+	 *
 	 * @param isRfreshAtOnece
 	 */
 	public void setRfreshAtOnece(boolean isRfreshAtOnece) {
@@ -1171,7 +1172,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 获取当前的单值专题图图层
-	 * 
+	 *
 	 * @return
 	 */
 	public Layer getThemeUniqueLayer() {
@@ -1180,7 +1181,7 @@ public class ThemeUniqueContainer extends JPanel {
 
 	/**
 	 * 设置当前的单值专题图图层
-	 * 
+	 *
 	 * @param themeUniqueLayer
 	 */
 	public void setThemeUniqueLayer(Layer themeUniqueLayer) {
