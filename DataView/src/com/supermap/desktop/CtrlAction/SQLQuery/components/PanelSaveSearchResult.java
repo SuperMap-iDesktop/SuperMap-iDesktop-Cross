@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.data.Datasource;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -82,9 +81,6 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 					}
 				}
 			}
-			if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-				datasourceComboBox.setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
-			}
 		}
 
 		private void initLayout() {
@@ -99,7 +95,7 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		private void initComponentStates() {
 			textFieldDataset.setEnabled(false);
 			datasourceComboBox.setEnabled(false);
-			textFieldDataset.setText(datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName("QueryResult"));
+			textFieldDataset.setText(datasourceComboBox.getSelectedDatasource() != null ? datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName("QueryResult") : "QueryResult");
 		}
 
 		private void registListeners() {
@@ -149,7 +145,7 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				if (!datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldDataset.getText())) {
+				if (datasourceComboBox.getSelectedDatasource() != null && !datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldDataset.getText())) {
 					textFieldDataset.setText(backUps);
 					textFieldDataset.setForeground(Color.black);
 				}

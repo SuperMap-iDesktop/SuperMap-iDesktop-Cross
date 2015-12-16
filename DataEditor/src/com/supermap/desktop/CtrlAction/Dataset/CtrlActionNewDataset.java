@@ -1,7 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.util.ArrayList;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -20,6 +18,8 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
+
+import java.util.ArrayList;
 
 public class CtrlActionNewDataset extends CtrlAction {
 
@@ -45,7 +45,12 @@ public class CtrlActionNewDataset extends CtrlAction {
 					NewDatasetInfo newDatasetInfo = datasets[index];
 					DatasetVectorInfo info = new DatasetVectorInfo(newDatasetInfo.getDatasetName(), newDatasetInfo.getDatasetType());
 					info.setEncodeType(newDatasetInfo.getEncodeType());
-					Dataset dataset = newDatasetInfo.getTargetDatasource().getDatasets().create(info);
+					Dataset dataset = null;
+					try {
+						dataset = newDatasetInfo.getTargetDatasource().getDatasets().create(info);
+					} catch (Exception e) {
+						// 创建失败，统计结果
+					}
 					if (dataset != null) {
 						dataset.setPrjCoordSys(dataset.getDatasource().getPrjCoordSys());
 						if (dataset instanceof DatasetVector) {
