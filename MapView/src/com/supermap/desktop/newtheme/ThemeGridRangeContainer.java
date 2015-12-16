@@ -85,8 +85,8 @@ public class ThemeGridRangeContainer extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTable tableRangeInfo = new JTable();
 
-	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
+	private static String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
 	private transient DatasetGrid datasetGrid;
 	private transient Map map;
 	private transient ThemeGridRange themeGridRange;
@@ -130,7 +130,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -195,10 +195,10 @@ public class ThemeGridRangeContainer extends JPanel {
 	 * 初始化分段方法项
 	 */
 	private void initComboBoxRangMethod() {
-		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
+		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
+				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
 		this.comboBoxRangeMethod.setEditable(true);
 		if (themeGridRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
@@ -215,8 +215,8 @@ public class ThemeGridRangeContainer extends JPanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
+		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
 		this.comboBoxRangeCount.setEditable(true);
 		int rangeCountNumber = themeGridRange.getCount();
 		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCountNumber));
@@ -226,9 +226,8 @@ public class ThemeGridRangeContainer extends JPanel {
 	 * 初始化段标题格式
 	 */
 	private void initComboBoxRangeFormat() {
-		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
+		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
-		this.comboBoxRangeFormat.setEditable(true);
 	}
 
 	/*
@@ -249,7 +248,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 表格初始化
-	 * 
+	 *
 	 * @return m_table
 	 */
 	private JTable getTable() {
@@ -404,9 +403,9 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 重置选择项颜色
-	 * 
+	 *
 	 * @param selectRow 要重置颜色的行
-	 * @param nowColor 新的颜色
+	 * @param nowColor  新的颜色
 	 */
 	private void resetColor(int selectRow, Color nowColor) {
 		ThemeGridRangeItem item = this.themeGridRange.getItem(selectRow);
@@ -513,7 +512,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项是否全部不可见
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -533,7 +532,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项中是否存在不可见子项
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -549,7 +548,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 		/**
 		 * 重置可见选项
-		 * 
+		 *
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
@@ -697,6 +696,27 @@ public class ThemeGridRangeContainer extends JPanel {
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
+			double minValue = datasetGrid.getGridStatisticsResult().getMinValue();
+			if (Double.compare(minValue, 0) < 0 && rangeMode == RangeMode.SQUAREROOT) {
+				// 有负数且为平方根分段
+				JOptionPane.showMessageDialog(
+						null,
+						MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"),
+						"",
+						JOptionPane.ERROR_MESSAGE);
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
+			if (Double.compare(minValue, 0) < 0 && rangeMode == RangeMode.LOGARITHM) {
+				// 有负数且为对数分段
+				JOptionPane.showMessageDialog(
+						null,
+						MapViewProperties.getString("String_UnMakeGridRangeTheme"),
+						"",
+						JOptionPane.ERROR_MESSAGE);
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
 			if (rangeCount < 2 || rangeCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeGridRange.getCount()));
@@ -715,7 +735,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 判断段值是否合法
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRightRangeValue(String rangeValue, int selectRow) {
@@ -767,7 +787,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 刷新theme
-	 * 
+	 *
 	 * @param theme
 	 */
 	private void refreshThemeRange(ThemeGridRange theme) {
@@ -846,7 +866,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 获取是否及时刷新值
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRefreshAtOnece() {
@@ -855,7 +875,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 设置是否及时刷新
-	 * 
+	 *
 	 * @param isRefreshAtOnece
 	 */
 	public void setRefreshAtOnece(boolean isRefreshAtOnece) {
@@ -864,7 +884,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 获取分段专题图图层
-	 * 
+	 *
 	 * @return
 	 */
 	public Layer getThemeRangeLayer() {
@@ -873,7 +893,7 @@ public class ThemeGridRangeContainer extends JPanel {
 
 	/**
 	 * 设置分段专题图图层
-	 * 
+	 *
 	 * @param themeRangeLayer
 	 */
 	public void setThemeRangeLayer(Layer themeRangeLayer) {

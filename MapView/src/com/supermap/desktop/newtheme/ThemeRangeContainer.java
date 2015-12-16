@@ -213,14 +213,14 @@ public class ThemeRangeContainer extends JPanel {
 		this.panelProperty.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
 		spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
-		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(3, 0));
+		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(1, 0));
 		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
 		
 		getTable();
@@ -326,7 +326,6 @@ public class ThemeRangeContainer extends JPanel {
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
-		this.comboBoxRangeMethod.setEditable(true);
 		if (themeRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeRange.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -359,7 +358,6 @@ public class ThemeRangeContainer extends JPanel {
 	private void initComboBoxRangePrecision() {
 		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
 				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
-		this.comboBoxRangePrecision.setEditable(true);
 		this.numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
 	}
@@ -396,7 +394,6 @@ public class ThemeRangeContainer extends JPanel {
 	private void initComboBoxRangeFormat() {
 		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
-		this.comboBoxRangeFormat.setEditable(true);
 	}
 
 	/*

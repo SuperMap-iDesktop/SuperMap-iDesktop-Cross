@@ -104,7 +104,7 @@ public class AddItemPanel extends JPopupMenu {
 					deleteUniqueItems.add(getNewItem(themeUniqueTemp.getItem(i).getUnique()));
 				}
 			}
-		}else{
+		} else {
 			ThemeGridUnique themeGridUniqueTemp = ThemeGridUnique.makeDefault((DatasetGrid) dataset);
 			List allItems = new ArrayList();
 			for (int i = 0; i < themeGridUniqueTemp.getCount(); i++) {
@@ -262,16 +262,16 @@ public class AddItemPanel extends JPopupMenu {
 		return null;
 	}
 
-	private ThemeGridUniqueItem getDeletedGridItem(String itemName){
+	private ThemeGridUniqueItem getDeletedGridItem(String itemName) {
 		double unique = Double.valueOf(itemName);
-		for (ThemeGridUniqueItem deleteItem: deleteGridUniqueItems) {
-			if (Double.compare(unique, deleteItem.getUnique())==0) {
+		for (ThemeGridUniqueItem deleteItem : deleteGridUniqueItems) {
+			if (Double.compare(unique, deleteItem.getUnique()) == 0) {
 				return deleteItem;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 找到单值的对应关系
 	 *
@@ -291,7 +291,7 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 找到栅格单值的对应关系
 	 *
@@ -305,13 +305,14 @@ public class AddItemPanel extends JPopupMenu {
 			ThemeGridUniqueItem themeGridUniqueItem = themeGridUnique.getItem(i);
 			for (String selectItemName : selectList) {
 				double tempUnique = Double.valueOf(selectItemName);
-				if (Double.compare(themeGridUniqueItem.getUnique(), tempUnique)==0) {
+				if (Double.compare(themeGridUniqueItem.getUnique(), tempUnique) == 0) {
 					result.put(i, themeGridUniqueItem);
 				}
 			}
 		}
 		return result;
 	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -332,7 +333,7 @@ public class AddItemPanel extends JPopupMenu {
 							deleteUniqueItems.remove(selectUniqueItem);
 						}
 					}
-				}else {
+				} else {
 					// 从未添加项中添加到添加项中去
 					List<String> selectList = listRemoveFrom.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
@@ -346,7 +347,7 @@ public class AddItemPanel extends JPopupMenu {
 					}
 				}
 			} else {
-				if (themeType==ThemeType.UNIQUE) {
+				if (themeType == ThemeType.UNIQUE) {
 					// 从已添加项中移除某项
 					List<String> selectList = listAddto.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
@@ -361,7 +362,7 @@ public class AddItemPanel extends JPopupMenu {
 							}
 						}
 					}
-				}else {
+				} else {
 					// 从已添加项中移除某项
 					List<String> selectList = listAddto.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
@@ -369,7 +370,8 @@ public class AddItemPanel extends JPopupMenu {
 						for (int i = themeGridUnique.getCount() - 1; i >= 0; i--) {
 							if (result.get(i) != null) {
 								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(result.get(i).getUnique()));
-								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(result.get(i).getUnique()));
+								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
+										String.valueOf(result.get(i).getUnique()));
 								deleteGridUniqueItems.add(new ThemeGridUniqueItem(result.get(i)));
 								themeGridUnique.remove(i);
 
@@ -403,6 +405,11 @@ public class AddItemPanel extends JPopupMenu {
 						return;
 					}
 				}
+				for (int i = 0; i < deleteUniqueItems.size(); i++) {
+					if (deleteUniqueItems.get(i).getUnique().equals(caption)) {
+						return;
+					}
+				}
 				themeUnique.add(getNewItem(caption));
 			} else {
 				// 先从已删除的子项找
@@ -416,10 +423,17 @@ public class AddItemPanel extends JPopupMenu {
 						return;
 					}
 				}
+				double existValue = Double.parseDouble(caption);
 				// 查看是否已存在
 				for (int i = 0; i < themeGridUnique.getCount(); i++) {
-					String gridUnique = String.valueOf(themeGridUnique.getItem(i).getUnique());
-					if (caption.equals(gridUnique)) {
+					double gridUnique = themeGridUnique.getItem(i).getUnique();
+					if (Double.compare(gridUnique, existValue) == 0) {
+						return;
+					}
+				}
+				for (int i = 0; i < deleteGridUniqueItems.size(); i++) {
+					double gridUniqueValue = deleteGridUniqueItems.get(i).getUnique();
+					if (Double.compare(gridUniqueValue, existValue) == 0.) {
 						return;
 					}
 				}
