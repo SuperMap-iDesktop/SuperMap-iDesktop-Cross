@@ -40,8 +40,8 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 界面替换
-	 * 
-	 * @param panel
+	 *
+	 * @param
 	 */
 
 	private ThemeGuideFactory() {
@@ -94,7 +94,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 获取MapControl
-	 * 
+	 *
 	 * @return
 	 */
 	static MapControl getMapControl() {
@@ -117,22 +117,23 @@ public class ThemeGuideFactory {
 			// 字段记录数大于3000条时建议不做专题图
 			JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
 					CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
-			if (null != themeUnique) {
-				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
-				ThemeMainContainer container = addPanelToThemeMainContainer(themeUniqueContainer);
-				Layers layers = getMapControl().getMap().getLayers();
-				for (int i = 0; i < layers.getCount(); i++) {
-					Layer tempLayer = layers.get(i);
-					container.addItemToComboBox(tempLayer);
-				}
-				container.getComboBoxThemeLayer().setSelectedItem(themeUniqueContainer.getThemeUniqueLayer().getName());
-				getDockbarThemeContainer().setVisible(true);
-			} else {
-				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-			}
+			return;
 		}
+		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
+		if (null != themeUnique) {
+			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
+			ThemeMainContainer container = addPanelToThemeMainContainer(themeUniqueContainer);
+			Layers layers = getMapControl().getMap().getLayers();
+			for (int i = 0; i < layers.getCount(); i++) {
+				Layer tempLayer = layers.get(i);
+				container.addItemToComboBox(tempLayer);
+			}
+			container.getComboBoxThemeLayer().setSelectedItem(themeUniqueContainer.getThemeUniqueLayer().getName());
+			getDockbarThemeContainer().setVisible(true);
+		} else {
+			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
+		}
+
 	}
 
 	/**
@@ -200,7 +201,14 @@ public class ThemeGuideFactory {
 	 */
 	public static void buildGridUniqueTheme() {
 		DatasetGrid datasetGrid = (DatasetGrid) getDataset();
+		int rowCount = datasetGrid.getRowBlockCount();
+		int columCount = datasetGrid.getColumnBlockCount();
+		datasetGrid.buildStatistics();
 		try {
+			if (rowCount * columCount > 3000) {
+				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeUniqueMaxCount"));
+				return;
+			}
 			ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
@@ -255,7 +263,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改单值专题图
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void resetUniqueTheme(Layer layer) {
@@ -281,7 +289,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 根据图层名称获得展开的节点
-	 * 
+	 *
 	 * @param tree
 	 * @param layerName
 	 */
@@ -301,7 +309,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改分段专题图
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void resetRangeTheme(Layer layer) {
@@ -313,7 +321,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改标签统一风格专题图
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void resetLabelUniform(Layer layer) {
@@ -325,7 +333,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改标签分段风格专题图
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void resetLabelRange(Layer layer) {
@@ -337,7 +345,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改栅格单值专题图
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void resetGridUnique(Layer layer) {
@@ -349,7 +357,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 修改栅格分段专题图
-	 * 
+	 *
 	 * @return
 	 */
 	public static void resetGridRange(Layer layer) {
@@ -374,7 +382,7 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 根据
-	 * 
+	 *
 	 * @param layer
 	 */
 	public static void modifyTheme(Layer layer) {

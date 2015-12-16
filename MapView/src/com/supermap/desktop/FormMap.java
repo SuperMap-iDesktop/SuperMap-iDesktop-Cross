@@ -380,7 +380,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		initCenter();
 		// 坐标和投影 不可编辑
 		initUneditableStatus();
-		getStatusbar().updateUI();
 	}
 
 	private void initComponents() {
@@ -544,7 +543,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			// 投影改变时更新一下
 			if (!coordSysType.equals(this.prjCoordSysType)) {
 				this.prjCoordSysType = coordSysType;
-				getStatusbar().updateUI();
 			}
 
 		} catch (Exception ex) {

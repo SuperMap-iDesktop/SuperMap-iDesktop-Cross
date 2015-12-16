@@ -1,10 +1,12 @@
 package com.supermap.desktop.netservices.iserver;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -12,9 +14,22 @@ import javax.swing.table.AbstractTableModel;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
+import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 
 public class PanelFolderSelector extends JPanel {
-	private static final int CONTENT_NONE = 0;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static void main(String[] args) {
+		JFrame frame = new JFrame();
+		frame.add(new PanelFolderSelector());
+		frame.setVisible(true);
+	}
+
 	private static final int CONTENT_FILE = 1;
 	private static final int CONTENT_DIRECTORY = 2;
 	private static final int CONTENT_FILE_AND_DIRECTORY = 3;
@@ -23,27 +38,23 @@ public class PanelFolderSelector extends JPanel {
 	private String rootDirectory;
 	private ArrayList<String> selectedDirectories;
 	private ArrayList<String> selectedFiles;
-	private ArrayList<String> hideExtensions;
-	private boolean isInitial = false;
 
 	/**
 	 * 显示隐藏文件。true，在列表中列出，并以 是/否 显示；false，过滤掉，并且不在列表中显示。
 	 */
-	private boolean isShowHide = true;
+	private boolean isShowHidden = true;
 
 	private JTable table;
 
-	public PanelFolderSelector() {
+	private PanelFolderSelector() {
 		initializeComponent();
-		// initializeListView();
-		this.hideExtensions = new ArrayList<String>();
 		this.selectedDirectories = new ArrayList<String>();
 		this.selectedFiles = new ArrayList<String>();
 	}
 
 	public PanelFolderSelector(String rootDirectory) {
 		this();
-		InitializeSelector(rootDirectory);
+		initializeSelector(rootDirectory);
 	}
 
 	public PanelFolderSelector(String rootDirectory, ArrayList<String> selectedDirectories, ArrayList<String> selectedFiles) {
@@ -51,12 +62,13 @@ public class PanelFolderSelector extends JPanel {
 		initializeSelector(rootDirectory, selectedDirectories, selectedFiles);
 	}
 
-	public boolean isShowHide() {
-		return isShowHide;
+	public boolean isShowHidden() {
+		return isShowHidden;
 	}
 
-	public void setShowHide(boolean isShowHide) {
-		this.isShowHide = isShowHide;
+	public void setShowHidden(boolean isShowHidden) {
+		this.isShowHidden = isShowHidden;
+		((FolderSelectorTableModel) this.table.getModel()).setShowHidden(isShowHidden);
 	}
 
 	public ArrayList<String> getSelectedDirectories() {
@@ -67,23 +79,14 @@ public class PanelFolderSelector extends JPanel {
 		return selectedFiles;
 	}
 
-	public ArrayList<String> getHideExtensions() {
-		return hideExtensions;
-	}
-
-	void InitializeSelector(String rootDirectory) {
-		this.isInitial = false;
-		// setIsShowHide();
+	void initializeSelector(String rootDirectory) {
 		this.rootDirectory = rootDirectory;
 		this.selectedDirectories.clear();
 		this.selectedFiles.clear();
-		// fillListView();
-		// resizeColumnHeader();
+
 	}
 
 	void initializeSelector(String rootDirectory, ArrayList<String> selectedDirectories, ArrayList<String> selectedFiles) {
-		this.isInitial = false;
-		// setIsShowHide();
 		this.rootDirectory = rootDirectory;
 		this.selectedDirectories.clear();
 		if (selectedDirectories != null) {
@@ -93,31 +96,89 @@ public class PanelFolderSelector extends JPanel {
 		if (selectedFiles != null) {
 			this.selectedFiles.addAll(selectedFiles);
 		}
-		// fillListView();
-		// resizeColumnHeader();
 	}
 
 	private void initializeComponent() {
 		this.table = new JTable();
+		FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
+		this.table.setModel(tableModel);
+	}
+
+	/**
+	 * 更新 TableModel 的数据
+	 * 
+	 * @param rootFile
+	 */
+	private void updateTableModel(File rootFile) {
+		if (rootFile == null || !rootFile.exists() || !rootFile.isDirectory()) {
+			return;
+		}
+
+		ArrayList<File> modelData = new ArrayList<>(); // 用来初始化 Model 的集合
+		File[] subFiles = rootFile.listFiles(new DirectoryFilter(CONTENT_FILE)); // 获取根目录下的所有文件
+		File[] subDirectories = rootFile.listFiles(new DirectoryFilter(CONTENT_DIRECTORY)); // 获取根目录下的所有目录
+
+		if (this.displayContent == CONTENT_FILE) {
+			ListUtilties.addArray(modelData, subFiles);
+		} else if (this.displayContent == CONTENT_DIRECTORY) {
+			ListUtilties.addArray(modelData, subDirectories);
+		} else if (this.displayContent == CONTENT_FILE_AND_DIRECTORY) {
+			ListUtilties.addArray(modelData, subFiles);
+			ListUtilties.addArray(modelData, subDirectories);
+		}
+		((FolderSelectorTableModel) this.table.getModel()).setFiles(modelData);
+	}
+
+	private class DirectoryFilter implements FileFilter {
+
+		/**
+		 * 可以返回的文件类型 1 -- 文件，2 -- 目录，其他 -- 文件和目录
+		 */
+		private int acceptType = PanelFolderSelector.CONTENT_FILE_AND_DIRECTORY;
+
+		public DirectoryFilter(int acceptType) {
+			this.acceptType = acceptType;
+		}
+
+		@Override
+		public boolean accept(File pathname) {
+			boolean accept = false;
+
+			if (this.acceptType == PanelFolderSelector.CONTENT_FILE) {
+				if (pathname.exists() && !pathname.isDirectory()) {
+					accept = true;
+				}
+			} else if (this.acceptType == PanelFolderSelector.CONTENT_DIRECTORY) {
+				if (pathname.exists() && pathname.isDirectory()) {
+					accept = true;
+				}
+			}
+			return accept;
+		}
+
+		public int getAcceptType() {
+			return this.acceptType;
+		}
+
+		public void setAcceptType(int acceptType) {
+			this.acceptType = acceptType;
+		}
 	}
 
 	private class FolderSelectorTableModel extends AbstractTableModel {
 
 		public static final int SELECTED = 0;
 		public static final int NAME = 1; // 名称列
-		public static final int SIZE = 2; //
-		public static final int LASTMODIFIED = 3;
-		public static final int HIDEN = 4;
+		public static final int SIZE = 2; // 文件大小列
+		public static final int LASTMODIFIED = 3; // 最后修改时间列
+		public static final int HIDEN = 4; // 是否显示隐藏列
 
 		private boolean isShowHidden = true;
 		private ArrayList<File> files = new ArrayList<>();
 		private ArrayList<Boolean> isSelectedValues = new ArrayList<>();
 
-		public FolderSelectorTableModel(ArrayList<File> files) {
-			this.files.addAll(files);
-			for (int i = 0; i < this.files.size(); i++) {
-				this.isSelectedValues.add(false);
-			}
+		public FolderSelectorTableModel() {
+
 		}
 
 		@Override
@@ -157,6 +218,15 @@ public class PanelFolderSelector extends JPanel {
 			return result;
 		}
 
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			try {
+
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+
 		/**
 		 * Returns <code>Object.class</code> regardless of <code>columnIndex</code>.
 		 *
@@ -192,5 +262,18 @@ public class PanelFolderSelector extends JPanel {
 			fireTableStructureChanged();
 		}
 
+		public void clear() {
+			this.files.clear();
+			this.isSelectedValues.clear();
+			fireTableDataChanged();
+		}
+
+		public void setFiles(ArrayList<File> files) {
+			this.files.addAll(files);
+			for (int i = 0; i < this.files.size(); i++) {
+				this.isSelectedValues.add(false);
+			}
+			fireTableDataChanged();
+		}
 	}
 }

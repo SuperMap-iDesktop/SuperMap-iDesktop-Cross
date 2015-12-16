@@ -29,4 +29,20 @@ public class ListUtilties {
 		}
 		return result;
 	}
+
+	/**
+	 * 将数组添加到指定集合
+	 * 
+	 * @param list
+	 * @param array
+	 */
+	public static <T> void addArray(ArrayList<T> list, T[] array) {
+		if (list == null || array == null || array.length == 0) {
+			return;
+		}
+
+		for (int i = 0; i < array.length; i++) {
+			list.add(array[i]);
+		}
+	}
 }

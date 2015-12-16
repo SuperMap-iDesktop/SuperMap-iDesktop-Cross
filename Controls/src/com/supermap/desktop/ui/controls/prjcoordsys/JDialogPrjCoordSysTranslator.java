@@ -84,7 +84,8 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	/**
 	 * 新建投影转换窗口
 	 *
-	 * @param beforePrj 转换之前的投影信息
+	 * @param beforePrj
+	 *            转换之前的投影信息
 	 */
 	public JDialogPrjCoordSysTranslator(PrjCoordSys beforePrj) {
 		this.beforePrj = beforePrj;
@@ -358,18 +359,5 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	private void buttonCancelClicked() {
 		this.dialogResult = DialogResult.CANCEL;
 		setVisible(false);
-	}
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			JDialogPrjCoordSysTranslator dialog = new JDialogPrjCoordSysTranslator(null);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		}
 	}
 }

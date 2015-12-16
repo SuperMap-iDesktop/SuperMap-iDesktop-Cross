@@ -71,8 +71,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 	private JButton buttonAntitone = new JButton();
 
 	private AddItemPanel addItemPanel;
-	private String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
+	private String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
 	private transient ThemeGridUnique themeUnique;
 	private transient DatasetGrid datasetGrid;
 	private transient Layer themeUniqueLayer;
@@ -118,7 +118,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -257,7 +257,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 表格初始化
-	 * 
+	 *
 	 * @return m_table
 	 */
 	private JTable getTable() {
@@ -265,7 +265,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[uniqueCount + 1][4], nameStrings) {
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings({ "unchecked", "rawtypes" })
+			@SuppressWarnings({"unchecked", "rawtypes"})
 			@Override
 			public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
 				if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
@@ -344,6 +344,13 @@ public class ThemeGridUniqueContainer extends JPanel {
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			}
+			// 包含最后一行不能做删除操作
+			int[] selectRows = tableUniqueInfo.getSelectedRows();
+			if (selectRows[selectRows.length - 1] == tableUniqueInfo.getRowCount() - 1) {
+				buttonDelete.setEnabled(false);
+			} else {
+				buttonDelete.setEnabled(true);
+			}
 		}
 	}
 
@@ -382,7 +389,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 判断单值项是否已经存在
-	 * 
+	 *
 	 * @param uniqueValue
 	 * @return
 	 */
@@ -446,9 +453,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 下拉项发生变化时的事件处理类
-	 * 
-	 * @author Administrator
 	 *
+	 * @author Administrator
 	 */
 	class LocalComboBoxItemListener implements ItemListener {
 
@@ -483,7 +489,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 			try {
 				int selectColumn = e.getColumn();
 				int selectRow = e.getFirstRow();
-				if (selectColumn == TABLE_COLUMN_UNIQUE && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
+				if (selectColumn == TABLE_COLUMN_UNIQUE && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))
+						&& StringUtilties.isNumber(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString())) {
 					double uniqueValue = Double.valueOf(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString());
 					setUniqueItemUnique(uniqueValue);
 				}
@@ -556,7 +563,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 		/**
 		 * 判断单值项是否需要添加到未添加项中
-		 * 
+		 *
 		 * @param deleteItem
 		 * @return
 		 */
@@ -576,9 +583,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 		 */
 		private void deleteItem() {
 			int[] selectedRow = tableUniqueInfo.getSelectedRows();
-			int uniqueCount = themeUnique.getCount();
 			themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
-			if (selectedRow.length == 1 && uniqueCount > 0) {
+			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[0]);
 
 				if (isNeedAddToDeleteItems(item)) {
@@ -588,7 +594,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 				themeUnique.remove(selectedRow[0]);
 
-			} else if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && uniqueCount > 0) {
+			} else if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 				for (int i = selectedRow.length - 1; i >= 0; i--) {
 					ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[i]);
 					if (isNeedAddToDeleteItems(item)) {
@@ -641,7 +647,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 		/**
 		 * 判断选中项是否全部不可见
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -664,7 +670,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 			}
 			if (selectedRows[selectedRows.length - 1] != rowCounts && count == selectedRows.length) {
 				allItemInvisible = true;
-			} else if (count == selectedRows.length - 1) {
+			} else if (selectedRows[selectedRows.length - 1] == rowCounts && count == selectedRows.length - 1) {
 				allItemInvisible = true;
 			}
 			return allItemInvisible;
@@ -672,7 +678,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 		/**
 		 * 判断选中项中是否存在不可见子项
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -696,7 +702,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 		/**
 		 * 重置可见选项
-		 * 
+		 *
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
@@ -748,9 +754,9 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 重置选择项颜色
-	 * 
+	 *
 	 * @param selectRow 要重置颜色的行
-	 * @param nowColor 新的颜色
+	 * @param nowColor  新的颜色
 	 */
 	private void resetColor(int selectRow, Color nowColor) {
 		ThemeGridUniqueItem item = this.themeUnique.getItem(selectRow);
@@ -761,7 +767,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 获取是否及时刷新
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRfreshAtOnece() {
@@ -770,7 +776,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 设置及时刷新
-	 * 
+	 *
 	 * @param isRfreshAtOnece
 	 */
 	public void setRfreshAtOnece(boolean isRfreshAtOnece) {
@@ -779,7 +785,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 获取当前的单值专题图图层
-	 * 
+	 *
 	 * @return
 	 */
 	public Layer getThemeUniqueLayer() {
@@ -788,7 +794,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 	/**
 	 * 设置当前的单值专题图图层
-	 * 
+	 *
 	 * @param themeUniqueLayer
 	 */
 	public void setThemeUniqueLayer(Layer themeUniqueLayer) {
