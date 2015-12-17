@@ -26,6 +26,9 @@ import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
+import com.supermap.desktop.core.http.HttpPostEvent;
+import com.supermap.desktop.core.http.HttpPostFile;
+import com.supermap.desktop.core.http.HttpPostListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -61,6 +64,14 @@ public class ServerRelease {
 	private long zippedSize = 0;
 	private int totalEntry = 0;
 	private int zippedEntry = 0;
+
+	private HttpPostListener httpPostListener = new HttpPostListener() {
+
+		@Override
+		public void httpPost(HttpPostEvent e) {
+			httpPosting(e);
+		}
+	};
 
 	public ServerRelease() {
 		this.directories = new ArrayList<String>();
@@ -258,178 +269,47 @@ public class ServerRelease {
 		return result;
 	}
 
-	// 这样的上传代码之后封装成类，并且上传事件同时返回已上传、总长度、传输速度等信息
 	private String uploadTask(String uploadURL, File dataFile) {
 		String workspaceConnection = "";
-		CloseableHttpClient httpClient = HttpClients.createDefault();
 
 		try {
-            ServerReleaseMessage.outputMessage(ServerReleaseMessage.Uploading);
-			String fileName = MessageFormat.format("{0}/{1}", this.SERVER_DATA_DIR, dataFile.getName());
-			HttpPost httpPost = new HttpPost(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName, getToken()));
+			ServerReleaseMessage.outputMessage(ServerReleaseMessage.Uploading);
 
+			String fileName = MessageFormat.format("{0}/{1}", this.SERVER_DATA_DIR, dataFile.getName());
+			HttpPostFile httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName,
+					getToken()));
+
+			String response = httpPostFile.post(dataFile);
+			if (!StringUtilties.isNullOrEmpty(response)) {
+				JSONObject responseJson = JSONObject.parseObject(response);
+
+				String dataDirectory = responseJson.getString("filePath");
+				// 服务器返回的解压缩之后的路径，经常改动，有时候带了工作空间文件名，有时候没带，这里随着 iserver的版本更改可能有问题，到时候再处理
+				workspaceConnection = MessageFormat.format("{0}/{1}/{2}", SERVER_DATA_DIR, dataDirectory, new File(this.connectionInfo.getServer()).getName());
+				ServerReleaseMessage.outputMessage(ServerReleaseMessage.UploadCompleted);
+			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			try {
-				httpClient.close();
-			} catch (IOException e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
 		}
-		// FileStream fileStream = null;
-		// BinaryReader reader = null;
-		// Stream requestStream = null;
-		// Stream responseStream = null;
-		// StreamReader responseReader = null;
-		// try
-		// {
-		// ServerReleaseMessage.OutputMessage(ServerReleaseMessage.Uploading);
-		// String token = GetToken();
-		// String fileName = String.Format("{0}/{1}", ServerDataDir, Path.GetFileName(dataPath));
-		// String uploadTaskURL = String.Format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName, token);
-		//
-		// fileStream = new FileStream(dataPath, FileMode.Open, FileAccess.Read);
-		// fileStream.Seek((Int64)0, SeekOrigin.Begin);
-		// reader = new BinaryReader(fileStream);
-		// //FileInfo fileInfo = new FileInfo(dataPath);
-		// Int64 totalSize = fileStream.Length;
-		//
-		// //定义边界符
-		// String boundary = "--------" + DateTime.Now.Ticks.ToString("x");
-		// //起始边界符
-		// StringBuilder prePostData = new StringBuilder();
-		// prePostData.Append("--" + boundary);//起始边界符
-		// prePostData.Append("\r\n");//另起一行
-		// prePostData.Append("Content-Disposition:form-data;name=\"file\";filename=\"");
-		// prePostData.Append(Path.GetFileNameWithoutExtension(dataPath) + ".zip\"");
-		// prePostData.Append("\r\n");//另起一行
-		// prePostData.Append("Content-Type:application/octet-stream");
-		// prePostData.Append("\r\n");//另起一行
-		// prePostData.Append("\r\n");//空一行
-		// Byte[] prePostDataBytes = Encoding.UTF8.GetBytes(prePostData.ToString());
-		// //----这里就填写二进制数据----
-		// //然后是结束边界符
-		// String endBoundary = "\r\n--" + boundary + "--\r\n";
-		// Byte[] endBoundaryBytes = Encoding.UTF8.GetBytes(endBoundary);
-		// //初始化Http请求
-		// HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uploadTaskURL);
-		// request.AllowWriteStreamBuffering = false;
-		// request.Timeout = 30000000;//500分钟
-		// request.Method = "POST";
-		// request.ContentType = "multipart/form-data;boundary=" + boundary;
-		// request.ContentLength = totalSize + prePostDataBytes.Length + endBoundaryBytes.Length;
-		// requestStream = request.GetRequestStream();
-		// //上传断点
-		// Int64 uploadOffset = 0;
-		// Byte[] buffer = new Byte[BufferSize];
-		// //写入起始边界符
-		// requestStream.Write(prePostDataBytes, 0, prePostDataBytes.Length);
-		//
-		// DateTime startTime = DateTime.Now;
-		// while (uploadOffset < totalSize)
-		// {
-		// if (this.m_cancel)
-		// {
-		// break;
-		// }
-		// Int32 realReadSize = reader.Read(buffer, 0, BufferSize);
-		// requestStream.Write(buffer, 0, realReadSize);
-		// uploadOffset += realReadSize;
-		// TimeSpan timeSpan = DateTime.Now - startTime;
-		// Double milliseconds = timeSpan.TotalMilliseconds;
-		// FileSize uploadOffsetSize = new FileSize(uploadOffset, FileSizeType.Byte);
-		// FileSize speed = (uploadOffsetSize * 1000) / milliseconds;
-		// //SendUploadProgress(uploadOffset, totalSize);
-		// SendUploadProgress(uploadOffset, totalSize, speed);
-		// }
-		// //写入结束边界符
-		// requestStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
-		// //关闭请求流
-		// requestStream.Close();
-		// //获取服务器响应
-		// HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-		// responseStream = response.GetResponseStream();
-		// responseReader = new StreamReader(responseStream);
-		// String responseString = responseReader.ReadToEnd();
-		// //解析结果
-		// if (!String.IsNullOrEmpty(responseString))
-		// {
-		// DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(UploadResponse));
-		// using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
-		// {
-		// UploadResponse uploadResponse = jsonSerializer.ReadObject(stream) as UploadResponse;
-		// if (uploadResponse != null)
-		// {
-		// String zipPath = uploadResponse.FilePath;
-		// //服务器返回的解压缩之后的路径，经常改动，有时候带了工作空间文件名，有时候没带，为了应变所以一并处理
-		// String dataDirectory = Path.GetFileNameWithoutExtension(zipPath);
-		// if (String.IsNullOrEmpty(dataDirectory))
-		// {
-		// DirectoryInfo directoryInfo = new DirectoryInfo(zipPath);
-		// dataDirectory = directoryInfo.Name;
-		// }
-		// workspaceConnection = String.Format(@"{0}/{1}/{2}", ServerDataDir, dataDirectory, Path.GetFileName(this.m_connectionInfo.Server));
-		// ServerReleaseMessage.OutputMessage(ServerReleaseMessage.UploadCompleted);
-		// }
-		// }
-		// }
-		// }
-		// catch (WebException ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.Message, InfoType.Information);
-		// HttpWebResponse webResponse = ex.Response as HttpWebResponse;
-		// if (webResponse != null)
-		// {
-		// OutputHttpStatus(webResponse.StatusCode);
-		// }
-		// if (Application.ActiveApplication.Workspace.Type == WorkspaceType.Default)
-		// {
-		// Application.ActiveApplication.Workspace.Open(this.m_connectionInfo);
-		// }
-		// }
-		// catch (Exception ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.StackTrace, InfoType.Exception);
-		// }
-		// finally
-		// {
-		// if (fileStream != null)
-		// {
-		// fileStream.Close();
-		// }
-		// if (reader != null)
-		// {
-		// reader.Close();
-		// }
-		// if (requestStream != null)
-		// {
-		// requestStream.Close();
-		// }
-		// if (responseStream != null)
-		// {
-		// responseStream.Close();
-		// }
-		// if (responseReader != null)
-		// {
-		// responseReader.Close();
-		// }
-		// }
 
 		return workspaceConnection;
 	}
 
-	private void sendUploadProgress(long uploadSize, long totalSize, FileSize currentSpeed) {
-		FileSize currentFileSize = new FileSize(uploadSize, FileSizeType.BYTE);
-		FileSize totalFileSize = new FileSize(totalSize, FileSizeType.BYTE);
-		int currentProgress = (int) (uploadSize * 100 / totalSize);
-		int totalProgress = 50 + (int) (currentProgress * 0.49);
-		String currentSpeedString = MessageFormat.format(ServerReleaseMessage.UploadSpeedUnit, currentSpeed.ToStringClever());
+	private void httpPosting(HttpPostEvent e) {
 
-		String currentMessage = MessageFormat.format(ServerReleaseMessage.UploadCurrent, currentFileSize.ToStringClever(), totalFileSize.ToStringClever(),
-				currentSpeedString);
-		sendFunctionProgressEvent(currentProgress, totalProgress, currentMessage, ServerReleaseMessage.Uploading);
 	}
+
+	// private void sendUploadProgress(long uploadSize, long totalSize, FileSize currentSpeed) {
+	// FileSize currentFileSize = new FileSize(uploadSize, FileSizeType.BYTE);
+	// FileSize totalFileSize = new FileSize(totalSize, FileSizeType.BYTE);
+	// int currentProgress = (int) (uploadSize * 100 / totalSize);
+	// int totalProgress = 50 + (int) (currentProgress * 0.49);
+	// String currentSpeedString = MessageFormat.format(ServerReleaseMessage.UploadSpeedUnit, currentSpeed.ToStringClever());
+	//
+	// String currentMessage = MessageFormat.format(ServerReleaseMessage.UploadCurrent, currentFileSize.ToStringClever(), totalFileSize.ToStringClever(),
+	// currentSpeedString);
+	// sendFunctionProgressEvent(currentProgress, totalProgress, currentMessage, ServerReleaseMessage.Uploading);
+	// }
 
 	private boolean releaseServerUploadFile(String workspaceConnection) {
 		this.remoteFilePath = workspaceConnection;
