@@ -1,27 +1,21 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+import com.supermap.mapping.Layer;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
-
-import com.supermap.mapping.Layer;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 /**
  * 图层管理树单元格编辑器
@@ -65,7 +59,7 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 		TreeNodeData obj = (TreeNodeData) node.getUserObject();
 		JPanel panel = (JPanel) layersTreeCellRenderer.getPanel(obj);
 		NodeDataType type = obj.getType();
-		if (type.equals(NodeDataType.LAYER) || type.equals(NodeDataType.LAYER_GROUP)) {
+		if (type != NodeDataType.WMSSUB_LAYER) {
 			currentTreeNodeData = obj;
 			Object innerData = obj.getData();
 			if (innerData instanceof Layer) {
