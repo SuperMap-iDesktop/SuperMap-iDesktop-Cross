@@ -127,9 +127,12 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 					gridBagConstraints.weightx = 0;
 				} else if (component instanceof JTextField) {
 					gridBagConstraints.weightx = 1;
+				} else if (component instanceof JComboBox) {
+					gridBagConstraints.weightx = 0.1;
 				} else {
 					gridBagConstraints.weightx = 1;
 				}
+
 				gridBagConstraints.fill = gridBagConstraints.BOTH;
 				gridBagConstraints.anchor = gridBagConstraints.CENTER;
 				this.add(component, gridBagConstraints);
