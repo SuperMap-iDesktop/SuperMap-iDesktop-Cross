@@ -154,7 +154,7 @@ public class ThemeGridRangeContainer extends JPanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
-		this.comboBoxColorStyle.setSelectedIndex(25);
+		this.comboBoxColorStyle.setSelectedIndex(21);
 		if (isNewTheme) {
 			refreshColor();
 		}

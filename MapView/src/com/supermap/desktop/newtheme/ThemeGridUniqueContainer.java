@@ -142,7 +142,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		this.comboboxColor.setSelectedIndex(25);
+		this.comboboxColor.setSelectedIndex(21);
 		if (isNewTheme) {
 			refreshColor();
 		}
@@ -310,7 +310,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 			this.tableUniqueInfo.setValueAt(visibleIcon, i, TABLE_COLUMN_VISIBLE);
 			Color color = uniqueItem.getColor();
 			this.tableUniqueInfo.setValueAt(ThemeItemLabelDecorator.buildColorIcon(datasetGrid, color), i, TABLE_COLUMN_GEOSTYLE);
-			this.tableUniqueInfo.setValueAt(uniqueItem.getUnique(), i, TABLE_COLUMN_UNIQUE);
+			this.tableUniqueInfo.setValueAt((int)uniqueItem.getUnique(), i, TABLE_COLUMN_UNIQUE);
 			this.tableUniqueInfo.setValueAt(uniqueItem.getCaption(), i, TABLE_COLUMN_CAPTION);
 		}
 		Color defualtColor = themeUnique.getDefaultColor();

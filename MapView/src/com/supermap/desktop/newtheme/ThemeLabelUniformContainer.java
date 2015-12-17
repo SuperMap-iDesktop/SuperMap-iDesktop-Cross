@@ -1,38 +1,10 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-
 import com.supermap.data.DatasetVector;
-import com.supermap.data.Enum;
 import com.supermap.data.FieldInfo;
-import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
-import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextStyleContainer;
 import com.supermap.mapping.Layer;
@@ -40,12 +12,8 @@ import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
 import com.supermap.ui.MapControl;
 
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
+import java.awt.*;
 
 public class ThemeLabelUniformContainer extends JPanel {
 
@@ -99,7 +67,7 @@ public class ThemeLabelUniformContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */

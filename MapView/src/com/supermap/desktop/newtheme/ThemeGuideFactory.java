@@ -16,12 +16,15 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.ActiveLayersChangedEvent;
+import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -37,6 +40,7 @@ public class ThemeGuideFactory {
 
 	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
+	private static transient ThemeMainContainer container;
 
 	/**
 	 * 界面替换
@@ -61,8 +65,7 @@ public class ThemeGuideFactory {
 		return dockbarThemeContainer;
 	}
 
-	private static ThemeMainContainer addPanelToThemeMainContainer(JPanel panel) {
-		ThemeMainContainer container = null;
+	private static ThemeMainContainer addPanelToThemeMainContainer(JPanel panel, String caption) {
 		try {
 			dockbarThemeContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
 					.get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
@@ -81,6 +84,35 @@ public class ThemeGuideFactory {
 						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
 								.setFill(GridBagConstraints.BOTH));
 				container.repaint();
+				if (!StringUtilties.isNullOrEmpty(caption)) {
+					Layers layers = getMapControl().getMap().getLayers();
+					for (int i = 0; i < layers.getCount(); i++) {
+						Layer tempLayer = layers.get(i);
+						container.addItemToComboBox(tempLayer);
+					}
+					container.getComboBoxThemeLayer().setSelectedItem(caption);
+				}
+//				if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+//					((IFormMap) Application.getActiveApplication().getActiveForm()).addActiveLayersChangedListener(new ActiveLayersChangedListener() {
+//						@Override
+//						public void acitiveLayersChanged(ActiveLayersChangedEvent e) {
+//							if (null == e.getNewActiveLayers()) {
+//								for (int i = container.getComponents().length - 1; i >= 0; i--) {
+//									if (container.getComponent(i) instanceof JPanel) {
+//										container.remove(container.getComponent(i));
+//									}
+//								}
+//								container.add(
+//										container.getPanelThemeInfo(),
+//										new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
+//												.setIpad(0, 0)
+//												.setFill(GridBagConstraints.BOTH));
+//								container.getComboBoxThemeLayer().removeAllItems();
+//								container.repaint();
+//							}
+//						}
+//					});
+//				}
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -122,13 +154,7 @@ public class ThemeGuideFactory {
 		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
 		if (null != themeUnique) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
-			ThemeMainContainer container = addPanelToThemeMainContainer(themeUniqueContainer);
-			Layers layers = getMapControl().getMap().getLayers();
-			for (int i = 0; i < layers.getCount(); i++) {
-				Layer tempLayer = layers.get(i);
-				container.addItemToComboBox(tempLayer);
-			}
-			container.getComboBoxThemeLayer().setSelectedItem(themeUniqueContainer.getThemeUniqueLayer().getName());
+			addPanelToThemeMainContainer(themeUniqueContainer, themeUniqueContainer.getThemeUniqueLayer().getCaption());
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -144,13 +170,7 @@ public class ThemeGuideFactory {
 		if (null != themeRange) {
 			themeRange.setPrecision(0.1);
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange);
-			ThemeMainContainer container = addPanelToThemeMainContainer(themeRangeContainer);
-			Layers layers = getMapControl().getMap().getLayers();
-			for (int i = 0; i < layers.getCount(); i++) {
-				Layer tempLayer = layers.get(i);
-				container.addItemToComboBox(tempLayer);
-			}
-			container.getComboBoxThemeLayer().setSelectedItem(themeRangeContainer.getThemeRangeLayer().getName());
+			addPanelToThemeMainContainer(themeRangeContainer, themeRangeContainer.getThemeRangeLayer().getCaption());
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -165,13 +185,7 @@ public class ThemeGuideFactory {
 		themeLabel.setLabelExpression("SmID");
 		themeLabel.setMaxLabelLength(8);
 		ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel);
-		ThemeMainContainer container = addPanelToThemeMainContainer(themeLabelUniformContainer);
-		Layers layers = getMapControl().getMap().getLayers();
-		for (int i = 0; i < layers.getCount(); i++) {
-			Layer tempLayer = layers.get(i);
-			container.addItemToComboBox(tempLayer);
-		}
-		container.getComboBoxThemeLayer().setSelectedItem(themeLabelUniformContainer.getThemeLabelLayer().getName());
+		addPanelToThemeMainContainer(themeLabelUniformContainer, themeLabelUniformContainer.getThemeLabelLayer().getCaption());
 		getDockbarThemeContainer().setVisible(true);
 	}
 
@@ -183,13 +197,7 @@ public class ThemeGuideFactory {
 		if (null != themeLabel) {
 			themeLabel.setMaxLabelLength(8);
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel);
-			ThemeMainContainer container = addPanelToThemeMainContainer(themeLabelRangeContainer);
-			Layers layers = getMapControl().getMap().getLayers();
-			for (int i = 0; i < layers.getCount(); i++) {
-				Layer tempLayer = layers.get(i);
-				container.addItemToComboBox(tempLayer);
-			}
-			container.getComboBoxThemeLayer().setSelectedItem(themeLabelRangeContainer.getThemeLabelLayer().getName());
+			addPanelToThemeMainContainer(themeLabelRangeContainer, themeLabelRangeContainer.getThemeLabelLayer().getCaption());
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -212,13 +220,7 @@ public class ThemeGuideFactory {
 			ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
-				ThemeMainContainer container = addPanelToThemeMainContainer(themeUniqueContainer);
-				Layers layers = getMapControl().getMap().getLayers();
-				for (int i = 0; i < layers.getCount(); i++) {
-					Layer tempLayer = layers.get(i);
-					container.addItemToComboBox(tempLayer);
-				}
-				container.getComboBoxThemeLayer().setSelectedItem(themeUniqueContainer.getThemeUniqueLayer().getName());
+				addPanelToThemeMainContainer(themeUniqueContainer, themeUniqueContainer.getThemeUniqueLayer().getCaption());
 				getDockbarThemeContainer().setVisible(true);
 			} else {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -241,13 +243,7 @@ public class ThemeGuideFactory {
 			ThemeGridRange themeUnique = ThemeGridRange.makeDefault(datasetGrid, RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer((DatasetGrid) getDataset(), themeUnique);
-				ThemeMainContainer container = addPanelToThemeMainContainer(themeGridRangeContainer);
-				Layers layers = getMapControl().getMap().getLayers();
-				for (int i = 0; i < layers.getCount(); i++) {
-					Layer tempLayer = layers.get(i);
-					container.addItemToComboBox(tempLayer);
-				}
-				container.getComboBoxThemeLayer().setSelectedItem(themeGridRangeContainer.getThemeRangeLayer().getName());
+				addPanelToThemeMainContainer(themeGridRangeContainer, themeGridRangeContainer.getThemeRangeLayer().getCaption());
 				getDockbarThemeContainer().setVisible(true);
 			} else {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -269,7 +265,7 @@ public class ThemeGuideFactory {
 	public static void resetUniqueTheme(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
-			addPanelToThemeMainContainer(themeUniqueContainer);
+			addPanelToThemeMainContainer(themeUniqueContainer, "");
 		}
 	}
 
@@ -315,7 +311,7 @@ public class ThemeGuideFactory {
 	public static void resetRangeTheme(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
-			addPanelToThemeMainContainer(themeRangeContainer);
+			addPanelToThemeMainContainer(themeRangeContainer, "");
 		}
 	}
 
@@ -327,7 +323,7 @@ public class ThemeGuideFactory {
 	public static void resetLabelUniform(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
-			addPanelToThemeMainContainer(themeLabelUniformContainer);
+			addPanelToThemeMainContainer(themeLabelUniformContainer, "");
 		}
 	}
 
@@ -339,7 +335,7 @@ public class ThemeGuideFactory {
 	public static void resetLabelRange(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
-			addPanelToThemeMainContainer(themeLabelRangeContainer);
+			addPanelToThemeMainContainer(themeLabelRangeContainer, "");
 		}
 	}
 
@@ -351,7 +347,7 @@ public class ThemeGuideFactory {
 	public static void resetGridUnique(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
-			addPanelToThemeMainContainer(themeGridUniqueContainer);
+			addPanelToThemeMainContainer(themeGridUniqueContainer, "");
 		}
 	}
 
@@ -363,7 +359,7 @@ public class ThemeGuideFactory {
 	public static void resetGridRange(Layer layer) {
 		if (null != layer.getDataset()) {
 			ThemeGridRangeContainer themeGridUniqueContainer = new ThemeGridRangeContainer(layer);
-			addPanelToThemeMainContainer(themeGridUniqueContainer);
+			addPanelToThemeMainContainer(themeGridUniqueContainer, "");
 		}
 	}
 

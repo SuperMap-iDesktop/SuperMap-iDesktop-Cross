@@ -1,7 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Component;
-import javax.swing.Icon;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMain;
@@ -11,6 +9,9 @@ import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.ui.docking.View;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class FormBaseChild extends View implements IForm {
 
@@ -144,8 +145,8 @@ public class FormBaseChild extends View implements IForm {
 		if (formClass != null) {
 			smstatusbar = statusbarManager.getStatusbar(formClass.getName());
 			if (smstatusbar != null) {
-				smstatusbar.build(this);
 				this.setSouthComponent(smstatusbar);
+				smstatusbar.build(this);
 			}
 		}
 		return smstatusbar;

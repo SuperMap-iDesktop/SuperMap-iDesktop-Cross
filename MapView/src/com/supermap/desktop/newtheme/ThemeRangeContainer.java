@@ -185,7 +185,7 @@ public class ThemeRangeContainer extends JPanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
-		this.comboBoxColorStyle.setSelectedIndex(25);
+		this.comboBoxColorStyle.setSelectedIndex(21);
 		if (isNewTheme) {
 			refreshColor();
 		}

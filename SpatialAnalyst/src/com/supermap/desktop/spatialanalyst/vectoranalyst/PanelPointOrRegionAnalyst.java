@@ -7,8 +7,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.concurrent.CancellationException;
-
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -17,15 +15,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
-import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
 import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
@@ -35,15 +29,11 @@ import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.ControlDefaultValues;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
@@ -61,7 +51,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private JLabel labelUnit;
 	private JRadioButton radioButtonNumeric;
 	private JRadioButton radioButtonField;
-	private JFormattedTextField textFieldNumeric;
+	private SMFormattedTextField textFieldNumeric;
 	private JComboBox<Object> comboBoxField;
 	private JPanel panelBasic;
 	private JPanel panelBasicLeft;
@@ -74,21 +64,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private String resultDatasetName;
 	private Recordset recordset;
 	private Object radius;
-	private boolean buttonEnabled = false;
-	private boolean bufferSuccess;
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private DatasetVector sourceDatasetVector;
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
-	
+
 	private JComboBox<Unit> comboBoxUnitBox;
-
-	public boolean isButtonEnabled() {
-		return buttonEnabled;
-	}
-
-	public void setButtonEnabled(boolean buttonEnabled) {
-		this.buttonEnabled = buttonEnabled;
-	}
+	private DatasetVector resultDatasetVector;
+	private boolean bufferCreate;
 
 	public PanelBufferData getPanelBufferData() {
 		return panelBufferData;
@@ -145,7 +127,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
 		numberFormatter.setValueClass(Integer.class);
-		this.textFieldNumeric = new JFormattedTextField(numberFormatter);
+		this.textFieldNumeric = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumeric.setText("10");
 
 		// 设置按钮组，只能点击一个按钮
@@ -283,12 +265,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(hasSelectedGeometryProperty());
 			setComponentEnabled();
 		}
-
-		// if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
-		// setButtonEnabled(false);
-		// } else {
-		// setEnabled(true);
-		// }
 	}
 
 	/**
@@ -310,9 +286,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			Dataset comboBoxDataset = this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			createComboBoxField(comboBoxDataset);
-			setButtonEnabled(true);
-		} else {
-			setButtonEnabled(false);
 		}
 		setComponentEnabled();
 		this.radius = Integer.valueOf(this.textFieldNumeric.getText());
@@ -397,111 +370,59 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	/**
 	 * 创建缓冲区分析
 	 */
-	public void CreateCurrentBuffer() {
-		bufferSuccess = false;
-		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources()
-				.get(this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getAlias());
-		DatasetVectorInfo resultDatasetVectorInfo = new DatasetVectorInfo();
-		this.resultDatasetName = this.panelResultData.getTextFieldResultDataDataset().getText();
-		String datasetName = datasource.getDatasets().getAvailableDatasetName(this.resultDatasetName);
-		resultDatasetVectorInfo.setName(datasetName);
-		resultDatasetVectorInfo.setType(DatasetType.REGION);
-
-		DatasetVector resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
-		if (this.panelBufferData.getComboBoxBufferDataDataset() != null) {
+	public boolean CreateCurrentBuffer() {
+		bufferCreate = false;
+		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			BufferAnalystParameter bufferAnalystParameter = new BufferAnalystParameter();
 
-			// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
-			if (this.radioButtonNumeric.isSelected()) {
-				this.radius = Integer.valueOf(this.textFieldNumeric.getText());
-				if (sourceDatasetVector.getType() == DatasetType.POINT || sourceDatasetVector.getType() == DatasetType.POINT3D) {
-					if (this.radius instanceof Integer) {
-						this.radius = Math.abs((Integer) this.radius);
+			// 创建缓冲数据集
+
+			if (sourceDatasetVector.getRecordCount() != 0) {
+				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources()
+						.get(this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getAlias());
+				DatasetVectorInfo resultDatasetVectorInfo = new DatasetVectorInfo();
+				this.resultDatasetName = this.panelResultData.getTextFieldResultDataDataset().getText();
+				String datasetName = datasource.getDatasets().getAvailableDatasetName(this.resultDatasetName);
+				resultDatasetVectorInfo.setName(datasetName);
+				resultDatasetVectorInfo.setType(DatasetType.REGION);
+				resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
+
+				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
+
+				if (this.radioButtonNumeric.isSelected()) {
+					this.radius = Integer.valueOf(this.textFieldNumeric.getText());
+					if (sourceDatasetVector.getType() == DatasetType.POINT || sourceDatasetVector.getType() == DatasetType.POINT3D) {
+						if (this.radius instanceof Integer) {
+							this.radius = Math.abs((Integer) this.radius);
+						}
 					}
 				}
-			}
-			bufferAnalystParameter.setLeftDistance(this.radius);
-			bufferAnalystParameter.setEndType(BufferEndType.ROUND);
 
+				// 设置缓冲区参数
+				bufferAnalystParameter.setLeftDistance(this.radius);
+				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
+				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
+				bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
-			bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
+				// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
+				FormProgress formProgress = new FormProgress(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
 
-			bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
-
-			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
-			// if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
-			// bufferSuccess = BufferAnalyst.createBuffer(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet.getCheckBoxUnionBuffer()
-			// .isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
-			// } else {
-			// bufferSuccess = BufferAnalyst.createBuffer(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-			// .getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected());
-			// }
-
-			// if (bufferSuccess) {
-			// // 待实现
-			// // 打开生成的缓冲区数据集，并将数据集添加到地图上展现
-			// }
-
-			FormProgress formProgress = new FormProgress(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
-			formProgress.doWork(new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-					.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
-		}
-	}
-
-	class BufferProgressCallable extends UpdateProgressCallable {
-		DatasetVector sourceDatasetVector;
-		DatasetVector resultDatasetVector;
-		BufferAnalystParameter bufferAnalystParameter;
-		boolean union;
-		boolean isAttributeRetained;
-
-		private SteppedListener steppedListener = new SteppedListener() {
-
-			@Override
-			public void stepped(SteppedEvent arg0) {
-				try {
-					updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
-				} catch (CancellationException e) {
-					int result = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_Warning_DatasetPrjCoordSysTranslatorCancel"));
-
-					if (result == 0) {
-						arg0.setCancel(true);
-					} else {
-						update.setCancel(false);
-						arg0.setCancel(false);
-					}
-				}
-			}
-		};
-
-		public BufferProgressCallable(DatasetVector sourceDatasetVector, DatasetVector resultDatasetVector, BufferAnalystParameter bufferAnalystParameter,
-				boolean union, boolean isAttributeRetained) {
-			this.sourceDatasetVector = sourceDatasetVector;
-			this.resultDatasetVector = resultDatasetVector;
-			this.bufferAnalystParameter = bufferAnalystParameter;
-			this.union = union;
-			this.isAttributeRetained = isAttributeRetained;
-		}
-
-		@Override
-		public Boolean call() throws Exception {
-
-			Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
-			try {
-				BufferAnalyst.addSteppedListener(steppedListener);
-				bufferSuccess = BufferAnalyst.createBuffer(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, union, isAttributeRetained);
-				if (bufferSuccess) {
-					Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess"));
+				if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
+					formProgress.doWork(new BufferProgressCallable(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+							.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
 				} else {
-					Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
+					formProgress.doWork(new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+							.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
 				}
-			} catch (Exception e) {
+				bufferCreate = true;
+			} else {
+				bufferCreate = false;
+				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
 				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
 			}
-			return bufferSuccess;
 		}
-
+		return bufferCreate;
 	}
 
 	class LocalItemListener implements ItemListener {
@@ -516,10 +437,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				}
 				// 切换数据源后，如果ComboBoxDataset为空时，清除字段选项
 				if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
-					setButtonEnabled(true);
 				} else {
 					// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
-					setButtonEnabled(false);
 					comboBoxField.removeAllItems();
 				}
 				setComponentEnabled();
@@ -531,9 +450,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 						Dataset datasetItem = panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource().getDatasets()
 								.get(e.getItem().toString());
 						createComboBoxField(datasetItem);
-						setButtonEnabled(true);
 					} else {
-						setButtonEnabled(false);
 					}
 				}
 			} else if (e.getSource() == panelBufferData.getCheckBoxGeometrySelect()) {
