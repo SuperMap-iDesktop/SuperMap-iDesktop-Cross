@@ -106,33 +106,34 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 
 	private void createLayout() {
 		if (this.items != null && !this.items.isEmpty()) {
-			GroupLayout groupLayout = new GroupLayout(this);
-			GroupLayout.SequentialGroup hGroup = groupLayout.createSequentialGroup();
+//			GroupLayout groupLayout = new GroupLayout(this);
+//			GroupLayout.SequentialGroup hGroup = groupLayout.createSequentialGroup();
+//			for (int i = 0; i < this.items.size(); i++) {
+//				Component component = (Component) this.items.get(i);
+//				hGroup.addComponent(component);
+//				hGroup.addGap(5);
+//			}
+//			groupLayout.setHorizontalGroup(hGroup);
+			this.setLayout(new GridBagLayout());
 			for (int i = 0; i < this.items.size(); i++) {
 				Component component = (Component) this.items.get(i);
 				component.setFont(component.getFont().deriveFont(Float.valueOf(component.getFont().getSize() - 1)));
-				hGroup.addComponent(component);
-				hGroup.addGap(5);
+				GridBagConstraints gridBagConstraints = new GridBagConstraints();
+				gridBagConstraints.gridx = i;
+				gridBagConstraints.gridy = 0;
+				gridBagConstraints.gridheight = 1;
+				gridBagConstraints.gridwidth = 1;
+				if (component instanceof JLabel) {
+					gridBagConstraints.weightx = 0;
+				} else if (component instanceof JTextField) {
+					gridBagConstraints.weightx = 1;
+				} else {
+					gridBagConstraints.weightx = 1;
+				}
+				gridBagConstraints.fill = gridBagConstraints.BOTH;
+				gridBagConstraints.anchor = gridBagConstraints.CENTER;
+				this.add(component, gridBagConstraints);
 			}
-			groupLayout.setHorizontalGroup(hGroup);
-//			this.setLayout(new GridBagLayout());
-//			for (int i = 0; i < this.items.size(); i++) {
-//				Component component = (Component) this.items.get(i);
-//				component.setFont(component.getFont().deriveFont(Float.valueOf(component.getFont().getSize() - 1)));
-//				GridBagConstraints gridBagConstraints = new GridBagConstraints();
-//				gridBagConstraints.gridx = i;
-//				gridBagConstraints.gridy = 0;
-//				if (component instanceof JLabel) {
-//					gridBagConstraints.weightx = 0;
-//				} else if (component instanceof JTextField) {
-//					gridBagConstraints.weightx = 1;
-//				} else {
-//					gridBagConstraints.weightx = 1;
-//				}
-//				gridBagConstraints.fill = gridBagConstraints.BOTH;
-//				gridBagConstraints.anchor = gridBagConstraints.CENTER;
-//				this.add(component, gridBagConstraints);
-//			}
 		}
 	}
 

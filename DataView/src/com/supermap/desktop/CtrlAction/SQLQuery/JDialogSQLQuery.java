@@ -986,7 +986,6 @@ public class JDialogSQLQuery extends SmDialog {
 		if (activeForm instanceof IFormMap) {
 			formMap = ((IFormMap) activeForm);
 		}
-		// 新地图打开
 //		else {
 //			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
 //				if (Application.getActiveApplication().getMainFrame().getFormManager().get(i).getWindowType() == WindowType.MAP) {
@@ -995,6 +994,7 @@ public class JDialogSQLQuery extends SmDialog {
 //				}
 //			}
 //		}
+		// 新地图打开
 		if (formMap == null) {
 			String name = MapUtilties.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource().getAlias()), true);

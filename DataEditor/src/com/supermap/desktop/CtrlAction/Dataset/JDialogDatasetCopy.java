@@ -1,26 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Point;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
-
 import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
@@ -46,19 +25,21 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.CharsetUtilties;
 
-import javax.swing.JCheckBox;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
-
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 
 public class JDialogDatasetCopy extends SmDialog {
 	/**
@@ -328,8 +309,7 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 通过按钮初始化数据集选择界面
-	 * 
-	 * @param e
+	 *
 	 */
 	private void buttonAdd_Click() {
 		try {
@@ -494,8 +474,7 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 全选
-	 * 
-	 * @param e
+	 *
 	 */
 	private void buttonSelectAll_Click() {
 		try {
@@ -509,7 +488,6 @@ public class JDialogDatasetCopy extends SmDialog {
 	/**
 	 * 反选
 	 * 
-	 * @param e
 	 */
 	private void buttonSelectInvert_Click() {
 		try {
@@ -534,7 +512,6 @@ public class JDialogDatasetCopy extends SmDialog {
 	/**
 	 * 删除
 	 * 
-	 * @param e
 	 */
 	private void buttonDelete_Click() {
 		deleteSelectedRow();
@@ -564,7 +541,6 @@ public class JDialogDatasetCopy extends SmDialog {
 	/**
 	 * 统一设置的简单实现
 	 * 
-	 * @param e
 	 */
 	private void buttonSetting_Click() {
 		try {
@@ -620,7 +596,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			String datasetName = table.getValueAt(row, COLUMN_INDEX_Dataset).toString();
 			Dataset dataset = datasource.getDatasets().get(datasetName);
-			ArrayList<String> tempEncodeType = new ArrayList<String>();
+			ArrayList<String> tempEncodeType = new ArrayList<>();
 			tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.NONE));
 			if (dataset instanceof DatasetVector && (DatasetType.LINE == dataset.getType() || DatasetType.REGION == dataset.getType())) {
 				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.BYTE));
@@ -635,7 +611,7 @@ public class JDialogDatasetCopy extends SmDialog {
 				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.LZW));
 			}
 
-			comboboxEncodingType.setModel(new DefaultComboBoxModel<String>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
+			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
 			comboboxEncodingType.setSelectedItem(value);
 			return comboboxEncodingType;
 		}
@@ -663,7 +639,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			String datasetName = table.getValueAt(row, COLUMN_INDEX_Dataset).toString();
 			Dataset dataset = datasource.getDatasets().get(datasetName);
 
-			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
+			ArrayList<String> tempcharsharsetes = new ArrayList<>();
 			if (dataset instanceof DatasetVector) {
 				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.OEM));
 				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.EASTEUROPE));
@@ -697,7 +673,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			} else {
 				tempcharsharsetes.add(CharsetUtilties.getCharsetName(null));
 			}
-			comboboxCharsetType.setModel(new DefaultComboBoxModel<String>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
+			comboboxCharsetType.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
 			comboboxCharsetType.setSelectedItem(value);
 			return comboboxCharsetType;
 		}
