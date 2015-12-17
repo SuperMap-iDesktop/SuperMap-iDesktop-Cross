@@ -179,7 +179,7 @@ public class ThemeUniqueContainer extends JPanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		getFieldComboBox(this.comboBoxExpression, EXPRESSION_TYPE);
-		this.comboboxColor.setSelectedIndex(25);
+		this.comboboxColor.setSelectedIndex(21);
 		if (isNewTheme) {
 			refreshColor();
 		}
