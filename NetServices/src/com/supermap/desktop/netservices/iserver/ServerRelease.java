@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -30,6 +31,7 @@ import com.supermap.desktop.core.http.HttpPostEvent;
 import com.supermap.desktop.core.http.HttpPostFile;
 import com.supermap.desktop.core.http.HttpPostListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 public class ServerRelease {
@@ -323,14 +325,15 @@ public class ServerRelease {
 		this.totalEntry = 0;
 		this.zippedEntry = 0;
 		try {
-			// ServerReleaseMessage.OutputMessage(ServerReleaseMessage.ZippingData);
-			// String zipCacheDirectory = Path.GetFullPath(CloudyCache + @"/iServerZipCache");
-			// if (!Directory.Exists(zipCacheDirectory))
-			// {
-			// Directory.CreateDirectory(zipCacheDirectory);
-			// }
-			// String workspaceName = Path.GetFileNameWithoutExtension(this.m_workspacePath) + DateTime.Now.GetHashCode();
-			// zipPath = String.Format(@"{0}/{1}.zip", zipCacheDirectory, workspaceName);
+			 ServerReleaseMessage.outputMessage(ServerReleaseMessage.ZippingData);
+			 String zipCacheDirectory="";
+//			 String zipCacheDirectory = Path.GetFullPath(CloudyCache + @"/iServerZipCache");
+//			 if (!Directory.Exists(zipCacheDirectory))
+//			 {
+//			 Directory.CreateDirectory(zipCacheDirectory);
+//			 }
+			 String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) +new Date().hashCode();
+			 zipPath = MessageFormat.format("{0}/{1}.zip", zipCacheDirectory, workspaceName);
 			//
 			// if (File.Exists(zipPath))
 			// {
