@@ -3,19 +3,17 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
-import javax.swing.WindowConstants;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
@@ -24,10 +22,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+import com.supermap.desktop.ui.controls.comboBox.ComboBoxDataset;
 import com.supermap.ui.MapControl;
 
 public class BufferFactory extends SmDialog {
@@ -46,6 +46,8 @@ public class BufferFactory extends SmDialog {
 	private MapControl mapControl;
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private PanelButton panelButton;
+	private DatasourceComboBox datasourceComboBox;
+	private DatasetComboBox datasetComboBox;
 
 	public JPanel getPanelBuffer() {
 		return panelBufferBasic;
@@ -68,6 +70,7 @@ public class BufferFactory extends SmDialog {
 		super();
 		initPanelBufferBasic();
 		setBufferFactory();
+		lineBufferButtonOk();
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -90,6 +93,7 @@ public class BufferFactory extends SmDialog {
 					this.panelBufferBasic = new PanelLineBufferAnalyst();
 					setSize(575, 435);
 					this.radioButtonLine.setSelected(true);
+
 				}
 			} else {
 				this.panelBufferBasic = new PanelLineBufferAnalyst();
@@ -133,6 +137,13 @@ public class BufferFactory extends SmDialog {
 			}
 		}
 
+	}
+
+	private void lineBufferButtonOk() {
+		if (panelBufferBasic instanceof PanelLineBufferAnalyst) {
+			datasetComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
+			panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset() != null);
+		}
 	}
 
 	private void setBufferFactory() {
@@ -201,6 +212,12 @@ public class BufferFactory extends SmDialog {
 		this.radioButtonLine.addActionListener(this.localActionListener);
 		this.panelButton.getButtonOk().addActionListener(this.localActionListener);
 		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
+		
+		if (panelBufferBasic instanceof PanelLineBufferAnalyst) {
+			datasetComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
+			panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset() != null);
+			datasetComboBox.addItemListener(new LocalItemListener());
+		}
 	}
 	
 	private void removeRegisterEvent(){
@@ -209,30 +226,71 @@ public class BufferFactory extends SmDialog {
 	}
 	
 	class LocalActionListener implements ActionListener{
+		private boolean flag;
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
 			if (e.getSource() == radioButtonPointOrRegion) {
 				BufferFactory.this.getContentPane().remove(panelBufferBasic);
 				panelBufferBasic = new PanelPointOrRegionAnalyst();
+				datasourceComboBox = ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDatasource();
+				datasetComboBox =  ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
+				panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset()!=null);
+				addRegister();
 				setSize(575, 332);
 				BufferFactory.this.getContentPane().add(panelBufferBasic);
-//				panelButton.getButtonOk().setEnabled(((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonEnabled());
 			} else if (e.getSource() == radioButtonLine) {
 				BufferFactory.this.getContentPane().remove(panelBufferBasic);
 				panelBufferBasic = new PanelLineBufferAnalyst();
+				datasourceComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDatasource();
+				datasetComboBox =  ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
+				panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset()!=null);
+				addRegister();
 				setSize(575, 435);
 				BufferFactory.this.getContentPane().add(panelBufferBasic);
-//				panelButton.getButtonOk().setEnabled(((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonEnabled());
 			}else if (e.getSource() == panelButton.getButtonOk()) {
 				 if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
-					 ((PanelPointOrRegionAnalyst)panelBufferBasic).CreateCurrentBuffer();
+					flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).CreateCurrentBuffer();
 				 }else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
-					((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
+					flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
 				}
+				 if(flag==true){
 				 BufferFactory.this.dispose();
+				 }
 			}else if (e.getSource()==panelButton.getButtonCancel()) {
 				BufferFactory.this.dispose();
 			}
 		}
+		
+		private void addRegister(){
+			datasetComboBox.addItemListener(new LocalItemListener());
+			datasourceComboBox.addItemListener(new LocalItemListener());
+		}
+		
+		
+	}
+	class LocalItemListener implements ItemListener{
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if(e.getSource()==datasourceComboBox){
+				if(datasetComboBox.getSelectedDataset()==null){
+					panelButton.getButtonOk().setEnabled(false);
+					}else {
+						panelButton.getButtonOk().setEnabled(true);
+					}
+				
+			}else if (e.getSource() == datasetComboBox) {
+
+				if(datasetComboBox.getSelectedDataset()==null){
+					panelButton.getButtonOk().setEnabled(false);
+					}else {
+						panelButton.getButtonOk().setEnabled(true);
+					}
+			}
+			
+		}
+		
 	}
 }
