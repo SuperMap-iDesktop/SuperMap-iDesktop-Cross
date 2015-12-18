@@ -1,10 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.text.MessageFormat;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -17,6 +12,9 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.CursorUtilties;
 
+import javax.swing.*;
+import java.text.MessageFormat;
+
 public class CtrlActionDeleteDataset extends CtrlAction {
 
     public CtrlActionDeleteDataset(IBaseItem caller, IForm formClass) {
@@ -27,9 +25,9 @@ public class CtrlActionDeleteDataset extends CtrlAction {
     public void run() {
         try {
             boolean isDataset = false;
-            Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-            if (datasets != null && datasets.length > 0) {
-                isDataset = true;
+	        final Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+	        if (datasets != null && datasets.length > 0) {
+		        isDataset = true;
             }
 
             if (isDataset) {
@@ -48,12 +46,17 @@ public class CtrlActionDeleteDataset extends CtrlAction {
                     try {
                         CursorUtilties.setWaitCursor();
                         CommonToolkit.DatasetWrap.CloseDataset(datasets);
-                        for (int i = 0; i < datasets.length; i++) {
-                            String resultInfo = MessageFormat.format(DataEditorProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
-                                    .getDatasource().getAlias(), datasets[i].getName());
-                            datasets[i].getDatasource().getDatasets().delete(datasets[i].getName());
-                            Application.getActiveApplication().getOutput().output(resultInfo);
-                        }
+	                    new Thread() {
+		                    @Override
+		                    public void run() {
+			                    for (int i = 0; i < datasets.length; i++) {
+				                    String resultInfo = MessageFormat.format(DataEditorProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
+						                    .getDatasource().getAlias(), datasets[i].getName());
+				                    datasets[i].getDatasource().getDatasets().delete(datasets[i].getName());
+				                    Application.getActiveApplication().getOutput().output(resultInfo);
+			                    }
+		                    }
+	                    }.run();
                         Application.getActiveApplication().setActiveDatasets(null);
                     } finally {
                         CursorUtilties.setDefaultCursor();
