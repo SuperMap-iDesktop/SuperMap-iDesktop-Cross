@@ -1,19 +1,16 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.QueryParameter;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeLabel;
+
+import java.text.MessageFormat;
+import java.util.HashMap;
 
 /**
  * 显示过滤条件、对象显示顺序、设置图层关联属性表因为有额外的功能界面要开发实现，暂缓
@@ -347,11 +344,14 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 					Boolean enabled = true;
 					// 显示完整线性，数据集非线面数据集则不可用
 					enabled = hashMapTmp.get(IS_COMPLETE_LINE_SYMBOL_DISPLAYED)
-							&& (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.REGION);
+							&& (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.REGION) && !(layer.getTheme() instanceof ThemeLabel);
 					hashMapTmp.put(IS_COMPLETE_LINE_SYMBOL_DISPLAYED, enabled);
 					// 十字路口优化，数据集非线数据集则不可用
 					enabled = hashMapTmp.get(IS_CROSSROAD_OPTIMIZED) && dataset.getType() == DatasetType.LINE;
 					hashMapTmp.put(IS_CROSSROAD_OPTIMIZED, enabled);
+					// 符号随图所放
+					enabled = hashMapTmp.get(IS_SYMBOL_SCALABLE) && !(layer.getTheme() instanceof ThemeLabel);
+					hashMapTmp.put(IS_SYMBOL_SCALABLE, enabled);
 					// 缩放基准比例尺，符号随图缩放设置为 false
 					enabled = hashMapTmp.get(SYMBOL_SCALE) && hashMapTmp.get(IS_SYMBOL_SCALABLE)
 							&& this.isSymbolScalable != null && this.isSymbolScalable;
