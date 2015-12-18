@@ -1,25 +1,6 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -32,6 +13,13 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class ThemeMainContainer extends JPanel {
 
@@ -84,7 +72,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 得到中间界面
-	 * 
+	 *
 	 * @return
 	 */
 	public JPanel getPanelThemeInfo() {
@@ -153,7 +141,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 刷新专题图主界面
-	 * 
+	 *
 	 * @param layer
 	 */
 	private void refreshThemeMainContainer(Layer layer) {
@@ -206,22 +194,21 @@ public class ThemeMainContainer extends JPanel {
 				ThemeMainContainer.this.updateUI();
 				ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
 				unregistActionListener();
-			}else if(null!=getSelectLayer()){
-				resetThemeMainContainer(getSelectLayer());
-				
+			} else {
+				resetThemeMainContainer(getSelectLayer()); 
 			}
 		}
 
 		private boolean hasTheme() {
 			boolean hasTheme = false;
-				if (null!=ThemeGuideFactory.getMapControl()) {
-					map = ThemeGuideFactory.getMapControl().getMap();
-					for (int i = 0; i < map.getLayers().getCount(); i++) {
-						if (null != map.getLayers().get(i).getTheme()) {
-							hasTheme = true;
-						}
+			if (null != ThemeGuideFactory.getMapControl()) {
+				map = ThemeGuideFactory.getMapControl().getMap();
+				for (int i = 0; i < map.getLayers().getCount(); i++) {
+					if (null != map.getLayers().get(i).getTheme()) {
+						hasTheme = true;
 					}
 				}
+			}
 			return hasTheme;
 		}
 	}
@@ -240,7 +227,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 利用递归将当前地图的专题图图层标题添加到combobox中
-	 * 
+	 *
 	 * @param layer
 	 */
 	public void addItemToComboBox(Layer layer) {

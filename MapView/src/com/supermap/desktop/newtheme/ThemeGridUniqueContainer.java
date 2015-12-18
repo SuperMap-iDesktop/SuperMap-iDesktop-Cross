@@ -1,40 +1,5 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
@@ -46,12 +11,21 @@ import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class ThemeGridUniqueContainer extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -491,8 +465,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 				int selectRow = e.getFirstRow();
 				if (selectColumn == TABLE_COLUMN_UNIQUE && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))
 						&& StringUtilties.isNumber(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString())) {
-					double uniqueValue = Double.valueOf(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString());
-					setUniqueItemUnique(uniqueValue);
+					setUniqueItemUnique(Double.valueOf(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString()));
+					setUniqueItemCaption(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString());
 				}
 				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableUniqueInfo.getValueAt(selectRow, selectColumn).toString();
