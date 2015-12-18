@@ -1,12 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.CancellationException;
-
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -17,13 +10,16 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.CharsetUtilties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CancellationException;
 
 public class DatasetCopyCallable extends UpdateProgressCallable {
 	private static final int COLUMN_INDEX_Dataset = 0;
@@ -119,41 +115,31 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		try {
 			String targetDatasourceStr = datasource.getAlias();
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			Dataset resultDataset = null;
-			if (datasource.isReadOnly()) {
-				// 只读数据源不能复制
-				String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), targetDatasourceStr);
-				Application.getActiveApplication().getOutput().output(info);
-				return;
-			}
+
 
 			if (1 == datasets.length) {
 				// 只复制一个数据集
 				Dataset targetDataset = datasets[0];
 				// 提示是否进行复制操作
-				if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
-						ControlsProperties.getString("String_CopyDataset_Makesure"), targetDataset.getName(), targetDatasourceStr))) {
-					PercentListener percentListener = new PercentListener(1, 1, targetDataset.getName());
-					datasource.addSteppedListener(percentListener);
-					resultDataset = copyDatasetToDatasource(targetDataset, targetDatasourceStr, datasource);
-					if (percentListener != null && percentListener.isCancel()) {
-						return;
-					}
+
+				PercentListener percentListener = new PercentListener(1, 1, targetDataset.getName());
+				datasource.addSteppedListener(percentListener);
+				copyDatasetToDatasource(targetDataset, targetDatasourceStr, datasource);
+				if (percentListener.isCancel()) {
+					return;
 				}
+
 			} else if (1 < datasets.length) {
 				// 复制多个数据集
-				if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
-						ControlsProperties.getString("String_CopyDataset_Makesure2"), String.valueOf(datasets.length), targetDatasourceStr))) {
-					for (int i = 0; i < datasets.length; i++) {
-						PercentListener percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
-						datasource.addSteppedListener(percentListener);
-						copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
-						if (percentListener != null && percentListener.isCancel()) {
-							break;
-						}
+
+				for (int i = 0; i < datasets.length; i++) {
+					PercentListener percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
+					datasource.addSteppedListener(percentListener);
+					copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
+					if (percentListener.isCancel()) {
+						break;
 					}
 				}
-			
 			}
 
 		} catch (Exception e) {

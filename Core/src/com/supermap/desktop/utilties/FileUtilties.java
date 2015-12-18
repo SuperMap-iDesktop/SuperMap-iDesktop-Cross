@@ -33,4 +33,15 @@ public class FileUtilties {
 		}
 		return fileSize;
 	}
+
+	public static String getFileNameWithoutExtension(File file) {
+		String fileName = file.getName();
+		int lastDotIndex = fileName.lastIndexOf(".");
+
+		// 该字符串中存在 . 并且不在末尾
+		if (lastDotIndex != -1 && lastDotIndex != fileName.length() - 1) {
+			fileName = fileName.substring(0, lastDotIndex - 1);
+		}
+		return fileName;
+	}
 }

@@ -9,7 +9,6 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
-import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -19,12 +18,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ThemeLabelRangeContainer extends JPanel {
@@ -69,13 +67,14 @@ public class ThemeLabelRangeContainer extends JPanel {
 	private boolean isRefreshAtOnce = true;
 	private boolean isCustom = false;
 	private boolean isNewTheme = false;
+	private boolean isMergeOrSplit = false;
 
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_RANGEVALUE = 1;
 	private static final int TABLE_COLUMN_CAPTION = 2;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
-	private transient LocalTableMouseListener tableMouseListener = new LocalTableMouseListener();
+	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
@@ -205,7 +204,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
+				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
 		if (themeLabel.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeLabel.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -226,7 +225,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 	 */
 	private void initComboBoxRangeCount() {
 		comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
+				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		comboBoxRangeCount.setEditable(true);
 		int rangeCount = themeLabel.getCount();
 		comboBoxRangeCount.setSelectedIndex(rangeCount - 2);
@@ -234,7 +233,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 	}
 
 	private void initComboBoxRangeFormat() {
-		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
+		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		comboBoxRangeFormat.setSelectedIndex(1);
 	}
 
@@ -364,7 +363,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 	 * 设置文本风格颜色
 	 *
 	 * @param textStyle 需要设置的风格
-	 * @param color     设置的颜色
+	 * @param color 设置的颜色
 	 */
 	private void setTextStyleColor(TextStyle textStyle, Color color) {
 		textStyle.setForeColor(color);
@@ -394,10 +393,11 @@ public class ThemeLabelRangeContainer extends JPanel {
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
 		this.buttonSplit.addActionListener(this.actionListener);
-		this.tableLabelInfo.addMouseListener(this.tableMouseListener);
+		this.tableLabelInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxExpression.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
+		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
@@ -411,10 +411,11 @@ public class ThemeLabelRangeContainer extends JPanel {
 		this.buttonStyle.removeActionListener(this.actionListener);
 		this.buttonMerge.removeActionListener(this.actionListener);
 		this.buttonSplit.removeActionListener(this.actionListener);
-		this.tableLabelInfo.removeMouseListener(this.tableMouseListener);
+		this.tableLabelInfo.removeMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
 		this.comboBoxExpression.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
+		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeItemListener(this.itemListener);
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
@@ -474,7 +475,10 @@ public class ThemeLabelRangeContainer extends JPanel {
 					String endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(splitValue),
 							String.valueOf(item.getEnd()));
 					themeLabel.split(selectRow, splitValue, item.getStyle(), startCaption, item.getStyle(), endCaption);
+					isMergeOrSplit = true;
 					getTable();
+					labelCount = themeLabel.getCount();
+					comboBoxRangeCount.setSelectedItem(String.valueOf(labelCount));
 					tableLabelInfo.setRowSelectionInterval(selectRow, selectRow);
 				}
 			}
@@ -493,9 +497,9 @@ public class ThemeLabelRangeContainer extends JPanel {
 			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
 					String.valueOf(endItem.getEnd()));
 			themeLabel.merge(startIndex, selectedRows.length, startItem.getStyle(), caption);
-			if (themeLabel.getCount() > 2) {
-				comboBoxRangeCount.setSelectedIndex(labelCount - 2);
-			}
+			labelCount = themeLabel.getCount();
+			comboBoxRangeCount.setSelectedItem(String.valueOf(labelCount));
+			isMergeOrSplit = true;
 			getTable();
 			tableLabelInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			buttonMerge.setEnabled(false);
@@ -611,7 +615,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	}
 
-	class LocalTableMouseListener extends MouseAdapter {
+	class LocalMouseListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			int[] selectedRows = tableLabelInfo.getSelectedRows();
@@ -631,7 +635,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (1 == e.getClickCount() && tableLabelInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE && tableLabelInfo.getSelectedRows().length == 1) {
+			if (e.getSource() == tableLabelInfo && 1 == e.getClickCount() && tableLabelInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE
+					&& tableLabelInfo.getSelectedRows().length == 1) {
 				int selectRow = tableLabelInfo.getSelectedRow();
 				ThemeLabelItem item = themeLabel.getItem(selectRow);
 				boolean isVisible = item.isVisible();
@@ -646,6 +651,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 				if (isRefreshAtOnce) {
 					ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 				}
+			} else if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
+				isMergeOrSplit = false;
 			}
 		}
 
@@ -665,7 +672,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 					getSqlExpression(comboBoxExpression);
 					// 修改表达式
 					setFieldInfo();
-				} else if (e.getSource() == comboBoxRangeCount && !isCustom) {
+				} else if (e.getSource() == comboBoxRangeCount && !isCustom && !isMergeOrSplit) {
 					// 修改段数
 					setRangeCount();
 				} else if (e.getSource() == comboBoxRangeMethod) {
@@ -927,6 +934,15 @@ public class ThemeLabelRangeContainer extends JPanel {
 							&& (selectRow != tableLabelInfo.getRowCount() - 1)) {
 						// 如果输入为数值且段值合法时修改段值
 						themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+						String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
+						String caption = themeLabel.getItem(selectRow).getCaption();
+						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), end);
+						themeLabel.getItem(selectRow).setCaption(caption);
+						if (selectRow != themeLabel.getCount() - 1) {
+							String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
+							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), end);
+							themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
+						}
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();

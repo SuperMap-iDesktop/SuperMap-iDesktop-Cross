@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -209,12 +210,12 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		if (deleteGridUniqueItems != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(deleteGridItem.getUnique()));
+				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
 			}
 		}
 		if (themeGridUnique != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (int i = 0; i < themeGridUnique.getCount(); i++) {
-				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(themeGridUnique.getItem(i).getUnique()));
+				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((int) themeGridUnique.getItem(i).getUnique()));
 			}
 		}
 	}
@@ -339,8 +340,8 @@ public class AddItemPanel extends JPopupMenu {
 					if (selectList != null && !selectList.isEmpty()) {
 						for (String selectItem : selectList) {
 							ThemeGridUniqueItem gridUniqueItem = getDeletedGridItem(selectItem);
-							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(gridUniqueItem.getUnique()));
-							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(gridUniqueItem.getUnique()));
+							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf((int) gridUniqueItem.getUnique()));
+							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) gridUniqueItem.getUnique())));
 							themeGridUnique.add(gridUniqueItem);
 							deleteGridUniqueItems.remove(gridUniqueItem);
 						}
@@ -369,9 +370,9 @@ public class AddItemPanel extends JPopupMenu {
 						HashMap<Integer, ThemeGridUniqueItem> result = getNeedDeleteGridItemHashMap(selectList);
 						for (int i = themeGridUnique.getCount() - 1; i >= 0; i--) {
 							if (result.get(i) != null) {
-								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(result.get(i).getUnique()));
+								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(((int) result.get(i).getUnique())));
 								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
-										String.valueOf(result.get(i).getUnique()));
+										String.valueOf(((int) result.get(i).getUnique())));
 								deleteGridUniqueItems.add(new ThemeGridUniqueItem(result.get(i)));
 								themeGridUnique.remove(i);
 
@@ -414,10 +415,9 @@ public class AddItemPanel extends JPopupMenu {
 			} else {
 				// 先从已删除的子项找
 				for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-					String uniqueValue = String.valueOf(deleteGridItem.getUnique());
-					if (caption.equalsIgnoreCase(uniqueValue)) {
-						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(deleteGridItem.getUnique()));
-						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(deleteGridItem.getUnique()));
+					if (Double.compare(deleteGridItem.getUnique(), Double.parseDouble(caption)) == 0) {
+						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(((int) deleteGridItem.getUnique())));
+						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
 						themeGridUnique.add(deleteGridItem);
 						deleteGridUniqueItems.remove(deleteGridItem);
 						return;
@@ -433,7 +433,7 @@ public class AddItemPanel extends JPopupMenu {
 				}
 				for (int i = 0; i < deleteGridUniqueItems.size(); i++) {
 					double gridUniqueValue = deleteGridUniqueItems.get(i).getUnique();
-					if (Double.compare(gridUniqueValue, existValue) == 0.) {
+					if (Double.compare(gridUniqueValue, existValue) == 0) {
 						return;
 					}
 				}

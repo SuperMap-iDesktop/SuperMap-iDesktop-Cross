@@ -17,8 +17,7 @@ import javax.swing.event.EventListenerList;
 import org.apache.http.HttpStatus;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.core.compress.CompressEvent;
-import com.supermap.desktop.core.compress.CompressListener;
+import com.supermap.desktop.utilties.StringUtilties;
 
 public class HttpPostFile {
 	private static final String POST = "POST";
@@ -35,6 +34,10 @@ public class HttpPostFile {
 	private boolean isCancel = false;
 
 	private EventListenerList listenerList = new EventListenerList();
+
+	public HttpPostFile(String url) throws UnsupportedEncodingException {
+		this(url, "");
+	}
 
 	public HttpPostFile(String url, String fileName) throws UnsupportedEncodingException {
 
@@ -63,12 +66,15 @@ public class HttpPostFile {
 
 		try {
 			long totalSize = file.length();
+			if (StringUtilties.isNullOrEmpty(this.fileName)) {
+				this.fileName = file.getName().split(".")[0];
+			}
 
 			StringBuilder prePostData = new StringBuilder();
 			prePostData.append("--" + boundary); // 起始边界符
 			prePostData.append(System.lineSeparator()); // 另起一行
 			prePostData.append("Content-Disposition:form-data;name=\"file\";filename=\"");
-			prePostData.append(fileName + ".zip\"");
+			prePostData.append(this.fileName + ".zip\"");
 			prePostData.append(System.lineSeparator()); // 另起一行
 			prePostData.append("Content-Type:application/octet-stream");
 			prePostData.append(System.lineSeparator());// 另起一行
@@ -141,12 +147,20 @@ public class HttpPostFile {
 		return result;
 	}
 
-	protected void fireCompressing(CompressEvent e) {
+	public void addHttpPostListener(HttpPostListener listener) {
+		this.listenerList.add(HttpPostListener.class, listener);
+	}
+
+	public void removeHttpPostListener(HttpPostListener listener) {
+		this.listenerList.remove(HttpPostListener.class, listener);
+	}
+
+	protected void fireHttpPost(HttpPostEvent e) {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == CompressListener.class) {
-				((CompressListener) listeners[i + 1]).compressing(e);
+			if (listeners[i] == HttpPostListener.class) {
+				((HttpPostListener) listeners[i + 1]).httpPost(e);
 			}
 		}
 		this.isCancel = e.isCancel();
