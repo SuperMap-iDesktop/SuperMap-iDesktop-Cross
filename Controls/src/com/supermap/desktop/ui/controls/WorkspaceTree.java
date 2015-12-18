@@ -297,9 +297,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		super();
 		try {
 			currentWorkspace = this.getDefaultWorkspace();
-			buildWorkspaceNode(currentWorkspace);
 			treeModelTemp = new DefaultTreeModel(treeNodeWorkspace);
 			setModel(treeModelTemp);
+			buildWorkspaceNode(currentWorkspace);
+			this.treeModelTemp.setRoot(this.treeNodeWorkspace);
 			init();
 			addListener();
 			addMouseListener(new WorkspaceTreeMouseListener());
@@ -322,9 +323,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				workspace = this.getDefaultWorkspace();
 			}
 			currentWorkspace = workspace;
-			buildWorkspaceNode(currentWorkspace);
 			treeModelTemp = new DefaultTreeModel(treeNodeWorkspace);
 			setModel(treeModelTemp);
+			buildWorkspaceNode(currentWorkspace);
+			this.treeModelTemp.setRoot(this.treeNodeWorkspace);
 			init();
 			addListener();
 			addKeyListener(new WorkspaceTreeKeyListener());
@@ -581,7 +583,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 刷新指定节点
 	 * 
-	 * @param node 指定节点
+	 * @param node
+	 *            指定节点
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -1379,7 +1382,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			fillGridCollectionNodes(gridCollection, datasetNode);
 		}
 
-		datasourceNode.add(datasetNode);
+		// 使用下面的方式来刷新 Node，而不要使用 updateUI 来整个刷新 UGDJ-243
+		this.treeModelTemp.insertNodeInto(datasetNode, datasourceNode, datasourceNode.getChildCount());
 	}
 
 	private void fillImageCollectionNodes(DatasetImageCollection imageCollection, DefaultMutableTreeNode datasetNode) {
@@ -1677,11 +1681,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			int index = datasources.indexOf(datasource.getAlias().trim());
 			DefaultMutableTreeNode sourceDatasourceNode = (DefaultMutableTreeNode) treeNodeDatasources.getChildAt(index);
 			addDataset(tempdatasets.get(event.getDatasetName()), sourceDatasourceNode);
-
-			updateUI();
-
 		}
-
 	}
 
 	private class WorkspaceTreeDatasetDeletedAllListener implements DatasetDeletedAllListener {
@@ -2240,7 +2240,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		return flag;
 	}
 
-	
 	public DropTarget getWorkspaceDropTarget() {
 		return workspaceDropTarget;
 	}
