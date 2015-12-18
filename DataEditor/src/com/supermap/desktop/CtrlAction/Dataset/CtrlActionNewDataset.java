@@ -15,11 +15,14 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CtrlActionNewDataset extends CtrlAction {
 
@@ -41,38 +44,62 @@ public class CtrlActionNewDataset extends CtrlAction {
 				}
 				NewDatasetInfo[] datasets = dialog.getDatasets();
 				int count = 0;
-				for (int index = 0; index < datasets.length; index++) {
-					NewDatasetInfo newDatasetInfo = datasets[index];
-					DatasetVectorInfo info = new DatasetVectorInfo(newDatasetInfo.getDatasetName(), newDatasetInfo.getDatasetType());
-					info.setEncodeType(newDatasetInfo.getEncodeType());
-					Dataset dataset = null;
-					try {
-						dataset = newDatasetInfo.getTargetDatasource().getDatasets().create(info);
-					} catch (Exception e) {
-						// 创建失败，统计结果
-					}
-					if (dataset != null) {
-						dataset.setPrjCoordSys(dataset.getDatasource().getPrjCoordSys());
-						if (dataset instanceof DatasetVector) {
-							((DatasetVector) dataset).setCharset(newDatasetInfo.getCharset());
-						}
-						String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Success"), newDatasetInfo.getDatasetName(),
-								newDatasetInfo.getTargetDatasource().getAlias());
-						Application.getActiveApplication().getOutput().output(information);
-						count++;
 
-						if (newDatasetInfo.getModeType() == AddToWindowMode.CURRENTWINDOW) {
-							addToCurrentMap.add(dataset);
-						} else if (newDatasetInfo.getModeType() == AddToWindowMode.NEWWINDOW) {
-							addToNewMap.add(dataset);
+				final WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+				Dataset selectDataset = null;
+				final List<Datasource> dataSources = new ArrayList<>();
+
+				try {
+					for (int index = 0; index < datasets.length; index++) {
+						NewDatasetInfo newDatasetInfo = datasets[index];
+						if (!dataSources.contains(newDatasetInfo.getTargetDatasource())) {
+							workspaceTree.removeDatasetListener(newDatasetInfo.getTargetDatasource().getDatasets());
+							dataSources.add(newDatasetInfo.getTargetDatasource());
 						}
-						// 刷新数据集对应的数据源节点并选中数据集
-						UICommonToolkit.refreshSelectedDatasetNode(dataset);
-					} else {
-						String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), newDatasetInfo.getDatasetName(),
-								newDatasetInfo.getTargetDatasource().getAlias());
-						Application.getActiveApplication().getOutput().output(information);
+						DatasetVectorInfo info = new DatasetVectorInfo(newDatasetInfo.getDatasetName(), newDatasetInfo.getDatasetType());
+						info.setEncodeType(newDatasetInfo.getEncodeType());
+						DatasetVector dataset = null;
+						try {
+							dataset = newDatasetInfo.getTargetDatasource().getDatasets().create(info);
+						} catch (Exception e) {
+							// 创建失败，统计结果
+						}
+						if (dataset != null) {
+							selectDataset = dataset;
+							dataset.setPrjCoordSys(dataset.getDatasource().getPrjCoordSys());
+							dataset.setCharset(newDatasetInfo.getCharset());
+							String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Success"), newDatasetInfo.getDatasetName(),
+									newDatasetInfo.getTargetDatasource().getAlias());
+							Application.getActiveApplication().getOutput().output(information);
+							count++;
+
+							if (newDatasetInfo.getModeType() == AddToWindowMode.CURRENTWINDOW) {
+								addToCurrentMap.add(dataset);
+							} else if (newDatasetInfo.getModeType() == AddToWindowMode.NEWWINDOW) {
+								addToNewMap.add(dataset);
+							}
+							// 刷新数据集对应的数据源节点并选中数据集
+							UICommonToolkit.refreshSelectedDatasetNode(dataset);
+						} else {
+							String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), newDatasetInfo.getDatasetName(),
+									newDatasetInfo.getTargetDatasource().getAlias());
+							Application.getActiveApplication().getOutput().output(information);
+						}
 					}
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} finally {
+					final Dataset finalSelectDataset = selectDataset;
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							for (int i = 0; i < dataSources.size(); i++) {
+								UICommonToolkit.refreshSelectedDatasourceNode(dataSources.get(i).getAlias());
+							}
+
+							UICommonToolkit.refreshSelectedDatasetNode(finalSelectDataset);
+						}
+					});
 				}
 				String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Message"), datasets.length, count,
 						datasets.length - count);
