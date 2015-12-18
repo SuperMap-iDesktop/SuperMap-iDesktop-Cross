@@ -145,7 +145,7 @@ import java.util.List;
 public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -524,7 +524,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取工作空间节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getWorkspaceNode() {
@@ -533,7 +533,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取数据源集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getDatasourcesNode() {
@@ -542,7 +542,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取地图集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getMapsNode() {
@@ -551,7 +551,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取场景集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getScenesNode() {
@@ -560,7 +560,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取资源集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getResourcesNode() {
@@ -581,10 +581,13 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	/**
-	 * 刷新指定节点
+	 * 刷新指定节点 <<<<<<< HEAD
 	 * 
 	 * @param node
-	 *            指定节点
+	 *            指定节点 =======
+	 *
+	 * @param node
+	 *            指定节点 >>>>>>> branch 'master' of https://git.oschina.net/supermap/SuperMap-iDesktop-Cross.git
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -818,7 +821,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * This method buildWorkspaceTree build workspace tree
-	 * 
+	 *
 	 */
 	private void buildWorkspaceNode(Workspace workspace) {
 		datasources = workspace.getDatasources();
@@ -1308,7 +1311,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 添加数据集
-	 * 
+	 *
 	 * @param dataset
 	 * @param datasourceNode
 	 */
@@ -2134,7 +2137,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-	 * 
+	 *
 	 * @author xie
 	 */
 	private class WorkspaceTreeDropTargetAdapter extends DropTargetAdapter {
@@ -2223,7 +2226,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 得到文件类型
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */

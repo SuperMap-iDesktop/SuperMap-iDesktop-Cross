@@ -153,7 +153,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 						}
 					}
 				}
-			
+
 			}
 
 		} catch (Exception e) {
