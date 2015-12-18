@@ -7,15 +7,12 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.event.ActiveLayersChangedEvent;
-import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
@@ -74,35 +71,6 @@ public class ThemeGuideFactory {
 						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
 								.setFill(GridBagConstraints.BOTH));
 				container.repaint();
-				if (!StringUtilties.isNullOrEmpty(caption)) {
-					Layers layers = getMapControl().getMap().getLayers();
-					for (int i = 0; i < layers.getCount(); i++) {
-						Layer tempLayer = layers.get(i);
-						container.addItemToComboBox(tempLayer);
-					}
-					container.getComboBoxThemeLayer().setSelectedItem(caption);
-				}
-				if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-					((IFormMap) Application.getActiveApplication().getActiveForm()).addActiveLayersChangedListener(new ActiveLayersChangedListener() {
-						@Override
-						public void acitiveLayersChanged(ActiveLayersChangedEvent e) {
-							if (null == e.getOldActiveLayers()) {
-								for (int i = container.getComponents().length - 1; i >= 0; i--) {
-									if (container.getComponent(i) instanceof JPanel) {
-										container.remove(container.getComponent(i));
-									}
-								}
-								container.add(
-										container.getPanelThemeInfo(),
-										new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
-												.setIpad(0, 0)
-												.setFill(GridBagConstraints.BOTH));
-								container.getComboBoxThemeLayer().removeAllItems();
-								container.repaint();
-							}
-						}
-					});
-				}
 			}
 
 		} catch (ClassNotFoundException e) {

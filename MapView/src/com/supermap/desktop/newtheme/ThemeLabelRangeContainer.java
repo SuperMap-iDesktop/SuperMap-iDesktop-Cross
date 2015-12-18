@@ -497,9 +497,9 @@ public class ThemeLabelRangeContainer extends JPanel {
 			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
 					String.valueOf(endItem.getEnd()));
 			themeLabel.merge(startIndex, selectedRows.length, startItem.getStyle(), caption);
+			isMergeOrSplit = true;
 			labelCount = themeLabel.getCount();
 			comboBoxRangeCount.setSelectedItem(String.valueOf(labelCount));
-			isMergeOrSplit = true;
 			getTable();
 			tableLabelInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			buttonMerge.setEnabled(false);
