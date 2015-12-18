@@ -1315,7 +1315,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	 * @param dataset
 	 * @param datasourceNode
 	 */
-	private void addDataset(Dataset dataset, DefaultMutableTreeNode datasourceNode) {
+	private DefaultMutableTreeNode addDataset(Dataset dataset, DefaultMutableTreeNode datasourceNode) {
 		DefaultMutableTreeNode datasetNode;
 		TreeNodeData datasetNodeData;
 
@@ -1387,6 +1387,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 		// 使用下面的方式来刷新 Node，而不要使用 updateUI 来整个刷新 UGDJ-243
 		this.treeModelTemp.insertNodeInto(datasetNode, datasourceNode, datasourceNode.getChildCount());
+		return datasetNode;
 	}
 
 	private void fillImageCollectionNodes(DatasetImageCollection imageCollection, DefaultMutableTreeNode datasetNode) {
@@ -1683,8 +1684,31 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 			int index = datasources.indexOf(datasource.getAlias().trim());
 			DefaultMutableTreeNode sourceDatasourceNode = (DefaultMutableTreeNode) treeNodeDatasources.getChildAt(index);
-			addDataset(tempdatasets.get(event.getDatasetName()), sourceDatasourceNode);
+			DefaultMutableTreeNode createdNode = addDataset(tempdatasets.get(event.getDatasetName()), sourceDatasourceNode);
+			locateNode(createdNode);
 		}
+	}
+
+	/**
+	 * 定位到指定节点并选中
+	 * 
+	 * @param node
+	 */
+	private void locateNode(DefaultMutableTreeNode node) {
+		if (node == null || node.getParent() == null || node.getRoot() == null) {
+			return;
+		}
+
+		// 获取新创建节点的 Path
+		TreePath treePath = new TreePath(node.getPath());
+		// 展开该节点的父节点
+		if (!isExpanded(treePath.getParentPath())) {
+			expandPath(treePath.getParentPath());
+		}
+		// 使新创建的节点可见
+		scrollPathToVisible(treePath);
+		// 选中新创建的节点
+		setSelectionPath(treePath);
 	}
 
 	private class WorkspaceTreeDatasetDeletedAllListener implements DatasetDeletedAllListener {
@@ -1730,9 +1754,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			DefaultMutableTreeNode addMapNode = new DefaultMutableTreeNode(newMapNodeData);
 
 			treeModelTemp.insertNodeInto(addMapNode, treeNodeMaps, treeNodeMaps.getChildCount());
-			updateUI();
+			locateNode(addMapNode);
 		}
-
 	}
 
 	private class WorkspaceTreeMapClearedListener implements MapClearedListener {
