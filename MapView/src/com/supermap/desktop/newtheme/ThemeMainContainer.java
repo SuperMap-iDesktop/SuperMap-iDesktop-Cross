@@ -1,27 +1,5 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.event.ActiveFormChangedEvent;
-import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -33,6 +11,13 @@ import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.event.*;
+
 public class ThemeMainContainer extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -41,10 +26,8 @@ public class ThemeMainContainer extends JPanel {
 	private JPanel panelThemeInfo = new JPanel();
 	private Map map;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
 	private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
-	private LocalTreeKeyListener localTreeKeyListener = new LocalTreeKeyListener();
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -84,7 +67,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 得到中间界面
-	 * 
+	 *
 	 * @return
 	 */
 	public JPanel getPanelThemeInfo() {
@@ -101,13 +84,11 @@ public class ThemeMainContainer extends JPanel {
 	private void registActionListener() {
 		this.comboBoxThemeLayer.addItemListener(this.itemListener);
 		// 地图删除时移除掉
-		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
 		this.layersTree.addMouseListener(this.localMouseListener);
-		this.layersTree.addKeyListener(this.localTreeKeyListener);
-		this.layersTree.addPropertyChangeListener("LayerChange", new PropertyChangeListener() {
 
+		this.layersTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
-			public void propertyChange(PropertyChangeEvent arg0) {
+			public void valueChanged(TreeSelectionEvent e) {
 				resetThemeMainContainer(getSelectLayer());
 			}
 		});
@@ -153,7 +134,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 刷新专题图主界面
-	 * 
+	 *
 	 * @param layer
 	 */
 	private void refreshThemeMainContainer(Layer layer) {
@@ -197,34 +178,6 @@ public class ThemeMainContainer extends JPanel {
 				.setIpad(0, 0).setFill(GridBagConstraints.BOTH));
 	}
 
-	class LocalActiveFormChangedListener implements ActiveFormChangedListener {
-
-		@Override
-		public void activeFormChanged(ActiveFormChangedEvent e) {
-			if (!hasTheme()) {
-				updateThemeMainContainer();
-				ThemeMainContainer.this.updateUI();
-				ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
-				unregistActionListener();
-			}else if(null!=getSelectLayer()){
-				resetThemeMainContainer(getSelectLayer());
-				
-			}
-		}
-
-		private boolean hasTheme() {
-			boolean hasTheme = false;
-				if (null!=ThemeGuideFactory.getMapControl()) {
-					map = ThemeGuideFactory.getMapControl().getMap();
-					for (int i = 0; i < map.getLayers().getCount(); i++) {
-						if (null != map.getLayers().get(i).getTheme()) {
-							hasTheme = true;
-						}
-					}
-				}
-			return hasTheme;
-		}
-	}
 
 	/**
 	 * 刷新标签项下拉框中显示的子项
@@ -240,7 +193,7 @@ public class ThemeMainContainer extends JPanel {
 
 	/**
 	 * 利用递归将当前地图的专题图图层标题添加到combobox中
-	 * 
+	 *
 	 * @param layer
 	 */
 	public void addItemToComboBox(Layer layer) {
@@ -267,6 +220,11 @@ public class ThemeMainContainer extends JPanel {
 				updateThemeMainContainer();
 				ThemeMainContainer.this.updateUI();
 			}
+		} else {
+			updateThemeMainContainer();
+			ThemeMainContainer.this.repaint();
+			ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
+			unregistActionListener();
 		}
 	}
 
@@ -289,23 +247,10 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 
-			if (1 == e.getClickCount()) {
-				resetThemeMainContainer(getSelectLayer());
-			} else if (2 == e.getClickCount() && null != getSelectLayer() && null != getSelectLayer().getTheme()) {
+			if (2 == e.getClickCount() && null != getSelectLayer() && null != getSelectLayer().getTheme()) {
 				resetThemeMainContainer(getSelectLayer());
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
 		}
-	}
-
-	class LocalTreeKeyListener extends KeyAdapter {
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
-				resetThemeMainContainer(getSelectLayer());
-			}
-		}
-
 	}
 }
