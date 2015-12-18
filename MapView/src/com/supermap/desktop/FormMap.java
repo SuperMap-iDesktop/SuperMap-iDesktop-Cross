@@ -31,6 +31,7 @@ import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.implement.SmComboBox;
 import com.supermap.desktop.implement.SmLabel;
+import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
@@ -39,6 +40,7 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.SymbolDialog;
@@ -181,8 +183,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			if (buttonType == MouseEvent.BUTTON3
 					&& clickCount == 1
-					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2 
-						|| getMapControl().getAction() == Action.SELECTCIRCLE)
+					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2
+					|| getMapControl().getAction() == Action.SELECTCIRCLE)
 					&& getMapControl().getTrackMode() == TrackMode.EDIT
 					&& isShowPopupMenu <= 0) {
 				showPopupMenu(e);
@@ -357,7 +359,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	public FormMap(String title, Icon icon, Component component) {
 		super(title, icon, component);
-
+		resetSmStatusbarLayout();
 		initComponents();
 
 		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
@@ -380,6 +382,46 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		initCenter();
 		// 坐标和投影 不可编辑
 		initUneditableStatus();
+	}
+
+	private void resetSmStatusbarLayout() {
+		SmStatusbar statusbar = getStatusbar();
+		java.util.List<Component> list = new ArrayList();
+		for (int i = 0; i < statusbar.getCount(); i++) {
+			list.add(((Component) statusbar.get(i)));
+		}
+		statusbar.removeAll();
+		statusbar.setLayout(new GridBagLayout());
+
+		if (list.get(0) != null) {
+			statusbar.add(list.get(0), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(1) != null) {
+			statusbar.add(list.get(1), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(2) != null) {
+			statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setIpad(100, 0));
+		}
+		if (list.get(3) != null) {
+			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setIpad(100, 0));
+		}
+		if (list.get(4) != null) {
+			statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(5) != null) {
+			list.get(5).setMinimumSize(new Dimension(60, list.get(5).getHeight()));
+			statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(6) != null) {
+			list.get(6).setMinimumSize(new Dimension(60, list.get(6).getHeight()));
+			statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(7) != null) {
+			statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
+		if (list.get(8) != null) {
+			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		}
 	}
 
 	private void initComponents() {
@@ -1170,7 +1212,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	public void clearSelection(){
+	public void clearSelection() {
 		mapControlGeometrySelected(MapViewUtilties.clearAllSelection(this));
 	}
 
@@ -1219,7 +1261,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	@Override
-	public void updataSelectNumber(){
+	public void updataSelectNumber() {
 		((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(MapViewUtilties.calculateSelectNumber(this)));
 		updataLayersTreeSelection();
 	}

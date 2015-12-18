@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import javax.swing.event.EventListenerList;
 
@@ -16,6 +17,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
 import com.supermap.desktop.utilties.FileUtilties;
+import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 /**
@@ -46,6 +48,10 @@ public class Compressor {
 	 */
 	// @formatter:on
 	private boolean isCustomDesName = false;
+	/**
+	 * 待压缩的文件。如果 srcFile 是目录，那么该目录下的文件支持选择压缩一部分。
+	 */
+	private ArrayList<File> files = new ArrayList<>();
 
 	/**
 	 * @param srcFile
@@ -54,10 +60,22 @@ public class Compressor {
 	 *            保存压缩结果的目录
 	 */
 	public Compressor(String srcFile, String desDir) {
+		this(srcFile, desDir, new ArrayList<File>());
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param files
+	 *            指定需要压缩的文件
+	 */
+	public Compressor(String srcFile, String desDir, ArrayList<File> files) {
 		this.srcFile = new File(srcFile);
 		this.desDir = desDir;
 		getDesName();
-		this.totalSize = FileUtilties.getFileSize(this.srcFile);
+		initializeCompressFiles(files);
 	}
 
 	/**
@@ -69,9 +87,22 @@ public class Compressor {
 	 *            压缩包文件名
 	 */
 	public Compressor(String srcFile, String desDir, String desName) {
+		this(srcFile, desDir, desName, null);
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param desName
+	 *            压缩包文件名
+	 * @param files
+	 *            指定将要压缩的文件
+	 */
+	public Compressor(String srcFile, String desDir, String desName, ArrayList<File> files) {
 		this.srcFile = new File(srcFile);
 		this.desDir = desDir;
-		this.totalSize = FileUtilties.getFileSize(this.srcFile);
 
 		if (StringUtilties.isNullOrEmpty(desName)) {
 			getDesName();
@@ -86,6 +117,7 @@ public class Compressor {
 
 			this.isCustomDesName = true;
 		}
+		initializeCompressFiles(files);
 	}
 
 	/**
@@ -102,16 +134,19 @@ public class Compressor {
 			zipArchiveOutputStream = (ZipArchiveOutputStream) factory.createArchiveOutputStream(ArchiveStreamFactory.ZIP, new FileOutputStream(
 					new File(desFile)));
 
+			String entryName = "";
 			if (this.srcFile.isDirectory() && !this.isCustomDesName) {
-
 				// 源文件为目录，且非自定义结果文件名，则压缩包以源文件目录名作为结果文件名，内部层级与源文件目录一致。
-				File[] files = this.srcFile.listFiles();
-
-				for (int i = 0; i < files.length; i++) {
-					compress(zipArchiveOutputStream, files[i], "");
-				}
+				entryName = "";
 			} else {
-				compress(zipArchiveOutputStream, this.srcFile, "");
+				entryName = this.srcFile.getName() + File.separator;
+				ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(entryName);
+				zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
+				zipArchiveOutputStream.closeArchiveEntry();
+			}
+
+			for (int i = 0; i < this.files.size(); i++) {
+				compress(zipArchiveOutputStream, this.files.get(i), entryName);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -120,6 +155,25 @@ public class Compressor {
 			this.isCancel = false;
 			this.compressedSize = 0;
 		}
+	}
+
+	public void addCompressingListener(CompressListener listener) {
+		this.listenerList.add(CompressListener.class, listener);
+	}
+
+	public void removeCompressingListener(CompressListener listener) {
+		this.listenerList.remove(CompressListener.class, listener);
+	}
+
+	protected void fireCompressing(CompressEvent e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == CompressListener.class) {
+				((CompressListener) listeners[i + 1]).compressing(e);
+			}
+		}
+		this.isCancel = e.isCancel();
 	}
 
 	/**
@@ -230,14 +284,34 @@ public class Compressor {
 		}
 	}
 
-	protected void fireCompressing(CompressEvent e) {
-		Object[] listeners = this.listenerList.getListenerList();
+	/**
+	 * 初始化将要压缩的文件信息
+	 * 
+	 * @param files
+	 *            指定需要压缩的文件，不指定则默认 srcFile下的所有。
+	 */
+	private void initializeCompressFiles(ArrayList<File> files) {
+		if (files != null && files.size() > 0) {
+			for (int i = 0; i < files.size(); i++) {
+				File file = files.get(i);
 
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == CompressListener.class) {
-				((CompressListener) listeners[i + 1]).compressing(e);
+				if (file.getParentFile().equals(this.srcFile)) {
+					this.files.add(file);
+				}
 			}
+		} else {
+			ListUtilties.addArray(this.files, this.srcFile.listFiles());
 		}
-		this.isCancel = e.isCancel();
+
+		computeTotalSize();
+	}
+
+	/**
+	 * 计算将要压缩的文件总大小
+	 */
+	private void computeTotalSize() {
+		for (int i = 0; i < this.files.size(); i++) {
+			this.totalSize += FileUtilties.getFileSize(this.files.get(i));
+		}
 	}
 }

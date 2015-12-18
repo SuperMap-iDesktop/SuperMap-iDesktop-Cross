@@ -60,6 +60,8 @@ public class ColorsComboBox extends JComboBox {
 		};
 
 		initComboBox();
+		this.setMaximumRowCount(20);
+		this.setSelectedIndex(21);
 	}
 
 	/**

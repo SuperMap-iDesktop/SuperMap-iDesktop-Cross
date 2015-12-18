@@ -793,7 +793,15 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	 * @param searchModel
 	 */
 	private void searchDefine(String pattern, CoordSysDefine define, SearchResultModel searchModel) {
-		CoordSysDefine[] allLeafDefines = define.getAllLeaves();
+		CoordSysDefine[] allLeafDefines = null;
+
+		// 如果选中的是最后一级子节点，那么就选择改节点的父节点进行搜索
+		if (define.size() == 0) {
+			allLeafDefines = define.getParent().getAllLeaves();
+		} else {
+			allLeafDefines = define.getAllLeaves();
+		}
+
 		for (int i = 0; i < allLeafDefines.length; i++) {
 			String caption = allLeafDefines[i].getCaption();
 			if (caption.toLowerCase().contains(pattern.toLowerCase())) {
