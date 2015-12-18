@@ -1,14 +1,5 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.GridBagConstraints;
-import java.text.MessageFormat;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
@@ -25,16 +16,15 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeUnique;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.text.MessageFormat;
 
 public class ThemeGuideFactory {
 
@@ -92,27 +82,27 @@ public class ThemeGuideFactory {
 					}
 					container.getComboBoxThemeLayer().setSelectedItem(caption);
 				}
-//				if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-//					((IFormMap) Application.getActiveApplication().getActiveForm()).addActiveLayersChangedListener(new ActiveLayersChangedListener() {
-//						@Override
-//						public void acitiveLayersChanged(ActiveLayersChangedEvent e) {
-//							if (null == e.getNewActiveLayers()) {
-//								for (int i = container.getComponents().length - 1; i >= 0; i--) {
-//									if (container.getComponent(i) instanceof JPanel) {
-//										container.remove(container.getComponent(i));
-//									}
-//								}
-//								container.add(
-//										container.getPanelThemeInfo(),
-//										new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
-//												.setIpad(0, 0)
-//												.setFill(GridBagConstraints.BOTH));
-//								container.getComboBoxThemeLayer().removeAllItems();
-//								container.repaint();
-//							}
-//						}
-//					});
-//				}
+				if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+					((IFormMap) Application.getActiveApplication().getActiveForm()).addActiveLayersChangedListener(new ActiveLayersChangedListener() {
+						@Override
+						public void acitiveLayersChanged(ActiveLayersChangedEvent e) {
+							if (null == e.getOldActiveLayers()) {
+								for (int i = container.getComponents().length - 1; i >= 0; i--) {
+									if (container.getComponent(i) instanceof JPanel) {
+										container.remove(container.getComponent(i));
+									}
+								}
+								container.add(
+										container.getPanelThemeInfo(),
+										new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
+												.setIpad(0, 0)
+												.setFill(GridBagConstraints.BOTH));
+								container.getComboBoxThemeLayer().removeAllItems();
+								container.repaint();
+							}
+						}
+					});
+				}
 			}
 
 		} catch (ClassNotFoundException e) {
