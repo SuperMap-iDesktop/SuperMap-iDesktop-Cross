@@ -145,7 +145,7 @@ import java.util.List;
 public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -522,7 +522,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取工作空间节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getWorkspaceNode() {
@@ -531,7 +531,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取数据源集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getDatasourcesNode() {
@@ -540,7 +540,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取地图集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getMapsNode() {
@@ -549,7 +549,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取场景集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getScenesNode() {
@@ -558,7 +558,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 获取资源集合节点
-	 * 
+	 *
 	 * @return
 	 */
 	public DefaultMutableTreeNode getResourcesNode() {
@@ -580,7 +580,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 刷新指定节点
-	 * 
+	 *
 	 * @param node 指定节点
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
@@ -815,7 +815,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * This method buildWorkspaceTree build workspace tree
-	 * 
+	 *
 	 */
 	private void buildWorkspaceNode(Workspace workspace) {
 		datasources = workspace.getDatasources();
@@ -1028,7 +1028,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 添加数据源事件
 	 */
-	public void addDatasourceListener() {
+	private void addDatasourceListener() {
 
 		datasources.addAliasModifiedListener(datasourceAliasModifiedListener);
 
@@ -1048,7 +1048,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 删除数据源及数据集事件事件
 	 */
-	public void removeDatasourceListener() {
+	private void removeDatasourceListener() {
 		datasources.removeAliasModifiedListener(datasourceAliasModifiedListener);
 
 		datasources.removeClosedListener(datasourceClosedListener);
@@ -1068,7 +1068,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 添加数据集事件事件
 	 */
-	public void addDatasetListener(Datasets datasets) {
+	private void addDatasetListener(Datasets datasets) {
 		Datasets tempDatasets = datasets;
 		/**
 		 * 添加数据集创建事件
@@ -1105,7 +1105,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 删除数据集事件事件
 	 */
-	public void removeDatasetListener(Datasets datasets) {
+	private void removeDatasetListener(Datasets datasets) {
 		Datasets tempDatasets = datasets;
 		/**
 		 * 删除数据集创建事件
@@ -1186,7 +1186,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 添加地图事件
 	 */
-	public void addMapListener() {
+	private void addMapListener() {
 
 		maps.addAddedListener(mapAddedListener);
 
@@ -1201,7 +1201,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 删除地图事件
 	 */
-	public void removeMapListener() {
+	private void removeMapListener() {
 
 		maps.removeAddedListener(mapAddedListener);
 
@@ -1216,7 +1216,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 添加布局事件
 	 */
-	public void addLayoutsListener() {
+	private void addLayoutsListener() {
 
 		layouts.addAddedListener(layoutsAddedListener);
 
@@ -1230,7 +1230,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 删除布局事件
 	 */
-	public void removeLayoutsListener() {
+	private void removeLayoutsListener() {
 
 		layouts.removeAddedListener(layoutsAddedListener);
 
@@ -1244,7 +1244,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 添加场景事件
 	 */
-	public void addScenesListener() {
+	private void addScenesListener() {
 
 		scenes.addAddedListener(sceneAddedListener);
 
@@ -1258,7 +1258,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 删除场景事件
 	 */
-	public void removeScenesListener() {
+	private void removeScenesListener() {
 
 		scenes.removeAddedListener(sceneAddedListener);
 
@@ -1305,7 +1305,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 添加数据集
-	 * 
+	 *
 	 * @param dataset
 	 * @param datasourceNode
 	 */
@@ -2134,7 +2134,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-	 * 
+	 *
 	 * @author xie
 	 */
 	private class WorkspaceTreeDropTargetAdapter extends DropTargetAdapter {
@@ -2223,7 +2223,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 得到文件类型
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -2240,7 +2240,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		return flag;
 	}
 
-	
+
 	public DropTarget getWorkspaceDropTarget() {
 		return workspaceDropTarget;
 	}

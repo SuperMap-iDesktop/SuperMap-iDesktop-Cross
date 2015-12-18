@@ -1,5 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CancellationException;
+
+import javax.swing.JOptionPane;
+
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -10,19 +17,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.CharsetUtilties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-
-import javax.swing.*;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.CancellationException;
 
 public class DatasetCopyCallable extends UpdateProgressCallable {
 	private static final int COLUMN_INDEX_Dataset = 0;
@@ -63,86 +64,61 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		List<Object> contents = tableModel.getContents();
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 
-		final WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-		Dataset selectDataset = null;
-		final List<Datasource> dataSources = new ArrayList<>();
-		try {
-			for (int i = 0; i < count; i++) {
-				@SuppressWarnings("unchecked")
-				Vector<Object> vector = (Vector<Object>) contents.get(i);
+		for (int i = 0; i < count; i++) {
+			@SuppressWarnings("unchecked")
+			Vector<Object> vector = (Vector<Object>) contents.get(i);
 
-				String currentDatasourceStr = vector.get(COLUMN_INDEX_CurrentDatasource).toString();
-				String datasetStr = vector.get(COLUMN_INDEX_Dataset).toString();
-				String targetDatasourceStr = vector.get(COLUMN_INDEX_TargetDatasource).toString();
-				String targetDatasetName = vector.get(COLUMN_INDEX_TargetDataset).toString();
-				String encodingType = vector.get(COLUMN_INDEX_EncodeType).toString();
-				String charset = vector.get(COLUMN_INDEX_Charset).toString();
-				Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
-				Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
-				Datasource targetDatasource = workspace.getDatasources().get(targetDatasourceStr);
-				Dataset resultDataset = null;
-				if (StringUtilties.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
-						|| !targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
-					targetDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(targetDatasetName);
-				}
-
-				PercentListener percentListener = null;
-
-				if (!targetDatasource.isReadOnly()) {
-					if (!dataSources.contains(targetDatasource)) {
-						workspaceTree.removeDatasetListener(targetDatasource.getDatasets());
-						dataSources.add(targetDatasource);
-					}
-					percentListener = new PercentListener(i, count, targetDatasetName);
-					targetDatasource.addSteppedListener(percentListener);
-					if (null != CharsetUtilties.valueOf(charset)) {
-						resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType),
-								CharsetUtilties.valueOf(charset));
-					} else {
-						resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType));
-					}
-
-				} else {
-					String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), targetDatasourceStr);
-					Application.getActiveApplication().getOutput().output(info);
-				}
-				if (null != resultDataset) {
-					selectDataset = resultDataset;
-					String copySuccess = MessageFormat.format(ControlsProperties.getString("String_CopyDataset_Success"), currentDatasourceStr, datasetStr,
-							targetDatasourceStr, targetDatasetName);
-					Application.getActiveApplication().getOutput().output(copySuccess);
-				} else {
-					String copyFailed = MessageFormat.format(ControlsProperties.getString("String_CopyDataset_Failed"), currentDatasourceStr, datasetStr,
-							targetDatasourceStr);
-					Application.getActiveApplication().getOutput().output(copyFailed);
-				}
-
-				if (percentListener != null && percentListener.isCancel()) {
-					break;
-				}
+			String currentDatasourceStr = vector.get(COLUMN_INDEX_CurrentDatasource).toString();
+			String datasetStr = vector.get(COLUMN_INDEX_Dataset).toString();
+			String targetDatasourceStr = vector.get(COLUMN_INDEX_TargetDatasource).toString();
+			String targetDatasetName = vector.get(COLUMN_INDEX_TargetDataset).toString();
+			String encodingType = vector.get(COLUMN_INDEX_EncodeType).toString();
+			String charset = vector.get(COLUMN_INDEX_Charset).toString();
+			Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
+			Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
+			Datasource targetDatasource = workspace.getDatasources().get(targetDatasourceStr);
+			Dataset resultDataset = null;
+			if (StringUtilties.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
+					|| !targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
+				targetDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(targetDatasetName);
 			}
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			final Dataset finalSelectDataset = selectDataset;
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < dataSources.size(); i++) {
-						UICommonToolkit.refreshSelectedDatasourceNode(dataSources.get(i).getAlias());
-					}
-					UICommonToolkit.refreshSelectedDatasetNode(finalSelectDataset);
+
+			PercentListener percentListener = null;
+
+			if (!targetDatasource.isReadOnly()) {
+				percentListener = new PercentListener(i, count, targetDatasetName);
+				targetDatasource.addSteppedListener(percentListener);
+				if (null != CharsetUtilties.valueOf(charset)) {
+					resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType),
+							CharsetUtilties.valueOf(charset));
+				} else {
+					resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType));
 				}
-			});
+			} else {
+				String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), targetDatasourceStr);
+				Application.getActiveApplication().getOutput().output(info);
+			}
+			if (null != resultDataset) {
+
+				String copySuccess = MessageFormat.format(ControlsProperties.getString("String_CopyDataset_Success"), currentDatasourceStr, datasetStr,
+						targetDatasourceStr, targetDatasetName);
+				Application.getActiveApplication().getOutput().output(copySuccess);
+			} else {
+				String copyFailed = MessageFormat.format(ControlsProperties.getString("String_CopyDataset_Failed"), currentDatasourceStr, datasetStr,
+						targetDatasourceStr);
+				Application.getActiveApplication().getOutput().output(copyFailed);
+			}
+
+			if (percentListener != null && percentListener.isCancel()) {
+				break;
+			}
 		}
 	}
 
-	private void copyDatasets(final Datasource datasource) {
-		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-		Dataset selectDataset = null;
+	private void copyDatasets(Datasource datasource) {
 		try {
-			final String targetDatasourceStr = datasource.getAlias();
-			final Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+			String targetDatasourceStr = datasource.getAlias();
+			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 			Dataset resultDataset = null;
 			if (datasource.isReadOnly()) {
 				// 只读数据源不能复制
@@ -168,30 +144,20 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				// 复制多个数据集
 				if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
 						ControlsProperties.getString("String_CopyDataset_Makesure2"), String.valueOf(datasets.length), targetDatasourceStr))) {
-
-					workspaceTree.removeDatasetListener(datasource.getDatasets());
 					for (int i = 0; i < datasets.length; i++) {
 						PercentListener percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
 						datasource.addSteppedListener(percentListener);
-						selectDataset = copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
-						if (percentListener.isCancel()) {
+						copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
+						if (percentListener != null && percentListener.isCancel()) {
 							break;
 						}
 					}
 				}
+
 			}
+
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			final Dataset finalSelectDataset = selectDataset;
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-					UICommonToolkit.refreshSelectedDatasetNode(finalSelectDataset);
-				}
-			});
-
 		}
 	}
 
