@@ -431,6 +431,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 		private ArrayList<FieldData> fieldInfos = new ArrayList<FieldData>();
 		private ArrayList<Integer> uneditableRows = new ArrayList<Integer>(); // 从 DatasetVector 中取出来的 FieldInfo 不可编辑（Caption 除外）
+		private ArrayList<Integer> captionModifiedRows = new ArrayList<>(); // 主动修改过 caption 的行。没有主动修改过的 caption 随 name 的改变而改变
 
 		public RecordsetPropertyTableModel() {
 			// 默认实现
@@ -440,6 +441,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		public void intializeRows(FieldInfos fieldInfos) {
 			this.fieldInfos.clear();
 			this.uneditableRows.clear();
+			this.captionModifiedRows.clear();
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				this.fieldInfos.add(new FieldData(fieldInfos.get(i)));
 				if (fieldInfos.get(i).isSystemField()) {
@@ -486,8 +488,10 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		/**
 		 * Returns true regardless of parameter values.
 		 *
-		 * @param row the row whose value is to be queried
-		 * @param column the column whose value is to be queried
+		 * @param row
+		 *            the row whose value is to be queried
+		 * @param column
+		 *            the column whose value is to be queried
 		 * @return true
 		 * @see #setValueAt
 		 */
@@ -570,9 +574,23 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				if (columnIndex == INDEX) {
 					return;
 				} else if (columnIndex == FIELD_NAME) {
-					this.fieldInfos.get(rowIndex).setName(getAvailableFieldName(String.valueOf(aValue)));
+					String newName = getAvailableFieldName(String.valueOf(aValue));
+					this.fieldInfos.get(rowIndex).setName(newName);
+
+					// 如果 caption 的主动修改记录列表不包含当前修改记录，那么联动更新 caption
+					if (!this.captionModifiedRows.contains(rowIndex)) {
+						this.fieldInfos.get(rowIndex).setCaption(newName);
+					}
 				} else if (columnIndex == FIELD_CAPTION) {
-					this.fieldInfos.get(rowIndex).setCaption(String.valueOf(aValue));
+					String oldCaption = this.fieldInfos.get(rowIndex).getCaption();
+					if (!oldCaption.equals(String.valueOf(aValue))) {
+						this.fieldInfos.get(rowIndex).setCaption(String.valueOf(aValue));
+
+						// 添加到主动修改列表
+						if (!this.captionModifiedRows.contains(rowIndex)) {
+							this.captionModifiedRows.add(rowIndex);
+						}
+					}
 				} else if (columnIndex == FIELD_TYPE) {
 					this.fieldInfos.get(rowIndex).setType(FieldTypeUtilties.getFieldType((String) aValue));
 					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilties.getFieldTypeMaxLength(FieldTypeUtilties.getFieldType((String) aValue)));
