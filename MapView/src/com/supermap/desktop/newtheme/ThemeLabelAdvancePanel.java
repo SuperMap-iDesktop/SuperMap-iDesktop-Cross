@@ -1,40 +1,19 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import com.supermap.data.DatasetType;
 import com.supermap.data.Size2D;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.AlongLineDirection;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.OverLengthLabelMode;
-import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.*;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
 
 public class ThemeLabelAdvancePanel extends JPanel {
 
@@ -277,19 +256,43 @@ public class ThemeLabelAdvancePanel extends JPanel {
 		initTextFieldMaxFontHeight();
 		initTextFieldMinFontHeight();
 		//@formatter:off
-		panelFontHeight.setLayout(new GridBagLayout());
-		this.labelMaxFontHeightUnity.setPreferredSize(unityDimension);
-		this.labelMinFontHeightUnity.setPreferredSize(unityDimension);
-		this.labelMaxFontHeight.setPreferredSize(labelDimension);
-		this.labelMinFontHeight.setPreferredSize(labelDimension);
-		this.textFieldMaxFontHeight.setPreferredSize(new Dimension(600,20));
-		this.textFieldMinFontHeight.setPreferredSize(new Dimension(600,20));
-		panelFontHeight.add(this.labelMaxFontHeight,     new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontHeight.add(this.textFieldMaxFontHeight, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontHeight.add(this.labelMaxFontHeightUnity,new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelFontHeight.add(this.labelMinFontHeight,     new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontHeight.add(this.textFieldMinFontHeight, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontHeight.add(this.labelMinFontHeightUnity,new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(2,10,2,10));
+		GroupLayout gl_panelFontHeight = new GroupLayout(panelFontHeight);
+		gl_panelFontHeight.setHorizontalGroup(gl_panelFontHeight.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(gl_panelFontHeight.createSequentialGroup()
+						.addComponent(this.labelMaxFontHeight, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelFontHeight.createSequentialGroup()
+							.addComponent(this.textFieldMaxFontHeight, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelMaxFontHeightUnity, 0, 30, 30)
+						)
+				)
+				.addGroup(gl_panelFontHeight.createSequentialGroup()
+						.addComponent(this.labelMinFontHeight, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelFontHeight.createSequentialGroup()
+							.addComponent(this.textFieldMinFontHeight, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelMinFontHeightUnity, 0, 30, 30)
+						)
+				));
+		gl_panelFontHeight.setVerticalGroup(gl_panelFontHeight.createSequentialGroup()
+				.addGap(5)
+				.addGroup(gl_panelFontHeight.createParallelGroup()
+						.addComponent(this.labelMaxFontHeight)
+						.addGroup(gl_panelFontHeight.createParallelGroup()
+							.addComponent(this.textFieldMaxFontHeight)
+							.addComponent(this.labelMaxFontHeightUnity)
+						))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addGroup(gl_panelFontHeight.createParallelGroup()
+						.addComponent(this.labelMinFontHeight)
+						.addGroup(gl_panelFontHeight.createParallelGroup()
+							.addComponent(this.textFieldMinFontHeight)
+							.addComponent(this.labelMinFontHeightUnity)
+						))
+				.addGap(5));
+		panelFontHeight.setLayout(gl_panelFontHeight);
 		//@formatter:on
 	}
 
@@ -322,46 +325,90 @@ public class ThemeLabelAdvancePanel extends JPanel {
 	 */
 	private void initPanelTextExtentInflation(JPanel panelTextExtentInflation) {
 		//@formatter:off
-		panelTextExtentInflation.setLayout(new GridBagLayout());
-		this.labelHorizontalUnity.setPreferredSize(unityDimension);
-		this.labelVerticalUnity.setPreferredSize(unityDimension);
-		this.labelVertical.setPreferredSize(labelDimension);
-		this.labelHorizontal.setPreferredSize(labelDimension);
-		this.textFieldHorizontal.setPreferredSize(textFieldDimension);
-		this.textFieldVertical.setPreferredSize(textFieldDimension);
-		panelTextExtentInflation.add(this.labelHorizontal,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		this.textFieldHorizontal.setText("0");
-		panelTextExtentInflation.add(this.textFieldHorizontal,  new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextExtentInflation.add(this.labelHorizontalUnity, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelTextExtentInflation.add(this.labelVertical,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		this.textFieldVertical.setText("0");
-		panelTextExtentInflation.add(this.textFieldVertical,    new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextExtentInflation.add(this.labelVerticalUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(2,10,2,10));
+		GroupLayout gl_panelTextExtent = new GroupLayout(panelTextExtentInflation);
+		gl_panelTextExtent.setHorizontalGroup(gl_panelTextExtent.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(gl_panelTextExtent.createSequentialGroup()
+						.addComponent(this.labelHorizontal, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelTextExtent.createSequentialGroup()
+							.addComponent(this.textFieldHorizontal, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelHorizontalUnity, 0, 30, 30)
+						)
+				)
+				.addGroup(gl_panelTextExtent.createSequentialGroup()
+						.addComponent(this.labelVertical, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelTextExtent.createSequentialGroup()
+							.addComponent(this.textFieldVertical, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelVerticalUnity, 0, 30, 30)
+						)
+				));
+		gl_panelTextExtent.setVerticalGroup(gl_panelTextExtent.createSequentialGroup()
+				.addGap(5)
+				.addGroup(gl_panelTextExtent.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelHorizontal)
+						.addGroup(gl_panelTextExtent.createParallelGroup()
+							.addComponent(this.textFieldHorizontal)
+							.addComponent(this.labelHorizontalUnity)
+						))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addGroup(gl_panelTextExtent.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelVertical)
+						.addGroup(gl_panelTextExtent.createParallelGroup()
+							.addComponent(this.textFieldVertical)
+							.addComponent(this.labelVerticalUnity)
+						))
+				.addGap(5));
+		panelTextExtentInflation.setLayout(gl_panelTextExtent);
 		//@formatter:on
 	}
 
 	/**
 	 * 文本宽度限制界面布局
-	 * 
-	 * @param panelFontWide
+	 *
+	 * @param panelFontWidth
 	 */
-	private void initPanelFontWidth(JPanel panelFontWide) {
+	private void initPanelFontWidth(JPanel panelFontWidth) {
 		//@formatter:off
-		panelFontWide.setLayout(new GridBagLayout());
-		this.labelMaxFontWidthUnity.setPreferredSize(unityDimension);
-		this.labelMinFontWidthUnity.setPreferredSize(unityDimension);
-		this.labelMaxFontWidth.setPreferredSize(labelDimension);
-		this.labelMinFontWidth.setPreferredSize(labelDimension);
-		this.textFieldMaxFontWidth.setPreferredSize(new Dimension(600,20));
-		this.textFieldMinFontWidth.setPreferredSize(new Dimension(600,20));
-		panelFontWide.add(this.labelMaxFontWidth,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		this.textFieldMaxFontWidth.setText("0");
-		panelFontWide.add(this.textFieldMaxFontWidth,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWide.add(this.labelMaxFontWidthUnity, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelFontWide.add(this.labelMinFontWidth,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		this.textFieldMinFontWidth.setText("0");
-		panelFontWide.add(this.textFieldMinFontWidth,  new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWide.add(this.labelMinFontWidthUnity, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(2,10,2,10));
+		GroupLayout gl_panelFontWidth = new GroupLayout(panelFontWidth);
+		gl_panelFontWidth.setHorizontalGroup(gl_panelFontWidth.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(gl_panelFontWidth.createSequentialGroup()
+						.addComponent(this.labelMaxFontWidth, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelFontWidth.createSequentialGroup()
+							.addComponent(this.textFieldMaxFontWidth, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelMaxFontWidthUnity, 0, 30, 30)
+						)
+				)
+				.addGroup(gl_panelFontWidth.createSequentialGroup()
+						.addComponent(this.labelMinFontWidth, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(gl_panelFontWidth.createSequentialGroup()
+							.addComponent(this.textFieldMinFontWidth, 0, 74, Short.MAX_VALUE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(this.labelMinFontWidthUnity, 0, 30, 30)
+						)
+				));
+		gl_panelFontWidth.setVerticalGroup(gl_panelFontWidth.createSequentialGroup()
+				.addGap(5)
+				.addGroup(gl_panelFontWidth.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelMaxFontWidth)
+						.addGroup(gl_panelFontWidth.createParallelGroup()
+							.addComponent(this.textFieldMaxFontWidth)
+							.addComponent(this.labelMaxFontWidthUnity)
+						))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addGroup(gl_panelFontWidth.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelMinFontWidth)
+						.addGroup(gl_panelFontWidth.createParallelGroup()
+							.addComponent(this.textFieldMinFontWidth)
+							.addComponent(this.labelMinFontWidthUnity)
+						))
+				.addGap(5));
+		panelFontWidth.setLayout(gl_panelFontWidth);
 		//@formatter:on
 	}
 
@@ -394,27 +441,21 @@ public class ThemeLabelAdvancePanel extends JPanel {
 	private void initPanelRotateLabel(JPanel panelRotateLabel) {
 		//@formatter:off
 		panelRotateLabel.setLayout(new GridBagLayout());
-		this.checkBoxFixedFontAngl.setPreferredSize(labelDimension);
-		this.checkBoxRemoveRepeatLabel.setPreferredSize(labelDimension);
-		this.labelLineDirection.setPreferredSize(labelDimension);
-		this.labelFontSpace.setPreferredSize(labelDimension);
-		this.labelRepeatInterval.setPreferredSize(labelDimension);
-		this.checkBoxRepeatIntervalFixed.setPreferredSize(labelDimension);
 		this.checkBoxFixedFontAngl.setSelected(true);
 		this.textFieldRepeatInterval.setPreferredSize(textFieldDimension);
 		initComboBoxLineDirection();
-		panelRotateLabel.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.labelLineDirection,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.comboBoxLineDirection,      new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelFontSpace,             new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelRepeatInterval,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		this.textFieldRepeatInterval.setText("0");
-		panelRotateLabel.add(this.textFieldRepeatInterval,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelUnity,                 new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		this.labelUnity.setText(map.getCoordUnit().toString());
-		panelRotateLabel.add(this.checkBoxRepeatIntervalFixed,new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.labelLineDirection,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.comboBoxLineDirection,      new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelRotateLabel.add(this.labelFontSpace,             new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelRotateLabel.add(this.labelRepeatInterval,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.textFieldRepeatInterval,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelRotateLabel.add(this.labelUnity,                 new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(15, 0).setInsets(2,10,2,10));
+		panelRotateLabel.add(this.checkBoxRepeatIntervalFixed,new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10));
 		//@formatter:on
 	}
 
@@ -443,16 +484,28 @@ public class ThemeLabelAdvancePanel extends JPanel {
 	 */
 	private void initPanelTextFontSet(JPanel panelTextFontSet) {
 		//@formatter:off
-		panelTextFontSet.setLayout(new GridBagLayout());
-		this.labelOverLength.setPreferredSize(labelDimension);
-		this.labelFontCount.setPreferredSize(labelDimension);
-		this.comboBoxOverLength.setPreferredSize(textFieldDimension);
-		this.spinnerFontCount.setPreferredSize(textFieldDimension);
 		initComboBoxOverLength();
-		panelTextFontSet.add(this.labelOverLength,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelTextFontSet.add(this.comboBoxOverLength,   new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextFontSet.add(this.labelFontCount,       new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelTextFontSet.add(this.spinnerFontCount,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		GroupLayout gl_panelTextGroupLayout = new GroupLayout(panelTextFontSet);
+		gl_panelTextGroupLayout.setHorizontalGroup(gl_panelTextGroupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addGroup(gl_panelTextGroupLayout.createSequentialGroup()
+								.addComponent(this.labelOverLength, 0, 72, Short.MAX_VALUE)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(this.comboBoxOverLength, 0, 104, Short.MAX_VALUE))
+				.addGroup(gl_panelTextGroupLayout.createSequentialGroup()
+						.addComponent(this.labelFontCount, 0, 72, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(this.spinnerFontCount, 0, 104, Short.MAX_VALUE)));
+		gl_panelTextGroupLayout.setVerticalGroup(gl_panelTextGroupLayout.createSequentialGroup()
+				.addGap(5)
+				.addGroup(gl_panelTextGroupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelOverLength)
+						.addComponent(this.comboBoxOverLength,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addGroup(gl_panelTextGroupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.labelFontCount)
+						.addComponent(this.spinnerFontCount,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addGap(5));
+		panelTextFontSet.setLayout(gl_panelTextGroupLayout);
 		//@formatter:on
 	}
 
