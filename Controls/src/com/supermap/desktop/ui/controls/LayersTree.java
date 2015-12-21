@@ -751,7 +751,7 @@ public class LayersTree extends JTree {
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			Point clickPoint = dge.getDragOrigin();
 			TreePath path = getClosestPathForLocation(clickPoint.x, clickPoint.y);
-			if (null != path.getLastPathComponent()) {
+			if (path != null && null != path.getLastPathComponent()) {
 				draggedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 				draggedNodeIndex = ((DefaultMutableTreeNode) LayersTree.this.getModel().getRoot()).getIndex(draggedNode);
 				dropTargetNodeIndex = -1;
@@ -870,6 +870,9 @@ public class LayersTree extends JTree {
 			Graphics2D graphics2D = (Graphics2D) getGraphics();
 			Color color = graphics2D.getColor();
 			Rectangle bounds = getPathBounds(treePath);
+			if (bounds == null) {
+				bounds = new Rectangle(0, 0, 0, 0);
+			}
 			dropTargetNodeIndex = ((DefaultMutableTreeNode) getModel().getRoot()).getIndex(dropTargetNode);
 
 			// 被拖拽的节点索引大于目标节点索引，则表示向上拖拽，否则表示向下，在相应的位置画线

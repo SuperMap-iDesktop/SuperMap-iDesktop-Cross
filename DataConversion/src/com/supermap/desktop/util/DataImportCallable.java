@@ -81,7 +81,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 					break;
 				}
 			}
-
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
@@ -93,7 +92,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 						UICommonToolkit.refreshSelectedDatasourceNode(entry.getKey());
 					}
 				}
-
 			}
 		}
 		return true;
@@ -121,9 +119,8 @@ public class DataImportCallable extends UpdateProgressCallable {
 			try {
 				double count = fileInfos.size();
 				int totalPercent = (int) ((100 * this.i + arg0.getSubPercent()) / count);
-				updateProgressTotal(arg0.getSubPercent(), MessageFormat.format(
-						DataConversionProperties.getString("String_TotalTaskNumber"), String.valueOf(fileInfos.size()))
-						, totalPercent,
+				updateProgressTotal(arg0.getSubPercent(),
+						MessageFormat.format(DataConversionProperties.getString("String_TotalTaskNumber"), String.valueOf(fileInfos.size())), totalPercent,
 						MessageFormat.format(DataConversionProperties.getString("String_FileInport"), arg0.getCurrentTask().getSourceFilePath()));
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
@@ -179,8 +176,8 @@ public class DataImportCallable extends UpdateProgressCallable {
 				Application
 						.getActiveApplication()
 						.getOutput()
-						.output(MessageFormat.format(successImportInfo, sucessSetting.getSourceFilePath(), "->", targetDatasetName,
-								sucessSetting.getTargetDatasource().getAlias(), time));
+						.output(MessageFormat.format(successImportInfo, sucessSetting.getSourceFilePath(), "->", targetDatasetName, sucessSetting
+								.getTargetDatasource().getAlias(), time));
 			}
 
 		} else if (null != failImportSettings && 0 < failImportSettings.length) {

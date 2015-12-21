@@ -1,10 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetTopology;
 import com.supermap.data.DatasetType;
@@ -20,13 +15,14 @@ import com.supermap.data.Resources;
 import com.supermap.data.Size2D;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolMarker;
-import com.supermap.data.SymbolMarker3D;
 import com.supermap.data.SymbolMarkerLibrary;
 import com.supermap.data.Toolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeType;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * 图层节点装饰器
@@ -39,7 +35,12 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 	public void decorate(JLabel label, TreeNodeData data) {
 		if (data.getType().equals(NodeDataType.LAYER)) {
 			Layer layer = (Layer) data.getData();
-			label.setText(layer.getCaption());
+			try {
+				label.setText(layer.getCaption());
+			} catch (Exception e) {
+				// layer为空
+				return;
+			}
 			Dataset dataset = layer.getDataset();
 			if (dataset == null) {
 				ImageIcon icon = (ImageIcon) label.getIcon();

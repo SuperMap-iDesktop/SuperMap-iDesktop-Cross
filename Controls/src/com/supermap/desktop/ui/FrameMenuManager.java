@@ -1,18 +1,15 @@
 package com.supermap.desktop.ui;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-
-import javax.swing.JMenuBar;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.Interface.IFrameMenuManager;
 import com.supermap.desktop.Interface.IMenu;
+import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmMenu;
-import com.supermap.desktop.ui.XMLMenu;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
 
 public class FrameMenuManager implements IFrameMenuManager {
 
@@ -124,14 +121,16 @@ public class FrameMenuManager implements IFrameMenuManager {
 
 	public boolean loadChildMenu(WindowType windowType) {
 		boolean result = false;
-		try {
+		try {			
 			ArrayList<IMenu> childMenus = this.childFrameMenus.get(windowType);
 			if (childMenus != null) {
 				for (int i = 0; i < childMenus.size(); i++) {
 					SmMenu menu = (SmMenu) childMenus.get(i);
 					// modify by huchenpu 20151215
 					// 添加的子菜单放到帮助的前面
-					this.frameMenuBar.add(menu, this.frameMenuBar.getMenuCount() - 1);
+					if (this.frameMenuBar.getComponentIndex(menu) == -1) {
+						this.frameMenuBar.add(menu, this.frameMenuBar.getMenuCount() - 1);
+					}
 				}
 			}
 		} catch (Exception ex) {

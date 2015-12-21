@@ -379,7 +379,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				if (isDatasourcesNodeVisible) {
 					treeModelTemp.insertNodeInto(treeNodeDatasources, treeNodeWorkspace, 0);
 
-					for (; datasourcesTreePath != null && datasourcesTreePath.hasMoreElements(); ) {
+					for (; datasourcesTreePath != null && datasourcesTreePath.hasMoreElements();) {
 						this.setExpandedState(datasourcesTreePath.nextElement(), true);
 					}
 				} else {
@@ -411,7 +411,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeMaps, treeNodeWorkspace, 1);
 					}
 
-					for (; mapsTreePath != null && mapsTreePath.hasMoreElements(); ) {
+					for (; mapsTreePath != null && mapsTreePath.hasMoreElements();) {
 						this.setExpandedState(mapsTreePath.nextElement(), true);
 					}
 				} else {
@@ -445,7 +445,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeLayouts, treeNodeWorkspace, 2);
 					}
 
-					for (; layoutsTreePath != null && layoutsTreePath.hasMoreElements(); ) {
+					for (; layoutsTreePath != null && layoutsTreePath.hasMoreElements();) {
 						this.setExpandedState(layoutsTreePath.nextElement(), true);
 					}
 				} else {
@@ -479,7 +479,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeScenes, treeNodeWorkspace, treeNodeWorkspace.getChildCount() - 1);
 					}
 
-					for (; scenesTreePath != null && scenesTreePath.hasMoreElements(); ) {
+					for (; scenesTreePath != null && scenesTreePath.hasMoreElements();) {
 						this.setExpandedState(scenesTreePath.nextElement(), true);
 					}
 				} else {
@@ -507,7 +507,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				if (isResourcesNodeVisible) {
 					treeModelTemp.insertNodeInto(treeNodeResources, treeNodeWorkspace, treeNodeWorkspace.getChildCount());
 
-					for (; resourcesTreePath != null && resourcesTreePath.hasMoreElements(); ) {
+					for (; resourcesTreePath != null && resourcesTreePath.hasMoreElements();) {
 						this.setExpandedState(resourcesTreePath.nextElement(), true);
 					}
 
@@ -580,13 +580,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	/**
-	 * 刷新指定节点 <<<<<<< HEAD
-	 * 
-	 * @param node
-	 *            指定节点 =======
+	 * 刷新指定节点
 	 *
 	 * @param node
-	 *            指定节点 >>>>>>> branch 'master' of https://git.oschina.net/supermap/SuperMap-iDesktop-Cross.git
+	 *            指定节点
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -653,7 +650,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addDatasetListener(datasets);
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 		} catch (Exception e) {
@@ -703,7 +700,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addDatasourceListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -733,7 +730,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addMapListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -763,7 +760,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addLayoutsListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 		} catch (Exception e) {
@@ -792,7 +789,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addScenesListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -1689,7 +1686,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 定位到指定节点并选中
-	 * 
+	 *
 	 * @param node
 	 */
 	private void locateNode(DefaultMutableTreeNode node) {
@@ -1733,6 +1730,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) datasourceNode.getChildAt(deleteingDatasetIndex);
 					treeModelTemp.removeNodeFromParent(datasetNode);
 				}
+				locateNode(datasourceNode);
 			}
 		}
 	}
@@ -2114,21 +2112,21 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 				// Make sure we aren't already scrolled all the way down
 				if (tree.getHeight() - treeVisibleRectangle.y != vp.getHeight()) {
-				/*
-                 * Get Y coordinate for scrolling down
-                 */
-					if (vp.getHeight() - vpMousePosition.y < 15 && vp.getHeight() - vpMousePosition.y > 0) {
-						newY = treeVisibleRectangle.y + 10;
+					/*
+					 * Get Y coordinate for scrolling down
+					 */
+					if (vp.getHeight() - vpMousePosition.y < 30 && vp.getHeight() - vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y + (30 + vpMousePosition.y - vp.getHeight()) * 2;
 					}
 				}
 
 				// Make sure we aren't already scrolled all the way up
 				if (newY == null && treeVisibleRectangle.y != 0) {
-                /*
-                 * Get Y coordinate for scrolling up
-                 */
-					if (15 > vpMousePosition.y && vpMousePosition.y > 0) {
-						newY = treeVisibleRectangle.y - 10;
+					/*
+					 * Get Y coordinate for scrolling up
+					 */
+					if (30 > vpMousePosition.y && vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y - (30 - vpMousePosition.y) * 2;
 					}
 				}
 
@@ -2153,8 +2151,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			this.treeNode = treeNode;
 		}
 
-		DataFlavor[] flavors = {DataFlavor.javaFileListFlavor};
-		DataFlavor[] flavosString = {DataFlavor.stringFlavor};
+		DataFlavor[] flavors = { DataFlavor.javaFileListFlavor };
+		DataFlavor[] flavosString = { DataFlavor.stringFlavor };
 
 		@Override
 		public DataFlavor[] getTransferDataFlavors() {
@@ -2263,7 +2261,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 											boolean isDoWork = false;
 											if (datasource.isReadOnly()) {
 												// 只读数据源不能复制
-												String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), datasource.getAlias());
+												String info = MessageFormat.format(
+														ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), datasource.getAlias());
 												Application.getActiveApplication().getOutput().output(info);
 												return;
 											}
@@ -2273,12 +2272,14 @@ public class WorkspaceTree extends JTree implements IDisposable {
 												Dataset targetDataset = datasets[0];
 												// 提示是否进行复制操作
 												if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
-														ControlsProperties.getString("String_CopyDataset_Makesure"), targetDataset.getName(), datasource.getAlias()))) {
+														ControlsProperties.getString("String_CopyDataset_Makesure"), targetDataset.getName(),
+														datasource.getAlias()))) {
 													isDoWork = true;
 												}
 											} else {
 												if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
-														ControlsProperties.getString("String_CopyDataset_Makesure2"), String.valueOf(datasets.length), datasource.getAlias()))) {
+														ControlsProperties.getString("String_CopyDataset_Makesure2"), String.valueOf(datasets.length),
+														datasource.getAlias()))) {
 													isDoWork = true;
 												}
 											}

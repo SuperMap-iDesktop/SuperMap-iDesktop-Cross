@@ -1,36 +1,11 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.text.NumberFormatter;
 import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Enum;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
-import com.supermap.data.Enum;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -45,16 +20,30 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
 /**
  * FieldInfo 添加到 DatasetVector 之后，就只有 Caption 可以进行修改。
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int COLUMN_INDEX_WIDTH = 80;
@@ -70,7 +59,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	private transient FieldInfos fieldInfos;
 	private boolean showWarning = true;
 
-	private ArrayList<ModifiedData> modifields = new ArrayList<ModifiedData>();
+	private ArrayList<ModifiedData> modifieds = new ArrayList<ModifiedData>();
 	private boolean isCellValueChange = false;
 
 	private transient ActionListener actionListener = new ActionListener() {
@@ -151,7 +140,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 						.addGap(10, 10, Short.MAX_VALUE)
 						.addComponent(this.buttonReset)
 						.addComponent(this.buttonApply)));
-		
+
 		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
@@ -250,15 +239,15 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		this.buttonAdd.setEnabled(!this.datasetVector.isReadOnly());
 		this.buttonDelete.setEnabled(!this.datasetVector.isReadOnly() && this.isCellValueChange);
 		this.checkBoxShowWarning.setEnabled(!this.datasetVector.isReadOnly());
-		this.buttonReset.setEnabled(!this.modifields.isEmpty() || this.isCellValueChange);
-		this.buttonApply.setEnabled(!this.modifields.isEmpty() || this.isCellValueChange);
+		this.buttonReset.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
+		this.buttonApply.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
 	}
 
 	private void buttonAddClicked() {
 		RecordsetPropertyTableModel tableModel = (RecordsetPropertyTableModel) this.tableRecordset.getModel();
 		FieldData fieldData = tableModel.addRow();
 		if (fieldData != null) {
-			this.modifields.add(new ModifiedData(fieldData, ModifiedData.ADD));
+			this.modifieds.add(new ModifiedData(fieldData, ModifiedData.ADD));
 		}
 		setComponentsEnabled();
 	}
@@ -294,15 +283,43 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			FieldData fieldInfo = tableModel.getRowData(row);
 			if (fieldInfo != null && !fieldInfo.isSystemField()) {
 				tableModel.removeRow(row);
-				this.modifields.add(new ModifiedData(fieldInfo, ModifiedData.DELETE));
+				addDeletedFieldModifiedData(fieldInfo);
 			}
+		}
+	}
+
+	// @formatter:off
+	/**
+	 * 添加删除行的操作记录，如果删除的是还未应用的添加行，那么直接移除这一条添加行的操作记录即可。
+	 * 如果不做这样的处理，那么在应用的时候就会先添加到数据集再从数据集里删除，而由于这条记录在 TableModel
+	 * 里的集合中已经不存在了，那么在 ButtonApply 的时候，就不会应用这条记录的（将 name、caption 等写入到真正的 FieldInfo 中）基本信息。
+	 * 所以添加的时候，字段名是 untitled，删除的时候取的封装的 FieldData 的 name，也就是 “NewField” 等，就会提示删除失败。
+	 *
+	 * @param deletedData
+	 */
+	// @formatter:on
+	private void addDeletedFieldModifiedData(FieldData deletedData) {
+		boolean isAdded = false; // 即将要删除的数据是否之前新增的行
+
+		for (int i = this.modifieds.size() - 1; i >= 0; i--) {
+			ModifiedData data = this.modifieds.get(i);
+
+			if (data.getModifiedType() == ModifiedData.ADD && data.getFieldData() == deletedData) {
+				this.modifieds.remove(i);
+				isAdded = true;
+				break;
+			}
+		}
+
+		if (!isAdded) {
+			this.modifieds.add(new ModifiedData(deletedData, ModifiedData.DELETE));
 		}
 	}
 
 	private void buttonResetClicked() {
 		try {
 
-			this.modifields.clear();
+			this.modifieds.clear();
 			fillComponents();
 			this.isCellValueChange = false;
 			setComponentsEnabled();
@@ -323,8 +340,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			}
 
 			// 应用字段的添加删除
-			for (int i = 0; i < this.modifields.size(); i++) {
-				ModifiedData modifiedData = this.modifields.get(i);
+			for (int i = 0; i < this.modifieds.size(); i++) {
+				ModifiedData modifiedData = this.modifieds.get(i);
 				if (modifiedData.getModifiedType() == ModifiedData.ADD) {
 					int result = this.datasetVector.getFieldInfos().add(modifiedData.getFieldData().getFieldInfo());
 
@@ -348,7 +365,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				}
 			}
 
-			// 先移除所有行，再重新添加。如果不移出直接更换 Model，操作过程中将无法获取到正确的的 SelectedRow。
+			// 先移除所有行，再重新添加。如果不移除直接更换 Model，操作过程中将无法获取到正确的的 SelectedRow。
 			tableModel.removeAllRows();
 			tableModel.intializeRows(this.datasetVector.getFieldInfos());
 
@@ -365,7 +382,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			this.isCellValueChange = false;
-			this.modifields.clear();
+			this.modifieds.clear();
 			setComponentsEnabled();
 		}
 	}
@@ -416,17 +433,17 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	private class RecordsetPropertyTableModel extends AbstractTableModel {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private static final String DEFUALT_FIELDNAME = "NewField";
+		private static final String DEFAULT_FIELDNAME = "NewField";
 		private static final int INDEX = 0;
 		private static final int FIELD_NAME = 1;
 		private static final int FIELD_CAPTION = 2;
 		private static final int FIELD_TYPE = 3;
 		private static final int MAX_LENGTH = 4;
-		private static final int DEFUALT_VALUE = 5;
+		private static final int DEFAULT_VALUE = 5;
 		private static final int IS_REQUIRED = 6;
 
 		private ArrayList<FieldData> fieldInfos = new ArrayList<FieldData>();
@@ -470,7 +487,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 		public FieldData addRow() {
 			FieldData fieldInfo = new FieldData();
-			fieldInfo.setName(getAvailableFieldName(DEFUALT_FIELDNAME));
+			fieldInfo.setName(getAvailableFieldName(DEFAULT_FIELDNAME));
 			fieldInfo.setCaption(fieldInfo.getName());
 
 			if (this.fieldInfos.add(fieldInfo)) {
@@ -509,7 +526,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return false;
 			}
 
-			if (column == FIELD_NAME || column == IS_REQUIRED || column == FIELD_TYPE || column == DEFUALT_VALUE) {
+			if (column == FIELD_NAME || column == IS_REQUIRED || column == FIELD_TYPE || column == DEFAULT_VALUE) {
 				return true;
 			}
 
@@ -547,7 +564,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return FieldTypeUtilties.getFieldTypeName(fieldInfo.getType());
 			} else if (columnIndex == MAX_LENGTH) {
 				return fieldInfo.getMaxLength();
-			} else if (columnIndex == DEFUALT_VALUE) {
+			} else if (columnIndex == DEFAULT_VALUE) {
 				if (fieldInfo.getDefaultValue() == null) {
 					return CommonProperties.getString(CommonProperties.NULL);
 				} else {
@@ -566,7 +583,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return;
 			}
 
-			if (columnIndex != DEFUALT_VALUE && aValue == null) {
+			if (columnIndex != DEFAULT_VALUE && aValue == null) {
 				return;
 			}
 
@@ -580,6 +597,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					// 如果 caption 的主动修改记录列表不包含当前修改记录，那么联动更新 caption
 					if (!this.captionModifiedRows.contains(rowIndex)) {
 						this.fieldInfos.get(rowIndex).setCaption(newName);
+						fireTableCellUpdated(rowIndex, FIELD_CAPTION);
+						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, FIELD_CAPTION));
 					}
 				} else if (columnIndex == FIELD_CAPTION) {
 					String oldCaption = this.fieldInfos.get(rowIndex).getCaption();
@@ -597,7 +616,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					this.fireTableDataChanged();
 				} else if (columnIndex == MAX_LENGTH) {
 					this.fieldInfos.get(rowIndex).setMaxLength(Integer.valueOf(aValue.toString()));
-				} else if (columnIndex == DEFUALT_VALUE) {
+				} else if (columnIndex == DEFAULT_VALUE) {
 					FieldData fieldInfo = this.fieldInfos.get(rowIndex);
 					if (aValue == null) {
 						if (fieldInfo.isRequired()) {
@@ -615,9 +634,11 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					this.fieldInfos.get(rowIndex).setRequired(isRequired);
 					if (isRequired && StringUtilties.isNullOrEmpty(this.fieldInfos.get(rowIndex).getDefaultValue())) {
 						this.fieldInfos.get(rowIndex).setDefaultValue("0");
-						fireTableCellUpdated(rowIndex, DEFUALT_VALUE);
+						fireTableCellUpdated(rowIndex, DEFAULT_VALUE);
+						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, DEFAULT_VALUE));
 					}
 				}
+				fireTableCellUpdated(rowIndex, columnIndex);
 				fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, columnIndex));
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
@@ -636,7 +657,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return CommonProperties.getString(CommonProperties.FieldType);
 			} else if (column == MAX_LENGTH) {
 				return CommonProperties.getString(CommonProperties.Length);
-			} else if (column == DEFUALT_VALUE) {
+			} else if (column == DEFAULT_VALUE) {
 				return CommonProperties.getString(CommonProperties.DefaultValue);
 			} else if (column == IS_REQUIRED) {
 				return CommonProperties.getString(CommonProperties.IsRequired);
@@ -655,7 +676,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return FieldType.class;
 			} else if (columnIndex == MAX_LENGTH) {
 				return Integer.class;
-			} else if (columnIndex == DEFUALT_VALUE) {
+			} else if (columnIndex == DEFAULT_VALUE) {
 				return String.class;
 			} else if (columnIndex == IS_REQUIRED) {
 				return Boolean.class;
@@ -700,9 +721,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 	/**
 	 * 由于在操作过程中可以对每一个字段的各个属性进行更改，而使用 FieldInfo 将会直接写到字段里，从而不能重置撤销操作，并且还慢，因此本类用来封装没行绑定的字段信息。
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private class FieldData {
 		private boolean isSystemField = false;
@@ -770,7 +790,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		}
 
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 		public void setName(String name) {
