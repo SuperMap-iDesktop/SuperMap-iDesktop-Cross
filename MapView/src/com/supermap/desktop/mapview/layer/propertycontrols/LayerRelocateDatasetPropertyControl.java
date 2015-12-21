@@ -52,7 +52,11 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 	private DatasourceClosingListener datasourceClosingEvent = new DatasourceClosingListener(){
 		@Override
 		public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
-			if(getLayerPropertyModel().getDataset() != null && datasourceClosingEvent.getDatasource().equals(getLayerPropertyModel().getDataset().getDatasource())){
+			try {
+				if (getLayerPropertyModel().getDataset() != null && datasourceClosingEvent.getDatasource().equals(getLayerPropertyModel().getDataset().getDatasource())) {
+					getLayerPropertyModel().setDataset(null);
+				}
+			} catch (Exception e) {
 				getLayerPropertyModel().setDataset(null);
 			}
 		}
