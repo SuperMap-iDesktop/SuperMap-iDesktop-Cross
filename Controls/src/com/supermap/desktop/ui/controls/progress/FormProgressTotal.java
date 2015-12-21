@@ -97,8 +97,7 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 
 		addWindowListener(new WindowAdapter() {
 			/**
-			 * Invoked when a window is in the process of being closed. The
-			 * close operation can be overridden at this point.
+			 * Invoked when a window is in the process of being closed. The close operation can be overridden at this point.
 			 */
 			@Override
 			public void windowClosing(WindowEvent e) {
