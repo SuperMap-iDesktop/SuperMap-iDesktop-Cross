@@ -121,7 +121,7 @@ public class FrameMenuManager implements IFrameMenuManager {
 
 	public boolean loadChildMenu(WindowType windowType) {
 		boolean result = false;
-		try {
+		try {			
 			ArrayList<IMenu> childMenus = this.childFrameMenus.get(windowType);
 			if (childMenus != null) {
 				for (int i = 0; i < childMenus.size(); i++) {
