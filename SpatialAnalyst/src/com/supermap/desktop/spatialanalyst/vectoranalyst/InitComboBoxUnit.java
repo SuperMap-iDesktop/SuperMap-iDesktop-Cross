@@ -10,56 +10,44 @@ public class InitComboBoxUnit {
 	private JComboBox<Unit> comboBox;
 	private BufferRadiusUnit bufferRadiusUnit;
 
-	public static final String MILLIMETER = "毫米";
-	public static final String CENTIMETER = "厘米";
-	public static final String DECIMETER = "分米";
-	public static final String METER = "米";
-	public static final String KILOMETER = "千米";
-	public static final String MILE = "英里";
-	public static final String INCH = "英寸";
-	public static final String FOOT = "英尺";
-	public static final String YARD = "码";
-
 	public JComboBox<Unit> createComboBoxUnit() {
-		comboBox = new JComboBox<Unit>();
-		comboBox.addItem(Unit.MILIMETER);
-		comboBox.addItem(Unit.CENTIMETER);
-		comboBox.addItem(Unit.DECIMETER);
-		comboBox.addItem(Unit.METER);
-		comboBox.addItem(Unit.KILOMETER);
-		comboBox.addItem(Unit.INCH);
-		comboBox.addItem(Unit.FOOT);
-		comboBox.addItem(Unit.MILE);
-		comboBox.addItem(Unit.YARD);
-		comboBox.setSelectedItem(Unit.METER);
-		comboBox.setEditable(false);
-		comboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		return comboBox;
+		this.comboBox = new JComboBox<Unit>();
+		this.comboBox.addItem(Unit.MILIMETER);
+		this.comboBox.addItem(Unit.CENTIMETER);
+		this.comboBox.addItem(Unit.DECIMETER);
+		this.comboBox.addItem(Unit.METER);
+		this.comboBox.addItem(Unit.KILOMETER);
+		this.comboBox.addItem(Unit.INCH);
+		this.comboBox.addItem(Unit.FOOT);
+		this.comboBox.addItem(Unit.MILE);
+		this.comboBox.addItem(Unit.YARD);
+		this.comboBox.setSelectedItem(Unit.METER);
+		this.comboBox.setEditable(false);
+		this.comboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
+		return this.comboBox;
 	}
 
-	public BufferRadiusUnit getBufferRadiusUnit(Object unitName) {
+	public BufferRadiusUnit getBufferRadiusUnit(Unit unitName) {
 
-		if (MILLIMETER.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.MiliMeter;
-		} else if (CENTIMETER.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.CentiMeter;
-		} else if (DECIMETER.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.DeciMeter;
-		} else if (METER.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.Meter;
-		} else if (KILOMETER.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.KiloMeter;
-		} else if (INCH.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.Inch;
-		} else if (FOOT.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.Foot;
-		} else if (MILE.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.Mile;
-		} else if (YARD.equals(unitName)) {
-			bufferRadiusUnit = BufferRadiusUnit.Yard;
+		if (Unit.MILIMETER.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.MiliMeter;
+		} else if (Unit.CENTIMETER.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.CentiMeter;
+		} else if (Unit.DECIMETER.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.DeciMeter;
+		} else if (Unit.METER.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.Meter;
+		} else if (Unit.KILOMETER.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.KiloMeter;
+		} else if (Unit.INCH.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.Inch;
+		} else if (Unit.FOOT.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.Foot;
+		} else if (Unit.MILE.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.Mile;
+		} else if (Unit.YARD.equals(unitName)) {
+			this.bufferRadiusUnit = BufferRadiusUnit.Yard;
 		}
-
-		return bufferRadiusUnit;
+		return this.bufferRadiusUnit;
 	}
-
 }
