@@ -500,7 +500,7 @@ public class FormManager implements IFormManager {
 
 			boolean needRefersh = false;
 			// 如果之前存在子窗口，则需要移除原来的子菜单和工具条
-			if (beforeType!=WindowType.UNKNOWN) {
+			if (beforeType != WindowType.UNKNOWN) {
 				// 移除原子窗体的子菜单
 				frameMenuManager.removeChildMenu(beforeType);
 				// 移除原子窗体的子工具条
@@ -548,21 +548,6 @@ public class FormManager implements IFormManager {
 
 	private void childWindowRemoved(DockingWindow removedWindow) {
 		try {
-			// add by huchenpu 20150716
-			// 子窗体关闭的时候，另外一个子窗体会被激活，但是没有触发 childWindowShown，这里主动触发下吧
-			if (removedWindow instanceof IForm) {
-				IForm window = getActiveForm();
-				if (null != window) {
-					childWindowActived((DockingWindow)window);
-					this.refreshMenusAndToolbars(window);
-					// 触发子窗体各自的实现方法
-					((IForm) window).windowShown();
-				} else {
-					// add by huchenpu 20150828
-					// 如果没有子窗体被激活，主动调用一下刷新方法，移除下子菜单和工具条吧。
-					this.refreshMenusAndToolbars(null);
-				}
-			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -655,14 +640,8 @@ public class FormManager implements IFormManager {
 
 			// 子窗口集合不包含 activeForm，表明之前移除了 activeForm，那么就需要切换另一个 activeForm 了
 			if (!this.childForms.contains(this.activeForm)) {
-				FrameMenuManager frameMenuManager = (FrameMenuManager) Application.getActiveApplication().getMainFrame().getFrameMenuManager();
-				frameMenuManager.removeChildMenu(WindowType.UNKNOWN);
-
 				if (!childForms.isEmpty()) {
 					this.setActiveForm(this.childForms.get(0));
-					this.activatedChildFormType = this.getActiveForm().getWindowType();
-					frameMenuManager.loadChildMenu(this.activatedChildFormType);
-					refreshMenusAndToolbars(this.childForms.get(0));
 				} else {
 					// 为空时置空当前活动窗体
 					this.setActiveForm(null);
