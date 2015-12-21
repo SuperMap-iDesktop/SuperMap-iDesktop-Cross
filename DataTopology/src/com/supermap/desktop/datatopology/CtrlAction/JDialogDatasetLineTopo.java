@@ -1,14 +1,6 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
+import com.supermap.data.*;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -20,16 +12,12 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JDialogDatasetLineTopo extends SmDialog {
 
@@ -95,20 +83,31 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		// @formatter:off
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelDatasource,GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(panelTopoProcessingOptions,GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(buttonMore)
-						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-						.addComponent(buttonSure)
-						.addComponent(buttonQuite)));
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addComponent(panelDatasource,GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(panelTopoProcessingOptions,GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(buttonMore)
-						.addComponent(buttonSure)
-						.addComponent(buttonQuite)));
+						.addContainerGap()
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING,groupLayout.createSequentialGroup()
+								.addComponent(buttonMore)
+								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+								.addComponent(buttonSure)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(buttonQuite))
+						.addComponent(panelDatasource, GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+						.addComponent(panelTopoProcessingOptions, GroupLayout.PREFERRED_SIZE, 270, Short.MAX_VALUE))
+						.addGap(26)));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(panelDatasource)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(panelTopoProcessingOptions)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(buttonMore)
+								.addComponent(buttonSure)
+								.addComponent(buttonQuite))
+						.addContainerGap(13, Short.MAX_VALUE)));
+
 		GroupLayout gl_panelTopoProcessingOptions = new GroupLayout(panelTopoProcessingOptions);
 		gl_panelTopoProcessingOptions.setAutoCreateContainerGaps(true);
 		gl_panelTopoProcessingOptions.setAutoCreateGaps(true);
@@ -136,7 +135,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
 								.addComponent(checkboxLinesIntersected).addComponent(checkboxOvershootsCleaned)
 								.addComponent(checkboxPseudoNodesCleaned).addComponent(checkboxAdjacentEndpointsMerged))
 				.addGroup(gl_panelTopoProcessingOptions.createSequentialGroup()
-						.addComponent(checkboxDuplicatedLinesCleaned).addComponent(checkboxUndershootsExtended)
+						.addComponent(checkboxDuplicatedLinesCleaned)
+						.addComponent(checkboxUndershootsExtended)
 						.addComponent(checkboxRedundantVerticesCleaned)));
 		panelTopoProcessingOptions.setLayout(gl_panelTopoProcessingOptions);
 
@@ -144,8 +144,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		gl_panelDatasource.setAutoCreateContainerGaps(true);
 		gl_panelDatasource.setAutoCreateGaps(true);
 
-		gl_panelDatasource
-				.setHorizontalGroup(gl_panelDatasource.createParallelGroup()
+		gl_panelDatasource.setHorizontalGroup(gl_panelDatasource.createParallelGroup()
 						.addGroup(gl_panelDatasource.createSequentialGroup()
 								.addComponent(labelDatasource, 0, 72, Short.MAX_VALUE)
 								.addPreferredGap(ComponentPlacement.RELATED)
@@ -154,10 +153,12 @@ public class JDialogDatasetLineTopo extends SmDialog {
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(comboBoxDataset, 0, 144, Short.MAX_VALUE)));
 		gl_panelDatasource.setVerticalGroup(gl_panelDatasource.createSequentialGroup()
-				.addGroup(gl_panelDatasource.createParallelGroup().addComponent(labelDatasource)
-						.addComponent(comboBoxDatasource))
-				.addGroup(gl_panelDatasource.createParallelGroup().addComponent(labelDataset)
-						.addComponent(comboBoxDataset)));
+				.addGroup(gl_panelDatasource.createParallelGroup()
+						.addComponent(labelDatasource)
+						.addComponent(comboBoxDatasource,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_panelDatasource.createParallelGroup()
+						.addComponent(labelDataset)
+						.addComponent(comboBoxDataset,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
 		panelDatasource.setLayout(gl_panelDatasource);
 		getContentPane().setLayout(groupLayout);
@@ -339,8 +340,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
 
 	/**
 	 * 为comboBoxDataset插入选项
-	 * 
-	 * @param Datasource
+	 *
+	 * @param datasource
 	 */
 	private boolean insertItemToComboBox(Datasource datasource) {
 		comboBoxDataset.removeAllItems();
