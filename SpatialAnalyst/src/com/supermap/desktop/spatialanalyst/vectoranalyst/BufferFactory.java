@@ -110,7 +110,6 @@ public class BufferFactory extends SmDialog {
 					TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
 					if (nodeData.getData() instanceof Datasource) {
 						getPanelLineBuffer();
-
 					} else if (nodeData.getData() instanceof Dataset) {
 						Dataset selectedDataset = (Dataset) nodeData.getData();
 						if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
@@ -258,11 +257,15 @@ public class BufferFactory extends SmDialog {
                     setSize(575, 435);
                     BufferFactory.this.getContentPane().add(panelBufferBasic);
                }else if (e.getSource() == panelButton.getButtonOk()) {
-                    if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
-                         flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).CreateCurrentBuffer();
-                    }else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
-                         flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
-                    }
+                    try {
+						if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
+						     flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).CreateCurrentBuffer();
+						}else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
+						     flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
+						}
+					} catch (Exception e1) {
+						BufferFactory.this.dispose();
+					}
                     if(flag==true){
                     BufferFactory.this.dispose();
                     }

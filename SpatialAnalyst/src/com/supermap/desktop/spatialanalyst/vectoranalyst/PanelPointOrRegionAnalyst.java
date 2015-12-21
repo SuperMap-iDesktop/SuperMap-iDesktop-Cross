@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,8 +19,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
+import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
 import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
@@ -381,6 +384,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
 				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
+				if (Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) < 4
+						|| Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) > 200) {
+					this.panelResultSet.getTextFieldSemicircleLineSegment().setText("100");
+				}
+
 				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 
 				if (this.radioButtonNumeric.isSelected()) {
@@ -395,7 +403,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				// 设置缓冲区参数
 				bufferAnalystParameter.setLeftDistance(this.radius);
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
-				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
+				 bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit((Unit)this.comboBoxUnitBox.getSelectedItem()));
+				// bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
+				bufferAnalystParameter.setRadiusUnit(BufferRadiusUnit.Meter);
 				bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 				// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析

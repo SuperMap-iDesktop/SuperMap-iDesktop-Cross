@@ -199,8 +199,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.radioButtonField = new JRadioButton("Field");
 		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
 
-		 NumberFormatter numberFormatter = new NumberFormatter();
-		 numberFormatter.setValueClass(Double.class);
+		NumberFormatter numberFormatter = new NumberFormatter();
+		numberFormatter.setValueClass(Double.class);
 		this.textFieldNumericLeft = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumericRight = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumericLeft.setText("10");
@@ -487,6 +487,10 @@ public class PanelLineBufferAnalyst extends JPanel {
 				DatasetVector resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
 				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
+				if (Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) < 4
+						|| Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) > 200) {
+					this.panelResultSet.getTextFieldSemicircleLineSegment().setText("100");
+				}
 				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 				if (this.radioButtonNumeric.isSelected()) {
 					this.radiusLeft = Math.abs(Integer.parseInt(this.textFieldNumericLeft.getText().replaceAll(",", "")));
@@ -506,7 +510,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 						bufferAnalystParameter.setRightDistance(this.radiusRight);
 					}
 				}
-				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnit.getSelectedItem().toString()));
+				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit((Unit) this.comboBoxUnit.getSelectedItem()));
 				bufferAnalystParameter.setSemicircleLineSegment(Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 				FormProgress formProgress = new FormProgress();
