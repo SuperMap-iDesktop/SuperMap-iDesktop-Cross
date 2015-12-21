@@ -1,5 +1,25 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.topology.TopologyPreprocessOptions;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.datatopology.DataTopologyProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
+import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
+import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -7,45 +27,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.GroupLayout;
-import javax.swing.JFrame;
-import javax.swing.ListSelectionModel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JToolBar;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JCheckBox;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.topology.TopologyPreprocessOptions;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.datatopology.DataTopologyProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.CommonListCellRenderer;
-import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DatasetComboBox;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-
 public class JDialogTopoPreProgress extends SmDialog {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private MutiTable table;
@@ -133,7 +117,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		buttonDelete
 				.setIcon(new ImageIcon(JDialogTopoPreProgress.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
-		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance"));
+		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance")+":");
 		labelConsultDataset.setText(DataTopologyProperties.getString("String_Label_ConsultDataset"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_COUNT).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
@@ -195,7 +179,6 @@ public class JDialogTopoPreProgress extends SmDialog {
 												.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 														.addComponent(labelConsultDataset)
 														.addComponent(labelTolerance))
-												.addGap(18)
 												.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 														.addComponent(textFieldTolerance, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
 														.addComponent(comboBoxConsultDataset))))
@@ -217,7 +200,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 										.addComponent(checkBoxVertexesSnapped)
 										.addComponent(checkBoxArcsInserted))
-										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addPreferredGap(ComponentPlacement.RELATED)
 										.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 												.addComponent(labelConsultDataset)
 												.addComponent(comboBoxConsultDataset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)

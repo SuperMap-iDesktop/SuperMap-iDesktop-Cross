@@ -1,37 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
@@ -51,8 +19,24 @@ import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.DatasetUtil;
 import com.supermap.desktop.util.ExportFunction;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
+
 /**
- * 
  * @author Administrator 数据导入主体界面
  */
 public class DataSetChooserExPort extends JDialog {
@@ -113,28 +97,34 @@ public class DataSetChooserExPort extends JDialog {
 		DatasourceConnectionInfo dsci = datasource.getConnectionInfo();
 		textFieldPath.setText(dsci.getServer());
 		Datasets datasets = datasource.getDatasets();
-		for (int i = 0; i < datasets.getCount(); i++) {
-			ExportFileInfo temp = new ExportFileInfo();
-			temp.setDataset(datasets.get(i));
-			temp.setDatasetName(datasets.get(i).getName());
-			temp.setDatasource(datasource);
-			String datasetType = datasets.get(i).getType().toString();
-			temp.setDataType(DatasetUtil.getDatasetName(datasetType, "", 0));
-			ExportSetting exportSetting = new ExportSetting();
-			exportSetting.setSourceData(datasets.get(i));
-			temp.setFileTypes(exportSetting.getSupportedFileType());
-			temp.setFileName(datasets.get(i).getName());
-			temp.setFilePath(DataConversionProperties.getString("String_ExportRootPath") + File.separator);
-			temp.setState(DataConversionProperties.getString("string_change"));
-			tempExports.add(temp);
+		if (datasets.getCount() > 0) {
+			for (int i = 0; i < datasets.getCount(); i++) {
+				ExportFileInfo temp = new ExportFileInfo();
+				temp.setDataset(datasets.get(i));
+				temp.setDatasetName(datasets.get(i).getName());
+				temp.setDatasource(datasource);
+				String datasetType = datasets.get(i).getType().toString();
+				temp.setDataType(DatasetUtil.getDatasetName(datasetType, "", 0));
+				ExportSetting exportSetting = new ExportSetting();
+				exportSetting.setSourceData(datasets.get(i));
+				temp.setFileTypes(exportSetting.getSupportedFileType());
+				temp.setFileName(datasets.get(i).getName());
+				temp.setFilePath(DataConversionProperties.getString("String_ExportRootPath") + File.separator);
+				temp.setState(DataConversionProperties.getString("string_change"));
+				tempExports.add(temp);
+			}
 		}
 		return tempExports;
 	}
 
 	public void initCompanent() {
 		setResizable(false);
-		childExports = initExportFileInfo(Application.getActiveApplication().getActiveDatasources()[0]);
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
+			childExports = initExportFileInfo(Application.getActiveApplication().getActiveDatasources()[0]);
+		} else {
+			childExports = initExportFileInfo(workspace.getDatasources().get(0));
+		}
 		workspaceTree = new WorkspaceTree(workspace);
 		workspaceTree.setMapsNodeVisible(false);
 		workspaceTree.setResourcesNodeVisible(false);

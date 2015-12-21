@@ -1,15 +1,14 @@
 package com.supermap.desktop.popupmenus;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.DataExportFrame;
-import com.supermap.desktop.util.CommonFunction;
+
+import javax.swing.*;
 
 public class CtrlActionDataExport extends CtrlAction {
 
@@ -33,7 +32,27 @@ public class CtrlActionDataExport extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return true;
+		boolean enable = false;
+		Datasource[] datasources = Application.getActiveApplication().getActiveDatasources();
+		if (datasources != null && datasources.length > 0) {
+			for (Datasource datasource : datasources) {
+				if (!datasource.isReadOnly()) {
+					enable = true;
+					break;
+				}
+			}
+		}
+
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+			for (int i = 0; i < Application.getActiveApplication().getWorkspace().getDatasources().getCount(); i++) {
+				Datasource tempDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(i);
+				if (!tempDatasource.isReadOnly()) {
+					enable = true;
+					break;
+				}
+			}
+		}
+		return enable;
 	}
 
 }
