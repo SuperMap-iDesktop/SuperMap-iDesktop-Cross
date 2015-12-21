@@ -25,6 +25,7 @@ public class CtrlActionThemeModify extends CtrlAction {
 		}
 		ThemeGuideFactory.modifyTheme(layer);
 		ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
+		ThemeGuideFactory.getDockbarThemeContainer().active();
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class CtrlActionThemeModify extends CtrlAction {
 		} else {
 			layer = formMap.getMapControl().getMap().getLayers().get(0);
 		}
-		if (null != layer&&null!=layer.getDataset()) {
+		if (null != layer && null != layer.getDataset()) {
 			enable = true;
 		}
 		return enable;

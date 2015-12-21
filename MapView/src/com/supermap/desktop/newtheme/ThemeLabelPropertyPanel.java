@@ -1,13 +1,6 @@
 package com.supermap.desktop.newtheme;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -23,14 +16,8 @@ import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -475,7 +462,7 @@ public class ThemeLabelPropertyPanel extends JPanel {
 			fieldTypes.add(FieldType.DOUBLE);
 			fieldTypes.add(FieldType.SINGLE);
 			if (type == LABELEXPRESSION_TYPE) {
-				dialogResult = sqlDialog.showDialog(datasetVector.getName() + "." + themeLabel.getLabelExpression(), datasets);
+				dialogResult = sqlDialog.showDialog(themeLabel.getLabelExpression(), datasets);
 			} else if (type == OFFSETX_TYPE) {
 				dialogResult = sqlDialog.showDialog(datasets, fieldTypes, themeLabel.getOffsetX());
 			} else {
@@ -646,7 +633,6 @@ public class ThemeLabelPropertyPanel extends JPanel {
 		 */
 		private void setFieldInfo() {
 			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
-			labelExpression = labelExpression.replaceAll(datasetVector.getName() + ".", "");
 			if (comboBoxArray.contains(labelExpression)) {
 				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(labelExpression);
 				// 控制文本进度下拉框的可使用性

@@ -174,8 +174,7 @@ public class Dockbar extends View implements IDockbar {
 
 	@Override
 	public void active() {
-		this.setFocused(true);
-		this.requestFocusInWindow();
+		makeVisible();
 	}
 
 	class SetDockingWindowListener implements DockingWindowListener {
