@@ -581,12 +581,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 刷新指定节点 <<<<<<< HEAD
-	 * 
-	 * @param node
-	 *            指定节点 =======
 	 *
-	 * @param node
-	 *            指定节点 >>>>>>> branch 'master' of https://git.oschina.net/supermap/SuperMap-iDesktop-Cross.git
+	 * @param node 指定节点 =======
+	 * @param node 指定节点 >>>>>>> branch 'master' of https://git.oschina.net/supermap/SuperMap-iDesktop-Cross.git
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -1689,7 +1686,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	/**
 	 * 定位到指定节点并选中
-	 * 
+	 *
 	 * @param node
 	 */
 	private void locateNode(DefaultMutableTreeNode node) {
@@ -2115,10 +2112,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				// Make sure we aren't already scrolled all the way down
 				if (tree.getHeight() - treeVisibleRectangle.y != vp.getHeight()) {
 				/*
-                 * Get Y coordinate for scrolling down
+		         * Get Y coordinate for scrolling down
                  */
-					if (vp.getHeight() - vpMousePosition.y < 15 && vp.getHeight() - vpMousePosition.y > 0) {
-						newY = treeVisibleRectangle.y + 10;
+					if (vp.getHeight() - vpMousePosition.y < 30 && vp.getHeight() - vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y + (30 + vpMousePosition.y - vp.getHeight()) * 2;
 					}
 				}
 
@@ -2127,8 +2124,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
                 /*
                  * Get Y coordinate for scrolling up
                  */
-					if (15 > vpMousePosition.y && vpMousePosition.y > 0) {
-						newY = treeVisibleRectangle.y - 10;
+					if (30 > vpMousePosition.y && vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y - (30 - vpMousePosition.y) * 2;
 					}
 				}
 
