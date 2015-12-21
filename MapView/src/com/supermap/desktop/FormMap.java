@@ -403,7 +403,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setIpad(100, 0));
 		}
 		if (list.get(3) != null) {
-			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setIpad(100, 0));
+			list.get(3).setMinimumSize(new Dimension(200, list.get(3).getHeight()));
+			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(4) != null) {
 			statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
@@ -980,8 +981,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 				if (exist) {
 					layersComponentManager.setMap(this.getMapControl().getMap());
-
-
 					setActiveLayers(rememberActiveLayers);
 					this.getMapControl().getMap().refresh();
 				} else {

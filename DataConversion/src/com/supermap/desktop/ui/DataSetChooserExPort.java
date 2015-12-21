@@ -97,34 +97,32 @@ public class DataSetChooserExPort extends JDialog {
 		DatasourceConnectionInfo dsci = datasource.getConnectionInfo();
 		textFieldPath.setText(dsci.getServer());
 		Datasets datasets = datasource.getDatasets();
-		if (datasets.getCount() > 0) {
-			for (int i = 0; i < datasets.getCount(); i++) {
-				ExportFileInfo temp = new ExportFileInfo();
-				temp.setDataset(datasets.get(i));
-				temp.setDatasetName(datasets.get(i).getName());
-				temp.setDatasource(datasource);
-				String datasetType = datasets.get(i).getType().toString();
-				temp.setDataType(DatasetUtil.getDatasetName(datasetType, "", 0));
-				ExportSetting exportSetting = new ExportSetting();
-				exportSetting.setSourceData(datasets.get(i));
-				temp.setFileTypes(exportSetting.getSupportedFileType());
-				temp.setFileName(datasets.get(i).getName());
-				temp.setFilePath(DataConversionProperties.getString("String_ExportRootPath") + File.separator);
-				temp.setState(DataConversionProperties.getString("string_change"));
-				tempExports.add(temp);
-			}
+		for (int i = 0; i < datasets.getCount(); i++) {
+			ExportFileInfo temp = new ExportFileInfo();
+			temp.setDataset(datasets.get(i));
+			temp.setDatasetName(datasets.get(i).getName());
+			temp.setDatasource(datasource);
+			String datasetType = datasets.get(i).getType().toString();
+			temp.setDataType(DatasetUtil.getDatasetName(datasetType, "", 0));
+			ExportSetting exportSetting = new ExportSetting();
+			exportSetting.setSourceData(datasets.get(i));
+			temp.setFileTypes(exportSetting.getSupportedFileType());
+			temp.setFileName(datasets.get(i).getName());
+			temp.setFilePath(DataConversionProperties.getString("String_ExportRootPath") + File.separator);
+			temp.setState(DataConversionProperties.getString("string_change"));
+			tempExports.add(temp);
 		}
 		return tempExports;
 	}
 
 	public void initCompanent() {
 		setResizable(false);
-		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-			childExports = initExportFileInfo(Application.getActiveApplication().getActiveDatasources()[0]);
-		} else {
-			childExports = initExportFileInfo(workspace.getDatasources().get(0));
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() <= 0) {
+			return;
 		}
+		Datasource datasource = Application.getActiveApplication().getActiveDatasources().length > 0 ? Application.getActiveApplication().getActiveDatasources()[0] : Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+		childExports = initExportFileInfo(datasource);
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		workspaceTree = new WorkspaceTree(workspace);
 		workspaceTree.setMapsNodeVisible(false);
 		workspaceTree.setResourcesNodeVisible(false);

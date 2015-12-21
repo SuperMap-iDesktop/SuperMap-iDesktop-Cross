@@ -62,7 +62,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
 	private static final int PREFER_ROW_HEIGHT = 40;
-	private static final int PREFER_COLUMN_WIDTH = 120;
+	private static final int PREFER_COLUMN_WIDTH = 100;
 	private static final int MIN_COLUMN_WIDTH = 20;
 	private int[] selectColumns;
 
@@ -112,7 +112,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// TODO 设置行表头
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
 		JList rowHeader = new JList(listModel);
-		rowHeader.setFixedCellWidth(50);
+		rowHeader.setFixedCellWidth(60);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
 		rowHeader.addMouseMotionListener(new MouseAdapter() {
