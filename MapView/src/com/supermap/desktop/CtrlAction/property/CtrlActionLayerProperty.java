@@ -25,10 +25,11 @@ public class CtrlActionLayerProperty extends CtrlAction {
 
 			if (dockbarPropertyContainer != null) {
 				LayerPropertyContainer container = (LayerPropertyContainer) dockbarPropertyContainer.getComponent();
-				if(Application.getActiveApplication().getActiveForm() instanceof IFormMap){
+				if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 					container.setFormMap((IFormMap) Application.getActiveApplication().getActiveForm());
 				}
 				dockbarPropertyContainer.setVisible(true);
+				dockbarPropertyContainer.active();
 			}
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);

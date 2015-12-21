@@ -1,10 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.text.MessageFormat;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
@@ -13,6 +8,9 @@ import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
+
+import javax.swing.*;
+import java.text.MessageFormat;
 
 /**
  * 属性表统计相关公共类
@@ -57,7 +55,6 @@ public class TabularStatisticUtilties {
 			JTextField jTextFieldStatisticResult = (JTextField) ((FormBaseChild) Application.getActiveApplication().getActiveForm()).getStatusbar()
 					.getComponent(STATISTIC_RESULT_INDEX);
 			jTextFieldStatisticResult.setText(result);
-			((FormBaseChild)Application.getActiveApplication().getActiveForm()).getStatusbar().updateUI();
 		} catch (Exception e) {
 			throw e;
 		}
@@ -124,7 +121,6 @@ public class TabularStatisticUtilties {
 			((JTextField)smStatusbar.get(FIELD_NAME)).setText(formTabular.getSelectColumnName(columnIndex));
 		}
 
-		smStatusbar.updateUI();
 		ToolbarUtilties.updataToolbarsState();
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +105,7 @@ public class AddItemPanel extends JPopupMenu {
 					deleteUniqueItems.add(getNewItem(themeUniqueTemp.getItem(i).getUnique()));
 				}
 			}
-		}else{
+		} else {
 			ThemeGridUnique themeGridUniqueTemp = ThemeGridUnique.makeDefault((DatasetGrid) dataset);
 			List allItems = new ArrayList();
 			for (int i = 0; i < themeGridUniqueTemp.getCount(); i++) {
@@ -209,12 +210,12 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		if (deleteGridUniqueItems != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(deleteGridItem.getUnique()));
+				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
 			}
 		}
 		if (themeGridUnique != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (int i = 0; i < themeGridUnique.getCount(); i++) {
-				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(themeGridUnique.getItem(i).getUnique()));
+				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((int) themeGridUnique.getItem(i).getUnique()));
 			}
 		}
 	}
@@ -262,16 +263,16 @@ public class AddItemPanel extends JPopupMenu {
 		return null;
 	}
 
-	private ThemeGridUniqueItem getDeletedGridItem(String itemName){
+	private ThemeGridUniqueItem getDeletedGridItem(String itemName) {
 		double unique = Double.valueOf(itemName);
-		for (ThemeGridUniqueItem deleteItem: deleteGridUniqueItems) {
-			if (Double.compare(unique, deleteItem.getUnique())==0) {
+		for (ThemeGridUniqueItem deleteItem : deleteGridUniqueItems) {
+			if (Double.compare(unique, deleteItem.getUnique()) == 0) {
 				return deleteItem;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 找到单值的对应关系
 	 *
@@ -291,7 +292,7 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 找到栅格单值的对应关系
 	 *
@@ -305,13 +306,14 @@ public class AddItemPanel extends JPopupMenu {
 			ThemeGridUniqueItem themeGridUniqueItem = themeGridUnique.getItem(i);
 			for (String selectItemName : selectList) {
 				double tempUnique = Double.valueOf(selectItemName);
-				if (Double.compare(themeGridUniqueItem.getUnique(), tempUnique)==0) {
+				if (Double.compare(themeGridUniqueItem.getUnique(), tempUnique) == 0) {
 					result.put(i, themeGridUniqueItem);
 				}
 			}
 		}
 		return result;
 	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -332,21 +334,21 @@ public class AddItemPanel extends JPopupMenu {
 							deleteUniqueItems.remove(selectUniqueItem);
 						}
 					}
-				}else {
+				} else {
 					// 从未添加项中添加到添加项中去
 					List<String> selectList = listRemoveFrom.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
 						for (String selectItem : selectList) {
 							ThemeGridUniqueItem gridUniqueItem = getDeletedGridItem(selectItem);
-							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(gridUniqueItem.getUnique()));
-							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(gridUniqueItem.getUnique()));
+							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf((int) gridUniqueItem.getUnique()));
+							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) gridUniqueItem.getUnique())));
 							themeGridUnique.add(gridUniqueItem);
 							deleteGridUniqueItems.remove(gridUniqueItem);
 						}
 					}
 				}
 			} else {
-				if (themeType==ThemeType.UNIQUE) {
+				if (themeType == ThemeType.UNIQUE) {
 					// 从已添加项中移除某项
 					List<String> selectList = listAddto.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
@@ -361,15 +363,16 @@ public class AddItemPanel extends JPopupMenu {
 							}
 						}
 					}
-				}else {
+				} else {
 					// 从已添加项中移除某项
 					List<String> selectList = listAddto.getSelectedValuesList();
 					if (selectList != null && !selectList.isEmpty()) {
 						HashMap<Integer, ThemeGridUniqueItem> result = getNeedDeleteGridItemHashMap(selectList);
 						for (int i = themeGridUnique.getCount() - 1; i >= 0; i--) {
 							if (result.get(i) != null) {
-								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(result.get(i).getUnique()));
-								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(result.get(i).getUnique()));
+								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(((int) result.get(i).getUnique())));
+								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
+										String.valueOf(((int) result.get(i).getUnique())));
 								deleteGridUniqueItems.add(new ThemeGridUniqueItem(result.get(i)));
 								themeGridUnique.remove(i);
 
@@ -403,23 +406,34 @@ public class AddItemPanel extends JPopupMenu {
 						return;
 					}
 				}
+				for (int i = 0; i < deleteUniqueItems.size(); i++) {
+					if (deleteUniqueItems.get(i).getUnique().equals(caption)) {
+						return;
+					}
+				}
 				themeUnique.add(getNewItem(caption));
 			} else {
 				// 先从已删除的子项找
 				for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-					String uniqueValue = String.valueOf(deleteGridItem.getUnique());
-					if (caption.equalsIgnoreCase(uniqueValue)) {
-						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(deleteGridItem.getUnique()));
-						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(deleteGridItem.getUnique()));
+					if (Double.compare(deleteGridItem.getUnique(), Double.parseDouble(caption)) == 0) {
+						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(((int) deleteGridItem.getUnique())));
+						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
 						themeGridUnique.add(deleteGridItem);
 						deleteGridUniqueItems.remove(deleteGridItem);
 						return;
 					}
 				}
+				double existValue = Double.parseDouble(caption);
 				// 查看是否已存在
 				for (int i = 0; i < themeGridUnique.getCount(); i++) {
-					String gridUnique = String.valueOf(themeGridUnique.getItem(i).getUnique());
-					if (caption.equals(gridUnique)) {
+					double gridUnique = themeGridUnique.getItem(i).getUnique();
+					if (Double.compare(gridUnique, existValue) == 0) {
+						return;
+					}
+				}
+				for (int i = 0; i < deleteGridUniqueItems.size(); i++) {
+					double gridUniqueValue = deleteGridUniqueItems.get(i).getUnique();
+					if (Double.compare(gridUniqueValue, existValue) == 0) {
 						return;
 					}
 				}

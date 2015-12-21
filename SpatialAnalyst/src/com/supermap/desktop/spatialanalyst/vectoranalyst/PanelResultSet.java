@@ -92,8 +92,6 @@ public class PanelResultSet extends JPanel {
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
 		numberFormatter.setValueClass(Integer.class);
-		numberFormatter.setMinimum(4);
-		numberFormatter.setMaximum(200);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText("100");
 	}

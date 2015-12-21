@@ -1,28 +1,9 @@
 package com.supermap.desktop;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import com.supermap.data.DatasetVector;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
@@ -65,6 +46,22 @@ import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CommonToolkit {
 
@@ -1384,6 +1381,16 @@ public class CommonToolkit {
 				if (closeDataset == null || closeDataset.length <= 0) {
 					return;
 				}
+
+				List<Dataset> datasets = new ArrayList<>();
+				for (int i = 0; i < closeDataset.length; i++) {
+					Dataset dataset = closeDataset[i];
+					datasets.add(dataset);
+					if (dataset instanceof DatasetVector && null != ((DatasetVector) dataset).getChildDataset()) {
+						datasets.add(((DatasetVector) dataset).getChildDataset());
+					}
+				}
+				closeDataset = (Dataset[]) datasets.toArray(new Dataset[datasets.size()]);
 				if (null != Application.getActiveApplication().getMainFrame().getFormManager()
 						&& 0 < Application.getActiveApplication().getMainFrame().getFormManager().getCount()) {
 					// 删除时考虑地图与场景
@@ -1419,7 +1426,7 @@ public class CommonToolkit {
 						} else if (form instanceof IFormTabular) {
 							Dataset dataset = ((IFormTabular) form).getRecordset().getDataset();
 							for (int j = 0; j < closeDataset.length; j++) {
-								if (closeDataset[j].equals(dataset)) {
+								if (closeDataset[j] == dataset) {
 									Application.getActiveApplication().getMainFrame().getFormManager().close(form);
 									i--;
 									formNumber--;
@@ -1450,11 +1457,18 @@ public class CommonToolkit {
 			if (null == closeDatasets || 0 == closeDatasets.getCount()) {
 				return;
 			}
-			Dataset[] datasets = new Dataset[closeDatasets.getCount()];
+			List<Dataset> datasets = new ArrayList<>();
+//			Dataset[] datasets = new Dataset[closeDatasets.getCount()];
 			for (int i = 0; i < closeDatasets.getCount(); i++) {
-				datasets[i] = closeDatasets.get(i);
+				Dataset dataset = closeDatasets.get(i);
+				datasets.add(dataset);
+//				if (dataset instanceof  DatasetVector) {
+//					if (null != ((DatasetVector) dataset).getChildDataset()) {
+//						datasets.add(((DatasetVector) dataset).getChildDataset());
+//					}
+//				}
 			}
-			CloseDataset(datasets);
+			CloseDataset((Dataset[]) datasets.toArray(new Dataset[datasets.size()]));
 		}
 
 		public static Dataset getDatasetFromDatasource(String datasetName, Datasource datasource) {

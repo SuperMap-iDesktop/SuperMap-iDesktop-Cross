@@ -1,12 +1,12 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import java.util.ArrayList;
-
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.LayerSettingType;
-import com.supermap.mapping.Map;
+
+import java.util.ArrayList;
 
 public class LayerPropertyModelFactory {
 
@@ -26,21 +26,27 @@ public class LayerPropertyModelFactory {
 		ArrayList<LayerPropertyModel> models = new ArrayList<LayerPropertyModel>();
 
 		for (Layer layer : layers) {
+			if (layer == null) {
+				continue;
+			}
 			if (layer instanceof LayerGroup) {
 				layerType = LAYERGROUP;
 				break;
-			} else {
-				if (layer != null && layer.getAdditionalSetting() != null) {
-					if (layer.getAdditionalSetting().getType() == LayerSettingType.VECTOR) {
-						layerType |= LAYER_VECTOR;
-					} else if (layer.getAdditionalSetting().getType() == LayerSettingType.GRID) {
-						layerType |= LAYER_GRID;
-					} else if (layer.getAdditionalSetting().getType() == LayerSettingType.IMAGE) {
-						layerType |= LAYER_IMAGE;
-					} else {
-						layerType |= LAYER_UNKNOWN;
-					}
+			} else if (layer.getAdditionalSetting() != null) {
+				if (layer.getAdditionalSetting().getType() == LayerSettingType.VECTOR) {
+					layerType |= LAYER_VECTOR;
+				} else if (layer.getAdditionalSetting().getType() == LayerSettingType.GRID) {
+					layerType |= LAYER_GRID;
+				} else if (layer.getAdditionalSetting().getType() == LayerSettingType.IMAGE) {
+					layerType |= LAYER_IMAGE;
+				} else {
+					layerType |= LAYER_UNKNOWN;
 				}
+			} else if (layer.getTheme() != null) {
+				if (layer.getDataset() instanceof DatasetVector) {
+					layerType |= LAYER_VECTOR;
+				}
+
 			}
 		}
 

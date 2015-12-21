@@ -117,20 +117,24 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 			this.setLayout(new GridBagLayout());
 			for (int i = 0; i < this.items.size(); i++) {
 				Component component = (Component) this.items.get(i);
-				component.setFont(component.getFont().deriveFont(Float.valueOf(component.getFont().getSize() - 2)));
+				component.setFont(component.getFont().deriveFont(Float.valueOf(component.getFont().getSize() - 1)));
 				GridBagConstraints gridBagConstraints = new GridBagConstraints();
 				gridBagConstraints.gridx = i;
 				gridBagConstraints.gridy = 0;
+				gridBagConstraints.gridheight = 1;
+				gridBagConstraints.gridwidth = 1;
 				if (component instanceof JLabel) {
 					gridBagConstraints.weightx = 0;
 				} else if (component instanceof JTextField) {
 					gridBagConstraints.weightx = 1;
+				} else if (component instanceof JComboBox) {
+					gridBagConstraints.weightx = 0.1;
 				} else {
 					gridBagConstraints.weightx = 1;
 				}
+
 				gridBagConstraints.fill = gridBagConstraints.BOTH;
 				gridBagConstraints.anchor = gridBagConstraints.CENTER;
-//				gridBagConstraints.insets = new Insets(0, 2, 0, 2);
 				this.add(component, gridBagConstraints);
 			}
 		}

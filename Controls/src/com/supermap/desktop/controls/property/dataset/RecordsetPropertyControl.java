@@ -420,17 +420,18 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private static final String DEFUALT_FIELDNAME = "NewField";
+		private static final String DEFAULT_FIELDNAME = "NewField";
 		private static final int INDEX = 0;
 		private static final int FIELD_NAME = 1;
 		private static final int FIELD_CAPTION = 2;
 		private static final int FIELD_TYPE = 3;
 		private static final int MAX_LENGTH = 4;
-		private static final int DEFUALT_VALUE = 5;
+		private static final int DEFAULT_VALUE = 5;
 		private static final int IS_REQUIRED = 6;
 
 		private ArrayList<FieldData> fieldInfos = new ArrayList<FieldData>();
 		private ArrayList<Integer> uneditableRows = new ArrayList<Integer>(); // 从 DatasetVector 中取出来的 FieldInfo 不可编辑（Caption 除外）
+		private ArrayList<Integer> captionModifiedRows = new ArrayList<>(); // 主动修改过 caption 的行。没有主动修改过的 caption 随 name 的改变而改变
 
 		public RecordsetPropertyTableModel() {
 			// 默认实现
@@ -440,6 +441,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		public void intializeRows(FieldInfos fieldInfos) {
 			this.fieldInfos.clear();
 			this.uneditableRows.clear();
+			this.captionModifiedRows.clear();
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				this.fieldInfos.add(new FieldData(fieldInfos.get(i)));
 				if (fieldInfos.get(i).isSystemField()) {
@@ -468,7 +470,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 		public FieldData addRow() {
 			FieldData fieldInfo = new FieldData();
-			fieldInfo.setName(getAvailableFieldName(DEFUALT_FIELDNAME));
+			fieldInfo.setName(getAvailableFieldName(DEFAULT_FIELDNAME));
 			fieldInfo.setCaption(fieldInfo.getName());
 
 			if (this.fieldInfos.add(fieldInfo)) {
@@ -486,8 +488,10 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		/**
 		 * Returns true regardless of parameter values.
 		 *
-		 * @param row the row whose value is to be queried
-		 * @param column the column whose value is to be queried
+		 * @param row
+		 *            the row whose value is to be queried
+		 * @param column
+		 *            the column whose value is to be queried
 		 * @return true
 		 * @see #setValueAt
 		 */
@@ -505,7 +509,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return false;
 			}
 
-			if (column == FIELD_NAME || column == IS_REQUIRED || column == FIELD_TYPE || column == DEFUALT_VALUE) {
+			if (column == FIELD_NAME || column == IS_REQUIRED || column == FIELD_TYPE || column == DEFAULT_VALUE) {
 				return true;
 			}
 
@@ -543,7 +547,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return FieldTypeUtilties.getFieldTypeName(fieldInfo.getType());
 			} else if (columnIndex == MAX_LENGTH) {
 				return fieldInfo.getMaxLength();
-			} else if (columnIndex == DEFUALT_VALUE) {
+			} else if (columnIndex == DEFAULT_VALUE) {
 				if (fieldInfo.getDefaultValue() == null) {
 					return CommonProperties.getString(CommonProperties.NULL);
 				} else {
@@ -562,7 +566,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return;
 			}
 
-			if (columnIndex != DEFUALT_VALUE && aValue == null) {
+			if (columnIndex != DEFAULT_VALUE && aValue == null) {
 				return;
 			}
 
@@ -570,16 +574,32 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				if (columnIndex == INDEX) {
 					return;
 				} else if (columnIndex == FIELD_NAME) {
-					this.fieldInfos.get(rowIndex).setName(getAvailableFieldName(String.valueOf(aValue)));
+					String newName = getAvailableFieldName(String.valueOf(aValue));
+					this.fieldInfos.get(rowIndex).setName(newName);
+
+					// 如果 caption 的主动修改记录列表不包含当前修改记录，那么联动更新 caption
+					if (!this.captionModifiedRows.contains(rowIndex)) {
+						this.fieldInfos.get(rowIndex).setCaption(newName);
+						fireTableCellUpdated(rowIndex, FIELD_CAPTION);
+						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, FIELD_CAPTION));
+					}
 				} else if (columnIndex == FIELD_CAPTION) {
-					this.fieldInfos.get(rowIndex).setCaption(String.valueOf(aValue));
+					String oldCaption = this.fieldInfos.get(rowIndex).getCaption();
+					if (!oldCaption.equals(String.valueOf(aValue))) {
+						this.fieldInfos.get(rowIndex).setCaption(String.valueOf(aValue));
+
+						// 添加到主动修改列表
+						if (!this.captionModifiedRows.contains(rowIndex)) {
+							this.captionModifiedRows.add(rowIndex);
+						}
+					}
 				} else if (columnIndex == FIELD_TYPE) {
 					this.fieldInfos.get(rowIndex).setType(FieldTypeUtilties.getFieldType((String) aValue));
 					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilties.getFieldTypeMaxLength(FieldTypeUtilties.getFieldType((String) aValue)));
 					this.fireTableDataChanged();
 				} else if (columnIndex == MAX_LENGTH) {
 					this.fieldInfos.get(rowIndex).setMaxLength(Integer.valueOf(aValue.toString()));
-				} else if (columnIndex == DEFUALT_VALUE) {
+				} else if (columnIndex == DEFAULT_VALUE) {
 					FieldData fieldInfo = this.fieldInfos.get(rowIndex);
 					if (aValue == null) {
 						if (fieldInfo.isRequired()) {
@@ -597,9 +617,11 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					this.fieldInfos.get(rowIndex).setRequired(isRequired);
 					if (isRequired && StringUtilties.isNullOrEmpty(this.fieldInfos.get(rowIndex).getDefaultValue())) {
 						this.fieldInfos.get(rowIndex).setDefaultValue("0");
-						fireTableCellUpdated(rowIndex, DEFUALT_VALUE);
+						fireTableCellUpdated(rowIndex, DEFAULT_VALUE);
+						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, DEFAULT_VALUE));
 					}
 				}
+				fireTableCellUpdated(rowIndex, columnIndex);
 				fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, columnIndex));
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
@@ -618,7 +640,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return CommonProperties.getString(CommonProperties.FieldType);
 			} else if (column == MAX_LENGTH) {
 				return CommonProperties.getString(CommonProperties.Length);
-			} else if (column == DEFUALT_VALUE) {
+			} else if (column == DEFAULT_VALUE) {
 				return CommonProperties.getString(CommonProperties.DefaultValue);
 			} else if (column == IS_REQUIRED) {
 				return CommonProperties.getString(CommonProperties.IsRequired);
@@ -637,7 +659,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return FieldType.class;
 			} else if (columnIndex == MAX_LENGTH) {
 				return Integer.class;
-			} else if (columnIndex == DEFUALT_VALUE) {
+			} else if (columnIndex == DEFAULT_VALUE) {
 				return String.class;
 			} else if (columnIndex == IS_REQUIRED) {
 				return Boolean.class;

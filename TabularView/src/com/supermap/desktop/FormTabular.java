@@ -1,43 +1,5 @@
 package com.supermap.desktop;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.sql.Time;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultCellEditor;
-import javax.swing.Icon;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
@@ -56,6 +18,26 @@ import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
+
+import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Time;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
@@ -80,7 +62,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
 	private static final int PREFER_ROW_HEIGHT = 40;
-	private static final int PREFER_COLUMN_WIDTH = 120;
+	private static final int PREFER_COLUMN_WIDTH = 100;
 	private static final int MIN_COLUMN_WIDTH = 20;
 	private int[] selectColumns;
 
@@ -130,7 +112,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// TODO 设置行表头
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
 		JList rowHeader = new JList(listModel);
-		rowHeader.setFixedCellWidth(50);
+		rowHeader.setFixedCellWidth(60);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
 		rowHeader.addMouseMotionListener(new MouseAdapter() {
@@ -256,7 +238,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public void setText(String text) {
-		this.title = text;
+		super.setTitle(text);
 	}
 
 	@Override

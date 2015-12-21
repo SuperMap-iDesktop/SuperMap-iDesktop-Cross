@@ -1,33 +1,22 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+import com.supermap.mapping.*;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
-
-import com.supermap.mapping.Layer;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.EventObject;
 
 /**
  * 图层管理树单元格编辑器
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListener, TreeSelectionListener {
 
@@ -38,6 +27,16 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	private JTextField jTextFieldName = null;
 
 	private Layer currentLayer = null;
+
+	private ThemeUniqueItem uniqueItem = null;
+
+	private ThemeRangeItem rangeItem = null;
+
+	private ThemeLabelItem labelItem = null;
+
+	private ThemeGridRangeItem gridRangeItem = null;
+
+	private ThemeGridUniqueItem gridUniqueItem = null;
 
 	private Timer timer;
 
@@ -65,16 +64,37 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 		TreeNodeData obj = (TreeNodeData) node.getUserObject();
 		JPanel panel = (JPanel) layersTreeCellRenderer.getPanel(obj);
 		NodeDataType type = obj.getType();
-		if (type.equals(NodeDataType.LAYER) || type.equals(NodeDataType.LAYER_GROUP)) {
+		jTextFieldName = new JTextField();
+		jTextFieldName.setPreferredSize(new Dimension(150, 20));
+		if (type != NodeDataType.WMSSUB_LAYER) {
 			currentTreeNodeData = obj;
 			Object innerData = obj.getData();
 			if (innerData instanceof Layer) {
-				Layer layer = (Layer) innerData;
-				currentLayer = layer;
-				jTextFieldName = new JTextField(layer.getCaption());
-				jTextFieldName.setFont(tree.getFont());
-				jTextFieldName.addKeyListener(this);
+				currentLayer = (Layer) innerData;
+				jTextFieldName.setText(currentLayer.getCaption());
 			}
+			if (innerData instanceof ThemeUniqueItem) {
+				uniqueItem = (ThemeUniqueItem) innerData;
+				jTextFieldName.setText(uniqueItem.getCaption());
+			}
+			if (innerData instanceof ThemeRangeItem) {
+				rangeItem = (ThemeRangeItem) innerData;
+				jTextFieldName.setText(rangeItem.getCaption());
+			}
+			if (innerData instanceof ThemeLabelItem) {
+				labelItem = (ThemeLabelItem) innerData;
+				jTextFieldName.setText(labelItem.getCaption());
+			}
+			if (innerData instanceof ThemeGridRangeItem) {
+				gridRangeItem = (ThemeGridRangeItem) innerData;
+				jTextFieldName.setText(gridRangeItem.getCaption());
+			}
+			if (innerData instanceof ThemeGridUniqueItem) {
+				gridUniqueItem = (ThemeGridUniqueItem) innerData;
+				jTextFieldName.setText(gridUniqueItem.getCaption());
+			}
+			jTextFieldName.setFont(tree.getFont());
+			jTextFieldName.addKeyListener(this);
 		}
 		int componetsCount = panel.getComponentCount();
 		Component component = panel.getComponent(componetsCount - 1);
@@ -90,6 +110,7 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	public void addCellEditorListener(CellEditorListener l) {
 		// 默认实现，后续进行初始化操作
 	}
+
 
 	@Override
 	public void cancelCellEditing() {
@@ -157,7 +178,19 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	}
 
 	public void validateLayerCaption(String caption) {
-		currentLayer.setCaption(caption);
+		if (null != currentLayer) {
+			currentLayer.setCaption(caption);
+		} else if (null != uniqueItem) {
+			uniqueItem.setCaption(caption);
+		} else if (null != rangeItem) {
+			rangeItem.setCaption(caption);
+		} else if (null != labelItem) {
+			labelItem.setCaption(caption);
+		} else if (null != gridUniqueItem) {
+			gridUniqueItem.setCaption(caption);
+		} else if (null != gridRangeItem) {
+			gridRangeItem.setCaption(caption);
+		}
 		updateUI();
 	}
 

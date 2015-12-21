@@ -1,30 +1,18 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.util.ArrayList;
+import com.supermap.data.*;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.MathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.mapping.*;
+import com.supermap.ui.MapControl;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -32,38 +20,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SymbolDialog;
-import com.supermap.desktop.utilties.MathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.ui.MapControl;
-
-import javax.swing.SpinnerNumberModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 
 public class ThemeRangeContainer extends JPanel {
 
@@ -122,9 +83,10 @@ public class ThemeRangeContainer extends JPanel {
 	private boolean isCustom = false;
 	private double precision;
 	private boolean isNewTheme = false;
+	private boolean isMergeOrSplit = false;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
-	private transient LocalTableMouseListener tableMouseListener = new LocalTableMouseListener();
+	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
@@ -157,7 +119,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 初始化单值专题图
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -185,7 +147,7 @@ public class ThemeRangeContainer extends JPanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
-		this.comboBoxColorStyle.setSelectedIndex(25);
+		this.comboBoxColorStyle.setSelectedIndex(21);
 		if (isNewTheme) {
 			refreshColor();
 		}
@@ -213,14 +175,14 @@ public class ThemeRangeContainer extends JPanel {
 		this.panelProperty.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
 		spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
-		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(3, 0));
-		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(3, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(3, 0));
+		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(1, 0));
 		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
 		
 		getTable();
@@ -326,7 +288,6 @@ public class ThemeRangeContainer extends JPanel {
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
-		this.comboBoxRangeMethod.setEditable(true);
 		if (themeRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeRange.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -359,14 +320,13 @@ public class ThemeRangeContainer extends JPanel {
 	private void initComboBoxRangePrecision() {
 		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
 				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
-		this.comboBoxRangePrecision.setEditable(true);
 		this.numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
 	}
 
 	/**
 	 * 科学计数法转换
-	 * 
+	 *
 	 * @param precesion
 	 * @return
 	 */
@@ -396,7 +356,6 @@ public class ThemeRangeContainer extends JPanel {
 	private void initComboBoxRangeFormat() {
 		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
-		this.comboBoxRangeFormat.setEditable(true);
 	}
 
 	/*
@@ -426,7 +385,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 表格初始化
-	 * 
+	 *
 	 * @return m_table
 	 */
 	private JTable getTable() {
@@ -479,7 +438,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 表达式
-	 * 
+	 *
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
@@ -521,7 +480,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 根据当前数据集类型设置颜色方案
-	 * 
+	 *
 	 * @param geoStyle 需要设置的风格
 	 * @param color 设置的颜色
 	 */
@@ -564,11 +523,12 @@ public class ThemeRangeContainer extends JPanel {
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
 		this.buttonSplit.addActionListener(this.actionListener);
-		this.tableRangeInfo.addMouseListener(this.tableMouseListener);
+		this.tableRangeInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxExpression.addItemListener(this.itemListener);
 		this.comboBoxRangePrecision.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
+		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.itemListener);
@@ -586,11 +546,12 @@ public class ThemeRangeContainer extends JPanel {
 		this.buttonStyle.removeActionListener(this.actionListener);
 		this.buttonMerge.removeActionListener(this.actionListener);
 		this.buttonSplit.removeActionListener(this.actionListener);
-		this.tableRangeInfo.removeMouseListener(this.tableMouseListener);
+		this.tableRangeInfo.removeMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
 		this.comboBoxExpression.removeItemListener(this.itemListener);
 		this.comboBoxRangePrecision.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
+		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeItemListener(this.itemListener);
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
@@ -647,7 +608,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 重置文本风格
-	 * 
+	 *
 	 * @param selectRow 要重置文本风格的行
 	 * @param nowGeoStyle 新的文本风格
 	 * @param symbolType 文本的风格类型
@@ -711,7 +672,10 @@ public class ThemeRangeContainer extends JPanel {
 					String endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(splitValue),
 							String.valueOf(item.getEnd()));
 					themeRange.split(selectRow, splitValue, item.getStyle(), startCaption, item.getStyle(), endCaption);
+					isMergeOrSplit = true;
 					getTable();
+					int rangCount = themeRange.getCount();
+					comboBoxRangeCount.setSelectedItem(String.valueOf(rangCount));
 					tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
 				}
 			}
@@ -729,7 +693,10 @@ public class ThemeRangeContainer extends JPanel {
 			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
 					String.valueOf(endItem.getEnd()));
 			themeRange.merge(startIndex, selectedRows.length, startItem.getStyle(), caption);
+			isMergeOrSplit = true;
 			getTable();
+			int rangeCount = themeRange.getCount();
+			comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
 			tableRangeInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			buttonMerge.setEnabled(false);
 			buttonSplit.setEnabled(true);
@@ -758,7 +725,7 @@ public class ThemeRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项是否全部不可见
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -778,7 +745,7 @@ public class ThemeRangeContainer extends JPanel {
 
 		/**
 		 * 判断选中项中是否存在不可见子项
-		 * 
+		 *
 		 * @param selectedRows
 		 * @return
 		 */
@@ -794,7 +761,7 @@ public class ThemeRangeContainer extends JPanel {
 
 		/**
 		 * 重置可见选项
-		 * 
+		 *
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
@@ -811,26 +778,29 @@ public class ThemeRangeContainer extends JPanel {
 
 	}
 
-	class LocalTableMouseListener extends MouseAdapter {
+	class LocalMouseListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			int[] selectedRows = tableRangeInfo.getSelectedRows();
-			if (selectedRows.length == 1) {
-				buttonMerge.setEnabled(false);
-				buttonSplit.setEnabled(true);
-			} else if (selectedRows.length >= 2) {
-				buttonSplit.setEnabled(false);
-			}
-			if (selectedRows.length >= 2 && MathUtilties.isContiuityArray(selectedRows)) {
-				buttonMerge.setEnabled(true);
-			} else {
-				buttonMerge.setEnabled(false);
+			if (e.getSource() == tableRangeInfo) {
+				int[] selectedRows = tableRangeInfo.getSelectedRows();
+				if (selectedRows.length == 1) {
+					buttonMerge.setEnabled(false);
+					buttonSplit.setEnabled(true);
+				} else if (selectedRows.length >= 2) {
+					buttonSplit.setEnabled(false);
+				}
+				if (selectedRows.length >= 2 && MathUtilties.isContiuityArray(selectedRows)) {
+					buttonMerge.setEnabled(true);
+				} else {
+					buttonMerge.setEnabled(false);
+				}
 			}
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (1 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE && tableRangeInfo.getSelectedRows().length == 1) {
+			if (e.getSource() == tableRangeInfo && 1 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE
+					&& tableRangeInfo.getSelectedRows().length == 1) {
 				int selectRow = tableRangeInfo.getSelectedRow();
 				ThemeRangeItem item = themeRange.getItem(selectRow);
 				boolean isVisible = item.isVisible();
@@ -845,13 +815,16 @@ public class ThemeRangeContainer extends JPanel {
 				if (isRefreshAtOnce) {
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 				}
-			} else if (2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
+			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				int selectRow = tableRangeInfo.getSelectedRow();
 				setItemGeoSytle();
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 				}
+			}
+			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
+				isMergeOrSplit = false;
 			}
 		}
 	}
@@ -870,7 +843,7 @@ public class ThemeRangeContainer extends JPanel {
 					getSqlExpression(comboBoxExpression);
 					// 修改表达式
 					setFieldInfo();
-				} else if (e.getSource() == comboBoxRangeCount && !isCustom) {
+				} else if (e.getSource() == comboBoxRangeCount && !isCustom && !isMergeOrSplit) {
 					// 修改段数
 					setRangeCount();
 				} else if (e.getSource() == comboBoxRangePrecision) {
@@ -1107,7 +1080,7 @@ public class ThemeRangeContainer extends JPanel {
 
 		/**
 		 * 获取表达式项
-		 * 
+		 *
 		 * @param jComboBoxField
 		 */
 		private void getSqlExpression(JComboBox<String> jComboBoxField) {
@@ -1158,7 +1131,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 判断段值是否合法
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRightRangeValue(String rangeValue, int selectRow) {
@@ -1191,6 +1164,15 @@ public class ThemeRangeContainer extends JPanel {
 					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
 						themeRange.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+						String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
+						String caption = themeRange.getItem(selectRow).getCaption();
+						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), endValue);
+						themeRange.getItem(selectRow).setCaption(caption);
+						if (selectRow != themeRange.getCount() - 1) {
+							String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
+							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), endValue);
+							themeRange.getItem(selectRow + 1).setCaption(nextCaption);
+						}
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
@@ -1210,7 +1192,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 刷新theme
-	 * 
+	 *
 	 * @param theme
 	 */
 	private void refreshThemeRange(ThemeRange theme) {
@@ -1289,7 +1271,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 获取是否及时刷新值
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isRefreshAtOnece() {
@@ -1298,7 +1280,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 设置是否及时刷新
-	 * 
+	 *
 	 * @param isRefreshAtOnece
 	 */
 	public void setRefreshAtOnece(boolean isRefreshAtOnece) {
@@ -1307,7 +1289,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 获取分段专题图图层
-	 * 
+	 *
 	 * @return
 	 */
 	public Layer getThemeRangeLayer() {
@@ -1316,7 +1298,7 @@ public class ThemeRangeContainer extends JPanel {
 
 	/**
 	 * 设置分段专题图图层
-	 * 
+	 *
 	 * @param themeRangeLayer
 	 */
 	public void setThemeRangeLayer(Layer themeRangeLayer) {
