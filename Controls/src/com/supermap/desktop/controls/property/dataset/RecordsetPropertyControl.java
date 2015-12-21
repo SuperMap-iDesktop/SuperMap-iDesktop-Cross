@@ -1,37 +1,11 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.text.NumberFormatter;
-
 import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Enum;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
-import com.supermap.data.Enum;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -45,6 +19,21 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
 /**
  * FieldInfo 添加到 DatasetVector 之后，就只有 Caption 可以进行修改。
@@ -306,7 +295,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	 * 里的集合中已经不存在了，那么在 ButtonApply 的时候，就不会应用这条记录的（将 name、caption 等写入到真正的 FieldInfo 中）基本信息。
 	 * 所以添加的时候，字段名是 untitled，删除的时候取的封装的 FieldData 的 name，也就是 “NewField” 等，就会提示删除失败。
 	 *
-	 * @param deletedRow
+	 * @param deletedData
 	 */
 	// @formatter:on
 	private void addDeletedFieldModifiedData(FieldData deletedData) {
