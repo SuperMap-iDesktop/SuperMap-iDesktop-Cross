@@ -1,12 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.event.EventListenerList;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IForm;
@@ -30,6 +23,11 @@ import com.supermap.desktop.ui.docking.RootWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.ui.docking.View;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FormManager implements IFormManager {
 	private IFormMain mainForm = null;
@@ -520,7 +518,7 @@ public class FormManager implements IFormManager {
 			}
 
 			if (needRefersh) {
-				frameMenuManager.getMenuBar().repaint();
+				frameMenuManager.getMenuBar().updateUI();
 				toolbarManager.getToolbarsContainer().repaint();
 			}
 		}
