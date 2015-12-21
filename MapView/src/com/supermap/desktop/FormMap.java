@@ -980,8 +980,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 				if (exist) {
 					layersComponentManager.setMap(this.getMapControl().getMap());
-
-
 					setActiveLayers(rememberActiveLayers);
 					this.getMapControl().getMap().refresh();
 				} else {
