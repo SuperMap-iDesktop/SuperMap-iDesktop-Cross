@@ -600,11 +600,11 @@ public class JDialogSQLQuery extends SmDialog {
 	private void initPanelButton() {
 		// @formatter:off
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonImport,new GridBagConstraintsHelper(0,0,1,1).setWeight(0.1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelButton.add(buttonExport,new GridBagConstraintsHelper(1,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelButton.add(buttonQuery,new GridBagConstraintsHelper(2,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
-		panelButton.add(buttonClear,new GridBagConstraintsHelper(3,0,1,1).setWeight(0.1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
-		panelButton.add(buttonClose,new GridBagConstraintsHelper(4,0,1,1).setWeight(0.1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		panelButton.add(buttonImport,new GridBagConstraintsHelper(0,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelButton.add(buttonExport,new GridBagConstraintsHelper(1,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelButton.add(buttonQuery,new GridBagConstraintsHelper(2,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		panelButton.add(buttonClear,new GridBagConstraintsHelper(3,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		panelButton.add(buttonClose,new GridBagConstraintsHelper(4,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
 
 
 		// @formatter:on

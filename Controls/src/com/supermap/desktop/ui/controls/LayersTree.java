@@ -751,7 +751,7 @@ public class LayersTree extends JTree {
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			Point clickPoint = dge.getDragOrigin();
 			TreePath path = getClosestPathForLocation(clickPoint.x, clickPoint.y);
-			if (null != path.getLastPathComponent()) {
+			if (path != null && null != path.getLastPathComponent()) {
 				draggedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 				draggedNodeIndex = ((DefaultMutableTreeNode) LayersTree.this.getModel().getRoot()).getIndex(draggedNode);
 				dropTargetNodeIndex = -1;
