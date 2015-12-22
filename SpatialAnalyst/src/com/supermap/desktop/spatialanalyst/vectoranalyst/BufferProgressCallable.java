@@ -28,7 +28,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			try {
 				updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
 			} catch (CancellationException e) {
-				// 待实现
+				arg0.setCancel(true);
 			}
 		}
 	};
@@ -44,7 +44,6 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 
 	@Override
 	public Boolean call() throws Exception {
-
 		Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
 		try {
 			createBufferAnalyst = false;
@@ -64,6 +63,11 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
+		} finally {
+			BufferAnalyst.removeSteppedListener(steppedListener);
+			if (this.sourceData instanceof Recordset && this.sourceData != null) {
+				((Recordset) this.sourceData).dispose();
+			}
 		}
 		return createBufferAnalyst;
 	}

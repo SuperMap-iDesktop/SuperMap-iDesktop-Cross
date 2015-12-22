@@ -82,6 +82,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBufferData = panelBufferData;
 	}
 
+	public PanelResultSet getPanelResultSet() {
+		return panelResultSet;
+	}
+
+	public void setPanelResultSet(PanelResultSet panelResultSet) {
+		this.panelResultSet = panelResultSet;
+	}
+
 	public PanelPointOrRegionAnalyst() {
 		initComponent();
 		initResources();
@@ -128,9 +136,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.comboBoxFieldControl.setEditable(false);
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
-		numberFormatter.setValueClass(Double.class);
+		numberFormatter.setValueClass(Integer.class);
 		this.textFieldNumeric = new SMFormattedTextField(numberFormatter);
-		this.textFieldNumeric.setText("10");
+		this.textFieldNumeric.setValue(10);
 
 		// 设置按钮组，只能点击一个按钮
 		ButtonGroup bufferRadiusButtonGroup = new ButtonGroup();
@@ -294,10 +302,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			Dataset comboBoxDataset = this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			this.comboBoxField = new ComboBoxField(comboBoxDataset, comboBoxFieldControl);
-			comboBoxField.createComboBoxField(comboBoxDataset, comboBoxFieldControl);
+			this.comboBoxField.createComboBoxField(comboBoxDataset, comboBoxFieldControl);
 		}
 		setComponentEnabled();
-		this.radius = Integer.valueOf(this.textFieldNumeric.getText().replaceAll(",", ""));
+		this.radius = Integer.valueOf(this.textFieldNumeric.getValue().toString());
 	}
 
 	/**
@@ -365,7 +373,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	/**
 	 * 创建缓冲区分析
 	 */
-	public boolean CreateCurrentBuffer() {
+	public boolean createCurrentBuffer() {
 		bufferCreate = false;
 		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
@@ -384,28 +392,18 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
 				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
-				if (Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) < 4
-						|| Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) > 200) {
-					this.panelResultSet.getTextFieldSemicircleLineSegment().setText("100");
-				}
-
 				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 
 				if (this.radioButtonNumeric.isSelected()) {
-					this.radius = Integer.valueOf(this.textFieldNumeric.getText().replaceAll(",", ""));
+					this.radius = Integer.parseInt(this.textFieldNumeric.getValue().toString());
 					if (sourceDatasetVector.getType() == DatasetType.POINT || sourceDatasetVector.getType() == DatasetType.POINT3D) {
-						if (this.radius instanceof Integer) {
-							this.radius = Math.abs((Integer) this.radius);
-						}
+						this.radius = Math.abs((Integer) this.radius);
 					}
 				}
-
 				// 设置缓冲区参数
 				bufferAnalystParameter.setLeftDistance(this.radius);
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
 				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit((Unit) this.comboBoxUnitBox.getSelectedItem()));
-				// bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit(this.comboBoxUnitBox.getSelectedItem().toString()));
-				bufferAnalystParameter.setRadiusUnit(BufferRadiusUnit.Meter);
 				bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 				// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
@@ -477,10 +475,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				}
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonNumeric) {
-				radius = Integer.valueOf(textFieldNumeric.getText().replaceAll(",", ""));
+				radius = Integer.valueOf(textFieldNumeric.getValue().toString());
 				setComponentEnabled();
 			} else if (e.getSource() == textFieldNumeric) {
-				radius = Integer.valueOf(textFieldNumeric.getText().replaceAll(",", ""));
+				radius = Integer.valueOf(textFieldNumeric.getValue().toString());
 			} else if (e.getSource() == comboBoxFieldControl) {
 				if (comboBoxFieldControl.getSelectedItem() != null) {
 					radius = comboBoxFieldControl.getSelectedItem().toString();

@@ -1,5 +1,7 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.BorderFactory;
@@ -26,6 +28,7 @@ public class PanelResultSet extends JPanel {
 	private JCheckBox checkBoxDisplayInScene;
 	private JLabel labelSemicircleLineSegment;
 	private SMFormattedTextField textFieldSemicircleLineSegment;
+	private final static String TEXT_VALUE = "100";
 
 	public JCheckBox getCheckBoxUnionBuffer() {
 		return checkBoxUnionBuffer;
@@ -81,19 +84,19 @@ public class PanelResultSet extends JPanel {
 		setPanelResultSetLayout();
 	}
 
+
 	private void initComponent() {
 		this.checkBoxUnionBuffer = new JCheckBox("UnionBuffer");
 		this.checkBoxRemainAttributes = new JCheckBox("RemainInAttributes");
 		this.checkBoxDisplayInMap = new JCheckBox("DisplayInMap");
 		this.checkBoxDisplayInScene = new JCheckBox("DisPlayInScene");
-		//暂时不实现
 		this.checkBoxDisplayInScene.setVisible(false);
 		this.labelSemicircleLineSegment = new JLabel("SemicircleLineSegment");
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
-		numberFormatter.setValueClass(Integer.class);
+		numberFormatter.setValueClass(Long.class);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
-		this.textFieldSemicircleLineSegment.setText("100");
+		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 	}
 
 	private void initResources() {

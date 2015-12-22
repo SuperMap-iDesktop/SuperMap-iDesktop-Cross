@@ -5,10 +5,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.spatialanalyst.vectoranalyst.BufferFactory;
+import com.supermap.desktop.spatialanalyst.vectoranalyst.BufferDialog;
 
 public class CtrlActionBufferAnalyst extends CtrlAction {
-	private BufferFactory bufferFactory;
+	private BufferDialog bufferFactory;
 
 	public CtrlActionBufferAnalyst(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -17,7 +17,7 @@ public class CtrlActionBufferAnalyst extends CtrlAction {
 
 	@Override
 	public void run() {
-		 this.setBufferFactory(new BufferFactory());
+		 this.setBufferFactory(new BufferDialog());
 	}
 
 	@Override
@@ -31,11 +31,11 @@ public class CtrlActionBufferAnalyst extends CtrlAction {
 		return visible;
 	}
 
-	public BufferFactory getBufferFactory() {
+	public BufferDialog getBufferFactory() {
 		return bufferFactory;
 	}
 
-	public void setBufferFactory(BufferFactory bufferFactory) {
+	public void setBufferFactory(BufferDialog bufferFactory) {
 		this.bufferFactory = bufferFactory;
 	}
 

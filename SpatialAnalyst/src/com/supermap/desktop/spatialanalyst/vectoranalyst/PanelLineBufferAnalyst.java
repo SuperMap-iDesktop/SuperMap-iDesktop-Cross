@@ -78,23 +78,19 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private SMFormattedTextField textFieldNumericRight;
 	private JComboBox<Object> comboBoxFieldLeft;
 	private JComboBox<Object> comboBoxFieldRight;
-
 	private JRadioButton radioButtonBufferTypeRound;
 	private JRadioButton radioButtonBufferTypeFlat;
 	private JCheckBox checkBoxBufferLeft;
 	private JCheckBox checkBoxBufferRight;
 	private PanelBufferData panelBufferData;
-
 	private PanelResultData panelResultData;
 	private PanelResultSet panelResultSet;
 	private MapControl mapControl;
 	private Recordset recordset;
 	private Object radiusLeft;
 	private Object radiusRight;
-
 	private String resultDatasetName;
 	private boolean bufferCreate;
-
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
 	private LocalKeylistener localKeylistener = new LocalKeylistener();
 	private ComboBoxField comboBoxField;
@@ -200,11 +196,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
 
 		NumberFormatter numberFormatter = new NumberFormatter();
-		numberFormatter.setValueClass(Double.class);
+		numberFormatter.setValueClass(Integer.class);
 		this.textFieldNumericLeft = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumericRight = new SMFormattedTextField(numberFormatter);
-		this.textFieldNumericLeft.setText("10");
-		this.textFieldNumericRight.setText("10");
+		this.textFieldNumericLeft.setValue(10);
+		this.textFieldNumericRight.setValue(10);
 
 		this.comboBoxFieldLeft = new JComboBox<Object>();
 		this.comboBoxFieldRight = new JComboBox<Object>();
@@ -486,15 +482,10 @@ public class PanelLineBufferAnalyst extends JPanel {
 				resultDatasetVectorInfo.setType(DatasetType.REGION);
 				DatasetVector resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
 				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
-
-				if (Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) < 4
-						|| Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()) > 200) {
-					this.panelResultSet.getTextFieldSemicircleLineSegment().setText("100");
-				}
 				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 				if (this.radioButtonNumeric.isSelected()) {
-					this.radiusLeft = Math.abs(Integer.parseInt(this.textFieldNumericLeft.getText().replaceAll(",", "")));
-					this.radiusRight = Math.abs(Integer.parseInt(this.textFieldNumericRight.getText().replaceAll(",", "")));
+					this.radiusLeft = Math.abs(Integer.parseInt(this.textFieldNumericLeft.getValue().toString()));
+					this.radiusRight = Math.abs(Integer.parseInt(this.textFieldNumericRight.getValue().toString()));
 				}
 
 				if (this.radioButtonBufferTypeRound.isSelected()) {
@@ -514,7 +505,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 				bufferAnalystParameter.setSemicircleLineSegment(Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 				FormProgress formProgress = new FormProgress();
-
 				// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
 				if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
 					formProgress.doWork(new BufferProgressCallable(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
@@ -619,8 +609,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonNumeric) {
-				radiusLeft = Math.abs(Integer.parseInt(textFieldNumericLeft.getText().replaceAll(",", "")));
-				radiusRight = Math.abs(Integer.parseInt(textFieldNumericRight.getText().replaceAll(",", "")));
+				radiusLeft = Math.abs(Integer.parseInt(textFieldNumericLeft.getValue().toString()));
+				radiusRight = Math.abs(Integer.parseInt(textFieldNumericRight.getValue().toString()));
 				setComponentEnabled();
 			}
 		}
@@ -646,7 +636,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 			textFieldNumericLeft.setText(((JTextField) e.getSource()).getText());
 			updateUI();
 		}
-
 	}
 
 }
