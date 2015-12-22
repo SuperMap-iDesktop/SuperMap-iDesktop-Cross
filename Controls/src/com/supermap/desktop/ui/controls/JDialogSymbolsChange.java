@@ -221,6 +221,8 @@ public class JDialogSymbolsChange extends SmDialog {
 
 	private void initPanelEnabled() {
 
+		this.buttonNext.setEnabled(false);
+
 		if (symbolType == SymbolType.MARKER) {
 			panelPoint.setCheckBoxsEnable(true);
 			panelLine.setCheckBoxsEnable(false);
