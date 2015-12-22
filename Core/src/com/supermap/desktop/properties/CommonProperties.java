@@ -51,4 +51,7 @@ public class CommonProperties extends Properties {
 	public static final String Extremum = "String_Extremum";
 	public static final String DefaultValue = "String_DefaultValue";
 	public static final String IsRequired = "String_IsRequired";
+	public static final String Next = "String_Button_Next";
+
+
 }

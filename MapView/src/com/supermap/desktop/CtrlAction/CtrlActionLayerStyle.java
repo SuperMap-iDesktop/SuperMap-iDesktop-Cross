@@ -1,8 +1,6 @@
 package com.supermap.desktop.CtrlAction;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.FormMap;
@@ -13,6 +11,9 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.mapping.Layer;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public class CtrlActionLayerStyle extends CtrlAction {
 
@@ -32,7 +33,7 @@ public class CtrlActionLayerStyle extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean enable = false;
+		DatasetType datasetType = null;
 		try {
 			LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 			TreePath[] selections = null;
@@ -44,16 +45,34 @@ public class CtrlActionLayerStyle extends CtrlAction {
 					Layer tempLayer = null;
 					if (treeNodeData.getData() instanceof Layer) {
 						tempLayer = (Layer) treeNodeData.getData();
+					} else {
+						datasetType = null;
+						break;
 					}
 					if (tempLayer != null && tempLayer.getTheme() == null && tempLayer.getDataset() != null) {
 						if (CommonToolkit.DatasetTypeWrap.isPoint(tempLayer.getDataset().getType())) {
-							enable = true;
-							break;
+							if (datasetType == null) {
+								datasetType = DatasetType.POINT;
+							} else if (datasetType != DatasetType.POINT) {
+								datasetType = null;
+								break;
+							}
 						} else if (CommonToolkit.DatasetTypeWrap.isLine(tempLayer.getDataset().getType())) {
-							enable = true;
-							break;
+							if (datasetType == null) {
+								datasetType = DatasetType.LINE;
+							} else if (datasetType != DatasetType.LINE) {
+								datasetType = null;
+								break;
+							}
 						} else if (CommonToolkit.DatasetTypeWrap.isRegion(tempLayer.getDataset().getType())) {
-							enable = true;
+							if (datasetType == null) {
+								datasetType = DatasetType.REGION;
+							} else if (datasetType != DatasetType.REGION) {
+								datasetType = null;
+								break;
+							}
+						} else {
+							datasetType = null;
 							break;
 						}
 					}
@@ -62,7 +81,7 @@ public class CtrlActionLayerStyle extends CtrlAction {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-		return enable;
+		return datasetType != null;
 	}
 
 	@Override
