@@ -115,7 +115,7 @@ public class BufferFactory extends SmDialog {
 						if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
 								|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
 							this.panelBufferBasic = new PanelPointOrRegionAnalyst();
-							// setSize(575, 332);
+							 setSize(575, 332);
 							this.radioButtonPointOrRegion.setSelected(true);
 						} else {
 							getPanelLineBuffer();

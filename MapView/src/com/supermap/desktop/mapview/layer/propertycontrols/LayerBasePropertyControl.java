@@ -1,5 +1,9 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -59,6 +63,20 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 	private transient TextFieldLayerCaptionDocumentListener textFieldLayerCaptionListener = new TextFieldLayerCaptionDocumentListener();
 	private transient SpinnerTransparenceChangeListener spinnerTransparenceChangedListener = new SpinnerTransparenceChangeListener();
 	private transient ComboBoxItemListener comboBoxItemListener = new ComboBoxItemListener();
+	private transient ActionListener actionListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			textFieldLayerCaptionAction();
+		}
+	};
+	private transient FocusAdapter focusAdapter = new FocusAdapter() {
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			textFieldLayerCaptionLostFocus();
+		}
+	};
 
 	public LayerBasePropertyControl() {
 		// TODO 后续根据需求进行一些初始化操作
@@ -190,6 +208,8 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		this.checkBoxIsSelectable.addStateChangeListener(checkBoxListener);
 		this.checkBoxIsSnapable.addStateChangeListener(checkBoxListener);
 		this.textFieldLayerCaption.getDocument().addDocumentListener(this.textFieldLayerCaptionListener);
+		this.textFieldLayerCaption.addActionListener(this.actionListener);
+		this.textFieldLayerCaption.addFocusListener(this.focusAdapter);
 		this.spinnerTransparence.addChangeListener(this.spinnerTransparenceChangedListener);
 		this.comboBoxMinVisibleScale.addItemListener(comboBoxItemListener);
 		this.comboBoxMaxVisibleScale.addItemListener(comboBoxItemListener);
@@ -202,6 +222,8 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		this.checkBoxIsSelectable.removeStateChangeListener(checkBoxListener);
 		this.checkBoxIsSnapable.removeStateChangeListener(checkBoxListener);
 		this.textFieldLayerCaption.getDocument().removeDocumentListener(this.textFieldLayerCaptionListener);
+		this.textFieldLayerCaption.removeActionListener(this.actionListener);
+		this.textFieldLayerCaption.removeFocusListener(this.focusAdapter);
 		this.spinnerTransparence.removeChangeListener(this.spinnerTransparenceChangedListener);
 		this.comboBoxMinVisibleScale.removeItemListener(comboBoxItemListener);
 		this.comboBoxMaxVisibleScale.removeItemListener(comboBoxItemListener);
@@ -248,8 +270,22 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 	}
 
 	private void textFieldLayerCaptionTextChanged() {
-		getModifiedLayerPropertyModel().setCaption(this.textFieldLayerCaption.getText());
-		checkChanged();
+		if (!StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+			getModifiedLayerPropertyModel().setCaption(this.textFieldLayerCaption.getText());
+			checkChanged();
+		}
+	}
+
+	private void textFieldLayerCaptionAction() {
+		if (StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+			this.textFieldLayerCaption.setText(getModifiedLayerPropertyModel().getCaption());
+		}
+	}
+
+	private void textFieldLayerCaptionLostFocus() {
+		if (StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+			this.textFieldLayerCaption.setText(getModifiedLayerPropertyModel().getCaption());
+		}
 	}
 
 	private void spinnerTransparenceChanged() {
@@ -277,7 +313,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 					// 如果选中的是当前可见比例尺，那么就把文本设置为当前比例尺，如果选中的是清除，那么就把文本设置为 NONE
 					if (isChanged
 							&& this.comboBoxMinVisibleScale.getSelectedItem().toString()
-							.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
+									.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
 						this.comboBoxMinVisibleScale.removeItemListener(comboBoxItemListener);
 						this.comboBoxMinVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						this.comboBoxMinVisibleScale.addItemListener(comboBoxItemListener);
@@ -312,7 +348,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 					// 如果选中的是当前可见比例尺，那么就把文本设置为当前比例尺，如果选中的是清除，那么就把文本设置为 NONE
 					if (isChanged
 							&& this.comboBoxMaxVisibleScale.getSelectedItem().toString()
-							.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
+									.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
 						this.comboBoxMaxVisibleScale.removeItemListener(comboBoxItemListener);
 						this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						this.comboBoxMaxVisibleScale.addItemListener(comboBoxItemListener);
