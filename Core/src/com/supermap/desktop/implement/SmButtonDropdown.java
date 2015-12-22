@@ -45,6 +45,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		} else {
 			displayButton.setText(xmlCommand.getLabel());
 		}
+		displayButton.setToolTipText(xmlCommand.getLabel());
 
 		arrowButton = new ControlButton(this);
 		arrowButton.setIcon(new MetalComboBoxIcon());
