@@ -9,10 +9,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.LabelBackShape;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,7 +22,7 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class ThemeLabelPropertyPanel extends JPanel {
+public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -395,7 +392,7 @@ public class ThemeLabelPropertyPanel extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	private void registActionListener() {
+	void registActionListener() {
 		this.comboBoxLabelExpression.addItemListener(this.itemListener);
 		this.comboBoxBGShape.addItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.itemListener);
@@ -788,6 +785,11 @@ public class ThemeLabelPropertyPanel extends JPanel {
 
 	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeLabel;
 	}
 
 }

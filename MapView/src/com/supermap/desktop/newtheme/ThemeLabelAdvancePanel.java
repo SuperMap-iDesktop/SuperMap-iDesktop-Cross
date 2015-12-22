@@ -15,7 +15,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ThemeLabelAdvancePanel extends JPanel {
+public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 	// panelAdvanced
@@ -159,7 +159,7 @@ public class ThemeLabelAdvancePanel extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	private void registActionListener() {
+	void registActionListener() {
 		this.comboBoxLineDirection.addItemListener(this.itemListener);
 		this.comboBoxOverLength.addItemListener(this.itemListener);
 		this.checkBoxRotateLabel.addActionListener(this.actionListener);
@@ -247,7 +247,7 @@ public class ThemeLabelAdvancePanel extends JPanel {
 
 	/**
 	 * 本文高度限制界面布局
-	 * 
+	 *
 	 * @param panelFontHeight
 	 */
 	private void initPanelFontHeight(JPanel panelFontHeight) {
@@ -754,5 +754,10 @@ public class ThemeLabelAdvancePanel extends JPanel {
 
 	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeLabel;
 	}
 }

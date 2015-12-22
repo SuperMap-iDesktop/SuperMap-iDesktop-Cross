@@ -1,11 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
-import com.supermap.data.Workspace;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -30,6 +25,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 	private static final int COLUMN_INDEX_Charset = 5;
 	private MutiTable table;
 	private Datasource datasource;
+	private PercentListener percentListener;
 
 	public DatasetCopyCallable(MutiTable table) {
 		this.table = table;
@@ -48,7 +44,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				copyDatasets(this.datasource);
 			}
 		} catch (Exception ex) {
-
+			this.datasource.removeSteppedListener(percentListener);
 		}
 		return true;
 	}
@@ -72,23 +68,21 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			String charset = vector.get(COLUMN_INDEX_Charset).toString();
 			Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
 			Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
-			Datasource targetDatasource = workspace.getDatasources().get(targetDatasourceStr);
+			datasource = workspace.getDatasources().get(targetDatasourceStr);
 			Dataset resultDataset = null;
 			if (StringUtilties.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
-					|| !targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
-				targetDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(targetDatasetName);
+					|| !datasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
+				targetDatasetName = datasource.getDatasets().getAvailableDatasetName(targetDatasetName);
 			}
 
-			PercentListener percentListener = null;
-
-			if (!targetDatasource.isReadOnly()) {
+			if (!datasource.isReadOnly()) {
 				percentListener = new PercentListener(i, count, targetDatasetName);
-				targetDatasource.addSteppedListener(percentListener);
+				datasource.addSteppedListener(percentListener);
 				if (null != CharsetUtilties.valueOf(charset)) {
-					resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType),
+					resultDataset = datasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType),
 							CharsetUtilties.valueOf(charset));
 				} else {
-					resultDataset = targetDatasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType));
+					resultDataset = datasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType));
 				}
 			} else {
 				String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), targetDatasourceStr);
@@ -122,7 +116,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				Dataset targetDataset = datasets[0];
 				// 提示是否进行复制操作
 
-				PercentListener percentListener = new PercentListener(1, 1, targetDataset.getName());
+				percentListener = new PercentListener(1, 1, targetDataset.getName());
 				datasource.addSteppedListener(percentListener);
 				copyDatasetToDatasource(targetDataset, targetDatasourceStr, datasource);
 				if (percentListener.isCancel()) {
@@ -133,7 +127,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				// 复制多个数据集
 
 				for (int i = 0; i < datasets.length; i++) {
-					PercentListener percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
+					percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
 					datasource.addSteppedListener(percentListener);
 					copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
 					if (percentListener.isCancel()) {

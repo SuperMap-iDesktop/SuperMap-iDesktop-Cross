@@ -1,21 +1,5 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.FlowLayout;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JList;
-
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
@@ -23,13 +7,18 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
 
-import java.awt.Color;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.border.LineBorder;
 
 public class ThemeGuidDialog extends SmDialog {
 	private static final long serialVersionUID = 1L;
@@ -64,7 +53,8 @@ public class ThemeGuidDialog extends SmDialog {
 	 * 界面布局入口
 	 */
 	private void initComponents() {
-		setBounds(500, 400, 477, 385);
+		setSize(477, 385);
+		setLocationRelativeTo(null);
 		this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		JScrollPane scrollPane = new JScrollPane();

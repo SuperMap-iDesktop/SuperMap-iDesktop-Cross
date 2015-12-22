@@ -181,7 +181,9 @@ public class ThemeMainContainer extends JPanel {
 	 */
 	private void updateThemeMainContainer() {
 		for (int i = ThemeMainContainer.this.getComponentCount() - 1; i >= 0; i--) {
-			if (ThemeMainContainer.this.getComponent(i) instanceof JPanel) {
+			if (ThemeMainContainer.this.getComponent(i) instanceof ThemeChangePanel) {
+				ThemeChangePanel themeChangePanel = (ThemeChangePanel) ThemeMainContainer.this.getComponent(i);
+				themeChangePanel.unregistActionListener();
 				ThemeMainContainer.this.remove(i);
 			}
 		}
@@ -264,4 +266,13 @@ public class ThemeMainContainer extends JPanel {
 			}
 		}
 	}
+
+	public boolean isTreeClicked() {
+		return isTreeClicked;
+	}
+
+	public void setTreeClicked(boolean isTreeClicked) {
+		this.isTreeClicked = isTreeClicked;
+	}
+
 }

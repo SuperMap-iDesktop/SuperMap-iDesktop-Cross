@@ -50,8 +50,8 @@ public abstract class UpdateProgressCallable implements Callable<Boolean> {
 	 * 总进度
 	 * 
 	 * @param percent
+	 * @param recentTask
 	 * @param totalPercent
-	 * @param remainTime
 	 * @param message
 	 * @throws CancellationException
 	 */

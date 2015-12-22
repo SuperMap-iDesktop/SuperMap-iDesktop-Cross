@@ -1,33 +1,14 @@
 package com.supermap.desktop.newtheme;
 
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SymbolDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeType;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -39,16 +20,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +28,7 @@ import java.util.ArrayList;
  *
  * @author xie
  */
-public class ThemeUniqueContainer extends JPanel {
+public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane tabbedPaneInfo = new JTabbedPane(JTabbedPane.TOP);
@@ -198,7 +170,7 @@ public class ThemeUniqueContainer extends JPanel {
 	/**
 	 * 控件注册事件
 	 */
-	private void registActionListener() {
+	 void registActionListener() {
 		this.comboBoxExpression.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetY.addItemListener(this.comboBoxItemListener);
@@ -523,6 +495,7 @@ public class ThemeUniqueContainer extends JPanel {
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			}
@@ -557,6 +530,7 @@ public class ThemeUniqueContainer extends JPanel {
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 			}
 		}
@@ -622,6 +596,7 @@ public class ThemeUniqueContainer extends JPanel {
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
@@ -692,6 +667,7 @@ public class ThemeUniqueContainer extends JPanel {
 					setOffsetUnity();
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			}
@@ -843,6 +819,7 @@ public class ThemeUniqueContainer extends JPanel {
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			} catch (Exception ex) {
@@ -877,6 +854,7 @@ public class ThemeUniqueContainer extends JPanel {
 				setGeoStyleAntitone();
 			}
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 			}
 			if (null != selectRows && e.getSource() != buttonDelete) {
@@ -1175,6 +1153,11 @@ public class ThemeUniqueContainer extends JPanel {
 	 */
 	public void setThemeUniqueLayer(Layer themeUniqueLayer) {
 		this.themeUniqueLayer = themeUniqueLayer;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeUnique;
 	}
 
 }

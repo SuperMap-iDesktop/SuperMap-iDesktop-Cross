@@ -27,7 +27,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-public class ThemeGridUniqueContainer extends JPanel {
+public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane tabbedPaneInfo = new JTabbedPane(JTabbedPane.TOP);
 	private JPanel panelProperty = new JPanel();
@@ -141,7 +141,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 	/**
 	 * 控件注册事件
 	 */
-	private void registActionListener() {
+	void registActionListener() {
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
 		this.buttonAdd.addActionListener(this.actionListener);
@@ -315,6 +315,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 				setItemColor(e.getX(), e.getY());
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			}
@@ -356,6 +357,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 			}
 		}
@@ -406,6 +408,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
@@ -450,6 +453,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 					}
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			}
@@ -475,6 +479,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
 			} catch (Exception ex) {
@@ -509,6 +514,7 @@ public class ThemeGridUniqueContainer extends JPanel {
 				setGeoStyleAntitone();
 			}
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 			}
 			if (null != selectRows && e.getSource() != buttonDelete) {
@@ -775,4 +781,8 @@ public class ThemeGridUniqueContainer extends JPanel {
 		this.themeUniqueLayer = themeUniqueLayer;
 	}
 
+	@Override
+	public Theme getCurrentTheme() {
+		return themeUnique;
+	}
 }

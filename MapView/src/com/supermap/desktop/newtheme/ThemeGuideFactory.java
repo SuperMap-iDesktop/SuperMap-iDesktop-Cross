@@ -18,10 +18,11 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 public class ThemeGuideFactory {
@@ -29,7 +30,7 @@ public class ThemeGuideFactory {
 	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
-
+	private static LocalPropertyListener propertyListener;
 	/**
 	 * 界面替换
 	 *
@@ -53,7 +54,7 @@ public class ThemeGuideFactory {
 		return dockbarThemeContainer;
 	}
 
-	private static ThemeMainContainer addPanelToThemeMainContainer(JPanel panel, String caption) {
+	private static ThemeMainContainer addPanelToThemeMainContainer(ThemeChangePanel panel, String caption) {
 		try {
 			dockbarThemeContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
 					.get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
@@ -71,11 +72,16 @@ public class ThemeGuideFactory {
 						panel,
 						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
 								.setFill(GridBagConstraints.BOTH));
+				ThemeGuideFactory themeGuideFactory = new ThemeGuideFactory();
+				propertyListener = themeGuideFactory.new LocalPropertyListener();
+				panel.addPropertyChangeListener("ThemeChange", propertyListener);
 				container.repaint();
 			}
 
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			panel.removePropertyChangeListener(propertyListener);
 		}
 		if (null != container) {
 			return container;
@@ -234,7 +240,6 @@ public class ThemeGuideFactory {
 	public static void refreshMapAndLayer(Map map, String layerName, boolean isExpandPath) {
 		map.refresh();
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
-		DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
 		tree.reload();
 		TreePath layerPath = getSelectionPath(tree, layerName);
 		tree.setSelectionPath(layerPath);
@@ -359,4 +364,10 @@ public class ThemeGuideFactory {
 		}
 	}
 
+	class LocalPropertyListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			container.setTreeClicked(false);
+		}
+	}
 }

@@ -1,13 +1,6 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import java.text.MessageFormat;
-import java.util.concurrent.CancellationException;
-
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
-import com.supermap.data.TopologyDatasetRelationItem;
+import com.supermap.data.*;
 import com.supermap.data.topology.TopologyPreprocessOptions;
 import com.supermap.data.topology.TopologyValidator;
 import com.supermap.desktop.Application;
@@ -17,10 +10,14 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 
+import java.text.MessageFormat;
+import java.util.concurrent.CancellationException;
+
 public class TopoPregressCallable extends UpdateProgressCallable {
 	private MutiTable table;
 	private double tolerance;
 	private TopologyPreprocessOptions options;
+	private PercentListener percentListener;
 
 	public TopoPregressCallable(MutiTable table, double tolerance, TopologyPreprocessOptions options) {
 		this.table = table;
@@ -43,8 +40,8 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 					datasets[i] = (DatasetVector) datasource.getDatasets().get(datasetName);
 					TopologyDatasetRelationItem item = new TopologyDatasetRelationItem(datasets[i]);
 					precisionOrders[i] = item.getPrecisionOrder();
-
-					TopologyValidator.addSteppedListener(new PercentListener(i, count));
+					percentListener = new PercentListener(i, count);
+					TopologyValidator.addSteppedListener(percentListener);
 				}
 				long startTime = System.currentTimeMillis();
 				boolean topologyPreprocessResult = TopologyValidator.preprocess(datasets, precisionOrders, options, tolerance);
@@ -59,6 +56,8 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			TopologyValidator.removeSteppedListener(percentListener);
 		}
 		return true;
 	}

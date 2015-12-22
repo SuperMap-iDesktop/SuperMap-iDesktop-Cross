@@ -18,6 +18,7 @@ public class TopoBuildRegionsCallable extends UpdateProgressCallable {
 	private String time;
 	private DatasetVector resultDataset;
 	private TopologyProcessingOptions topologyProcessingOptions;
+	private PercentListener percentListener;
 
 	public TopoBuildRegionsCallable(Datasource datasource, Dataset dataset, String targetDatasetName, TopologyProcessingOptions topologyProcessingOptions) {
 		this.datasource = datasource;
@@ -31,7 +32,8 @@ public class TopoBuildRegionsCallable extends UpdateProgressCallable {
 		boolean result = true;
 
 		try {
-			TopologyProcessing.addSteppedListener(new PercentListener());
+			percentListener = new PercentListener();
+			TopologyProcessing.addSteppedListener(percentListener);
 			long startTime = System.currentTimeMillis();
 			resultDataset = TopologyProcessing.buildRegions((DatasetVector) dataset, datasource, targetDatasetName, topologyProcessingOptions);
 			long endTime = System.currentTimeMillis();
@@ -50,6 +52,7 @@ public class TopoBuildRegionsCallable extends UpdateProgressCallable {
 				info = "failed";
 			}
 			Application.getActiveApplication().getOutput().output(info);
+			TopologyProcessing.removeSteppedListener(percentListener);
 		}
 		return result;
 	}

@@ -30,7 +30,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
-public class ThemeGridRangeContainer extends JPanel {
+public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private static final long serialVersionUID = 1L;
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_GEOSTYLE = 1;
@@ -314,7 +314,7 @@ public class ThemeGridRangeContainer extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	private void registActionListener() {
+	void registActionListener() {
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonForeGroundColor.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
@@ -412,6 +412,7 @@ public class ThemeGridRangeContainer extends JPanel {
 				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight() - 60);
 			}
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 			}
 		}
@@ -578,11 +579,13 @@ public class ThemeGridRangeContainer extends JPanel {
 					tableRangeInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 				}
 			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				setItemColor(e.getX(), e.getY());
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 				}
 			}
@@ -612,6 +615,7 @@ public class ThemeGridRangeContainer extends JPanel {
 					setRangeFormat();
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 					tableRangeInfo.setRowSelectionInterval(0, 0);
 				}
@@ -769,6 +773,7 @@ public class ThemeGridRangeContainer extends JPanel {
 				getTable();
 				tableRangeInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 				}
 			} catch (Exception e) {
@@ -827,6 +832,7 @@ public class ThemeGridRangeContainer extends JPanel {
 		public void stateChanged(ChangeEvent e) {
 			makeDefaultAsCustom();
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
 			}
 		}
@@ -891,6 +897,11 @@ public class ThemeGridRangeContainer extends JPanel {
 	 */
 	public void setThemeRangeLayer(Layer themeRangeLayer) {
 		this.themeRangeLayer = themeRangeLayer;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeGridRange;
 	}
 
 }

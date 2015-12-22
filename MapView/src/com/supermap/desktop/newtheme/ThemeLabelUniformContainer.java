@@ -6,16 +6,16 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.TextStyleContainer;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ThemeLabelUniformContainer extends JPanel {
+public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,6 +28,7 @@ public class ThemeLabelUniformContainer extends JPanel {
 	private transient ThemeLabel themeLabel;
 	private transient Layer themeLabelLayer;
 	private transient TextStyle textStyle;
+	private transient TextStyleContainer textStyleContainer;
 
 	private boolean isRefreshAtOnece = true;
 
@@ -57,8 +58,9 @@ public class ThemeLabelUniformContainer extends JPanel {
 		this.setLayout(new GridBagLayout());
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
+		this.textStyleContainer = new TextStyleContainer(textStyle, map);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
-		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), new TextStyleContainer(textStyle, map));
+		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), textStyleContainer);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.tabbedPane.setSelectedIndex(1);
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
@@ -99,6 +101,24 @@ public class ThemeLabelUniformContainer extends JPanel {
 
 	public void setThemeLabelLayer(Layer themeLabelLayer) {
 		this.themeLabelLayer = themeLabelLayer;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeLabel;
+	}
+
+	@Override
+	void registActionListener() {
+		// do nothing
+
+	}
+
+	@Override
+	public void unregistActionListener() {
+		panelProperty.unregistActionListener();
+		panelAdvance.unregistActionListener();
+		textStyleContainer.unregistActionListener();
 	}
 
 }

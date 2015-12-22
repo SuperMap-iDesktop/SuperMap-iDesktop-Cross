@@ -1,28 +1,23 @@
 package com.supermap.desktop.util;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-
-import javax.swing.JTable;
-
 import com.supermap.data.Dataset;
-import com.supermap.data.conversion.DataExport;
-import com.supermap.data.conversion.ExportResult;
-import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.ExportSettings;
-import com.supermap.data.conversion.ExportSteppedEvent;
-import com.supermap.data.conversion.ExportSteppedListener;
-import com.supermap.data.conversion.FileType;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ExportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
+import javax.swing.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+
 public class DataExportCallable extends UpdateProgressCallable {
 	private ArrayList<ExportFileInfo> exports;
 	private JTable exportTable;
+	private DataExport dataExport = new DataExport();
+	private PercentProgress progress;
 
 	/**
 	 * 是否强制覆盖
@@ -65,10 +60,9 @@ public class DataExportCallable extends UpdateProgressCallable {
 					tempExportSetting.setTargetFileType(export.getTargetFileType());
 				}
 				tempExportSetting.setTargetFilePath(filePath);
-				final DataExport dataExport = new DataExport();
 				ExportSettings exportSettings = dataExport.getExportSettings();
 				exportSettings.add(tempExportSetting);
-				PercentProgress progress = new PercentProgress(i);
+				progress = new PercentProgress(i);
 				dataExport.addExportSteppedListener(progress);
 				long startTime = System.currentTimeMillis();
 				ExportResult result = dataExport.run();
@@ -82,6 +76,8 @@ public class DataExportCallable extends UpdateProgressCallable {
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			dataExport.removeExportSteppedListener(progress);
 		}
 		return true;
 	}

@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThemeLabelRangeContainer extends JPanel {
+public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 	private transient ThemeLabel themeLabel;
@@ -388,7 +388,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	private void registActionListener() {
+	void registActionListener() {
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
@@ -447,6 +447,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 				setItemTextSytle();
 			}
 			if (isRefreshAtOnce) {
+				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 			}
 			if (selectedRows.length > 0) {
@@ -643,6 +644,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 				}
 				tableLabelInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 				}
 			} else if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
@@ -676,6 +678,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 					setRangeFormat();
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 				}
 			}
@@ -942,6 +945,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 					themeLabel.getItem(selectRow).setCaption(caption);
 				}
 				if (isRefreshAtOnce) {
+					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 				}
 				getTable();
@@ -967,6 +971,11 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 	public void setThemeLabelLayer(Layer themeLabelLayer) {
 		this.themeLabelLayer = themeLabelLayer;
+	}
+
+	@Override
+	public Theme getCurrentTheme() {
+		return themeLabel;
 	}
 
 }

@@ -1,8 +1,5 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import java.text.MessageFormat;
-import java.util.concurrent.CancellationException;
-
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.SteppedEvent;
@@ -14,10 +11,14 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
+import java.text.MessageFormat;
+import java.util.concurrent.CancellationException;
+
 public class LineTopoCleanCallable extends UpdateProgressCallable {
 	private String datasetName;
 	private TopologyProcessingOptions topologyProcessingOptions;
 	private Datasource datasource;
+	private PercentListener percentListener;
 
 	public LineTopoCleanCallable(String datasetName, TopologyProcessingOptions topologyProcessingOptions, Datasource datasource) {
 		this.datasetName = datasetName;
@@ -32,7 +33,8 @@ public class LineTopoCleanCallable extends UpdateProgressCallable {
 		try {
 			DatasetVector dataset = (DatasetVector) CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
 			String topoInfo = "";
-			TopologyProcessing.addSteppedListener(new PercentListener());
+			percentListener = new PercentListener();
+			TopologyProcessing.addSteppedListener(percentListener);
 			long startTime = System.currentTimeMillis();
 			boolean topologyProcessResult = TopologyProcessing.clean(dataset, topologyProcessingOptions);
 			long endTime = System.currentTimeMillis();
@@ -46,6 +48,8 @@ public class LineTopoCleanCallable extends UpdateProgressCallable {
 		} catch (Exception e) {
 			result = false;
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			TopologyProcessing.removeSteppedListener(percentListener);
 		}
 		return result;
 	}
