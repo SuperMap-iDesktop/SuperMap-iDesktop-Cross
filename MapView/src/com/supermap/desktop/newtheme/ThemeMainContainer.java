@@ -1,5 +1,8 @@
 package com.supermap.desktop.newtheme;
 
+import com.supermap.desktop.Application;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -24,12 +27,17 @@ public class ThemeMainContainer extends JPanel {
 	private JLabel labelThemeLayer = new JLabel();
 	private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
 	private JPanel panelThemeInfo = new JPanel();
+
 	private Map map;
+	private boolean isTreeClicked = false;
+	
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
-	private boolean isTreeClicked = false;
-
+	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
+	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
+	private LocalMouseListener mouseListener = new LocalMouseListener();
+	
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -84,32 +92,21 @@ public class ThemeMainContainer extends JPanel {
 	 */
 	private void registActionListener() {
 		this.comboBoxThemeLayer.addItemListener(this.itemListener);
-		// 地图删除时移除掉
 		this.layersTree.addMouseListener(this.localMouseListener);
-
-		this.layersTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				if (isTreeClicked) {
-					resetThemeMainContainer(getSelectLayer());
-				}
-			}
-		});
-		this.layersTree.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (1 == e.getClickCount()) {
-					isTreeClicked = true;
-				}
-			}
-		});
+		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
+		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
+		this.layersTree.addMouseListener(this.mouseListener);
 	}
 
 	/**
 	 * 注销事件
 	 */
 	public void unregistActionListener() {
-		// do nothing
+		this.comboBoxThemeLayer.removeItemListener(this.itemListener);
+		this.layersTree.removeMouseListener(this.localMouseListener);
+		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
+		Application.getActiveApplication().getMainFrame().getFormManager().removeActiveFormChangedListener(this.activeFormChangedListener);
+		this.layersTree.removeMouseListener(this.mouseListener);
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -189,8 +186,9 @@ public class ThemeMainContainer extends JPanel {
 		}
 		ThemeMainContainer.this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
 				.setIpad(0, 0).setFill(GridBagConstraints.BOTH));
+		ThemeMainContainer.this.repaint();
+		ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
 	}
-
 
 	/**
 	 * 刷新标签项下拉框中显示的子项
@@ -235,9 +233,6 @@ public class ThemeMainContainer extends JPanel {
 			}
 		} else {
 			updateThemeMainContainer();
-			ThemeMainContainer.this.repaint();
-			ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
-			unregistActionListener();
 		}
 	}
 
@@ -263,6 +258,35 @@ public class ThemeMainContainer extends JPanel {
 			if (2 == e.getClickCount() && null != getSelectLayer() && null != getSelectLayer().getTheme()) {
 				resetThemeMainContainer(getSelectLayer());
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
+			}
+		}
+	}
+
+	class LocalActiveFormChangedListener implements ActiveFormChangedListener {
+
+		@Override
+		public void activeFormChanged(ActiveFormChangedEvent e) {
+			resetThemeMainContainer(getSelectLayer());
+			if (null == e.getNewActiveForm()) {
+				unregistActionListener();
+			}
+		}
+	}
+
+	class LocalTreeSelectListener implements TreeSelectionListener {
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			if (isTreeClicked) {
+				resetThemeMainContainer(getSelectLayer());
+			}
+		}
+	}
+
+	class LocalMouseListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (1 == e.getClickCount() || null == layersTree) {
+				isTreeClicked = true;
 			}
 		}
 	}

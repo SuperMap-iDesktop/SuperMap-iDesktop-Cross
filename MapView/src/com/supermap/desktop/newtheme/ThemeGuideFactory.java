@@ -60,6 +60,8 @@ public class ThemeGuideFactory {
 					.get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
 			if (dockbarThemeContainer != null) {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
+				// 新建时默认设置isTreeClicked为true
+				container.setTreeClicked(true);
 				if (null != container.getPanelThemeInfo()) {
 					container.remove(container.getPanelThemeInfo());
 				}

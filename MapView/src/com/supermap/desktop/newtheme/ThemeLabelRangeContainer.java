@@ -309,6 +309,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			String caption = rangeItem.getCaption();
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
+				caption = caption.replaceAll("< X <", "-");
 			} else {
 				caption = caption.replaceAll("-", "<= X <");
 			}

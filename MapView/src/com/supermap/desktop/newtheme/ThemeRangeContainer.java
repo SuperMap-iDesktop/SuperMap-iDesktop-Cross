@@ -428,6 +428,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			String caption = rangeItem.getCaption();
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
+				caption = caption.replaceAll("< X <", "-");
 			} else if (this.captiontype.contains("<")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
@@ -1173,6 +1174,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					String rangeValue = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
+//						rangeValue = new DecimalFormat(numeric).format(Double.valueOf(rangeValue));
 						themeRange.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
 						String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
 						String caption = themeRange.getItem(selectRow).getCaption();

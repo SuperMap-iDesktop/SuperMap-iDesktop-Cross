@@ -264,6 +264,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			String caption = gridRangeItem.getCaption();
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
+				caption = caption.replaceAll("< X <", "-");
 			} else if (this.captiontype.contains("<")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}

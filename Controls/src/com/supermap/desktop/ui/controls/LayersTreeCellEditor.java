@@ -18,7 +18,7 @@ import java.util.EventObject;
  *
  * @author xuzw
  */
-class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListener, TreeSelectionListener {
+class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListener, TreeSelectionListener, FocusListener {
 
 	private LayersTree layersTree = null;
 
@@ -95,6 +95,7 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 			}
 			jTextFieldName.setFont(tree.getFont());
 			jTextFieldName.addKeyListener(this);
+			jTextFieldName.addFocusListener(this);
 		}
 		int componetsCount = panel.getComponentCount();
 		Component component = panel.getComponent(componetsCount - 1);
@@ -246,4 +247,15 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 		}
 	}
 
+	@Override
+	public void focusGained(FocusEvent e) {
+
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		fireStopCellEditing();
+		fireCellEditable(e);
+		updateUI();
+	}
 }
