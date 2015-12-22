@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class JDialogTopoBuildRegions extends SmDialog {
 	private static final long serialVersionUID = 1L;
@@ -137,14 +138,22 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				}
 			}
 			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-			Datasource currentDatasource = null;
-			if (lineDataset != null) {
-				currentDatasource = lineDataset.getDatasource();
-			} else if (null != datasources && null != datasources.get(0)) {
-				currentDatasource = datasources.get(0);
+			java.util.List<Datasource> datasourceList = new ArrayList<Datasource>();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				if (!datasources.get(i).isReadOnly()) {
+					datasourceList.add(datasources.get(i));
+				}
 			}
+
+			Datasource currentDatasource = null;
+			if (lineDataset != null && !lineDataset.getDatasource().isReadOnly()) {
+				currentDatasource = lineDataset.getDatasource();
+			} else if (null != datasourceList && null != datasourceList.get(0)) {
+				currentDatasource = datasourceList.get(0);
+			}
+			Datasource[] datasourceArray = new Datasource[datasourceList.size()];
 			if (null != currentDatasource) {
-				comboBoxResultDatasource = new DatasourceComboBox(datasources);
+				comboBoxResultDatasource = new DatasourceComboBox(datasourceList.toArray(datasourceArray));
 				for (int i = 0; i < comboBoxResultDatasource.getItemCount(); i++) {
 					if (((DataCell) comboBoxResultDatasource.getItemAt(i)).getDatasetName().equals(currentDatasource.getAlias())) {
 						comboBoxResultDatasource.setSelectedIndex(i);
@@ -152,7 +161,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 					}
 				}
 
-				comboBoxDatasource = new DatasourceComboBox(datasources);
+				comboBoxDatasource = new DatasourceComboBox((Datasource[]) datasourceList.toArray(datasourceArray));
 				for (int i = 0; i < comboBoxDatasource.getItemCount(); i++) {
 					if (((DataCell) comboBoxDatasource.getItemAt(i)).getDatasetName().equals(currentDatasource.getAlias())) {
 						comboBoxDatasource.setSelectedIndex(i);
@@ -323,7 +332,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	}
 
 	/**
-	 * 
 	 * 改变下拉选项时修改comboBoxDataset的值
 	 */
 
@@ -337,13 +345,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	private void setCheckBoxSelected(boolean isSelected) {
 		buttonOk.setEnabled(isSelected);
 		buttonMore.setEnabled(isSelected);
-		checkboxLinesIntersected.setEnabled(isSelected);
-		checkboxOvershootsCleaned.setEnabled(isSelected);
-		checkboxPseudoNodesCleaned.setEnabled(isSelected);
-		checkboxAdjacentEndpointsMerged.setEnabled(isSelected);
-		checkboxDuplicatedLinesCleaned.setEnabled(isSelected);
-		checkboxUndershootsExtended.setEnabled(isSelected);
-		checkboxRedundantVerticesCleaned.setEnabled(isSelected);
 	}
 
 	/**
@@ -373,7 +374,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	}
 
 	/**
-	 * 
 	 * 线拓扑处理
 	 */
 
@@ -398,26 +398,30 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	}
 
 	/**
-	 * 
 	 * 拓扑构面
 	 */
 	private void topologyBuildRegion() {
 		try {
 			String datasetName = comboBoxDataset.getSelectItem();
-			String datasourceName = comboBoxDatasource.getSelectItem();
+			String resultDatasourceName = comboBoxResultDatasource.getSelectItem();
 			String targetDatasetName = textFieldResultDataset.getText();
+			String targetDatasourceName = comboBoxDatasource.getSelectItem();
+			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasourceName);
+			Datasource resultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(resultDatasourceName);
+			Dataset dataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
-			progress.doWork(new TopoBuildRegionsCallable(datasourceName, datasetName, targetDatasetName, topologyProcessingOptions));
-			dispose();
+			progress.doWork(new TopoBuildRegionsCallable(resultDatasource, dataset, targetDatasetName, topologyProcessingOptions));
 		} catch (Exception e) {
 
+		} finally {
+			dispose();
 		}
 	}
 
 	/**
 	 * 打开高级参数设置页面
-	 * 
+	 *
 	 * @param topologyProcessingOptions
 	 */
 

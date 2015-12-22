@@ -1,39 +1,23 @@
 package com.supermap.desktop.util;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CancellationException;
-
-import javax.swing.JTable;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasources;
-import com.supermap.data.SpatialIndexInfo;
-import com.supermap.data.SpatialIndexType;
-import com.supermap.data.Workspace;
-import com.supermap.data.conversion.DataImport;
-import com.supermap.data.conversion.FileType;
-import com.supermap.data.conversion.ImportResult;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingWOR;
-import com.supermap.data.conversion.ImportSettings;
-import com.supermap.data.conversion.ImportSteppedEvent;
-import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.data.*;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 
+import javax.swing.*;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.concurrent.CancellationException;
+
 public class DataImportCallable extends UpdateProgressCallable {
 	private ArrayList<ImportFileInfo> fileInfos;
 	private JTable table;
 	private boolean isWor = false;
+	private PercentProgress percentProgress;
 
 	public DataImportCallable(List<ImportFileInfo> fileInfos, JTable table) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
@@ -49,9 +33,9 @@ public class DataImportCallable extends UpdateProgressCallable {
 		}
 		// 不用了先置空回收对象
 		datasources = null;
+		final DataImport dataImport = new DataImport();
 		try {
 			for (int i = 0; i < fileInfos.size(); i++) {
-				final DataImport dataImport = new DataImport();
 				ImportSettings importSettings = dataImport.getImportSettings();
 				ImportFileInfo fileInfo = fileInfos.get(i);
 				ImportSetting importSetting = fileInfo.getImportSetting();
@@ -63,7 +47,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 					((ImportSettingWOR) importSetting).setTargetDatasource(importSetting.getTargetDatasource());
 				}
 				importSettings.add(importSetting);
-				PercentProgress percentProgress = new PercentProgress(i);
+				percentProgress = new PercentProgress(i);
 				dataImport.addImportSteppedListener(percentProgress);
 				long startTime = System.currentTimeMillis(); // 获取开始时间
 
@@ -93,6 +77,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 					}
 				}
 			}
+			dataImport.removeImportSteppedListener(percentProgress);
 		}
 		return true;
 	}

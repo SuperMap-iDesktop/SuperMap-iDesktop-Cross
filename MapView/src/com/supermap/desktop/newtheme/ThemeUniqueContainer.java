@@ -1,60 +1,17 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SymbolDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeType;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -62,7 +19,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.DefaultComboBoxModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * 单值专题图容器及属性设置接口类
@@ -734,11 +693,8 @@ public class ThemeUniqueContainer extends JPanel {
 					}
 					themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
 					themeUnique.setUniqueExpression(expression);
-					UICommonToolkit.getLayersManager().getLayersTree().reload();
 					refreshColor();
 					getTable();
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
-
 				} else {
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"),
 							CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);

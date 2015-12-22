@@ -28,6 +28,7 @@ public class ThemeMainContainer extends JPanel {
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
+	private boolean isTreeClicked = false;
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -89,7 +90,17 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
 			public void valueChanged(TreeSelectionEvent e) {
-				resetThemeMainContainer(getSelectLayer());
+				if (isTreeClicked) {
+					resetThemeMainContainer(getSelectLayer());
+				}
+			}
+		});
+		this.layersTree.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (1 == e.getClickCount()) {
+					isTreeClicked = true;
+				}
 			}
 		});
 	}

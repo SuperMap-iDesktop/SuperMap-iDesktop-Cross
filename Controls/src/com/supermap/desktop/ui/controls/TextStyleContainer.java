@@ -519,6 +519,7 @@ public class TextStyleContainer extends JPanel {
 				}
 			}
 			checkBoxOutlook.setEnabled(isOpare);
+			buttonBGColorSelect.setEnabled(!isOpare);
 		}
 
 		/**
@@ -533,6 +534,7 @@ public class TextStyleContainer extends JPanel {
 					list.get(i).setOutline(isOutlook);
 				}
 			}
+			buttonBGColorSelect.setEnabled(isOutlook);
 		}
 
 		/**
