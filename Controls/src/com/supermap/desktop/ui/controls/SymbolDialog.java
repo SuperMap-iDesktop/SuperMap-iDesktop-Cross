@@ -41,6 +41,10 @@ public class SymbolDialog extends JDialog {
 	// 操作过程中被赋值的GeoStyle，该GeoStyle经过用户一系列的赋值之后返回给用户
 	private transient GeoStyle activeStyle;
 
+	public DialogResult getDialogResult() {
+		return dialogResult;
+	}
+
 	// 符号选择器的最终结果，默认是CANCEL
 	private transient DialogResult dialogResult = DialogResult.CANCEL;
 

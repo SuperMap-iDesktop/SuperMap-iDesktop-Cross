@@ -60,15 +60,16 @@ public class JDialogSymbolsChange extends SmDialog {
 		}
 	};
 
-	private SymbolDialog getSymbolDialogs() {
+	private DialogResult showSymbolDialog() {
+		DialogResult result = DialogResult.CANCEL;
 		if (symbolDialog == null) {
 			symbolDialog = new SymbolDialog();
+			result = symbolDialog.showDialog(Application.getActiveApplication().getWorkspace().getResources(), geoStylesBeforeList.get(0), this.symbolType);
+		} else {
+			symbolDialog.setVisible(true);
+			result = symbolDialog.getDialogResult();
 		}
-		return symbolDialog;
-	}
-
-	private DialogResult showSymbolDialog() {
-		return getSymbolDialogs().showDialog(Application.getActiveApplication().getWorkspace().getResources(), geoStylesBeforeList.get(0), this.symbolType);
+		return result;
 	}
 	//endregion
 
