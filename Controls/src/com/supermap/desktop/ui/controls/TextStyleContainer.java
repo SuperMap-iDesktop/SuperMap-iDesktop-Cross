@@ -158,10 +158,11 @@ public class TextStyleContainer extends JPanel {
 			initTextFieldFontWidth();
 			initTextFieldFontItalicAngl();
 			initTextFieldFontRotation();
-			this.textFieldFontHeight.setPreferredSize(new Dimension(180,20));
-			this.textFieldFontWidth.setPreferredSize(new Dimension(180, 20));
-			this.textFieldFontRotationAngl.setPreferredSize(new Dimension(280,20));
-			this.textFieldFontItalicAngl.setPreferredSize(new Dimension(280, 20));
+			Dimension dimension = new Dimension(180,20);
+			this.textFieldFontHeight.setPreferredSize(dimension);
+			this.textFieldFontWidth.setPreferredSize(dimension);
+			this.textFieldFontRotationAngl.setPreferredSize(dimension);
+			this.textFieldFontItalicAngl.setPreferredSize(dimension);
 			panelSytleContent.add(this.labelFontName,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 			panelSytleContent.add(this.comboBoxFontName,       new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,40,2,10).setFill(GridBagConstraints.HORIZONTAL));
 			panelSytleContent.add(this.labelAlign,             new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
@@ -518,7 +519,6 @@ public class TextStyleContainer extends JPanel {
 				}
 			}
 			checkBoxOutlook.setEnabled(isOpare);
-			buttonBGColorSelect.setEnabled(!isOpare);
 		}
 
 		/**
@@ -533,7 +533,6 @@ public class TextStyleContainer extends JPanel {
 					list.get(i).setOutline(isOutlook);
 				}
 			}
-			buttonBGColorSelect.setEnabled(isOutlook);
 		}
 
 		/**

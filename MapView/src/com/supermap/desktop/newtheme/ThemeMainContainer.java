@@ -58,10 +58,10 @@ public class ThemeMainContainer extends JPanel {
 		this.comboBoxThemeLayer.setEditable(true);
 		this.setLayout(new GridBagLayout());
 		this.add(labelThemeLayer,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(3, 0).setInsets(5, 20, 5, 20).setAnchor(GridBagConstraints.WEST).setIpad(30, 0));
-		this.add(comboBoxThemeLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(3, 0).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(30, 0)
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(50, 0).setInsets(10, 20, 5, 20).setAnchor(GridBagConstraints.WEST));
+		this.add(comboBoxThemeLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(50, 0).setInsets(10, 20, 5, 35).setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.HORIZONTAL));
-		this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
+		this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER)
 				.setFill(GridBagConstraints.BOTH));
 	}
 
