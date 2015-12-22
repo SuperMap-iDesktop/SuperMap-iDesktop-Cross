@@ -609,9 +609,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			for (int i = 0; i < selectedRow.length; i++) {
 				tableRangeInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}
-		} else {
-			tableRangeInfo.addRowSelectionInterval(0, 0);
-		}
+		} 
 	}
 
 	/**
@@ -727,8 +725,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				}
 			}
 			getTable();
-			if (selectedRow.length > 0) {
-				tableRangeInfo.setRowSelectionInterval(selectedRow[0], selectedRow[selectedRow.length - 1]);
+			for (int i = 0; i < selectedRow.length; i++) {
+				tableRangeInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}
 		}
 

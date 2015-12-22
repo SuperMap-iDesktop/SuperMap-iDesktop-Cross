@@ -9,14 +9,12 @@ import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -68,7 +66,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JTextField textFieldFontItalicAngl;
 	private JTextField textFieldFontRotationAngl;
 	// 对齐方式名称
-	private static final String[] TEXTALIGNMENT_NAMES = { ControlsProperties.getString("String_TextAlignment_LeftTop"),
+	private static final String[] TEXTALIGNMENT_NAMES = {ControlsProperties.getString("String_TextAlignment_LeftTop"),
 			ControlsProperties.getString("String_TextAlignment_MidTop"),
 			ControlsProperties.getString("String_TextAlignment_RightTop"),
 			ControlsProperties.getString("String_TextAlignment_LeftBaseline"),
@@ -249,9 +247,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * 初始化字号下拉框
 	 */
 	private void initComboBoxFontSize() {
-		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[] { "1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
+		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
 				"12", "14",
-				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
+				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72"}));
 		this.comboBoxFontSize.setEditable(true);
 		this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
 		if (null != this.textStyle) {
@@ -311,6 +309,13 @@ public class TextStyleContainer extends ThemeChangePanel {
 			this.checkBoxOutlook.setSelected(textStyle.getOutline());
 			this.checkBoxBGTransparent.setSelected(!textStyle.getBackOpaque());
 			this.checkBoxOutlook.setEnabled(!textStyle.getBackOpaque());
+			boolean isOpare = this.checkBoxBGTransparent.isSelected();
+			boolean isOutlook = this.checkBoxOutlook.isSelected();
+			if (!isOpare || isOutlook) {
+				buttonBGColorSelect.setEnabled(true);
+			} else {
+				buttonBGColorSelect.setEnabled(false);
+			}
 		}
 	}
 
@@ -525,7 +530,12 @@ public class TextStyleContainer extends ThemeChangePanel {
 				}
 			}
 			checkBoxOutlook.setEnabled(isOpare);
-			buttonBGColorSelect.setEnabled(!isOpare);
+			boolean isOutlook = checkBoxOutlook.isSelected();
+			if (!isOpare || isOutlook) {
+				buttonBGColorSelect.setEnabled(true);
+			} else {
+				buttonBGColorSelect.setEnabled(false);
+			}
 		}
 
 		/**
@@ -540,8 +550,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 					list.get(i).setOutline(isOutlook);
 				}
 			}
-			buttonBGColorSelect.setEnabled(isOutlook);
+			boolean isOpare = checkBoxBGTransparent.isSelected();
+			if (!isOpare || isOutlook) {
+				buttonBGColorSelect.setEnabled(true);
+			} else {
+				buttonBGColorSelect.setEnabled(false);
+			}
 		}
+
 
 		/**
 		 * 设置字体固定大小
