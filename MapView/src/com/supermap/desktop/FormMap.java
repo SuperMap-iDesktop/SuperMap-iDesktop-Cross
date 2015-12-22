@@ -41,6 +41,7 @@ import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.SymbolDialog;
@@ -1085,13 +1086,22 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			// notify by huchenpu 2015-06-30
 			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
 			if (layer != null && selections.length > 1) {
-				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
-				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
-				if (geostyle != null) {
-					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
-					layerSetting.setStyle(geostyle);
+				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+				for (TreePath selection : selections) {
+					Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
+					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
+				}
+
+//				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
+//				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
+//				if (geostyle != null) {
+//					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
+//					layerSetting.setStyle(geostyle);
+				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
 					this.getMapControl().getMap().refresh();
 				}
+//				}
 			} else if (layer != null && selections.length == 1) {
 				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
 				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
@@ -1237,6 +1247,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			CursorUtilties.setWaitCursor();
 			symbolDialog = new SymbolDialog();
+			symbolDialog.setApplyEnable(true);
 			DialogResult dialogResult = symbolDialog.showDialog(resources, beforeStyle, symbolType);
 			if (dialogResult == DialogResult.OK) {
 				result = symbolDialog.getStyle();

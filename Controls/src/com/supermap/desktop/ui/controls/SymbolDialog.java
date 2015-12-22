@@ -1,17 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Resources;
@@ -27,6 +15,11 @@ import com.supermap.mapping.LayerSettingVector;
 import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DSettingVector;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * 符号选择器对话框
@@ -61,12 +54,22 @@ public class SymbolDialog extends JDialog {
 
 	private transient SymbolPanel symbolPanel;
 
+	private boolean applyEnable = false;
+
 	/**
 	 * 默认构造函数
 	 */
 	public SymbolDialog() {
 		super();
 		this.setModal(true);
+	}
+
+	/**
+	 * 控制应用按钮是否可用，默认不可用
+	 * @param applyEnable 应用按钮是否可用
+	 */
+	public void setApplyEnable(boolean applyEnable) {
+		this.applyEnable = applyEnable;
 	}
 
 	/**
@@ -216,6 +219,9 @@ public class SymbolDialog extends JDialog {
 	}
 
 	private void abstractJbuttonApplyLisenter() {
+		if (!applyEnable) {
+			return;
+		}
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof IFormMap) {
 			Layer[] layers = ((IFormMap) activeForm).getActiveLayers();

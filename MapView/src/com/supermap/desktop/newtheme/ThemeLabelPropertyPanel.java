@@ -66,7 +66,6 @@ public class ThemeLabelPropertyPanel extends JPanel {
 	private transient DatasetVector datasetVector;
 	private transient ThemeLabel themeLabel;
 	private transient Map map;
-	private Dimension unityDimension = new Dimension(60, 20);
 	private transient SymbolType symbolType;
 	private boolean isRefreshAtOnce = true;
 	private ArrayList<String> comboBoxArray;
@@ -135,14 +134,15 @@ public class ThemeLabelPropertyPanel extends JPanel {
 		initComboBoxLabelExpression();
 		getFieldComboBox(comboBoxLabelExpression, LABELEXPRESSION_TYPE);
 		//@formatter:off
+		this.labelLabelExpression.setPreferredSize(new Dimension(160,20));
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		panelPropertyContent.setLayout(new GridBagLayout());
-		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2, 20, 2, 10).setIpad(30, 0));
-		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelPropertyContent.add(panelBGSet, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelPropertyContent.add(panelLabelOffset, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelPropertyContent.add(panelLabelEffectSet, new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2, 20, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,  0, 2, 20).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(panelBGSet,                   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(panelLabelOffset,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(panelLabelEffectSet,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -167,10 +167,10 @@ public class ThemeLabelPropertyPanel extends JPanel {
 		//@formatter:off
 		panelBGSet.setLayout(new GridBagLayout());
 		initComboBoxBackGround();
-		panelBGSet.add(this.labelBGShape,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.comboBoxBGShape, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.labelBGSytle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.buttonBGStyle,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.labelBGShape,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.comboBoxBGShape, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.labelBGSytle,    new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.buttonBGStyle,   new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -220,29 +220,23 @@ public class ThemeLabelPropertyPanel extends JPanel {
 	private void initPanelLabelOffset(JPanel panelLabelOffset) {
 		//@formatter:off
 		panelLabelOffset.setLayout(new GridBagLayout());
-		this.labelOffsetXUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
-		this.labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
-		this.labelOffsetXUnity.setPreferredSize(unityDimension);
-		this.labelOffsetYUnity.setPreferredSize(unityDimension);
-		this.comboBoxOffsetX.setSelectedIndex(this.comboBoxOffsetX.getItemCount()-1);
-		this.comboBoxOffsetY.setSelectedIndex(this.comboBoxOffsetX.getItemCount()-1);
 		initComboBoxUnity();
 		initComboBoxOffsetX();
 		initComboBoxOffsetY();
-		Dimension dimension =new Dimension(160, 20);
+		Dimension dimension = new Dimension(160,20);
 		this.labelOffsetUnity.setPreferredSize(dimension);
 		this.labelOffsetX.setPreferredSize(dimension);
 		this.labelOffsetY.setPreferredSize(dimension);
-		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,0));
-		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,80,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,0));
+		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		this.comboBoxOffsetX.setEditable(true);
-		panelLabelOffset.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,80,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(2,10,2,10));
-		panelLabelOffset.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,0));
+		panelLabelOffset.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10));
+		panelLabelOffset.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		this.comboBoxOffsetY.setEditable(true);
-		panelLabelOffset.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,80,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(2,10,2,10));
+		panelLabelOffset.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10));
 		//@formatter:on
 	}
 
@@ -307,18 +301,18 @@ public class ThemeLabelPropertyPanel extends JPanel {
 		initComboboxAutoAvoidance();
 		initComboBoxTextPrecision();
 		panelLabelEffectSet.setLayout(new GridBagLayout());
-		panelLabelEffectSet.add(this.checkBoxFlowVisual,       new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowSmallLabel,   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxAutoAvoidance,    new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.comboBoxAutoAvoidance,    new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxDraftLine,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.buttonDraftLine,          new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelTextPrecision,       new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.comboBoxTextPrecision,    new GridBagConstraintsHelper(2, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(2, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxFlowVisual,       new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxShowSmallLabel,   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxAutoAvoidance,    new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.comboBoxAutoAvoidance,    new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxDraftLine,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.buttonDraftLine,          new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelTextPrecision,       new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.comboBoxTextPrecision,    new GridBagConstraintsHelper(2, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -486,7 +480,7 @@ public class ThemeLabelPropertyPanel extends JPanel {
 
 	private void resetComboBoxSelectItem(int type, JComboBox<String> jComboBoxField) {
 		if (type == LABELEXPRESSION_TYPE) {
-			jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeLabel.getLabelExpression());
+			jComboBoxField.setSelectedItem(themeLabel.getLabelExpression());
 		} else if (type == OFFSETX_TYPE) {
 			if (!StringUtilties.isNullOrEmpty(themeLabel.getOffsetX())) {
 				jComboBoxField.setSelectedItem(themeLabel.getOffsetX());
@@ -634,7 +628,9 @@ public class ThemeLabelPropertyPanel extends JPanel {
 		private void setFieldInfo() {
 			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
 			if (comboBoxArray.contains(labelExpression)) {
-				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(labelExpression);
+				System.out.println(comboBoxArray.get(0));
+				String tempLabelExpression = labelExpression.substring(labelExpression.lastIndexOf(".")+1, labelExpression.length());
+				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(tempLabelExpression);
 				// 控制文本进度下拉框的可使用性
 				if (fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32
 						|| fieldInfo.getType() == FieldType.INT64 || fieldInfo.getType() == FieldType.LONGBINARY) {

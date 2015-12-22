@@ -91,8 +91,8 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 								geoPoint.setX(x);
 								geoPoint.setY(y);
 							} else {
-								geoPoint.setX(IMAGEICON_WIDTH/2.0);
-								geoPoint.setY(IMAGEICON_HEIGHT/2.0);
+								geoPoint.setX(IMAGEICON_WIDTH / 2.0);
+								geoPoint.setY(IMAGEICON_HEIGHT / 2.0);
 							}
 							InternalToolkitControl.internalDraw(geoPoint, resources, graphics);
 

@@ -18,6 +18,7 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -233,6 +234,7 @@ public class ThemeGuideFactory {
 	public static void refreshMapAndLayer(Map map, String layerName, boolean isExpandPath) {
 		map.refresh();
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
+		DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
 		tree.reload();
 		TreePath layerPath = getSelectionPath(tree, layerName);
 		tree.setSelectionPath(layerPath);

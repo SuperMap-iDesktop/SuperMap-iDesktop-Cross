@@ -132,8 +132,8 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 					gridBagConstraints.weightx = 1;
 				}
 
-				gridBagConstraints.fill = gridBagConstraints.BOTH;
-				gridBagConstraints.anchor = gridBagConstraints.CENTER;
+				gridBagConstraints.fill = GridBagConstraints.BOTH;
+				gridBagConstraints.anchor = GridBagConstraints.CENTER;
 				this.add(component, gridBagConstraints);
 			}
 		}

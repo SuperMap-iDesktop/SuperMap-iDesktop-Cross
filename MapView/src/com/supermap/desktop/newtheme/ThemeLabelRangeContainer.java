@@ -428,8 +428,8 @@ public class ThemeLabelRangeContainer extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int[] selectedRows = tableLabelInfo.getSelectedRows();
 			if (e.getSource() == buttonMerge) {
-				int[] selectedRows = tableLabelInfo.getSelectedRows();
 				if (selectedRows.length == tableLabelInfo.getRowCount()) {
 					UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_Warning_RquiredTwoFieldForRange"));
 				} else {
@@ -448,6 +448,11 @@ public class ThemeLabelRangeContainer extends JPanel {
 			}
 			if (isRefreshAtOnce) {
 				ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
+			}
+			if (selectedRows.length > 0) {
+				tableLabelInfo.setRowSelectionInterval(selectedRows[0], selectedRows[selectedRows.length - 1]);
+			} else {
+				tableLabelInfo.setRowSelectionInterval(0, 0);
 			}
 		}
 
@@ -522,11 +527,6 @@ public class ThemeLabelRangeContainer extends JPanel {
 				}
 			}
 			getTable();
-			if (selectedRow.length > 0) {
-				tableLabelInfo.setRowSelectionInterval(selectedRow[0], selectedRow[selectedRow.length - 1]);
-			} else {
-				tableLabelInfo.setRowSelectionInterval(0, 0);
-			}
 		}
 
 		/**
@@ -606,13 +606,7 @@ public class ThemeLabelRangeContainer extends JPanel {
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
 			}
-			if (selectedRow.length > 0) {
-				tableLabelInfo.setRowSelectionInterval(selectedRow[0], selectedRow[selectedRow.length - 1]);
-			} else {
-				tableLabelInfo.setRowSelectionInterval(0, 0);
-			}
 		}
-
 	}
 
 	class LocalMouseListener extends MouseAdapter {
@@ -655,7 +649,6 @@ public class ThemeLabelRangeContainer extends JPanel {
 				isMergeOrSplit = false;
 			}
 		}
-
 	}
 
 	class LocalComboBoxItemListener implements ItemListener {

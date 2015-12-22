@@ -1,32 +1,27 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import java.text.MessageFormat;
-import java.util.concurrent.CancellationException;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.data.topology.TopologyProcessing;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 
+import java.text.MessageFormat;
+import java.util.concurrent.CancellationException;
+
 public class TopoBuildRegionsCallable extends UpdateProgressCallable {
-	private String datasourceName;
-	private String datasetName;
+	private Datasource datasource;
+	private Dataset dataset;
 	private String targetDatasetName;
 	private String time;
 	private DatasetVector resultDataset;
 	private TopologyProcessingOptions topologyProcessingOptions;
 
-	public TopoBuildRegionsCallable(String datasourceName, String datasetName, String targetDatasetName, TopologyProcessingOptions topologyProcessingOptions) {
-		this.datasourceName = datasourceName;
-		this.datasetName = datasetName;
+	public TopoBuildRegionsCallable(Datasource datasource, Dataset dataset, String targetDatasetName, TopologyProcessingOptions topologyProcessingOptions) {
+		this.datasource = datasource;
+		this.dataset = dataset;
 		this.targetDatasetName = targetDatasetName;
 		this.topologyProcessingOptions = topologyProcessingOptions;
 	}
@@ -36,8 +31,6 @@ public class TopoBuildRegionsCallable extends UpdateProgressCallable {
 		boolean result = true;
 
 		try {
-			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-			Dataset dataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
 			TopologyProcessing.addSteppedListener(new PercentListener());
 			long startTime = System.currentTimeMillis();
 			resultDataset = TopologyProcessing.buildRegions((DatasetVector) dataset, datasource, targetDatasetName, topologyProcessingOptions);

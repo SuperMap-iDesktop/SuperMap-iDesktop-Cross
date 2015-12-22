@@ -1,31 +1,5 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
@@ -45,6 +19,7 @@ import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -55,6 +30,7 @@ import com.supermap.mapping.ThemeUnique;
 import com.supermap.mapping.ThemeUniqueItem;
 import com.supermap.ui.MapControl;
 
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -62,13 +38,23 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.DefaultComboBoxModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * 单值专题图容器及属性设置接口类
  *
  * @author xie
- *
  */
 public class ThemeUniqueContainer extends JPanel {
 
@@ -734,11 +720,8 @@ public class ThemeUniqueContainer extends JPanel {
 					}
 					themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
 					themeUnique.setUniqueExpression(expression);
-					UICommonToolkit.getLayersManager().getLayersTree().reload();
 					refreshColor();
 					getTable();
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
-
 				} else {
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"),
 							CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
@@ -1111,11 +1094,6 @@ public class ThemeUniqueContainer extends JPanel {
 		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 		SymbolType symbolType = null;
 		GeoStyle geoStyle = new GeoStyle();
-		if (selectedRow.length == 1 && selectedRow[0] != this.tableUniqueInfo.getRowCount() - 1) {
-			geoStyle = this.themeUnique.getItem(selectedRow[0]).getStyle();
-		} else {
-			geoStyle.setLineWidth(0.1);
-		}
 		if (CommonToolkit.DatasetTypeWrap.isPoint(datasetVector.getType())) {
 			symbolType = SymbolType.MARKER;
 		} else if (CommonToolkit.DatasetTypeWrap.isLine(datasetVector.getType())) {
@@ -1123,18 +1101,29 @@ public class ThemeUniqueContainer extends JPanel {
 		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
 			symbolType = SymbolType.FILL;
 		}
-		DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
-		if (dialogResult.equals(DialogResult.OK)) {
-			GeoStyle nowGeoStyle = textStyleDialog.getStyle();
-			if (selectedRow.length > 0) {
-				for (int i = 0; i < selectedRow.length; i++) {
-					if (selectedRow[i] != tableUniqueInfo.getRowCount() - 1) {
-						resetGeoSytle(selectedRow[i], nowGeoStyle);
-					} else {
-						this.themeUnique.setDefaultStyle(nowGeoStyle);
+
+		if (selectedRow.length == 1 && selectedRow[0] != this.tableUniqueInfo.getRowCount() - 1) {
+			geoStyle = this.themeUnique.getItem(selectedRow[0]).getStyle();
+			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			if (dialogResult.equals(DialogResult.OK)) {
+				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				if (selectedRow.length > 0) {
+					for (int i = 0; i < selectedRow.length; i++) {
+						if (selectedRow[i] != tableUniqueInfo.getRowCount() - 1) {
+							resetGeoSytle(selectedRow[i], nowGeoStyle);
+						} else {
+							this.themeUnique.setDefaultStyle(nowGeoStyle);
+						}
 					}
 				}
 			}
+		} else {
+			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+			for (int i = 0; i < selectedRow.length; i++) {
+				geoStyleList.add(themeUnique.getItem(selectedRow[i]).getStyle());
+			}
+			JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+			jDialogSymbolsChange.showDialog();
 		}
 		getTable();
 	}
