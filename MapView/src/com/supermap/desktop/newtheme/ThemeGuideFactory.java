@@ -84,6 +84,9 @@ public class ThemeGuideFactory {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			panel.removePropertyChangeListener(propertyListener);
+			if (null == getDockbarThemeContainer()) {
+				container.unregistActionListener();
+			}
 		}
 		if (null != container) {
 			return container;

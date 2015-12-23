@@ -267,9 +267,6 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
 			resetThemeMainContainer(getSelectLayer());
-			if (null == e.getNewActiveForm()) {
-				unregistActionListener();
-			}
 		}
 	}
 
