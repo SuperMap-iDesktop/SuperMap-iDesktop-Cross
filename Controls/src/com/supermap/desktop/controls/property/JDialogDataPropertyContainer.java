@@ -120,4 +120,9 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			}
 		}
 	}
+
+	@Override
+	public boolean isUsable() {
+		return this.isVisible();
+	}
 }

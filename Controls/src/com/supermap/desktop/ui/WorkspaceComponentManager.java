@@ -416,7 +416,9 @@ public class WorkspaceComponentManager extends JComponent {
 				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					setActiveDatasourcesAndDatasets();
-					setSelectedDataProperty();
+					if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+						setSelectedDataProperty();
+					}
 				}
 			});
 		} catch (Exception ex) {
@@ -457,7 +459,7 @@ public class WorkspaceComponentManager extends JComponent {
 
 				if (activeDatasets != null && !activeDatasets.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(activeDatasets.toArray(new Dataset[activeDatasets.size()]));
-					Application.getActiveApplication().setActiveDatasources(new Datasource[]{activeDatasets.get(0).getDatasource()});
+					Application.getActiveApplication().setActiveDatasources(new Datasource[] { activeDatasets.get(0).getDatasource() });
 				} else if (activeDatasources != null && !activeDatasources.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(null);
 					Application.getActiveApplication().setActiveDatasources(activeDatasources.toArray(new Datasource[activeDatasources.size()]));
@@ -552,7 +554,7 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					MapViewUtilties.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedNodeData.getData()}, true);
+					MapViewUtilties.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
 				} else if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {
@@ -688,7 +690,7 @@ public class WorkspaceComponentManager extends JComponent {
 					dataType |= DATASET_TYPE_TOPOLOGY;
 				}
 			}
-			if (popupMenu == null && !nodeDatas.isEmpty()&& NodeDataType.RESOURCES != nodeDatas.get(0).getType()) {
+			if (popupMenu == null && !nodeDatas.isEmpty() && NodeDataType.RESOURCES != nodeDatas.get(0).getType()) {
 				// 为空，不为资源节点
 				popupMenu = getPopupMenuByDataType(dataType);
 			}
