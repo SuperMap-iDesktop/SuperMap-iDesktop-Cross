@@ -130,7 +130,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		if (symbolEnables[2]) {
 			// 符号颜色
 			for (GeoStyle geoStyle : geoStylesBeforeList) {
-				geoStyle.setLineColor(geoStyle.getLineColor());
+				geoStyle.setLineColor(geoStyleAfter.getLineColor());
 			}
 		}
 		if (symbolEnables[3]) {

@@ -1,38 +1,12 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.NumberFormatter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
@@ -44,13 +18,28 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Selection;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import javax.swing.text.NumberFormatter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class PanelPointOrRegionAnalyst extends JPanel {
 
 	/**
-     *
+	 *
      */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelBufferRadius;
@@ -87,7 +76,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	public void setEnabled(boolean isEnabled) {
 		this.isEnabled = isEnabled;
-		some.doSome();
 	}
 
 	public void setSome(DoSome some) {
@@ -100,7 +88,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	public void setButtonOKEnabled(boolean buttonOKEnabled) {
 		this.buttonOKEnabled = buttonOKEnabled;
-		// some.doSome();
+		if (some != null) {
+			some.doSome(buttonOKEnabled);
+		}
 	}
 
 	public PanelBufferData getPanelBufferData() {
@@ -519,26 +509,30 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	class LocalDocumentListener implements DocumentListener {
 		@Override
 		public void insertUpdate(DocumentEvent e) {
-			getButtonOkEnabled();
+			getButtonOkEnabled(e.getDocument());
 		}
 
 		@Override
 		public void removeUpdate(DocumentEvent e) {
-			getButtonOkEnabled();
+			getButtonOkEnabled(e.getDocument());
 		}
 
 		@Override
 		public void changedUpdate(DocumentEvent e) {
-			getButtonOkEnabled();
+			getButtonOkEnabled(e.getDocument());
 		}
 
-		private void getButtonOkEnabled() {
-			setButtonOKEnabled(true);
-			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
-			if (value < 4 || value > 200) {
+		private void getButtonOkEnabled(Document document) {
+			try {
+				long value = Long.parseLong(document.getText(0, document.getLength()));
+				if (value < 4 || value > 200) {
+					setButtonOKEnabled(false);
+				} else {
+					setButtonOKEnabled(true);
+				}
+			} catch (Exception e) {
 				setButtonOKEnabled(false);
 			}
-
 		}
 	}
 }
