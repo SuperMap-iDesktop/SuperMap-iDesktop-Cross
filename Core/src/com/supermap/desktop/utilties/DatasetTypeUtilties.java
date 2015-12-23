@@ -61,6 +61,8 @@ public class DatasetTypeUtilties {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.WCS);
 			} else if (datasetType == DatasetType.WMS) {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.WMS);
+			} else if (datasetType == DatasetType.VOLUME) {
+				result = DatasetTypeProperties.getString(DatasetTypeProperties.VOLUME);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -120,6 +122,8 @@ public class DatasetTypeUtilties {
 				result = DatasetType.WCS;
 			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.WMS))) {
 				result = DatasetType.WMS;
+			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.VOLUME))) {
+				result = DatasetType.VOLUME;
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

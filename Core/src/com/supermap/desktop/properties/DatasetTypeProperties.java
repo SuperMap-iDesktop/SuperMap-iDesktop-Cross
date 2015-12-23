@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 public class DatasetTypeProperties extends Properties {
 	public static final String DATASETTYPE = "resources.DatasetType";
 
+
 	public static final String getString(String key) {
 		return getString(DATASETTYPE, key);
 	}
@@ -46,4 +47,5 @@ public class DatasetTypeProperties extends Properties {
 	public static final String Model = "String_DatasetType_Model";
 	public static final String Texture = "String_DatasetType_Texture";
 	public static final String All = "String_DatasetType_All";
+	public static final String VOLUME = "String_DatasetType_Volume";
 }

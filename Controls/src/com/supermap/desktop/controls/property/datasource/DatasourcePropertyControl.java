@@ -1,23 +1,5 @@
 package com.supermap.desktop.controls.property.datasource;
 
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-
-import java.awt.Dimension;
-
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.table.DefaultTableModel;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
@@ -34,18 +16,22 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.plaf.metal.MetalBorders;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-
 public class DatasourcePropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final Dimension DEFAULT_BUTTON_PREFERREDSIZE = new Dimension(75, 23);
@@ -172,11 +158,11 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		JScrollPane scrollPaneStatisticValue = new JScrollPane();
 		scrollPaneStatisticValue.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_StatisticsInfo")));
 		table = new JTable();
-		table.setModel(new DefaultTableModel(new Object[][] {,}, new String[] { ControlsProperties.getString("String_DatasetType"),
-				ControlsProperties.getString("String_StatisticResult") }) {
+		table.setModel(new DefaultTableModel(new Object[][]{,}, new String[]{ControlsProperties.getString("String_DatasetType"),
+				ControlsProperties.getString("String_StatisticResult")}) {
 			/**
-					 * 
-					 */
+			 *
+			 */
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -276,20 +262,21 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		while (tableModel.getRowCount() > 0) {
 			tableModel.removeRow(tableModel.getRowCount() - 1);
 		}
-		// 屏蔽texture
+		//  TODO 屏蔽texture
 		int count = datasource.getDatasets().getCount();
 		for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-			if (datasource.getDatasets().get(i).getType() == DatasetType.TEXTURE) {
+			DatasetType type = datasource.getDatasets().get(i).getType();
+			if (type == DatasetType.TEXTURE || type == DatasetType.VOLUME) {
 				count--;
 			}
 		}
-		tableModel.addRow(new Object[] { TOTAL, count });
+		tableModel.addRow(new Object[]{TOTAL, count});
 		com.supermap.data.Enum[] enums = DatasetType.getEnums(DatasetType.class);
 		for (int i = 0; i < enums.length; i++) {
 			DatasetType datasetType = (DatasetType) enums[i];
-			// 暂时排除 Texture 数据集
-			if (datasetType != DatasetType.TEXTURE) {
-				tableModel.addRow(new Object[] { this.strDatasetTypeMap.get(datasetType), this.statisticMap.get(datasetType) });
+			// TODO 暂时排除 Texture 数据集
+			if (datasetType != DatasetType.TEXTURE && datasetType != DatasetType.VOLUME) {
+				tableModel.addRow(new Object[]{this.strDatasetTypeMap.get(datasetType), this.statisticMap.get(datasetType)});
 			}
 		}
 	}
@@ -307,7 +294,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 
 		for (int i = 0; i < enums.length; i++) {
 			DatasetType datasetType = (DatasetType) enums[i];
-			if (datasetType != DatasetType.TEXTURE) {
+			if (datasetType != DatasetType.TEXTURE && datasetType != DatasetType.VOLUME) {
 				strDatasetTypeMap.put(datasetType, DatasetTypeUtilties.toString(datasetType));
 				statisticMap.put(datasetType, 0);
 			}
@@ -319,7 +306,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
 				Dataset dataset = datasource.getDatasets().get(i);
 
-				if (dataset != null && dataset.getType() != DatasetType.TEXTURE) {
+				if (dataset != null && dataset.getType() != DatasetType.TEXTURE && dataset.getType() != DatasetType.VOLUME) {
 					this.statisticMap.put(dataset.getType(), this.statisticMap.get(dataset.getType()) + 1);
 				}
 			}
