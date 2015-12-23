@@ -61,7 +61,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private static final Color COLOR_EDITABLE_SELECTED = new Color(196, 225, 255);
 	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
-	private static final int PREFER_ROW_HEIGHT = 40;
+	private static final int PREFER_ROW_HEIGHT = 23;
 	private static final int PREFER_COLUMN_WIDTH = 100;
 	private static final int MIN_COLUMN_WIDTH = 20;
 	private int[] selectColumns;
