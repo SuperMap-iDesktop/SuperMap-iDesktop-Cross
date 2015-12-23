@@ -197,6 +197,7 @@ public class JDialogSQLQuery extends SmDialog {
 		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
 			setWorkspaceTreeSelectedDataset(currentDataset);
+			panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
 			// 初始化字段信息表
 			tableFieldInfo.setDataset(currentDataset);
 			if (currentDataset.getType() == DatasetType.TABULAR) {
