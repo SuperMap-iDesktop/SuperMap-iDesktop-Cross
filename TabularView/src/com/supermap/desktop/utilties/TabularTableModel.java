@@ -1,9 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.sql.Time;
-
-import javax.swing.table.AbstractTableModel;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfos;
@@ -11,13 +7,14 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.tabularview.TabularViewProperties;
+
+import javax.swing.table.AbstractTableModel;
+import java.sql.Time;
 
 /**
  * 属性表的TableModel
- * 
- * @author XiaJT
  *
+ * @author XiaJT
  */
 public class TabularTableModel extends AbstractTableModel {
 
@@ -25,6 +22,8 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient Recordset recordset;
 	private transient FieldInfos fieldInfos;
 	private int nowRow = 0;
+	private TabularCache tabularCache = new TabularCache();
+
 
 	public TabularTableModel(Recordset recordset) {
 		setRecordset(recordset);
@@ -73,14 +72,24 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null) {
 			return null;
 		}
+		int key = getKey(rowIndex, columnIndex);
+		Object value = tabularCache.getValue(key);
+		if (null == value) {
+			moveToRow(rowIndex);
+			value = recordset.getFieldValue(columnIndex);
+			tabularCache.updateValue(key, value);
+		}
+		return value;
+	}
 
-		moveToRow(rowIndex);
-		return recordset.getFieldValue(columnIndex);
+	private int getKey(int rowIndex, int columnIndex) {
+		// 暂定最多一百列
+		return rowIndex * 100 + columnIndex;
 	}
 
 	/**
 	 * 从当前位置移动到行
-	 * 
+	 *
 	 * @param rowIndex
 	 */
 	private void moveToRow(int rowIndex) {
@@ -151,7 +160,6 @@ public class TabularTableModel extends AbstractTableModel {
 			}
 		} catch (Exception e) {
 			deadException(e);
-			return;
 			// everything will be fine
 		}
 	}
@@ -212,11 +220,11 @@ public class TabularTableModel extends AbstractTableModel {
 				}
 				if (recordset.setFieldValue(columnIndex, value)) {
 					recordset.update();
+					tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
 				}
 			}
 		} catch (Exception e) {
 			deadException(e);
-			return;
 			// everything will be fine
 		}
 	}

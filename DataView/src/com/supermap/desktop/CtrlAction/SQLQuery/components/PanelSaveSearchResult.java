@@ -57,6 +57,10 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		return this.insidePanel.getDatasetName();
 	}
 
+	public void setSelectedDatasources(Datasource datasource) {
+		this.insidePanel.setSelectedDatasources(datasource);
+	}
+
 	class InsidePanel extends JPanel implements StateTransmitter {
 		private JLabel labelDatasource = new JLabel("datasource");
 		private JLabel labelDataset = new JLabel("dataset");
@@ -158,6 +162,10 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 
 		public String getDatasetName() {
 			return this.textFieldDataset.getText();
+		}
+
+		public void setSelectedDatasources(Datasource datasource) {
+			this.datasourceComboBox.setSelectedDatasource(datasource);
 		}
 		//endregion
 

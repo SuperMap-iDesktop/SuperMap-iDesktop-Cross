@@ -2,36 +2,25 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
@@ -52,11 +41,9 @@ public class BufferDialog extends SmDialog {
 	private MapControl mapControl;
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private PanelButton panelButton;
-	private DatasourceComboBox datasourceComboBox;
 	private DatasetComboBox datasetComboBox;
-	private SMFormattedTextField textFieldSemicircleLineSegment;
-	private final static Dimension DEFAULT_BUFFER_LINE_DIMENSION = new Dimension(575,435);
-	private final static Dimension DEFAULT_BUFFER_POINTORREGION_DIMENSION = new Dimension(575,332);
+	private final static Dimension DEFAULT_BUFFER_LINE_DIMENSION = new Dimension(575, 435);
+	private final static Dimension DEFAULT_BUFFER_POINTORREGION_DIMENSION = new Dimension(575, 332);
 
 	public JPanel getPanelBuffer() {
 		return panelBufferBasic;
@@ -81,21 +68,25 @@ public class BufferDialog extends SmDialog {
 		setBufferFactory();
 		initBufferButtonOk();
 		setLocationRelativeTo(null);
-		setResizable(false);
+		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
 
 	private void initPanelBufferBasic() {
 		setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
-		if (Application.getActiveApplication().getActiveForm() != null) {
-			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-				mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-				if (mapControl.getMap().getLayers().getCount() > 0) {
-					DatasetType datasetType = mapControl.getMap().getLayers().get(0).getDataset().getType();
-
-					if (datasetType == DatasetType.POINT || datasetType == DatasetType.POINT3D || datasetType == DatasetType.REGION
-							|| datasetType == DatasetType.REGION3D) {
+		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+		TreePath selectedPath = workspaceTree.getSelectionPath();
+		if (selectedPath != null) {
+			if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
+				if (nodeData.getData() instanceof Datasource) {
+					getPanelLineBuffer();
+				} else if (nodeData.getData() instanceof Dataset) {
+					Dataset selectedDataset = (Dataset) nodeData.getData();
+					if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
+							|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
 						this.panelBufferBasic = new PanelPointOrRegionAnalyst();
 						setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
 						this.radioButtonPointOrRegion.setSelected(true);
@@ -105,35 +96,9 @@ public class BufferDialog extends SmDialog {
 				} else {
 					getPanelLineBuffer();
 				}
-			} else {
-				getPanelLineBuffer();
 			}
 		} else {
-			WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-			TreePath selectedPath = workspaceTree.getSelectionPath();
-			if (selectedPath != null) {
-				if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
-					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-					TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
-					if (nodeData.getData() instanceof Datasource) {
-						getPanelLineBuffer();
-					} else if (nodeData.getData() instanceof Dataset) {
-						Dataset selectedDataset = (Dataset) nodeData.getData();
-						if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
-								|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
-							this.panelBufferBasic = new PanelPointOrRegionAnalyst();
-							setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
-							this.radioButtonPointOrRegion.setSelected(true);
-						} else {
-							getPanelLineBuffer();
-						}
-					} else {
-						getPanelLineBuffer();
-					}
-				}
-			} else {
-				getPanelLineBuffer();
-			}
+			getPanelLineBuffer();
 		}
 
 	}
@@ -149,7 +114,6 @@ public class BufferDialog extends SmDialog {
 			this.datasetComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
 		} else if (panelBufferBasic instanceof PanelPointOrRegionAnalyst) {
 			this.datasetComboBox = ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-			this.textFieldSemicircleLineSegment = ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelResultSet().getTextFieldSemicircleLineSegment();
 		}
 		panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset() != null);
 	}
@@ -223,41 +187,51 @@ public class BufferDialog extends SmDialog {
           this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
          
           if (panelBufferBasic instanceof PanelLineBufferAnalyst) {
-               datasetComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-               panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset() != null);
-               datasetComboBox.addItemListener(new LocalItemListener());
-//               textFieldSemicircleLineSegment.getDocument().addDocumentListener(new LocalDocumentListener());
-          }
+               ((PanelLineBufferAnalyst)panelBufferBasic).addListener();
+          }else if (panelBufferBasic instanceof PanelPointOrRegionAnalyst) {
+			((PanelPointOrRegionAnalyst)panelBufferBasic).addListener();
+		}
      }
     
      private void removeRegisterEvent(){
           this.radioButtonLine.removeActionListener(this.localActionListener);
           this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
      }
+     
+ 
     
      class LocalActionListener implements ActionListener{
           private boolean flag;
          
           @Override
           public void actionPerformed(ActionEvent e) {
-              
                if (e.getSource() == radioButtonPointOrRegion) {
                     BufferDialog.this.getContentPane().remove(panelBufferBasic);
                     panelBufferBasic = new PanelPointOrRegionAnalyst();
-                    datasourceComboBox = ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDatasource();
-                    datasetComboBox =  ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-                    addRegister();
-                    setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
                     BufferDialog.this.getContentPane().add(panelBufferBasic);
+                    ((PanelPointOrRegionAnalyst) panelBufferBasic).addListener();
+                    ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(new DoSome() {
+						@Override
+						
+						public void doSome() {
+							 panelButton.getButtonOk().setEnabled(((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonOKEnabled()&&((PanelPointOrRegionAnalyst) panelBufferBasic).isEnabled());
+						}
+					});
+                    setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
                } else if (e.getSource() == radioButtonLine) {
                     BufferDialog.this.getContentPane().remove(panelBufferBasic);
                     panelBufferBasic = new PanelLineBufferAnalyst();
-                    datasourceComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDatasource();
-                    datasetComboBox =  ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-                    panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset()!=null);
-                    addRegister();
-                    setSize(DEFAULT_BUFFER_LINE_DIMENSION);
                     BufferDialog.this.getContentPane().add(panelBufferBasic);
+                    setSize(DEFAULT_BUFFER_LINE_DIMENSION);
+                    
+                    ((PanelLineBufferAnalyst) panelBufferBasic).addListener();
+                    ((PanelLineBufferAnalyst) panelBufferBasic).setSome(new DoSome() {
+						@Override
+						public void doSome() {
+							 panelButton.getButtonOk().setEnabled(((PanelLineBufferAnalyst) panelBufferBasic).isButtonOkEnabled()&&((PanelLineBufferAnalyst) panelBufferBasic).isEnabled());
+						}
+					});
+                    
                }else if (e.getSource() == panelButton.getButtonOk()) {
                     try {
 						if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
@@ -275,63 +249,5 @@ public class BufferDialog extends SmDialog {
                     BufferDialog.this.dispose();
                }
           }
-         
-          private void addRegister(){
-               datasetComboBox.addItemListener(new LocalItemListener());
-               datasourceComboBox.addItemListener(new LocalItemListener());
-//               textFieldSemicircleLineSegment.getDocument().addDocumentListener(new LocalDocumentListener());
-          }
-         
-         
      }
-     class LocalItemListener implements ItemListener{
-
-          @Override
-          public void itemStateChanged(ItemEvent e) {
-               if(e.getSource()==datasourceComboBox){
-                    if(datasetComboBox.getSelectedDataset()==null){
-                         panelButton.getButtonOk().setEnabled(false);
-                         }else {
-                              panelButton.getButtonOk().setEnabled(true);
-                         }
-                   
-               }else if (e.getSource() == datasetComboBox) {
-
-                    if(datasetComboBox.getSelectedDataset()==null){
-                         panelButton.getButtonOk().setEnabled(false);
-                         }else {
-                              panelButton.getButtonOk().setEnabled(true);
-                         }
-               }
-              
-          }
-         
-     }
-     
-     class LocalDocumentListener implements DocumentListener{
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			int value = Integer.parseInt(textFieldSemicircleLineSegment.getText().replaceAll(",", ""));
-			if(value<4||value>200){
-				panelButton.getButtonOk().setEnabled(false);
-			}else {
-				panelButton.getButtonOk().setEnabled(true);
-			}
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-    	 
-     }
-     
-     
 }
