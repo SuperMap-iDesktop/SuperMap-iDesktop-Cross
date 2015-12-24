@@ -398,6 +398,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.comboBoxLabelExpression.addItemListener(this.itemListener);
 		this.comboBoxBGShape.addItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.itemListener);

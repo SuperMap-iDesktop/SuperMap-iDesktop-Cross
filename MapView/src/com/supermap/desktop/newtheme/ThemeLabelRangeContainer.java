@@ -389,6 +389,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);

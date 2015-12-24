@@ -49,6 +49,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JLabel labelInclinationAngl = new JLabel();
 	private JSpinner spinnerInclinationAngl = new JSpinner();
 	private JLabel labelFontColor = new JLabel();
+	boolean focusGaint = false;
 
 	// 经验值
 	private final static double EXPERIENCE = 0.283;
@@ -100,13 +101,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalCheckBoxActionListener checkBoxActionListener = new LocalCheckBoxActionListener();
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
-	private transient MapDrawnListener mapDrawnListener = new MapDrawnListener() {
-		@Override
-		public void mapDrawn(MapDrawnEvent event) {
-			changeFontSizeWithMapObject();
-		}
-
-	};
+	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
+	
 	private List<TextStyle> list;
 
 	public TextStyleContainer(TextStyle textStyle, Map map) {
@@ -342,6 +338,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.comboBoxFontName.addItemListener(this.itemListener);
 		this.comboBoxAlign.addItemListener(this.itemListener);
 		this.comboBoxFontSize.addItemListener(this.itemListener);
@@ -366,6 +363,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
 		this.map.addDrawnListener(this.mapDrawnListener);
+
 	}
 
 	/**
@@ -395,6 +393,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.buttonFontColorSelect.removePropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.buttonBGColorSelect.removePropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
+		this.map.removeDrawnListener(this.mapDrawnListener);
 	}
 
 	private void initHashMapTextAlignment() {
@@ -728,6 +727,13 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	}
 
+	class LocalMapDrawnListener implements MapDrawnListener {
+
+		@Override
+		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
+			changeFontSizeWithMapObject();
+		}
+	}
 	/**
 	 * 设置旋转角度
 	 */
@@ -826,22 +832,30 @@ public class TextStyleContainer extends ThemeChangePanel {
 		}
 	}
 
+
 	private void changeFontSizeWithMapObject() {
-		// 非固定文本大小
-		if (!textStyle.isSizeFixed()) {
-			// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
-			// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-			Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
-			DecimalFormat decimalFormat = new DecimalFormat("0.0");
-			if (Double.compare(size, size.intValue()) > 0) {
-				textFieldFontSize.setText(decimalFormat.format(size));
+
+		try {
+			// 非固定文本大小
+			if (!checkBoxFixedSize.isSelected()) {
+				// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
+				// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
+				Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+				DecimalFormat decimalFormat = new DecimalFormat("0.0");
+				if (Double.compare(size, size.intValue()) > 0) {
+					textFieldFontSize.setText(decimalFormat.format(size));
+				} else {
+					decimalFormat = new DecimalFormat("0");
+					textFieldFontSize.setText(decimalFormat.format(size));
+				}
+				if (spinnerFontHeight.getFocusTraversalKeysEnabled()) {
+					textFieldFontHeight.setText(new DecimalFormat(numeric).format(size / EXPERIENCE));
+				}
 			} else {
-				decimalFormat = new DecimalFormat("0");
-				textFieldFontSize.setText(decimalFormat.format(size));
+				// 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
 			}
-			textFieldFontHeight.setText(new DecimalFormat(numeric).format(size / EXPERIENCE));
-		} else if (textStyle.isSizeFixed()) {
-			// 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
+		} catch (Exception e) {
+
 		}
 	}
 

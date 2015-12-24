@@ -111,7 +111,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	@Override
 	void registActionListener() {
 		// do nothing
-
+		unregistActionListener();
 	}
 
 	@Override

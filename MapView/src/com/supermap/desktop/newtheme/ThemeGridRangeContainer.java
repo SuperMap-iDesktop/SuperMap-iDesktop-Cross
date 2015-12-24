@@ -316,6 +316,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonForeGroundColor.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);

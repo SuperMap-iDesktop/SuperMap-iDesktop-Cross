@@ -1,21 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalComboBoxIcon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.plaf.metal.MetalComboBoxIcon;
 
 public class ColorSelectButton extends JButton {
 	
@@ -60,12 +51,11 @@ public class ColorSelectButton extends JButton {
 		this.panelColorDisplay.setBackground(color);
 		this.setLayout(new GridBagLayout());
 		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(this.panelColorDisplay, BorderLayout.CENTER);
-		panel.add(this.labelArraw, BorderLayout.EAST);
-		setBorder(BorderFactory.createEtchedBorder(1));
-		
-		this.add(panel,new GridBagConstraintsHelper(0,0,1,1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.WEST));
+		panel.setLayout(new GridBagLayout());
+		panel.add(this.panelColorDisplay, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(1, 2, 1, 2));
+		panel.add(this.labelArraw, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.WEST));
+		setBorder(BorderFactory.createDashedBorder(Color.WHITE));
+		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setInsets(3, 5, 3, 5));
 	}		
 	
 	public void selectColor(Color newColor) {

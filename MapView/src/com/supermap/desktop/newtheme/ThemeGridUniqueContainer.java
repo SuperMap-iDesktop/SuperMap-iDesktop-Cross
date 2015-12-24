@@ -142,6 +142,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 * 控件注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
 		this.buttonAdd.addActionListener(this.actionListener);
