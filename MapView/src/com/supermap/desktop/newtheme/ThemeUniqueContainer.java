@@ -1097,7 +1097,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			}
 		} else {
 			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
-			for (int i = 0; i < selectedRow.length; i++) {
+			for (int i = 0; i < selectedRow.length - 1; i++) {
 				geoStyleList.add(themeUnique.getItem(selectedRow[i]).getStyle());
 			}
 			JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);

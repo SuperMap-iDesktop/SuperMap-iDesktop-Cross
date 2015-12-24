@@ -132,6 +132,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		getFieldComboBox(comboBoxLabelExpression, LABELEXPRESSION_TYPE);
 		//@formatter:off
 		this.labelLabelExpression.setPreferredSize(new Dimension(160,20));
+		Dimension textDimension = new Dimension(180,20);
+		this.comboBoxLabelExpression.setPreferredSize(textDimension);
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		panelPropertyContent.setLayout(new GridBagLayout());
@@ -221,9 +223,12 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxOffsetX();
 		initComboBoxOffsetY();
 		Dimension dimension = new Dimension(160,20);
+		Dimension textDimension = new Dimension(160,20);
 		this.labelOffsetUnity.setPreferredSize(dimension);
 		this.labelOffsetX.setPreferredSize(dimension);
 		this.labelOffsetY.setPreferredSize(dimension);
+		this.comboBoxOffsetX.setPreferredSize(textDimension);
+		this.comboBoxOffsetY.setPreferredSize(textDimension);
 		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
@@ -625,7 +630,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		private void setFieldInfo() {
 			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
 			if (comboBoxArray.contains(labelExpression)) {
-				System.out.println(comboBoxArray.get(0));
 				String tempLabelExpression = labelExpression.substring(labelExpression.lastIndexOf(".")+1, labelExpression.length());
 				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(tempLabelExpression);
 				// 控制文本进度下拉框的可使用性

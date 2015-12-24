@@ -7,7 +7,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilties.FontUtilties;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapDrawnEvent;
+import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Theme;
 
 import javax.swing.*;
@@ -16,7 +19,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -43,6 +49,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JLabel labelInclinationAngl = new JLabel();
 	private JSpinner spinnerInclinationAngl = new JSpinner();
 	private JLabel labelFontColor = new JLabel();
+
+	// 经验值
+	private final static double EXPERIENCE = 0.283;
+	// 单位转换
+	private final static int UNIT_CONVERSION = 10;
 
 	private transient ColorSelectButton buttonFontColorSelect;
 	private JLabel labelBGColor = new JLabel();
@@ -80,7 +91,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 			ControlsProperties.getString("String_TextAlignment_RightMid"),
 	};
 	// 字号与字高之间的转换精度
-	private final double fontPrecision = 3.535;
 	// 显示精度
 	private String numeric = "0.00";
 	private boolean isRefreshAtOnece = true;
@@ -90,6 +100,13 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalCheckBoxActionListener checkBoxActionListener = new LocalCheckBoxActionListener();
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
+	private transient MapDrawnListener mapDrawnListener = new MapDrawnListener() {
+		@Override
+		public void mapDrawn(MapDrawnEvent event) {
+			changeFontSizeWithMapObject();
+		}
+
+	};
 	private List<TextStyle> list;
 
 	public TextStyleContainer(TextStyle textStyle, Map map) {
@@ -158,7 +175,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 			}
 			initComboBoxAlign();
 			initComboBoxFontSize();
-			initTextFieldFontHeight();
 			initTextFieldFontWidth();
 			initTextFieldFontItalicAngl();
 			initTextFieldFontRotation();
@@ -232,28 +248,31 @@ public class TextStyleContainer extends ThemeChangePanel {
 	}
 
 	/**
-	 * 初始化字高左侧textField值
-	 */
-	private void initTextFieldFontHeight() {
-		this.spinnerFontHeight.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
-		this.textFieldFontHeight = numberEditor.getTextField();
-		if (null != this.textStyle) {
-			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight()));
-		}
-	}
-
-	/**
-	 * 初始化字号下拉框
+	 * 初始化字号下拉框和字高
 	 */
 	private void initComboBoxFontSize() {
 		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
 				"12", "14",
-				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72"}));
+				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
 		this.comboBoxFontSize.setEditable(true);
 		this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
+		this.spinnerFontHeight.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
+		this.textFieldFontHeight = numberEditor.getTextField();
 		if (null != this.textStyle) {
-			this.textFieldFontSize.setText(new DecimalFormat(numeric).format(textStyle.getFontHeight() / fontPrecision));
+			Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+			DecimalFormat decimalFormat = new DecimalFormat("0.0");
+			String textFieldString = "";
+			if (Double.compare(size, size.intValue()) > 0) {
+				textFieldString = decimalFormat.format(size);
+				this.textFieldFontSize.setText(textFieldString);
+			} else {
+				decimalFormat = new DecimalFormat("0");
+				textFieldString = decimalFormat.format(size);
+				this.textFieldFontSize.setText(textFieldString);
+			}
+			double height = Double.parseDouble(textFieldString);
+			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height/EXPERIENCE));
 		}
 	}
 
@@ -335,17 +354,18 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.textFieldFontWidth.addKeyListener(this.localKeyListener);
 		this.textFieldFontItalicAngl.addKeyListener(this.localKeyListener);
 		this.textFieldFontRotationAngl.addKeyListener(this.localKeyListener);
-		this.checkBoxBGTransparent.addActionListener(this.checkBoxActionListener);
-		this.checkBoxBorder.addActionListener(this.checkBoxActionListener);
-		this.checkBoxFixedSize.addActionListener(this.checkBoxActionListener);
-		this.checkBoxItalic.addActionListener(this.checkBoxActionListener);
-		this.checkBoxOutlook.addActionListener(this.checkBoxActionListener);
-		this.checkBoxShadow.addActionListener(this.checkBoxActionListener);
-		this.checkBoxUnderline.addActionListener(this.checkBoxActionListener);
-		this.checkBoxStrickout.addActionListener(this.checkBoxActionListener);
+		this.checkBoxBGTransparent.addItemListener(this.checkBoxActionListener);
+		this.checkBoxBorder.addItemListener(this.checkBoxActionListener);
+		this.checkBoxFixedSize.addItemListener(this.checkBoxActionListener);
+		this.checkBoxItalic.addItemListener(this.checkBoxActionListener);
+		this.checkBoxOutlook.addItemListener(this.checkBoxActionListener);
+		this.checkBoxShadow.addItemListener(this.checkBoxActionListener);
+		this.checkBoxUnderline.addItemListener(this.checkBoxActionListener);
+		this.checkBoxStrickout.addItemListener(this.checkBoxActionListener);
 		this.buttonFontColorSelect.addPropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
+		this.map.addDrawnListener(this.mapDrawnListener);
 	}
 
 	/**
@@ -364,14 +384,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.textFieldFontWidth.removeKeyListener(this.localKeyListener);
 		this.textFieldFontItalicAngl.removeKeyListener(this.localKeyListener);
 		this.textFieldFontRotationAngl.removeKeyListener(this.localKeyListener);
-		this.checkBoxBGTransparent.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxBorder.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxFixedSize.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxItalic.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxOutlook.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxShadow.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxUnderline.removeActionListener(this.checkBoxActionListener);
-		this.checkBoxStrickout.removeActionListener(this.checkBoxActionListener);
+		this.checkBoxBGTransparent.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxBorder.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxFixedSize.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxItalic.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxOutlook.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxShadow.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxUnderline.removeItemListener(this.checkBoxActionListener);
+		this.checkBoxStrickout.removeItemListener(this.checkBoxActionListener);
 		this.buttonFontColorSelect.removePropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.buttonBGColorSelect.removePropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
@@ -483,10 +503,10 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	}
 
-	class LocalCheckBoxActionListener implements ActionListener {
+	class LocalCheckBoxActionListener implements ItemListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void itemStateChanged(ItemEvent e) {
 			if (e.getSource() == checkBoxBorder) {
 				// 设置字体加粗
 				setFontBorder();
@@ -558,11 +578,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 			}
 		}
 
-
 		/**
 		 * 设置字体固定大小
 		 */
 		private void setFixedSize() {
+
 			boolean isFixedSize = checkBoxFixedSize.isSelected();
 			if (null != textStyle) {
 				textStyle.setSizeFixed(isFixedSize);
@@ -571,6 +591,18 @@ public class TextStyleContainer extends ThemeChangePanel {
 					list.get(i).setSizeFixed(isFixedSize);
 				}
 			}
+			Double height = 0.0;
+			if (isFixedSize) {
+				height = Double.parseDouble(textFieldFontHeight.getText());
+				height /= 10;
+			} else {
+				double size = Double.parseDouble(textFieldFontSize.getText());
+				height = FontUtilties.fontSizeToMapHeight(size, map, textStyle.isSizeFixed());
+			}
+			if (height > 0) {
+				textStyle.setFontHeight(height);
+			}
+
 		}
 
 		/**
@@ -733,12 +765,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 */
 	private void setFontWidth() {
 		if (null != spinnerFontWidth.getValue()) {
-			double fontWidth = (double) spinnerFontWidth.getValue();
+			boolean isFixSize = checkBoxFixedSize.isSelected();
+			double logicalWidth = Double.parseDouble(spinnerFontWidth.getValue().toString());
+			double fontWidth = FontUtilties.fontWidthToMapWidth(logicalWidth, map, isFixSize);
 			if (null != textStyle) {
-				textStyle.setFontWidth(fontWidth);
+				textStyle.setFontWidth(fontWidth / UNIT_CONVERSION);
 			} else {
 				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setFontWidth(fontWidth);
+					list.get(i).setFontWidth(fontWidth / UNIT_CONVERSION);
 				}
 			}
 		}
@@ -748,37 +782,66 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * 设置字高
 	 */
 	private void setFontHeight() {
-		if (null != spinnerFontHeight.getValue()) {
-			double fontHeight = (double) spinnerFontHeight.getValue();
-			if (fontHeight > 0) {
-				if (null != textStyle) {
-					textStyle.setFontHeight(fontHeight);
-				} else {
-					for (int i = 0; i < list.size(); i++) {
-						list.get(i).setFontHeight(fontHeight);
-					}
+		double logicalHeight = 0.0;
+		logicalHeight = Double.parseDouble(textFieldFontHeight.getText());
+		Double size = logicalHeight * EXPERIENCE;
+		DecimalFormat decimalFormat = new DecimalFormat("0.0");
+		if (Double.compare(size, size.intValue()) > 0) {
+			textFieldFontSize.setText(decimalFormat.format(size));
+		} else {
+			decimalFormat = new DecimalFormat("0");
+			textFieldFontSize.setText(decimalFormat.format(size));
+		}
+		double fontHeight = logicalHeight;
+		fontHeight = FontUtilties.fontSizeToMapHeight(size, map, textStyle.isSizeFixed());
+		if (fontHeight > 0) {
+			if (null != textStyle) {
+				textStyle.setFontHeight(fontHeight);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setFontHeight(fontHeight);
 				}
-				textFieldFontSize.setText(new DecimalFormat(numeric).format(fontHeight / fontPrecision));
 			}
 		}
+
 	}
 
 	/**
 	 * 设置字号
 	 */
 	private void setFontSize() {
-		if (!textFieldFontSize.getText().isEmpty()) {
-			double fontHeight = Double.valueOf(textFieldFontSize.getText()) * fontPrecision;
-			if (fontHeight > 0) {
-				textFieldFontHeight.setText(new DecimalFormat(numeric).format(fontHeight));
-				if (null != textStyle) {
-					textStyle.setFontHeight(fontHeight);
-				} else {
-					for (int i = 0; i < list.size(); i++) {
-						list.get(i).setFontHeight(fontHeight);
-					}
+		// 保证字高控件的值正确
+		double size = Double.valueOf(textFieldFontSize.getText());
+		double fontHeight = size / EXPERIENCE;
+		fontHeight = FontUtilties.fontSizeToMapHeight(size, map, textStyle.isSizeFixed());
+		if (fontHeight > 0) {
+			textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+			if (null != textStyle) {
+				textStyle.setFontHeight(fontHeight);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					list.get(i).setFontHeight(fontHeight);
 				}
 			}
+		}
+	}
+
+	private void changeFontSizeWithMapObject() {
+		// 非固定文本大小
+		if (!textStyle.isSizeFixed()) {
+			// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
+			// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
+			Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+			DecimalFormat decimalFormat = new DecimalFormat("0.0");
+			if (Double.compare(size, size.intValue()) > 0) {
+				textFieldFontSize.setText(decimalFormat.format(size));
+			} else {
+				decimalFormat = new DecimalFormat("0");
+				textFieldFontSize.setText(decimalFormat.format(size));
+			}
+			textFieldFontHeight.setText(new DecimalFormat(numeric).format(size / EXPERIENCE));
+		} else if (textStyle.isSizeFixed()) {
+			// 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
 		}
 	}
 

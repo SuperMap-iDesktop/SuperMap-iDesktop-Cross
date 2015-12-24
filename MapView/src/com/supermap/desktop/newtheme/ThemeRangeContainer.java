@@ -74,7 +74,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient Map map;
 	private transient ThemeRange themeRange;
 	private transient Layer themeRangeLayer;
-	private String numeric = "#";
+	//	private String numeric = "#";
 	private String rangeExpression = "SmID";
 	private transient RangeMode rangeMode = RangeMode.EQUALINTERVAL;
 	private transient int rangeCount = 5;
@@ -198,7 +198,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
 		String expression = themeRange.getRangeExpression();
-		expression = datasetVector.getName() + "." + expression;
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
@@ -319,8 +318,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangePrecision() {
 		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
-				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
-		this.numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
+				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001"}));
+
+		String numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
 	}
 
@@ -429,7 +429,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<")) {
+			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -987,49 +987,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			int index = comboBoxRangePrecision.getSelectedIndex();
 			String precisionStr = comboBoxRangePrecision.getSelectedItem().toString();
 			rangeCount = Integer.valueOf(comboBoxRangeCount.getSelectedItem().toString());
-			switch (index) {
-			case 0:
-				numeric = "#######";
-				break;
-			case 1:
-				numeric = "######";
-				break;
-			case 2:
-				numeric = "#####";
-				break;
-			case 3:
-				numeric = "####";
-				break;
-			case 4:
-				numeric = "##";
-				break;
-			case 5:
-				numeric = "#";
-				break;
-			case 6:
-				numeric = "0.0";
-				break;
-			case 7:
-				numeric = "0.00";
-				break;
-			case 8:
-				numeric = "0.000";
-				break;
-			case 9:
-				numeric = "0.0000";
-				break;
-			case 10:
-				numeric = "0.00000";
-				break;
-			case 11:
-				numeric = "0.000000";
-				break;
-			case 12:
-				numeric = "0.0000000";
-				break;
-			default:
-				break;
-			}
 			// 设置分段舍入精度，用于分度段数确定
 			precision = Double.valueOf(precisionStr);
 			// 这里做一个精度设置，以避免出现1<=x<1这样的表达式
@@ -1047,7 +1004,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = (String) comboBoxExpression.getSelectedItem();
-			rangeExpression = rangeExpression.replaceAll(datasetVector.getName() + ".", "");
 			resetThemeInfo();
 		}
 
@@ -1108,17 +1064,17 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				fieldTypes.add(FieldType.DOUBLE);
 				fieldTypes.add(FieldType.SINGLE);
 
-				DialogResult dialogResult = sqlDialog.showDialog(datasets, fieldTypes, datasetVector.getName() + "." + themeRange.getRangeExpression());
+				DialogResult dialogResult = sqlDialog.showDialog(datasets, fieldTypes, themeRange.getRangeExpression());
 				if (dialogResult == DialogResult.OK) {
 					String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 					if (null != filter && !filter.isEmpty()) {
 						jComboBoxField.insertItemAt(filter, allItems - 1);
 						jComboBoxField.setSelectedIndex(allItems - 1);
 					} else {
-						jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeRange.getRangeExpression());
+						jComboBoxField.setSelectedItem(themeRange.getRangeExpression());
 					}
 				} else {
-					jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeRange.getRangeExpression());
+					jComboBoxField.setSelectedItem(themeRange.getRangeExpression());
 				}
 
 			}
@@ -1175,7 +1131,11 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
 //						rangeValue = new DecimalFormat(numeric).format(Double.valueOf(rangeValue));
-						themeRange.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+						String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
+						numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
+						DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
+						String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
+						themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
 						String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
 						String caption = themeRange.getItem(selectRow).getCaption();
 						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), endValue);

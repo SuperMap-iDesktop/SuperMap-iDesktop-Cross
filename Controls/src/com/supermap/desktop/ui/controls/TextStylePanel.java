@@ -1,54 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-
 import com.supermap.data.Enum;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.Point2D;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Size2D;
-import com.supermap.data.TextAlignment;
-import com.supermap.data.TextPart;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.layout.MapLayout;
@@ -60,6 +13,19 @@ import com.supermap.mapping.MapDrawnListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.InteractionMode;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.HashMap;
 
 /**
  * 文本风格面板
@@ -258,8 +224,8 @@ public class TextStylePanel extends JPanel {
 
 	/**
 	 * 设置一个值表示是否是设置专题图的文本风格
-	 * 
-	 * @param themeTextStyle
+	 *
+	 * @param value
 	 */
 	public void setThemeText(boolean value) {
 		isThemeText = value;
@@ -298,8 +264,8 @@ public class TextStylePanel extends JPanel {
 
 	/**
 	 * 设置地图或布局对象
-	 * 
-	 * @param object
+	 *
+	 * @param value
 	 */
 	public void setMapObject(Object value) {
 		if (value != null && !value.equals(mapObject)) {

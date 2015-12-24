@@ -31,6 +31,7 @@ public class ThemeGuideFactory {
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
 	private static LocalPropertyListener propertyListener;
+
 	/**
 	 * 界面替换
 	 *
@@ -136,7 +137,7 @@ public class ThemeGuideFactory {
 	 * 新建分段专题图
 	 */
 	public static void buildRangeTheme() {
-		ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null, 0.1);
+		ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null, 0.1);
 		if (null != themeRange) {
 			themeRange.setPrecision(0.1);
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange);
@@ -152,7 +153,6 @@ public class ThemeGuideFactory {
 	 */
 	public static void buildLabelUnformTheme() {
 		ThemeLabel themeLabel = new ThemeLabel();
-		themeLabel.setLabelExpression("SmID");
 		themeLabel.setMaxLabelLength(8);
 		ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel);
 		addPanelToThemeMainContainer(themeLabelUniformContainer, themeLabelUniformContainer.getThemeLabelLayer().getCaption());
@@ -163,8 +163,8 @@ public class ThemeGuideFactory {
 	 * 新建分段风格标签专题图
 	 */
 	public static void buildLabelRangeTheme() {
-		ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
-		if (null != themeLabel) {
+		ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
+		if (null != themeLabel && themeLabel.getCount() >= 2) {
 			themeLabel.setMaxLabelLength(8);
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel);
 			addPanelToThemeMainContainer(themeLabelRangeContainer, themeLabelRangeContainer.getThemeLabelLayer().getCaption());

@@ -186,7 +186,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
 		String expression = themeLabel.getRangeExpression();
-		expression = datasetVector.getName() + "." + expression;
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
@@ -204,7 +203,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
+				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
 		if (themeLabel.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeLabel.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -225,7 +224,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeCount() {
 		comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
+				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		comboBoxRangeCount.setEditable(true);
 		int rangeCount = themeLabel.getCount();
 		comboBoxRangeCount.setSelectedIndex(rangeCount - 2);
@@ -233,7 +232,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	}
 
 	private void initComboBoxRangeFormat() {
-		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
+		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		comboBoxRangeFormat.setSelectedIndex(1);
 	}
 
@@ -310,7 +309,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else {
+			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -364,7 +363,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 设置文本风格颜色
 	 *
 	 * @param textStyle 需要设置的风格
-	 * @param color     设置的颜色
+	 * @param color 设置的颜色
 	 */
 	private void setTextStyleColor(TextStyle textStyle, Color color) {
 		textStyle.setForeColor(color);
@@ -762,7 +761,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = comboBoxExpression.getSelectedItem().toString();
-			rangeExpression = rangeExpression.replaceAll(datasetVector.getName() + ".", "");
 			resetThemeInfo();
 		}
 
@@ -830,10 +828,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 						jComboBoxField.insertItemAt(filter, allItems - 1);
 						jComboBoxField.setSelectedIndex(allItems - 1);
 					} else {
-						jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeLabel.getRangeExpression());
+						jComboBoxField.setSelectedItem(themeLabel.getRangeExpression());
 					}
 				} else {
-					jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeLabel.getRangeExpression());
+					jComboBoxField.setSelectedItem(themeLabel.getRangeExpression());
 				}
 
 			}
