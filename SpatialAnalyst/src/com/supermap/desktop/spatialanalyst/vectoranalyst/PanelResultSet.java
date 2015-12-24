@@ -1,18 +1,13 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.NumberFormat;
-
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.text.NumberFormatter;
-
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 

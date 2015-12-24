@@ -82,6 +82,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean isButtonOkEnabled;
 	private boolean isEnabled;
 	private DoSome some;
+	private final static int DEFAULT_MIN = 4;
+	private final static int DEFAULT_MAX= 200;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -394,7 +396,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 对结果面板进行设置
 	 */
 	private void setPanelResultSet() {
-//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+		// this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
@@ -465,13 +467,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	public void addListener() {
 		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
-		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -678,7 +673,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		private void getButtonOkEnabled(Document document) {
 			try {
 				long value = Long.parseLong(document.getText(0, document.getLength()));
-				if (value < 4 || value > 200) {
+				if (value < DEFAULT_MIN|| value > DEFAULT_MAX) {
 					setButtonOkEnabled(false);
 				} else {
 					setButtonOkEnabled(true);

@@ -69,6 +69,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean isEnabled;
 	private DoSome some;
 	private boolean isSelected;
+	private final static int DEFAULT_MIN = 4;
+	private final static int DEFAULT_MAX= 200;
 
 	public boolean isEnabled() {
 		return isEnabled;
@@ -525,7 +527,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		private void getButtonOkEnabled(Document document) {
 			try {
 				long value = Long.parseLong(document.getText(0, document.getLength()));
-				if (value < 4 || value > 200) {
+				if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
 					setButtonOKEnabled(false);
 				} else {
 					setButtonOKEnabled(true);
