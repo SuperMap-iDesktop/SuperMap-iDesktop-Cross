@@ -339,6 +339,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
+							this.panelResultData.resetDatasetName();
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
 							recordset = activeLayer[i].getSelection().toRecordset();
@@ -370,11 +371,13 @@ public class PanelLineBufferAnalyst extends JPanel {
 				Datasource selectedDatasource = (Datasource) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
 				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
 						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
@@ -448,6 +451,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
+		this.panelResultData.resetDatasetName();
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
