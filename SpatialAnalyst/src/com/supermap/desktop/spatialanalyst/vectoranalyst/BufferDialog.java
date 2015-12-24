@@ -28,7 +28,7 @@ public class BufferDialog extends SmDialog {
 	private ButtonGroup buttonGroup;
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private PanelButton panelButton;
-	private DatasetComboBox datasetComboBox;
+	private final static String DATASET_NOT_NULL = "源数据集不能为空";
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(575, 435);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(575, 332);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(670, 470);
@@ -44,7 +44,6 @@ public class BufferDialog extends SmDialog {
 		super();
 		initPanelBufferBasic();
 		setBufferFactory();
-		initBufferButtonOk();
 		setLocationRelativeTo(null);
 		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -58,7 +57,7 @@ public class BufferDialog extends SmDialog {
 
 		if (activeDatasets.length > 0
 				&& (activeDatasets[0].getType() == DatasetType.POINT || activeDatasets[0].getType() == DatasetType.POINT3D
-				|| activeDatasets[0].getType() == DatasetType.REGION || activeDatasets[0].getType() == DatasetType.REGION3D)) {
+						|| activeDatasets[0].getType() == DatasetType.REGION || activeDatasets[0].getType() == DatasetType.REGION3D)) {
 
 			this.panelBufferBasic = new PanelPointOrRegionAnalyst();
 			setSize(getPointPanelDimension());
@@ -70,15 +69,6 @@ public class BufferDialog extends SmDialog {
 			this.radioButtonLine.setSelected(true);
 			((PanelLineBufferAnalyst) panelBufferBasic).setSome(some);
 		}
-	}
-
-	private void initBufferButtonOk() {
-		if (panelBufferBasic instanceof PanelLineBufferAnalyst) {
-			this.datasetComboBox = ((PanelLineBufferAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-		} else if (panelBufferBasic instanceof PanelPointOrRegionAnalyst) {
-			this.datasetComboBox = ((PanelPointOrRegionAnalyst) panelBufferBasic).getPanelBufferData().getComboBoxBufferDataDataset();
-		}
-		panelButton.getButtonOk().setEnabled(datasetComboBox.getSelectedDataset() != null);
 	}
 
 	private void setBufferFactory() {
@@ -212,8 +202,17 @@ public class BufferDialog extends SmDialog {
                     try {
 						if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
 						     flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).createCurrentBuffer();
+						     if(!((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonEnabled()){
+						    	 flag = false;
+						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
+						     }
+						     
 						}else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
 						     flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
+						     if(!((PanelLineBufferAnalyst) panelBufferBasic).isButtonEnabled()){
+						    	 flag = false;
+						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
+						     }
 						}
 					} catch (Exception e1) {
 						BufferDialog.this.dispose();
