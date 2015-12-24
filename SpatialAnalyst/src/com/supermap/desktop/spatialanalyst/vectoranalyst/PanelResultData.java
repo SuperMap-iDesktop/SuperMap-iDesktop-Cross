@@ -1,17 +1,13 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
-
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasource;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class PanelResultData extends JPanel {
 
@@ -59,6 +55,14 @@ public class PanelResultData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
 		this.textFieldResultDataDataset = new JTextField("Buffer");
+
+		comboBoxResultDataDatasource.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				resetDatasetName();
+			}
+		});
+
 	}
 
 	private void setPanelResultDataLayout() {
@@ -85,4 +89,10 @@ public class PanelResultData extends JPanel {
 		//@formatter:on
 	}
 
+	public void resetDatasetName() {
+		String name = "Buffer";
+		if (this.comboBoxResultDataDatasource.getSelectedDatasource() != null) {
+			this.textFieldResultDataDataset.setText(this.comboBoxResultDataDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(name));
+		}
+	}
 }

@@ -66,19 +66,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private boolean buttonOKEnabled = true;
-	private boolean isEnabled;
+	private boolean isButtonEnabled = true;
 	private DoSome some;
 	private boolean isSelected;
 	private final static int DEFAULT_MIN = 4;
-	private final static int DEFAULT_MAX= 200;
-
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
-	}
+	private final static int DEFAULT_MAX = 200;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -93,6 +85,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		if (some != null) {
 			some.doSome(buttonOKEnabled);
 		}
+	}
+
+	public boolean isButtonEnabled() {
+		return isButtonEnabled;
+	}
+
+	public void setButtonEnabled(boolean isButtonEnabled) {
+		this.isButtonEnabled = isButtonEnabled;
 	}
 
 	public PanelBufferData getPanelBufferData() {
@@ -269,6 +269,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
+							this.panelResultData.resetDatasetName();
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
 							recordset = activeLayer[i].getSelection().toRecordset();
@@ -300,11 +301,16 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				Datasource selectedDatasource = (Datasource) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
+				if(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset()==null){
+					setButtonEnabled(false);
+				}
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
 				if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
 						|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
@@ -348,7 +354,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * 设置PanelResultSet初始化勾选对象
 	 */
 	private void setPanelResultSet() {
-//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+		// this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
@@ -370,6 +376,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
+		this.panelResultData.resetDatasetName();
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
@@ -438,13 +445,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	public void addListener() {
-//		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
-		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				getButtonOkEnabled();
-			}
-		});
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						getButtonOkEnabled();
+					}
+				});
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -461,10 +468,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				}
 				// 切换数据源后，如果ComboBoxDataset为空时，清除字段选项
 				if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
-					setEnabled(true);
+					setButtonEnabled(true);
 				} else {
 					// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
-					setEnabled(false);
+					setButtonEnabled(false);
 					comboBoxFieldControl.removeAllItems();
 				}
 				setComponentEnabled();
@@ -477,9 +484,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 								.get(e.getItem().toString());
 						comboBoxField = new ComboBoxField(datasetItem, comboBoxFieldControl);
 						comboBoxField.createComboBoxField(datasetItem, comboBoxFieldControl);
-						setEnabled(true);
+						setButtonEnabled(true);
 					} else {
-						setEnabled(false);
+						setButtonEnabled(false);
 					}
 				}
 			} else if (e.getSource() == panelBufferData.getCheckBoxGeometrySelect()) {
@@ -514,22 +521,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
-//	class LocalDocumentListener implements DocumentListener {
-//		@Override
-//		public void insertUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-//
-//		@Override
-//		public void removeUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-//
-//		@Override
-//		public void changedUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-
 	private void getButtonOkEnabled() {
 		try {
 			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
@@ -542,5 +533,5 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			setButtonOKEnabled(false);
 		}
 	}
-//	}
+
 }

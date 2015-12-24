@@ -52,7 +52,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private JLabel labelRightNumericRadius;
 	private JLabel labelLeftFieldRadius;
 	private JLabel labelRightFieldRadius;
-
 	private JRadioButton radioButtonNumeric;
 	private JRadioButton radioButtonField;
 	private JComboBox<Unit> comboBoxUnit;
@@ -77,8 +76,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private LocalKeylistener localKeylistener = new LocalKeylistener();
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private ComboBoxField comboBoxField;
-	private boolean isButtonOkEnabled;
-	private boolean isEnabled;
+	private boolean isButtonOkEnabled = true;
+	private boolean isButtonEnabled = true;
 	private DoSome some;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
@@ -87,12 +86,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.some = some;
 	}
 
-	public boolean isEnabled() {
-		return isEnabled;
+	public boolean isButtonEnabled() {
+		return isButtonEnabled;
 	}
 
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setButtonEnabled(boolean isButtonEnabled) {
+		this.isButtonEnabled = isButtonEnabled;
 	}
 
 	public PanelBufferData getPanelBufferData() {
@@ -339,6 +338,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
+							this.panelResultData.resetDatasetName();
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
 							recordset = activeLayer[i].getSelection().toRecordset();
@@ -370,11 +370,16 @@ public class PanelLineBufferAnalyst extends JPanel {
 				Datasource selectedDatasource = (Datasource) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
+				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
+					setButtonEnabled(false);
+				}
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
+				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
 				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
 						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
@@ -394,7 +399,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 对结果面板进行设置
 	 */
 	private void setPanelResultSet() {
-//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+		// this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
@@ -448,6 +453,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
+		this.panelResultData.resetDatasetName();
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
@@ -464,14 +470,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	public void addListener() {
-//		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
-		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				// TODO Auto-generated method stub
-				getButtonOkEnabled();
-			}
-		});
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						// TODO Auto-generated method stub
+						getButtonOkEnabled();
+					}
+				});
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -552,9 +558,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 						// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
 						comboBoxFieldLeft.removeAllItems();
 						comboBoxFieldRight.removeAllItems();
-						setEnabled(false);
+						setButtonEnabled(false);
 					} else {
-						setEnabled(true);
+						setButtonEnabled(true);
 					}
 				}
 				// 切换数据源后，如果ComboBoxDataset为空时，清除字段选项
@@ -570,9 +576,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 								.get(e.getItem().toString());
 						comboBoxField = new ComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
 						comboBoxField.createComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
-						setEnabled(true);
+						setButtonEnabled(true);
 					} else {
-						setEnabled(false);
+						setButtonEnabled(false);
 					}
 				}
 			} else if (e.getSource() == comboBoxFieldLeft) {
@@ -581,9 +587,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 						comboBoxFieldRight.setSelectedItem(comboBoxFieldLeft.getSelectedItem());
 						radiusLeft = comboBoxFieldLeft.getSelectedItem().toString();
 					}
-
 				}
-
 			} else if (e.getSource() == comboBoxFieldRight) {
 				if (comboBoxFieldRight.getSelectedItem() != null) {
 					radiusRight = comboBoxFieldRight.getSelectedItem().toString();
@@ -659,22 +663,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
-//	class LocalDocumentListener implements DocumentListener {
-//		@Override
-//		public void insertUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-//
-//		@Override
-//		public void removeUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-//
-//		@Override
-//		public void changedUpdate(DocumentEvent e) {
-//			getButtonOkEnabled(e.getDocument());
-//		}
-
 	private void getButtonOkEnabled() {
 		try {
 			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
@@ -688,5 +676,4 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 
 	}
-//	}
 }
