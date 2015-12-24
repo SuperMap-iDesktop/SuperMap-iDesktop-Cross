@@ -404,7 +404,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				int column = jTableTabular.getSelectedColumn();
 				int row = jTableTabular.getSelectedRow();
 				if (row != -1 && column != -1) {
-					((TabularTableModel) jTableTabular.getModel()).updateData(row, column, jTableTabular.getCellEditor(row, column).getCellEditorValue());
+					((TabularTableModel) jTableTabular.getModel()).setValueAt(jTableTabular.getCellEditor(row, column).getCellEditorValue(), row, column);
 				}
 			}
 
