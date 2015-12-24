@@ -54,8 +54,9 @@ public class BufferDialog extends SmDialog {
 
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 
-		if (activeDatasets.length > 0 && (activeDatasets[0].getType() == DatasetType.POINT || activeDatasets[0].getType() == DatasetType.POINT3D
-				|| activeDatasets[0].getType() == DatasetType.REGION || activeDatasets[0].getType() == DatasetType.REGION3D)) {
+		if (activeDatasets.length > 0
+				&& (activeDatasets[0].getType() == DatasetType.POINT || activeDatasets[0].getType() == DatasetType.POINT3D
+						|| activeDatasets[0].getType() == DatasetType.REGION || activeDatasets[0].getType() == DatasetType.REGION3D)) {
 
 			this.panelBufferBasic = new PanelPointOrRegionAnalyst();
 			setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
@@ -170,7 +171,6 @@ public class BufferDialog extends SmDialog {
           @Override
           public void actionPerformed(ActionEvent e) {
                if (e.getSource() == radioButtonPointOrRegion) {
-	               ((PanelLineBufferAnalyst) panelBufferBasic).setSome(null);
 	               BufferDialog.this.getContentPane().remove(panelBufferBasic);
                     panelBufferBasic = new PanelPointOrRegionAnalyst();
                     BufferDialog.this.getContentPane().add(panelBufferBasic);
@@ -178,7 +178,6 @@ public class BufferDialog extends SmDialog {
 	               ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(some);
                     setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
                } else if (e.getSource() == radioButtonLine) {
-	               ((PanelLineBufferAnalyst) panelBufferBasic).setSome(null);
 	               BufferDialog.this.getContentPane().remove(panelBufferBasic);
 	               panelBufferBasic = new PanelLineBufferAnalyst();
 	               BufferDialog.this.getContentPane().add(panelBufferBasic);

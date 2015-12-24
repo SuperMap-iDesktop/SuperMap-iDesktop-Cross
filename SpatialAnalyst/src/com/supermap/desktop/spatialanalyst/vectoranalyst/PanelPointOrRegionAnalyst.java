@@ -346,7 +346,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * 设置PanelResultSet初始化勾选对象
 	 */
 	private void setPanelResultSet() {
-		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 

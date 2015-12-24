@@ -394,7 +394,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 对结果面板进行设置
 	 */
 	private void setPanelResultSet() {
-		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 

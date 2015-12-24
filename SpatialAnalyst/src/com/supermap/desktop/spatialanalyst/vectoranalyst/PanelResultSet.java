@@ -84,13 +84,13 @@ public class PanelResultSet extends JPanel {
 		setPanelResultSetLayout();
 	}
 
-
 	private void initComponent() {
 		this.checkBoxUnionBuffer = new JCheckBox("UnionBuffer");
 		this.checkBoxRemainAttributes = new JCheckBox("RemainInAttributes");
 		this.checkBoxDisplayInMap = new JCheckBox("DisplayInMap");
+		this.checkBoxDisplayInMap.setEnabled(false);
 		this.checkBoxDisplayInScene = new JCheckBox("DisPlayInScene");
-		this.checkBoxDisplayInScene.setVisible(false);
+		this.checkBoxDisplayInScene.setEnabled(false);
 		this.labelSemicircleLineSegment = new JLabel("SemicircleLineSegment");
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
