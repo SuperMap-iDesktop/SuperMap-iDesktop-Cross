@@ -11,6 +11,7 @@ import com.supermap.data.Recordset;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -22,9 +23,6 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -33,6 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -40,7 +40,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	/**
 	 *
-     */
+	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelBufferRadius;
 	private JLabel labelUnit;
@@ -438,7 +438,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	public void addListener() {
-		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
+//		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				getButtonOkEnabled();
+			}
+		});
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -508,33 +514,33 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
-	class LocalDocumentListener implements DocumentListener {
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
+//	class LocalDocumentListener implements DocumentListener {
+//		@Override
+//		public void insertUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void removeUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void changedUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
 
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
-
-		private void getButtonOkEnabled(Document document) {
-			try {
-				long value = Long.parseLong(document.getText(0, document.getLength()));
-				if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
-					setButtonOKEnabled(false);
-				} else {
-					setButtonOKEnabled(true);
-				}
-			} catch (Exception e) {
+	private void getButtonOkEnabled() {
+		try {
+			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
+			if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
 				setButtonOKEnabled(false);
+			} else {
+				setButtonOKEnabled(true);
 			}
+		} catch (Exception e) {
+			setButtonOKEnabled(false);
 		}
 	}
+//	}
 }

@@ -11,6 +11,7 @@ import com.supermap.data.Recordset;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -22,9 +23,6 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -41,7 +39,7 @@ import java.util.ArrayList;
 public class PanelLineBufferAnalyst extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelBasic;
@@ -83,7 +81,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean isEnabled;
 	private DoSome some;
 	private final static int DEFAULT_MIN = 4;
-	private final static int DEFAULT_MAX= 200;
+	private final static int DEFAULT_MAX = 200;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -396,7 +394,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 对结果面板进行设置
 	 */
 	private void setPanelResultSet() {
-		// this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
@@ -466,7 +464,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	public void addListener() {
-		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
+//		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// TODO Auto-generated method stub
+				getButtonOkEnabled();
+			}
+		});
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -654,34 +659,34 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
-	class LocalDocumentListener implements DocumentListener {
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
+//	class LocalDocumentListener implements DocumentListener {
+//		@Override
+//		public void insertUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void removeUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void changedUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
 
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			getButtonOkEnabled(e.getDocument());
-		}
-
-		private void getButtonOkEnabled(Document document) {
-			try {
-				long value = Long.parseLong(document.getText(0, document.getLength()));
-				if (value < DEFAULT_MIN|| value > DEFAULT_MAX) {
-					setButtonOkEnabled(false);
-				} else {
-					setButtonOkEnabled(true);
-				}
-			} catch (Exception e) {
+	private void getButtonOkEnabled() {
+		try {
+			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
+			if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
 				setButtonOkEnabled(false);
+			} else {
+				setButtonOkEnabled(true);
 			}
-
+		} catch (Exception e) {
+			setButtonOkEnabled(false);
 		}
+
 	}
+//	}
 }
