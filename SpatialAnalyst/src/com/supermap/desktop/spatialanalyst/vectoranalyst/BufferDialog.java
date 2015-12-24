@@ -178,7 +178,7 @@ public class BufferDialog extends SmDialog {
 	               ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(some);
                     setSize(DEFAULT_BUFFER_POINTORREGION_DIMENSION);
                } else if (e.getSource() == radioButtonLine) {
-	               ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(null);
+	               ((PanelLineBufferAnalyst) panelBufferBasic).setSome(null);
 	               BufferDialog.this.getContentPane().remove(panelBufferBasic);
 	               panelBufferBasic = new PanelLineBufferAnalyst();
 	               BufferDialog.this.getContentPane().add(panelBufferBasic);

@@ -376,8 +376,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
-				if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
-						|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
+				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
+						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
 					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
 				}
 			} else {
@@ -686,7 +686,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 			} catch (Exception e) {
 				setButtonOkEnabled(false);
 			}
-
 
 		}
 	}
