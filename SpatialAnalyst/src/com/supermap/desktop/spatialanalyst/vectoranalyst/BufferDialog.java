@@ -202,6 +202,7 @@ public class BufferDialog extends SmDialog {
                     try {
 						if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
 						     flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).createCurrentBuffer();
+						     ((PanelPointOrRegionAnalyst) panelBufferBasic).addListener();
 						     if(!((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonEnabled()){
 						    	 flag = false;
 						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
@@ -209,6 +210,7 @@ public class BufferDialog extends SmDialog {
 						     
 						}else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
 						     flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
+						     ((PanelLineBufferAnalyst)panelBufferBasic).addListener();
 						     if(!((PanelLineBufferAnalyst) panelBufferBasic).isButtonEnabled()){
 						    	 flag = false;
 						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
