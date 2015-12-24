@@ -26,17 +26,7 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 
 	private JTextField jTextFieldName = null;
 
-	private Layer currentLayer = null;
-
-	private ThemeUniqueItem uniqueItem = null;
-
-	private ThemeRangeItem rangeItem = null;
-
-	private ThemeLabelItem labelItem = null;
-
-	private ThemeGridRangeItem gridRangeItem = null;
-
-	private ThemeGridUniqueItem gridUniqueItem = null;
+	private Object currentData = null;
 
 	private Timer timer;
 
@@ -68,30 +58,24 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 		jTextFieldName.setPreferredSize(new Dimension(150, 20));
 		if (type != NodeDataType.WMSSUB_LAYER) {
 			currentTreeNodeData = obj;
-			Object innerData = obj.getData();
-			if (innerData instanceof Layer) {
-				currentLayer = (Layer) innerData;
-				jTextFieldName.setText(currentLayer.getCaption());
+			this.currentData = obj.getData();
+			if (this.currentData instanceof Layer) {
+				jTextFieldName.setText(((Layer) this.currentData).getCaption());
 			}
-			if (innerData instanceof ThemeUniqueItem) {
-				uniqueItem = (ThemeUniqueItem) innerData;
-				jTextFieldName.setText(uniqueItem.getCaption());
+			if (this.currentData instanceof ThemeUniqueItem) {
+				jTextFieldName.setText(((ThemeUniqueItem) this.currentData).getCaption());
 			}
-			if (innerData instanceof ThemeRangeItem) {
-				rangeItem = (ThemeRangeItem) innerData;
-				jTextFieldName.setText(rangeItem.getCaption());
+			if (this.currentData instanceof ThemeRangeItem) {
+				jTextFieldName.setText(((ThemeRangeItem) this.currentData).getCaption());
 			}
-			if (innerData instanceof ThemeLabelItem) {
-				labelItem = (ThemeLabelItem) innerData;
-				jTextFieldName.setText(labelItem.getCaption());
+			if (this.currentData instanceof ThemeLabelItem) {
+				jTextFieldName.setText(((ThemeLabelItem) this.currentData).getCaption());
 			}
-			if (innerData instanceof ThemeGridRangeItem) {
-				gridRangeItem = (ThemeGridRangeItem) innerData;
-				jTextFieldName.setText(gridRangeItem.getCaption());
+			if (this.currentData instanceof ThemeGridRangeItem) {
+				jTextFieldName.setText(((ThemeGridRangeItem) this.currentData).getCaption());
 			}
-			if (innerData instanceof ThemeGridUniqueItem) {
-				gridUniqueItem = (ThemeGridUniqueItem) innerData;
-				jTextFieldName.setText(gridUniqueItem.getCaption());
+			if (this.currentData instanceof ThemeGridUniqueItem) {
+				jTextFieldName.setText(((ThemeGridUniqueItem) this.currentData).getCaption());
 			}
 			jTextFieldName.setFont(tree.getFont());
 			jTextFieldName.addKeyListener(this);
@@ -111,7 +95,6 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	public void addCellEditorListener(CellEditorListener l) {
 		// 默认实现，后续进行初始化操作
 	}
-
 
 	@Override
 	public void cancelCellEditing() {
@@ -179,18 +162,18 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	}
 
 	public void validateLayerCaption(String caption) {
-		if (null != currentLayer) {
-			currentLayer.setCaption(caption);
-		} else if (null != uniqueItem) {
-			uniqueItem.setCaption(caption);
-		} else if (null != rangeItem) {
-			rangeItem.setCaption(caption);
-		} else if (null != labelItem) {
-			labelItem.setCaption(caption);
-		} else if (null != gridUniqueItem) {
-			gridUniqueItem.setCaption(caption);
-		} else if (null != gridRangeItem) {
-			gridRangeItem.setCaption(caption);
+		if (this.currentData instanceof Layer) {
+			((Layer) this.currentData).setCaption(caption);
+		} else if (this.currentData instanceof ThemeUniqueItem) {
+			((ThemeUniqueItem) this.currentData).setCaption(caption);
+		} else if (this.currentData instanceof ThemeRangeItem) {
+			((ThemeRangeItem) this.currentData).setCaption(caption);
+		} else if (this.currentData instanceof ThemeLabelItem) {
+			((ThemeLabelItem) this.currentData).setCaption(caption);
+		} else if (this.currentData instanceof ThemeGridUniqueItem) {
+			((ThemeGridUniqueItem) this.currentData).setCaption(caption);
+		} else if (this.currentData instanceof ThemeGridRangeItem) {
+			((ThemeGridRangeItem) this.currentData).setCaption(caption);
 		}
 		updateUI();
 	}

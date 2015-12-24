@@ -1,9 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -17,6 +13,9 @@ import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.LayerSettingVector;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 public class MapUtilties {
 	private MapUtilties() {
@@ -474,7 +473,7 @@ public class MapUtilties {
 	public static Layer findLayerByDataset(Map map, Dataset dataset) {
 		ArrayList<Layer> layers = MapUtilties.getLayers(map);
 		for (Layer layer : layers) {
-			if (layer!=null && layer.getDataset() == dataset){
+			if (layer != null && layer.getDataset() == dataset && layer.getTheme() == null) {
 				return layer;
 			}
 		}

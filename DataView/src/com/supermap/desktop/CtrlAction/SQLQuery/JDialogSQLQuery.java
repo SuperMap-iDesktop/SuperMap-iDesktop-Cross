@@ -197,6 +197,7 @@ public class JDialogSQLQuery extends SmDialog {
 		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
 			setWorkspaceTreeSelectedDataset(currentDataset);
+			panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
 			// 初始化字段信息表
 			tableFieldInfo.setDataset(currentDataset);
 			if (currentDataset.getType() == DatasetType.TABULAR) {
@@ -885,7 +886,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 					// 查询字段
 					String queryFields = textareaQueryField.getSQLExpression();
-					String[] queryFieldNames = queryFields.split(",");
+					String[] queryFieldNames = getQueryFieldNames(queryFields);
 					queryParameter.setResultFields(queryFieldNames);
 					// 查询条件
 					queryParameter.setAttributeFilter(textareaQueryCondition.getSQLExpression());
@@ -949,6 +950,31 @@ public class JDialogSQLQuery extends SmDialog {
 			}
 		}
 	};
+
+	private String[] getQueryFieldNames(String queryFields) {
+		int bracketsCount = 0;
+		java.util.List<String> fieldNames = new ArrayList<>();
+		char[] fieldNamesChars = queryFields.toCharArray();
+		StringBuilder builderFieldName = new StringBuilder();
+		for (char fieldNamesChar : fieldNamesChars) {
+			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
+				fieldNames.add(builderFieldName.toString());
+				builderFieldName.setLength(0);
+			} else {
+				builderFieldName.append(fieldNamesChar);
+				if (fieldNamesChar == '(') {
+					bracketsCount++;
+				} else if (fieldNamesChar == ')' && bracketsCount > 0) {
+					bracketsCount--;
+				}
+			}
+		}
+		if (builderFieldName.length() > 0) {
+			fieldNames.add(builderFieldName.toString());
+			builderFieldName.setLength(0);
+		}
+		return (String[]) fieldNames.toArray(new String[fieldNames.size()]);
+	}
 
 	private void SaveQueryResult(Recordset resultRecord) {
 		Datasource resultDatasource = panelSaveSearchResult.getSelectDatasouce();

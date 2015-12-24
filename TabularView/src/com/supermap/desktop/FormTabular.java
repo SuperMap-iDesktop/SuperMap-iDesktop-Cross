@@ -61,7 +61,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private static final Color COLOR_EDITABLE_SELECTED = new Color(196, 225, 255);
 	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
-	private static final int PREFER_ROW_HEIGHT = 40;
+	private static final int PREFER_ROW_HEIGHT = 23;
 	private static final int PREFER_COLUMN_WIDTH = 100;
 	private static final int MIN_COLUMN_WIDTH = 20;
 	private int[] selectColumns;
@@ -124,7 +124,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 					int row = jTableTabular.rowAtPoint(e.getPoint());
 					if (row >= 0 && row < jTableTabular.getRowCount()) {
 						jTableTabular.setRowSelectionInterval(tableClickedRow, row);
-						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
+//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
 					}
 				}
 				TabularStatisticUtilties.updataSatusbars(FormTabular.this);
@@ -429,7 +429,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 					int column = jTableTabular.columnAtPoint(e.getPoint());
 					if (column >= 0 && column < jTableTabular.getColumnCount()) {
 						setSelectedColumn(tableClickedColumn, column);
-						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(column, 0, true));
+//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
 					}
 				}
 				TabularStatisticUtilties.updataSatusbars(FormTabular.this);

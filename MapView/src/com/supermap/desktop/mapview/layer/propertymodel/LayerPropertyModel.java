@@ -1,14 +1,13 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import java.util.HashMap;
-import java.util.Set;
-
-import javax.swing.event.EventListenerList;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
+
+import javax.swing.event.EventListenerList;
+import java.util.HashMap;
+import java.util.Set;
 
 // @formatter:off
 /**
@@ -91,7 +90,9 @@ public abstract class LayerPropertyModel implements Cloneable {
 		try {
 			if (this.layers != null && this.layers.length > 0) {
 				for (Layer layer : layers) {
-					apply(layer);
+					if (!layer.isDisposed()) {
+						apply(layer);
+					}
 				}
 			}
 			result = true;

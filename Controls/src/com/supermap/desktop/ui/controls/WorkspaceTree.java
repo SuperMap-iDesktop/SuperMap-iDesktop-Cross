@@ -42,6 +42,7 @@ import com.supermap.data.DatasetRenamedListener;
 import com.supermap.data.DatasetTopology;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVolume;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceAliasModifiedEvent;
@@ -1311,6 +1312,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	 * @param datasourceNode
 	 */
 	private DefaultMutableTreeNode addDataset(Dataset dataset, DefaultMutableTreeNode datasourceNode) {
+		if (dataset instanceof DatasetVolume) {
+			// 暂不支持的数据集类型
+			return null;
+		}
 		DefaultMutableTreeNode datasetNode;
 		TreeNodeData datasetNodeData;
 

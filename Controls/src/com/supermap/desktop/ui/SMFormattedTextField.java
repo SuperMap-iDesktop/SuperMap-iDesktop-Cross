@@ -1,15 +1,13 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.desktop.utilties.StringUtilties;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import com.supermap.desktop.utilties.StringUtilties;
 
 public class SMFormattedTextField extends JFormattedTextField implements DocumentListener, FocusListener {
 

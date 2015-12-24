@@ -1,63 +1,45 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.text.NumberFormatter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-
-import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
-
-import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
-import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.mapping.Selection;
+import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.text.NumberFormatter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class PanelLineBufferAnalyst extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelBasic;
@@ -93,7 +75,25 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean bufferCreate;
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
 	private LocalKeylistener localKeylistener = new LocalKeylistener();
+	private LocalItemListener localItemListener = new LocalItemListener();
 	private ComboBoxField comboBoxField;
+	private boolean isButtonOkEnabled;
+	private boolean isEnabled;
+	private DoSome some;
+	private final static int DEFAULT_MIN = 4;
+	private final static int DEFAULT_MAX = 200;
+
+	public void setSome(DoSome some) {
+		this.some = some;
+	}
+
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 
 	public PanelBufferData getPanelBufferData() {
 		return panelBufferData;
@@ -101,6 +101,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	public void setPanelBufferData(PanelBufferData panelBufferData) {
 		this.panelBufferData = panelBufferData;
+	}
+
+	public boolean isButtonOkEnabled() {
+		return isButtonOkEnabled;
+	}
+
+	public void setButtonOkEnabled(boolean isButtonOkEnabled) {
+		this.isButtonOkEnabled = isButtonOkEnabled;
+		if (some != null) {
+			some.doSome(isButtonOkEnabled);
+		}
 	}
 
 	public PanelLineBufferAnalyst() {
@@ -313,63 +324,77 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 当窗体界面打开时，且打开的窗体是地图时，如果数据集不是线或者网络数据集，设置选中数据集的数据源的第一个线或者网络数据集，否则设置数据集为选中地图的第一个数据集 如果窗体没有打开，获取工作空间树选中节点,得到选中的数据集，数据源
 	 */
 	private void setPanelBufferData() {
-		Dataset activeDataset = null;
 		setComboBoxDatasetType();
-		// 窗体激活，且打开的窗体是地图,如果窗体没有激活，直接获取工作空间树节点，通过树节点数据
+		int layersCount;
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-			if (this.mapControl.getMap().getLayers().getCount() > 0) {
-				activeDataset = this.mapControl.getMap().getLayers().get(0).getDataset();
-			} else {
-				initDataSourceAndDataSet();
-				return;
-			}
-			this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeDataset.getDatasource());
-			this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeDataset.getDatasource());
-			this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeDataset.getDatasource().getDatasets());
-			if (activeDataset.getType() == DatasetType.LINE || activeDataset.getType() == DatasetType.LINE3D || activeDataset.getType() == DatasetType.NETWORK
-					|| activeDataset.getType() == DatasetType.NETWORK3D) {
-				this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeDataset);
-			}
-			this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(hasSelectedGeometryProperty());
-			setComponentEnabled();
-		} else {
-			WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-			TreePath selectedPath = workspaceTree.getSelectionPath();
-			if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
-				if (nodeData.getData() instanceof Datasource) {
-					Datasource selectedDatasource = (Datasource) nodeData.getData();
-					this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
-					this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
-					this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
-				} else if (nodeData.getData() instanceof Dataset) {
-					Dataset selectedDataset = (Dataset) nodeData.getData();
-					this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-					this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-					this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
-					if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
-							|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
-						this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
+			layersCount = this.mapControl.getMap().getLayers().getCount();
+			if (layersCount > 0) {
+				for (int i = 0; i < layersCount; i++) {
+					Layer[] activeLayer = new Layer[layersCount];
+					activeLayer[i] = mapControl.getMap().getLayers().get(i);
 
+					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.LINE3D
+							|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK || activeLayer[i].getDataset().getType() == DatasetType.NETWORK3D) {
+						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
+							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
+							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
+							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
+							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
+							recordset = activeLayer[i].getSelection().toRecordset();
+							this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
+							this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
+							setComponentEnabled();
+
+						} else {
+							setWorkspaceTreeNode();
+						}
+						return;
+					} else {
+						setWorkspaceTreeNode();
 					}
-				} else {
-					initDataSourceAndDataSet();
+				}
+			}
+		} else {
+			setWorkspaceTreeNode();
+		}
+	}
+
+	private void setWorkspaceTreeNode() {
+		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+		TreePath selectedPath = workspaceTree.getSelectionPath();
+		if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+			TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
+			if (nodeData.getData() instanceof Datasource) {
+				Datasource selectedDatasource = (Datasource) nodeData.getData();
+				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
+				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
+				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
+			} else if (nodeData.getData() instanceof Dataset) {
+				Dataset selectedDataset = (Dataset) nodeData.getData();
+				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
+				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
+				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
+				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
+						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
+					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
 				}
 			} else {
-				initDataSourceAndDataSet();
+				initDatasourceAndDataSet();
 			}
-			this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(hasSelectedGeometryProperty());
-			setComponentEnabled();
+		} else {
+			initDatasourceAndDataSet();
 		}
+		this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(false);
+
 	}
 
 	/**
 	 * 对结果面板进行设置
 	 */
 	private void setPanelResultSet() {
-		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
+//		this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
 		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
@@ -419,31 +444,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
-	private boolean hasSelectedGeometryProperty() {
-		if (this.mapControl != null && this.mapControl.getMap() != null) {
-			// 默认取第一个选择集的多个对象
-			Selection[] selections = this.mapControl.getMap().findSelection(true);
-			if (selections.length > 0) {
-				Selection selection = selections[0];
-				int[] selectionCount = new int[selection.getCount()];
-				for (int i = 0; i < selection.getCount(); i++) {
-					selectionCount[i] = selection.get(i);
-				}
-				DatasetVector datasetVector = selection.getDataset();
-				this.recordset = datasetVector.query(selectionCount, CursorType.DYNAMIC);
-				if (datasetVector.getType() == DatasetType.LINE || datasetVector.getType() == DatasetType.LINE3D
-						|| datasetVector.getType() == DatasetType.NETWORK || datasetVector.getType() == DatasetType.NETWORK3D) {
-					this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
-					return true;
-				}
-			}
-		}
-		this.panelBufferData.getCheckBoxGeometrySelect().setSelected(false);
-		return false;
-
-	}
-
-	private void initDataSourceAndDataSet() {
+	private void initDatasourceAndDataSet() {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
@@ -460,6 +461,19 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelResultSet.getCheckBoxRemainAttributes().setEnabled(!this.panelResultSet.getCheckBoxUnionBuffer().isSelected());
 		this.checkBoxBufferLeft.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
 		this.checkBoxBufferRight.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
+	}
+
+	public void addListener() {
+//		this.panelResultSet.getTextFieldSemicircleLineSegment().getDocument().addDocumentListener(new LocalDocumentListener());
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// TODO Auto-generated method stub
+				getButtonOkEnabled();
+			}
+		});
+		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
+		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
 
 	/**
@@ -484,8 +498,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
 				if (this.radioButtonNumeric.isSelected()) {
-					this.radiusLeft = Math.abs(Integer.parseInt(this.textFieldNumericLeft.getValue().toString()));
-					this.radiusRight = Math.abs(Integer.parseInt(this.textFieldNumericRight.getValue().toString()));
+					this.radiusLeft = Math.abs(Double.parseDouble(textFieldNumericLeft.getValue().toString()));
+					this.radiusRight = Math.abs(Double.parseDouble(textFieldNumericRight.getValue().toString()));
 				}
 
 				if (this.radioButtonBufferTypeRound.isSelected()) {
@@ -534,13 +548,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceAlis);
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					panelBufferData.getComboBoxBufferDataDataset().setDatasets(datasource.getDatasets());
+					if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
+						// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
+						comboBoxFieldLeft.removeAllItems();
+						comboBoxFieldRight.removeAllItems();
+						setEnabled(false);
+					} else {
+						setEnabled(true);
+					}
 				}
 				// 切换数据源后，如果ComboBoxDataset为空时，清除字段选项
-				if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
-					// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
-					comboBoxFieldLeft.removeAllItems();
-					comboBoxFieldRight.removeAllItems();
-				}
+
 				setComponentEnabled();
 			} else if (e.getSource() == panelBufferData.getComboBoxBufferDataDataset()) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -552,6 +570,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 								.get(e.getItem().toString());
 						comboBoxField = new ComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
 						comboBoxField.createComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
+						setEnabled(true);
+					} else {
+						setEnabled(false);
 					}
 				}
 			} else if (e.getSource() == comboBoxFieldLeft) {
@@ -609,8 +630,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonNumeric) {
-				radiusLeft = Math.abs(Integer.parseInt(textFieldNumericLeft.getValue().toString()));
-				radiusRight = Math.abs(Integer.parseInt(textFieldNumericRight.getValue().toString()));
+				radiusLeft = Math.abs(Double.parseDouble(textFieldNumericLeft.getValue().toString()));
+				radiusRight = Math.abs(Double.parseDouble(textFieldNumericRight.getValue().toString()));
 				setComponentEnabled();
 			}
 		}
@@ -638,4 +659,34 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
+//	class LocalDocumentListener implements DocumentListener {
+//		@Override
+//		public void insertUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void removeUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+//
+//		@Override
+//		public void changedUpdate(DocumentEvent e) {
+//			getButtonOkEnabled(e.getDocument());
+//		}
+
+	private void getButtonOkEnabled() {
+		try {
+			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
+			if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
+				setButtonOkEnabled(false);
+			} else {
+				setButtonOkEnabled(true);
+			}
+		} catch (Exception e) {
+			setButtonOkEnabled(false);
+		}
+
+	}
+//	}
 }
