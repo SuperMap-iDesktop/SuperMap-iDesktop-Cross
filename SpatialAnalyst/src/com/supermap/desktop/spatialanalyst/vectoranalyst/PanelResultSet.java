@@ -1,15 +1,14 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import java.text.NumberFormat;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.text.NumberFormatter;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
 
 public class PanelResultSet extends JPanel {
 
@@ -92,6 +91,17 @@ public class PanelResultSet extends JPanel {
 		numberFormatter.setValueClass(Long.class);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
+
+		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char keyChar = e.getKeyChar();
+				if (keyChar > '9' || keyChar < '0') {
+					e.consume();
+				}
+			}
+		});
 	}
 
 	private void initResources() {
