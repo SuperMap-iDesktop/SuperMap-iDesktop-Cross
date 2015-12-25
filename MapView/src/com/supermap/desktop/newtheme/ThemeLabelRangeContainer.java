@@ -283,6 +283,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		TableColumn visibleColumn = this.tableLabelInfo.getColumn(MapViewProperties.getString("String_Title_Visible"));
 		visibleColumn.setMaxWidth(40);
 		initColumnIcon();
+		this.tableLabelInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableLabelInfo;
 	}
@@ -402,6 +403,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
+		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 	}
 
 	/**

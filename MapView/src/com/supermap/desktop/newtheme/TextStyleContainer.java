@@ -49,7 +49,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JLabel labelInclinationAngl = new JLabel();
 	private JSpinner spinnerInclinationAngl = new JSpinner();
 	private JLabel labelFontColor = new JLabel();
-	boolean focusGaint = false;
 
 	// 经验值
 	private final static double EXPERIENCE = 0.283;

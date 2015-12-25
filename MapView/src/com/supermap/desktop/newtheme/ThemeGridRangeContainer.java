@@ -237,6 +237,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		visibleColumn.setMaxWidth(40);
 		viewColumn.setMaxWidth(100);
 		rangeValueColumn.setMaxWidth(200);
+		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableRangeInfo;
 	}
@@ -329,6 +330,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
+		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 	}
 
 	/**

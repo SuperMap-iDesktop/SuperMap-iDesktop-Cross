@@ -21,8 +21,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 public class ThemeGuideFactory {
@@ -30,7 +28,6 @@ public class ThemeGuideFactory {
 	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
-	private static LocalPropertyListener propertyListener;
 
 	/**
 	 * 界面替换
@@ -62,7 +59,6 @@ public class ThemeGuideFactory {
 			if (dockbarThemeContainer != null) {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
 				// 新建时默认设置isTreeClicked为true
-				container.setTreeClicked(true);
 				if (null != container.getPanelThemeInfo()) {
 					container.remove(container.getPanelThemeInfo());
 				}
@@ -75,16 +71,12 @@ public class ThemeGuideFactory {
 						panel,
 						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
 								.setFill(GridBagConstraints.BOTH));
-				ThemeGuideFactory themeGuideFactory = new ThemeGuideFactory();
-				propertyListener = themeGuideFactory.new LocalPropertyListener();
-				panel.addPropertyChangeListener("ThemeChange", propertyListener);
 				container.repaint();
 			}
 
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			panel.removePropertyChangeListener(propertyListener);
 			if (null == getDockbarThemeContainer()) {
 				container.unregistActionListener();
 			}
@@ -247,7 +239,6 @@ public class ThemeGuideFactory {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
 		tree.reload();
 		TreePath layerPath = getSelectionPath(tree, layerName);
-		tree.setSelectionPath(layerPath);
 		if (isExpandPath) {
 			tree.expandPath(layerPath);
 		}
@@ -366,13 +357,6 @@ public class ThemeGuideFactory {
 			} else if (layer.getTheme() instanceof ThemeGridRange) {
 				resetGridRange(layer);
 			}
-		}
-	}
-
-	class LocalPropertyListener implements PropertyChangeListener {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			container.setTreeClicked(false);
 		}
 	}
 }
