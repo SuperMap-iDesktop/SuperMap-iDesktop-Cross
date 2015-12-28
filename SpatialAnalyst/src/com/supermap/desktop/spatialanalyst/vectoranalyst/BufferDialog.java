@@ -31,8 +31,7 @@ public class BufferDialog extends SmDialog {
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private PanelButton panelButton;
 	private JPanel panelBuffer;
-	private final static String DATASET_NOT_NULL = "源数据集不能为空";
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 450);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 470);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 350);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(670, 470);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(670, 370);
@@ -220,7 +219,7 @@ public class BufferDialog extends SmDialog {
 						((PanelPointOrRegionAnalyst) panelBufferType).addListener();
 						if (!((PanelPointOrRegionAnalyst) panelBufferType).isButtonEnabled()) {
 							flag = false;
-							JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
+							JOptionPane.showMessageDialog(BufferDialog.this, SpatialAnalystProperties.getString("String_Dataset_Not_Null"));
 						}
 
 					} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
@@ -228,7 +227,7 @@ public class BufferDialog extends SmDialog {
 						((PanelLineBufferAnalyst) panelBufferType).addListener();
 						if (!((PanelLineBufferAnalyst) panelBufferType).isButtonEnabled()) {
 							flag = false;
-							JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
+							JOptionPane.showMessageDialog(BufferDialog.this, SpatialAnalystProperties.getString("String_Dataset_Not_Null"));
 						}
 					}
 				} catch (Exception e1) {

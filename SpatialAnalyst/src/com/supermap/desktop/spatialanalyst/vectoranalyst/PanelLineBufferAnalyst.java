@@ -12,7 +12,6 @@ import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
-import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -21,14 +20,12 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -284,9 +281,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 	    		.addPreferredGap(ComponentPlacement.RELATED)
 	    		.addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.TRAILING)
-	    				.addComponent(this.panelBasicLeft,0, 330, Short.MAX_VALUE)
-	    				.addComponent(this.panelBasicRight,0, 330, Short.MAX_VALUE)));
+	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
+	    				.addComponent(this.panelBasicLeft)
+	    				.addComponent(this.panelBasicRight)));
 	    //@formatter:on
 	}
 
@@ -302,8 +299,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.panelResultData)));
 		
 		panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-				.addComponent(this.panelBufferData)
-				.addComponent(this.panelResultSet)
+				.addComponent(this.panelBufferData).addGap(8)
+				.addComponent(this.panelResultSet).addGap(8)
 				.addComponent(this.panelResultData));
 		//@formatter:on
 
@@ -320,7 +317,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)));
 		
 		panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+				.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE).addGap(10)
 				.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE));
 		//@formatter:on
 
