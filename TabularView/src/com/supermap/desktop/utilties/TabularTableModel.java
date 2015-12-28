@@ -113,7 +113,9 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null || recordset.getDataset().isReadOnly()) {
 			return false;
 		}
-
+		if (recordset.getDataset().getFieldInfos().get(getColumnName(column)) == null) {
+			return false;
+		}
 		boolean flag = true;
 		if (column == 0 || recordset.getFieldInfos().get(column).isSystemField()) {
 			flag = false;
@@ -135,34 +137,34 @@ public class TabularTableModel extends AbstractTableModel {
 		return this.recordset;
 	}
 
-	public void updateData(int row, int column, Object data) {
-		if (recordset == null) {
-			return;
-		}
-
-		moveToRow(row);
-		try {
-			// 判断Data是否为空
-			boolean isDataNull = false;
-			if (data == null)
-				isDataNull = true;
-			else if (data instanceof String && ((String) data).length() <= 0) {
-				isDataNull = true;
-			}
-
-			if ((!isDataNull || recordset.getFieldInfos().get(column).isRequired()) && (recordset.getFieldValue(column) == null
-					|| !recordset.getFieldValue(column).equals(data))) {
-
-				recordset.edit();
-				if (recordset.setFieldValue(column, data)) {
-					recordset.update();
-				}
-			}
-		} catch (Exception e) {
-			deadException(e);
-			// everything will be fine
-		}
-	}
+//	public void updateData(int row, int column, Object data) {
+//		if (recordset == null) {
+//			return;
+//		}
+//
+//		moveToRow(row);
+//		try {
+//			// 判断Data是否为空
+//			boolean isDataNull = false;
+//			if (data == null)
+//				isDataNull = true;
+//			else if (data instanceof String && ((String) data).length() <= 0) {
+//				isDataNull = true;
+//			}
+//
+//			if ((!isDataNull || recordset.getFieldInfos().get(column).isRequired()) && (recordset.getFieldValue(column) == null
+//					|| !recordset.getFieldValue(column).equals(data))) {
+//
+//				recordset.edit();
+//				if (recordset.setFieldValue(column, data)) {
+//					recordset.update();
+//				}
+//			}
+//		} catch (Exception e) {
+//			deadException(e);
+//			// everything will be fine
+//		}
+//	}
 
 	@Override
 	public Class getColumnClass(int c) {
@@ -196,6 +198,10 @@ public class TabularTableModel extends AbstractTableModel {
 			return;
 		}
 
+		if (recordset.getDataset().getFieldInfos().get(getColumnName(columnIndex)) == null) {
+			return;
+		}
+
 		moveToRow(rowIndex);
 		try {
 			// 判断Data是否为空
@@ -205,20 +211,20 @@ public class TabularTableModel extends AbstractTableModel {
 			} else if (aValue instanceof String && ((String) aValue).length() <= 0) {
 				isDataNull = true;
 			}
-			if ((!isDataNull || !recordset.getFieldInfos().get(columnIndex).isRequired())
-					&& (recordset.getFieldValue(columnIndex) == null || !recordset.getFieldValue(columnIndex).equals(aValue))) {
+			if ((!isDataNull || !recordset.getFieldInfos().get(getColumnName(columnIndex)).isRequired())
+					&& (recordset.getFieldValue(getColumnName(columnIndex)) == null || !recordset.getFieldValue(getColumnName(columnIndex)).equals(aValue))) {
 				recordset.edit();
 				// bool类型先处理
 
 				Object value = aValue;
-				if (FieldType.BOOLEAN.equals(recordset.getFieldInfos().get(columnIndex).getType())) {
+				if (FieldType.BOOLEAN.equals(recordset.getFieldInfos().get(getColumnName(columnIndex)).getType())) {
 					if (!isDataNull) {
 						value = "True".equals(aValue);
 					} else {
 						value = null;
 					}
 				}
-				if (recordset.setFieldValue(columnIndex, value)) {
+				if (recordset.setFieldValue(getColumnName(columnIndex), value)) {
 					recordset.update();
 					tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
 				}

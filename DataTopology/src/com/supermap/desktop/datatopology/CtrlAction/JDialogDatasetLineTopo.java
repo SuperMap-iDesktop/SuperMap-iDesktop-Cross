@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 public class JDialogDatasetLineTopo extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton buttonMore = new JButton("String_Button_Advance");
@@ -51,10 +51,14 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	private transient TopologyProcessingOptions topologyProcessingOptions = new TopologyProcessingOptions();
 	private boolean hasDataset;
 
+	private transient CommonCheckBoxListener checkBoxListener = new CommonCheckBoxListener();
+	private transient CommonButtonListener commonButtonListener = new CommonButtonListener();
+
 	public JDialogDatasetLineTopo(JFrame owner, boolean model) {
 		super(owner, model);
 		initComponents();
 		initResources();
+		registActionListener();
 	}
 
 	private void initResources() {
@@ -107,7 +111,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 								.addComponent(buttonSure)
 								.addComponent(buttonQuite))
 						.addContainerGap(13, Short.MAX_VALUE)));
-
+        getContentPane().setLayout(groupLayout);
 		GroupLayout gl_panelTopoProcessingOptions = new GroupLayout(panelTopoProcessingOptions);
 		gl_panelTopoProcessingOptions.setAutoCreateContainerGaps(true);
 		gl_panelTopoProcessingOptions.setAutoCreateGaps(true);
@@ -161,7 +165,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 						.addComponent(comboBoxDataset,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
 		panelDatasource.setLayout(gl_panelDatasource);
-		getContentPane().setLayout(groupLayout);
+
 		checkboxAdjacentEndpointsMerged.setSelected(true);
 		checkboxDuplicatedLinesCleaned.setSelected(true);
 		checkboxLinesIntersected.setSelected(true);
@@ -169,19 +173,40 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		checkboxPseudoNodesCleaned.setSelected(true);
 		checkboxRedundantVerticesCleaned.setSelected(true);
 		checkboxUndershootsExtended.setSelected(true);
+	}
 
-		checkboxAdjacentEndpointsMerged.addActionListener(new CommonCheckBoxListener());
-		checkboxDuplicatedLinesCleaned.addActionListener(new CommonCheckBoxListener());
-		checkboxLinesIntersected.addActionListener(new CommonCheckBoxListener());
-		checkboxOvershootsCleaned.addActionListener(new CommonCheckBoxListener());
-		checkboxPseudoNodesCleaned.addActionListener(new CommonCheckBoxListener());
-		checkboxRedundantVerticesCleaned.addActionListener(new CommonCheckBoxListener());
-		checkboxUndershootsExtended.addActionListener(new CommonCheckBoxListener());
-		buttonSure.addActionListener(new CommonButtonListener());
-		buttonMore.addActionListener(new CommonButtonListener());
-		buttonQuite.addActionListener(new CommonButtonListener());
-		comboBoxDatasource.addActionListener(new CommonButtonListener());
+	private void initContentPane() {
 
+	}
+
+	private void registActionListener() {
+		unregistActionListener();
+		this.checkboxAdjacentEndpointsMerged.addActionListener(this.checkBoxListener);
+		this.checkboxDuplicatedLinesCleaned.addActionListener(this.checkBoxListener);
+		this.checkboxLinesIntersected.addActionListener(this.checkBoxListener);
+		this.checkboxOvershootsCleaned.addActionListener(this.checkBoxListener);
+		this.checkboxPseudoNodesCleaned.addActionListener(this.checkBoxListener);
+		this.checkboxRedundantVerticesCleaned.addActionListener(this.checkBoxListener);
+		this.checkboxUndershootsExtended.addActionListener(this.checkBoxListener);
+		this.buttonSure.addActionListener(commonButtonListener);
+		this.buttonMore.addActionListener(commonButtonListener);
+		this.buttonQuite.addActionListener(commonButtonListener);
+		this.comboBoxDatasource.addActionListener(commonButtonListener);
+
+	}
+
+	private void unregistActionListener() {
+		this.checkboxAdjacentEndpointsMerged.removeActionListener(this.checkBoxListener);
+		this.checkboxDuplicatedLinesCleaned.removeActionListener(this.checkBoxListener);
+		this.checkboxLinesIntersected.removeActionListener(this.checkBoxListener);
+		this.checkboxOvershootsCleaned.removeActionListener(this.checkBoxListener);
+		this.checkboxPseudoNodesCleaned.removeActionListener(this.checkBoxListener);
+		this.checkboxRedundantVerticesCleaned.removeActionListener(this.checkBoxListener);
+		this.checkboxUndershootsExtended.removeActionListener(this.checkBoxListener);
+		this.buttonSure.removeActionListener(commonButtonListener);
+		this.buttonMore.removeActionListener(commonButtonListener);
+		this.buttonQuite.removeActionListener(commonButtonListener);
+		this.comboBoxDatasource.removeActionListener(commonButtonListener);
 	}
 
 	class CommonButtonListener implements ActionListener {
@@ -247,7 +272,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 
 	/**
 	 * 打开高级参数设置页面
-	 * 
+	 *
 	 * @param topologyProcessingOptions
 	 */
 	private void openAdvanceDialog(TopologyProcessingOptions topologyProcessingOptions) {
@@ -278,6 +303,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
 				if (hasDataset && !isAdjacentEndpointsMerged && !isDuplicatedLinesCleaned && !isLinesIntersected && !isOvershootsCleaned
 						&& !isPseudoNodesCleaned && !isRedundantVerticesCleaned && !isUndershootsExtended) {
 					buttonSure.setEnabled(false);
+				} else {
+					buttonSure.setEnabled(true);
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);

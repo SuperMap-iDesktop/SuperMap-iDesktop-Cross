@@ -15,8 +15,6 @@ public class UniqueValueCountUtil {
 	/**
 	 * 判断单值项是否大于3000条
 	 * 
-	 * @param datasetVector
-	 * @param expression
 	 * @return
 	 */
 
@@ -31,7 +29,7 @@ public class UniqueValueCountUtil {
 		if (recordset.getRecordCount() > 3000) {
 			countBeyond = true;
 		}
-		recordset.close();
+		recordset.dispose();
 		return countBeyond;
 	}
 
@@ -50,7 +48,7 @@ public class UniqueValueCountUtil {
 		if (recordset.getRecordCount() > 0) {
 			hasNegative = true;
 		}
-		recordset.close();
+		recordset.dispose();
 		return hasNegative;
 	}
 }

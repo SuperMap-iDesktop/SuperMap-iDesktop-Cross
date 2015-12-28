@@ -142,6 +142,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 * 控件注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
 		this.buttonAdd.addActionListener(this.actionListener);
@@ -151,6 +152,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.addMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.addKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
+		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
 	}
 
 	/**
@@ -191,6 +193,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.buttonAntitone.removeActionListener(this.actionListener);
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
+		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
 	}
 
 	/**
@@ -265,6 +268,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		TableColumn viewColumn = tableUniqueInfo.getColumn(MapViewProperties.getString("String_Title_Sytle"));
 		visibleColumn.setMaxWidth(40);
 		viewColumn.setMaxWidth(100);
+		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableUniqueInfo;
 	}

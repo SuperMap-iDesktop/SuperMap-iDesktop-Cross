@@ -68,8 +68,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private JLabel labelOffsetYUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
 
-	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
+	private static String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
 	private transient DatasetVector datasetVector;
 	private transient Map map;
 	private transient ThemeRange themeRange;
@@ -234,8 +234,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
 		if (this.themeRange.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -283,10 +283,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化分段方法项
 	 */
 	private void initComboBoxRangMethod() {
-		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
+		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
+				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
 		if (themeRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeRange.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -306,8 +306,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
+		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
 		this.comboBoxRangeCount.setEditable(true);
 		int rangeCountNumber = themeRange.getCount();
 		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCountNumber));
@@ -317,7 +317,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段值精度项
 	 */
 	private void initComboBoxRangePrecision() {
-		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
+		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[]{"10000000", "1000000", "100000", "10000", "1000", "100",
 				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001"}));
 
 		String numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
@@ -354,7 +354,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段标题格式
 	 */
 	private void initComboBoxRangeFormat() {
-		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
+		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
 	}
 
@@ -401,6 +401,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		visibleColumn.setMaxWidth(40);
 		viewColumn.setMaxWidth(100);
 		rangeValueColumn.setMaxWidth(200);
+		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableRangeInfo;
 	}
@@ -483,7 +484,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 根据当前数据集类型设置颜色方案
 	 *
 	 * @param geoStyle 需要设置的风格
-	 * @param color 设置的颜色
+	 * @param color    设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = datasetVector.getType();
@@ -519,7 +520,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * 注册事件
 	 */
-	 void registActionListener() {
+	void registActionListener() {
+		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
@@ -537,6 +539,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxOffsetY.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
+		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 	}
 
 	/**
@@ -610,15 +613,15 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			for (int i = 0; i < selectedRow.length; i++) {
 				tableRangeInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}
-		} 
+		}
 	}
 
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow 要重置文本风格的行
+	 * @param selectRow   要重置文本风格的行
 	 * @param nowGeoStyle 新的文本风格
-	 * @param symbolType 文本的风格类型
+	 * @param symbolType  文本的风格类型
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle, SymbolType symbolType) {
 		ThemeRangeItem item = ((ThemeRange) themeRangeLayer.getTheme()).getItem(selectRow);

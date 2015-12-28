@@ -225,10 +225,10 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		// labelResultDataset textFieldResultDataset
 		// @formatter:off
 		panelResultData.setLayout(new GridBagLayout());
-		panelResultData.add(labelResultDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		panelResultData.add(comboBoxResultDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
-		panelResultData.add(labelResultDataset,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		panelResultData.add(textFieldResultDataset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
+		panelResultData.add(labelResultDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		panelResultData.add(comboBoxResultDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
+		panelResultData.add(labelResultDataset,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		panelResultData.add(textFieldResultDataset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 10, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
 		// @formatter:on
 	}
 
@@ -237,10 +237,10 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		// labelDataset comboBoxDataset
 		// @formatter:off
 		panelDatasource.setLayout(new GridBagLayout());
-		panelDatasource.add(labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		panelDatasource.add(comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
-		panelDatasource.add(labelDataset,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		panelDatasource.add(comboBoxDataset,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 1));
+		panelDatasource.add(labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		panelDatasource.add(comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 0));
+		panelDatasource.add(labelDataset,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 10).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		panelDatasource.add(comboBoxDataset,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 10, 10).setFill(GridBagConstraints.BOTH).setWeight(60, 0));
 		// @formatter:on
 	}
 
@@ -258,7 +258,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		panelTopoProcessingOptions.add(checkboxPseudoNodesCleaned,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
 		panelTopoProcessingOptions.add(checkboxRedundantVerticesCleaned, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
 		panelTopoProcessingOptions.add(checkboxAdjacentEndpointsMerged,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
-		panelTopoProcessingOptions.add(buttonMore,                       new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+		panelTopoProcessingOptions.add(buttonMore,                       new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 1));
 		// @formatter:on
 	}
 

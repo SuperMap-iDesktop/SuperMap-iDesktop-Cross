@@ -34,6 +34,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
@@ -85,7 +86,6 @@ public class CreateTextAction {
 	};
 	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
 
-
 		@Override
 		public void actionChanged(ActionChangedEvent arg0) {
 
@@ -100,7 +100,6 @@ public class CreateTextAction {
 			mapControl.getMap().removeMapClosedListener(this);
 		}
 	};
-
 
 	private void abstractAvtionListener(ActionChangedEvent arg0) {
 		if (arg0.getOldAction() == Action.CREATETEXT) {
@@ -208,8 +207,9 @@ public class CreateTextAction {
 			// 什么都不做，输出提示信息的工作已经由 FormMap 全权负责
 		} else {
 			this.editingGeoText = (GeoText) e.getGeometry();
-			this.editingGeoText.getTextStyle().setSizeFixed(true);
-			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_FONT_HEIGHT);
+			this.editingGeoText.getTextStyle().setSizeFixed(false);
+			// DEFAULT_INPUT_HEIGHT / 2 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
+			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilties.PixelLength(this.mapControl));
 
 			// 获取 GeoText 的位置，将文本编辑控件显示到那个位置
 			Point2D centerPointMap = this.editingGeoText.getInnerPoint();
@@ -234,7 +234,8 @@ public class CreateTextAction {
 			if (activeForm instanceof IFormMap) {
 				Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
 
-				if (activeEditableLayer.getDataset() instanceof DatasetVector && (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() ==DatasetType.CAD)) {
+				if (activeEditableLayer.getDataset() instanceof DatasetVector
+						&& (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
 					recordset = ((DatasetVector) activeEditableLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
 
 					// 表明有待提交的编辑

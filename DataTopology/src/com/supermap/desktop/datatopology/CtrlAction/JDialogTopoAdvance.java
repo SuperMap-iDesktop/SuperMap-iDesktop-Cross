@@ -245,7 +245,9 @@ public class JDialogTopoAdvance extends SmDialog {
 			if (0 < comboBoxNotCutting.getItemCount()) {
 				String datasetName = comboBoxNotCutting.getSelectItem();
 				DatasetVector dataset = (DatasetVector) CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
-				topologyProcessingOptions.setVertexFilterRecordset(dataset.getRecordset(false, CursorType.STATIC));
+				Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
+				topologyProcessingOptions.setVertexFilterRecordset(recordset);
+				recordset.dispose();
 			}
 
 			double overshootsTolerance = Double.parseDouble(textFieldOvershootsTolerance.getText());

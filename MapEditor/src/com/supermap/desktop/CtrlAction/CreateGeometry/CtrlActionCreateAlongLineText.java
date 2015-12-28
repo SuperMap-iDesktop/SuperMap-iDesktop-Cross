@@ -11,6 +11,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
@@ -19,17 +20,20 @@ import com.supermap.ui.TrackedListener;
 
 public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
-	private static final double DEFAULT_FONT_HEIGHT = 10;
+	private static final double DEFAULT_FONT_PIXEL_HEIGHT = 23;
 
 	private TrackedListener trackedListener = new TrackedListener() {
 
 		@Override
 		public void tracked(TrackedEvent arg0) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+
 			GeoCompound geoCompound = (GeoCompound) arg0.getGeometry();
 			String text = JOptionPane.showInputDialog(MapEditorProperties.getString("String_AlongLineText"));
 			GeoText geoText = (GeoText) geoCompound.getPart(0);
-			geoText.getTextStyle().setSizeFixed(true);
-			geoText.getTextStyle().setFontHeight(DEFAULT_FONT_HEIGHT);
+			geoText.getTextStyle().setSizeFixed(false);
+			// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
+			geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.PixelLength(formMap.getMapControl()));
 			TextPart textPart = new TextPart();
 			textPart.setText(text);
 			geoText.addPart(textPart);

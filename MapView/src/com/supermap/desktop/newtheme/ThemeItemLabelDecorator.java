@@ -1,22 +1,11 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
-import com.supermap.data.Resources;
+import com.supermap.data.*;
 import com.supermap.data.Toolkit;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * 专题图缩略图工厂类,用于显示专题图的缩略图
@@ -32,9 +21,9 @@ public class ThemeItemLabelDecorator {
 
 	/**
 	 * 通过给定的数据集和专题图项样式绘制图片
-	 * 
-	 * @param datasetVector给定的数据集
-	 * @param geoStyle专题图项样式
+	 *
+	 * @param dataset 给定的数据集
+	 * @param geoStyle 专题图项样式
 	 * @return 目标图片
 	 */
 	public static ImageIcon buildGeoStyleIcon(Dataset dataset, GeoStyle geoStyle) {
@@ -42,8 +31,7 @@ public class ThemeItemLabelDecorator {
 		BufferedImage bufferedImage = new BufferedImage(100, 20, BufferedImage.TYPE_INT_ARGB);
 		Graphics graphics = bufferedImage.getGraphics();
 		Geometry geometry = getGeometryByDatasetType(dataset.getType());
-		GeoStyle geoStyleClone = geoStyle.clone();
-		geometry.setStyle(geoStyleClone);
+		geometry.setStyle(geoStyle);
 		Resources resources = dataset.getDatasource().getWorkspace().getResources();
 		Toolkit.draw(geometry, resources, graphics);
 		geoStyleIcon.setImage(bufferedImage);
@@ -52,9 +40,9 @@ public class ThemeItemLabelDecorator {
 	
 	/**
 	 * 通过给定的数据集和专题图项样式绘制图片
-	 * 
-	 * @param datasetVector给定的数据集
-	 * @param geoStyle专题图项样式
+	 *
+	 * @param dataset 给定的数据集
+	 * @param color 指定颜色
 	 * @return 目标图片
 	 */
 	public static ImageIcon buildColorIcon(Dataset dataset, Color color) {

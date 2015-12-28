@@ -18,6 +18,7 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -29,15 +30,15 @@ public class ThemeMainContainer extends JPanel {
 	private JPanel panelThemeInfo = new JPanel();
 
 	private Map map;
-	private boolean isTreeClicked = false;
-	
+
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
 	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
-	private LocalMouseListener mouseListener = new LocalMouseListener();
-	
+	private Layer newLayer;
+	private Layer oldLayer;
+
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -95,7 +96,6 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
-		this.layersTree.addMouseListener(this.mouseListener);
 	}
 
 	/**
@@ -106,7 +106,6 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.removeMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().removeActiveFormChangedListener(this.activeFormChangedListener);
-		this.layersTree.removeMouseListener(this.mouseListener);
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -236,27 +235,13 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
-	public Layer getSelectLayer() {
-		Layer layer = null;
-		if (null != layersTree.getLastSelectedPathComponent()) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) layersTree.getLastSelectedPathComponent();
-			Object obj = node.getUserObject();
-			TreeNodeData controlNodeData = (TreeNodeData) obj;
-			Object itemObj = controlNodeData.getData();
-			if (itemObj instanceof Layer) {
-				layer = (Layer) itemObj;
-			}
-		}
-		return layer;
-	}
-
 	class LocalTreeMouseListener extends MouseAdapter {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 
-			if (2 == e.getClickCount() && null != getSelectLayer() && null != getSelectLayer().getTheme()) {
-				resetThemeMainContainer(getSelectLayer());
+			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
+				resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
 		}
@@ -266,34 +251,55 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
-			resetThemeMainContainer(getSelectLayer());
+			resetThemeMainContainer(newLayer);
 		}
 	}
 
 	class LocalTreeSelectListener implements TreeSelectionListener {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
-			if (isTreeClicked) {
-				resetThemeMainContainer(getSelectLayer());
+			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
+			oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+			boolean isResetThemeMain = false;
+			map = ThemeGuideFactory.getMapControl().getMap();
+			// 当地图中不存在图层时刷新专题图
+			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
+				updateThemeMainContainer();
+			}
+			if (null == oldLayer || (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer))) {
+				isResetThemeMain = true;
+			}
+			if (isResetThemeMain) {
+				resetThemeMainContainer(newLayer);
 			}
 		}
 	}
 
-	class LocalMouseListener extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (1 == e.getClickCount() || null == layersTree) {
-				isTreeClicked = true;
+	/**
+	 * 根据选中的treePath获取图层
+	 *
+	 * @param path
+	 * @return
+	 */
+	private Layer getLayerByPath(TreePath path) {
+		Layer layer = null;
+		if (null != path && null != path.getLastPathComponent()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Object obj = node.getUserObject();
+			TreeNodeData controlNodeData = (TreeNodeData) obj;
+			Object itemObj = controlNodeData.getData();
+			if (itemObj instanceof Layer) {
+				layer = (Layer) itemObj;
+			} else {
+				DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getParentPath().getLastPathComponent();
+				Object parentUserObj = parentNode.getUserObject();
+				TreeNodeData nodeData = (TreeNodeData) parentUserObj;
+				Object parentObj = nodeData.getData();
+				if (parentObj instanceof Layer) {
+					layer = (Layer) parentObj;
+				}
 			}
 		}
+		return layer;
 	}
-
-	public boolean isTreeClicked() {
-		return isTreeClicked;
-	}
-
-	public void setTreeClicked(boolean isTreeClicked) {
-		this.isTreeClicked = isTreeClicked;
-	}
-
 }

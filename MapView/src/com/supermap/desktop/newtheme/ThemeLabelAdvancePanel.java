@@ -160,6 +160,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		unregistActionListener();
 		this.comboBoxLineDirection.addItemListener(this.itemListener);
 		this.comboBoxOverLength.addItemListener(this.itemListener);
 		this.checkBoxRotateLabel.addActionListener(this.actionListener);
