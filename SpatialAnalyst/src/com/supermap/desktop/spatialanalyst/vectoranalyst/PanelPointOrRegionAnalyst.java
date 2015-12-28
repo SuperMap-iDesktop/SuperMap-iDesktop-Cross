@@ -229,7 +229,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData).addGap(8)
+                    .addComponent(this.panelBufferData).addGap(10)
                     .addComponent(this.panelResultData).addContainerGap());
           //@formatter:on
 	}
