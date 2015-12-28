@@ -157,6 +157,9 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	public void setDatasetVector(DatasetVector datasetVector) {
+		this.modifieds.clear();
+		this.isCellValueChange = false;
+
 		this.datasetVector = datasetVector;
 		this.fieldInfos = datasetVector.getFieldInfos();
 		unregisterEvents();
