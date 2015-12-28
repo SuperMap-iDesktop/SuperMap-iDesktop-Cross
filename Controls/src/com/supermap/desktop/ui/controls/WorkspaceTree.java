@@ -2008,6 +2008,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	@Override
 	public void dispose() {
+		removeListener();
 		disposeDefaultWorkspace();
 	}
 

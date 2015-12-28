@@ -127,7 +127,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 	// 参与查询的数据
 	private JScrollPane scrollPaneWorkspaceTree = new JScrollPane();
-	private WorkspaceTree workspaceTree = new WorkspaceTree();
+	private WorkspaceTree workspaceTree;
 	// 字段信息
 	private JScrollPane scrollPaneFieldInfo = new JScrollPane();
 	private FieldInfoTable tableFieldInfo = new FieldInfoTable();
@@ -416,7 +416,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化工作空间树
 	 */
 	private void initWorkspaceTree() {
-		this.workspaceTree.setWorkspace(Application.getActiveApplication().getWorkspace());
+		this.workspaceTree = new WorkspaceTree(Application.getActiveApplication().getWorkspace());
 		this.workspaceTree.setLayoutsNodeVisible(false);
 		this.workspaceTree.setMapsNodeVisible(false);
 		this.workspaceTree.setScenesNodeVisible(false);
