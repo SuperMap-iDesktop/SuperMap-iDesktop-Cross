@@ -1,26 +1,22 @@
 package com.supermap.desktop.ui.controls;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.ListCellRenderer;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 
+import javax.swing.*;
+
 /**
  * 太乱，需要重构 by wuxb
  *
  * @author highsad
- *
  */
 public class DatasourceComboBox extends JComboBox<Object> {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 根据工作空间中已经有的数据源集合类创建下拉选择框
-	 *
 	 */
 	public DatasourceComboBox() {
 		super(initDatasourceComboBoxItem());
@@ -87,16 +83,17 @@ public class DatasourceComboBox extends JComboBox<Object> {
 	 * @param datasource
 	 */
 	public void setSelectedDatasource(Datasource datasource) {
+		if (getItemCount() <= 0 || datasource == null) {
+			return;
+		}
 		int selectIndex = 0;
 
-		if (datasource != null) {
-			for (int i = 0; i < getItemCount(); i++) {
-				DataCell dataCell = (DataCell) getItemAt(i);
+		for (int i = 0; i < getItemCount(); i++) {
+			DataCell dataCell = (DataCell) getItemAt(i);
 
-				if (dataCell.getData() == datasource) {
-					selectIndex = i;
-					break;
-				}
+			if (dataCell.getData() == datasource) {
+				selectIndex = i;
+				break;
 			}
 		}
 		setSelectedIndex(selectIndex);
@@ -126,7 +123,7 @@ public class DatasourceComboBox extends JComboBox<Object> {
 
 		if (getItemCount() > 0) {
 			setSelectedIndex(selectedIndex);
-		}else{
+		} else {
 			setSelectedIndex(-1);
 		}
 	}
