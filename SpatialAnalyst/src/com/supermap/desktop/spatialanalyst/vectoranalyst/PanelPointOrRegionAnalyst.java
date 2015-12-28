@@ -23,9 +23,11 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -71,6 +73,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean isSelected;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
+	private final static Object DEFAULT_VALUE = 10;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -159,7 +162,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
 		numberFormatter.setValueClass(Double.class);
 		this.textFieldNumeric = new SMFormattedTextField(numberFormatter);
-		this.textFieldNumeric.setValue(10);
+		this.textFieldNumeric.setValue(DEFAULT_VALUE);
 
 		// 设置按钮组，只能点击一个按钮
 		ButtonGroup bufferRadiusButtonGroup = new ButtonGroup();
@@ -169,27 +172,29 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.comboBoxFieldControl.setEnabled(false);
 
 		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);
+		panelBufferRadiusLayout.setAutoCreateGaps(true);
+		panelBufferRadiusLayout.setAutoCreateContainerGaps(true);
 		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
 
 		//@formatter:off
           panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
-                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
                               .addComponent(this.labelUnit)
                               .addComponent(this.radioButtonNumeric)
-                              .addComponent(this.radioButtonField)).addGap(35)
+                              .addComponent(this.radioButtonField))
                     .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
                               .addComponent(this.comboBoxUnitBox)
                               .addComponent(this.textFieldNumeric)
                               .addComponent(this.comboBoxFieldControl)));
          
           panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
-                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
                               .addComponent(this.labelUnit)
-                              .addComponent(this.comboBoxUnitBox)).addGap(8)
-                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                              .addComponent(this.comboBoxUnitBox)).addGap(5)
+                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
                              .addComponent(this.radioButtonNumeric)
-                             .addComponent(this.textFieldNumeric)).addGap(8)
-                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+                             .addComponent(this.textFieldNumeric)).addGap(5)
+                   .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
                              .addComponent(this.radioButtonField)
                              .addComponent(this.comboBoxFieldControl)));
           //@formatter:on
@@ -202,17 +207,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 		//@formatter:off
          panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-                   .addContainerGap()
-                   .addComponent(this.panelBasicLeft)
-                   .addComponent(this.panelBasicRight).addContainerGap());
+                   .addComponent(this.panelBasicLeft,0, 180, Short.MAX_VALUE)
+                   .addPreferredGap(ComponentPlacement.RELATED)
+                   .addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
         
          panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-                   .addContainerGap()
                    .addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
                              .addComponent(this.panelBasicLeft)
-                             .addComponent(this.panelBasicRight)).addGap(50));
+                             .addComponent(this.panelBasicRight)));
          //@formatter:on
-		panelBasicLayout.linkSize(panelBasicLeft, panelBasicRight);
 	}
 
 	private void setPanelBasicLeftLayout() {
@@ -226,7 +229,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData)
+                    .addComponent(this.panelBufferData).addGap(8)
                     .addComponent(this.panelResultData).addContainerGap());
           //@formatter:on
 	}
@@ -303,7 +306,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
 				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
-				if(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset()==null){
+				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
 					setButtonEnabled(false);
 				}
 			} else if (nodeData.getData() instanceof Dataset) {

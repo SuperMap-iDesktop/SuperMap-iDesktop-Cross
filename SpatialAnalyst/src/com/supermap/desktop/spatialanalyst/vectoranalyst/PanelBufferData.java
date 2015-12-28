@@ -1,6 +1,8 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -11,11 +13,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -33,6 +37,8 @@ public class PanelBufferData extends JPanel {
 	private DatasourceComboBox comboBoxBufferDataDatasource;
 	private JCheckBox checkBoxGeometrySelect;
 	private JPanel panelBufferDataBasic;
+	private JPanel panelSelect;
+	private final static Dimension DIMENSION = new Dimension(100, 20);
 
 	public JCheckBox getCheckBoxGeometrySelect() {
 		return checkBoxGeometrySelect;
@@ -68,9 +74,12 @@ public class PanelBufferData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
+		this.comboBoxBufferDataDatasource.setSize(DIMENSION);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
+		this.comboBoxBufferDataDataset.setSize(DIMENSION);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 		this.panelBufferDataBasic = new JPanel();
+		this.panelSelect = new JPanel();
 
 	}
 
@@ -86,27 +95,27 @@ public class PanelBufferData extends JPanel {
 
 		this.add(this.panelBufferDataBasic, BorderLayout.CENTER);
 		GroupLayout panelBufferDataLayout = new GroupLayout(this.panelBufferDataBasic);
+		panelBufferDataLayout.setAutoCreateContainerGaps(true);
+		panelBufferDataLayout.setAutoCreateGaps(true);
 		this.panelBufferDataBasic.setLayout(panelBufferDataLayout);
 		//@formatter:off
 		panelBufferDataLayout.setHorizontalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.labelDataset)).addGap(35)
+						.addComponent(this.labelDataset))
 				.addGroup(panelBufferDataLayout.createParallelGroup()
 						.addComponent(this.comboBoxBufferDataDatasource)
-						.addComponent(this.comboBoxBufferDataDataset)).addGap(5));
+						.addComponent(this.comboBoxBufferDataDataset)));
 		
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
-				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxBufferDataDatasource)).addGap(10)
-				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.comboBoxBufferDataDatasource)).addGap(5)
+				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.comboBoxBufferDataDataset)).addContainerGap()
-			   );
+						.addComponent(this.comboBoxBufferDataDataset)));
 		//@formatter:on
-
+		
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);
-
 	}
 }

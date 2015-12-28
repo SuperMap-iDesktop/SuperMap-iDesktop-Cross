@@ -1,5 +1,8 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -35,36 +38,19 @@ public class PanelButton extends JPanel {
 	public PanelButton() {
 		initComponent();
 		initResources();
-		setPanelButtonLayout();
-
+		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT, 10, 10);
+		this.setLayout(flowLayout);
+		this.add(buttonOk);
+		this.add(buttonCancel);
 	}
 
 	private void initComponent() {
 		this.buttonOk = new JButton("Ok");
 		this.buttonCancel = new JButton("Cancel");
-
 	}
 
 	private void initResources() {
 		this.buttonOk.setText(CoreProperties.getString("String_Button_OK"));
 		this.buttonCancel.setText(CoreProperties.getString("String_Button_Cancel"));
-
 	}
-
-	private void setPanelButtonLayout() {
-		GroupLayout panelButtonLayout = new GroupLayout(this);
-		this.setLayout(panelButtonLayout);
-
-		//@formatter:off
-		panelButtonLayout.setHorizontalGroup(panelButtonLayout.createSequentialGroup()
-				.addGap(420)
-				.addComponent(this.buttonOk).addGap(15)
-				.addComponent(this.buttonCancel));
-		panelButtonLayout.setVerticalGroup(panelButtonLayout.createSequentialGroup()
-				.addGroup(panelButtonLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(buttonOk)
-						.addComponent(buttonCancel)).addGap(5));
-		//@formatter:on
-	}
-
 }

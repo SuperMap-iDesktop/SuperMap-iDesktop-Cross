@@ -12,6 +12,7 @@ import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -23,9 +24,12 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -81,6 +85,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private DoSome some;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
+	private final static Object DEFAULT_VALUE = 10;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -129,7 +134,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
-		this.add(this.panelBasic);
+		this.setLayout(new BorderLayout());
+		this.add(this.panelBasic, BorderLayout.CENTER);
+
 		initComponentBufferType();
 		initComponentBufferRadius();
 		setPanelBasicLayout();
@@ -173,21 +180,23 @@ public class PanelLineBufferAnalyst extends JPanel {
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeFlat);
 
 		GroupLayout panelBufferTypeLayout = new GroupLayout(this.panelBufferType);
+		panelBufferTypeLayout.setAutoCreateGaps(true);
+		panelBufferTypeLayout.setAutoCreateContainerGaps(true);
 		this.panelBufferType.setLayout(panelBufferTypeLayout);
 
 		//@formatter:off
 		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeRound)
-						.addComponent(this.radioButtonBufferTypeFlat)).addGap(50)
+						.addComponent(this.radioButtonBufferTypeFlat)).addGap(60)
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.checkBoxBufferLeft)
-						.addComponent(this.checkBoxBufferRight)).addGap(75));
+						.addComponent(this.checkBoxBufferRight)));
 		
 		panelBufferTypeLayout.setVerticalGroup(panelBufferTypeLayout.createSequentialGroup()
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeRound)
-						.addComponent(this.checkBoxBufferLeft)).addGap(10)
+						.addComponent(this.checkBoxBufferLeft))
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeFlat)
 						.addComponent(this.checkBoxBufferRight)));
@@ -206,11 +215,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
 
 		NumberFormatter numberFormatter = new NumberFormatter();
-		numberFormatter.setValueClass(Integer.class);
+		numberFormatter.setValueClass(Double.class);
 		this.textFieldNumericLeft = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumericRight = new SMFormattedTextField(numberFormatter);
-		this.textFieldNumericLeft.setValue(10);
-		this.textFieldNumericRight.setValue(10);
+		this.textFieldNumericLeft.setValue(DEFAULT_VALUE);
+		this.textFieldNumericRight.setValue(DEFAULT_VALUE);
 
 		this.comboBoxFieldLeft = new JComboBox<Object>();
 		this.comboBoxFieldRight = new JComboBox<Object>();
@@ -221,6 +230,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 		//@formatter:off
 		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);
+		panelBufferRadiusLayout.setAutoCreateContainerGaps(true);
+		panelBufferRadiusLayout.setAutoCreateGaps(true);
 		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
 		
 		panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
@@ -231,34 +242,34 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.labelRightNumericRadius)
 						.addComponent(this.radioButtonField)
 						.addComponent(this.labelLeftFieldRadius)
-						.addComponent(this.labelRightFieldRadius)).addGap(10)
+						.addComponent(this.labelRightFieldRadius))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.comboBoxUnit)
 						.addComponent(this.textFieldNumericLeft)
 						.addComponent(this.textFieldNumericRight)
 						.addComponent(this.comboBoxFieldLeft)
-						.addComponent(this.comboBoxFieldRight)).addContainerGap());
+						.addComponent(this.comboBoxFieldRight)));
 		
 		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit)).addGap(8)
+						.addComponent(this.comboBoxUnit,25,25,25)).addGap(5)
 			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.radioButtonNumeric)).addGap(5)
-			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.radioButtonNumeric)).addGap(10)
+			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 					   .addComponent(this.labelLeftNumericRadius)
-					   .addComponent(this.textFieldNumericLeft)).addGap(15)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+					   .addComponent(this.textFieldNumericLeft,25,25,25))
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightNumericRadius)
-						.addComponent(this.textFieldNumericRight)).addGap(5)
+						.addComponent(this.textFieldNumericRight,25,25,25))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.radioButtonField)).addGap(5)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.radioButtonField)).addGap(10)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelLeftFieldRadius)
-						.addComponent(this.comboBoxFieldLeft)).addGap(15)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.comboBoxFieldLeft,25,25,25))
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightFieldRadius)
-						.addComponent(this.comboBoxFieldRight)).addContainerGap().addGap(5));
+						.addComponent(this.comboBoxFieldRight,25,25,25)).addGap(5));
 		//@formatter:on
 
 	}
@@ -269,18 +280,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 		//@formatter:off
 	    panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
-	    		.addComponent(this.panelBasicLeft)
-	    		.addComponent(this.panelBasicRight).addContainerGap());
-	    
+	    		.addComponent(this.panelBasicLeft,0, 180, Short.MAX_VALUE)
+	    		.addPreferredGap(ComponentPlacement.RELATED)
+	    		.addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
-	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
-	    				.addComponent(this.panelBasicLeft)
-	    				.addComponent(this.panelBasicRight)).addContainerGap());
+	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.TRAILING)
+	    				.addComponent(this.panelBasicLeft,0, 330, Short.MAX_VALUE)
+	    				.addComponent(this.panelBasicRight,0, 330, Short.MAX_VALUE)));
 	    //@formatter:on
-		panelBasicLayout.linkSize(this.panelBasicLeft, this.panelBasicRight);
-
 	}
 
 	private void setPanelBasicLeftLayout() {
@@ -297,7 +304,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
 				.addComponent(this.panelBufferData)
 				.addComponent(this.panelResultSet)
-				.addComponent(this.panelResultData).addContainerGap());
+				.addComponent(this.panelResultData));
 		//@formatter:on
 
 	}
@@ -309,12 +316,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		//@formatter:off
 		panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
 				.addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.panelBufferType)
-						.addComponent(this.panelBufferRadius)));
+						.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+						.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)));
 		
 		panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addComponent(this.panelBufferType)
-				.addComponent(this.panelBufferRadius).addContainerGap());
+				.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+				.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE));
 		//@formatter:on
 
 	}

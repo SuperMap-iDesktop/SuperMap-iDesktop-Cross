@@ -10,6 +10,8 @@ import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,14 +25,15 @@ public class BufferDialog extends SmDialog {
 	private JRadioButton radioButtonPointOrRegion = new JRadioButton("PointOrRegion");
 	private JRadioButton radioButtonLine = new JRadioButton("Line");
 	private JPanel panelDataType;
-	private JPanel panelBufferBasic;
+	private JPanel panelBufferType;
 	private JPanel panelButtonGroup;
 	private ButtonGroup buttonGroup;
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private PanelButton panelButton;
+	private JPanel panelBuffer;
 	private final static String DATASET_NOT_NULL = "源数据集不能为空";
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(575, 435);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(575, 332);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 450);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 350);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(670, 470);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(670, 370);
 	private DoSome some = new DoSome() {
@@ -43,7 +46,7 @@ public class BufferDialog extends SmDialog {
 	public BufferDialog() {
 		super();
 		initPanelBufferBasic();
-		setBufferFactory();
+		setBufferDialog();
 		setLocationRelativeTo(null);
 		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -59,19 +62,19 @@ public class BufferDialog extends SmDialog {
 				&& (activeDatasets[0].getType() == DatasetType.POINT || activeDatasets[0].getType() == DatasetType.POINT3D
 						|| activeDatasets[0].getType() == DatasetType.REGION || activeDatasets[0].getType() == DatasetType.REGION3D)) {
 
-			this.panelBufferBasic = new PanelPointOrRegionAnalyst();
+			this.panelBufferType = new PanelPointOrRegionAnalyst();
 			setSize(getPointPanelDimension());
 			this.radioButtonPointOrRegion.setSelected(true);
-			((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(some);
+			((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
 		} else {
-			this.panelBufferBasic = new PanelLineBufferAnalyst();
+			this.panelBufferType = new PanelLineBufferAnalyst();
 			setSize(getLinePanelDimension());
 			this.radioButtonLine.setSelected(true);
-			((PanelLineBufferAnalyst) panelBufferBasic).setSome(some);
+			((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 		}
 	}
 
-	private void setBufferFactory() {
+	private void setBufferDialog() {
 		removeRegisterEvent();
 		initComponent();
 		initResources();
@@ -82,6 +85,7 @@ public class BufferDialog extends SmDialog {
 		this.labelDataType = new JLabel("DataType");
 		this.panelDataType = new JPanel();
 		this.panelButton = new PanelButton();
+		this.panelBuffer = new JPanel();
 		this.panelButtonGroup = new JPanel();
 		this.buttonGroup = new ButtonGroup();
 		this.buttonGroup.add(this.radioButtonPointOrRegion);
@@ -102,59 +106,72 @@ public class BufferDialog extends SmDialog {
         //@formatter:on
 
 		GroupLayout panelDataTypeLayout = new GroupLayout(this.panelDataType);
+		panelDataTypeLayout.setAutoCreateGaps(true);
 		this.panelDataType.setLayout(panelDataTypeLayout);
 
 		//@formatter:off
-          panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
-                    .addGap(20)
-                    .addComponent(this.labelDataType).addGap(30)
-                    .addComponent(this.panelButtonGroup));
-         
-          panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
-                    .addGap(10)
-                    .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.CENTER)
-                              .addComponent(this.labelDataType)
-                              .addComponent(this.panelButtonGroup)));
+            panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
+            		.addGap(10)
+                      .addComponent(this.labelDataType).addGap(30)
+                      .addComponent(this.panelButtonGroup));
+           
+            panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
+                      .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.LEADING)
+                                .addComponent(this.labelDataType)
+                                .addComponent(this.panelButtonGroup)));
+		
+		
 
-         
-          GridBagLayout gridBagConstraints = new GridBagLayout();
-          this.getContentPane().setLayout(gridBagConstraints);
-         
-          this.setLayout(new BorderLayout());
-          this.add(panelDataType, BorderLayout.NORTH);
-          this.add(panelBufferBasic, BorderLayout.CENTER);
-          this.add(panelButton, BorderLayout.SOUTH);
-     }
+		GroupLayout layout = new GroupLayout(this.panelBuffer);
 
-     private void initResources() {
-          this.labelDataType.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_DataType"));
-          this.radioButtonLine.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_Line"));
-          this.radioButtonPointOrRegion.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_PointAndRegion"));
-     }
-    
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		//@formatter:off
+		this.panelBuffer.setLayout(layout);
+		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(Alignment.LEADING)
+				.addComponent(this.panelDataType)
+				.addComponent(this.panelBufferType)));
+        //设置panelBufferType布局竖直方向不拉伸
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addComponent(true,this.panelDataType).addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(this.panelBufferType,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addContainerGap(10, Short.MAX_VALUE));
+		
+		//@formatter:on
 
-     private void registerEvent() {
-          this.radioButtonPointOrRegion.addActionListener(this.localActionListener);
-          this.radioButtonLine.addActionListener(this.localActionListener);
-          this.panelButton.getButtonOk().addActionListener(this.localActionListener);
-          this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
-         
-          if (panelBufferBasic instanceof PanelLineBufferAnalyst) {
-               ((PanelLineBufferAnalyst)panelBufferBasic).addListener();
-          }else if (panelBufferBasic instanceof PanelPointOrRegionAnalyst) {
-			((PanelPointOrRegionAnalyst)panelBufferBasic).addListener();
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
+		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
+	}
+
+	private void initResources() {
+		this.labelDataType.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_DataType"));
+		this.radioButtonLine.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_Line"));
+		this.radioButtonPointOrRegion.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_PointAndRegion"));
+	}
+
+	private void registerEvent() {
+		this.radioButtonPointOrRegion.addActionListener(this.localActionListener);
+		this.radioButtonLine.addActionListener(this.localActionListener);
+		this.panelButton.getButtonOk().addActionListener(this.localActionListener);
+		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
+
+		if (panelBufferType instanceof PanelLineBufferAnalyst) {
+			((PanelLineBufferAnalyst) panelBufferType).addListener();
+		} else if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
+			((PanelPointOrRegionAnalyst) panelBufferType).addListener();
 		}
-     }
-    
-     private void removeRegisterEvent(){
-          this.radioButtonLine.removeActionListener(this.localActionListener);
-          this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
-     }
+	}
+
+	private void removeRegisterEvent() {
+		this.radioButtonLine.removeActionListener(this.localActionListener);
+		this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
+	}
 
 	private Dimension getLinePanelDimension() {
 		if (SystemPropertyUtilties.isWindows()) {
 			return BufferDialog.DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION;
-		}else{
+		} else {
 			return BufferDialog.DEFAULT_LINUX_BUFFER_LINE_DIMENSION;
 		}
 
@@ -163,68 +180,66 @@ public class BufferDialog extends SmDialog {
 	private Dimension getPointPanelDimension() {
 		if (SystemPropertyUtilties.isWindows()) {
 			return BufferDialog.DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION;
-		}else{
+		} else {
 			return BufferDialog.DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION;
 		}
 	}
 
 	class LocalActionListener implements ActionListener {
-          private boolean flag;
-         
-          @Override
-          public void actionPerformed(ActionEvent e) {
-               if (e.getSource() == radioButtonPointOrRegion) {
-            	   if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
-            		   ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(null);
-            	   }else {
-            		   ((PanelLineBufferAnalyst) panelBufferBasic).setSome(null);
-            	   }
-	               BufferDialog.this.getContentPane().remove(panelBufferBasic);
-                    panelBufferBasic = new PanelPointOrRegionAnalyst();
-                    BufferDialog.this.getContentPane().add(panelBufferBasic);
-                    ((PanelPointOrRegionAnalyst) panelBufferBasic).addListener();
-	               ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(some);
-                    setSize(getPointPanelDimension());
-               } else if (e.getSource() == radioButtonLine) {
-            	   if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
-            		   ((PanelPointOrRegionAnalyst) panelBufferBasic).setSome(null);
-            	   }else {
-            		   ((PanelLineBufferAnalyst) panelBufferBasic).setSome(null);
-            	   }
-	               BufferDialog.this.getContentPane().remove(panelBufferBasic);
-	               panelBufferBasic = new PanelLineBufferAnalyst();
-	               BufferDialog.this.getContentPane().add(panelBufferBasic);
-	               setSize(getLinePanelDimension());
-	               ((PanelLineBufferAnalyst) panelBufferBasic).addListener();
-	               ((PanelLineBufferAnalyst) panelBufferBasic).setSome(some);
-                    
-               }else if (e.getSource() == panelButton.getButtonOk()) {
-                    try {
-						if(panelBufferBasic instanceof PanelPointOrRegionAnalyst){
-						     flag = ((PanelPointOrRegionAnalyst)panelBufferBasic).createCurrentBuffer();
-						     ((PanelPointOrRegionAnalyst) panelBufferBasic).addListener();
-						     if(!((PanelPointOrRegionAnalyst) panelBufferBasic).isButtonEnabled()){
-						    	 flag = false;
-						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
-						     }
-						     
-						}else if (panelBufferBasic instanceof  PanelLineBufferAnalyst) {
-						     flag = ((PanelLineBufferAnalyst)panelBufferBasic).CreateCurrentBuffer();
-						     ((PanelLineBufferAnalyst)panelBufferBasic).addListener();
-						     if(!((PanelLineBufferAnalyst) panelBufferBasic).isButtonEnabled()){
-						    	 flag = false;
-						    	 JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
-						     }
+		private boolean flag;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == radioButtonPointOrRegion) {
+				if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
+					((PanelPointOrRegionAnalyst) panelBufferType).setSome(null);
+				} else {
+					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
+				}
+				BufferDialog.this.getContentPane().removeAll();
+				panelBufferType = new PanelPointOrRegionAnalyst();
+				setBufferDialog();
+				((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
+				setSize(getPointPanelDimension());
+			} else if (e.getSource() == radioButtonLine) {
+				if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
+					((PanelPointOrRegionAnalyst) panelBufferType).setSome(null);
+				} else {
+					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
+				}
+				BufferDialog.this.getContentPane().removeAll();
+				panelBufferType = new PanelLineBufferAnalyst();
+				setBufferDialog();
+				setSize(getLinePanelDimension());
+				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
+
+			} else if (e.getSource() == panelButton.getButtonOk()) {
+				try {
+					if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
+						flag = ((PanelPointOrRegionAnalyst) panelBufferType).createCurrentBuffer();
+						((PanelPointOrRegionAnalyst) panelBufferType).addListener();
+						if (!((PanelPointOrRegionAnalyst) panelBufferType).isButtonEnabled()) {
+							flag = false;
+							JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
 						}
-					} catch (Exception e1) {
-						BufferDialog.this.dispose();
+
+					} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
+						flag = ((PanelLineBufferAnalyst) panelBufferType).CreateCurrentBuffer();
+						((PanelLineBufferAnalyst) panelBufferType).addListener();
+						if (!((PanelLineBufferAnalyst) panelBufferType).isButtonEnabled()) {
+							flag = false;
+							JOptionPane.showMessageDialog(BufferDialog.this, DATASET_NOT_NULL);
+						}
 					}
-	               if (flag) {
-		               BufferDialog.this.dispose();
-                    }
-               }else if (e.getSource()==panelButton.getButtonCancel()) {
-                    BufferDialog.this.dispose();
-               }
-          }
-     }
+				} catch (Exception e1) {
+					BufferDialog.this.dispose();
+				}
+				if (flag) {
+					BufferDialog.this.dispose();
+				}
+			} else if (e.getSource() == panelButton.getButtonCancel()) {
+				BufferDialog.this.dispose();
+			}
+		}
+	}
 }

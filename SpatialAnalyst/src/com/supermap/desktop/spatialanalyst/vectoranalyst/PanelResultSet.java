@@ -115,6 +115,8 @@ public class PanelResultSet extends JPanel {
 	private void setPanelResultSetLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultSet")));
 		GroupLayout panelResultSetLayout = new GroupLayout(this);
+		panelResultSetLayout.setAutoCreateContainerGaps(true);
+		panelResultSetLayout.setAutoCreateGaps(true);
 		this.setLayout(panelResultSetLayout);
 
 		//@formatter:off
@@ -122,7 +124,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.labelSemicircleLineSegment)).addGap(5)
+						.addComponent(this.labelSemicircleLineSegment))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxRemainAttributes)
 						.addComponent(this.checkBoxDisplayInScene)
@@ -131,13 +133,13 @@ public class PanelResultSet extends JPanel {
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxRemainAttributes)).addGap(5)
+						.addComponent(this.checkBoxRemainAttributes))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxDisplayInScene)).addGap(5)
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxDisplayInScene))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)).addContainerGap());
+						.addComponent(this.textFieldSemicircleLineSegment)));
 		
 		//@formatter:on
 	}
