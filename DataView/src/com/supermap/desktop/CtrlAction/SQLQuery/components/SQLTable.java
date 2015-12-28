@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -87,17 +89,45 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		});
 
 		this.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox()) {
-			JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryASC"), DataViewProperties.getString("String_Descend_D")}));
+			JComboBox comboBox;
+			int selectedRow;
+			JTable table;
 
 			@Override
 			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-				comboBox.setSelectedItem(value);
-				return comboBox;
+				getCombobox();
+				this.table = table;
+				this.selectedRow = row;
+				this.comboBox.setSelectedItem(value);
+				return this.comboBox;
+			}
+
+			private void getCombobox() {
+				if (comboBox == null) {
+					comboBox = new JComboBox(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryASC"), DataViewProperties.getString("String_Descend_D")}));
+					comboBox.addItemListener(new ItemListener() {
+						@Override
+						public void itemStateChanged(ItemEvent e) {
+							if (e.getStateChange() == ItemEvent.SELECTED) {
+								stopCellEditing();
+							}
+						}
+					});
+
+				}
+
 			}
 
 			@Override
 			public Object getCellEditorValue() {
 				return comboBox.getSelectedItem();
+			}
+
+			@Override
+			public boolean stopCellEditing() {
+				boolean result = super.stopCellEditing();
+				table.setRowSelectionInterval(selectedRow, selectedRow);
+				return result;
 			}
 		});
 	}
