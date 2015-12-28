@@ -14,11 +14,11 @@ import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.LayerSettingVector;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeLabel;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class MapUtilties {
@@ -489,11 +489,20 @@ public class MapUtilties {
 		return availableMapName;
 	}
 
-	public static Layer findLayerByDataset(Map map, Dataset dataset) {
+	/**
+	 * 根据数据集查找非标签专题图的图层
+	 *
+	 * @param map     查找的地图
+	 * @param dataset 结果数据集
+	 * @return 找到的图层
+	 */
+	public static Layer findLayerByDatasetWithoutLabelTheme(Map map, Dataset dataset) {
 		ArrayList<Layer> layers = MapUtilties.getLayers(map);
 		for (Layer layer : layers) {
-			if (layer != null && layer.getDataset() == dataset && layer.getTheme() == null) {
-				return layer;
+			if (layer != null && layer.getDataset() == dataset) {
+				if (layer.getTheme() == null || !(layer.getTheme() instanceof ThemeLabel)) {
+					return layer;
+				}
 			}
 		}
 		return null;

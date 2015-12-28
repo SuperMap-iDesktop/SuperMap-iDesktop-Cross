@@ -46,8 +46,8 @@ public class BufferDialog extends SmDialog {
 	private JPanel panelBuffer;
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 470);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 350);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 520);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 420);
+	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 365);
+	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 480);
 	private DoSome some = new DoSome() {
 		@Override
 		public void doSome(boolean enable) {

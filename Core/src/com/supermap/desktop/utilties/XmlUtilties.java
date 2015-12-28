@@ -5,6 +5,9 @@ import com.supermap.desktop._XMLTag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,17 +37,22 @@ public class XmlUtilties {
 
 	private static Document getDocument(String filePath, int i) {
 		Document document = null;
-		if (i < 1000) {
+		if (i < 3000) {
 			try {
-				Thread.sleep(i);
+				Thread.sleep((long) (Math.random() * i));
 				if (filePath != null && !filePath.isEmpty()) {
 					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 					DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+					documentBuilder.setErrorHandler(new DefaultHandler() {
+						@Override
+						public void fatalError(SAXParseException e) throws SAXException {
+							// 不输出到控制台
+							throw e;
+						}
+					});
 					File file = new File(filePath);
 					document = documentBuilder.parse(file);
 				}
-			} catch (InterruptedException e) {
-				Application.getActiveApplication().getOutput().output(e);
 			} catch (Exception e) {
 				// 文件正在写或文件错误,重新取文件
 				if (i == 0) {
