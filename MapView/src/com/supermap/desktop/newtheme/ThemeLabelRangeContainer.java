@@ -68,6 +68,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isCustom = false;
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
+	private boolean isResetComboBox = false;
 
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_RANGEVALUE = 1;
@@ -400,6 +401,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxExpression.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
+		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
@@ -419,6 +422,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxExpression.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
+		this.comboBoxExpression.getComponent(0).removeMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.getComponent(0).removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeItemListener(this.itemListener);
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
@@ -651,8 +656,12 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeLabelLayer.getName(), true);
 				}
-			} else if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
+			}
+			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
+			}
+			if (e.getSource() == comboBoxExpression.getComponent(0) || e.getSource() == comboBoxRangeMethod) {
+				isResetComboBox = false;
 			}
 		}
 	}
@@ -727,6 +736,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -752,6 +762,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -797,6 +808,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;
 			}
@@ -807,6 +819,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;
 			}
@@ -850,6 +863,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
+			if (isResetComboBox) {
+				return;
+			}
 			if (rangeExpression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
 			} else if (labelCount < 2 || labelCount > 32) {
@@ -861,7 +877,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
-					resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				} else {
 					refreshThemeLabel(theme);
 				}
@@ -937,6 +952,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 创建自定义的分段专题图
 	 */
 	private void makeDefaultAsCustom() {
+		if (isResetComboBox) {
+			return;
+		}
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		if (rangeLength > 0) {
 			ThemeLabel theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED);
@@ -944,7 +962,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
-				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 			} else {
 				this.isCustom = true;
 				refreshThemeLabel(theme);

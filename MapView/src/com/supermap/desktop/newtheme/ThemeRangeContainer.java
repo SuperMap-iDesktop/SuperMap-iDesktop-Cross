@@ -74,7 +74,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient Map map;
 	private transient ThemeRange themeRange;
 	private transient Layer themeRangeLayer;
-	// private String numeric = "#";
 	private String rangeExpression = "SmID";
 	private transient RangeMode rangeMode = RangeMode.EQUALINTERVAL;
 	private transient int rangeCount = 5;
@@ -84,6 +83,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private double precision;
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
+	private boolean isResetComboBox = false;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -166,24 +166,24 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		initComboBoxRangePrecision();
 		initComboBoxRangeFormat();
 		this.panelProperty.setLayout(new GridBagLayout());
-		this.panelProperty.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
+		this.panelProperty.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
 		this.spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
-		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(1, 0));
-		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
+		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxRangePrecision,new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(80, 0).setIpad(40, 0));
+		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,5).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
 		
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
@@ -532,6 +532,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangePrecision.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
+		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.itemListener);
@@ -556,6 +558,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangePrecision.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
+		this.comboBoxExpression.getComponent(0).removeMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeItemListener(this.itemListener);
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
@@ -839,6 +843,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
 			}
+			if (e.getSource() == comboBoxExpression.getComponent(0) || e.getSource() == comboBoxRangeMethod) {
+				isResetComboBox = false;
+			}
 		}
 	}
 
@@ -928,6 +935,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 
 		private void setRangeCount() {
+
 			rangeCount = Integer.valueOf(comboBoxRangeCount.getSelectedItem().toString());
 			resetThemeInfo();
 		}
@@ -967,6 +975,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
 					// 重置分段方法下拉框
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -985,6 +994,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
 					// 重置分段方法下拉框
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -1042,6 +1052,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
 				// 重置字段表达式下拉框
+				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeRange.getRangeExpression());
 				return;
 			}
@@ -1053,6 +1064,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
 				// 重置字段表达式下拉框
+				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeRange.getRangeExpression());
 				return;
 			}
@@ -1069,6 +1081,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
+			if (isResetComboBox) {
+				return;
+			}
 			if (rangeExpression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
 			} else if (rangeCount < 2 || rangeCount > 32) {
@@ -1080,7 +1095,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
-					resetComboBoxRangeExpression(themeRange.getRangeExpression());
 				} else {
 					refreshThemeRange(theme);
 				}
@@ -1290,6 +1304,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 创建自定义的分段专题图
 	 */
 	private void makeDefaultAsCustom() {
+		if (isResetComboBox) {
+			return;
+		}
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		if (rangeLength > 0) {
 			ThemeRange theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
@@ -1297,7 +1314,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
-				resetComboBoxRangeExpression(themeRange.getRangeExpression());
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);
