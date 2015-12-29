@@ -40,7 +40,7 @@ public class CtrlActionDataImport extends CtrlAction {
 				}
 			}
 		}
-		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+		if (datasources != null && datasources.length <= 0 && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			for (int i = 0; i < Application.getActiveApplication().getWorkspace().getDatasources().getCount(); i++) {
 				Datasource tempDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(i);
 				if (!tempDatasource.isReadOnly()) {
