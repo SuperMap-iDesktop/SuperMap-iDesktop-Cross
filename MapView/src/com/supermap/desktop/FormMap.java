@@ -972,11 +972,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}finally {
+			if (recordset != null) {
+				recordset.dispose();
+			}
 		}
 
-		if (recordset != null) {
-			recordset.dispose();
-		}
 	}
 
 	@Override

@@ -8,11 +8,13 @@ import com.supermap.data.conversion.ExportSetting;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ExportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.popupmenus.CtrlActionDataExport;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.util.ChildExportModel;
 import com.supermap.desktop.util.CommonFunction;
@@ -46,7 +48,6 @@ public class DataSetChooserExPort extends JDialog {
 	}
 
 	/**
-	 * 
 	 * @wbp.parser.constructor
 	 */
 	public DataSetChooserExPort(JDialog owner, JTable exportTable) {
@@ -62,9 +63,9 @@ public class DataSetChooserExPort extends JDialog {
 	}
 
 	/**
-	
-	 * 
-	
+
+	 *
+
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -88,7 +89,6 @@ public class DataSetChooserExPort extends JDialog {
 	private JLabel labelSearch = new JLabel();
 
 	/**
-	 * 
 	 * Create the frame.
 	 */
 
@@ -135,12 +135,17 @@ public class DataSetChooserExPort extends JDialog {
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
 		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
 		workspaceTree.expandRow(1);
-		for (int i = 0; i < datasourceTreeNode.getChildCount(); i++) {
-			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+		for (int childCount = datasourceTreeNode.getChildCount() - 1; childCount >= 0; childCount--) {
+			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(childCount);
 			for (int j = 0; j < childDatasourceTreeNode.getChildCount(); j++) {
 				childDatasourceTreeNode.removeAllChildren();
 			}
+			if (!CtrlActionDataExport.isSupportEngineType(((Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData()).getEngineType())) {
+				childDatasourceTreeNode.removeFromParent();
+//				datasourceTreeNode.remove(childDatasourceTreeNode);
+			}
 		}
+		workspaceTree.updateUI();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(490, 280, 677, 456);
 		contentPane = new JPanel();
@@ -295,7 +300,7 @@ public class DataSetChooserExPort extends JDialog {
 
 	/**
 	 * 联合查询的具体实现
-	 * 
+	 *
 	 * @param arrayListForSearch
 	 */
 	private void searchForContent() {
