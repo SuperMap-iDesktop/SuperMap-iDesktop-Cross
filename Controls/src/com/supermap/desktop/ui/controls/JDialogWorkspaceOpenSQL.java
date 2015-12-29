@@ -18,6 +18,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -77,7 +78,6 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jLabelEmptyLabel = new JLabel();
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-		// TODO
 		jButtonClose.setText(CommonProperties.getString("String_Button_Cancel"));
 		jButtonClose.addActionListener(new ActionListener() {
 			@Override
@@ -108,6 +108,9 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				jComboBoxServerItemChange();
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					jButtonOpenActionPerformed();
+				}
 			}
 
 			@Override
@@ -129,6 +132,14 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		});
 
 		jTextFieldDatabase.setText("");
+		jTextFieldDatabase.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					jButtonOpenActionPerformed();
+				}
+			}
+		});
 		jTextFieldUser.setText("");
 		jTextFieldUser.addFocusListener(new FocusListener() {
 			@Override
@@ -144,7 +155,9 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jTextFieldUser.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// do nothing
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					jButtonOpenActionPerformed();
+				}
 			}
 
 			@Override
@@ -160,7 +173,14 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		});
 
 		jPasswordFieldPassword.setText("");
-
+		jPasswordFieldPassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					jButtonOpenActionPerformed();
+				}
+			}
+		});
 		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[]{""}));
 		jComboBoxWorkspaceName.setEditable(true);
 		jComboBoxWorkspaceName.getComponent(0).addMouseListener(new MouseAdapter() {
@@ -183,9 +203,12 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		});
 
 		jComboBoxWorkspaceName.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// do nothing
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					jButtonOpenActionPerformed();
+				}
 			}
 
 			@Override
@@ -195,7 +218,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// do nothing
+
 			}
 		});
 
@@ -345,7 +368,9 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	}
 
 	/**
-	 * open按钮点击事件 <li>标记出不能为空的项目 <li>打开工作空间
+	 * open按钮点击事件
+	 * <li>标记出不能为空的项目
+	 * <li>打开工作空间
 	 */
 	private void jButtonOpenActionPerformed() {
 		int flag = 0;
