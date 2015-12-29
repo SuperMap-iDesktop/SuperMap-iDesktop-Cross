@@ -70,6 +70,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private boolean isCustom = false;
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
+	private boolean isResetComboBox = false;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -172,7 +173,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				MapViewProperties.getString("String_RangeMode_SquareRoot"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
-		this.comboBoxRangeMethod.setEditable(true);
 		if (themeGridRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeGridRange.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -328,6 +328,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addItemListener(this.itemListener);
 		this.comboBoxRangeFormat.addItemListener(this.itemListener);
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
@@ -347,6 +348,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
+		this.comboBoxRangeMethod.removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeItemListener(this.itemListener);
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
@@ -599,6 +601,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
 			}
+
+			if (e.getSource() == comboBoxRangeMethod) {
+				isResetComboBox = true;
+			}
 		}
 	}
 
@@ -668,6 +674,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 							MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"),
 							"",
 							JOptionPane.ERROR_MESSAGE);
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -685,6 +692,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 							MapViewProperties.getString("String_UnMakeGridRangeTheme"),
 							"",
 							JOptionPane.ERROR_MESSAGE);
+					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
 				} else {
@@ -735,6 +743,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
+			if (isResetComboBox) {
+				return;
+			}
 			if (rangeCount < 2 || rangeCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeGridRange.getCount()));
@@ -867,6 +878,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 创建自定义的分段专题图
 	 */
 	private void makeDefaultAsCustom() {
+		if (isResetComboBox) {
+			return;
+		}
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		if (rangeLength > 0) {
 			ThemeGridRange theme = ThemeGridRange.makeDefault(datasetGrid, rangeMode, rangeLength, ColorGradientType.GREENRED);

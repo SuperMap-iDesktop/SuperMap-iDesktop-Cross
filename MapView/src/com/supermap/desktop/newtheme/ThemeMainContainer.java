@@ -38,6 +38,7 @@ public class ThemeMainContainer extends JPanel {
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private Layer newLayer;
 	private Layer oldLayer;
+	private boolean isThemeChange;
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -67,12 +68,11 @@ public class ThemeMainContainer extends JPanel {
 		this.setLayout(layout);
 		this.comboBoxThemeLayer.setEditable(true);
 		this.setLayout(new GridBagLayout());
-		this.add(labelThemeLayer,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(50, 0).setInsets(10, 20, 5, 20).setAnchor(GridBagConstraints.WEST));
-		this.add(comboBoxThemeLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(50, 0).setInsets(10, 20, 5, 35).setAnchor(GridBagConstraints.CENTER)
-				.setFill(GridBagConstraints.HORIZONTAL));
-		this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER)
-				.setFill(GridBagConstraints.BOTH));
+		// @formatter:off
+		this.add(labelThemeLayer,    new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(20, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
+		this.add(comboBoxThemeLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(80, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(panelThemeInfo,     new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		// @formatter:on
 	}
 
 	/**
@@ -96,6 +96,7 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
+		
 	}
 
 	/**
@@ -239,7 +240,9 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-
+			if (1 == e.getClickCount()) {
+				isThemeChange = false;
+			}
 			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
 				resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
@@ -270,6 +273,9 @@ public class ThemeMainContainer extends JPanel {
 			// 当地图中不存在图层时刷新专题图
 			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
 				updateThemeMainContainer();
+			}
+			if (isThemeChange) {
+				return;
 			}
 			if (null == oldLayer || (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer))) {
 				isResetThemeMain = true;
@@ -307,4 +313,15 @@ public class ThemeMainContainer extends JPanel {
 		}
 		return layer;
 	}
+
+	// 判断专题图属性是否改变的字段
+	public boolean isThemeChange() {
+		return isThemeChange;
+	}
+
+	// 设置专题图属性是否改变
+	public void setThemeChange(boolean isThemeChange) {
+		this.isThemeChange = isThemeChange;
+	}
+	
 }

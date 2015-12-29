@@ -244,14 +244,14 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		//@formatter:off
 		this.panelAdvance.add(this.panelOffsetSet, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		this.panelOffsetSet.setLayout(new GridBagLayout());
-		this.panelOffsetSet.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1));
-		this.panelOffsetSet.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1));
-		this.panelOffsetSet.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1));
-		this.panelOffsetSet.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1));
-		this.panelOffsetSet.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(1, 1));
+		this.panelOffsetSet.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(80, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelOffsetSet.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelOffsetSet.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(10, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelOffsetSet.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(10, 1).setIpad(20, 0));
 		//@formatter:on
 	}
 
@@ -341,12 +341,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		initToolBar();
 		initComboBoxExpression();
 		//@formatter:off
-		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 20, 5, 5).setIpad(30, 0).setWeight(1, 0));
-		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 20, 5, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 5).setWeight(1, 0));
-		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 20, 5, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 5).setWeight(1, 0));
-		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 10, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 3));
+		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
+		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
+		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(80, 0));
+		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 10, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
 		getTable();
 		this.tableUniqueInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(tableUniqueInfo);		
