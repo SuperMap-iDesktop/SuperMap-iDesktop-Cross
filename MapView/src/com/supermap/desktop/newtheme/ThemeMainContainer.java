@@ -251,6 +251,9 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
+			if (null == newLayer) {
+				layersTree.setSelectionRow(0);
+			}
 			resetThemeMainContainer(newLayer);
 		}
 	}

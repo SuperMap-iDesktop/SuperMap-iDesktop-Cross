@@ -260,7 +260,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxOffsetUnity() {
 		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
 		if (this.themeUnique.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 			this.labelOffsetXUnity.setText("0.1mm");
@@ -380,7 +380,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[uniqueCount + 1][4], nameStrings) {
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings({"unchecked", "rawtypes"})
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
 				if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
@@ -473,7 +473,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (1 == e.getClickCount() && tableUniqueInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE && tableUniqueInfo.getSelectedRows().length == 1) {
-				updateButtonDeleteState();
 				if (tableUniqueInfo.getSelectedRow() != tableUniqueInfo.getRowCount() - 1) {
 					int selectRow = tableUniqueInfo.getSelectedRow();
 					ThemeUniqueItem item = themeUnique.getItem(selectRow);
@@ -503,6 +502,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					firePropertyChange("ThemeChange", null, null);
 					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
 				}
+			}
+			// 包含最后一行不能做删除操作
+			int[] selectRows = tableUniqueInfo.getSelectedRows();
+			if (selectRows[selectRows.length - 1] == tableUniqueInfo.getRowCount() - 1) {
+				buttonDelete.setEnabled(false);
+			} else {
+				buttonDelete.setEnabled(true);
 			}
 		}
 	}
@@ -584,7 +590,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 根据当前数据集类型设置颜色方案
 	 *
 	 * @param geoStyle 需要设置的风格
-	 * @param color    设置的颜色
+	 * @param color 设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = datasetVector.getType();
@@ -908,7 +914,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			int[] selectedRow = tableUniqueInfo.getSelectedRows();
 			int uniqueCount = themeUnique.getCount();
 			themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
-			if (selectedRow.length == 1 && uniqueCount > 0) {
+			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeUniqueItem item = themeUnique.getItem(selectedRow[0]);
 
 				if (isNeedAddToDeleteItems(item)) {
@@ -1123,7 +1129,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow   要重置文本风格的行
+	 * @param selectRow 要重置文本风格的行
 	 * @param nowGeoStyle 新的文本风格
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {

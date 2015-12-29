@@ -259,7 +259,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (i == rangeCount - 1) {
 				this.tableRangeInfo.setValueAt("Max", i, TABLE_COLUMN_RANGEVALUE);
 			} else {
-				DecimalFormat format = new DecimalFormat("#.######");
+				DecimalFormat format = new DecimalFormat("0.######");
 				String itemEnd = format.format(gridRangeItem.getEnd());
 				this.tableRangeInfo.setValueAt(itemEnd, i, TABLE_COLUMN_RANGEVALUE);
 			}
@@ -372,14 +372,14 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 						int selectRow = selectRows[i];
 						resetColor(selectRow, color);
 					}
+					getTable();
+					for (int i = 0; i < selectRows.length; i++) {
+						tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+					}
 				}
 				popupMenu.setVisible(false);
 			}
 		});
-		getTable();
-		for (int i = 0; i < selectRows.length; i++) {
-			tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-		}
 	}
 
 	/**
@@ -399,8 +399,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int[] selectRows = tableRangeInfo.getSelectedRows();
 			if (e.getSource() == buttonMerge) {
+				int[] selectRows = tableRangeInfo.getSelectedRows();
 				if (selectRows.length == tableRangeInfo.getRowCount()) {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Warning_RquiredTwoFieldForRange"));
 				} else {
@@ -471,8 +471,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			isMergeOrSplit = true;
 			getTable();
 			rangeCount = themeGridRange.getCount();
-			tableRangeInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
+			tableRangeInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			buttonMerge.setEnabled(false);
 			buttonSplit.setEnabled(true);
 		}
@@ -785,16 +785,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					String rangeValue = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow))) {
 						// 如果输入为数值且段值合法时修改段值
-						themeGridRange.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
-						String endStr = String.valueOf(themeGridRange.getItem(selectRow).getEnd());
-						String caption = themeGridRange.getItem(selectRow).getCaption();
-						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), endStr);
-						themeGridRange.getItem(selectRow).setCaption(caption);
-						if (selectRow != themeGridRange.getCount() - 1) {
-							String nextCaption = themeGridRange.getItem(selectRow + 1).getCaption();
-							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), endStr);
-							themeGridRange.getItem(selectRow + 1).setCaption(nextCaption);
-						}
+						setGridRangeValue(selectRow, rangeValue);
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
@@ -808,6 +799,40 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+
+		private void setGridRangeValue(int selectRow, String rangeValue) {
+			themeGridRange.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+			String endStr = String.valueOf(themeGridRange.getItem(selectRow).getEnd());
+			String caption = themeGridRange.getItem(selectRow).getCaption();
+			String numicString = "<";
+			String numString = "-";
+			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
+			if (captiontype.contains(numicString) && caption.contains("<")) {
+				repleaceCaption(caption, selectRow, endStr, numicString);
+			} else if (captiontype.contains(numString) && caption.contains(numString)) {
+				repleaceCaption(caption, selectRow, endStr, numString);
+			}
+		}
+
+		private void repleaceCaption(String caption, int selectRow, String endStr, String numic) {
+			if (caption.lastIndexOf(numic) < 0) {
+				return;
+			}
+			// 替换当前行的标题
+			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
+			if (StringUtilties.isNumber(endString)) {
+				caption = caption.replace(endString, endStr);
+				themeGridRange.getItem(selectRow).setCaption(caption);
+			}
+			// 替换下一行的标题
+			if (selectRow != themeGridRange.getCount() - 1) {
+				String nextCaption = themeGridRange.getItem(selectRow + 1).getCaption();
+				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
+					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), endStr);
+					themeGridRange.getItem(selectRow + 1).setCaption(nextCaption);
+				}
 			}
 		}
 

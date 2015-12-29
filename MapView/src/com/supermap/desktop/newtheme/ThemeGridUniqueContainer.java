@@ -25,6 +25,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class ThemeGridUniqueContainer extends ThemeChangePanel {
@@ -242,7 +243,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[uniqueCount + 1][4], nameStrings) {
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings({"unchecked", "rawtypes"})
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
 				if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
@@ -288,8 +289,15 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			this.tableUniqueInfo.setValueAt(visibleIcon, i, TABLE_COLUMN_VISIBLE);
 			Color color = uniqueItem.getColor();
 			this.tableUniqueInfo.setValueAt(ThemeItemLabelDecorator.buildColorIcon(datasetGrid, color), i, TABLE_COLUMN_GEOSTYLE);
-			this.tableUniqueInfo.setValueAt((int)uniqueItem.getUnique(), i, TABLE_COLUMN_UNIQUE);
-			this.tableUniqueInfo.setValueAt(uniqueItem.getCaption(), i, TABLE_COLUMN_CAPTION);
+			DecimalFormat format = new DecimalFormat("0.######");
+			String unique = format.format(uniqueItem.getUnique());
+			if (StringUtilties.isNumber(uniqueItem.getCaption())) {
+				String caption = format.format(Double.parseDouble(uniqueItem.getCaption()));
+				this.tableUniqueInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
+			} else {
+				this.tableUniqueInfo.setValueAt(uniqueItem.getCaption(), i, TABLE_COLUMN_CAPTION);
+			}
+			this.tableUniqueInfo.setValueAt(unique, i, TABLE_COLUMN_UNIQUE);
 		}
 		Color defualtColor = themeUnique.getDefaultColor();
 		this.tableUniqueInfo.setValueAt(ThemeItemLabelDecorator.buildColorIcon(datasetGrid, defualtColor), uniqueCount, TABLE_COLUMN_GEOSTYLE);
@@ -497,10 +505,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int[] selectRows = null;
-			if (tableUniqueInfo.getSelectedRows().length > 0) {
-				selectRows = tableUniqueInfo.getSelectedRows();
-			}
 			if (e.getSource() == buttonVisble) {
 				// 批量修改单值段的可见状态
 				setItemVisble();
@@ -513,20 +517,15 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			} else if (e.getSource() == buttonDelete) {
 				// 删除单值段
 				deleteItem();
+				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			} else if (e.getSource() == buttonAntitone) {
 				// 颜色方案反序
 				setGeoStyleAntitone();
+				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
 				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
-			}
-			if (null != selectRows && e.getSource() != buttonDelete) {
-				for (int i = 0; i < selectRows.length; i++) {
-					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-				}
-			} else {
-				tableUniqueInfo.addRowSelectionInterval(0, 0);
 			}
 		}
 
@@ -587,6 +586,15 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 					}
 					themeUnique.remove(selectedRow[i]);
 				}
+			} else if (selectedRow[selectedRow.length - 1] == tableUniqueInfo.getRowCount() - 1) {
+				for (int i = selectedRow.length - 2; i >= 0; i--) {
+					ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[i]);
+					if (isNeedAddToDeleteItems(item)) {
+						ThemeGridUniqueItem itemClone = new ThemeGridUniqueItem(item);
+						deleteItems.add(itemClone);
+					}
+					themeUnique.remove(selectedRow[i]);
+				}
 			}
 			getTable();
 			if (tableUniqueInfo.getRowCount() == 1) {
@@ -627,6 +635,9 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				}
 			}
 			getTable();
+			for (int i = 0; i < selectedRow.length; i++) {
+				tableUniqueInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
+			}
 		}
 
 		/**
@@ -713,11 +724,11 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
 		colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
 		popupMenu.show(this.tableUniqueInfo, x, y);
+		final int[] selectRows = tableUniqueInfo.getSelectedRows();
 		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				Color color = (Color) evt.getNewValue();
-				int[] selectRows = tableUniqueInfo.getSelectedRows();
 				if (selectRows.length > 0) {
 					for (int i = 0; i < selectRows.length; i++) {
 						int selectRow = selectRows[i];
@@ -729,18 +740,21 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 							tableUniqueInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 						}
 					}
+					getTable();
+					for (int i = 0; i < selectRows.length; i++) {
+						tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+					}
 				}
 				popupMenu.setVisible(false);
 			}
 		});
-		getTable();
 	}
 
 	/**
 	 * 重置选择项颜色
 	 *
 	 * @param selectRow 要重置颜色的行
-	 * @param nowColor  新的颜色
+	 * @param nowColor 新的颜色
 	 */
 	private void resetColor(int selectRow, Color nowColor) {
 		ThemeGridUniqueItem item = this.themeUnique.getItem(selectRow);

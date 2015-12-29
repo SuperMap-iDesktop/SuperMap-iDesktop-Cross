@@ -1,38 +1,23 @@
 package com.supermap.desktop.newtheme;
 
-import java.awt.Color;
+import com.supermap.data.*;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.mapping.*;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.geom.Arc2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeType;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
 
 public class AddItemPanel extends JPopupMenu {
 
@@ -47,6 +32,7 @@ public class AddItemPanel extends JPopupMenu {
 	private JButton buttonAdd = new JButton();
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
+	private DecimalFormat decimalFormat = new DecimalFormat("0.######");
 
 	private transient ThemeUnique themeUnique;
 	private transient ThemeGridUnique themeGridUnique;
@@ -210,12 +196,12 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		if (deleteGridUniqueItems != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
+				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
 			}
 		}
 		if (themeGridUnique != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (int i = 0; i < themeGridUnique.getCount(); i++) {
-				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((int) themeGridUnique.getItem(i).getUnique()));
+				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(decimalFormat.format(themeGridUnique.getItem(i).getUnique())));
 			}
 		}
 	}
@@ -340,8 +326,8 @@ public class AddItemPanel extends JPopupMenu {
 					if (selectList != null && !selectList.isEmpty()) {
 						for (String selectItem : selectList) {
 							ThemeGridUniqueItem gridUniqueItem = getDeletedGridItem(selectItem);
-							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf((int) gridUniqueItem.getUnique()));
-							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) gridUniqueItem.getUnique())));
+							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(decimalFormat.format(gridUniqueItem.getUnique())));
+							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((decimalFormat.format(gridUniqueItem.getUnique()))));
 							themeGridUnique.add(gridUniqueItem);
 							deleteGridUniqueItems.remove(gridUniqueItem);
 						}
@@ -370,9 +356,9 @@ public class AddItemPanel extends JPopupMenu {
 						HashMap<Integer, ThemeGridUniqueItem> result = getNeedDeleteGridItemHashMap(selectList);
 						for (int i = themeGridUnique.getCount() - 1; i >= 0; i--) {
 							if (result.get(i) != null) {
-								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf(((int) result.get(i).getUnique())));
+								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf((decimalFormat.format(result.get(i).getUnique()))));
 								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
-										String.valueOf(((int) result.get(i).getUnique())));
+										String.valueOf((decimalFormat.format(result.get(i).getUnique()))));
 								deleteGridUniqueItems.add(new ThemeGridUniqueItem(result.get(i)));
 								themeGridUnique.remove(i);
 
@@ -416,8 +402,8 @@ public class AddItemPanel extends JPopupMenu {
 				// 先从已删除的子项找
 				for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
 					if (Double.compare(deleteGridItem.getUnique(), Double.parseDouble(caption)) == 0) {
-						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(((int) deleteGridItem.getUnique())));
-						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(((int) deleteGridItem.getUnique())));
+						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
+						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
 						themeGridUnique.add(deleteGridItem);
 						deleteGridUniqueItems.remove(deleteGridItem);
 						return;

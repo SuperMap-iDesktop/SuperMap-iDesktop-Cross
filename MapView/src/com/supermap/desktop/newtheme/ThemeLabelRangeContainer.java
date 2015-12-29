@@ -310,7 +310,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
+			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -955,7 +955,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private void resetComboBoxRangeExpression(String expression) {
 		comboBoxExpression.setSelectedItem(expression);
 	}
-	
+
 	class LocalSpinnerChangeListener implements ChangeListener {
 
 		@Override
@@ -1000,16 +1000,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow))
 							&& (selectRow != tableLabelInfo.getRowCount() - 1)) {
 						// 如果输入为数值且段值合法时修改段值
-						themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
-						String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
-						String caption = themeLabel.getItem(selectRow).getCaption();
-						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), end);
-						themeLabel.getItem(selectRow).setCaption(caption);
-						if (selectRow != themeLabel.getCount() - 1) {
-							String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
-							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), end);
-							themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
-						}
+						setLabelRangeValue(selectRow, rangeValue);
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
@@ -1023,6 +1014,40 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				tableLabelInfo.addRowSelectionInterval(selectRow, selectRow);
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+
+		private void setLabelRangeValue(int selectRow, String rangeValue) {
+			themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+			String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
+			String caption = themeLabel.getItem(selectRow).getCaption();
+			String numicString = "<";
+			String numString = "-";
+			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
+			if (captiontype.contains(numicString) && caption.contains("<")) {
+				repleaceCaption(caption, selectRow, end, numicString);
+			} else if (captiontype.contains(numString) && caption.contains(numString)) {
+				repleaceCaption(caption, selectRow, end, numString);
+			}
+		}
+
+		private void repleaceCaption(String caption, int selectRow, String end, String numic) {
+			if (caption.lastIndexOf(numic) < 0) {
+				return;
+			}
+			// 替换当前行的标题
+			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
+			if (StringUtilties.isNumber(endString)) {
+				caption = caption.replace(endString, end);
+				themeLabel.getItem(selectRow).setCaption(caption);
+			}
+			// 替换下一行的标题
+			if (selectRow != themeLabel.getCount() - 1) {
+				String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
+				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
+					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), end);
+					themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
+				}
 			}
 		}
 

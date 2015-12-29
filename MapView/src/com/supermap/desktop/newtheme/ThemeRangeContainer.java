@@ -234,7 +234,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
 				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
 		if (this.themeRange.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
@@ -286,7 +286,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
+				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
 		if (this.themeRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeRange.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -318,7 +318,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangePrecision() {
 		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[]{"10000000", "1000000", "100000", "10000", "1000", "100",
-				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001"}));
+				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
 
 		String numeric = initPrecision(String.valueOf(this.themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
@@ -430,7 +430,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
+			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -1199,22 +1199,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					String rangeValue = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
-						// rangeValue = new
-						// DecimalFormat(numeric).format(Double.valueOf(rangeValue));
-						String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
-						numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
-						DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
-						String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
-						themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
-						String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
-						String caption = themeRange.getItem(selectRow).getCaption();
-						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), endValue);
-						themeRange.getItem(selectRow).setCaption(caption);
-						if (selectRow != themeRange.getCount() - 1) {
-							String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
-							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), endValue);
-							themeRange.getItem(selectRow + 1).setCaption(nextCaption);
-						}
+						setRangeValue(selectRow, rangeValue);
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
@@ -1231,11 +1216,50 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 		}
 
+		private void setRangeValue(int selectRow, String rangeValue) {
+			String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
+			numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
+			DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
+			String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
+			themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
+			String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
+			String caption = themeRange.getItem(selectRow).getCaption();
+			String numicString = "<";
+			String numString = "-";
+			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
+			if (captiontype.contains(numicString) && caption.contains("<")) {
+				repleaceCaption(caption, selectRow, endValue, numicString);
+			} else if (captiontype.contains(numString) && caption.contains(numString)) {
+				repleaceCaption(caption, selectRow, endValue, numString);
+			}
+		}
+
+		private void repleaceCaption(String caption, int selectRow, String endValue, String numic) {
+			if (caption.lastIndexOf(numic) < 0) {
+				return;
+			}
+			// 替换当前行的标题
+			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
+			if (StringUtilties.isNumber(endString)) {
+				caption = caption.replace(endString, endValue);
+				themeRange.getItem(selectRow).setCaption(caption);
+			}
+			// 替换下一行的标题
+			if (selectRow != themeRange.getCount() - 1) {
+				String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
+				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
+					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), endValue);
+					themeRange.getItem(selectRow + 1).setCaption(nextCaption);
+				}
+			}
+		}
+
 	}
 
 	private void resetComboBoxRangeExpression(String expression) {
 		comboBoxExpression.setSelectedItem(expression);
 	}
+
 	/**
 	 * 刷新theme
 	 *
