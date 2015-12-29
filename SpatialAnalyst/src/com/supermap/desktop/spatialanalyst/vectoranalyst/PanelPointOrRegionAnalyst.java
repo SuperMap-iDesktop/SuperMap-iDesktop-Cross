@@ -15,6 +15,8 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -64,17 +66,21 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private JComboBox<Unit> comboBoxUnitBox;
 	private DatasetVector resultDatasetVector;
 	private ComboBoxField comboBoxField;
-	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
-	private LocalItemListener localItemListener = new LocalItemListener();
 	private boolean isButtonOKEnabled = true;
 	private boolean isButtonEnabled = true;
 	private boolean isBufferSucceed;
 	private boolean isShowInMap;
+	private boolean isRadiusNumSuitable;
+	private boolean isDatasourceReadOnly;
+	private boolean isTextFieldDatasetNotNull = true;
+
 	private DoSome some;
 	private BufferProgressCallable bufferProgressCallable;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
 	private final static Object DEFAULT_VALUE = 10;
+	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+	private LocalItemListener localItemListener = new LocalItemListener();
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -84,10 +90,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		return isButtonOKEnabled;
 	}
 
-	public void setButtonOKEnabled(boolean buttonOKEnabled) {
-		this.isButtonOKEnabled = buttonOKEnabled;
+	public void setButtonOKEnabled(boolean isButtonOKEnabled) {
+		this.isButtonOKEnabled = isButtonOKEnabled;
 		if (some != null) {
-			some.doSome(buttonOKEnabled);
+			some.doSome(isButtonOKEnabled, isButtonEnabled, isRadiusNumSuitable);
 		}
 	}
 
@@ -97,22 +103,28 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	public void setButtonEnabled(boolean isButtonEnabled) {
 		this.isButtonEnabled = isButtonEnabled;
+		if (some != null) {
+			some.doSome(isButtonOKEnabled, isButtonEnabled, isRadiusNumSuitable);
+		}
 	}
 
-	public PanelBufferData getPanelBufferData() {
-		return panelBufferData;
+	public boolean isRadiusNumSuitable() {
+		return isRadiusNumSuitable;
 	}
 
-	public void setPanelBufferData(PanelBufferData panelBufferData) {
-		this.panelBufferData = panelBufferData;
+	public void setRadiusNumSuitable(boolean isRadiusNumSuitable) {
+		this.isRadiusNumSuitable = isRadiusNumSuitable;
+		if (some != null) {
+			some.doSome(isButtonOKEnabled, isButtonEnabled, isRadiusNumSuitable);
+		}
 	}
 
-	public PanelResultSet getPanelResultSet() {
-		return panelResultSet;
+	public boolean isDatasourceReadOnly() {
+		return isDatasourceReadOnly;
 	}
 
-	public void setPanelResultSet(PanelResultSet panelResultSet) {
-		this.panelResultSet = panelResultSet;
+	public void setDatasourceReadOnly(boolean isDatasourceReadOnly) {
+		this.isDatasourceReadOnly = isDatasourceReadOnly;
 	}
 
 	public PanelPointOrRegionAnalyst() {
@@ -147,6 +159,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private void setPanelPointOrRegionAnalyst() {
 		setPanelBufferData();
 		setPanelBufferRadius();
+		setPanelResultData();
 		registerEvent();
 	}
 
@@ -256,6 +269,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * 当窗体界面打开时，且打开的窗体是地图时，如果数据集不是线或者网络数据集，设置选中数据集的数据源的第一个线或者网络数据集，否则设置数据集为选中地图的第一个数据集 如果窗体没有打开，获取工作空间树选中节点,得到选中的数据集，数据源
 	 */
 	private void setPanelBufferData() {
+		setDatasourceAndDataset();
+	}
+
+	private void setDatasourceAndDataset() {
 		int layersCount;
 		setComboBoxDatasetType();
 		// 窗体激活，且打开的窗体是地图,如果窗体没有激活，直接获取工作空间树节点，通过树节点数据
@@ -266,13 +283,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
-
 					if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.POINT3D
 							|| activeLayer[i].getDataset().getType() == DatasetType.REGION || activeLayer[i].getDataset().getType() == DatasetType.REGION3D) {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
-							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
-							this.panelResultData.resetDatasetName();
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
 							recordset = activeLayer[i].getSelection().toRecordset();
@@ -287,10 +301,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 						setWorkspaceTreeNode();
 					}
 				}
+			} else {
+				setWorkspaceTreeNode();
 			}
 		} else {
 			setWorkspaceTreeNode();
-
 		}
 	}
 
@@ -303,8 +318,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			if (nodeData.getData() instanceof Datasource) {
 				Datasource selectedDatasource = (Datasource) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
-				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
-				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
 				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
 					setButtonEnabled(false);
@@ -312,8 +325,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
 				if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
 						|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
@@ -353,6 +364,12 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.radius = Double.parseDouble(this.textFieldNumeric.getValue().toString());
 	}
 
+	private void setPanelResultData() {
+		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
+				this.panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource());
+
+	}
+
 	private void registerEvent() {
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
@@ -371,7 +388,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
-		this.panelResultData.resetDatasetName();
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
@@ -455,8 +471,16 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 						getButtonOkEnabled();
 					}
 				});
+		this.textFieldNumeric.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				judgeRadiusNum();
+			}
+		});
+
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
+
 	}
 
 	class LocalItemListener implements ItemListener {
@@ -537,4 +561,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
+	private void judgeRadiusNum() {
+
+		double num = Double.parseDouble(textFieldNumeric.getValue().toString());
+
+		if (num <= 0) {
+			setRadiusNumSuitable(false);
+		} else {
+			setRadiusNumSuitable(true);
+		}
+	}
 }
