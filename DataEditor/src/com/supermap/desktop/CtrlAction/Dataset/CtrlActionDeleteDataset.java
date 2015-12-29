@@ -1,10 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.text.MessageFormat;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -16,6 +11,9 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.CursorUtilties;
+
+import javax.swing.*;
+import java.text.MessageFormat;
 
 public class CtrlActionDeleteDataset extends CtrlAction {
 
@@ -52,6 +50,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 							String resultInfo = MessageFormat.format(DataEditorProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
 									.getDatasource().getAlias(), datasets[i].getName());
 							datasets[i].getDatasource().getDatasets().delete(datasets[i].getName());
+							datasets[i] = null;
 							Application.getActiveApplication().getOutput().output(resultInfo);
 						}
 						Application.getActiveApplication().setActiveDatasets(null);

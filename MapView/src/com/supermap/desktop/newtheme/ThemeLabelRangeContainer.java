@@ -185,14 +185,14 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		String expression = themeLabel.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
+		rangeExpression = themeLabel.getRangeExpression();
+		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
+			rangeExpression = "0";
 		}
-		this.comboBoxExpression.setSelectedItem(expression);
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
+		this.comboBoxExpression.setSelectedItem(rangeExpression);
+		if (!rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
+			this.comboBoxExpression.addItem(rangeExpression);
+			this.comboBoxExpression.setSelectedItem(rangeExpression);
 		}
 	}
 
@@ -310,7 +310,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
+			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -717,32 +717,58 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
 				// 平方根分度
-				rangeMode = RangeMode.SQUAREROOT;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为平方根分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.SQUAREROOT;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_StdDeviation"))) {
 				// 标准差分段
 				rangeMode = RangeMode.STDDEVIATION;
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
-				// 对数分度
-				rangeMode = RangeMode.LOGARITHM;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				// 对数分段
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为对数分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.LOGARITHM;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Quantile"))) {
 				// 等计数分段
 				rangeMode = RangeMode.QUANTILE;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			}
-			resetThemeInfo();
 			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
@@ -764,7 +790,60 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = comboBoxExpression.getSelectedItem().toString();
-			resetThemeInfo();
+			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
+				// 有负数且为平方根分段
+				JOptionPane.showMessageDialog(
+						null,
+						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
+				return;
+			}
+			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
+				// 有负数且为对数分段
+				JOptionPane.showMessageDialog(
+						null,
+						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
+				return;
+			}
+			if (rangeMode == RangeMode.CUSTOMINTERVAL) {
+				makeDefaultAsCustom();
+				return;
+			} else {
+				resetThemeInfo();
+				return;
+			}
+		}
+
+		private void resetComboBoxRangeMode() {
+			if (rangeMode.equals(RangeMode.EQUALINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.SQUAREROOT)) {
+				comboBoxRangeMethod.setSelectedIndex(1);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.STDDEVIATION)) {
+				comboBoxRangeMethod.setSelectedIndex(2);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.LOGARITHM)) {
+				comboBoxRangeMethod.setSelectedIndex(3);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.QUANTILE)) {
+				comboBoxRangeMethod.setSelectedIndex(4);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.CUSTOMINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(5);
+				return;
+			}
 		}
 
 		/**
@@ -773,23 +852,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		private void resetThemeInfo() {
 			if (rangeExpression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
-			}
-			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
-				// 有负数且为平方根分段
-				JOptionPane.showMessageDialog(
-						null,
-						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
-			} else if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
-				// 有负数且为对数分段
-				JOptionPane.showMessageDialog(
-						null,
-						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
 			} else if (labelCount < 2 || labelCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeLabel.getCount()));
@@ -799,6 +861,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				} else {
 					refreshThemeLabel(theme);
 				}
@@ -881,11 +944,16 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 			} else {
 				this.isCustom = true;
 				refreshThemeLabel(theme);
 			}
 		}
+	}
+
+	private void resetComboBoxRangeExpression(String expression) {
+		comboBoxExpression.setSelectedItem(expression);
 	}
 
 	class LocalSpinnerChangeListener implements ChangeListener {
@@ -932,16 +1000,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow))
 							&& (selectRow != tableLabelInfo.getRowCount() - 1)) {
 						// 如果输入为数值且段值合法时修改段值
-						themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
-						String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
-						String caption = themeLabel.getItem(selectRow).getCaption();
-						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), end);
-						themeLabel.getItem(selectRow).setCaption(caption);
-						if (selectRow != themeLabel.getCount() - 1) {
-							String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
-							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), end);
-							themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
-						}
+						setLabelRangeValue(selectRow, rangeValue);
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
@@ -955,6 +1014,40 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				tableLabelInfo.addRowSelectionInterval(selectRow, selectRow);
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+
+		private void setLabelRangeValue(int selectRow, String rangeValue) {
+			themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
+			String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
+			String caption = themeLabel.getItem(selectRow).getCaption();
+			String numicString = "<";
+			String numString = "-";
+			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
+			if (captiontype.contains(numicString) && caption.contains("<")) {
+				repleaceCaption(caption, selectRow, end, numicString);
+			} else if (captiontype.contains(numString) && caption.contains(numString)) {
+				repleaceCaption(caption, selectRow, end, numString);
+			}
+		}
+
+		private void repleaceCaption(String caption, int selectRow, String end, String numic) {
+			if (caption.lastIndexOf(numic) < 0) {
+				return;
+			}
+			// 替换当前行的标题
+			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
+			if (StringUtilties.isNumber(endString)) {
+				caption = caption.replace(endString, end);
+				themeLabel.getItem(selectRow).setCaption(caption);
+			}
+			// 替换下一行的标题
+			if (selectRow != themeLabel.getCount() - 1) {
+				String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
+				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
+					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), end);
+					themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
+				}
 			}
 		}
 

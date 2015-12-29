@@ -251,6 +251,9 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
+			if (null == newLayer) {
+				layersTree.setSelectionRow(0);
+			}
 			resetThemeMainContainer(newLayer);
 		}
 	}
@@ -261,7 +264,9 @@ public class ThemeMainContainer extends JPanel {
 			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
 			oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
 			boolean isResetThemeMain = false;
-			map = ThemeGuideFactory.getMapControl().getMap();
+			if (null != ThemeGuideFactory.getMapControl()) {
+				map = ThemeGuideFactory.getMapControl().getMap();
+			}
 			// 当地图中不存在图层时刷新专题图
 			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
 				updateThemeMainContainer();

@@ -74,7 +74,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient Map map;
 	private transient ThemeRange themeRange;
 	private transient Layer themeRangeLayer;
-	//	private String numeric = "#";
+	// private String numeric = "#";
 	private String rangeExpression = "SmID";
 	private transient RangeMode rangeMode = RangeMode.EQUALINTERVAL;
 	private transient int rangeCount = 5;
@@ -127,7 +127,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(dataset, themeRange, true);
-			this.themeRange = (ThemeRange) themeRangeLayer.getTheme();
+			this.themeRange = (ThemeRange) this.themeRangeLayer.getTheme();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -148,7 +148,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		initPanelProperty();
 		initPanelAdvance();
 		this.comboBoxColorStyle.setSelectedIndex(21);
-		if (isNewTheme) {
+		if (this.isNewTheme) {
 			refreshColor();
 		}
 	}
@@ -159,7 +159,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initPanelProperty() {
 		//@formatter:off
 		initToolBar();
-		getFieldComboBox(comboBoxExpression);
+		getFieldComboBox(this.comboBoxExpression);
 		initComboBoxRangeExpression();
 		initComboBoxRangMethod();
 		initComboBoxRangeCount();
@@ -173,7 +173,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
 		this.panelProperty.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		this.spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
 		this.panelProperty.add(this.spinnerRangeLength,    new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelRangePrecision,   new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
@@ -188,7 +188,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
 		
-		this.scrollPane.setViewportView(tableRangeInfo);
+		this.scrollPane.setViewportView(this.tableRangeInfo);
 		//@formatter:on
 	}
 
@@ -197,7 +197,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		String expression = themeRange.getRangeExpression();
+		String expression = this.themeRange.getRangeExpression();
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
@@ -234,8 +234,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
 		if (this.themeRange.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -251,7 +251,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initComboBoxOffsetX() {
 		getFieldComboBox(this.comboBoxOffsetX);
 		this.comboBoxOffsetX.addItem("0");
-		String offsetX = themeRange.getOffsetX();
+		String offsetX = this.themeRange.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
 			offsetX = "0";
 		}
@@ -268,7 +268,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initComboBoxOffsetY() {
 		getFieldComboBox(this.comboBoxOffsetY);
 		this.comboBoxOffsetY.addItem("0");
-		String offsetY = themeRange.getOffsetY();
+		String offsetY = this.themeRange.getOffsetY();
 		if (StringUtilties.isNullOrEmpty(offsetY)) {
 			offsetY = "0";
 		}
@@ -286,18 +286,18 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
-		if (themeRange.getRangeMode() == RangeMode.NONE) {
+				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
+		if (this.themeRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeRange.getRangeMode() == RangeMode.SQUAREROOT) {
 			this.comboBoxRangeMethod.setSelectedIndex(1);
-		} else if (themeRange.getRangeMode() == RangeMode.STDDEVIATION) {
+		} else if (this.themeRange.getRangeMode() == RangeMode.STDDEVIATION) {
 			this.comboBoxRangeMethod.setSelectedIndex(2);
-		} else if (themeRange.getRangeMode() == RangeMode.LOGARITHM) {
+		} else if (this.themeRange.getRangeMode() == RangeMode.LOGARITHM) {
 			this.comboBoxRangeMethod.setSelectedIndex(3);
-		} else if (themeRange.getRangeMode() == RangeMode.QUANTILE) {
+		} else if (this.themeRange.getRangeMode() == RangeMode.QUANTILE) {
 			this.comboBoxRangeMethod.setSelectedIndex(4);
-		} else if (themeRange.getRangeMode() == RangeMode.CUSTOMINTERVAL) {
+		} else if (this.themeRange.getRangeMode() == RangeMode.CUSTOMINTERVAL) {
 			this.comboBoxRangeMethod.setSelectedIndex(5);
 		}
 	}
@@ -307,9 +307,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeCount() {
 		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
+				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		this.comboBoxRangeCount.setEditable(true);
-		int rangeCountNumber = themeRange.getCount();
+		int rangeCountNumber = this.themeRange.getCount();
 		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCountNumber));
 	}
 
@@ -318,9 +318,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangePrecision() {
 		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[]{"10000000", "1000000", "100000", "10000", "1000", "100",
-				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001"}));
+				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
 
-		String numeric = initPrecision(String.valueOf(themeRange.getPrecision()));
+		String numeric = initPrecision(String.valueOf(this.themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
 	}
 
@@ -354,7 +354,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段标题格式
 	 */
 	private void initComboBoxRangeFormat() {
-		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
+		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
 	}
 
@@ -390,8 +390,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private JTable getTable() {
 		this.rangeCount = this.themeRange.getCount();
-		tableModel = new LocalDefualTableModel(new Object[rangeCount][4], nameStrings);
-		this.tableRangeInfo.setModel(tableModel);
+		this.tableModel = new LocalDefualTableModel(new Object[this.rangeCount][4], this.nameStrings);
+		this.tableRangeInfo.setModel(this.tableModel);
 		initColumnIcon();
 		this.tableRangeInfo.setRowHeight(20);
 
@@ -430,7 +430,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<") && !caption.contains("X")) {
+			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
 				caption = caption.replaceAll("-", "<= X <");
 			}
 			rangeItem.setCaption(caption);
@@ -444,9 +444,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
-		int count = datasetVector.getFieldCount();
+		int count = this.datasetVector.getFieldCount();
 		for (int j = 0; j < count; j++) {
-			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
+			FieldInfo fieldInfo = this.datasetVector.getFieldInfos().get(j);
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
 				String item = datasetVector.getName() + "." + fieldInfo.getName();
@@ -461,20 +461,20 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 颜色方案改变时刷新颜色
 	 */
 	private void refreshColor() {
-		if (comboBoxColorStyle != null) {
-			int colorCount = ((Colors) comboBoxColorStyle.getSelectedItem()).getCount();
-			Colors colors = (Colors) comboBoxColorStyle.getSelectedItem();
-			int themeRangeCount = themeRange.getCount();
+		if (this.comboBoxColorStyle != null) {
+			int colorCount = ((Colors) this.comboBoxColorStyle.getSelectedItem()).getCount();
+			Colors colors = (Colors) this.comboBoxColorStyle.getSelectedItem();
+			int themeRangeCount = this.themeRange.getCount();
 			if (themeRangeCount > 0) {
 				float ratio = (1f * colorCount) / (1f * themeRangeCount);
-				setGeoStyleColor(themeRange.getItem(0).getStyle(), colors.get(0));
-				setGeoStyleColor(themeRange.getItem(themeRangeCount - 1).getStyle(), colors.get(colorCount - 1));
+				setGeoStyleColor(this.themeRange.getItem(0).getStyle(), colors.get(0));
+				setGeoStyleColor(this.themeRange.getItem(themeRangeCount - 1).getStyle(), colors.get(colorCount - 1));
 				for (int i = 1; i < themeRangeCount - 1; i++) {
 					int colorIndex = Math.round(i * ratio);
 					if (colorIndex == colorCount) {
 						colorIndex--;
 					}
-					setGeoStyleColor(themeRange.getItem(i).getStyle(), colors.get(colorIndex));
+					setGeoStyleColor(this.themeRange.getItem(i).getStyle(), colors.get(colorIndex));
 				}
 			}
 		}
@@ -484,10 +484,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 根据当前数据集类型设置颜色方案
 	 *
 	 * @param geoStyle 需要设置的风格
-	 * @param color    设置的颜色
+	 * @param color 设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
-		DatasetType datasetType = datasetVector.getType();
+		DatasetType datasetType = this.datasetVector.getType();
 		if (CommonToolkit.DatasetTypeWrap.isPoint(datasetType) || CommonToolkit.DatasetTypeWrap.isLine(datasetType)) {
 			geoStyle.setLineColor(color);
 		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetType)) {
@@ -507,9 +507,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.toolBar.addSeparator();
 		this.buttonMerge.setIcon(InternalImageIconFactory.Merge);
 		this.buttonSplit.setIcon(InternalImageIconFactory.Split);
-		if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
+		if (CommonToolkit.DatasetTypeWrap.isRegion(this.datasetVector.getType())) {
 			this.buttonStyle.setIcon(InternalImageIconFactory.REGION_STYLE);
-		} else if (CommonToolkit.DatasetTypeWrap.isLine(datasetVector.getType())) {
+		} else if (CommonToolkit.DatasetTypeWrap.isLine(this.datasetVector.getType())) {
 			this.buttonStyle.setIcon(InternalImageIconFactory.LINE_STYLE);
 		} else {
 			this.buttonStyle.setIcon(InternalImageIconFactory.POINT_STYLE);
@@ -566,27 +566,27 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 批量设置文本风格
 	 */
 	private void setItemGeoSytle() {
-		int[] selectedRow = tableRangeInfo.getSelectedRows();
+		int[] selectedRow = this.tableRangeInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = new SymbolDialog();
-		String name = tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-		int width = tableRangeInfo.getColumn(name).getWidth();
-		int height = tableRangeInfo.getTableHeader().getHeight();
-		int x = tableRangeInfo.getLocationOnScreen().x + width;
-		int y = tableRangeInfo.getLocationOnScreen().y - height;
+		String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
+		int width = this.tableRangeInfo.getColumn(name).getWidth();
+		int height = this.tableRangeInfo.getTableHeader().getHeight();
+		int x = this.tableRangeInfo.getLocationOnScreen().x + width;
+		int y = this.tableRangeInfo.getLocationOnScreen().y - height;
 		textStyleDialog.setLocation(x, y);
 		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 		SymbolType symbolType = null;
 
-		if (CommonToolkit.DatasetTypeWrap.isPoint(datasetVector.getType())) {
+		if (CommonToolkit.DatasetTypeWrap.isPoint(this.datasetVector.getType())) {
 			symbolType = SymbolType.MARKER;
-		} else if (CommonToolkit.DatasetTypeWrap.isLine(datasetVector.getType())) {
+		} else if (CommonToolkit.DatasetTypeWrap.isLine(this.datasetVector.getType())) {
 			symbolType = SymbolType.LINE;
-		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
+		} else if (CommonToolkit.DatasetTypeWrap.isRegion(this.datasetVector.getType())) {
 			symbolType = SymbolType.FILL;
 		}
 
 		if (selectedRow.length == 1) {
-			GeoStyle geoStyle = themeRange.getItem(selectedRow[0]).getStyle();
+			GeoStyle geoStyle = this.themeRange.getItem(selectedRow[0]).getStyle();
 
 			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
 			if (dialogResult.equals(DialogResult.OK)) {
@@ -602,7 +602,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		} else if (selectedRow.length > 1) {
 			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
 			for (int i = 0; i < selectedRow.length; i++) {
-				geoStyleList.add(themeRange.getItem(selectedRow[i]).getStyle());
+				geoStyleList.add(this.themeRange.getItem(selectedRow[i]).getStyle());
 			}
 			JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
 			jDialogSymbolsChange.showDialog();
@@ -611,7 +611,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		getTable();
 		if (selectedRow.length > 0) {
 			for (int i = 0; i < selectedRow.length; i++) {
-				tableRangeInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
+				this.tableRangeInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}
 		}
 	}
@@ -619,14 +619,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow   要重置文本风格的行
+	 * @param selectRow 要重置文本风格的行
 	 * @param nowGeoStyle 新的文本风格
-	 * @param symbolType  文本的风格类型
+	 * @param symbolType 文本的风格类型
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle, SymbolType symbolType) {
-		ThemeRangeItem item = ((ThemeRange) themeRangeLayer.getTheme()).getItem(selectRow);
+		ThemeRangeItem item = ((ThemeRange) this.themeRangeLayer.getTheme()).getItem(selectRow);
 		item.setStyle(nowGeoStyle);
-		ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildGeoStyleIcon(datasetVector, nowGeoStyle);
+		ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildGeoStyleIcon(this.datasetVector, nowGeoStyle);
 		this.tableRangeInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 	}
 
@@ -943,30 +943,58 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_StdDeviation"))) {
 				// 标准差分段
 				rangeMode = RangeMode.STDDEVIATION;
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Quantile"))) {
 				// 等计数分段
 				rangeMode = RangeMode.QUANTILE;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
-				rangeMode = RangeMode.SQUAREROOT;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为平方根分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					// 重置分段方法下拉框
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.SQUAREROOT;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
-				rangeMode = RangeMode.LOGARITHM;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为对数分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					// 重置分段方法下拉框
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.LOGARITHM;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			}
-			resetThemeInfo();
 			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
@@ -987,7 +1015,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 * 设置分段舍入精度
 		 */
 		private void setRangePrecision() {
-			int index = comboBoxRangePrecision.getSelectedIndex();
 			String precisionStr = comboBoxRangePrecision.getSelectedItem().toString();
 			rangeCount = Integer.valueOf(comboBoxRangeCount.getSelectedItem().toString());
 			// 设置分段舍入精度，用于分度段数确定
@@ -1007,15 +1034,16 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = (String) comboBoxExpression.getSelectedItem();
-			resetThemeInfo();
-		}
-
-		/**
-		 * 重建专题图
-		 */
-		private void resetThemeInfo() {
-			if (rangeExpression.isEmpty()) {
-				comboBoxExpression.setSelectedIndex(0);
+			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
+				// 有负数且为对数分段
+				JOptionPane.showMessageDialog(
+						null,
+						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+						JOptionPane.ERROR_MESSAGE);
+				// 重置字段表达式下拉框
+				resetComboBoxRangeExpression(themeRange.getRangeExpression());
+				return;
 			}
 			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
 				// 有负数且为平方根分段
@@ -1024,15 +1052,25 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
-			} else if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
-				// 有负数且为对数分段
-				JOptionPane.showMessageDialog(
-						null,
-						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
+				// 重置字段表达式下拉框
+				resetComboBoxRangeExpression(themeRange.getRangeExpression());
+				return;
+			}
+			if (rangeMode == RangeMode.CUSTOMINTERVAL) {
+				makeDefaultAsCustom();
+				return;
+			} else {
+				resetThemeInfo();
+				return;
+			}
+		}
+
+		/**
+		 * 重建专题图
+		 */
+		private void resetThemeInfo() {
+			if (rangeExpression.isEmpty()) {
+				comboBoxExpression.setSelectedIndex(0);
 			} else if (rangeCount < 2 || rangeCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeRange.getCount()));
@@ -1042,9 +1080,37 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeExpression(themeRange.getRangeExpression());
 				} else {
 					refreshThemeRange(theme);
 				}
+			}
+		}
+
+		private void resetComboBoxRangeMode() {
+			if (rangeMode.equals(RangeMode.EQUALINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.SQUAREROOT)) {
+				comboBoxRangeMethod.setSelectedIndex(1);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.STDDEVIATION)) {
+				comboBoxRangeMethod.setSelectedIndex(2);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.LOGARITHM)) {
+				comboBoxRangeMethod.setSelectedIndex(3);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.QUANTILE)) {
+				comboBoxRangeMethod.setSelectedIndex(4);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.CUSTOMINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(5);
+				return;
 			}
 		}
 
@@ -1133,21 +1199,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					String rangeValue = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
-//						rangeValue = new DecimalFormat(numeric).format(Double.valueOf(rangeValue));
-						String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
-						numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
-						DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
-						String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
-						themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
-						String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
-						String caption = themeRange.getItem(selectRow).getCaption();
-						caption = caption.replace(caption.substring(caption.lastIndexOf("<") + 1, caption.length()), endValue);
-						themeRange.getItem(selectRow).setCaption(caption);
-						if (selectRow != themeRange.getCount() - 1) {
-							String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
-							nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf("<")), endValue);
-							themeRange.getItem(selectRow + 1).setCaption(nextCaption);
-						}
+						setRangeValue(selectRow, rangeValue);
 					}
 				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
@@ -1164,6 +1216,48 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 		}
 
+		private void setRangeValue(int selectRow, String rangeValue) {
+			String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
+			numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
+			DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
+			String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
+			themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
+			String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
+			String caption = themeRange.getItem(selectRow).getCaption();
+			String numicString = "<";
+			String numString = "-";
+			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
+			if (captiontype.contains(numicString) && caption.contains("<")) {
+				repleaceCaption(caption, selectRow, endValue, numicString);
+			} else if (captiontype.contains(numString) && caption.contains(numString)) {
+				repleaceCaption(caption, selectRow, endValue, numString);
+			}
+		}
+
+		private void repleaceCaption(String caption, int selectRow, String endValue, String numic) {
+			if (caption.lastIndexOf(numic) < 0) {
+				return;
+			}
+			// 替换当前行的标题
+			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
+			if (StringUtilties.isNumber(endString)) {
+				caption = caption.replace(endString, endValue);
+				themeRange.getItem(selectRow).setCaption(caption);
+			}
+			// 替换下一行的标题
+			if (selectRow != themeRange.getCount() - 1) {
+				String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
+				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
+					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), endValue);
+					themeRange.getItem(selectRow + 1).setCaption(nextCaption);
+				}
+			}
+		}
+
+	}
+
+	private void resetComboBoxRangeExpression(String expression) {
+		comboBoxExpression.setSelectedItem(expression);
 	}
 
 	/**
@@ -1203,6 +1297,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeRange.getRangeExpression());
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);
@@ -1252,7 +1347,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @return
 	 */
 	public boolean isRefreshAtOnece() {
-		return isRefreshAtOnce;
+		return this.isRefreshAtOnce;
 	}
 
 	/**
@@ -1270,7 +1365,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @return
 	 */
 	public Layer getThemeRangeLayer() {
-		return themeRangeLayer;
+		return this.themeRangeLayer;
 	}
 
 	/**
@@ -1284,7 +1379,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 	@Override
 	public Theme getCurrentTheme() {
-		return themeRange;
+		return this.themeRange;
 	}
 
 }

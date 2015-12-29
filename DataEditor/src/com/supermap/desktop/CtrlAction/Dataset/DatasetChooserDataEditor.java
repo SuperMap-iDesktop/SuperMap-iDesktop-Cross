@@ -4,28 +4,12 @@ package com.supermap.desktop.CtrlAction.Dataset;
  * @author Administrator 复制和删除数据集界面
  */
 
-import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Vector;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -34,6 +18,11 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.CharsetUtilties;
 import com.supermap.desktop.utilties.CursorUtilties;
+
+import javax.swing.*;
+import java.awt.event.*;
+import java.text.MessageFormat;
+import java.util.Vector;
 
 public class DatasetChooserDataEditor extends DatasetChooser {
 	/**
@@ -140,9 +129,11 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 
 				if (JOptionPane.OK_OPTION == UICommonToolkit
 						.showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectOneDataset"), datasourceName, datasetName))) {
-					boolean result = datasource.getDatasets().delete(datasetName);
+					Dataset deleteDataset = datasource.getDatasets().get(datasetName);
+					boolean result = datasource.getDatasets().delete(deleteDataset.getName());
 					workspaceTree.dispose();
 					if (result) {
+						deleteDataset = null;
 						String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
 								datasetName);
 						Application.getActiveApplication().getOutput().output(successInfo);
@@ -156,8 +147,10 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 				// 删除选中的多条数据
 				for (int i = 0; i < selectRows.length; i++) {
 					String datasetName = model.getTagValue(selectRows[i]).get(0).toString();
+					Dataset deleteDataset = datasource.getDatasets().get(datasetName);
 					boolean result = datasource.getDatasets().delete(datasetName);
 					if (result) {
+						deleteDataset = null;
 						String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
 								datasetName);
 						Application.getActiveApplication().getOutput().output(successInfo);
