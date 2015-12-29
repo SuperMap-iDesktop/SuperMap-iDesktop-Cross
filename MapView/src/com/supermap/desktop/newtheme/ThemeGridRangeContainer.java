@@ -171,7 +171,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"),
-				MapViewProperties.getString("String_RangeMode_CustomInterval")}));
+				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
 		this.comboBoxRangeMethod.setEditable(true);
 		if (themeGridRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
@@ -189,7 +189,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeCount() {
 		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
-				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
+				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		this.comboBoxRangeCount.setEditable(true);
 		int rangeCountNumber = themeGridRange.getCount();
 		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCountNumber));
@@ -199,7 +199,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 初始化段标题格式
 	 */
 	private void initComboBoxRangeFormat() {
-		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
+		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
 		this.comboBoxRangeFormat.setSelectedIndex(1);
 	}
 
@@ -259,7 +259,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (i == rangeCount - 1) {
 				this.tableRangeInfo.setValueAt("Max", i, TABLE_COLUMN_RANGEVALUE);
 			} else {
-				this.tableRangeInfo.setValueAt(gridRangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
+				DecimalFormat format = new DecimalFormat("#.######");
+				String itemEnd = format.format(gridRangeItem.getEnd());
+				this.tableRangeInfo.setValueAt(itemEnd, i, TABLE_COLUMN_RANGEVALUE);
 			}
 
 			String caption = gridRangeItem.getCaption();
@@ -384,7 +386,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 重置选择项颜色
 	 *
 	 * @param selectRow 要重置颜色的行
-	 * @param nowColor  新的颜色
+	 * @param nowColor 新的颜色
 	 */
 	private void resetColor(int selectRow, Color nowColor) {
 		ThemeGridRangeItem item = this.themeGridRange.getItem(selectRow);
@@ -469,8 +471,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			isMergeOrSplit = true;
 			getTable();
 			rangeCount = themeGridRange.getCount();
+			tableRangeInfo.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
-			tableRangeInfo.addRowSelectionInterval(selectedRows[0], selectedRows[0]);
 			buttonMerge.setEnabled(false);
 			buttonSplit.setEnabled(true);
 		}
@@ -571,7 +573,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (e.getSource() == tableRangeInfo && 1 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE && tableRangeInfo.getSelectedRows().length == 1) {
+			if (e.getSource() == tableRangeInfo && 1 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE
+					&& tableRangeInfo.getSelectedRows().length == 1) {
 				int selectRow = tableRangeInfo.getSelectedRow();
 				ThemeGridRangeItem item = themeGridRange.getItem(selectRow);
 				boolean isVisible = item.isVisible();
@@ -649,24 +652,49 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		 */
 		private void setRangeMethod() {
 			String rangeMethod = comboBoxRangeMethod.getSelectedItem().toString();
+			double minValue = datasetGrid.getGridStatisticsResult().getMinValue();
 			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_EqualInterval"))) {
 				// 等距分段
 				rangeMode = RangeMode.EQUALINTERVAL;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
-				rangeMode = RangeMode.SQUAREROOT;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (Double.compare(minValue, 0) < 0) {
+					// 有负数且为平方根分段
+					JOptionPane.showMessageDialog(
+							null,
+							MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"),
+							"",
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.SQUAREROOT;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
-				rangeMode = RangeMode.LOGARITHM;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (Double.compare(minValue, 0) < 0) {
+					// 有负数且为对数分段
+					JOptionPane.showMessageDialog(
+							null,
+							MapViewProperties.getString("String_UnMakeGridRangeTheme"),
+							"",
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.LOGARITHM;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			}
-			resetThemeInfo();
 			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
@@ -684,31 +712,29 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			}
 		}
 
+		private void resetComboBoxRangeMode() {
+			if (rangeMode.equals(RangeMode.EQUALINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.SQUAREROOT)) {
+				comboBoxRangeMethod.setSelectedIndex(1);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.LOGARITHM)) {
+				comboBoxRangeMethod.setSelectedIndex(2);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.CUSTOMINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(3);
+				return;
+			}
+		}
+
 		/**
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
-			double minValue = datasetGrid.getGridStatisticsResult().getMinValue();
-			if (Double.compare(minValue, 0) < 0 && rangeMode == RangeMode.SQUAREROOT) {
-				// 有负数且为平方根分段
-				JOptionPane.showMessageDialog(
-						null,
-						MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"),
-						"",
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
-				return;
-			}
-			if (Double.compare(minValue, 0) < 0 && rangeMode == RangeMode.LOGARITHM) {
-				// 有负数且为对数分段
-				JOptionPane.showMessageDialog(
-						null,
-						MapViewProperties.getString("String_UnMakeGridRangeTheme"),
-						"",
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
-				return;
-			}
 			if (rangeCount < 2 || rangeCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeGridRange.getCount()));

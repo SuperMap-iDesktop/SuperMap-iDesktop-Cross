@@ -185,14 +185,14 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		String expression = themeLabel.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
+		rangeExpression = themeLabel.getRangeExpression();
+		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
+			rangeExpression = "0";
 		}
-		this.comboBoxExpression.setSelectedItem(expression);
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
+		this.comboBoxExpression.setSelectedItem(rangeExpression);
+		if (!rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
+			this.comboBoxExpression.addItem(rangeExpression);
+			this.comboBoxExpression.setSelectedItem(rangeExpression);
 		}
 	}
 
@@ -717,32 +717,58 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
 				// 平方根分度
-				rangeMode = RangeMode.SQUAREROOT;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为平方根分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.SQUAREROOT;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_StdDeviation"))) {
 				// 标准差分段
 				rangeMode = RangeMode.STDDEVIATION;
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
-				// 对数分度
-				rangeMode = RangeMode.LOGARITHM;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
+				// 对数分段
+				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+					// 有负数且为对数分段
+					JOptionPane.showMessageDialog(
+							null,
+							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeMode();
+					return;
+				} else {
+					rangeMode = RangeMode.LOGARITHM;
+					comboBoxRangeCount.setEnabled(true);
+					spinnerRangeLength.setEnabled(false);
+					isCustom = false;
+					resetThemeInfo();
+				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Quantile"))) {
 				// 等计数分段
 				rangeMode = RangeMode.QUANTILE;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
+				resetThemeInfo();
 			}
-			resetThemeInfo();
 			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
@@ -764,7 +790,60 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = comboBoxExpression.getSelectedItem().toString();
-			resetThemeInfo();
+			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
+				// 有负数且为平方根分段
+				JOptionPane.showMessageDialog(
+						null,
+						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
+				return;
+			}
+			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
+				// 有负数且为对数分段
+				JOptionPane.showMessageDialog(
+						null,
+						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
+				return;
+			}
+			if (rangeMode == RangeMode.CUSTOMINTERVAL) {
+				makeDefaultAsCustom();
+				return;
+			} else {
+				resetThemeInfo();
+				return;
+			}
+		}
+
+		private void resetComboBoxRangeMode() {
+			if (rangeMode.equals(RangeMode.EQUALINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(0);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.SQUAREROOT)) {
+				comboBoxRangeMethod.setSelectedIndex(1);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.STDDEVIATION)) {
+				comboBoxRangeMethod.setSelectedIndex(2);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.LOGARITHM)) {
+				comboBoxRangeMethod.setSelectedIndex(3);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.QUANTILE)) {
+				comboBoxRangeMethod.setSelectedIndex(4);
+				return;
+			}
+			if (rangeMode.equals(RangeMode.CUSTOMINTERVAL)) {
+				comboBoxRangeMethod.setSelectedIndex(5);
+				return;
+			}
 		}
 
 		/**
@@ -773,23 +852,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		private void resetThemeInfo() {
 			if (rangeExpression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
-			}
-			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
-				// 有负数且为平方根分段
-				JOptionPane.showMessageDialog(
-						null,
-						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
-			} else if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
-				// 有负数且为对数分段
-				JOptionPane.showMessageDialog(
-						null,
-						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
-				comboBoxRangeMethod.setSelectedIndex(0);
 			} else if (labelCount < 2 || labelCount > 32) {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeLabel.getCount()));
@@ -799,6 +861,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				} else {
 					refreshThemeLabel(theme);
 				}
@@ -881,6 +944,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 			} else {
 				this.isCustom = true;
 				refreshThemeLabel(theme);
@@ -888,6 +952,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		}
 	}
 
+	private void resetComboBoxRangeExpression(String expression) {
+		comboBoxExpression.setSelectedItem(expression);
+	}
+	
 	class LocalSpinnerChangeListener implements ChangeListener {
 
 		@Override

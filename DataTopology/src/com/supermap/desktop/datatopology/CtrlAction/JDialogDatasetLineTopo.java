@@ -6,16 +6,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DatasetComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -63,120 +59,73 @@ public class JDialogDatasetLineTopo extends SmDialog {
 
 	private void initResources() {
 		setTitle(DataTopologyProperties.getString("String_TopoLineTitle"));
-		buttonMore.setText(CommonProperties.getString("String_Button_Advance"));
-		buttonSure.setText(CommonProperties.getString("String_Button_OK"));
-		buttonQuite.setText(CommonProperties.getString("String_Button_Cancel"));
-		checkboxLinesIntersected.setText(DataTopologyProperties.getString("String_LinesIntersected"));
-		checkboxOvershootsCleaned.setText(DataTopologyProperties.getString("String_CleanOvershoots"));
-		checkboxPseudoNodesCleaned.setText(DataTopologyProperties.getString("String_CleanPseudoNodes"));
-		checkboxAdjacentEndpointsMerged.setText(DataTopologyProperties.getString("String_MergeAdjacentEndpoints"));
-		checkboxDuplicatedLinesCleaned.setText(DataTopologyProperties.getString("String_CleanDuplicatedLines"));
-		checkboxUndershootsExtended.setText(DataTopologyProperties.getString("String_CleanUndershoots"));
-		checkboxRedundantVerticesCleaned.setText(DataTopologyProperties.getString("String_RedundantVertices"));
-		labelDatasource.setText(CommonProperties.getString("String_Label_Datasource"));
-		labelDataset.setText(CommonProperties.getString("String_Label_Dataset"));
-		panelDatasource.setBorder(
+		this.buttonMore.setText(CommonProperties.getString("String_Button_Advance"));
+		this.buttonSure.setText(CommonProperties.getString("String_Button_OK"));
+		this.buttonQuite.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.checkboxLinesIntersected.setText(DataTopologyProperties.getString("String_LinesIntersected"));
+		this.checkboxOvershootsCleaned.setText(DataTopologyProperties.getString("String_CleanOvershoots"));
+		this.checkboxPseudoNodesCleaned.setText(DataTopologyProperties.getString("String_CleanPseudoNodes"));
+		this.checkboxAdjacentEndpointsMerged.setText(DataTopologyProperties.getString("String_MergeAdjacentEndpoints"));
+		this.checkboxDuplicatedLinesCleaned.setText(DataTopologyProperties.getString("String_CleanDuplicatedLines"));
+		this.checkboxUndershootsExtended.setText(DataTopologyProperties.getString("String_CleanUndershoots"));
+		this.checkboxRedundantVerticesCleaned.setText(DataTopologyProperties.getString("String_RedundantVertices"));
+		this.labelDatasource.setText(CommonProperties.getString("String_Label_Datasource"));
+		this.labelDataset.setText(CommonProperties.getString("String_Label_Dataset"));
+		this.panelDatasource.setBorder(
 				new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelTopoProcessingOptions.setBorder(
+		this.panelTopoProcessingOptions.setBorder(
 				new TitledBorder(null, DataTopologyProperties.getString("String_FixTopoErrorSettings"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	}
 
 	private void initComponents() {
-		setBounds(600, 300, 300, 315);
+		setBounds(600, 300, 300, 360);
 		initComboBoxColumn();
 		// @formatter:off
-		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING,groupLayout.createSequentialGroup()
-								.addComponent(buttonMore)
-								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-								.addComponent(buttonSure)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(buttonQuite))
-						.addComponent(panelDatasource, GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-						.addComponent(panelTopoProcessingOptions, GroupLayout.PREFERRED_SIZE, 270, Short.MAX_VALUE))
-						.addGap(26)));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(panelDatasource)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(panelTopoProcessingOptions)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(buttonMore)
-								.addComponent(buttonSure)
-								.addComponent(buttonQuite))
-						.addContainerGap(13, Short.MAX_VALUE)));
-        getContentPane().setLayout(groupLayout);
-		GroupLayout gl_panelTopoProcessingOptions = new GroupLayout(panelTopoProcessingOptions);
-		gl_panelTopoProcessingOptions.setAutoCreateContainerGaps(true);
-		gl_panelTopoProcessingOptions.setAutoCreateGaps(true);
-		gl_panelTopoProcessingOptions.setHorizontalGroup(gl_panelTopoProcessingOptions.createSequentialGroup()
-				.addGroup(gl_panelTopoProcessingOptions.createParallelGroup(Alignment.LEADING)
-						.addComponent(checkboxLinesIntersected, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,
-								Short.MAX_VALUE)
-						.addComponent(checkboxOvershootsCleaned, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,
-								Short.MAX_VALUE)
-						.addComponent(checkboxPseudoNodesCleaned, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,
-								Short.MAX_VALUE)
-						.addComponent(checkboxAdjacentEndpointsMerged, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_panelTopoProcessingOptions.createParallelGroup(Alignment.LEADING)
-						.addComponent(checkboxDuplicatedLinesCleaned, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-						.addComponent(checkboxUndershootsExtended, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,
-								Short.MAX_VALUE)
-						.addComponent(checkboxRedundantVerticesCleaned, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)));
-		gl_panelTopoProcessingOptions
-				.setVerticalGroup(gl_panelTopoProcessingOptions.createParallelGroup(Alignment.BASELINE)
-						.addGroup(gl_panelTopoProcessingOptions.createSequentialGroup()
-								.addComponent(checkboxLinesIntersected).addComponent(checkboxOvershootsCleaned)
-								.addComponent(checkboxPseudoNodesCleaned).addComponent(checkboxAdjacentEndpointsMerged))
-				.addGroup(gl_panelTopoProcessingOptions.createSequentialGroup()
-						.addComponent(checkboxDuplicatedLinesCleaned)
-						.addComponent(checkboxUndershootsExtended)
-						.addComponent(checkboxRedundantVerticesCleaned)));
-		panelTopoProcessingOptions.setLayout(gl_panelTopoProcessingOptions);
-
-		GroupLayout gl_panelDatasource = new GroupLayout(panelDatasource);
-		gl_panelDatasource.setAutoCreateContainerGaps(true);
-		gl_panelDatasource.setAutoCreateGaps(true);
-
-		gl_panelDatasource.setHorizontalGroup(gl_panelDatasource.createParallelGroup()
-						.addGroup(gl_panelDatasource.createSequentialGroup()
-								.addComponent(labelDatasource, 0, 72, Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(comboBoxDatasource, 0, 144, Short.MAX_VALUE))
-				.addGroup(gl_panelDatasource.createSequentialGroup().addComponent(labelDataset, 0, 72, Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(comboBoxDataset, 0, 144, Short.MAX_VALUE)));
-		gl_panelDatasource.setVerticalGroup(gl_panelDatasource.createSequentialGroup()
-				.addGroup(gl_panelDatasource.createParallelGroup()
-						.addComponent(labelDatasource)
-						.addComponent(comboBoxDatasource,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelDatasource.createParallelGroup()
-						.addComponent(labelDataset)
-						.addComponent(comboBoxDataset,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)));
+		initContentPane();
+		initPanelDatasource();
+		initPanelTopoProcessingOptions();
 		// @formatter:on
-		panelDatasource.setLayout(gl_panelDatasource);
+	}
 
-		checkboxAdjacentEndpointsMerged.setSelected(true);
-		checkboxDuplicatedLinesCleaned.setSelected(true);
-		checkboxLinesIntersected.setSelected(true);
-		checkboxOvershootsCleaned.setSelected(true);
-		checkboxPseudoNodesCleaned.setSelected(true);
-		checkboxRedundantVerticesCleaned.setSelected(true);
-		checkboxUndershootsExtended.setSelected(true);
+	private void initPanelTopoProcessingOptions() {
+		this.checkboxAdjacentEndpointsMerged.setSelected(true);
+		this.checkboxDuplicatedLinesCleaned.setSelected(true);
+		this.checkboxLinesIntersected.setSelected(true);
+		this.checkboxOvershootsCleaned.setSelected(true);
+		this.checkboxPseudoNodesCleaned.setSelected(true);
+		this.checkboxRedundantVerticesCleaned.setSelected(true);
+		this.checkboxUndershootsExtended.setSelected(true);
+		//@formatter:off
+		this.panelTopoProcessingOptions.setLayout(new GridBagLayout());
+		this.panelTopoProcessingOptions.add(this.checkboxLinesIntersected,         new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxDuplicatedLinesCleaned,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxOvershootsCleaned,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxUndershootsExtended,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxPseudoNodesCleaned,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxRedundantVerticesCleaned, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		this.panelTopoProcessingOptions.add(this.checkboxAdjacentEndpointsMerged,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,5,10).setWeight(1, 0));
+		//@formatter:on
+	}
+
+	private void initPanelDatasource() {
+		//@formatter:off
+		this.panelDatasource.setLayout(new GridBagLayout());
+		this.panelDatasource.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,0,10));
+		this.panelDatasource.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,0,10).setWeight(60, 0));
+		this.panelDatasource.add(this.labelDataset,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5,10,10,10));
+		this.panelDatasource.add(this.comboBoxDataset,    new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5,10,10,10).setWeight(60, 0));
+		//@formatter:on
 	}
 
 	private void initContentPane() {
-
+		//@formatter:off
+		getContentPane().setLayout(new GridBagLayout());
+		getContentPane().add(this.panelDatasource,            new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10,10,5,10).setWeight(1, 1));
+		getContentPane().add(this.panelTopoProcessingOptions, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10,10,5,10).setWeight(1, 1));
+		getContentPane().add(this.buttonMore,                 new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,10,60).setWeight(20, 0));
+		getContentPane().add(this.buttonSure,                 new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,0,10,0).setWeight(60, 0));
+		getContentPane().add(this.buttonQuite,                new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,5,10,10).setWeight(20, 0));
+		//@formatter:on
 	}
 
 	private void registActionListener() {
@@ -188,10 +137,10 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		this.checkboxPseudoNodesCleaned.addActionListener(this.checkBoxListener);
 		this.checkboxRedundantVerticesCleaned.addActionListener(this.checkBoxListener);
 		this.checkboxUndershootsExtended.addActionListener(this.checkBoxListener);
-		this.buttonSure.addActionListener(commonButtonListener);
-		this.buttonMore.addActionListener(commonButtonListener);
-		this.buttonQuite.addActionListener(commonButtonListener);
-		this.comboBoxDatasource.addActionListener(commonButtonListener);
+		this.buttonSure.addActionListener(this.commonButtonListener);
+		this.buttonMore.addActionListener(this.commonButtonListener);
+		this.buttonQuite.addActionListener(this.commonButtonListener);
+		this.comboBoxDatasource.addActionListener(this.commonButtonListener);
 
 	}
 
@@ -203,10 +152,10 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		this.checkboxPseudoNodesCleaned.removeActionListener(this.checkBoxListener);
 		this.checkboxRedundantVerticesCleaned.removeActionListener(this.checkBoxListener);
 		this.checkboxUndershootsExtended.removeActionListener(this.checkBoxListener);
-		this.buttonSure.removeActionListener(commonButtonListener);
-		this.buttonMore.removeActionListener(commonButtonListener);
-		this.buttonQuite.removeActionListener(commonButtonListener);
-		this.comboBoxDatasource.removeActionListener(commonButtonListener);
+		this.buttonSure.removeActionListener(this.commonButtonListener);
+		this.buttonMore.removeActionListener(this.commonButtonListener);
+		this.buttonQuite.removeActionListener(this.commonButtonListener);
+		this.comboBoxDatasource.removeActionListener(this.commonButtonListener);
 	}
 
 	class CommonButtonListener implements ActionListener {
@@ -216,10 +165,12 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			JComponent c = (JComponent) e.getSource();
 			if (c == buttonSure) {
 				topologyProcess();
+				unregistActionListener();
 				dispose();
 			}
 			if (c == buttonQuite) {
 				dispose();
+				unregistActionListener();
 			}
 			if (c == buttonMore) {
 				openAdvanceDialog(topologyProcessingOptions);
@@ -235,19 +186,19 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 */
 	private void topologyProcess() {
 		try {
-			String datasetName = comboBoxDataset.getSelectItem();
-			String datasourceName = comboBoxDatasource.getSelectItem();
+			String datasetName = this.comboBoxDataset.getSelectItem();
+			String datasourceName = this.comboBoxDatasource.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-			topologyProcessingOptions.setAdjacentEndpointsMerged(isAdjacentEndpointsMerged);
-			topologyProcessingOptions.setDuplicatedLinesCleaned(isDuplicatedLinesCleaned);
-			topologyProcessingOptions.setLinesIntersected(isLinesIntersected);
-			topologyProcessingOptions.setOvershootsCleaned(isOvershootsCleaned);
-			topologyProcessingOptions.setPseudoNodesCleaned(isPseudoNodesCleaned);
-			topologyProcessingOptions.setRedundantVerticesCleaned(isRedundantVerticesCleaned);
-			topologyProcessingOptions.setUndershootsExtended(isUndershootsExtended);
+			this.topologyProcessingOptions.setAdjacentEndpointsMerged(this.isAdjacentEndpointsMerged);
+			this.topologyProcessingOptions.setDuplicatedLinesCleaned(this.isDuplicatedLinesCleaned);
+			this.topologyProcessingOptions.setLinesIntersected(this.isLinesIntersected);
+			this.topologyProcessingOptions.setOvershootsCleaned(this.isOvershootsCleaned);
+			this.topologyProcessingOptions.setPseudoNodesCleaned(this.isPseudoNodesCleaned);
+			this.topologyProcessingOptions.setRedundantVerticesCleaned(this.isRedundantVerticesCleaned);
+			this.topologyProcessingOptions.setUndershootsExtended(this.isUndershootsExtended);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
-			progress.doWork(new LineTopoCleanCallable(datasetName, topologyProcessingOptions, datasource));
+			progress.doWork(new LineTopoCleanCallable(datasetName, this.topologyProcessingOptions, datasource));
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -258,15 +209,15 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 * 改变下拉选项时修改comboBoxDataset的值
 	 */
 	private void changeComboBoxItem() {
-		String datasourceName = comboBoxDatasource.getSelectItem();
+		String datasourceName = this.comboBoxDatasource.getSelectItem();
 		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-		hasDataset = insertItemToComboBox(datasource);
-		if (!hasDataset) {
-			buttonSure.setEnabled(false);
-			buttonMore.setEnabled(false);
+		this.hasDataset = insertItemToComboBox(datasource);
+		if (!this.hasDataset) {
+			this.buttonSure.setEnabled(false);
+			this.buttonMore.setEnabled(false);
 		} else {
-			buttonSure.setEnabled(true);
-			buttonMore.setEnabled(true);
+			this.buttonSure.setEnabled(true);
+			this.buttonMore.setEnabled(true);
 		}
 	}
 
@@ -277,8 +228,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 */
 	private void openAdvanceDialog(TopologyProcessingOptions topologyProcessingOptions) {
 		try {
-			String datasetName = comboBoxDataset.getSelectItem();
-			String datasourceName = comboBoxDatasource.getSelectItem();
+			String datasetName = this.comboBoxDataset.getSelectItem();
+			String datasourceName = this.comboBoxDatasource.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			Dataset targetDataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
 			JDialogTopoAdvance advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
@@ -334,30 +285,30 @@ public class JDialogDatasetLineTopo extends SmDialog {
 				currentDatasource = datasources.get(0);
 			}
 			if (null != currentDatasource) {
-				comboBoxDatasource = new DatasourceComboBox(datasources);
-				for (int i = 0; i < comboBoxDatasource.getItemCount(); i++) {
-					if (((DataCell) comboBoxDatasource.getItemAt(i)).getDatasetName().equals(currentDatasource.getAlias())) {
-						comboBoxDatasource.setSelectedIndex(i);
+				this.comboBoxDatasource = new DatasourceComboBox(datasources);
+				for (int i = 0; i < this.comboBoxDatasource.getItemCount(); i++) {
+					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDatasetName().equals(currentDatasource.getAlias())) {
+						this.comboBoxDatasource.setSelectedIndex(i);
 						break;
 					}
 				}
 
-				comboBoxDataset = new DatasetComboBox(new Dataset[0]);
-				hasDataset = insertItemToComboBox(currentDatasource);
+				this.comboBoxDataset = new DatasetComboBox(new Dataset[0]);
+				this.hasDataset = insertItemToComboBox(currentDatasource);
 				if (null != lineDataset) {
-					for (int i = 0; i < comboBoxDataset.getItemCount(); i++) {
-						if (((DataCell) comboBoxDataset.getItemAt(i)).getDatasetName().equals(lineDataset.getName())) {
-							comboBoxDataset.setSelectedIndex(i);
+					for (int i = 0; i < this.comboBoxDataset.getItemCount(); i++) {
+						if (((DataCell) this.comboBoxDataset.getItemAt(i)).getDatasetName().equals(lineDataset.getName())) {
+							this.comboBoxDataset.setSelectedIndex(i);
 							break;
 						}
 					}
 				}
-				if (!hasDataset) {
-					buttonSure.setEnabled(false);
-					buttonMore.setEnabled(false);
+				if (!this.hasDataset) {
+					this.buttonSure.setEnabled(false);
+					this.buttonMore.setEnabled(false);
 				} else {
-					buttonSure.setEnabled(true);
-					buttonMore.setEnabled(true);
+					this.buttonSure.setEnabled(true);
+					this.buttonMore.setEnabled(true);
 				}
 			}
 		} catch (Exception e) {
@@ -371,7 +322,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 * @param datasource
 	 */
 	private boolean insertItemToComboBox(Datasource datasource) {
-		comboBoxDataset.removeAllItems();
+		this.comboBoxDataset.removeAllItems();
 		int count = 0;
 		if (null != datasource) {
 			Datasets datasets = datasource.getDatasets();
@@ -379,7 +330,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 				if (datasets.get(i).getType() == DatasetType.LINE || datasets.get(i).getType() == DatasetType.NETWORK) {
 					String path = CommonToolkit.DatasetImageWrap.getImageIconPath(datasets.get(i).getType());
 					DataCell cell = new DataCell(path, datasets.get(i).getName());
-					comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(cell);
 					count++;
 				}
 			}
