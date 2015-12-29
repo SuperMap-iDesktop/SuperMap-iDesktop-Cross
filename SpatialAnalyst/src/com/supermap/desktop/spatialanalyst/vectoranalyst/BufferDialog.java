@@ -48,8 +48,8 @@ public class BufferDialog extends SmDialog {
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
-		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable) {
-			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable);
+		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
+			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable && isHasResultDatasource);
 		}
 	};
 
@@ -211,7 +211,7 @@ public class BufferDialog extends SmDialog {
 		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
 
 		if (panelBufferType instanceof PanelLineBufferAnalyst) {
-			((PanelLineBufferAnalyst) panelBufferType).addButtonListener();
+			((PanelLineBufferAnalyst) panelBufferType).addListener();
 		} else if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
 			((PanelPointOrRegionAnalyst) panelBufferType).addListener();
 		}
