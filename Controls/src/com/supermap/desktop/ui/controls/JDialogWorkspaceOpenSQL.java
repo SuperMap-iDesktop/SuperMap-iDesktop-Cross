@@ -1,5 +1,17 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceType;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilties.CursorUtilties;
+
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -11,19 +23,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceType;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
-
 /**
  * 打开数据库型工作空间
- * 
+ *
  * @author huchenpu
  */
 public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
@@ -31,7 +33,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 
 	/**
 	 * 创建一个打开的配置窗口
-	 * 
+	 *
 	 * @param DataBase 数据库类型(SQL/Oracle)
 	 */
 	public JDialogWorkspaceOpenSQL(java.awt.Frame parent, boolean modal, String DataBase) {
@@ -87,7 +89,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jButtonOpen.setPreferredSize(new java.awt.Dimension(75, 23));
 
 		// TODO Oracle或Sql Server实例列表初始化
-		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
+		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[]{}));
 		jComboBoxServer.setEditable(true);
 
 		jComboBoxServer.getEditor().getEditorComponent().addFocusListener(new FocusListener() {
@@ -159,7 +161,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 
 		jPasswordFieldPassword.setText("");
 
-		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
+		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[]{""}));
 		jComboBoxWorkspaceName.setEditable(true);
 		jComboBoxWorkspaceName.getComponent(0).addMouseListener(new MouseAdapter() {
 			@Override
@@ -337,9 +339,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	 */
 	private void jComboBoxWorkspaceNameItemChange() {
 		String jComboBoxWorkspaceNameTemp = ((JTextField) this.jComboBoxWorkspaceName.getEditor().getEditorComponent()).getText();
-		if (null == jComboBoxWorkspaceNameTemp || jComboBoxWorkspaceNameTemp.length() <= 0) {
-			// do nothing
-		} else {
+		if (null != jComboBoxWorkspaceNameTemp && jComboBoxWorkspaceNameTemp.length() > 0) {
 			jLabelEmptyName.setVisible(false);
 		}
 	}
@@ -383,19 +383,24 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		Info.setPassword(jPasswordFieldPasswordTemp);
 		Info.setName(jComboBoxWorkspaceNameTemp);
 		try {
-			boolean openResult = Application.getActiveApplication().getWorkspace().open(Info);
-			String resultInfo = "";
-			if (openResult) {
-				resultInfo = ControlsProperties.getString("String_OpenWorkspaceSuccessful");
-			} else {
-				resultInfo = ControlsProperties.getString("String_OpenWorkspaceFailed");
-			}
-			Application.getActiveApplication().getOutput().output(resultInfo);
-			if (openResult) {
+			CursorUtilties.setWaitCursor();
+			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			Workspace workspaceTemp = new Workspace();
+			boolean openResult = workspaceTemp.open(Info);
+			if (openResult && CommonToolkit.WorkspaceWrap.closeWorkspace()) {
+				Application.getActiveApplication().getWorkspace().open(Info);
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenWorkspaceSuccessful"));
 				DialogExit();
 			}
+			if (!openResult) {
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenWorkspaceFailed"));
+			}
+			// 打开失败但没关闭当前工作空间啥也不干
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			CursorUtilties.setDefaultCursor();
+			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
@@ -404,10 +409,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	 */
 	private void jComboBoxServerItemChange() {
 		String jComboBoxServerTemp = ((JTextField) this.jComboBoxServer.getEditor().getEditorComponent()).getText();
-		if (null == jComboBoxServerTemp || jComboBoxServerTemp.length() <= 0) {
-			// do nothing
-
-		} else {
+		if (null != jComboBoxServerTemp && jComboBoxServerTemp.length() > 0) {
 			jLabelEmptyServer.setVisible(false);
 		}
 	}
@@ -417,9 +419,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	 */
 	private void jTextFieldUserValueChange() {
 		String jTextFieldUserTemp = this.jTextFieldUser.getText();
-		if (null == jTextFieldUserTemp || jTextFieldUserTemp.length() <= 0) {
-			// do nothing
-		} else {
+		if (null != jTextFieldUserTemp && jTextFieldUserTemp.length() > 0) {
 			jLabelEmptyUser.setVisible(false);
 		}
 	}
