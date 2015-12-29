@@ -30,8 +30,8 @@ public class ComboBoxField {
 			for (int i = 0; i < comboBoxDatasetVector.getFieldCount(); i++) {
 				FieldInfo fieldInfo = comboBoxDatasetVector.getFieldInfos().get(i);
 				if (!fieldInfo.isSystemField()) {
-					if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.SINGLE
-							|| fieldInfo.getType() == FieldType.DOUBLE) {
+					if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
+							|| fieldInfo.getType() == FieldType.SINGLE || fieldInfo.getType() == FieldType.DOUBLE) {
 						this.comboBoxFieldControl.addItem(comboBoxDatasetVector.getFieldInfos().get(i).getName());
 					}
 				}
