@@ -349,8 +349,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
-					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.LINE3D
-							|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK || activeLayer[i].getDataset().getType() == DatasetType.NETWORK3D) {
+					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
@@ -392,8 +391,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
-				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
-						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
+				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.NETWORK) {
 					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
 				}
 			} else {
@@ -450,11 +448,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	private void setComboBoxDatasetType() {
+		// 暂不支持三维
 		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
 		datasetTypes.add(DatasetType.LINE);
-		datasetTypes.add(DatasetType.LINE3D);
+		// datasetTypes.add(DatasetType.LINE3D);
 		datasetTypes.add(DatasetType.NETWORK);
-		datasetTypes.add(DatasetType.NETWORK3D);
+		// datasetTypes.add(DatasetType.NETWORK3D);
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
