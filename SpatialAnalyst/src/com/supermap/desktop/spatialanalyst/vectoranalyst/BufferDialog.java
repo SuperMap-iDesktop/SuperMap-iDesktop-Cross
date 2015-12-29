@@ -75,13 +75,10 @@ public class BufferDialog extends SmDialog {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
 					if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
-						if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.POINT3D
-								|| activeLayer[i].getDataset().getType() == DatasetType.REGION || activeLayer[i].getDataset().getType() == DatasetType.REGION3D) {
+						if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.REGION) {
 							getPointorRegionType();
 							return;
-						} else if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.LINE3D
-								|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK
-								|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK3D) {
+						} else if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
 							getLineType();
 							return;
 						}
@@ -100,8 +97,7 @@ public class BufferDialog extends SmDialog {
 				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
 				if (nodeData.getData() instanceof Dataset) {
 					Dataset selectedDataset = (Dataset) nodeData.getData();
-					if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
-							|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
+					if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.REGION) {
 						getPointorRegionType();
 						return;
 					}

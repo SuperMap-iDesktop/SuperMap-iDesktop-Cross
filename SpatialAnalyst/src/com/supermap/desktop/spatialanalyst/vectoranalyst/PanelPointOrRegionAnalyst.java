@@ -72,8 +72,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean isShowInMap;
 	private boolean isRadiusNumSuitable;
 	private boolean isDatasourceReadOnly;
-	private boolean isTextFieldDatasetNotNull = true;
-
 	private DoSome some;
 	private BufferProgressCallable bufferProgressCallable;
 	private final static int DEFAULT_MIN = 4;
@@ -283,8 +281,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
-					if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.POINT3D
-							|| activeLayer[i].getDataset().getType() == DatasetType.REGION || activeLayer[i].getDataset().getType() == DatasetType.REGION3D) {
+					if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.REGION) {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
@@ -326,8 +323,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
-				if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
-						|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
+				if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.REGION) {
 					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
 				}
 			} else {
@@ -343,11 +339,12 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * 设置ComboBoxDataset的类型
 	 */
 	private void setComboBoxDatasetType() {
+		// 暂不支持三维
 		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
 		datasetTypes.add(DatasetType.POINT);
 		datasetTypes.add(DatasetType.REGION);
-		datasetTypes.add(DatasetType.POINT3D);
-		datasetTypes.add(DatasetType.REGION3D);
+		// datasetTypes.add(DatasetType.POINT3D);
+		// datasetTypes.add(DatasetType.REGION3D);
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
@@ -417,7 +414,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 			if (this.radioButtonNumeric.isSelected()) {
 				this.radius = Double.parseDouble(this.textFieldNumeric.getValue().toString());
-				if (sourceDatasetVector.getType() == DatasetType.POINT || sourceDatasetVector.getType() == DatasetType.POINT3D) {
+				if (sourceDatasetVector.getType() == DatasetType.POINT) {
 					this.radius = Math.abs((Double) this.radius);
 				}
 			}
