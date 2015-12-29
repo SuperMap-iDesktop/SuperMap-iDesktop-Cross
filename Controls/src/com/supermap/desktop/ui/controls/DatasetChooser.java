@@ -1,39 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
@@ -46,14 +12,32 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 /**
  * 数据集选择界面
- * 
- * @author xie
+ * <p>工作空间树用完没 dispose
  *
+ * @author xie
  */
 public class DatasetChooser extends SmDialog {
-
 	private static final long serialVersionUID = 1L;
 	protected MutiTable table;
 	protected JButton buttonOk = new JButton("string_button_sure");
@@ -90,9 +74,9 @@ public class DatasetChooser extends SmDialog {
 
 	/**
 	 * 构造方法
-	 * 
-	 * @param owner 父窗体（JDialog类型）
-	 * @param flag 是否设置为模态窗口
+	 *
+	 * @param owner      父窗体（JDialog类型）
+	 * @param flag       是否设置为模态窗口
 	 * @param datasource 指定的数据源
 	 */
 	public DatasetChooser(JDialog owner, boolean flag, Datasource datasource) {
@@ -122,9 +106,9 @@ public class DatasetChooser extends SmDialog {
 
 	/**
 	 * 构造方法
-	 * 
-	 * @param owner 父窗体（JFrame类型）
-	 * @param flag 是否设置为模态窗口
+	 *
+	 * @param owner      父窗体（JFrame类型）
+	 * @param flag       是否设置为模态窗口
 	 * @param datasource 指定的数据源
 	 */
 	public DatasetChooser(JFrame owner, boolean flag, Datasource datasource) {
@@ -137,7 +121,6 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	/**
-	 * 
 	 * @param owner
 	 * @param flag
 	 * @param datasource
@@ -155,10 +138,9 @@ public class DatasetChooser extends SmDialog {
 
 	/**
 	 * 没有纯属性数据集的数据集选择器
-	 * 
+	 *
 	 * @param owner
 	 * @param flag
-	 * @param datasetType
 	 */
 	public DatasetChooser(JFrame owner, boolean flag, String[] datasetWithOutTabular) {
 		super(owner, flag);

@@ -127,7 +127,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 	// 参与查询的数据
 	private JScrollPane scrollPaneWorkspaceTree = new JScrollPane();
-	private WorkspaceTree workspaceTree = new WorkspaceTree();
+	private WorkspaceTree workspaceTree;
 	// 字段信息
 	private JScrollPane scrollPaneFieldInfo = new JScrollPane();
 	private FieldInfoTable tableFieldInfo = new FieldInfoTable();
@@ -197,12 +197,35 @@ public class JDialogSQLQuery extends SmDialog {
 		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
 			setWorkspaceTreeSelectedDataset(currentDataset);
-			panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
+//			panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
 			// 初始化字段信息表
 			tableFieldInfo.setDataset(currentDataset);
 			if (currentDataset.getType() == DatasetType.TABULAR) {
 				radioButtonQuerySpaceAndProperty.setEnabled(false);
 				radioButtonQueryAttributeInfo.setSelected(true);
+			}
+		} else if (Application.getActiveApplication().getActiveDatasources().length > 0) {
+//			panelSaveSearchResult.setSelectedDatasources(Application.getActiveApplication().getActiveDatasources()[0]);
+			setWorkspaceTreeSelectedDatasources(Application.getActiveApplication().getActiveDatasources()[0]);
+		}
+	}
+
+	private void setWorkspaceTreeSelectedDatasources(Datasource datasource) {
+		DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
+		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+		for (int i = 0; i < datasourceTreeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+			TreeNodeData selectedDatasourceNodeData = (TreeNodeData) childDatasourceTreeNode.getUserObject();
+			if (null != selectedDatasourceNodeData && selectedDatasourceNodeData.getData() instanceof Datasource) {
+				Datasource datasourceTemp = (Datasource) selectedDatasourceNodeData.getData();
+				if (datasourceTemp == datasource) {
+					TreePath path = new TreePath(childDatasourceTreeNode.getPath());
+					workspaceTree.setSelectionPath(path);
+					workspaceTree.scrollPathToVisible(path);
+					workspaceTree.expandPath(path);
+					return;
+				}
 			}
 		}
 	}
@@ -212,6 +235,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 *
 	 * @param dataset 需要选中的数据集
 	 */
+
 	private void setWorkspaceTreeSelectedDataset(Dataset dataset) {
 		DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
@@ -243,6 +267,12 @@ public class JDialogSQLQuery extends SmDialog {
 							}
 						}
 					}
+					// 没有return就没找到
+					TreePath path = new TreePath(childDatasourceTreeNode.getPath());
+					workspaceTree.setSelectionPath(path);
+					workspaceTree.scrollPathToVisible(path);
+					workspaceTree.expandPath(path);
+					return;
 				}
 			}
 		}
@@ -386,7 +416,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化工作空间树
 	 */
 	private void initWorkspaceTree() {
-		this.workspaceTree.setWorkspace(Application.getActiveApplication().getWorkspace());
+		this.workspaceTree = new WorkspaceTree(Application.getActiveApplication().getWorkspace());
 		this.workspaceTree.setLayoutsNodeVisible(false);
 		this.workspaceTree.setMapsNodeVisible(false);
 		this.workspaceTree.setScenesNodeVisible(false);
@@ -891,7 +921,9 @@ public class JDialogSQLQuery extends SmDialog {
 					// 查询条件
 					queryParameter.setAttributeFilter(textareaQueryCondition.getSQLExpression());
 					// 分组字段
-					queryParameter.setGroupBy(textFieldGroupField.getSQLExpression().split(","));
+					if (radioButtonQueryAttributeInfo.isSelected()) {
+						queryParameter.setGroupBy(textFieldGroupField.getSQLExpression().split(","));
+					}
 					// 排序字段
 					queryParameter.setOrderBy(sqlTableOrderByField.getSQLExpression().split(","));
 					// 关联表信息
@@ -957,7 +989,7 @@ public class JDialogSQLQuery extends SmDialog {
 		char[] fieldNamesChars = queryFields.toCharArray();
 		StringBuilder builderFieldName = new StringBuilder();
 		for (char fieldNamesChar : fieldNamesChars) {
-			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
+			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0 ) {
 				fieldNames.add(builderFieldName.toString());
 				builderFieldName.setLength(0);
 			} else {
@@ -1028,7 +1060,7 @@ public class JDialogSQLQuery extends SmDialog {
 		}
 
 		if (formMap != null) {
-			Layer layer = MapUtilties.findLayerByDataset(formMap.getMapControl().getMap(), currentDatasetVector);
+			Layer layer = MapUtilties.findLayerByDatasetWithoutLabelTheme(formMap.getMapControl().getMap(), currentDatasetVector);
 			if (layer == null) {
 				layer = MapUtilties.addDatasetToMap(formMap.getMapControl().getMap(), currentDatasetVector, true);
 			}

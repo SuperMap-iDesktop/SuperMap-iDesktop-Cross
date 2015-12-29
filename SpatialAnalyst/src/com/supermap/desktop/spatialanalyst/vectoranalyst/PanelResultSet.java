@@ -81,10 +81,11 @@ public class PanelResultSet extends JPanel {
 	private void initComponent() {
 		this.checkBoxUnionBuffer = new JCheckBox("UnionBuffer");
 		this.checkBoxRemainAttributes = new JCheckBox("RemainInAttributes");
+		this.checkBoxRemainAttributes.setSelected(true);
 		this.checkBoxDisplayInMap = new JCheckBox("DisplayInMap");
-		this.checkBoxDisplayInMap.setEnabled(false);
+		this.checkBoxDisplayInMap.setSelected(true);
 		this.checkBoxDisplayInScene = new JCheckBox("DisPlayInScene");
-		this.checkBoxDisplayInScene.setEnabled(false);
+		this.checkBoxDisplayInScene.setVisible(false);
 		this.labelSemicircleLineSegment = new JLabel("SemicircleLineSegment");
 
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
@@ -115,6 +116,8 @@ public class PanelResultSet extends JPanel {
 	private void setPanelResultSetLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultSet")));
 		GroupLayout panelResultSetLayout = new GroupLayout(this);
+		panelResultSetLayout.setAutoCreateContainerGaps(true);
+		panelResultSetLayout.setAutoCreateGaps(true);
 		this.setLayout(panelResultSetLayout);
 
 		//@formatter:off
@@ -122,7 +125,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.labelSemicircleLineSegment)).addGap(5)
+						.addComponent(this.labelSemicircleLineSegment))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxRemainAttributes)
 						.addComponent(this.checkBoxDisplayInScene)
@@ -131,13 +134,13 @@ public class PanelResultSet extends JPanel {
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxRemainAttributes)).addGap(5)
+						.addComponent(this.checkBoxRemainAttributes))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxDisplayInScene)).addGap(5)
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxDisplayInScene))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)).addContainerGap());
+						.addComponent(this.textFieldSemicircleLineSegment)));
 		
 		//@formatter:on
 	}

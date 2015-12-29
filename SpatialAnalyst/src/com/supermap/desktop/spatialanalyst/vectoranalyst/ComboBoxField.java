@@ -24,7 +24,7 @@ public class ComboBoxField {
 		this.comboBoxFieldRight = comboBoxFieldRight;
 	}
 
-	public void createComboBoxField(Dataset dataset, JComboBox<Object> comboBoxField) {
+	public void createComboBoxField(Dataset dataset, JComboBox<Object> comboBoxFieldControl) {
 		if (this.dataset instanceof DatasetVector) {
 			DatasetVector comboBoxDatasetVector = (DatasetVector) this.dataset;
 			for (int i = 0; i < comboBoxDatasetVector.getFieldCount(); i++) {

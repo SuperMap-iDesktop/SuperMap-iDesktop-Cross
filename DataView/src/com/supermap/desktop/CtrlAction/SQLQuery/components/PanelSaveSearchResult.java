@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -99,6 +100,15 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		private void initComponentStates() {
 			textFieldDataset.setEnabled(false);
 			datasourceComboBox.setEnabled(false);
+			Datasource selecedDatasource = null;
+			if (Application.getActiveApplication().getActiveDatasets().length > 0) {
+				selecedDatasource = Application.getActiveApplication().getActiveDatasets()[0].getDatasource();
+			} else if (Application.getActiveApplication().getActiveDatasources().length > 0) {
+				selecedDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+			}
+			if (selecedDatasource != null) {
+				datasourceComboBox.setSelectedDatasource(selecedDatasource);
+			}
 			textFieldDataset.setText(datasourceComboBox.getSelectedDatasource() != null ? datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName("QueryResult") : "QueryResult");
 		}
 

@@ -20,12 +20,13 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -71,16 +72,20 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private Object radiusLeft;
 	private Object radiusRight;
 	private String resultDatasetName;
-	private boolean bufferCreate;
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
 	private LocalKeylistener localKeylistener = new LocalKeylistener();
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private ComboBoxField comboBoxField;
 	private boolean isButtonOkEnabled = true;
 	private boolean isButtonEnabled = true;
+	private boolean isShowInMap;
 	private DoSome some;
+	private DatasetVector resultDatasetVector;
+	private BufferProgressCallable bufferProgressCallable;
+	private boolean isBufferSucceed;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
+	private final static Object DEFAULT_VALUE = 10;
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -129,7 +134,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
-		this.add(this.panelBasic);
+		this.setLayout(new BorderLayout());
+		this.add(this.panelBasic, BorderLayout.CENTER);
+
 		initComponentBufferType();
 		initComponentBufferRadius();
 		setPanelBasicLayout();
@@ -156,7 +163,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	private void setPanelLineBufferAnalyst() {
 		setPanelBufferData();
-		setPanelResultSet();
 		setPanelBufferType();
 		setPanelBuffeRadius();
 		registerEvent();
@@ -173,21 +179,23 @@ public class PanelLineBufferAnalyst extends JPanel {
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeFlat);
 
 		GroupLayout panelBufferTypeLayout = new GroupLayout(this.panelBufferType);
+		panelBufferTypeLayout.setAutoCreateGaps(true);
+		panelBufferTypeLayout.setAutoCreateContainerGaps(true);
 		this.panelBufferType.setLayout(panelBufferTypeLayout);
 
 		//@formatter:off
 		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeRound)
-						.addComponent(this.radioButtonBufferTypeFlat)).addGap(50)
+						.addComponent(this.radioButtonBufferTypeFlat)).addGap(60)
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.checkBoxBufferLeft)
-						.addComponent(this.checkBoxBufferRight)).addGap(75));
+						.addComponent(this.checkBoxBufferRight)));
 		
 		panelBufferTypeLayout.setVerticalGroup(panelBufferTypeLayout.createSequentialGroup()
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeRound)
-						.addComponent(this.checkBoxBufferLeft)).addGap(10)
+						.addComponent(this.checkBoxBufferLeft))
 				.addGroup(panelBufferTypeLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonBufferTypeFlat)
 						.addComponent(this.checkBoxBufferRight)));
@@ -206,11 +214,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
 
 		NumberFormatter numberFormatter = new NumberFormatter();
-		numberFormatter.setValueClass(Integer.class);
+		numberFormatter.setValueClass(Double.class);
 		this.textFieldNumericLeft = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumericRight = new SMFormattedTextField(numberFormatter);
-		this.textFieldNumericLeft.setValue(10);
-		this.textFieldNumericRight.setValue(10);
+		this.textFieldNumericLeft.setValue(DEFAULT_VALUE);
+		this.textFieldNumericRight.setValue(DEFAULT_VALUE);
 
 		this.comboBoxFieldLeft = new JComboBox<Object>();
 		this.comboBoxFieldRight = new JComboBox<Object>();
@@ -221,6 +229,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 		//@formatter:off
 		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);
+		panelBufferRadiusLayout.setAutoCreateContainerGaps(true);
+		panelBufferRadiusLayout.setAutoCreateGaps(true);
 		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
 		
 		panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
@@ -231,34 +241,34 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.labelRightNumericRadius)
 						.addComponent(this.radioButtonField)
 						.addComponent(this.labelLeftFieldRadius)
-						.addComponent(this.labelRightFieldRadius)).addGap(10)
+						.addComponent(this.labelRightFieldRadius))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.comboBoxUnit)
 						.addComponent(this.textFieldNumericLeft)
 						.addComponent(this.textFieldNumericRight)
 						.addComponent(this.comboBoxFieldLeft)
-						.addComponent(this.comboBoxFieldRight)).addContainerGap());
+						.addComponent(this.comboBoxFieldRight)));
 		
 		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit)).addGap(8)
+						.addComponent(this.comboBoxUnit,25,25,25)).addGap(5)
 			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.radioButtonNumeric)).addGap(5)
-			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.radioButtonNumeric)).addGap(10)
+			    .addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 					   .addComponent(this.labelLeftNumericRadius)
-					   .addComponent(this.textFieldNumericLeft)).addGap(15)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+					   .addComponent(this.textFieldNumericLeft,25,25,25))
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightNumericRadius)
-						.addComponent(this.textFieldNumericRight)).addGap(5)
+						.addComponent(this.textFieldNumericRight,25,25,25)).addGap(5)
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.radioButtonField)).addGap(5)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.radioButtonField)).addGap(10)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelLeftFieldRadius)
-						.addComponent(this.comboBoxFieldLeft)).addGap(15)
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.comboBoxFieldLeft,25,25,25))
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightFieldRadius)
-						.addComponent(this.comboBoxFieldRight)).addContainerGap().addGap(5));
+						.addComponent(this.comboBoxFieldRight,25,25,25)));
 		//@formatter:on
 
 	}
@@ -269,18 +279,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 		//@formatter:off
 	    panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
-	    		.addComponent(this.panelBasicLeft)
-	    		.addComponent(this.panelBasicRight).addContainerGap());
-	    
+	    		.addComponent(this.panelBasicLeft,0, 180, Short.MAX_VALUE)
+	    		.addPreferredGap(ComponentPlacement.RELATED)
+	    		.addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-	    		.addContainerGap()
 	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
 	    				.addComponent(this.panelBasicLeft)
-	    				.addComponent(this.panelBasicRight)).addContainerGap());
+	    				.addComponent(this.panelBasicRight)));
 	    //@formatter:on
-		panelBasicLayout.linkSize(this.panelBasicLeft, this.panelBasicRight);
-
 	}
 
 	private void setPanelBasicLeftLayout() {
@@ -295,9 +301,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.panelResultData)));
 		
 		panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-				.addComponent(this.panelBufferData)
-				.addComponent(this.panelResultSet)
-				.addComponent(this.panelResultData).addContainerGap());
+				.addComponent(this.panelBufferData).addGap(8)
+				.addComponent(this.panelResultSet).addGap(8)
+				.addComponent(this.panelResultData));
 		//@formatter:on
 
 	}
@@ -309,12 +315,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		//@formatter:off
 		panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
 				.addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.panelBufferType)
-						.addComponent(this.panelBufferRadius)));
+						.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+						.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)));
 		
 		panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addComponent(this.panelBufferType)
-				.addComponent(this.panelBufferRadius).addContainerGap());
+				.addComponent(this.panelBufferType,GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE).addGap(10)
+				.addComponent(this.panelBufferRadius,GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE));
 		//@formatter:on
 
 	}
@@ -393,14 +399,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 		this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(false);
 
-	}
-
-	/**
-	 * 对结果面板进行设置
-	 */
-	private void setPanelResultSet() {
-		// this.panelResultSet.getCheckBoxDisplayInMap().setSelected(true);
-		this.panelResultSet.getCheckBoxRemainAttributes().setSelected(true);
 	}
 
 	private void setPanelBufferType() {
@@ -486,62 +484,70 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 创建缓冲区分析
 	 */
 	public boolean CreateCurrentBuffer() {
-		bufferCreate = false;
+		isBufferSucceed = false;
 		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			DatasetVector sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			BufferAnalystParameter bufferAnalystParameter = new BufferAnalystParameter();
-			if (sourceDatasetVector.getRecordCount() != 0) {
-				// 创建缓冲区数据集
-				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources()
-						.get(this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getAlias());
-				DatasetVectorInfo resultDatasetVectorInfo = new DatasetVectorInfo();
-				this.resultDatasetName = this.panelResultData.getTextFieldResultDataDataset().getText();
-				String datasetName = datasource.getDatasets().getAvailableDatasetName(this.resultDatasetName);
-				resultDatasetVectorInfo.setName(datasetName);
 
-				resultDatasetVectorInfo.setType(DatasetType.REGION);
-				DatasetVector resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
-				resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
-				// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
-				if (this.radioButtonNumeric.isSelected()) {
-					this.radiusLeft = Math.abs(Double.parseDouble(textFieldNumericLeft.getValue().toString()));
-					this.radiusRight = Math.abs(Double.parseDouble(textFieldNumericRight.getValue().toString()));
-				}
+			// 创建缓冲区数据集
+			if (sourceDatasetVector.getRecordCount() > 0) {
+				createResultDataset(sourceDatasetVector);
+			}
+			// radioButtonNumeric被选中，当数据集类型为点对象时，缓冲半径取绝对值
+			if (this.radioButtonNumeric.isSelected()) {
+				this.radiusLeft = Math.abs(Double.parseDouble(textFieldNumericLeft.getValue().toString()));
+				this.radiusRight = Math.abs(Double.parseDouble(textFieldNumericRight.getValue().toString()));
+			}
 
-				if (this.radioButtonBufferTypeRound.isSelected()) {
-					bufferAnalystParameter.setEndType(BufferEndType.ROUND);
+			if (this.radioButtonBufferTypeRound.isSelected()) {
+				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
+				bufferAnalystParameter.setLeftDistance(this.radiusLeft);
+				bufferAnalystParameter.setRightDistance(this.radiusRight);
+			} else if (this.radioButtonBufferTypeFlat.isSelected()) {
+				bufferAnalystParameter.setEndType(BufferEndType.FLAT);
+				if (this.checkBoxBufferLeft.isSelected()) {
 					bufferAnalystParameter.setLeftDistance(this.radiusLeft);
+				}
+				if (this.checkBoxBufferRight.isSelected()) {
 					bufferAnalystParameter.setRightDistance(this.radiusRight);
-				} else if (this.radioButtonBufferTypeFlat.isSelected()) {
-					bufferAnalystParameter.setEndType(BufferEndType.FLAT);
-					if (this.checkBoxBufferLeft.isSelected()) {
-						bufferAnalystParameter.setLeftDistance(this.radiusLeft);
-					}
-					if (this.checkBoxBufferRight.isSelected()) {
-						bufferAnalystParameter.setRightDistance(this.radiusRight);
-					}
 				}
-				bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit((Unit) this.comboBoxUnit.getSelectedItem()));
-				bufferAnalystParameter.setSemicircleLineSegment(Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
+			}
 
-				FormProgress formProgress = new FormProgress();
-				// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
-				if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
-					formProgress.doWork(new BufferProgressCallable(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-							.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
-				} else {
-					formProgress.doWork(new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-							.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected()));
-				}
-				bufferCreate = true;
+			if (this.panelResultSet.getCheckBoxDisplayInMap().isSelected()) {
+				isShowInMap = true;
 			} else {
-				bufferCreate = false;
-				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
-				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
+				isShowInMap = false;
+			}
+
+			bufferAnalystParameter.setRadiusUnit(initComboBoxUnit.getBufferRadiusUnit((Unit) this.comboBoxUnit.getSelectedItem()));
+			bufferAnalystParameter.setSemicircleLineSegment(Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
+
+			FormProgress formProgress = new FormProgress();
+			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
+
+			if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
+				bufferProgressCallable = new BufferProgressCallable(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
+			} else {
+				bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
+			}
+			if (formProgress != null) {
+				formProgress.doWork(bufferProgressCallable);
+				isBufferSucceed = bufferProgressCallable.isSucceed();
 			}
 		}
+		return isBufferSucceed;
+	}
 
-		return bufferCreate;
+	private void createResultDataset(DatasetVector sourceDatasetVector) {
+		Datasource datasource = this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource();
+		DatasetVectorInfo resultDatasetVectorInfo = new DatasetVectorInfo();
+		this.resultDatasetName = this.panelResultData.getTextFieldResultDataDataset().getText();
+		resultDatasetVectorInfo.setName(this.resultDatasetName);
+		resultDatasetVectorInfo.setType(DatasetType.REGION);
+		resultDatasetVector = datasource.getDatasets().create(resultDatasetVectorInfo);
+		resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 	}
 
 	class LocalItemListener implements ItemListener {
@@ -584,7 +590,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 			} else if (e.getSource() == comboBoxFieldLeft) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
 					if (radioButtonBufferTypeRound.isSelected()) {
-						comboBoxFieldRight.setSelectedItem(comboBoxFieldLeft.getSelectedItem());
+						comboBoxFieldRight.setModel(comboBoxFieldLeft.getModel());
 						radiusLeft = comboBoxFieldLeft.getSelectedItem().toString();
 					}
 				}
@@ -623,7 +629,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 			} else if (e.getSource() == radioButtonBufferTypeFlat) {
 				textFieldNumericLeft.removeKeyListener(localKeylistener);
 				textFieldNumericRight.removeKeyListener(localKeylistener);
-
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonField) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {

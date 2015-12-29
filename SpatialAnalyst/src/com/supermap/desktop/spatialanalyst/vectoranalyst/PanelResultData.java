@@ -19,7 +19,6 @@ public class PanelResultData extends JPanel {
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
 
-	
 	public DatasourceComboBox getComboBoxResultDataDatasource() {
 		return comboBoxResultDataDatasource;
 	}
@@ -68,24 +67,26 @@ public class PanelResultData extends JPanel {
 	private void setPanelResultDataLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultData")));
 		GroupLayout panelResultDataLayout = new GroupLayout(this);
+		panelResultDataLayout.setAutoCreateGaps(true);
+		panelResultDataLayout.setAutoCreateContainerGaps(true);
 		this.setLayout(panelResultDataLayout);
 
 		//@formatter:off
 		panelResultDataLayout.setHorizontalGroup(panelResultDataLayout.createSequentialGroup()
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.labelDataset)).addGap(40)
+						.addComponent(this.labelDataset))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.comboBoxResultDataDatasource)
-						.addComponent(this.textFieldResultDataDataset)).addGap(5));
+						.addComponent(this.textFieldResultDataDataset)));
 		
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxResultDataDatasource)).addGap(15)
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.comboBoxResultDataDatasource)).addGap(5)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset)).addContainerGap());
+						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
 	}
 
