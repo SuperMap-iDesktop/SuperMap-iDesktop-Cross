@@ -636,7 +636,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 					}
 					addSelectedColumn(pick, pick);
 				}
-				jTableTabular.setRowSelectionInterval(jTableTabular.getRowCount() - 1, 0);
+				if (jTableTabular.getRowCount() > 0) {
+					jTableTabular.setRowSelectionInterval(jTableTabular.getRowCount() - 1, 0);
+				}
 			}
 		}
 
