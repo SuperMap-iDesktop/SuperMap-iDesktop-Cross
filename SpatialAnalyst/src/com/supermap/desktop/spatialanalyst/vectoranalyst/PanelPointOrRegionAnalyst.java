@@ -569,17 +569,20 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	private void judgeRadiusNum() {
 		double num = Double.parseDouble(textFieldNumeric.getValue().toString());
-		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.POINT) {
-			if (num <= 0) {
-				setRadiusNumSuitable(false);
-			} else {
-				setRadiusNumSuitable(true);
-			}
-		} else if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.REGION) {
-			if (num == 0) {
-				setRadiusNumSuitable(false);
-			} else {
-				setRadiusNumSuitable(true);
+		setRadiusNumSuitable(true);
+		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
+			if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.POINT) {
+				if (num <= 0) {
+					setRadiusNumSuitable(false);
+				} else {
+					setRadiusNumSuitable(true);
+				}
+			} else if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.REGION) {
+				if (num == 0) {
+					setRadiusNumSuitable(false);
+				} else {
+					setRadiusNumSuitable(true);
+				}
 			}
 		}
 	}
