@@ -1,5 +1,5 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 public interface DoSome {
-	void doSome(boolean enable);
+	void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDatasource);
 }

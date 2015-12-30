@@ -16,9 +16,6 @@ import java.util.concurrent.CancellationException;
 public class DataExportCallable extends UpdateProgressCallable {
 	private ArrayList<ExportFileInfo> exports;
 	private JTable exportTable;
-	private DataExport dataExport = new DataExport();
-	private PercentProgress progress;
-
 	/**
 	 * 是否强制覆盖
 	 */
@@ -39,6 +36,7 @@ public class DataExportCallable extends UpdateProgressCallable {
 	public Boolean call() throws Exception {
 		try {
 			for (int i = 0; i < exports.size(); i++) {
+				DataExport dataExport = new DataExport();
 				ExportFileInfo export = exports.get(i);
 				ExportSetting tempExportSetting = export.getExportSetting();
 				Dataset dataset = export.getDataset();
@@ -62,7 +60,7 @@ public class DataExportCallable extends UpdateProgressCallable {
 				tempExportSetting.setTargetFilePath(filePath);
 				ExportSettings exportSettings = dataExport.getExportSettings();
 				exportSettings.add(tempExportSetting);
-				progress = new PercentProgress(i);
+				PercentProgress progress = new PercentProgress(i);
 				dataExport.addExportSteppedListener(progress);
 				long startTime = System.currentTimeMillis();
 				ExportResult result = dataExport.run();
@@ -72,13 +70,12 @@ public class DataExportCallable extends UpdateProgressCallable {
 				if (null != progress && progress.isCancel()) {
 					break;
 				}
+				dataExport.removeExportSteppedListener(progress);
 			}
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			dataExport.removeExportSteppedListener(progress);
-		}
+		} 
 		return true;
 	}
 

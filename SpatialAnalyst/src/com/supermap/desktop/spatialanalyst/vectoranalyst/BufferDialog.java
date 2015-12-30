@@ -4,18 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
@@ -41,20 +38,20 @@ public class BufferDialog extends SmDialog {
 	private JPanel panelBufferType;
 	private JPanel panelButtonGroup;
 	private ButtonGroup buttonGroup;
-	private LocalActionListener localActionListener = new LocalActionListener();
+	private MapControl mapControl;
 	private PanelButton panelButton;
 	private JPanel panelBuffer;
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 470);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 350);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 365);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 480);
+	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
-		public void doSome(boolean enable) {
-			panelButton.getButtonOk().setEnabled(enable);
+		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
+			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable && isHasResultDatasource);
 		}
 	};
-	private MapControl mapControl;
 
 	public BufferDialog() {
 		super();
@@ -69,7 +66,6 @@ public class BufferDialog extends SmDialog {
 	private void initPanelBufferBasic() {
 		this.setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
 		int layersCount = 0;
-
 		// 打开地图时，如果选中点面或线数据集时，初始化打开界面为对应的选中缓冲区类型界面，如果选中的数据类型没有点，面，线，网络等类型时，默认打开线缓冲区界面
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
@@ -79,13 +75,10 @@ public class BufferDialog extends SmDialog {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
 					if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
-						if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.POINT3D
-								|| activeLayer[i].getDataset().getType() == DatasetType.REGION || activeLayer[i].getDataset().getType() == DatasetType.REGION3D) {
+						if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.REGION) {
 							getPointorRegionType();
 							return;
-						} else if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.LINE3D
-								|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK
-								|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK3D) {
+						} else if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
 							getLineType();
 							return;
 						}
@@ -95,6 +88,7 @@ public class BufferDialog extends SmDialog {
 		}
 
 		// 没有打开地图时，当选中数据集节点，如果为点，面类型时，打开点面缓冲区界面，选中其他节点打开线缓冲区界面
+
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 		TreePath selectedPath = workspaceTree.getSelectionPath();
 		if (selectedPath != null) {
@@ -103,8 +97,7 @@ public class BufferDialog extends SmDialog {
 				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
 				if (nodeData.getData() instanceof Dataset) {
 					Dataset selectedDataset = (Dataset) nodeData.getData();
-					if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.POINT3D
-							|| selectedDataset.getType() == DatasetType.REGION || selectedDataset.getType() == DatasetType.REGION3D) {
+					if (selectedDataset.getType() == DatasetType.POINT || selectedDataset.getType() == DatasetType.REGION) {
 						getPointorRegionType();
 						return;
 					}
@@ -114,22 +107,19 @@ public class BufferDialog extends SmDialog {
 		getLineType();
 	}
 
-	private void getLineType() {
-		// TODO Auto-generated method stub
-		this.panelBufferType = new PanelLineBufferAnalyst();
-		setSize(getLinePanelDimension());
-		this.radioButtonLine.setSelected(true);
-		((PanelLineBufferAnalyst) panelBufferType).setSome(some);
-
-	}
-
 	private void getPointorRegionType() {
-		// TODO Auto-generated method stub
 		this.panelBufferType = new PanelPointOrRegionAnalyst();
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
 		((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
 
+	}
+
+	private void getLineType() {
+		this.panelBufferType = new PanelLineBufferAnalyst();
+		setSize(getLinePanelDimension());
+		this.radioButtonLine.setSelected(true);
+		((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 	}
 
 	private void setBufferDialog() {
@@ -149,9 +139,18 @@ public class BufferDialog extends SmDialog {
 		this.buttonGroup.add(this.radioButtonPointOrRegion);
 		this.buttonGroup.add(this.radioButtonLine);
 
+		setPanelGroupButtonLayout();
+		setPanelDataTypeLayout();
+		setPanelBufferLayout();
+
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
+		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
+	}
+
+	private void setPanelGroupButtonLayout() {
 		GroupLayout panelButtonGroupLayout = new GroupLayout(this.panelButtonGroup);
 		this.panelButtonGroup.setLayout(panelButtonGroupLayout);
-
 		//@formatter:off
           panelButtonGroupLayout.setHorizontalGroup(panelButtonGroupLayout.createSequentialGroup()
                     .addComponent(this.radioButtonPointOrRegion).addGap(30)
@@ -160,9 +159,10 @@ public class BufferDialog extends SmDialog {
                     .addGroup(panelButtonGroupLayout.createParallelGroup(Alignment.CENTER)
                               .addComponent(this.radioButtonPointOrRegion)
                               .addComponent(this.radioButtonLine)));
-         
         //@formatter:on
+	}
 
+	private void setPanelDataTypeLayout() {
 		GroupLayout panelDataTypeLayout = new GroupLayout(this.panelDataType);
 		panelDataTypeLayout.setAutoCreateGaps(true);
 		this.panelDataType.setLayout(panelDataTypeLayout);
@@ -177,15 +177,15 @@ public class BufferDialog extends SmDialog {
                       .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.LEADING)
                                 .addComponent(this.labelDataType)
                                 .addComponent(this.panelButtonGroup)));
-		
-		
+       //@formatter:on
+	}
 
+	private void setPanelBufferLayout() {
 		GroupLayout layout = new GroupLayout(this.panelBuffer);
-
+		this.panelBuffer.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 		//@formatter:off
-		this.panelBuffer.setLayout(layout);
 		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(Alignment.LEADING)
 				.addComponent(this.panelDataType)
 				.addComponent(this.panelBufferType)));
@@ -196,10 +196,6 @@ public class BufferDialog extends SmDialog {
 				.addContainerGap(10, Short.MAX_VALUE));
 		
 		//@formatter:on
-
-		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
-		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
 	}
 
 	private void initResources() {
@@ -232,7 +228,6 @@ public class BufferDialog extends SmDialog {
 		} else {
 			return BufferDialog.DEFAULT_LINUX_BUFFER_LINE_DIMENSION;
 		}
-
 	}
 
 	private Dimension getPointPanelDimension() {
@@ -268,26 +263,15 @@ public class BufferDialog extends SmDialog {
 				BufferDialog.this.getContentPane().removeAll();
 				panelBufferType = new PanelLineBufferAnalyst();
 				setBufferDialog();
-				setSize(getLinePanelDimension());
 				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
-
+				setSize(getLinePanelDimension());
 			} else if (e.getSource() == panelButton.getButtonOk()) {
 				try {
 					if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
 						flag = ((PanelPointOrRegionAnalyst) panelBufferType).createCurrentBuffer();
-						((PanelPointOrRegionAnalyst) panelBufferType).addListener();
-						if (!((PanelPointOrRegionAnalyst) panelBufferType).isButtonEnabled()) {
-							flag = false;
-							JOptionPane.showMessageDialog(BufferDialog.this, SpatialAnalystProperties.getString("String_Dataset_Not_Null"));
-						}
 
 					} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
 						flag = ((PanelLineBufferAnalyst) panelBufferType).CreateCurrentBuffer();
-						((PanelLineBufferAnalyst) panelBufferType).addListener();
-						if (!((PanelLineBufferAnalyst) panelBufferType).isButtonEnabled()) {
-							flag = false;
-							JOptionPane.showMessageDialog(BufferDialog.this, SpatialAnalystProperties.getString("String_Dataset_Not_Null"));
-						}
 					}
 				} catch (Exception e1) {
 					BufferDialog.this.dispose();

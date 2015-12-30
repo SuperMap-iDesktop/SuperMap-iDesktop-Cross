@@ -21,6 +21,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 public class ThemeGuideFactory {
@@ -72,6 +74,13 @@ public class ThemeGuideFactory {
 						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
 								.setFill(GridBagConstraints.BOTH));
 				container.repaint();
+				panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						container.setThemeChange(true);
+					}
+				});
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -239,6 +248,7 @@ public class ThemeGuideFactory {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
 		tree.reload();
 		TreePath layerPath = getSelectionPath(tree, layerName);
+		tree.setSelectionPath(layerPath);
 		if (isExpandPath) {
 			tree.expandPath(layerPath);
 		}

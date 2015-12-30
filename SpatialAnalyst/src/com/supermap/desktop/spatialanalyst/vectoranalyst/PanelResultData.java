@@ -1,11 +1,14 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -18,6 +21,7 @@ public class PanelResultData extends JPanel {
 	private JLabel labelDataset;
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
+	private JTextField textFieldResultDataDataset;
 
 	public DatasourceComboBox getComboBoxResultDataDatasource() {
 		return comboBoxResultDataDatasource;
@@ -26,8 +30,6 @@ public class PanelResultData extends JPanel {
 	public void setComboBoxResultDataDatasource(DatasourceComboBox comboBoxResultDataDatasource) {
 		this.comboBoxResultDataDatasource = comboBoxResultDataDatasource;
 	}
-
-	private JTextField textFieldResultDataDataset;
 
 	public JTextField getTextFieldResultDataDataset() {
 		return textFieldResultDataDataset;
@@ -40,6 +42,8 @@ public class PanelResultData extends JPanel {
 	public PanelResultData() {
 		initComponent();
 		initResources();
+		resetDatasetName();
+		initComboBoxResultDataDatasource();
 		setPanelResultDataLayout();
 
 	}
@@ -90,7 +94,18 @@ public class PanelResultData extends JPanel {
 		//@formatter:on
 	}
 
-	public void resetDatasetName() {
+	private void initComboBoxResultDataDatasource() {
+
+		for (int i = this.comboBoxResultDataDatasource.getItemCount() - 1; i >= 0; i--) {
+			if (this.comboBoxResultDataDatasource.getItemAt(i) instanceof DataCell) {
+				DataCell dataCell = (DataCell) this.comboBoxResultDataDatasource.getItemAt(i);
+				if (dataCell.getData() instanceof Datasource && ((Datasource) dataCell.getData()).isReadOnly())
+					this.comboBoxResultDataDatasource.removeItemAt(i);
+			}
+		}
+	}
+
+	private void resetDatasetName() {
 		String name = "Buffer";
 		if (this.comboBoxResultDataDatasource.getSelectedDatasource() != null) {
 			this.textFieldResultDataDataset.setText(this.comboBoxResultDataDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(name));

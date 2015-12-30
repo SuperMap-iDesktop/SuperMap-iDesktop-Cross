@@ -4,7 +4,6 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.TextStylePanel;
 import com.supermap.mapping.Map;
 
 import java.awt.*;
@@ -40,9 +39,7 @@ public class TextStyleDialog extends SmDialog {
 		setSize(465, 450);
 		//  @formatter:off
 		getContentPane().setLayout(new GridBagLayout());
-		TextStylePanel panel = new TextStylePanel();
-		panel.setTextStyle(textStyle);
-		getContentPane().add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(2, 1));
+		getContentPane().add(new TextStyleContainer(textStyle, map), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(2, 1));
 		// @formatter:on
 	}
 

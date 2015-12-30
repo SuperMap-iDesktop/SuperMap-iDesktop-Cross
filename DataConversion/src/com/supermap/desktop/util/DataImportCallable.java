@@ -17,7 +17,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 	private ArrayList<ImportFileInfo> fileInfos;
 	private JTable table;
 	private boolean isWor = false;
-	private PercentProgress percentProgress;
 
 	public DataImportCallable(List<ImportFileInfo> fileInfos, JTable table) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
@@ -33,9 +32,9 @@ public class DataImportCallable extends UpdateProgressCallable {
 		}
 		// 不用了先置空回收对象
 		datasources = null;
-		final DataImport dataImport = new DataImport();
 		try {
 			for (int i = 0; i < fileInfos.size(); i++) {
+				DataImport dataImport = new DataImport();
 				ImportSettings importSettings = dataImport.getImportSettings();
 				ImportFileInfo fileInfo = fileInfos.get(i);
 				ImportSetting importSetting = fileInfo.getImportSetting();
@@ -47,7 +46,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 					((ImportSettingWOR) importSetting).setTargetDatasource(importSetting.getTargetDatasource());
 				}
 				importSettings.add(importSetting);
-				percentProgress = new PercentProgress(i);
+				PercentProgress percentProgress = new PercentProgress(i);
 				dataImport.addImportSteppedListener(percentProgress);
 				long startTime = System.currentTimeMillis(); // 获取开始时间
 
@@ -64,6 +63,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 				if (null != percentProgress && percentProgress.isCancel()) {
 					break;
 				}
+				dataImport.removeImportSteppedListener(percentProgress);
 			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -77,7 +77,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 					}
 				}
 			}
-			dataImport.removeImportSteppedListener(percentProgress);
 		}
 		return true;
 	}

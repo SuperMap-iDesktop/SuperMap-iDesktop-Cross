@@ -20,12 +20,14 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
+
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.util.ArrayList;
 
 public class PanelLineBufferAnalyst extends JPanel {
@@ -72,13 +75,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private Object radiusLeft;
 	private Object radiusRight;
 	private String resultDatasetName;
-	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
-	private LocalKeylistener localKeylistener = new LocalKeylistener();
-	private LocalItemListener localItemListener = new LocalItemListener();
 	private ComboBoxField comboBoxField;
-	private boolean isButtonOkEnabled = true;
-	private boolean isButtonEnabled = true;
-	private boolean isShowInMap;
+	private boolean isArcSegmentSuitable = true;
+	private boolean isComboBoxDatasetNotNull = true;
+	private boolean isShowInMap = true;
+	private boolean isRadiusNumSuitable;
+	private boolean isHasResultDatasource;
 	private DoSome some;
 	private DatasetVector resultDatasetVector;
 	private BufferProgressCallable bufferProgressCallable;
@@ -86,35 +88,55 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
 	private final static Object DEFAULT_VALUE = 10;
+	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+	private LocalKeylistener localKeylistener = new LocalKeylistener();
+	private LocalItemListener localItemListener = new LocalItemListener();
 
 	public void setSome(DoSome some) {
 		this.some = some;
 	}
 
-	public boolean isButtonEnabled() {
-		return isButtonEnabled;
+	public boolean isArcSegmentSuitable() {
+		return isArcSegmentSuitable;
 	}
 
-	public void setButtonEnabled(boolean isButtonEnabled) {
-		this.isButtonEnabled = isButtonEnabled;
-	}
-
-	public PanelBufferData getPanelBufferData() {
-		return panelBufferData;
-	}
-
-	public void setPanelBufferData(PanelBufferData panelBufferData) {
-		this.panelBufferData = panelBufferData;
-	}
-
-	public boolean isButtonOkEnabled() {
-		return isButtonOkEnabled;
-	}
-
-	public void setButtonOkEnabled(boolean isButtonOkEnabled) {
-		this.isButtonOkEnabled = isButtonOkEnabled;
+	public void setArcSegmentSuitable(boolean isArcSegmentSuitable) {
+		this.isArcSegmentSuitable = isArcSegmentSuitable;
 		if (some != null) {
-			some.doSome(isButtonOkEnabled);
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
+		}
+	}
+
+	public boolean isComboBoxDatasetNotNull() {
+		return isComboBoxDatasetNotNull;
+	}
+
+	public void setComboBoxDatasetNotNull(boolean isComboBoxDatasetNotNull) {
+		this.isComboBoxDatasetNotNull = isComboBoxDatasetNotNull;
+		if (some != null) {
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
+		}
+	}
+
+	public boolean isRadiusNumSuitable() {
+		return isRadiusNumSuitable;
+	}
+
+	public void setRadiusNumSuitable(boolean isRadiusNumSuitable) {
+		this.isRadiusNumSuitable = isRadiusNumSuitable;
+		if (some != null) {
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
+		}
+	}
+
+	public boolean isHasResultDatasource() {
+		return isHasResultDatasource;
+	}
+
+	public void setHasResultDatasource(boolean isHasResultDatasource) {
+		this.isHasResultDatasource = isHasResultDatasource;
+		if (some != null) {
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 	}
 
@@ -165,6 +187,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		setPanelBufferData();
 		setPanelBufferType();
 		setPanelBuffeRadius();
+		setPanelResultData();
 		registerEvent();
 	}
 
@@ -338,20 +361,15 @@ public class PanelLineBufferAnalyst extends JPanel {
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
 					activeLayer[i] = mapControl.getMap().getLayers().get(i);
-
-					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.LINE3D
-							|| activeLayer[i].getDataset().getType() == DatasetType.NETWORK || activeLayer[i].getDataset().getType() == DatasetType.NETWORK3D) {
+					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
-							this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
-							this.panelResultData.resetDatasetName();
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
 							recordset = activeLayer[i].getSelection().toRecordset();
 							this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
 							this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
 							setComponentEnabled();
-
 						} else {
 							setWorkspaceTreeNode();
 						}
@@ -360,6 +378,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 						setWorkspaceTreeNode();
 					}
 				}
+			} else {
+				setWorkspaceTreeNode();
 			}
 		} else {
 			setWorkspaceTreeNode();
@@ -375,20 +395,15 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (nodeData.getData() instanceof Datasource) {
 				Datasource selectedDatasource = (Datasource) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDatasource);
-				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDatasource);
-				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
 				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
-					setButtonEnabled(false);
+					setComboBoxDatasetNotNull(false);
 				}
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
 				this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-				this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(selectedDataset.getDatasource());
-				this.panelResultData.resetDatasetName();
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
-				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.LINE3D
-						|| selectedDataset.getType() == DatasetType.NETWORK || selectedDataset.getType() == DatasetType.NETWORK3D) {
+				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.NETWORK) {
 					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
 				}
 			} else {
@@ -418,6 +433,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 		setComponentEnabled();
 	}
 
+	private void setPanelResultData() {
+		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
+				this.panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource());
+		if (this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
+			setHasResultDatasource(true);
+		} else {
+			setHasResultDatasource(false);
+		}
+
+	}
+
 	private void registerEvent() {
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
@@ -432,26 +458,25 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.radioButtonBufferTypeRound.addActionListener(new LocalActionListener());
 		this.radioButtonNumeric.addActionListener(new LocalActionListener());
 		this.radioButtonField.addActionListener(new LocalActionListener());
-		this.comboBoxFieldLeft.addItemListener(new LocalItemListener());
-		this.comboBoxFieldRight.addItemListener(new LocalItemListener());
+		this.comboBoxFieldLeft.addItemListener(localItemListener);
+		this.comboBoxFieldRight.addItemListener(localItemListener);
 		this.textFieldNumericLeft.addKeyListener(localKeylistener);
 		this.textFieldNumericRight.addKeyListener(localKeylistener);
 	}
 
 	private void setComboBoxDatasetType() {
+		// 暂不支持三维
 		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
 		datasetTypes.add(DatasetType.LINE);
-		datasetTypes.add(DatasetType.LINE3D);
+		// datasetTypes.add(DatasetType.LINE3D);
 		datasetTypes.add(DatasetType.NETWORK);
-		datasetTypes.add(DatasetType.NETWORK3D);
+		// datasetTypes.add(DatasetType.NETWORK3D);
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
 	private void initDatasourceAndDataSet() {
 		Datasource defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(defaultDatasource);
-		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(defaultDatasource);
-		this.panelResultData.resetDatasetName();
 		this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(defaultDatasource.getDatasets());
 	}
 
@@ -472,10 +497,23 @@ public class PanelLineBufferAnalyst extends JPanel {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
-						// TODO Auto-generated method stub
-						getButtonOkEnabled();
+						judgeArcSegmentNum();
 					}
 				});
+
+		this.textFieldNumericLeft.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				judgeRadiusNum();
+			}
+		});
+		this.textFieldNumericRight.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				judgeRadiusNum();
+			}
+		});
+
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
@@ -564,9 +602,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 						// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
 						comboBoxFieldLeft.removeAllItems();
 						comboBoxFieldRight.removeAllItems();
-						setButtonEnabled(false);
+						setComboBoxDatasetNotNull(false);
 					} else {
-						setButtonEnabled(true);
+						setComboBoxDatasetNotNull(true);
 					}
 				}
 				// 切换数据源后，如果ComboBoxDataset为空时，清除字段选项
@@ -582,20 +620,23 @@ public class PanelLineBufferAnalyst extends JPanel {
 								.get(e.getItem().toString());
 						comboBoxField = new ComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
 						comboBoxField.createComboBoxField(datasetItem, comboBoxFieldLeft, comboBoxFieldRight);
-						setButtonEnabled(true);
+						setComboBoxDatasetNotNull(true);
 					} else {
-						setButtonEnabled(false);
+						setComboBoxDatasetNotNull(false);
 					}
 				}
 			} else if (e.getSource() == comboBoxFieldLeft) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
-					if (radioButtonBufferTypeRound.isSelected()) {
-						comboBoxFieldRight.setModel(comboBoxFieldLeft.getModel());
-						radiusLeft = comboBoxFieldLeft.getSelectedItem().toString();
-					}
+					comboBoxFieldRight.removeItemListener(localItemListener);
+					comboBoxFieldRight.setSelectedItem(comboBoxFieldLeft.getSelectedItem());
+					comboBoxFieldRight.addItemListener(localItemListener);
+					radiusLeft = comboBoxFieldLeft.getSelectedItem().toString();
 				}
 			} else if (e.getSource() == comboBoxFieldRight) {
 				if (comboBoxFieldRight.getSelectedItem() != null) {
+					comboBoxFieldLeft.removeItemListener(localItemListener);
+					comboBoxFieldLeft.setSelectedItem(comboBoxFieldRight.getSelectedItem());
+					comboBoxFieldLeft.addItemListener(localItemListener);
 					radiusRight = comboBoxFieldRight.getSelectedItem().toString();
 				}
 			} else if (e.getSource() == panelBufferData.getCheckBoxGeometrySelect()) {
@@ -616,9 +657,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == radioButtonBufferTypeRound) {
+				// 当点击圆头缓冲时，左右缓冲半径需相同，此设置左半径和右半径同步
 				textFieldNumericRight.setText(textFieldNumericLeft.getText());
 				textFieldNumericLeft.addKeyListener(localKeylistener);
 				textFieldNumericRight.addKeyListener(localKeylistener);
+				comboBoxFieldLeft.addItemListener(localItemListener);
+				comboBoxFieldRight.addItemListener(localItemListener);
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
 					comboBoxFieldLeft.setSelectedIndex(0);
 					comboBoxFieldRight.setSelectedIndex(0);
@@ -627,8 +671,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 				checkBoxBufferRight.setSelected(true);
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonBufferTypeFlat) {
+				// 当点击平台缓冲时，左右半径可以不同，移除监听设置不同步
 				textFieldNumericLeft.removeKeyListener(localKeylistener);
 				textFieldNumericRight.removeKeyListener(localKeylistener);
+				comboBoxFieldLeft.removeItemListener(localItemListener);
+				comboBoxFieldRight.removeItemListener(localItemListener);
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonField) {
 				if (comboBoxFieldLeft.getSelectedItem() != null) {
@@ -668,17 +715,28 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
-	private void getButtonOkEnabled() {
+	private void judgeArcSegmentNum() {
 		try {
 			long value = Long.parseLong(panelResultSet.getTextFieldSemicircleLineSegment().getValue().toString());
 			if (value < DEFAULT_MIN || value > DEFAULT_MAX) {
-				setButtonOkEnabled(false);
+				setArcSegmentSuitable(false);
 			} else {
-				setButtonOkEnabled(true);
+				setArcSegmentSuitable(true);
 			}
 		} catch (Exception e) {
-			setButtonOkEnabled(false);
+			setArcSegmentSuitable(false);
 		}
 
 	}
+
+	private void judgeRadiusNum() {
+		double leftNum = Double.parseDouble(textFieldNumericLeft.getValue().toString());
+		double rightNum = Double.parseDouble(textFieldNumericRight.getValue().toString());
+		if (leftNum <= 0 || rightNum <= 0) {
+			setRadiusNumSuitable(false);
+		} else {
+			setRadiusNumSuitable(true);
+		}
+	}
+
 }
