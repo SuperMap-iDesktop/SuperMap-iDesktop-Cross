@@ -174,7 +174,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.comboBoxFieldControl = new JComboBox<Object>();
 		this.comboBoxFieldControl.setEditable(false);
 
-		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
+		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setValueClass(Double.class);
 		this.textFieldNumeric = new SMFormattedTextField(numberFormatter);
 		this.textFieldNumeric.setValue(DEFAULT_VALUE);
@@ -569,10 +569,18 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	private void judgeRadiusNum() {
 		double num = Double.parseDouble(textFieldNumeric.getValue().toString());
-		if (num <= 0) {
-			setRadiusNumSuitable(false);
-		} else {
-			setRadiusNumSuitable(true);
+		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.POINT) {
+			if (num <= 0) {
+				setRadiusNumSuitable(false);
+			} else {
+				setRadiusNumSuitable(true);
+			}
+		} else if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.REGION) {
+			if (num == 0) {
+				setRadiusNumSuitable(false);
+			} else {
+				setRadiusNumSuitable(true);
+			}
 		}
 	}
 }
