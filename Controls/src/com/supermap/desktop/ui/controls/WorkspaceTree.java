@@ -811,6 +811,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					|| userData instanceof SymbolLineLibrary || userData instanceof SymbolMarkerLibrary) {
 				return false;
 
+			} else if (userData instanceof Dataset && ((Dataset) userData).getDatasource().isReadOnly()) {
+				return false;
 			}
 		}
 		return isEditable();

@@ -1,24 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.text.MessageFormat;
-import java.util.EventObject;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellEditor;
-import javax.swing.tree.TreeCellEditor;
-import javax.swing.tree.TreePath;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
@@ -43,6 +24,20 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.MapUtilties;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellEditor;
+import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.MessageFormat;
+import java.util.EventObject;
 
 /**
  * 工作空间树单元格编辑器
@@ -154,8 +149,8 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 			} else if (data instanceof Dataset) {
 				// 数据集重命名
 				Dataset dataset = (Dataset) data;
-				if (dataset.getName().equals(stringTextField)) {
-					// 点错了！
+				if (dataset.getDatasource().isReadOnly() || dataset.getName().equals(stringTextField)) {
+					// do nothings
 				} else if (!dataset.getDatasource().getDatasets().isAvailableDatasetName(stringTextField)) {
 					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_IllegalDatasetName"));
 				} else {
