@@ -22,7 +22,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient Recordset recordset;
 	private transient FieldInfos fieldInfos;
 	private int nowRow = 0;
-	private TabularCache tabularCache = new TabularCache();
+//	private TabularCache tabularCache = new TabularCache();
 
 
 	public TabularTableModel(Recordset recordset) {
@@ -72,13 +72,15 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null) {
 			return null;
 		}
-		int key = getKey(rowIndex, columnIndex);
-		Object value = tabularCache.getValue(key);
-		if (null == value) {
-			moveToRow(rowIndex);
-			value = recordset.getFieldValue(columnIndex);
-			tabularCache.updateValue(key, value);
-		}
+		// 缓存用处效果不明显
+//		int key = getKey(rowIndex, columnIndex);
+//		Object value = tabularCache.getValue(key);
+//		if (null == value) {
+		Object value = null;
+		moveToRow(rowIndex);
+		value = recordset.getFieldValue(columnIndex);
+//			tabularCache.updateValue(key, value);
+//		}
 		return value;
 	}
 
@@ -226,7 +228,7 @@ public class TabularTableModel extends AbstractTableModel {
 				}
 				if (recordset.setFieldValue(getColumnName(columnIndex), value)) {
 					recordset.update();
-					tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
+//					tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
 				}
 			}
 		} catch (Exception e) {
@@ -254,12 +256,10 @@ public class TabularTableModel extends AbstractTableModel {
 			if (!isFirst) {
 				buffer.append("#");
 			}
-			if (selectedColumns[i] != 0) {
-				buffer.append(datasetVector.getFieldInfos().get(selectedColumns[i]).getName());
-				buffer.append(" ");
-				buffer.append(sortKind);
-				isFirst = false;
-			}
+			buffer.append(datasetVector.getFieldInfos().get(selectedColumns[i]).getName());
+			buffer.append(" ");
+			buffer.append(sortKind);
+			isFirst = false;
 		}
 
 		try {
