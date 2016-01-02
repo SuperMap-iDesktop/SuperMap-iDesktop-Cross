@@ -52,6 +52,10 @@ public class CommonProperties extends Properties {
 	public static final String DefaultValue = "String_DefaultValue";
 	public static final String IsRequired = "String_IsRequired";
 	public static final String Next = "String_Button_Next";
+	public static final String CloseDialog = "String_CheckBox_CloseDialog";
+	public static final String Create = "String_Create";
+
+
 
 
 }
