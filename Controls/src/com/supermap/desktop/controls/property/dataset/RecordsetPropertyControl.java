@@ -477,6 +477,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 			if (removeRowCount > 0) {
 				this.fieldInfos.clear();
+				this.uneditableRows.clear();
+				this.captionModifiedRows.clear();
 				fireTableRowsDeleted(0, removeRowCount - 1);
 			}
 		}
@@ -485,6 +487,20 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			Object oldValue = this.fieldInfos.remove(row);
 			if (oldValue != null) {
 				fireTableRowsDeleted(row, row);
+
+				for (int i = this.uneditableRows.size() - 1; i >= 0; i--) {
+					if (this.uneditableRows.get(i) == row) {
+						this.uneditableRows.remove(i);
+						break;
+					}
+				}
+
+				for (int i = this.captionModifiedRows.size() - 1; i >= 0; i--) {
+					if (this.captionModifiedRows.get(i) == row) {
+						this.captionModifiedRows.remove(i);
+						break;
+					}
+				}
 			}
 		}
 
