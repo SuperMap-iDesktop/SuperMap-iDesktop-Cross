@@ -6,21 +6,19 @@ import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextField;
 import com.supermap.desktop.ui.controls.borderPanel.SmComponentPanel;
 import com.supermap.desktop.ui.controls.borderPanel.StateTransmitter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
- * Created by Administrator on 2015/12/7.
+ * SQL查询中的保存查询结果类
+ * @author xiajt
  */
 public class PanelSaveSearchResult extends SmComponentPanel {
 
@@ -66,7 +64,7 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		private JLabel labelDatasource = new JLabel("datasource");
 		private JLabel labelDataset = new JLabel("dataset");
 		private DatasourceComboBox datasourceComboBox = new DatasourceComboBox();
-		private JTextField textFieldDataset = new JTextField();
+		private SmTextField textFieldDataset = new SmTextField();
 
 
 		public InsidePanel() {
@@ -78,6 +76,17 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		}
 
 		private void initComponents() {
+			textFieldDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
+				@Override
+				public boolean isTextFieldValueLegit(String textFieldVaue) {
+					return datasourceComboBox.getSelectedDatasource() == null || (textFieldVaue != null && textFieldVaue.length() > 0 && datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldVaue));
+				}
+
+				@Override
+				public String getLegitValue(String currentValue, String backUpValue) {
+					return datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName(currentValue);
+				}
+			});
 			for (int i = datasourceComboBox.getItemCount() - 1; i >= 0; i--) {
 				if (datasourceComboBox.getItemAt(i) instanceof DataCell) {
 					DataCell dataCell = (DataCell) datasourceComboBox.getItemAt(i);
@@ -114,9 +123,6 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 
 		private void registListeners() {
 			datasourceComboBox.addItemListener(itemListener);
-			textFieldDataset.addKeyListener(textFieldDatasetKeyListener);
-
-			textFieldDataset.addFocusListener(focusListener);
 		}
 
 		private void initResources() {
@@ -137,47 +143,35 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 				textFieldDataset.setText(datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName(textFieldDataset.getText()));
 			}
 		};
-		private KeyListener textFieldDatasetKeyListener = new KeyAdapter() {
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (textFieldDataset.getText().length() > 0 && datasourceComboBox.getSelectedDatasource() != null && !datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldDataset.getText())) {
-					textFieldDataset.setForeground(Color.red);
-				} else {
-					textFieldDataset.setForeground(Color.black);
-				}
-			}
-		};
+		//endregion
 
-		private FocusListener focusListener = new FocusListener() {
-			private String backUps = "";
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				backUps = textFieldDataset.getText();
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (datasourceComboBox.getSelectedDatasource() != null && !datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldDataset.getText())) {
-					textFieldDataset.setText(backUps);
-					textFieldDataset.setForeground(Color.black);
-				}
-			}
-		};
-
+		/**
+		 * 获得当前选中的数据源
+		 *
+		 * @return 选中的数据源
+		 */
 		public Datasource getSelectDatasource() {
 			return this.datasourceComboBox.getSelectedDatasource() != null ? this.datasourceComboBox.getSelectedDatasource() : null;
 		}
 
+		/**
+		 * 获得当前输入的数据集名称
+		 *
+		 * @return
+		 */
 		public String getDatasetName() {
 			return this.textFieldDataset.getText();
 		}
 
+		/**
+		 * 设置当前选择的数据源
+		 *
+		 * @param datasource 数据源
+		 */
 		public void setSelectedDatasources(Datasource datasource) {
 			this.datasourceComboBox.setSelectedDatasource(datasource);
 		}
-		//endregion
 
 	}
 }
