@@ -6,9 +6,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CancellationException;
@@ -104,7 +106,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 				double count = fileInfos.size();
 				int totalPercent = (int) ((100 * this.i + arg0.getSubPercent()) / count);
 				updateProgressTotal(arg0.getSubPercent(),
-						MessageFormat.format(DataConversionProperties.getString("String_TotalTaskNumber"), String.valueOf(fileInfos.size())), totalPercent,
+						MessageFormat.format(CommonProperties.getString("String_TotalTaskNumber"), String.valueOf(fileInfos.size())), totalPercent,
 						MessageFormat.format(DataConversionProperties.getString("String_FileInport"), arg0.getCurrentTask().getSourceFilePath()));
 			} catch (CancellationException e) {
 				arg0.setCancel(true);

@@ -26,6 +26,8 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 	private MutiTable table;
 	private Datasource datasource;
 	private PercentListener percentListener;
+	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
+		EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
 
 	public DatasetCopyCallable(MutiTable table) {
 		this.table = table;
@@ -68,6 +70,9 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			String charset = vector.get(COLUMN_INDEX_Charset).toString();
 			Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
 			Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
+			if (!isSupportEngineType(dataset.getDatasource().getEngineType())) {
+				return;
+			}
 			datasource = workspace.getDatasources().get(targetDatasourceStr);
 			Dataset resultDataset = null;
 			if (StringUtilties.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
@@ -109,13 +114,20 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		try {
 			String targetDatasourceStr = datasource.getAlias();
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-
-
+			// 只读数据源不支持复制
+			if (datasource.isReadOnly()) {
+				String info = MessageFormat.format(ControlsProperties.getString("String_PluginDataEditor_MessageCopyDatasetOne"), targetDatasourceStr);
+				Application.getActiveApplication().getOutput().output(info);
+				return;
+			}
 			if (1 == datasets.length) {
 				// 只复制一个数据集
 				Dataset targetDataset = datasets[0];
+				// web数据源不能复制到udb数据源中
+				if (!isSupportEngineType(targetDataset.getDatasource().getEngineType())) {
+					return;
+				}
 				// 提示是否进行复制操作
-
 				percentListener = new PercentListener(1, 1, targetDataset.getName());
 				datasource.addSteppedListener(percentListener);
 				copyDatasetToDatasource(targetDataset, targetDatasourceStr, datasource);
@@ -127,6 +139,9 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				// 复制多个数据集
 
 				for (int i = 0; i < datasets.length; i++) {
+					if (!isSupportEngineType(datasets[i].getDatasource().getEngineType())) {
+						return;
+					}
 					percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
 					datasource.addSteppedListener(percentListener);
 					copyDatasetToDatasource(datasets[i], targetDatasourceStr, datasource);
@@ -178,6 +193,18 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		return flag;
 	}
 
+	private boolean isSupportEngineType(EngineType engineType) {
+		boolean result = true;
+
+		for (EngineType type : UN_SUPPORT_TYPE) {
+			if (engineType == type) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	class PercentListener implements SteppedListener {
 		private boolean isCancel = false;
 		private int count;

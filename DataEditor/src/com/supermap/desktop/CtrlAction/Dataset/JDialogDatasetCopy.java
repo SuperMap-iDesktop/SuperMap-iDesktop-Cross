@@ -9,7 +9,9 @@ import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.EncodeType;
+import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -31,6 +33,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -427,7 +430,15 @@ public class JDialogDatasetCopy extends SmDialog {
 	private void initializeColumns() {
 		try {
 			// 目标数据源
-			final DatasourceComboBox targetBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			ArrayList<Datasource> datasourcesArray = new ArrayList<Datasource>();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				if (!datasources.get(i).isReadOnly()) {
+					datasourcesArray.add(datasources.get(i));
+				}
+			}
+			Datasource[] array = new Datasource[datasourcesArray.size()];
+			final DatasourceComboBox targetBox = new DatasourceComboBox(datasourcesArray.toArray(array));
 			targetBox.addActionListener(new ActionListener() {
 
 				@Override

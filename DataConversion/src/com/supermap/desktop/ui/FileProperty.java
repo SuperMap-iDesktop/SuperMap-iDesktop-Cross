@@ -42,7 +42,7 @@ public class FileProperty extends JDialog {
 	private JButton btnQuit = new JButton();
 
 	public FileProperty(Dialog owner,  ImportFileInfo fileInfo) {
-		super(owner);
+		super(owner,true);
 		initComponent();
 		setFileInfo(fileInfo);
 		setLocationRelativeTo(owner);
@@ -87,8 +87,7 @@ public class FileProperty extends JDialog {
 	}
 
 	private void initComponent() {
-		setResizable(false);
-		setBounds(100, 100, 545, 241);
+		setBounds(100, 100, 600, 250);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

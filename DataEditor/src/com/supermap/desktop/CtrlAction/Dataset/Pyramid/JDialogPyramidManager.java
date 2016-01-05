@@ -7,17 +7,18 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
  * Created by XiaJt on 2016/1/1.
  */
 public class JDialogPyramidManager extends SmDialog {
-
 
 	//region 定义变量
 	// 工具条
@@ -56,13 +56,16 @@ public class JDialogPyramidManager extends SmDialog {
 	private JButton buttonClose;
 
 
-	private final int ColumnSourceDatasetIndex = 0;
-	private final int ColumnSourceDatasourceIndex = 1;
+	public static final int ColumnSourceDatasetIndex = 0;
+	public static final int ColumnSourceDatasourceIndex = 1;
 
 	private JDialogDatasetChoosePyramidManager jDialogDatasetChoosePyramidManager;
 
-	private final java.lang.String[] supportDatasetTypes = new java.lang.String[]{CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRID),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRIDCOLLECTION), CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGE), CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGECOLLECTION)};
+	private final java.lang.String[] supportDatasetTypes = new java.lang.String[]{
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRID),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRIDCOLLECTION),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGE),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGECOLLECTION)};
 	//endregion
 
 	public JDialogPyramidManager() {
@@ -148,33 +151,9 @@ public class JDialogPyramidManager extends SmDialog {
 	private void initTable() {
 		this.scrollPaneTable.setViewportView(tableDatasets);
 		this.tableDatasets.setModel(pyramidManagerTableModel);
-		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasetIndex).setCellRenderer(new DefaultTableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				Dataset dataset = (Dataset) value;
-				DataCell dataCell = new DataCell(new ImageIcon(JDialogPyramidManager.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()))), dataset.getName());
-				if (isSelected) {
-					dataCell.setBackground(table.getSelectionBackground());
-				} else {
-					dataCell.setBackground(table.getBackground());
-				}
-				return dataCell;
-			}
-		});
+		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasetIndex).setCellRenderer(new TableDatasetCellRender());
 
-		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasourceIndex).setCellRenderer(new DefaultTableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				Datasource datasource = (Datasource) value;
-				DataCell dataCell = new DataCell(CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType()), datasource.getAlias(), datasource);
-				if (isSelected) {
-					dataCell.setBackground(table.getSelectionBackground());
-				} else {
-					dataCell.setBackground(table.getBackground());
-				}
-				return dataCell;
-			}
-		});
+		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasourceIndex).setCellRenderer(new TabelDatasourceCellRender());
 	}
 
 	private void initPanelButtons() {
@@ -205,7 +184,7 @@ public class JDialogPyramidManager extends SmDialog {
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				invertSelectedRows();
+				TableUtilties.invertSelection(tableDatasets);
 			}
 		});
 
@@ -275,29 +254,12 @@ public class JDialogPyramidManager extends SmDialog {
 			int afterRowCount = tableDatasets.getRowCount();
 			if (afterRowCount > beforeRowCount) {
 				tableDatasets.setRowSelectionInterval(beforeRowCount, afterRowCount - 1);
+				tableDatasets.scrollRectToVisible(tableDatasets.getCellRect(tableDatasets.getRowCount() - 1, 0, true));
 			}
 		}
 
 	}
 
-	private void invertSelectedRows() {
-		try {
-			int[] temp = this.tableDatasets.getSelectedRows();
-			ArrayList<Integer> selectedRows = new ArrayList<Integer>();
-			for (int aTemp : temp) {
-				selectedRows.add(aTemp);
-			}
-
-			tableDatasets.clearSelection();
-			for (int index = 0; index < this.tableDatasets.getRowCount(); index++) {
-				if (!selectedRows.contains(index)) {
-					tableDatasets.addRowSelectionInterval(index, index);
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
 
 	private void bulidPyramid() {
 		if (pyramidManagerTableModel.bulidPyramid() && checkBoxAutoClose.isSelected()) {

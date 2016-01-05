@@ -1,0 +1,165 @@
+package com.supermap.desktop.utilties;
+
+import com.supermap.data.SpatialIndexInfo;
+
+import java.util.List;
+
+/**
+ * 空间索引信息公共类
+ *
+ * @author xiajt
+ */
+public class SpatialIndexInfoUtilties {
+	private SpatialIndexInfoUtilties() {
+
+	}
+
+	public static String getSpatialIndexInfoX(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getGridCenter().getX();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoY(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getGridCenter().getY();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoGrid0(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getGridSize0();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoGrid1(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getGridSize1();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoGrid2(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getGridSize2();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoTileField(List<SpatialIndexInfo> spatialIndexInfos) {
+		String result = "";
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			String value = spatialIndexInfos.get(i).getTileField();
+			if (i == 0) {
+				result = value;
+			} else if (!StringUtilties.stringEquals(result, value)) {
+				result = "";
+				break;
+			}
+		}
+		return result;
+	}
+
+	public static String getSpatialIndexInfoTileWidth(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getTileWidth();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+	public static String getSpatialIndexInfoTileHeight(List<SpatialIndexInfo> spatialIndexInfos) {
+		double result = 0;
+		boolean isDifferent = false;
+		for (int i = 0; i < spatialIndexInfos.size(); i++) {
+			double value = spatialIndexInfos.get(i).getTileHeight();
+			if (i == 0) {
+				result = value;
+			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+				isDifferent = true;
+				break;
+			}
+		}
+		if (isDifferent) {
+			return "";
+		} else {
+			return String.valueOf(result);
+		}
+	}
+
+}

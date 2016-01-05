@@ -123,7 +123,7 @@ public class ThemeGuideFactory {
 					CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
+		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), getDataset().getName()+"."+expression, ColorGradientType.GREENORANGEVIOLET);
 		if (null != themeUnique) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
 			addPanelToThemeMainContainer(themeUniqueContainer, themeUniqueContainer.getThemeUniqueLayer().getCaption());

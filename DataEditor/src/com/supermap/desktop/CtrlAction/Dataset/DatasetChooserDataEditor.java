@@ -18,8 +18,13 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.CharsetUtilties;
 import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.ui.controls.TreeNodeData;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+
 import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.Vector;
@@ -30,7 +35,7 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean DIALOG_TYPE_COPY = false;
-	private boolean DIALOG_TYPE_DELECT = false;
+	private boolean DIALOG_TYPE_DELETE = false;
 	private int COLUMN_INDEX_SOURCEDATASET = 0;
 	private int COLUMN_INDEX_SOURCEDATASOURCE = 1;
 	private int COLUMN_INDEX_TARGETDATASOURCE = 2;
@@ -45,11 +50,26 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 		this.DIALOG_TYPE_COPY = DIALOG_TYPE_COPY;
 		setTitle(CoreProperties.getString("String_FormDatasetBrowse_FormText"));
 		getDataset();
+		removeDatasourceNode();
 	}
 
-	public DatasetChooserDataEditor(JFrame owner, Datasource datasource, boolean DIALOG_TYPE_DELECT) {
+	private void removeDatasourceNode() {
+		// 删除不用显示的数据集节点
+		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
+		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+		for (int i = 0; i < datasourceTreeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+			if (!CtrlActionCopyDataset.isSupportEngineType(((Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData()).getEngineType())){
+				childDatasourceTreeNode.removeFromParent();
+			}
+		}
+		workspaceTree.updateUI();
+	}
+
+	public DatasetChooserDataEditor(JFrame owner, Datasource datasource, boolean DIALOG_TYPE_DELETE) {
 		super(owner, true, datasource);
-		this.DIALOG_TYPE_DELECT = DIALOG_TYPE_DELECT;
+		this.DIALOG_TYPE_DELETE = DIALOG_TYPE_DELETE;
 		setTitle(CoreProperties.getString("String_FormDatasetBrowse_FormText"));
 		getDataset();
 	}
@@ -63,9 +83,10 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 					// 添加数据集到复制数据集窗口
 					addInfoToMainTable();
 				}
-				if (DIALOG_TYPE_DELECT) {
+				if (DIALOG_TYPE_DELETE) {
 					// 删除数据集
-					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用 thread.start，使用 thread.run 单线程执行。
+					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用
+					// thread.start，使用 thread.run 单线程执行。
 					DeleteThread thread = new DeleteThread();
 					thread.run();
 				}
@@ -76,9 +97,10 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 			public void mouseClicked(MouseEvent e) {
 				if (2 == e.getClickCount() && DIALOG_TYPE_COPY) {
 					addInfoToMainTable();
-				} else if (2 == e.getClickCount() && DIALOG_TYPE_DELECT) {
+				} else if (2 == e.getClickCount() && DIALOG_TYPE_DELETE) {
 
-					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用 thread.start，使用 thread.run 单线程执行。
+					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用
+					// thread.start，使用 thread.run 单线程执行。
 					DeleteThread thread = new DeleteThread();
 					thread.run();
 				}
@@ -90,9 +112,10 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER && DIALOG_TYPE_COPY) {
 					addInfoToMainTable();
-				} else if (e.getKeyChar() == KeyEvent.VK_ENTER && DIALOG_TYPE_DELECT) {
+				} else if (e.getKeyChar() == KeyEvent.VK_ENTER && DIALOG_TYPE_DELETE) {
 
-					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用 thread.start，使用 thread.run 单线程执行。
+					// 删除数据集多线程操作会导致崩溃，原因未知，多半是因为另有线程同时访问了数据源，因此不使用
+					// thread.start，使用 thread.run 单线程执行。
 					DeleteThread thread = new DeleteThread();
 					thread.run();
 				}
@@ -123,7 +146,6 @@ public class DatasetChooserDataEditor extends DatasetChooser {
 			datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			// 只选择一条数据删除
 			dispose();
-			workspaceTree.removeMouseListener(mouseAdapter);
 			if (1 == count) {
 				String datasetName = model.getTagValue(selectRows[0]).get(0).toString();
 

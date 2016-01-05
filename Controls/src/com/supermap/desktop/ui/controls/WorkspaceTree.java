@@ -583,8 +583,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 刷新指定节点
 	 *
-	 * @param node
-	 *            指定节点
+	 * @param node 指定节点
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -2275,6 +2274,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 												return;
 											}
 											Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+											if (0 == datasets.length) {
+												return;
+											}
 											if (1 == datasets.length) {
 												// 只复制一个数据集
 												Dataset targetDataset = datasets[0];

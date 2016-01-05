@@ -28,6 +28,8 @@ public class ThemeMainContainer extends JPanel {
 	private JLabel labelThemeLayer = new JLabel();
 	private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
 	private JPanel panelThemeInfo = new JPanel();
+	private JCheckBox checkBoxRefreshAtOnce = new JCheckBox();
+	private JButton buttonApply = new JButton();
 
 	private Map map;
 
@@ -36,10 +38,11 @@ public class ThemeMainContainer extends JPanel {
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
 	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
+	
 	private Layer newLayer;
 	private Layer oldLayer;
 	private boolean isThemeChange;
-
+	
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -51,6 +54,8 @@ public class ThemeMainContainer extends JPanel {
 	 */
 	private void initResources() {
 		this.labelThemeLayer.setText(MapViewProperties.getString("String_Themelayers"));
+		this.checkBoxRefreshAtOnce.setText(MapViewProperties.getString("String_RefreshAtOnce"));
+		this.buttonApply.setText(MapViewProperties.getString("String_Button_Apply"));
 	}
 
 	/**
@@ -69,9 +74,11 @@ public class ThemeMainContainer extends JPanel {
 		this.comboBoxThemeLayer.setEditable(true);
 		this.setLayout(new GridBagLayout());
 		// @formatter:off
-		this.add(labelThemeLayer,    new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(20, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
-		this.add(comboBoxThemeLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(80, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
-		this.add(panelThemeInfo,     new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(20, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
+		this.add(comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(80, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(panelThemeInfo,        new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
+		this.add(buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(100, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
 		// @formatter:on
 	}
 
@@ -96,7 +103,7 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
-		
+
 	}
 
 	/**
@@ -113,14 +120,11 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// if (e.getSource() == checkBoxRefreshAtOnce) {
-			// isRefreshAtOnce = checkBoxRefreshAtOnce.isSelected();
-			// if (isRefreshAtOnce) {
-			// refreshMap();
-			// }
-			// } else {
-			// refreshMap();
-			// }
+			if (e.getSource() == checkBoxRefreshAtOnce) {
+				
+			} else {
+				refreshMap();
+			}
 		}
 
 		/**
@@ -323,5 +327,5 @@ public class ThemeMainContainer extends JPanel {
 	public void setThemeChange(boolean isThemeChange) {
 		this.isThemeChange = isThemeChange;
 	}
-	
+
 }

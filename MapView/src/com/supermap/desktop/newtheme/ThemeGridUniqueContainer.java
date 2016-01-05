@@ -223,10 +223,10 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.toolBar.add(this.buttonAntitone);
 		initToolBar();
 		//@formatter:off
-		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 5).setWeight(1, 0));
-		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 20, 5, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 5).setWeight(1, 0));
-		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 10, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 3));
+		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
+		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(100, 0));
+		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
 		getTable();
 		this.tableUniqueInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(tableUniqueInfo);		
