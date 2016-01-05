@@ -54,8 +54,6 @@ public class CommonProperties extends Properties {
 	public static final String Next = "String_Button_Next";
 	public static final String CloseDialog = "String_CheckBox_CloseDialog";
 	public static final String Create = "String_Create";
-
-
-
+	public static final String Size = "String_Size";
 
 }
