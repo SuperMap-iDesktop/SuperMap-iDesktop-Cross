@@ -18,6 +18,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
@@ -60,7 +61,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")};
 	private transient DatasetVector datasetVector;
 	private transient Map map;
-	private String rangeExpression = "SmID";
+	private String rangeExpression;
 	private transient RangeMode rangeMode = RangeMode.EQUALINTERVAL;
 	private int labelCount = 5;
 	private String captiontype = "<=X<";
@@ -158,24 +159,24 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		initComboBoxRangMethod();
 		initComboBoxRangeCount();
 		initComboBoxRangeFormat();
-		this.panelSytle.setLayout(new GridBagLayout());
-		this.panelSytle.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
 		this.comboBoxExpression.setEditable(true);
-		this.panelSytle.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelSytle.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelSytle.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		this.spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
-		this.panelSytle.add(this.spinnerRangeLength,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeFormat,      new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelSytle.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,10,2,10).setWeight(1, 0));
-		this.panelSytle.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(2,20,2,10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.toolBar,               new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(2).setWeight(1, 0));
-		this.panelSytle.add(this.scrollPane,            new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
+		this.panelSytle.setLayout(new GridBagLayout());
+		this.panelSytle.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.spinnerRangeLength,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.labelRangeFormat,    new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.comboBoxRangeFormat, new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.labelColorStyle,     new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelSytle.add(this.comboBoxColorStyle,  new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelSytle.add(this.toolBar,             new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 5).setWeight(100, 0).setIpad(50, 0));
+		this.panelSytle.add(this.scrollPane,          new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
 		getTable();
 		this.scrollPane.setViewportView(tableLabelInfo);
 		//@formatter:on
@@ -312,7 +313,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
 			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
-				caption = caption.replaceAll("-", "<= X <");
+				caption = caption.replaceAll(" - ", " <= X < ");
 			}
 			rangeItem.setCaption(caption);
 			this.tableLabelInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
@@ -1035,39 +1036,25 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		}
 
 		private void setLabelRangeValue(int selectRow, String rangeValue) {
+			DecimalFormat format = new DecimalFormat("#.######");
+			String end = format.format(themeLabel.getItem(selectRow).getEnd());
 			themeLabel.getItem(selectRow).setEnd(Double.valueOf(rangeValue));
-			String end = String.valueOf(themeLabel.getItem(selectRow).getEnd());
 			String caption = themeLabel.getItem(selectRow).getCaption();
-			String numicString = "<";
-			String numString = "-";
-			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
-			if (captiontype.contains(numicString) && caption.contains("<")) {
-				repleaceCaption(caption, selectRow, end, numicString);
-			} else if (captiontype.contains(numString) && caption.contains(numString)) {
-				repleaceCaption(caption, selectRow, end, numString);
-			}
-		}
-
-		private void repleaceCaption(String caption, int selectRow, String end, String numic) {
-			if (caption.lastIndexOf(numic) < 0) {
-				return;
-			}
+			themeLabel.getItem(selectRow).setEnd(Double.parseDouble(rangeValue));
+			double rangeEnd = Double.parseDouble(rangeValue);
+			rangeValue = format.format(rangeEnd);
 			// 替换当前行的标题
-			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
-			if (StringUtilties.isNumber(endString)) {
-				caption = caption.replace(endString, end);
+			if (StringUtilties.isNumber(end)) {
+				caption = caption.replace(end, rangeValue);
 				themeLabel.getItem(selectRow).setCaption(caption);
 			}
 			// 替换下一行的标题
 			if (selectRow != themeLabel.getCount() - 1) {
 				String nextCaption = themeLabel.getItem(selectRow + 1).getCaption();
-				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
-					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), end);
-					themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
-				}
+				nextCaption = nextCaption.replace(end, rangeValue);
+				themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
 			}
 		}
-
 	}
 
 	public boolean isRefreshAtOnece() {

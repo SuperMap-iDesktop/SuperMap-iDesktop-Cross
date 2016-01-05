@@ -131,14 +131,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxLabelExpression();
 		getFieldComboBox(comboBoxLabelExpression, LABELEXPRESSION_TYPE);
 		//@formatter:off
-		this.labelLabelExpression.setPreferredSize(new Dimension(160,20));
-		Dimension textDimension = new Dimension(180,20);
-		this.comboBoxLabelExpression.setPreferredSize(textDimension);
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		panelPropertyContent.setLayout(new GridBagLayout());
-		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2, 20, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,  0, 2, 20).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 0));
+		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelBGSet,                   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelOffset,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelEffectSet,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
@@ -166,10 +163,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		//@formatter:off
 		panelBGSet.setLayout(new GridBagLayout());
 		initComboBoxBackGround();
-		panelBGSet.add(this.labelBGShape,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.comboBoxBGShape, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.labelBGSytle,    new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.buttonBGStyle,   new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.labelBGShape,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.comboBoxBGShape, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(70, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.labelBGSytle,    new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.buttonBGStyle,   new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(70, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -222,23 +219,23 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxUnity();
 		initComboBoxOffsetX();
 		initComboBoxOffsetY();
-		Dimension dimension = new Dimension(160,20);
-		Dimension textDimension = new Dimension(160,20);
-		this.labelOffsetUnity.setPreferredSize(dimension);
-		this.labelOffsetX.setPreferredSize(dimension);
-		this.labelOffsetY.setPreferredSize(dimension);
-		this.comboBoxOffsetX.setPreferredSize(textDimension);
-		this.comboBoxOffsetY.setPreferredSize(textDimension);
-		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+//		Dimension dimension = new Dimension(160,20);
+//		Dimension textDimension = new Dimension(160,20);
+//		this.labelOffsetUnity.setPreferredSize(dimension);
+//		this.labelOffsetX.setPreferredSize(dimension);
+//		this.labelOffsetY.setPreferredSize(dimension);
+//		this.comboBoxOffsetX.setPreferredSize(textDimension);
+//		this.comboBoxOffsetY.setPreferredSize(textDimension);
+		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,0));
+		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
 		this.comboBoxOffsetX.setEditable(true);
-		panelLabelOffset.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10));
-		panelLabelOffset.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
+		panelLabelOffset.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
 		this.comboBoxOffsetY.setEditable(true);
-		panelLabelOffset.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelOffset.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10));
+		panelLabelOffset.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelOffset.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
 		//@formatter:on
 	}
 
@@ -303,18 +300,18 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboboxAutoAvoidance();
 		initComboBoxTextPrecision();
 		panelLabelEffectSet.setLayout(new GridBagLayout());
-		panelLabelEffectSet.add(this.checkBoxFlowVisual,       new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowSmallLabel,   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxAutoAvoidance,    new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.comboBoxAutoAvoidance,    new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxDraftLine,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.buttonDraftLine,          new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelTextPrecision,       new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.comboBoxTextPrecision,    new GridBagConstraintsHelper(2, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxFlowVisual,       new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,10));
+		panelLabelEffectSet.add(this.checkBoxShowSmallLabel,   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,10));
+		panelLabelEffectSet.add(this.checkBoxAutoAvoidance,    new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.comboBoxAutoAvoidance,    new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.checkBoxDraftLine,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.buttonDraftLine,          new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelTextPrecision,       new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelLabelEffectSet.add(this.comboBoxTextPrecision,    new GridBagConstraintsHelper(2, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 

@@ -37,6 +37,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -210,6 +211,17 @@ public class LayersTree extends JTree {
 		return result;
 	}
 
+	public void refreshNode(DefaultMutableTreeNode node){
+		
+		Object userObject = node.getUserObject();
+		TreeNodeData data = (TreeNodeData) userObject;
+		if (data.getType()==NodeDataType.LAYER) {
+			
+		}
+		
+	}
+	
+	
 	private TreeModel getTreeModel() {
 		TreeNodeData mapData = new TreeNodeData(currentMap.getName(), NodeDataType.UNKNOWN);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(mapData);

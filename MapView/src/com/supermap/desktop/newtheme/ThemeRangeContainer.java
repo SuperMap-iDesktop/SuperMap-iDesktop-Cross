@@ -20,6 +20,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
@@ -68,13 +69,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private JLabel labelOffsetYUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
 
-	private static String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
+	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient DatasetVector datasetVector;
 	private transient Map map;
 	private transient ThemeRange themeRange;
 	private transient Layer themeRangeLayer;
-	private String rangeExpression = "SmID";
+	private String rangeExpression;
 	private transient RangeMode rangeMode = RangeMode.EQUALINTERVAL;
 	private transient int rangeCount = 5;
 	private String captiontype = "";
@@ -182,8 +183,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.comboBoxRangeFormat,   new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelColorStyle,       new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(20, 0).setIpad(40, 0));
 		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(80, 0).setIpad(40, 0));
-		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,5).setWeight(1, 3).setFill(GridBagConstraints.BOTH));
+		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(100, 0).setIpad(40, 0));
+		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
 		
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
@@ -197,14 +198,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		String expression = this.themeRange.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
+		rangeExpression = this.themeRange.getRangeExpression();
+		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
+			rangeExpression = "0";
 		}
-		this.comboBoxExpression.setSelectedItem(expression);
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
+		this.comboBoxExpression.setSelectedItem(rangeExpression);
+		if (!rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
+			this.comboBoxExpression.addItem(rangeExpression);
+			this.comboBoxExpression.setSelectedItem(rangeExpression);
 		}
 	}
 
@@ -283,7 +284,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化分段方法项
 	 */
 	private void initComboBoxRangMethod() {
-		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
+		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
 				MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
@@ -306,7 +307,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
 				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		this.comboBoxRangeCount.setEditable(true);
 		int rangeCountNumber = this.themeRange.getCount();
@@ -317,7 +318,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段值精度项
 	 */
 	private void initComboBoxRangePrecision() {
-		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[]{"10000000", "1000000", "100000", "10000", "1000", "100",
+		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
 				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
 
 		String numeric = initPrecision(String.valueOf(this.themeRange.getPrecision()));
@@ -355,7 +356,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeFormat() {
 		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
-		this.comboBoxRangeFormat.setSelectedIndex(1);
+		if (themeRange.getItem(0).getCaption().contains("X")) {
+			this.comboBoxRangeFormat.setSelectedIndex(1);
+		} else {
+			this.comboBoxRangeFormat.setSelectedIndex(0);
+		}
+
 	}
 
 	/*
@@ -431,7 +437,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				caption = caption.replaceAll("<= X <", "-");
 				caption = caption.replaceAll("< X <", "-");
 			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
-				caption = caption.replaceAll("-", "<= X <");
+				caption = caption.replaceAll(" - ", " <= X < ");
 			}
 			rangeItem.setCaption(caption);
 			this.tableRangeInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
@@ -935,7 +941,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 
 		private void setRangeCount() {
-
 			rangeCount = Integer.valueOf(comboBoxRangeCount.getSelectedItem().toString());
 			resetThemeInfo();
 		}
@@ -1233,38 +1238,23 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		private void setRangeValue(int selectRow, String rangeValue) {
 			String numberDecimalFormat = comboBoxRangePrecision.getSelectedItem().toString();
 			numberDecimalFormat = numberDecimalFormat.replaceAll("1", "0");
+			numberDecimalFormat = numberDecimalFormat.replaceAll("0", "#");
 			DecimalFormat decimalFormat = new DecimalFormat(numberDecimalFormat);
+			double end = themeRange.getItem(selectRow).getEnd();
+			String endString = decimalFormat.format(end);
 			String tempStr = decimalFormat.format(Double.valueOf(rangeValue));
-			themeRange.getItem(selectRow).setEnd(Double.valueOf(tempStr));
-			String endValue = String.valueOf(themeRange.getItem(selectRow).getEnd());
+			themeRange.getItem(selectRow).setEnd(Double.parseDouble(tempStr));
 			String caption = themeRange.getItem(selectRow).getCaption();
-			String numicString = "<";
-			String numString = "-";
-			captiontype = comboBoxRangeFormat.getSelectedItem().toString();
-			if (captiontype.contains(numicString) && caption.contains("<")) {
-				repleaceCaption(caption, selectRow, endValue, numicString);
-			} else if (captiontype.contains(numString) && caption.contains(numString)) {
-				repleaceCaption(caption, selectRow, endValue, numString);
-			}
-		}
-
-		private void repleaceCaption(String caption, int selectRow, String endValue, String numic) {
-			if (caption.lastIndexOf(numic) < 0) {
-				return;
-			}
 			// 替换当前行的标题
-			String endString = caption.substring(caption.lastIndexOf(numic) + 1, caption.length()).trim();
 			if (StringUtilties.isNumber(endString)) {
-				caption = caption.replace(endString, endValue);
+				caption = caption.replace(endString, tempStr);
 				themeRange.getItem(selectRow).setCaption(caption);
 			}
 			// 替换下一行的标题
 			if (selectRow != themeRange.getCount() - 1) {
 				String nextCaption = themeRange.getItem(selectRow + 1).getCaption();
-				if (nextCaption.indexOf(numic) > 0 && StringUtilties.isNumber(nextCaption.substring(0, nextCaption.indexOf(numic)).trim())) {
-					nextCaption = nextCaption.replace(nextCaption.substring(0, nextCaption.indexOf(numic)), endValue);
-					themeRange.getItem(selectRow + 1).setCaption(nextCaption);
-				}
+				nextCaption = nextCaption.replace(endString, tempStr);
+				themeRange.getItem(selectRow + 1).setCaption(nextCaption);
 			}
 		}
 

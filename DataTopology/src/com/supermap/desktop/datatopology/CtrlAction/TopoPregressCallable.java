@@ -40,7 +40,7 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 					datasets[i] = (DatasetVector) datasource.getDatasets().get(datasetName);
 					TopologyDatasetRelationItem item = new TopologyDatasetRelationItem(datasets[i]);
 					precisionOrders[i] = item.getPrecisionOrder();
-					percentListener = new PercentListener(i, count);
+					percentListener = new PercentListener(i, count,datasets[i]);
 					TopologyValidator.addSteppedListener(percentListener);
 				}
 				long startTime = System.currentTimeMillis();
@@ -65,20 +65,22 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 	class PercentListener implements SteppedListener {
 		private int count;
 		private int i;
+		private Dataset dataset;
 
-		PercentListener(int i, int count) {
+		PercentListener(int i, int count,Dataset dataset) {
 			this.i = i;
 			this.count = count;
-
+			this.dataset = dataset;
 		}
 
 		@Override
 		public void stepped(SteppedEvent arg0) {
 			try {
 				int totalPercent = (int)(((i + 0.0) / count) * 100);
-				updateProgressTotal(arg0.getPercent(), totalPercent,
-						MessageFormat.format(CommonProperties.getString("String_Message_TotalProgress"), totalPercent, count),
-						MessageFormat.format(CommonProperties.getString("String_Message_SubProgress"), arg0.getPercent()));
+				updateProgressTotal(arg0.getPercent(), 
+						MessageFormat.format(CommonProperties.getString("String_TotalTaskNumber"),count),
+						totalPercent,
+						MessageFormat.format(DataTopologyProperties.getString("String_LineTopopress"), dataset.getName()));
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
 			}
