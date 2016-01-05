@@ -1,6 +1,8 @@
 package com.supermap.desktop.controls.utilties;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.properties.CoreProperties;
@@ -57,5 +59,31 @@ public class DatasetUtilties {
 		CommonToolkit.DatasetWrap.CloseDataset((Dataset[]) resultDataset.toArray(new Dataset[resultDataset.size()]));
 
 		return resultDataset;
+	}
+
+	/**
+	 * 得到传入数据集的公共字段
+	 */
+	public static String[] getCommonFields(List<Dataset> selectedDatasets) {
+		List<String> fieldNames = new ArrayList<>();
+		for (int i = 0; i < selectedDatasets.size(); i++) {
+			if (i == 0) {
+				FieldInfos fieldInfos = ((DatasetVector) selectedDatasets.get(i)).getFieldInfos();
+				List<String> datasetField = new ArrayList<>();
+				for (int j = 0; j < fieldInfos.getCount(); j++) {
+					if (!fieldInfos.get(j).isSystemField()) {
+						fieldNames.add(fieldInfos.get(j).getName());
+					}
+				}
+			} else {
+				FieldInfos fieldInfos = ((DatasetVector) selectedDatasets.get(i)).getFieldInfos();
+				for (int j = fieldNames.size() - 1; j >= 0; j--) {
+					if (fieldInfos.get(fieldNames.get(j)) == null) {
+						fieldNames.remove(j);
+					}
+				}
+			}
+		}
+		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 }
