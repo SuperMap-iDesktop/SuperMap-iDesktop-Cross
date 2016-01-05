@@ -1,17 +1,14 @@
 package com.supermap.desktop;
 
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Element;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-
-import org.osgi.framework.Bundle;
-import org.w3c.dom.Element;
-
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
 
 public class PluginManager {
 
@@ -40,8 +37,7 @@ public class PluginManager {
 
 	/**
 	 * 获取插件管理器中指定索引的插件对象。
-	 * 
-	 * @param index 插件索引
+	 *
 	 * @return 指定索引的插件
 	 */
 	public Plugin get(String pluginName) {

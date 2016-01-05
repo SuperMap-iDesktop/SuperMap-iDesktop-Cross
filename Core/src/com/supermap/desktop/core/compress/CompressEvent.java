@@ -20,7 +20,7 @@ public class CompressEvent extends EventObject {
 		super(source);
 		this.totalSize = totalSize;
 		this.compressedSize = compressedSize;
-		this.percent = new Double(FileSize.divide(this.compressedSize, this.totalSize)).intValue();
+		this.percent = new Double(100 * FileSize.divide(this.compressedSize, this.totalSize)).intValue();
 	}
 
 	public FileSize getTotalSize() {

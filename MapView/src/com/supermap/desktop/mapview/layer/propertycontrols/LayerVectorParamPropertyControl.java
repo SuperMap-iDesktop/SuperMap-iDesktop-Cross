@@ -105,7 +105,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			IFormMap iFormMap = Application.getActiveApplication().getActiveForm() instanceof IFormMap ? ((IFormMap) Application.getActiveApplication()
 					.getActiveForm()) : null;
 			if (iFormMap != null) {
-				DialogResult dialogResult = sqlDialog.showDialog("",getModifiedLayerPropertyModel().getDataset());
+				DialogResult dialogResult = sqlDialog.showDialog("", getModifiedLayerPropertyModel().getDataset());
 				if (dialogResult == DialogResult.OK) {
 					String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 
@@ -243,7 +243,11 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 				this.comboBoxSymbolScale.setEditable(true);
 				this.comboBoxSymbolScale.addItem(MapViewProperties.getString("String_SetCurrentScale"));
 				this.comboBoxSymbolScale.addItem(CoreProperties.getString(CoreProperties.Clear));
-				this.comboBoxSymbolScale.setSelectedItem(new ScaleModel(getLayerPropertyModel().getSymbolScale()));
+				if (null != getLayerPropertyModel().getSymbolScale()) {
+					this.comboBoxSymbolScale.setSelectedItem(new ScaleModel(getLayerPropertyModel().getSymbolScale()));
+				} else {
+					this.comboBoxSymbolScale.setSelectedItem("");
+				}
 
 				this.textFieldMinVisibleGeometrySize.setValue(getLayerPropertyModel().getMinVisibleGeometrySize());
 
@@ -320,7 +324,8 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void checkBoxIsSymbolScalableCheckedChanged() {
 		getModifiedLayerPropertyModel().setSymbolScalable(this.checkBoxIsSymbolScalable.isSelectedEx());
-		if (this.checkBoxIsSymbolScalable.isSelectedEx() && Double.compare(getModifiedLayerPropertyModel().getSymbolScale(), 0) == 0) {
+		if (this.checkBoxIsSymbolScalable.isSelectedEx()
+				&& (getModifiedLayerPropertyModel().getSymbolScale() == null || Double.compare(getModifiedLayerPropertyModel().getSymbolScale(), 0) == 0)) {
 			// 选中符号随图显示 而且没设置比例尺
 			this.comboBoxSymbolScale.setSelectedIndex(0);
 		}

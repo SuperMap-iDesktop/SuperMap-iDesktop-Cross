@@ -80,6 +80,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean isComboBoxDatasetNotNull = true;
 	private boolean isShowInMap = true;
 	private boolean isRadiusNumSuitable;
+	private boolean isHasResultDatasource;
 	private DoSome some;
 	private DatasetVector resultDatasetVector;
 	private BufferProgressCallable bufferProgressCallable;
@@ -102,7 +103,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	public void setArcSegmentSuitable(boolean isArcSegmentSuitable) {
 		this.isArcSegmentSuitable = isArcSegmentSuitable;
 		if (some != null) {
-			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable);
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 	}
 
@@ -113,7 +114,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	public void setComboBoxDatasetNotNull(boolean isComboBoxDatasetNotNull) {
 		this.isComboBoxDatasetNotNull = isComboBoxDatasetNotNull;
 		if (some != null) {
-			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable);
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 	}
 
@@ -124,7 +125,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 	public void setRadiusNumSuitable(boolean isRadiusNumSuitable) {
 		this.isRadiusNumSuitable = isRadiusNumSuitable;
 		if (some != null) {
-			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable);
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
+		}
+	}
+
+	public boolean isHasResultDatasource() {
+		return isHasResultDatasource;
+	}
+
+	public void setHasResultDatasource(boolean isHasResultDatasource) {
+		this.isHasResultDatasource = isHasResultDatasource;
+		if (some != null) {
+			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 	}
 
@@ -424,6 +436,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelResultData() {
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
 				this.panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource());
+		if (this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
+			setHasResultDatasource(true);
+		} else {
+			setHasResultDatasource(false);
+		}
 
 	}
 
@@ -475,7 +492,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.checkBoxBufferRight.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
 	}
 
-	public void addButtonListener() {
+	public void addListener() {
 		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
 				new PropertyChangeListener() {
 					@Override
@@ -721,4 +738,5 @@ public class PanelLineBufferAnalyst extends JPanel {
 			setRadiusNumSuitable(true);
 		}
 	}
+
 }

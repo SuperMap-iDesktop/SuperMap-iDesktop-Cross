@@ -1,8 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.util.ArrayList;
-
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
@@ -12,10 +9,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.CursorUtilties;
+
+import java.util.ArrayList;
 
 public class CtrlActionCreateImagePyramid extends CtrlAction {
 
@@ -33,7 +33,7 @@ public class CtrlActionCreateImagePyramid extends CtrlAction {
 					datasets.add(dataset);
 				}
 			}
-
+			DatasetUtilties.sureDatasetClosed(datasets);
 			FormProgressTotal formProgressTotal = new FormProgressTotal(ControlsProperties.getString("String_Form_BuildDatasetPyramid"));
 			formProgressTotal.doWork(new CreateImagePyramidCallable(datasets.toArray(new Dataset[datasets.size()])));
 		} catch (Exception ex) {

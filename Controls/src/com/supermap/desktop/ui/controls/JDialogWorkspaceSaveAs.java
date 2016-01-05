@@ -274,7 +274,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 					workspaceConnectionInfo.setServer(serverName);
 					workspaceConnectionInfo.setDatabase(databaseName);
 					if (null == workspaceName || workspaceName.isEmpty()) {
-						UICommonToolkit.showConfirmDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
+						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
 					} else {
 						workspaceConnectionInfo.setName(workspaceName);
 					}
@@ -289,7 +289,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 					workspaceConnectionInfo.setServer(serverName);
 					workspaceConnectionInfo.setDatabase(databaseName);
 					if (null == workspaceName || workspaceName.isEmpty()) {
-						UICommonToolkit.showConfirmDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
+						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
 					} else {
 						workspaceConnectionInfo.setName(workspaceName);
 					}

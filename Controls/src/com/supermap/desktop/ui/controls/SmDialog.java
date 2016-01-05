@@ -1,14 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Frame;
+import com.supermap.desktop.Application;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import com.supermap.desktop.Application;
 
 public class SmDialog extends JDialog implements WindowListener {
 
@@ -38,6 +35,7 @@ public class SmDialog extends JDialog implements WindowListener {
 	}
 
 	public DialogResult showDialog() {
+		this.setDialogResult(DialogResult.APPLY);
 		this.setVisible(true);
 		return this.getDialogResult();
 	}
