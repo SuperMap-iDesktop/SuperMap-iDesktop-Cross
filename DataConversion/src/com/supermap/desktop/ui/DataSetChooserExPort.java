@@ -27,14 +27,19 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -85,8 +90,8 @@ public class DataSetChooserExPort extends JDialog {
 	private JLabel labelPath = new JLabel("String_FormDatasetBrowse_ToolStripLabelPath");
 	private JLabel labelScense = new JLabel("String_FormDatasetBrowse_ToolStripLabelDisplayType");
 	private transient DatasetComboBox comboBoxScense = new DatasetComboBox();
-	private transient WorkspaceMouseAdapter mouseAdapter = new WorkspaceMouseAdapter();
 	private JLabel labelSearch = new JLabel();
+	private WorkspaceSelectChangeListener selectChangeListener = new WorkspaceSelectChangeListener();
 
 	/**
 	 * Create the frame.
@@ -116,6 +121,13 @@ public class DataSetChooserExPort extends JDialog {
 	}
 
 	public void initCompanent() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				workspaceTree.removeTreeSelectionListener(selectChangeListener);
+				workspaceTree.dispose();
+			}
+		});
 		setResizable(false);
 		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() <= 0) {
 			return;
@@ -128,7 +140,7 @@ public class DataSetChooserExPort extends JDialog {
 		workspaceTree.setResourcesNodeVisible(false);
 		workspaceTree.setScenesNodeVisible(false);
 		workspaceTree.setLayoutsNodeVisible(false);
-		workspaceTree.addMouseListener(mouseAdapter);
+		workspaceTree.addTreeSelectionListener(selectChangeListener);
 		// 删除不用显示的数据集节点
 
 		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
@@ -142,7 +154,6 @@ public class DataSetChooserExPort extends JDialog {
 			}
 			if (!CtrlActionDataExport.isSupportEngineType(((Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData()).getEngineType())) {
 				childDatasourceTreeNode.removeFromParent();
-//				datasourceTreeNode.remove(childDatasourceTreeNode);
 			}
 		}
 		workspaceTree.updateUI();
@@ -341,19 +352,24 @@ public class DataSetChooserExPort extends JDialog {
 
 	}
 
-	class WorkspaceMouseAdapter extends MouseAdapter {
+	class WorkspaceSelectChangeListener implements TreeSelectionListener{
+
 		@Override
-		public void mousePressed(MouseEvent e) {
-			if (1 == e.getClickCount()) {
-				Datasource datasource = UICommonToolkit.getDatasource(workspaceTree);
-				if (null != datasource) {
-					childExports = initExportFileInfo(datasource);
-					String path = datasource.getConnectionInfo().getServer();
-					textFieldPath.setText(path);
-					table.setModel(new ChildExportModel(childExports));
-					table.getColumnModel().getColumn(0).setCellRenderer(new CommonListCellRenderer());
-					table.setRowHeight(20);
-					table.updateUI();
+		public void valueChanged(TreeSelectionEvent e) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)e.getNewLeadSelectionPath().getLastPathComponent();
+			if (null != selectedNode) {
+				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+				if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
+					Datasource datasource = (Datasource) selectedNodeData.getData();
+					if (null != datasource) {
+						childExports = initExportFileInfo(datasource);
+						String path = datasource.getConnectionInfo().getServer();
+						textFieldPath.setText(path);
+						table.setModel(new ChildExportModel(childExports));
+						table.getColumnModel().getColumn(0).setCellRenderer(new CommonListCellRenderer());
+						table.setRowHeight(20);
+						table.updateUI();
+					}
 				}
 			}
 		}
@@ -372,7 +388,6 @@ public class DataSetChooserExPort extends JDialog {
 					// 添加数据集，并刷新导出界面
 
 					ExportFunction.updateMainTable(frame, table, exportTable);
-					workspaceTree.removeMouseListener(mouseAdapter);
 					dispose();
 				}
 			}
@@ -397,14 +412,13 @@ public class DataSetChooserExPort extends JDialog {
 				CommonFunction.selectInvert(table);
 			} else if (c == buttonQuit) {
 				// 关闭
-
-				workspaceTree.removeMouseListener(mouseAdapter);
+				workspaceTree.dispose();
 				dispose();
 			} else if (c == buttonOk) {
 				// 确定
 
 				ExportFunction.updateMainTable(frame, table, exportTable);
-				workspaceTree.removeMouseListener(mouseAdapter);
+				workspaceTree.dispose();
 				dispose();
 			}
 		}

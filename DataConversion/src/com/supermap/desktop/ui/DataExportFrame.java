@@ -703,8 +703,11 @@ public class DataExportFrame extends SmDialog {
 				datasetChooser.setVisible(true);
 				ExportFunction.getRigthPanel(frame, table);
 				setButtonState();
-			} else if (DataExportFrame.this.table == e.getSource() && 1 == e.getClickCount()) {
+			} else if (DataExportFrame.this.table.getSelectedRows().length==1 && 1 == e.getClickCount()) {
 				ExportFunction.getRigthPanelAsSet(frame, table);
+			}else {
+				ExportFunction.getRigthPanel(frame, table);
+				setButtonState();
 			}
 		}
 	}

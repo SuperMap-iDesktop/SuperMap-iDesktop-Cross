@@ -246,12 +246,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.panelOffsetSet.setLayout(new GridBagLayout());
 		this.panelOffsetSet.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
 		this.panelOffsetSet.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(80, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
-		this.panelOffsetSet.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(10, 1).setIpad(20, 0));
-		this.panelOffsetSet.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(20, 1).setIpad(20, 0));
-		this.panelOffsetSet.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelOffsetSet.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,5,10).setWeight(10, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(20, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelOffsetSet.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(10, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(20, 1).setIpad(20, 0));
+		this.panelOffsetSet.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelOffsetSet.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,10,5,10).setWeight(20, 1).setIpad(20, 0));
 		//@formatter:on
 	}
 
@@ -343,10 +343,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		//@formatter:off
 		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
 		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
-		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(80, 0));
-		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 10, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
+		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
+		this.panelProperty.add(this.comboboxColor,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolBar,            new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(100, 0));
+		this.panelProperty.add(this.scollPane,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
 		getTable();
 		this.tableUniqueInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(tableUniqueInfo);		
@@ -359,7 +359,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private void initComboBoxExpression() {
 		this.comboBoxExpression.setEditable(true);
 		String expression = themeUnique.getUniqueExpression();
-		expression = datasetVector.getName() + "." + expression;
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
@@ -691,7 +690,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (expression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
 			}
-			expression = expression.replaceAll(datasetVector.getName() + ".", "");
 			if (UniqueValueCountUtil.isCountBeyond(datasetVector, expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
@@ -704,7 +702,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					for (int i = 0; i < theme.getCount(); i++) {
 						((ThemeUnique) themeUniqueLayer.getTheme()).add(theme.getItem(i));
 					}
-					themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
+					themeUnique = theme;
 					themeUnique.setUniqueExpression(expression);
 					refreshColor();
 					getTable();
@@ -765,7 +763,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				fieldTypes.add(FieldType.DOUBLE);
 				fieldTypes.add(FieldType.SINGLE);
 				if (type == EXPRESSION_TYPE) {
-					dialogResult = sqlDialog.showDialog(datasetVector.getName() + "." + themeUnique.getUniqueExpression(), datasets);
+					dialogResult = sqlDialog.showDialog(themeUnique.getUniqueExpression(), datasets);
 				} else if (type == OFFSETX_TYPE) {
 					dialogResult = sqlDialog.showDialog(datasets, fieldTypes, themeUnique.getOffsetX());
 				} else {
@@ -792,7 +790,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 		private void resetComboBoxSelectItem(int type, JComboBox<String> jComboBoxField) {
 			if (type == EXPRESSION_TYPE) {
-				jComboBoxField.setSelectedItem(datasetVector.getName() + "." + themeUnique.getUniqueExpression());
+				jComboBoxField.setSelectedItem(themeUnique.getUniqueExpression());
 			} else if (type == OFFSETX_TYPE) {
 				if (!StringUtilties.isNullOrEmpty(themeUnique.getOffsetX())) {
 					jComboBoxField.setSelectedItem(themeUnique.getOffsetX());

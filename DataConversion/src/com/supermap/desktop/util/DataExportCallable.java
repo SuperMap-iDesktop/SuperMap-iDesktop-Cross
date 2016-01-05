@@ -6,8 +6,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.ExportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +105,7 @@ public class DataExportCallable extends UpdateProgressCallable {
 				int count = exports.size();
 				int totalPercent = (int) ((100 * this.i + arg0.getSubPercent()) / count);
 				updateProgressTotal(arg0.getSubPercent(),
-						MessageFormat.format(DataConversionProperties.getString("String_TotalTaskNumber"), String.valueOf(exports.size())),
+						MessageFormat.format(CommonProperties.getString("String_TotalTaskNumber"), String.valueOf(exports.size())),
 						totalPercent,
 						MessageFormat.format(DataConversionProperties.getString("String_DatasetOutport"), ((Dataset)arg0.getCurrentTask().getSourceData()).getName()));
 			} catch (CancellationException e) {

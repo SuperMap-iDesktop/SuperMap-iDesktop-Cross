@@ -18,9 +18,12 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,11 +32,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 /**
  * 数据集选择界面
- * <p>工作空间树用完没 dispose
+ * <p>
  *
  * @author xie
  */
@@ -59,7 +65,8 @@ public class DatasetChooser extends SmDialog {
 
 	private DatasetComboBox comboBoxScense;
 
-	protected transient WorkspaceMouseAdapter mouseAdapter = new WorkspaceMouseAdapter();
+//	protected transient WorkspaceMouseAdapter mouseAdapter = new WorkspaceMouseAdapter();
+	protected transient WorkspaceSelectChangeListener selectChangeListener = new WorkspaceSelectChangeListener();
 
 	protected static final int COLUMN_INDEX_DATASET = 0;
 
@@ -75,15 +82,15 @@ public class DatasetChooser extends SmDialog {
 	/**
 	 * 构造方法
 	 *
-	 * @param owner      父窗体（JDialog类型）
-	 * @param flag       是否设置为模态窗口
+	 * @param owner 父窗体（JDialog类型）
+	 * @param flag 是否设置为模态窗口
 	 * @param datasource 指定的数据源
 	 */
 	public DatasetChooser(JDialog owner, boolean flag, Datasource datasource) {
 		super(owner, flag);
 		this.datasource = datasource;
 		comboBoxScense = new DatasetComboBox();
-		initCompanent();
+		initComponent();
 		initResources();
 		initializeTableInfo(datasource);
 	}
@@ -91,7 +98,7 @@ public class DatasetChooser extends SmDialog {
 	public DatasetChooser(JFrame owner, boolean flag) {
 		super(owner, flag);
 		comboBoxScense = new DatasetComboBox();
-		initCompanent();
+		initComponent();
 		initResources();
 		initializeTableInfo();
 	}
@@ -99,7 +106,7 @@ public class DatasetChooser extends SmDialog {
 	public DatasetChooser(JDialog owner, boolean flag) {
 		super(owner, flag);
 		comboBoxScense = new DatasetComboBox();
-		initCompanent();
+		initComponent();
 		initResources();
 		initializeTableInfo();
 	}
@@ -107,14 +114,14 @@ public class DatasetChooser extends SmDialog {
 	/**
 	 * 构造方法
 	 *
-	 * @param owner      父窗体（JFrame类型）
-	 * @param flag       是否设置为模态窗口
+	 * @param owner 父窗体（JFrame类型）
+	 * @param flag 是否设置为模态窗口
 	 * @param datasource 指定的数据源
 	 */
 	public DatasetChooser(JFrame owner, boolean flag, Datasource datasource) {
 		super(owner, flag);
 		comboBoxScense = new DatasetComboBox();
-		initCompanent();
+		initComponent();
 		initResources();
 		this.datasource = datasource;
 		initializeTableInfo(datasource);
@@ -131,7 +138,7 @@ public class DatasetChooser extends SmDialog {
 		this.datasource = datasource;
 		this.datasetTypes = datasetTypes;
 		comboBoxScense = new DatasetComboBox(datasetTypes);
-		initCompanent();
+		initComponent();
 		initResources();
 		initializeTableInfo(datasource, datasetTypes);
 	}
@@ -146,7 +153,7 @@ public class DatasetChooser extends SmDialog {
 		super(owner, flag);
 		this.datasetWithOutTabular = datasetWithOutTabular;
 		comboBoxScense = new DatasetComboBox(datasetWithOutTabular);
-		initCompanent();
+		initComponent();
 		initResources();
 		Datasource datasourceTemp = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 		initializeTableInfoWithOutTabular(datasourceTemp);
@@ -168,7 +175,14 @@ public class DatasetChooser extends SmDialog {
 		buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
 	}
 
-	public void initCompanent() {
+	public void initComponent() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				workspaceTree.removeTreeSelectionListener(selectChangeListener);
+				workspaceTree.dispose();
+			}
+		});
 		setResizable(false);
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		workspaceTree = new WorkspaceTree(workspace);
@@ -176,7 +190,7 @@ public class DatasetChooser extends SmDialog {
 		workspaceTree.setResourcesNodeVisible(false);
 		workspaceTree.setScenesNodeVisible(false);
 		workspaceTree.setLayoutsNodeVisible(false);
-		workspaceTree.addMouseListener(mouseAdapter);
+		workspaceTree.addTreeSelectionListener(selectChangeListener);
 		// 删除不用显示的数据集节点
 		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
@@ -306,7 +320,7 @@ public class DatasetChooser extends SmDialog {
 		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] {
 				"Dataset", "CurrentDatasource", "DatasetType"}) {
 			boolean[] columnEditables = new boolean[] { false, false,false};
-@Override
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
@@ -549,26 +563,21 @@ public class DatasetChooser extends SmDialog {
 		return resultList;
 	}
 
-	/**
-	 * 点击数据源时切换现有的数据集
-	 * 
-	 * @author Administrator
-	 *
-	 */
-	class WorkspaceMouseAdapter extends MouseAdapter {
+	class WorkspaceSelectChangeListener implements TreeSelectionListener{
+
 		@Override
-		public void mousePressed(MouseEvent e) {
-			try {
-				if (1 == e.getClickCount()) {
-					datasource = UICommonToolkit.getDatasource(workspaceTree);
-					// 更换数据源后进行一次查询
+		public void valueChanged(TreeSelectionEvent e) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)e.getNewLeadSelectionPath().getLastPathComponent();
+			if (null != selectedNode) {
+				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+				if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
+					datasource = (Datasource) selectedNodeData.getData();
 					compositeSearch();
 				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
 			}
 		}
 	}
+	
 
 	class CommonButtonAction implements ActionListener {
 		@Override
@@ -604,7 +613,7 @@ public class DatasetChooser extends SmDialog {
 				}
 			} else if (c == cancelButton) {
 				// 关闭
-				workspaceTree.removeMouseListener(mouseAdapter);
+//				workspaceTree.removeMouseListener(mouseAdapter);
 				dispose();
 			}
 
