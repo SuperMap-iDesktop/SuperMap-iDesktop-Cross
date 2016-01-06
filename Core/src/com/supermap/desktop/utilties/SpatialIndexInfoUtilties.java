@@ -14,6 +14,7 @@ public class SpatialIndexInfoUtilties {
 
 	}
 
+	private static int POW = 10;
 	public static String getSpatialIndexInfoX(List<SpatialIndexInfo> spatialIndexInfos) {
 		double result = 0;
 		boolean isDifferent = false;
@@ -21,7 +22,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getGridCenter().getX();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -40,7 +41,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getGridCenter().getY();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -59,9 +60,12 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getGridSize0();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
-				isDifferent = true;
-				break;
+			} else {
+
+				if (!DoubleUtilties.equals(result, value, POW)) {
+					isDifferent = true;
+					break;
+				}
 			}
 		}
 		if (isDifferent) {
@@ -78,7 +82,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getGridSize1();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -97,7 +101,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getGridSize2();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -131,7 +135,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getTileWidth();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -150,7 +154,7 @@ public class SpatialIndexInfoUtilties {
 			double value = spatialIndexInfos.get(i).getTileHeight();
 			if (i == 0) {
 				result = value;
-			} else if (!DoubleUtilties.equals(result, value, 100000)) {
+			} else if (!DoubleUtilties.equals(result, value, POW)) {
 				isDifferent = true;
 				break;
 			}
@@ -161,5 +165,4 @@ public class SpatialIndexInfoUtilties {
 			return String.valueOf(result);
 		}
 	}
-
 }

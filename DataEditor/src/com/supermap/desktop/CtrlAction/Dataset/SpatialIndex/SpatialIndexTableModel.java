@@ -165,4 +165,8 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 	public SpatialIndexInfo getSpatialIndexInfo(int row) {
 		return this.datas.get(row).getSpatialIndexInfo();
 	}
+
+	public void setSpatialIndexInfoValue(int selectedRow, String propetName, Object value) {
+		datas.get(selectedRow).updateVaule(propetName, value);
+	}
 }

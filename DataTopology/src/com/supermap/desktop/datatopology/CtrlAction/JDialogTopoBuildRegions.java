@@ -1,19 +1,34 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class JDialogTopoBuildRegions extends SmDialog {
@@ -38,7 +53,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	private JLabel labelResultDatasource = new JLabel("New label");
 	private JLabel labelResultDataset = new JLabel("New label");
 	private DatasourceComboBox comboBoxResultDatasource;
-	private JTextField textFieldResultDataset = new JTextField("BuildRegion");
+	private SmTextFieldLegit textFieldResultDataset = new SmTextFieldLegit("BuildRegion");
 	private boolean isAdjacentEndpointsMerged = true;
 	private boolean isDuplicatedLinesCleaned = true;
 	private boolean isLinesIntersected = true;
@@ -277,6 +292,20 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		this.checkboxUndershootsExtended.setEnabled(false);
 		this.checkboxRedundantVerticesCleaned.setEnabled(false);
 		this.buttonMore.setEnabled(false);
+
+		this.textFieldResultDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+
+				Datasource selectedDatasource = comboBoxDatasource.getSelectedDatasource();
+				return selectedDatasource == null || selectedDatasource.getDatasets().isAvailableDatasetName(textFieldValue);
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(currentValue);
+			}
+		});
 		initPanelDatasource();
 		registAction();
 	}

@@ -1,12 +1,18 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * 图库索引
@@ -14,6 +20,10 @@ import java.awt.*;
  * @author XiaJT
  */
 public class JPanelGraphIndex extends JPanel {
+
+	private SpatialIndexInfoPropertyListener propertyListener;
+
+	private boolean isFireListener = true;
 
 	private ButtonGroup buttonGroup = new ButtonGroup();
 	// 字段索引
@@ -24,8 +34,8 @@ public class JPanelGraphIndex extends JPanel {
 	private JRadioButton radioButtonRangeIndex = new JRadioButton();
 	private JLabel labelWidth = new JLabel();
 	private JLabel labelHeight = new JLabel();
-	private JTextField textFieldWidth = new JTextField();
-	private JTextField textFieldHeight = new JTextField();
+	private SmTextFieldLegit textFieldWidth = new SmTextFieldLegit();
+	private SmTextFieldLegit textFieldHeight = new SmTextFieldLegit();
 
 	// 说明
 	private JPanelDescribe panelDescribe = new JPanelDescribe();
@@ -43,6 +53,28 @@ public class JPanelGraphIndex extends JPanel {
 	private void initComponent() {
 		buttonGroup.add(radioButtonFieldIndex);
 		buttonGroup.add(radioButtonRangeIndex);
+		ISmTextFieldLegit smTextFieldLegit = new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+					return true;
+				}
+				Double aDouble;
+				try {
+					aDouble = Double.valueOf(textFieldValue);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return aDouble >= 0;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		};
+		textFieldWidth.setSmTextFieldLegit(smTextFieldLegit);
+		textFieldHeight.setSmTextFieldLegit(smTextFieldLegit);
 	}
 
 	private void initLayout() {
@@ -63,10 +95,10 @@ public class JPanelGraphIndex extends JPanel {
 	}
 
 	private void addListeners() {
-		radioButtonRangeIndex.addChangeListener(new ChangeListener() {
+		radioButtonRangeIndex.addItemListener(new ItemListener() {
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (radioButtonFieldIndex.isSelected()) {
+			public void itemStateChanged(ItemEvent e) {
+				if (!radioButtonRangeIndex.isSelected()) {
 					comboBoxFieldIndex.setEnabled(true);
 					textFieldWidth.setEnabled(false);
 					textFieldHeight.setEnabled(false);
@@ -79,6 +111,52 @@ public class JPanelGraphIndex extends JPanel {
 				}
 			}
 		});
+
+		FocusAdapter focusAdapter = new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				fireSpatialIndexPropertyChanged(getPropertyName(e.getSource()), getPropertyValue(e.getSource()));
+			}
+
+
+		};
+		this.textFieldWidth.addFocusListener(focusAdapter);
+		this.textFieldHeight.addFocusListener(focusAdapter);
+
+		this.comboBoxFieldIndex.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && isFireListener) {
+					fireSpatialIndexPropertyChanged(getPropertyName(comboBoxFieldIndex), getPropertyValue(comboBoxFieldIndex));
+				}
+			}
+		});
+	}
+
+	private String getPropertyName(Object source) {
+		if (source == textFieldHeight) {
+			return SpatialIndexInfoPropertyListener.TILE_HEIGHT;
+		} else if (source == textFieldWidth) {
+			return SpatialIndexInfoPropertyListener.TILE_WIDTH;
+		} else if (source == comboBoxFieldIndex) {
+			return SpatialIndexInfoPropertyListener.TILE_FIELD;
+		} else return null;
+	}
+
+	private Object getPropertyValue(Object source) {
+		if (source == textFieldHeight) {
+			return textFieldHeight.getText();
+		} else if (source == textFieldWidth) {
+			return textFieldWidth.getText();
+		} else if (source == comboBoxFieldIndex) {
+			return comboBoxFieldIndex.getSelectedItem();
+		} else return null;
+	}
+
+	private void fireSpatialIndexPropertyChanged(String propertyName, Object value) {
+		if (this.propertyListener != null) {
+			propertyListener.propertyChanged(propertyName, value);
+		}
 	}
 
 	private void initComponentState() {
@@ -94,7 +172,19 @@ public class JPanelGraphIndex extends JPanel {
 
 
 	public void setField(String spatialIndexInfoTileField) {
-		this.comboBoxFieldIndex.setSelectedItem(spatialIndexInfoTileField);
+
+		try {
+			isFireListener = false;
+			if (StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+				this.comboBoxFieldIndex.setSelectedIndex(-1);
+			} else {
+				this.comboBoxFieldIndex.setSelectedItem(spatialIndexInfoTileField);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			isFireListener = true;
+		}
 	}
 
 	public void setWidth(String spatialIndexInfoTileWidth) {
@@ -107,5 +197,22 @@ public class JPanelGraphIndex extends JPanel {
 
 	public void setFieldModel(String[] commonFields) {
 		this.comboBoxFieldIndex.setModel(new DefaultComboBoxModel<>(commonFields));
+	}
+
+	/**
+	 * 设置字段索引radioButton是否选中
+	 *
+	 * @param b 是否选中
+	 */
+	public void setRadiaFieldSelected(boolean b) {
+		if (b) {
+			this.radioButtonFieldIndex.setSelected(true);
+		} else {
+			this.radioButtonRangeIndex.setSelected(true);
+		}
+	}
+
+	public void setPropertyListener(SpatialIndexInfoPropertyListener propertyListener) {
+		this.propertyListener = propertyListener;
 	}
 }

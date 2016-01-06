@@ -18,6 +18,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -91,7 +92,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		addListeners();
 		initComponentStates();
 		initResources();
-		this.setSize(800, 600);
+		this.setSize(900, 650);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -208,7 +209,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 * 初始化索引类型描述
 	 */
 	private void initPanelDescribe() {
-		Dimension size = new Dimension(200, 100);
+		Dimension size = new Dimension(300, 100);
 		scrollPaneDescribe.setMinimumSize(size);
 		scrollPaneDescribe.setPreferredSize(size);
 		scrollPaneDescribe.setMaximumSize(size);
@@ -268,6 +269,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.tableDatasets.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				tableDatasets.requestFocus();
 				checkButtonStates();
 			}
 		});
@@ -310,7 +312,6 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED && key) {
-
 					try {
 						key = false;
 						setTableValues(comboBoxIndexType.getSelectedItem());
@@ -321,6 +322,18 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 				}
 			}
 		});
+
+		SpatialIndexInfoPropertyListener propertyListener = new SpatialIndexInfoPropertyListener() {
+			@Override
+			public void propertyChanged(String propetName, Object value) {
+				int[] selectedRows = tableDatasets.getSelectedRows();
+				for (int selectedRow : selectedRows) {
+					spatialIndexTableModel.setSpatialIndexInfoValue(selectedRow, propetName, value);
+				}
+			}
+		};
+		this.panelGraphIndex.setPropertyListener(propertyListener);
+		this.panelDynamicIndex.setPropertyListener(propertyListener);
 	}
 
 	private void buttonAddClicked() {
@@ -432,7 +445,14 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		}
 
 		this.panelGraphIndex.setFieldModel(DatasetUtilties.getCommonFields(selectedDatasets));
-		this.panelGraphIndex.setField(SpatialIndexInfoUtilties.getSpatialIndexInfoTileField(selectedSpatialIndexInfo));
+
+		String spatialIndexInfoTileField = SpatialIndexInfoUtilties.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
+		this.panelGraphIndex.setField(spatialIndexInfoTileField);
+		if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+			this.panelGraphIndex.setRadiaFieldSelected(true);
+		} else {
+			this.panelGraphIndex.setRadiaFieldSelected(false);
+		}
 		this.panelGraphIndex.setWidth(SpatialIndexInfoUtilties.getSpatialIndexInfoTileWidth(selectedSpatialIndexInfo));
 		this.panelGraphIndex.setHeight(SpatialIndexInfoUtilties.getSpatialIndexInfoTileHeight(selectedSpatialIndexInfo));
 

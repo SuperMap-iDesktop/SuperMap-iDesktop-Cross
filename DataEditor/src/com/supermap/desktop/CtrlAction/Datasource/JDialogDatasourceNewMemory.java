@@ -1,24 +1,5 @@
 package com.supermap.desktop.CtrlAction.Datasource;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.EngineType;
@@ -27,20 +8,24 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit.DatasourceWrap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionListener;
 
 public class JDialogDatasourceNewMemory extends SmDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField jTextFieldAlias;
+	private SmTextFieldLegit jTextFieldAlias;
 	private JLabel jLabelAlias;
 	private JButton okButton;
 	private JButton cancelButton;
@@ -55,7 +40,26 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		jLabelAlias = new JLabel("Alias:");
-		jTextFieldAlias = new JTextField();
+		jTextFieldAlias = new SmTextFieldLegit();
+		jTextFieldAlias.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (null != textFieldValue && !textFieldValue.isEmpty()) {
+					char c = textFieldValue.charAt(0);
+					if ('_' == c || ('0' < c && c < '9')) {
+						return false;
+					}
+				} else {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 		jTextFieldAlias.setColumns(10);
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING).addGroup(
@@ -115,42 +119,8 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		initializeResources();
 		this.setLocationRelativeTo(null);
 		this.jTextFieldAlias.setText(getAvaliableDatasourceName("MemoryDatasource"));
-		this.jTextFieldAlias.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				jTextFieldAlias_changeText();
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				jTextFieldAlias_changeText();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				jTextFieldAlias_changeText();
-			}
-		});
-
 	}
 
-	/**
-	 * 
-	 * @param e
-	 */
-	protected void jTextFieldAlias_changeText() {
-		try {
-			String tempString = jTextFieldAlias.getText();
-			if (null != tempString && !tempString.isEmpty()) {
-				char c = tempString.charAt(0);
-				if ('_' == c || ('0' < c && c < '9')) {
-					UICommonToolkit.showConfirmDialog(DataEditorProperties.getString("String_Message_DatasourceNameUnavaliable"));
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
 
 	private void initializeResources() {
 		try {

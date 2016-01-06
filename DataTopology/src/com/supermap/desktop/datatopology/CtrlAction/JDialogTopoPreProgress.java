@@ -12,9 +12,12 @@ import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -33,7 +36,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private MutiTable table;
-	private JTextField textFieldTolerance;
+	private SmTextFieldLegit textFieldTolerance;
 	private DatasetComboBox comboBoxConsultDataset;
 	private JToolBar toolBar = new JToolBar();
 	private JScrollPane scrollPane = new JScrollPane();
@@ -161,7 +164,27 @@ public class JDialogTopoPreProgress extends SmDialog {
 						.addComponent(buttonSure)
 						.addComponent(buttonQuite)));
 		//@formatter:on
-		textFieldTolerance = new JTextField();
+		textFieldTolerance = new SmTextFieldLegit();
+		textFieldTolerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+					return true;
+				} else {
+					try {
+						Double aDouble = Double.valueOf(textFieldValue);
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 		textFieldTolerance.setText("0");
 		textFieldTolerance.setColumns(10);
 
@@ -394,7 +417,11 @@ public class JDialogTopoPreProgress extends SmDialog {
 	public void preProgressDataset() {
 		TopologyPreprocessOptions options = new TopologyPreprocessOptions();
 		// 容限值
-		double tolerance = Double.parseDouble(textFieldTolerance.getText());
+		String text = textFieldTolerance.getText();
+		if (StringUtilties.isNullOrEmpty(text)) {
+			text = "0";
+		}
+		double tolerance = Double.parseDouble(text);
 		// 节点与线段间插入节点
 		boolean isVertexArcInserted = checkBoxVertexArcInserted.isSelected();
 		// 节点捕捉
@@ -430,9 +457,6 @@ public class JDialogTopoPreProgress extends SmDialog {
 		return textFieldTolerance;
 	}
 
-	public void setTextFieldTolerance(JTextField textFieldTolerance) {
-		this.textFieldTolerance = textFieldTolerance;
-	}
 
 	public DatasetComboBox getComboBoxConsultDataset() {
 		return comboBoxConsultDataset;

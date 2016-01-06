@@ -14,7 +14,7 @@ import java.awt.event.FocusEvent;
  *
  * @author Xiajt
  */
-public class SmTextField extends JTextField {
+public class SmTextFieldLegit extends JTextField {
 
 	private String backUpValue = "";
 
@@ -23,11 +23,11 @@ public class SmTextField extends JTextField {
 	private static final Color IL_LEGAL_COLOR = Color.red;
 	private static final Color LEGAL_COLOR = Color.black;
 
-	public SmTextField() {
+	public SmTextFieldLegit() {
 		this(null);
 	}
 
-	public SmTextField(String text) {
+	public SmTextFieldLegit(String text) {
 		super(text);
 		smTextFieldLegit = new ISmTextFieldLegit() {
 			@Override
@@ -62,15 +62,15 @@ public class SmTextField extends JTextField {
 		this.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				backUpValue = SmTextField.this.getText();
+				backUpValue = SmTextFieldLegit.this.getText();
 			}
 
 			@Override
 			public void focusLost(FocusEvent e) {
 				// 丢失焦点时获得一个合法值
-				if (!isLegitValue(SmTextField.this.getText())) {
-					SmTextField.this.setForeground(LEGAL_COLOR);
-					SmTextField.this.setText(smTextFieldLegit.getLegitValue(SmTextField.this.getText(), SmTextField.this.backUpValue));
+				if (!isLegitValue(SmTextFieldLegit.this.getText())) {
+					SmTextFieldLegit.this.setForeground(LEGAL_COLOR);
+					SmTextFieldLegit.this.setText(smTextFieldLegit.getLegitValue(SmTextFieldLegit.this.getText(), SmTextFieldLegit.this.backUpValue));
 				}
 			}
 		});

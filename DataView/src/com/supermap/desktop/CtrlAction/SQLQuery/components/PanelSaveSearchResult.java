@@ -7,7 +7,7 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
-import com.supermap.desktop.ui.controls.TextFields.SmTextField;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.borderPanel.SmComponentPanel;
 import com.supermap.desktop.ui.controls.borderPanel.StateTransmitter;
 
@@ -64,7 +64,7 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 		private JLabel labelDatasource = new JLabel("datasource");
 		private JLabel labelDataset = new JLabel("dataset");
 		private DatasourceComboBox datasourceComboBox = new DatasourceComboBox();
-		private SmTextField textFieldDataset = new SmTextField();
+		private SmTextFieldLegit textFieldDataset = new SmTextFieldLegit();
 
 
 		public InsidePanel() {

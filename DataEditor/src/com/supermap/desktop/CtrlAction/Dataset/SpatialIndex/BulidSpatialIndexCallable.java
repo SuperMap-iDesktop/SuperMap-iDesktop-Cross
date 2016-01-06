@@ -20,7 +20,10 @@ public class BulidSpatialIndexCallable extends UpdateProgressCallable {
 	public BulidSpatialIndexCallable(List<SpatialIndexTableModelBean> tableModelBeans, SpatialIndexTableModel spatialIndexTableModel) {
 		this.tableModelBeans = tableModelBeans;
 		this.spatialIndexTableModel = spatialIndexTableModel;
-		this.totalSize = tableModelBeans.size() + 1;
+		this.totalSize = tableModelBeans.size();
+		if (totalSize == 0) {
+			totalSize = 1;
+		}
 	}
 
 	@Override

@@ -2,9 +2,14 @@ package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 /**
  * 动态索引参数设置界面
@@ -12,25 +17,27 @@ import java.awt.*;
  * @author XiaJT
  */
 public class JPanelDynamicIndex extends JPanel {
+	private SpatialIndexInfoPropertyListener propertyListener;
+
 	// 基准点
 	private JPanel panelBasePoint = new JPanel();
 	private JLabel labelBasePoint = new JLabel();
 	private JLabel labelX = new JLabel();
 	private JLabel labelY = new JLabel();
-	private JTextField textFieldX = new JTextField();
-	private JTextField textFieldY = new JTextField();
+	private SmTextFieldLegit textFieldX = new SmTextFieldLegit();
+	private SmTextFieldLegit textFieldY = new SmTextFieldLegit();
 
 	// 第一层网格高度
 	private JLabel labelFirstGridWidth = new JLabel();
-	private JTextField textFieldFirstGridWidth = new JTextField();
+	private SmTextFieldLegit textFieldFirstGridWidth = new SmTextFieldLegit();
 
 	// 第二层网格高度
 	private JLabel labelSecondGridWidth = new JLabel();
-	private JTextField textFieldSecondGridWidth = new JTextField();
+	private SmTextFieldLegit textFieldSecondGridWidth = new SmTextFieldLegit();
 
 	// 第三次网格高度
 	private JLabel labelThirdGridWidth = new JLabel();
-	private JTextField textFieldThirdGridWidth = new JTextField();
+	private SmTextFieldLegit textFieldThirdGridWidth = new SmTextFieldLegit();
 
 	// 说明
 	private JPanelDescribe panelDescribe = new JPanelDescribe();
@@ -39,13 +46,105 @@ public class JPanelDynamicIndex extends JPanel {
 		initComponent();
 		initLayout();
 		initResources();
+		addListeners();
 		initComponentState();
 		this.setBorder(BorderFactory.createTitledBorder(CoreProperties.getString("String_GroupBoxParameter")));
 	}
 
-	private void initComponent() {
-		this.panelDescribe.setDescirbe("    " + CoreProperties.getString("String_MultiLevelGridIndxDescription"));
+	private void addListeners() {
+		FocusAdapter focusAdapter = new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				fireSpatialIndexPropertyChanged(getPropertyName(e.getSource()), getPropertyValue(e.getSource()));
+			}
+		};
+		this.textFieldX.addFocusListener(focusAdapter);
+		this.textFieldY.addFocusListener(focusAdapter);
+		this.textFieldFirstGridWidth.addFocusListener(focusAdapter);
+		this.textFieldSecondGridWidth.addFocusListener(focusAdapter);
+		this.textFieldThirdGridWidth.addFocusListener(focusAdapter);
+	}
 
+	private void fireSpatialIndexPropertyChanged(String propertyName, Object value) {
+		if (this.propertyListener != null) {
+			propertyListener.propertyChanged(propertyName, value);
+		}
+	}
+
+	private String getPropertyName(Object source) {
+		if (source == textFieldX) {
+			return SpatialIndexInfoPropertyListener.GRID_X;
+		} else if (source == textFieldY) {
+			return SpatialIndexInfoPropertyListener.GRID_Y;
+		} else if (source == textFieldFirstGridWidth) {
+			return SpatialIndexInfoPropertyListener.GRID_SIZE_0;
+		} else if (source == textFieldSecondGridWidth) {
+			return SpatialIndexInfoPropertyListener.GRID_SIZE_1;
+		} else if (source == textFieldThirdGridWidth) {
+			return SpatialIndexInfoPropertyListener.GRID_SIZE_2;
+		} else return null;
+	}
+
+	private Object getPropertyValue(Object source) {
+		if (source == textFieldX) {
+			return textFieldX.getText();
+		} else if (source == textFieldY) {
+			return textFieldY.getText();
+		} else if (source == textFieldFirstGridWidth) {
+			return textFieldFirstGridWidth.getText();
+		} else if (source == textFieldSecondGridWidth) {
+			return textFieldSecondGridWidth.getText();
+		} else if (source == textFieldThirdGridWidth) {
+			return textFieldThirdGridWidth.getText();
+		} else return null;
+	}
+
+	private void initComponent() {
+		ISmTextFieldLegit smTextFieldLegitPoint = new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+					return true;
+				}
+				Double aDouble;
+				try {
+					aDouble = Double.valueOf(textFieldValue);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		};
+
+		ISmTextFieldLegit smTextFieldLegit = new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				Double aDouble;
+				try {
+					aDouble = Double.valueOf(textFieldValue);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return aDouble >= 0;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		};
+		textFieldX.setSmTextFieldLegit(smTextFieldLegitPoint);
+		textFieldY.setSmTextFieldLegit(smTextFieldLegitPoint);
+		textFieldFirstGridWidth.setSmTextFieldLegit(smTextFieldLegit);
+		textFieldSecondGridWidth.setSmTextFieldLegit(smTextFieldLegit);
+		textFieldThirdGridWidth.setSmTextFieldLegit(smTextFieldLegit);
+
+		this.panelDescribe.setDescirbe("    " + CoreProperties.getString("String_MultiLevelGridIndxDescription"));
 	}
 
 	//region 布局
@@ -99,12 +198,10 @@ public class JPanelDynamicIndex extends JPanel {
 	}
 
 	public void setX(String spatialIndexInfoX) {
-		// TODO 加锁
 		this.textFieldX.setText(spatialIndexInfoX);
 	}
 
 	public void setY(String spatialIndexInfoY) {
-		// TODO 加锁
 		this.textFieldY.setText(spatialIndexInfoY);
 	}
 
@@ -118,5 +215,9 @@ public class JPanelDynamicIndex extends JPanel {
 
 	public void setGrid2(String spatialIndexInfoGrid2) {
 		this.textFieldThirdGridWidth.setText(spatialIndexInfoGrid2);
+	}
+
+	public void setPropertyListener(SpatialIndexInfoPropertyListener propertyListener) {
+		this.propertyListener = propertyListener;
 	}
 }
