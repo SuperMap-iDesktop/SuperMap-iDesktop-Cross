@@ -1,16 +1,23 @@
 package com.supermap.desktop.core;
 
 public enum FileSizeType {
-	BYTE(1), KB(2), MB(4), GB(8), TB(16), PB(32);
+	BYTE(1, "Byte"), KB(2, "KB"), MB(4, "MB"), GB(8, "GB"), TB(16, "TB"), PB(32, "PB");
 
 	private int value;
+	private String text;
 
-	private FileSizeType(int value) {
+	private FileSizeType(int value, String text) {
 		this.value = value;
+		this.text = text;
 	}
 
 	public int getValue() {
 		return this.value;
+	}
+
+	@Override
+	public String toString() {
+		return this.text;
 	}
 
 	public static FileSizeType valueOf(int value) {

@@ -1,20 +1,29 @@
 package com.supermap.desktop.netservices.iserver;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
+import com.supermap.desktop.netservices.NetServicesProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -27,7 +36,16 @@ public class PanelFolderSelector extends JPanel {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.add(new PanelFolderSelector());
+		ArrayList<SelectableFile> files = new ArrayList<>();
+		File test = new File("D:/test");
+		File[] listFiles = test.listFiles();
+		for (int i = 0; i < listFiles.length; i++) {
+			files.add(new SelectableFile(listFiles[i], true));
+		}
+
+		PanelFolderSelector panel = new PanelFolderSelector(files);
+		frame.getContentPane().setLayout(new BorderLayout());
+		frame.add(panel, BorderLayout.CENTER);
 		frame.setVisible(true);
 	}
 
@@ -36,7 +54,6 @@ public class PanelFolderSelector extends JPanel {
 	private static final int CONTENT_FILE_AND_DIRECTORY = 3;
 
 	private int displayContent = CONTENT_FILE_AND_DIRECTORY;
-	private ArrayList<SelectableFile> files;
 	private ArrayList<SelectableFile> selectedFiles;
 
 	/**
@@ -48,7 +65,6 @@ public class PanelFolderSelector extends JPanel {
 
 	private PanelFolderSelector() {
 		initializeComponent();
-		this.files = new ArrayList<>();
 	}
 
 	public PanelFolderSelector(ArrayList<SelectableFile> files) {
@@ -73,6 +89,10 @@ public class PanelFolderSelector extends JPanel {
 		this.table = new JTable();
 		FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
 		this.table.setModel(tableModel);
+
+		JScrollPane scrollTable = new JScrollPane(this.table);
+		this.setLayout(new BorderLayout());
+		this.add(scrollTable, BorderLayout.CENTER);
 	}
 
 	/**
@@ -88,12 +108,12 @@ public class PanelFolderSelector extends JPanel {
 		ArrayList<SelectableFile> modelData = new ArrayList<>(); // 用来初始化 Model 的集合
 
 		if (this.displayContent == CONTENT_FILE) {
-			modelData.addAll(getSingleFiles());
+			modelData.addAll(getSingleFiles(files));
 		} else if (this.displayContent == CONTENT_DIRECTORY) {
-			modelData.addAll(getDirectories());
+			modelData.addAll(getDirectories(files));
 		} else if (this.displayContent == CONTENT_FILE_AND_DIRECTORY) {
-			modelData.addAll(getSingleFiles());
-			modelData.addAll(getDirectories());
+			modelData.addAll(getSingleFiles(files));
+			modelData.addAll(getDirectories(files));
 		}
 		((FolderSelectorTableModel) this.table.getModel()).setFiles(modelData);
 	}
@@ -103,12 +123,12 @@ public class PanelFolderSelector extends JPanel {
 	 * 
 	 * @return
 	 */
-	private ArrayList<SelectableFile> getSingleFiles() {
+	private ArrayList<SelectableFile> getSingleFiles(ArrayList<SelectableFile> files) {
 		ArrayList<SelectableFile> singleFiles = new ArrayList<>();
 
-		for (int i = 0; i < this.files.size(); i++) {
-			if (!this.files.get(i).isDirectory()) {
-				singleFiles.add(this.files.get(i));
+		for (int i = 0; i < files.size(); i++) {
+			if (!files.get(i).isDirectory()) {
+				singleFiles.add(files.get(i));
 			}
 		}
 		return singleFiles;
@@ -119,66 +139,38 @@ public class PanelFolderSelector extends JPanel {
 	 * 
 	 * @return
 	 */
-	private ArrayList<SelectableFile> getDirectories() {
+	private ArrayList<SelectableFile> getDirectories(ArrayList<SelectableFile> files) {
 		ArrayList<SelectableFile> directories = new ArrayList<>();
 
-		for (int i = 0; i < this.files.size(); i++) {
-			if (this.files.get(i).isDirectory()) {
-				directories.add(this.files.get(i));
+		for (int i = 0; i < files.size(); i++) {
+			if (files.get(i).isDirectory()) {
+				directories.add(files.get(i));
 			}
 		}
 		return directories;
 	}
 
-	private class DirectoryFilter implements FileFilter {
+	private class FolderSelectorTableModel extends AbstractTableModel {
 
 		/**
-		 * 可以返回的文件类型 1 -- 文件，2 -- 目录，其他 -- 文件和目录
+		 * 
 		 */
-		private int acceptType = PanelFolderSelector.CONTENT_FILE_AND_DIRECTORY;
-
-		public DirectoryFilter(int acceptType) {
-			this.acceptType = acceptType;
-		}
-
-		@Override
-		public boolean accept(File pathname) {
-			boolean accept = false;
-
-			if (this.acceptType == PanelFolderSelector.CONTENT_FILE) {
-				if (pathname.exists() && !pathname.isDirectory()) {
-					accept = true;
-				}
-			} else if (this.acceptType == PanelFolderSelector.CONTENT_DIRECTORY) {
-				if (pathname.exists() && pathname.isDirectory()) {
-					accept = true;
-				}
-			}
-			return accept;
-		}
-
-		public int getAcceptType() {
-			return this.acceptType;
-		}
-
-		public void setAcceptType(int acceptType) {
-			this.acceptType = acceptType;
-		}
-	}
-
-	private class FolderSelectorTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
+		private static final String ICON_DIRECTORY_PATH = "/com/supermap/desktop/netservicesresources/directory.png";
+		private static final String ICON_FILE_PATH = "/com/supermap/desktop/netservicesresources/file.png";
 
 		public static final int SELECTED = 0;
 		public static final int NAME = 1; // 名称列
-		public static final int SIZE = 2; // 文件大小列
-		public static final int LASTMODIFIED = 3; // 最后修改时间列
-		public static final int HIDEN = 4; // 是否显示隐藏列
+		public static final int TYPE = 2; // 类型
+		public static final int SIZE = 3; // 文件大小列
+		public static final int LASTMODIFIED = 4; // 最后修改时间列
+		public static final int HIDEN = 5; // 是否隐藏
 
-		private boolean isShowHidden = true;
+		private boolean isShowHidden = true;// 是否显示隐藏列
 		private ArrayList<SelectableFile> files;
 
 		public FolderSelectorTableModel() {
-
+			this.files = new ArrayList<>();
 		}
 
 		@Override
@@ -188,7 +180,7 @@ public class PanelFolderSelector extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return this.isShowHidden ? 5 : 4;
+			return this.isShowHidden ? 6 : 5;
 		}
 
 		@Override
@@ -203,14 +195,21 @@ public class PanelFolderSelector extends JPanel {
 						result = file.isSelected();
 					} else if (columnIndex == NAME) {
 						result = file.getName();
+					} else if (columnIndex == TYPE) {
+						result = file.isDirectory() ? CommonProperties.getString(CommonProperties.Directory) : CommonProperties
+								.getString(CommonProperties.File);
 					} else if (columnIndex == SIZE) {
-						FileSize fileSize = new FileSize(file.length(), FileSizeType.BYTE);
+						FileSize fileSize = new FileSize(FileUtilties.getFileSize(file.getFile()), FileSizeType.BYTE);
 						result = fileSize.ToStringClever();
 					} else if (columnIndex == LASTMODIFIED) {
-						result = new Date(file.lastModified());
+						result = DateFormat.getDateTimeInstance().format(new Date(file.lastModified()));
 						new Date(file.lastModified());
 					} else if (columnIndex == HIDEN && this.isShowHidden) {
-						result = file.isHidden();
+						if (file.isHidden()) {
+							result = CommonProperties.getString(CommonProperties.True);
+						} else {
+							result = CommonProperties.getString(CommonProperties.False);
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -245,7 +244,28 @@ public class PanelFolderSelector extends JPanel {
 		 */
 		@Override
 		public Class<?> getColumnClass(int columnIndex) {
-			return columnIndex == SELECTED ? Boolean.class : Object.class;
+			if (columnIndex == SELECTED) {
+				return Boolean.class;
+			} else {
+				return Object.class;
+			}
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			if (column == NAME) {
+				return CommonProperties.getString(CommonProperties.Name);
+			} else if (column == TYPE) {
+				return CommonProperties.getString(CommonProperties.Type);
+			} else if (column == SIZE) {
+				return CommonProperties.getString(CommonProperties.Size);
+			} else if (column == LASTMODIFIED) {
+				return NetServicesProperties.getString("String_LastModified");
+			} else if (column == HIDEN) {
+				return NetServicesProperties.getString("String_Hidden");
+			} else {
+				return "";
+			}
 		}
 
 		/**
@@ -284,6 +304,22 @@ public class PanelFolderSelector extends JPanel {
 		public void setFiles(ArrayList<SelectableFile> files) {
 			this.files.addAll(files);
 			fireTableDataChanged();
+		}
+
+		private Icon getIcon(boolean isDirectory) {
+			if (isDirectory) {
+				return getDirectoryIcon();
+			} else {
+				return getFileIcon();
+			}
+		}
+
+		private Icon getFileIcon() {
+			return new ImageIcon(getClass().getResource(ICON_FILE_PATH));
+		}
+
+		private Icon getDirectoryIcon() {
+			return new ImageIcon(getClass().getResource(ICON_DIRECTORY_PATH));
 		}
 	}
 }
