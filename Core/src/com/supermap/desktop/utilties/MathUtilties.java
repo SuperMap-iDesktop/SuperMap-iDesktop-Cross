@@ -7,7 +7,7 @@ public class MathUtilties {
 	}
 
 	public static double log(double a, double newBase) {
-		return Math.log10(newBase) / Math.log10(a);
+		return Math.log(a) / Math.log(newBase);
 	}
 
 	public static boolean isContiuityArray(int[] array) {

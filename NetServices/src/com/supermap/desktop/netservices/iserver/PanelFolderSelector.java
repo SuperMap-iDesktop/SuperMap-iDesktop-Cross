@@ -23,6 +23,7 @@ import com.supermap.desktop.core.FileSizeType;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -88,7 +89,6 @@ public class PanelFolderSelector extends JPanel {
 		this.table = new JTable();
 		FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
 		this.table.setModel(tableModel);
-		this.table.setDefaultRenderer(StringWithIcon.class, new StringWithIconTableCellRenerer());
 
 		JScrollPane scrollTable = new JScrollPane(this.table);
 		this.setLayout(new BorderLayout());
@@ -161,9 +161,10 @@ public class PanelFolderSelector extends JPanel {
 
 		public static final int SELECTED = 0;
 		public static final int NAME = 1; // 名称列
-		public static final int SIZE = 2; // 文件大小列
-		public static final int LASTMODIFIED = 3; // 最后修改时间列
-		public static final int HIDEN = 4; // 是否隐藏
+		public static final int TYPE = 2; // 类型
+		public static final int SIZE = 3; // 文件大小列
+		public static final int LASTMODIFIED = 4; // 最后修改时间列
+		public static final int HIDEN = 5; // 是否隐藏
 
 		private boolean isShowHidden = true;// 是否显示隐藏列
 		private ArrayList<SelectableFile> files;
@@ -179,7 +180,7 @@ public class PanelFolderSelector extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return this.isShowHidden ? 5 : 4;
+			return this.isShowHidden ? 6 : 5;
 		}
 
 		@Override
@@ -193,15 +194,22 @@ public class PanelFolderSelector extends JPanel {
 					if (columnIndex == SELECTED) {
 						result = file.isSelected();
 					} else if (columnIndex == NAME) {
-						result = new StringWithIcon(getIcon(file.isDirectory()), getName());
+						result = file.getName();
+					} else if (columnIndex == TYPE) {
+						result = file.isDirectory() ? CommonProperties.getString(CommonProperties.Directory) : CommonProperties
+								.getString(CommonProperties.File);
 					} else if (columnIndex == SIZE) {
-						FileSize fileSize = new FileSize(file.length(), FileSizeType.BYTE);
+						FileSize fileSize = new FileSize(FileUtilties.getFileSize(file.getFile()), FileSizeType.BYTE);
 						result = fileSize.ToStringClever();
 					} else if (columnIndex == LASTMODIFIED) {
-						result = new Date(file.lastModified());
+						result = DateFormat.getDateTimeInstance().format(new Date(file.lastModified()));
 						new Date(file.lastModified());
 					} else if (columnIndex == HIDEN && this.isShowHidden) {
-						result = file.isHidden();
+						if (file.isHidden()) {
+							result = CommonProperties.getString(CommonProperties.True);
+						} else {
+							result = CommonProperties.getString(CommonProperties.False);
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -238,8 +246,6 @@ public class PanelFolderSelector extends JPanel {
 		public Class<?> getColumnClass(int columnIndex) {
 			if (columnIndex == SELECTED) {
 				return Boolean.class;
-			} else if (columnIndex == NAME) {
-				return StringWithIcon.class;
 			} else {
 				return Object.class;
 			}
@@ -249,6 +255,8 @@ public class PanelFolderSelector extends JPanel {
 		public String getColumnName(int column) {
 			if (column == NAME) {
 				return CommonProperties.getString(CommonProperties.Name);
+			} else if (column == TYPE) {
+				return CommonProperties.getString(CommonProperties.Type);
 			} else if (column == SIZE) {
 				return CommonProperties.getString(CommonProperties.Size);
 			} else if (column == LASTMODIFIED) {
