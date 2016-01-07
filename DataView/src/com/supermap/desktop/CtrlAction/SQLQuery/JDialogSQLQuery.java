@@ -1088,9 +1088,9 @@ public class JDialogSQLQuery extends SmDialog {
 		try {
 			for (String field : queryParameter.getResultFields()) {
 				String strText = field.toUpperCase();
-				if (strText.indexOf("SUM(") > -1 || strText.indexOf("MAX(") > -1 || strText.indexOf("MIN(") > -1 || strText.indexOf("AVG(") > -1
-						|| strText.indexOf("COUNT(") > -1 || strText.indexOf("STDEV(") > -1 || strText.indexOf("STDEVP(") > -1 || strText.indexOf("VAR(") > -1
-						|| strText.indexOf("VARP(") > -1) {
+				if (strText.contains("SUM(") || strText.contains("MAX(") || strText.contains("MIN(") || strText.contains("AVG(")
+						|| strText.contains("COUNT(") || strText.contains("STDEV(") || strText.contains("STDEVP(") || strText.contains("VAR(")
+						|| strText.contains("VARP(")) {
 					queryParameter.setCursorType(CursorType.STATIC);
 					break;
 				}

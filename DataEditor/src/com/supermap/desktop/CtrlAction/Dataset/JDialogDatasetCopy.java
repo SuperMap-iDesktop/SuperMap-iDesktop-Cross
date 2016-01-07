@@ -21,6 +21,8 @@ import com.supermap.desktop.ui.controls.DatasetCopyCallable;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -32,7 +34,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 
 public class JDialogDatasetCopy extends SmDialog {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int COLUMN_INDEX_Dataset = 0;
@@ -94,9 +95,9 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.table.setRowHeight(23);
 		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		@SuppressWarnings("serial")
-		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "Dataset", "CurrentDatasource", "TargetDatasource", "TargetDataset",
-				"EncodeType", "Charset" }) {
-			boolean[] columnEditables = new boolean[] { false, false, true, true, true, true };
+		DDLExportTableModel tableModel = new DDLExportTableModel(new String[]{"Dataset", "CurrentDatasource", "TargetDatasource", "TargetDataset",
+				"EncodeType", "Charset"}) {
+			boolean[] columnEditables = new boolean[]{false, false, true, true, true, true};
 
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -281,7 +282,7 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 双击table或JScrollPanel打开数据集选择界面,单击选中
-	 * 
+	 *
 	 * @param e
 	 */
 	private void tableOrScrollPanel_pressed(MouseEvent e) {
@@ -310,7 +311,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 通过按钮初始化数据集选择界面
-	 *
 	 */
 	private void buttonAdd_Click() {
 		try {
@@ -481,7 +481,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 全选
-	 *
 	 */
 	private void buttonSelectAll_Click() {
 		try {
@@ -494,7 +493,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 反选
-	 * 
 	 */
 	private void buttonSelectInvert_Click() {
 		try {
@@ -518,7 +516,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 删除
-	 * 
 	 */
 	private void buttonDelete_Click() {
 		deleteSelectedRow();
@@ -547,7 +544,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 统一设置的简单实现
-	 * 
 	 */
 	private void buttonSetting_Click() {
 		try {
@@ -577,7 +573,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	/**
 	 * 取消
-	 *
 	 */
 	private void cancelButton_Click() {
 		try {
@@ -695,12 +690,24 @@ public class JDialogDatasetCopy extends SmDialog {
 	public class TargetDatasetNameCellEditor extends DefaultCellEditor {
 
 		private JTable table;
-		private JTextField textField = new JTextField();
+		private SmTextFieldLegit textField = new SmTextFieldLegit();
 		private int row = 0;
 		private int column = 0;
 
-		public TargetDatasetNameCellEditor(JTextField textField) {
+		public TargetDatasetNameCellEditor(final JTextField textField) {
 			super(textField);
+			this.textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
+				@Override
+				public boolean isTextFieldValueLegit(String textFieldValue) {
+
+					return getAvailableDatasetName(textFieldValue, table, column, row).equals(textFieldValue);
+				}
+
+				@Override
+				public String getLegitValue(String currentValue, String backUpValue) {
+					return getAvailableDatasetName(currentValue, table, column, row);
+				}
+			});
 		}
 
 		@Override
@@ -731,6 +738,7 @@ public class JDialogDatasetCopy extends SmDialog {
 				if (suffix != 0) {
 					value = MessageFormat.format(DataEditorProperties.getString("String_TargetDatasetName"), datasetName, suffix);
 				} else {
+
 					value = datasetName;
 				}
 				int i;

@@ -1,30 +1,20 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 /**
  * 符号基本信息面板
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 class SymbolBasicInfoPanel extends JPanel {
 
@@ -57,6 +47,13 @@ class SymbolBasicInfoPanel extends JPanel {
 		try {
 			String idStr = jComboBoxSymbolID.getSelectedItem().toString();
 			if (idStr.trim().length() == 0) {
+				jTextFieldSymbolID.setText("");
+				jTextFieldSymbolName.setText("");
+				return;
+			}
+			try {
+				Integer integer = Integer.valueOf(idStr.trim());
+			} catch (NumberFormatException e) {
 				jTextFieldSymbolID.setText("");
 				jTextFieldSymbolName.setText("");
 				return;
@@ -204,7 +201,7 @@ class SymbolBasicInfoPanel extends JPanel {
 
 	/**
 	 * 刷新两个JComboBox，先移除监听，避免操作两个JComboBox时不停的触发事件
-	 * 
+	 *
 	 * @param arrayList
 	 */
 	public void refreshComboBox(ArrayList<LabelInfo> arrayList) {
@@ -223,7 +220,7 @@ class SymbolBasicInfoPanel extends JPanel {
 
 	/**
 	 * 刷新基本信息面板
-	 * 
+	 *
 	 * @param symbolID
 	 * @param symbolName
 	 */

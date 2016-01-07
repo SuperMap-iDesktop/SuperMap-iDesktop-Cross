@@ -58,6 +58,7 @@ public class JDialogDatasetChoosePyramidManager extends DatasetChooser {
 	@Override
 	public DialogResult showDialog() {
 		this.selectedDatasets = null;
+		table.clearSelection();
 		this.setDialogResult(DialogResult.CLOSED);
 		return super.showDialog();
 	}

@@ -375,7 +375,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
 				IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
 
-				if (form instanceof IFormTabular && ((IFormTabular) form).getRecordset().getDataset() == this.datasetVector) {
+				if (form instanceof IFormTabular && ((IFormTabular) form).getRecordset().getDataset()== this.datasetVector) {
 					// 刷新已打开的当前修改数据的属性表，不同的窗口绑定不同的表格
 					Recordset recordset = this.datasetVector.getRecordset(false, CursorType.DYNAMIC);
 					((IFormTabular) form).setRecordset(recordset);

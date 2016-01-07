@@ -110,7 +110,7 @@ public class FileSize {
 
 	@Override
 	public String toString() {
-		return (BigDecimal.valueOf(this.size).toString() + "/x20" + String.valueOf(this.sizeType.getValue()));
+		return String.format("%.2f", this.size) + " " + this.sizeType.toString();
 	}
 
 	// 智能字符串转换 举例说明：如果当前单位是KB，实际数值大于1MB即转为 10+MB字符串显示

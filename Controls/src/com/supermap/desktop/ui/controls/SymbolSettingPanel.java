@@ -1,45 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.util.EventObject;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-
 import com.supermap.data.Enum;
 import com.supermap.data.FillGradientMode;
 import com.supermap.data.GeoLine;
@@ -53,11 +13,29 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CoreProperties;
 
+import javax.swing.*;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+
 /**
  * 符号设置面板
- * 
+ *
  * @author xuzw
- * 
  */
 class SymbolSettingPanel extends JPanel {
 
@@ -186,7 +164,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 构造符号设置面板，
-	 * 
+	 *
 	 * @param symbolPanel 预览面板
 	 * @param geoStyle
 	 * @param symbolType
@@ -301,7 +279,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 填充设置上方面板，包括颜色设置和透明设置
-	 * 
+	 *
 	 * @return
 	 */
 	protected JPanel getFillTopPanel() {
@@ -317,7 +295,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 颜色设置面板
-	 * 
+	 *
 	 * @return
 	 */
 	protected JPanel getFillColorPanel() {
@@ -352,7 +330,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 透明设置面板
-	 * 
+	 *
 	 * @return
 	 */
 	protected JPanel getFillBackOpaquePanel() {
@@ -476,8 +454,8 @@ class SymbolSettingPanel extends JPanel {
 	}
 
 	/**
- * 
- */
+	 *
+	 */
 	private FocusAdapter getSelectAllAdapter(final JSpinner spinner) {
 		selectAllAdapter = new FocusAdapter() {
 			@Override
@@ -495,7 +473,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 点符号宽度值
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolMarkerWidthJSpinner() {
@@ -517,6 +495,14 @@ class SymbolSettingPanel extends JPanel {
 				public void caretUpdate(CaretEvent e) {
 					try {
 						String widthString = widthTextField.getText();
+						if (widthString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(widthString);
+						} catch (Exception e1) {
+							return;
+						}
 						if (widthString == null || "".equals(widthString) || markerWidth.equals(widthString) || Double.valueOf(widthString) > 999) {
 							return;
 						}
@@ -547,7 +533,6 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 设置点符号大小
-	 *
 	 */
 	private void setSymbolMarkerSize() {
 		try {
@@ -568,7 +553,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 设置点符号高度
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolMarkerHeightJSpinner() {
@@ -600,6 +585,14 @@ class SymbolSettingPanel extends JPanel {
 	private void abstractHeightTextFieldLisenter(final JTextField heightTextField) {
 		try {
 			String heightString = heightTextField.getText();
+			if (heightString.contains("d")) {
+				return;
+			}
+			try {
+				Double aDouble = Double.valueOf(heightString);
+			} catch (Exception e) {
+				return;
+			}
 			if (heightString == null || "".equals(heightString) || markerHeight.equals(heightString) || Double.valueOf(heightString) > 900) {
 				return;
 			}
@@ -627,7 +620,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 锁定宽高比
-	 * 
+	 *
 	 * @return
 	 */
 	private JCheckBox getSymbolMarkerSizeBox() {
@@ -653,7 +646,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 符号旋转角度
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolMarkerAngleSpinner() {
@@ -675,6 +668,14 @@ class SymbolSettingPanel extends JPanel {
 				public void caretUpdate(CaretEvent e) {
 					try {
 						String angleString = angleTextField.getText();
+						if (angleString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(angleString);
+						} catch (NumberFormatException e1) {
+							return;
+						}
 						if (angleString == null || "".equals(angleString) || markerAngle.equals(angleString) || Double.valueOf(angleString) > 180
 								|| Double.valueOf(angleString) < -180) {
 							return;
@@ -695,7 +696,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 符号颜色
-	 * 
+	 *
 	 * @return
 	 */
 	protected DropDownColor getSymbolMarkerColorButton() {
@@ -726,7 +727,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 线符号颜色
-	 * 
+	 *
 	 * @return
 	 */
 	protected DropDownColor getSymbolLineColorButton() {
@@ -755,7 +756,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 线符号宽度
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolLineWidthSpinner() {
@@ -770,7 +771,7 @@ class SymbolSettingPanel extends JPanel {
 			final JTextField widthTextField = numberEditor.getTextField();
 			// 如果初始化为1.0，实际显示的是1，鼠标点击后会变为1.0
 			// 解决此问题，此处再次设置是为了让显示为1.0
-			
+
 			// 默认将线宽设置为0.1
 			widthTextField.setText(String.valueOf(activeStyle.getLineWidth()));
 			numberEditor.getFormat().applyPattern("##0.0");
@@ -788,6 +789,14 @@ class SymbolSettingPanel extends JPanel {
 	private void abstractWidthTextField(final JTextField widthTextField) {
 		try {
 			String lineWidthString = widthTextField.getText();
+			if (lineWidthString.contains("d")) {
+				return;
+			}
+			try {
+				Double aDouble = Double.valueOf(lineWidthString);
+			} catch (NumberFormatException e) {
+				return;
+			}
 			if (lineWidthString == null || "".equals(lineWidthString) || lineWidth.equals(lineWidthString) || Double.valueOf(lineWidthString) > 20) {
 				return;
 			}
@@ -802,7 +811,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 面符号前景色
-	 * 
+	 *
 	 * @return
 	 */
 	protected DropDownColor getSymbolFillForeColor() {
@@ -837,7 +846,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 面符号背景色
-	 * 
+	 *
 	 * @return
 	 */
 	protected DropDownColor getSymbolFillBackColor() {
@@ -876,7 +885,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 获取背景透明
-	 * 
+	 *
 	 * @return
 	 */
 	private JCheckBox getSymbolFillBackOpaqueCheckBox() {
@@ -909,7 +918,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 面符号设置线型
-	 * 
+	 *
 	 * @return
 	 */
 	private JButton getSymbolFillLine() {
@@ -938,7 +947,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 线型图片获取
-	 * 
+	 *
 	 * @return
 	 */
 	private Icon getLineIcon() {
@@ -1001,7 +1010,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 不透明度
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolFillOpaqueRateSpinner() {
@@ -1020,6 +1029,14 @@ class SymbolSettingPanel extends JPanel {
 				public void caretUpdate(CaretEvent e) {
 					try {
 						String rateString = opaqueTextField.getText();
+						if (rateString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(rateString);
+						} catch (NumberFormatException e1) {
+							return;
+						}
 						if (rateString == null || "".equals(rateString) || fillOpaque.equals(rateString) || Double.valueOf(rateString) > 100
 								|| Double.valueOf(rateString) < 0) {
 							return;
@@ -1102,7 +1119,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 旋转角度
-	 * 
+	 *
 	 * @return
 	 */
 	private JSpinner getSymbolFillGradientAngleSpinner() {
@@ -1127,6 +1144,14 @@ class SymbolSettingPanel extends JPanel {
 				public void caretUpdate(CaretEvent e) {
 					try {
 						String angleString = angleTextField.getText();
+						if (angleString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(angleString);
+						} catch (NumberFormatException e1) {
+							return;
+						}
 						if (angleString == null || "".equals(angleString) || fillGradienAngle.equals(angleString) || Double.valueOf(angleString) > 360) {
 							return;
 						}
@@ -1146,7 +1171,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 水平偏移
-	 * 
+	 *
 	 * @return m_fillGradientOffsetRatioXSpinner
 	 */
 	private JSpinner getSymbolFillGradientOffsetRatioXSpinner() {
@@ -1172,6 +1197,14 @@ class SymbolSettingPanel extends JPanel {
 					try {
 
 						String offsetXString = ratioXTextField.getText();
+						if (offsetXString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(offsetXString);
+						} catch (NumberFormatException e1) {
+							return;
+						}
 						if (offsetXString == null || "".equals(offsetXString) || fillGradientX.equals(offsetXString) || Double.valueOf(offsetXString) > 100) {
 							return;
 						}
@@ -1192,7 +1225,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 垂直偏移
-	 * 
+	 *
 	 * @return m_fillGradientOffsetRatioYSpinner
 	 */
 	private JSpinner getSymbolFillGradientOffsetRatioYSpinner() {
@@ -1217,6 +1250,15 @@ class SymbolSettingPanel extends JPanel {
 				public void caretUpdate(CaretEvent e) {
 					try {
 						String offsetYString = ratioYTextField.getText();
+						if (offsetYString.contains("d")) {
+							return;
+						}
+						try {
+							Double aDouble = Double.valueOf(offsetYString);
+						} catch (NumberFormatException e1) {
+							return;
+						}
+
 						if (offsetYString == null || "".equals(offsetYString) || fillGradientY.equals(offsetYString) || Double.valueOf(offsetYString) > 100) {
 							return;
 						}
@@ -1238,11 +1280,11 @@ class SymbolSettingPanel extends JPanel {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	/**
 	 * 向点符号操作面板中加组件
-	 * 
+	 *
 	 * @param c
 	 * @param constraints
 	 * @param x
@@ -1260,7 +1302,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 向面符号操作面板中加组件
-	 * 
+	 *
 	 * @param c
 	 * @param constraints
 	 * @param x
@@ -1278,7 +1320,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 向面符号操作面板中加组件
-	 * 
+	 *
 	 * @param c
 	 * @param constraints
 	 * @param x
@@ -1296,7 +1338,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 使图像上下左右完全翻转，解决线颠倒问题
-	 * 
+	 *
 	 * @param bufferedImage
 	 * @return
 	 */
