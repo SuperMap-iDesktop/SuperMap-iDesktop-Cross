@@ -1301,10 +1301,8 @@ public class CommonToolkit {
 				if (form instanceof IFormMap) {
 					// 判断地图有没有
 					Layers layers = ((IFormMap) form).getMapControl().getMap().getLayers();
-					for (int j = 0; j < layers.getCount(); j++) {
-						if (layers.get(j).getDataset().equals(dataset)) {
-							return true;
-						}
+					if (isIncludeDataset(layers, dataset)) {
+						return true;
 					}
 				} else if (form instanceof IFormScene) {
 					// 判断场景有没有
@@ -1330,6 +1328,28 @@ public class CommonToolkit {
 				}
 			}
 			// 遍历完还活着返回false
+			return false;
+		}
+
+		private static boolean isIncludeDataset(Layers layers, Dataset dataset) {
+			for (int i = 0; i < layers.getCount(); i++) {
+				if (isIncludeDataset(layers.get(i), dataset)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static boolean isIncludeDataset(Layer layer, Dataset dataset) {
+			if (layer instanceof LayerGroup) {
+				for (int i = 0; i < ((LayerGroup) layer).getCount(); i++) {
+					if (isIncludeDataset(((LayerGroup) layer).get(i), dataset)) {
+						return true;
+					}
+				}
+			} else if (layer.getDataset() == dataset) {
+				return true;
+			}
 			return false;
 		}
 
