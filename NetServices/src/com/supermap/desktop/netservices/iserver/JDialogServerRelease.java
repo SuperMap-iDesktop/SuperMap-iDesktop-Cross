@@ -5,28 +5,41 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.CancellationException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.DatasetType;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.netservices.NetServicesProperties;
+import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.Properties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
-public class JDialogServerRelease extends JDialog implements ActionListener {
+public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 	/**
 	 * 
@@ -373,31 +386,27 @@ public class JDialogServerRelease extends JDialog implements ActionListener {
 	}
 
 	// 发布文件型工作空间到远程服务器还没有API
-	// 因此先处理为文件型的时候，远程选项不可能
+	// 因此先处理为文件型的时候，远程选项不可用
 	// 文件型工作空间+文件型数据源，需要工作空间和数据源在同一个目录下，打包上传
 	// 文件型工作空间+数据库型数据源，只需要上传文件型工作空间
 	private boolean canRemoteRelease() {
 		Boolean canRemoteRelease = true;
-		// try
-		// {
-		// if (!StringUtilties.isNullOrEmpty(this.workspaceInfo.getWorkspacePath()))
-		// {
-		// DirectoryInfo workspaceDirectory = Directory.GetParent(this.m_workspaceInfo.WorkspacePath);
-		// foreach (String datasourcePath in this.m_workspaceInfo.DatasourcesPath)
-		// {
-		// DirectoryInfo datasourceDirectory = Directory.GetParent(datasourcePath);
-		// if (workspaceDirectory.FullName.ToLower() != datasourceDirectory.FullName)
-		// {
-		// canRemoteRelease = false;
-		// break;
-		// }
-		// }
-		// }
-		// }
-		// catch (Exception ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.StackTrace, InfoType.Exception);
-		// }
+		try {
+			if (!StringUtilties.isNullOrEmpty(this.workspaceInfo.getWorkspacePath())) {
+				File workspaceDirectory = new File(workspaceInfo.getWorkspacePath()).getParentFile(); // 工作空间所在路径
+
+				ArrayList<String> datasourcesPath = this.workspaceInfo.getDatasourcesPath();
+				for (int i = 0; i < datasourcesPath.size(); i++) {
+					File datasourceDirectory = new File(datasourcesPath.get(i)).getParentFile(); // 数据源所在的路径
+					if (!workspaceDirectory.equals(datasourceDirectory)) {
+						canRemoteRelease = false;
+						break;
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
 
 		return canRemoteRelease;
 	}
@@ -782,10 +791,9 @@ public class JDialogServerRelease extends JDialog implements ActionListener {
 
 				if (!canRemoteRelease()) {
 					this.canRelease = false;
-					// this.m_errorProvider.SetError(this.m_radioButtonRemoteHost, "文件型工作空间下的文件型数据源必须与工作空间在同一目录下才能发布到远程服务器。");
+					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Remote_Forbidden"));
 				} else {
 					this.canRelease = true;
-					// this.m_errorProvider.Clear();
 				}
 				setButtonReleaseEnabled();
 			}
@@ -797,65 +805,40 @@ public class JDialogServerRelease extends JDialog implements ActionListener {
 	private void buttonReleaseClicked() {
 		CursorUtilties.setWaitCursor();
 		try {
-			// ServerRelease serverRelease = FillServerRelease();
-			// //需要打包上传，需要展示将要打包的数据
-			// if (!String.IsNullOrEmpty(serverRelease.WorkspacePath)
-			// && serverRelease.HostType == HostType.RemoteHost)
-			// {
-			// _FormFolderSelector formFolderSelector = new _FormFolderSelector(serverRelease.WorkDirectory, serverRelease.Directories, serverRelease.Files);
-			// if (formFolderSelector.ShowDialog() == DialogResult.OK)
-			// {
-			// serverRelease.Directories.Clear();
-			// serverRelease.Directories.AddRange(formFolderSelector.Directories.ToArray());
-			// serverRelease.Files.Clear();
-			// serverRelease.Files.AddRange(formFolderSelector.Files.ToArray());
-			// }
-			// else
-			// {
-			// Application.ActiveApplication.Output.Output("操作已取消。");
-			// return;
-			// }
-			// }
-			//
-			// //发布服务开始，给出提示，并开始统计时间
-			// Application.ActiveApplication.Output.Output(Properties.NetServicesResources.String_iServer_Message_ReleaseStart);
-			// DateTime startTime = DateTime.Now;
-			//
-			// this.m_formProgress = new FormProgressTotal();
-			// this.m_formProgress.CancelButtonVisible = serverRelease.CanCancel;
-			// this.m_formProgress.IsShowRemainTime = false;
-			// this.m_formProgress.IsShowPercent = true;
-			// Thread thread = CommonToolkit.ThreadWrap.CreateThread(() =>
-			// {
-			// this.m_formProgress.ShowDialog();
-			// });
-			//
-			// thread.Start();
-			//
-			// Application.ActiveApplication.UserInfoManage.FunctionStart(FunctionID.ServerRelease);
-			// serverRelease.FunctionProgress += new FunctionProgressEventHandler(serverRelease_FunctionProgress);
-			// Boolean releaseResult = serverRelease.Release();
-			// this.m_formProgress.Visible = false;
-			// if (releaseResult)
-			// {
-			// ServerReleaseSetting();
-			// Double totalTime = (DateTime.Now - startTime).TotalSeconds;
-			// Application.ActiveApplication.UserInfoManage.FunctionSuccess(FunctionID.ServerRelease);
-			// Application.ActiveApplication.Output.Output(String.Format(Properties.NetServicesResources.String_iServer_Message_ReleaseSuccess,totalTime.ToString()));
-			// _FormResults formResult = new _FormResults(serverRelease.ResultURL);
-			// Application.ActiveApplication.Output.Output("本次操作成功发布了以下服务");
-			// for (Int32 i = 0; i < formResult.Results.Count; i++)
-			// {
-			// Application.ActiveApplication.Output.Output(formResult.Results[i]);
-			// }
-			// //formResult.ShowDialog(this);
-			// this.DialogResult = DialogResult.OK;
-			// }
-			// else
-			// {
-			// Application.ActiveApplication.UserInfoManage.FunctionFailed(FunctionID.ServerRelease);
-			// Application.ActiveApplication.Output.Output(Properties.NetServicesResources.String_iServer_Message_ReleaseFaild);
-			// }
+			ServerRelease serverRelease = FillServerRelease();
+			// 需要打包上传，需要展示将要打包的数据
+			if (!StringUtilties.isNullOrEmpty(serverRelease.getWorkspacePath()) && serverRelease.getHostType() == HostType.REMOTE) {
+				ArrayList<SelectableFile> files = new ArrayList<>();
+				File workDirectory = new File(serverRelease.getWorkDirectory());
+				File[] childFiles = workDirectory.listFiles();
+				for (int i = 0; i < childFiles.length; i++) {
+					files.add(SelectableFile.fromFile(childFiles[i], !childFiles[i].isDirectory()));
+				}
+				JDialogFolderSelector folderSelector = new JDialogFolderSelector(files);
+				if (folderSelector.showDialog() == DialogResult.OK) {
+					serverRelease.getDirectories().clear();
+					serverRelease.getFiles().clear();
+
+					for (int i = 0; i < files.size(); i++) {
+						SelectableFile selectableFile = files.get(i);
+						if (!selectableFile.isSelected()) {
+							continue;
+						}
+
+						if (selectableFile.isDirectory()) {
+							serverRelease.getDirectories().add(selectableFile.getPath());
+						} else {
+							serverRelease.getFiles().add(selectableFile.getPath());
+						}
+					}
+				} else {
+					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Operation_Cancel"));
+					return;
+				}
+			}
+
+			FormProgressTotal formProgressTotal = new FormProgressTotal();
+			formProgressTotal.doWork(new ServerReleaseCallable(serverRelease));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -865,30 +848,10 @@ public class JDialogServerRelease extends JDialog implements ActionListener {
 
 	private void buttonCloseClicked() {
 		try {
-			// this.DialogResult = DialogResult.Cancel;
+			setDialogResult(DialogResult.CANCEL);
 			setVisible(false);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}
-	}
-
-	void serverRelease_FunctionProgress() {
-		// try
-		// {
-		// this.m_formProgress.UpdateProgress(String.Empty, e.CurrentMessage, e.CurrentProgress, e.TotalMessage, e.TotalProgress, String.Empty, TimeSpan.Zero);
-		// e.Cancel = this.m_formProgress.IsCancel;
-		// }
-		// catch (Exception ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.StackTrace, InfoType.Exception);
-		// }
-	}
-
-	private void serverReleaseSetting() {
-		if (this.hostType == HostType.REMOTE) {
-			// ServerReleaseSetting setting = new ServerReleaseSetting();
-			// setting.RemoteHost = this.m_remoteHost;
-			// setting.Save();
 		}
 	}
 
@@ -911,5 +874,90 @@ public class JDialogServerRelease extends JDialog implements ActionListener {
 		// serverRelease.DatasourcesPath = this.m_workspaceInfo.DatasourcesPath;
 
 		return serverRelease;
+	}
+
+	private class ServerReleaseCallable extends UpdateProgressCallable {
+
+		private ServerRelease serverRelease;
+		private FunctionProgressListener functionProgressListener = new FunctionProgressListener() {
+
+			@Override
+			public void functionProgress(FunctionProgressEvent event) {
+				try {
+					updateProgressTotal(event.getCurrentProgress(), event.getTotalProgress(), "", event.getCurrentMessage());
+				} catch (CancellationException e) {
+					event.setCancel(true);
+				}
+			}
+		};
+
+		public ServerReleaseCallable(ServerRelease serverRelease) {
+			this.serverRelease = serverRelease;
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			boolean result = true;
+			try {
+				// 发布服务开始，给出提示，并开始统计时间
+				Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_Message_ReleaseStart"));
+				Date startTime = new Date();
+				this.serverRelease.addFunctionProgressListener(this.functionProgressListener);
+
+				boolean releaseResult = this.serverRelease.release();
+				if (releaseResult) {
+					serverReleaseSetting();
+					long totalTime = (new Date().getTime()) - startTime.getTime(); // 单位毫秒
+					Application
+							.getActiveApplication()
+							.getOutput()
+							.output(MessageFormat.format(NetServicesProperties.getString("String_iServer_Message_ReleaseSuccess"),
+									String.valueOf(totalTime / 1000)));
+					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_Message_ReleaseSuccessResult"));
+
+					ArrayList<String> resultServers = getResultServers(this.serverRelease.getResultURL());
+					for (int i = 0; i < resultServers.size(); i++) {
+						Application.getActiveApplication().getOutput().output(resultServers.get(i));
+					}
+				} else {
+					result = false;
+					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_Message_ReleaseFaild"));
+				}
+			} catch (Exception e) {
+				result = false;
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				this.serverRelease.removeFunctionProgressListener(this.functionProgressListener);
+			}
+			return result;
+		}
+
+		private void serverReleaseSetting() {
+			if (JDialogServerRelease.this.hostType == HostType.REMOTE) {
+				// ServerReleaseSetting setting = new ServerReleaseSetting();
+				// setting.RemoteHost = this.m_remoteHost;
+				// setting.Save();
+			}
+		}
+
+		private ArrayList<String> getResultServers(String links) {
+			ArrayList<String> result = new ArrayList<>();
+			try {
+				JSONArray jsonArray = JSONArray.parseArray(links);
+
+				for (int i = 0; i < jsonArray.size(); i++) {
+					JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+					if (jsonObject.containsKey(ResponseKey.ReleaseWorkspace.SERVICE_TYPE)
+							&& jsonObject.containsKey(ResponseKey.ReleaseWorkspace.SERVICE_ADDRESS)) {
+						result.add(jsonObject.get(ResponseKey.ReleaseWorkspace.SERVICE_TYPE) + ":"
+								+ jsonObject.get(ResponseKey.ReleaseWorkspace.SERVICE_ADDRESS) + ";");
+					}
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+			return result;
+		}
 	}
 }

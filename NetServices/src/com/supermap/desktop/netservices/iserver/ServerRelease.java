@@ -2,19 +2,17 @@ package com.supermap.desktop.netservices.iserver;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.event.EventListenerList;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,12 +24,12 @@ import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
-import com.supermap.desktop.core.FileSizeType;
 import com.supermap.desktop.core.http.HttpPostEvent;
 import com.supermap.desktop.core.http.HttpPostFile;
 import com.supermap.desktop.core.http.HttpPostListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.utilties.FileUtilties;
+import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 public class ServerRelease {
@@ -61,6 +59,7 @@ public class ServerRelease {
 	private String remoteFilePath; // 文件型工作空间+文件型数据源发布到远程服务器上之后的工作空间路径
 	private boolean cancel = false;
 	private String resultURL = "";
+	private EventListenerList listenerList = new EventListenerList();
 
 	private long totalSize = 0;
 	private long zippedSize = 0;
@@ -137,7 +136,7 @@ public class ServerRelease {
 	}
 
 	public int getServicesType() {
-		return servicesType;
+		return this.servicesType;
 	}
 
 	public void setServicesType(int servicesType) {
@@ -145,7 +144,7 @@ public class ServerRelease {
 	}
 
 	public String getWorkspacePath() {
-		return workspacePath;
+		return this.workspacePath;
 	}
 
 	public void setWorkspacePath(String workspacePath) {
@@ -154,20 +153,20 @@ public class ServerRelease {
 	}
 
 	public ArrayList<String> getDirectories() {
-		return directories;
+		return this.directories;
 	}
 
-	public void setDirectories(ArrayList<String> directories) {
-		this.directories = directories;
-	}
+	// public void setDirectories(ArrayList<String> directories) {
+	// this.directories = directories;
+	// }
 
 	public ArrayList<String> getFiles() {
-		return files;
+		return this.files;
 	}
 
-	public void setFiles(ArrayList<String> files) {
-		this.files = files;
-	}
+	// public void setFiles(ArrayList<String> files) {
+	// this.files = files;
+	// }
 
 	public String getResultURL() {
 		return resultURL;
@@ -198,9 +197,9 @@ public class ServerRelease {
 							|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU)) {
 				result = releaseWithUploading();
 			} else {
-				sendFunctionProgressEvent(0, 0, "...", ServerReleaseMessage.Releasing);// 正在发布
+				fireFunctionProgress(0, 0, "...", NetServicesProperties.getString("String_Releasing"));// 正在发布
 				result = releaseWithoutUploading();
-				sendFunctionProgressEvent(100, 100, "...", ServerReleaseMessage.ReleaseCompleted);// 发布成功
+				fireFunctionProgress(100, 100, "...", NetServicesProperties.getString("String_ReleaseCompleted"));// 发布成功
 			}
 		}
 
@@ -208,27 +207,16 @@ public class ServerRelease {
 	}
 
 	public static void clearTmp() {
-		// String zipCacheDirectory = Path.GetFullPath(CLOUDY_CACHE + "/iServerZipCache");
-		// if (Directory.Exists(zipCacheDirectory))
-		// {
-		// String[] directories = Directory.GetDirectories(zipCacheDirectory);
-		// for (Int32 i = 0; i < directories.Length; i++)
-		// {
-		// try
-		// {
-		// Directory.Delete(directories[i], true);
-		// }
-		// catch
-		// {
-		// }
-		// }
-		//
-		// String[] files = Directory.GetFiles(zipCacheDirectory, "*.tmp");
-		// for (Int32 i = 0; i < files.Length; i++)
-		// {
-		// File.Delete(files[i]);
-		// }
-		// }
+		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE, true) + "/iServerZipCache");
+		FileUtilties.delete(zipCacheDirectory);
+	}
+
+	public void addFunctionProgressListener(FunctionProgressListener listener) {
+		this.listenerList.add(FunctionProgressListener.class, listener);
+	}
+
+	public void removeFunctionProgressListener(FunctionProgressListener listener) {
+		this.listenerList.remove(FunctionProgressListener.class, listener);
 	}
 
 	private Boolean releaseWithUploading() {
@@ -243,7 +231,7 @@ public class ServerRelease {
 				return false;
 			}
 			String dataPath = zipWorkspaceData();
-			sendFunctionProgressEvent(0, 49, "...", ServerReleaseMessage.ZipDataCompleted);// 正在进行上传预处理
+			fireFunctionProgress(0, 49, "...", NetServicesProperties.getString("String_ZipCompleted"));// 正在进行上传预处理
 			if (!StringUtilties.isNullOrEmpty(dataPath)) {
 				// 创建一个上传任务
 				if (this.cancel) {
@@ -256,13 +244,13 @@ public class ServerRelease {
 						return false;
 					}
 					String workspaceConnection = uploadTask(uploadURL, new File(dataPath));
-					sendFunctionProgressEvent(0, 99, "...", ServerReleaseMessage.UploadCompleted);// 正在发布服务
+					fireFunctionProgress(0, 99, "...", NetServicesProperties.getString("String_UploadCompleted"));// 正在发布服务
 					// 发布服务
 					if (this.cancel) {
 						return false;
 					}
 					result = releaseServerUploadFile(workspaceConnection);
-					sendFunctionProgressEvent(100, 100, "...", ServerReleaseMessage.ReleaseCompleted);
+					fireFunctionProgress(100, 100, "...", NetServicesProperties.getString("String_ReleaseCompleted"));
 				}
 			}
 		} catch (Exception ex) {
@@ -275,7 +263,7 @@ public class ServerRelease {
 		String workspaceConnection = "";
 
 		try {
-			ServerReleaseMessage.outputMessage(ServerReleaseMessage.Uploading);
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Uploading"));
 
 			String fileName = MessageFormat.format("{0}/{1}", this.SERVER_DATA_DIR, dataFile.getName());
 			HttpPostFile httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName,
@@ -288,7 +276,7 @@ public class ServerRelease {
 				String dataDirectory = responseJson.getString("filePath");
 				// 服务器返回的解压缩之后的路径，经常改动，有时候带了工作空间文件名，有时候没带，这里随着 iserver的版本更改可能有问题，到时候再处理
 				workspaceConnection = MessageFormat.format("{0}/{1}/{2}", SERVER_DATA_DIR, dataDirectory, new File(this.connectionInfo.getServer()).getName());
-				ServerReleaseMessage.outputMessage(ServerReleaseMessage.UploadCompleted);
+				Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_UploadCompleted"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -298,20 +286,13 @@ public class ServerRelease {
 	}
 
 	private void httpPosting(HttpPostEvent e) {
-
+		int currentProgress = new Double(FileSize.divide(FileSize.multiply(e.getPostedSize(), 100), e.getTotalSize())).intValue();
+		int totalProgress = 50 + (int) (currentProgress * 0.49);
+		String currentSpeedString = MessageFormat.format(NetServicesProperties.getString("String_UploadSpeedUnit"), e.getSpeed());
+		String currentMessage = MessageFormat.format(NetServicesProperties.getString("String_UploadingInfo"), e.getPostedSize().ToStringClever(), e
+				.getTotalSize().ToStringClever(), currentSpeedString);
+		fireFunctionProgress(currentProgress, totalProgress, currentMessage, NetServicesProperties.getString("String_Uploading"));
 	}
-
-	// private void sendUploadProgress(long uploadSize, long totalSize, FileSize currentSpeed) {
-	// FileSize currentFileSize = new FileSize(uploadSize, FileSizeType.BYTE);
-	// FileSize totalFileSize = new FileSize(totalSize, FileSizeType.BYTE);
-	// int currentProgress = (int) (uploadSize * 100 / totalSize);
-	// int totalProgress = 50 + (int) (currentProgress * 0.49);
-	// String currentSpeedString = MessageFormat.format(ServerReleaseMessage.UploadSpeedUnit, currentSpeed.ToStringClever());
-	//
-	// String currentMessage = MessageFormat.format(ServerReleaseMessage.UploadCurrent, currentFileSize.ToStringClever(), totalFileSize.ToStringClever(),
-	// currentSpeedString);
-	// sendFunctionProgressEvent(currentProgress, totalProgress, currentMessage, ServerReleaseMessage.Uploading);
-	// }
 
 	private boolean releaseServerUploadFile(String workspaceConnection) {
 		this.remoteFilePath = workspaceConnection;
@@ -325,15 +306,15 @@ public class ServerRelease {
 		this.totalEntry = 0;
 		this.zippedEntry = 0;
 		try {
-			 ServerReleaseMessage.outputMessage(ServerReleaseMessage.ZippingData);
-			 String zipCacheDirectory="";
-//			 String zipCacheDirectory = Path.GetFullPath(CloudyCache + @"/iServerZipCache");
-//			 if (!Directory.Exists(zipCacheDirectory))
-//			 {
-//			 Directory.CreateDirectory(zipCacheDirectory);
-//			 }
-			 String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) +new Date().hashCode();
-			 zipPath = MessageFormat.format("{0}/{1}.zip", zipCacheDirectory, workspaceName);
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZippingData"));
+			String zipCacheDirectory = "";
+			// String zipCacheDirectory = Path.GetFullPath(CloudyCache + @"/iServerZipCache");
+			// if (!Directory.Exists(zipCacheDirectory))
+			// {
+			// Directory.CreateDirectory(zipCacheDirectory);
+			// }
+			String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) + new Date().hashCode();
+			zipPath = MessageFormat.format("{0}/{1}.zip", zipCacheDirectory, workspaceName);
 			//
 			// if (File.Exists(zipPath))
 			// {
@@ -362,25 +343,13 @@ public class ServerRelease {
 			// ServerReleaseMessage.OutputMessage(ServerReleaseMessage.ZipDataCompleted);
 			// }
 		} catch (Exception ex) {
-			ServerReleaseMessage.outputMessage(ServerReleaseMessage.ZipDataFailed);
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZipDataFailed"));
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 
 		}
 
 		return zipPath;
-	}
-
-	private void getTotalSize() {
-		// for (Int32 i = 0; i < this.m_directories.Count; i++)
-		// {
-		// this.m_totalSize += CommonToolkit.DirectoryWrap.GetDirectorySize(this.m_directories[i]);
-		// }
-		// for (Int32 i = 0; i < this.m_files.Count; i++)
-		// {
-		// FileInfo fileInfo = new FileInfo(this.m_files[i]);
-		// this.m_totalSize += fileInfo.Length;
-		// }
 	}
 
 	// 还需要处理压缩失败的问题
@@ -408,7 +377,7 @@ public class ServerRelease {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 
 		try {
-			ServerReleaseMessage.outputMessage(ServerReleaseMessage.PreUploading);
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_PreUploading"));
 			HttpPost httpPost = new HttpPost(MessageFormat.format(UPLOAD_TASKS, this.host, this.port, getToken()));
 			httpPost.setConfig(RequestConfig.custom().setConnectTimeout(300000).build());
 
@@ -420,9 +389,9 @@ public class ServerRelease {
 					if (responseEntity != null) {
 						JSONObject responseJson = JSONObject.parseObject(EntityUtils.toString(responseEntity));
 
-						if (responseJson.containsKey(ResonseKey.CreateUpload.SUCCESS)
-								&& Boolean.valueOf(responseJson.get(ResonseKey.CreateUpload.SUCCESS).toString())) {
-							uploadTask = responseJson.get(ResonseKey.CreateUpload.NEW_RESOURCE_LOCATION).toString();
+						if (responseJson.containsKey(ResponseKey.CreateUpload.SUCCESS)
+								&& Boolean.valueOf(responseJson.get(ResponseKey.CreateUpload.SUCCESS).toString())) {
+							uploadTask = responseJson.get(ResponseKey.CreateUpload.NEW_RESOURCE_LOCATION).toString();
 						}
 					}
 				} else {
@@ -714,13 +683,12 @@ public class ServerRelease {
 	// 数据库型数据源不关闭，其他关闭
 	private void closeCurrentFileWorkspace() {
 		try {
-			// if (this.m_hostType == _FormServerRelease.HostType.LocalHost)
-			// {
-			if (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
-					|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU) {
-				Application.getActiveApplication().getWorkspace().close();
+			if (this.hostType == HostType.LOCAL) {
+				if (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
+						|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU) {
+					Application.getActiveApplication().getWorkspace().close();
+				}
 			}
-			// }
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -735,13 +703,15 @@ public class ServerRelease {
 		}
 	}
 
-	private void sendFunctionProgressEvent(int currentProgress, int totalProgress, String currentMessage, String totalMessage) {
-		// if (this.FunctionProgress != null)
-		// {
-		// FunctionProgressEventArgs eventArgs = new FunctionProgressEventArgs(this, totalProgress, currentProgress, currentMessage, totalMessage);
-		// this.FunctionProgress(this, eventArgs);
-		// this.m_cancel = eventArgs.Cancel;
-		// }
+	private void fireFunctionProgress(int currentProgress, int totalProgress, String currentMessage, String totalMessage) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FunctionProgressListener.class) {
+				((FunctionProgressListener) listeners[i + 1]).functionProgress(new FunctionProgressEvent(this, totalProgress, currentProgress, currentMessage,
+						totalMessage));
+			}
+		}
 	}
 
 	// 根据工作空间文件初始化将要发布的文件夹和文件

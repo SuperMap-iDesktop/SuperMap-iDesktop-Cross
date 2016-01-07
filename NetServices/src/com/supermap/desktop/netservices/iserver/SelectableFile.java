@@ -8,25 +8,17 @@ import java.io.File;
  * @author highsad
  *
  */
-public class SelectableFile {
+public class SelectableFile extends File {
 	private File file;
 	private boolean isSelected = false;
 
-	public SelectableFile(File file) {
-		this.file = file;
-	}
-
-	public SelectableFile(String filePath) {
-		this(new File(filePath));
-	}
-
-	public SelectableFile(File file, boolean isSelected) {
-		this(file);
+	public SelectableFile(String pathname, boolean isSelected) {
+		super(pathname);
 		this.isSelected = isSelected;
 	}
 
-	public File getFile() {
-		return this.file;
+	public static SelectableFile fromFile(File file, boolean isSelected) {
+		return new SelectableFile(file.getPath(), isSelected);
 	}
 
 	public boolean isSelected() {
@@ -35,29 +27,5 @@ public class SelectableFile {
 
 	public void setIsSelected(boolean isSelected) {
 		this.isSelected = isSelected;
-	}
-
-	public boolean isDirectory() {
-		return this.file.isDirectory();
-	}
-
-	public boolean isHidden() {
-		return this.file.isHidden();
-	}
-
-	public boolean isAbsolute() {
-		return this.file.isAbsolute();
-	}
-
-	public String getName() {
-		return this.file.getName();
-	}
-
-	public long length() {
-		return this.file.length();
-	}
-
-	public long lastModified() {
-		return this.file.lastModified();
 	}
 }

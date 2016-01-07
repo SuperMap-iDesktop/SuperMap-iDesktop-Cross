@@ -2,6 +2,7 @@ package com.supermap.desktop.utilties;
 
 import java.io.File;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
 
@@ -43,5 +44,38 @@ public class FileUtilties {
 			fileName = fileName.substring(0, lastDotIndex - 1);
 		}
 		return fileName;
+	}
+
+	/**
+	 * 删除指定路径的文件或者文件夹
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static boolean delete(File file) {
+		boolean result = true;
+
+		try {
+			if (file.exists()) {
+				if (file.isDirectory()) {
+					File[] childFiles = file.listFiles();
+
+					for (int i = 0; i < childFiles.length; i++) {
+						result = delete(childFiles[i]);
+
+						if (!result) {
+							break;
+						}
+					}
+				} else {
+					result = file.delete();
+				}
+			} else {
+				result = false;
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return result;
 	}
 }

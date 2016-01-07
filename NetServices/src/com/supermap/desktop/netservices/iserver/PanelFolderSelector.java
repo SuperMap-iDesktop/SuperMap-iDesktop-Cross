@@ -40,7 +40,7 @@ public class PanelFolderSelector extends JPanel {
 		File test = new File("D:/test");
 		File[] listFiles = test.listFiles();
 		for (int i = 0; i < listFiles.length; i++) {
-			files.add(new SelectableFile(listFiles[i], true));
+			files.add(SelectableFile.fromFile(listFiles[i], true));
 		}
 
 		PanelFolderSelector panel = new PanelFolderSelector(files);
@@ -199,7 +199,7 @@ public class PanelFolderSelector extends JPanel {
 						result = file.isDirectory() ? CommonProperties.getString(CommonProperties.Directory) : CommonProperties
 								.getString(CommonProperties.File);
 					} else if (columnIndex == SIZE) {
-						FileSize fileSize = new FileSize(FileUtilties.getFileSize(file.getFile()), FileSizeType.BYTE);
+						FileSize fileSize = new FileSize(FileUtilties.getFileSize(file), FileSizeType.BYTE);
 						result = fileSize.ToStringClever();
 					} else if (columnIndex == LASTMODIFIED) {
 						result = DateFormat.getDateTimeInstance().format(new Date(file.lastModified()));
