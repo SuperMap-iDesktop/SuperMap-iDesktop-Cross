@@ -1,21 +1,7 @@
 package com.supermap.desktop.controls.property.workspace;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.GroupLayout;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.plaf.metal.MetalBorders;
-
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IPasswordCheck;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -27,9 +13,17 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.plaf.metal.MetalBorders;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class WorkspacePropertyControl extends AbstractPropertyControl {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -153,6 +147,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 		buttonReset = new JButton("Reset");
 
 		buttonChangePassword = new JButton("Change Password...");
+
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -212,6 +207,11 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 		this.textFieldVersion.setText(workspace.getConnectionInfo().getVersion().toString());
 		this.textFieldWorkspaceType.setText(workspace.getConnectionInfo().getType().toString());
 		this.textFieldDescription.setText(workspace.getDescription());
+		if (workspace.getConnectionInfo().getType() == WorkspaceType.SXWU) {
+			this.buttonChangePassword.setEnabled(false);
+		} else {
+			this.buttonChangePassword.setEnabled(true);
+		}
 	}
 
 	private void registerEvents() {

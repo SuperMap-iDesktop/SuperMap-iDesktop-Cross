@@ -1,21 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
@@ -27,6 +11,18 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.PropertyManagerUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.metal.MetalBorders;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JDialogWorkspaceSaveAs extends SmDialog {
 
@@ -250,12 +246,14 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 					((JPanelWorkspaceSaveAsFile) tempPanel).getjButtonBrowser().requestFocus();
 					return;
 				}
-				if (!workspacePassword.equals(workspacePasswordConfirm)) {
-					UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_Password_Confirm"));
-					((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().requestFocus();
-					return;
-				} else {
-					workspaceConnectionInfo.setPassword(workspacePassword);
+				if (workspaceFileName.toLowerCase().endsWith(".smwu")) {
+					if (!workspacePassword.equals(workspacePasswordConfirm)) {
+						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_Password_Confirm"));
+						((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().requestFocus();
+						return;
+					} else {
+						workspaceConnectionInfo.setPassword(workspacePassword);
+					}
 				}
 				workspaceVersion = (String) ((JPanelWorkspaceSaveAsFile) tempPanel).getjComboBoxVersion().getSelectedItem();
 				setWorkspaceVersion(workspaceConnectionInfo, workspaceVersion);

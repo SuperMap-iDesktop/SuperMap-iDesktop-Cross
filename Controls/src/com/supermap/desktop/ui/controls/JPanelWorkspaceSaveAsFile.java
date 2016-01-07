@@ -1,31 +1,22 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
- *
  * @author Huchenpu
  */
 public class JPanelWorkspaceSaveAsFile extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private String fileName;
@@ -53,6 +44,23 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 		jButtonBrowser = new JButton();
 		jTextFieldFileName = new JTextField();
 		jTextFieldFileName.setEditable(false);
+		jTextFieldFileName.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				checkPasswordEnable();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				checkPasswordEnable();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				checkPasswordEnable();
+			}
+		});
+
 		jLabelFileName = new JLabel();
 		jPasswordFieldPassword = new JPasswordField();
 		jLabelPassword = new JLabel();
@@ -70,7 +78,7 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 		});
 		initResources();
 
-		jComboBoxVersion.setModel(new DefaultComboBoxModel<String>(new String[] { "SuperMap UGC 7.0", "SuperMap UGC 6.0" }));
+		jComboBoxVersion.setModel(new DefaultComboBoxModel<>(new String[]{"SuperMap UGC 7.0", "SuperMap UGC 6.0"}));
 		jComboBoxVersion.setSelectedIndex(0);
 
 		GroupLayout layout = new GroupLayout(this);
@@ -120,6 +128,16 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 										.addComponent(jLabelVersion)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 	}// </editor-fold>
 
+	private void checkPasswordEnable() {
+		if (jTextFieldFileName.getText().toLowerCase().endsWith(".smwu")) {
+			jPasswordFieldPassword.setEditable(true);
+			jPasswordFieldPasswordConfrim.setEnabled(true);
+		} else if (jTextFieldFileName.getText().toLowerCase().endsWith(".sxwu")) {
+			jPasswordFieldPassword.setEditable(false);
+			jPasswordFieldPasswordConfrim.setEnabled(false);
+		}
+	}
+
 	private void OpenFileAction() {
 		String moduleName = ControlsProperties.getString("String_SmFileChooseName_WorkpaceSaveAsFile");
 		if (!SmFileChoose.isModuleExist(moduleName)) {
@@ -161,33 +179,19 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 		return jComboBoxVersion;
 	}
 
-	public void setjComboBoxVersion(JComboBox<String> jComboBoxVersion) {
-		this.jComboBoxVersion = jComboBoxVersion;
-	}
-
 	public JTextField getjTextFieldFileName() {
 		return jTextFieldFileName;
-	}
-
-	public void setjTextFieldFileName(JTextField jTextFieldFileName) {
-		this.jTextFieldFileName = jTextFieldFileName;
 	}
 
 	public JPasswordField getjPasswordFieldPassword() {
 		return jPasswordFieldPassword;
 	}
 
-	public void setjPasswordFieldPassword(JPasswordField jPasswordFieldPassword) {
-		this.jPasswordFieldPassword = jPasswordFieldPassword;
-	}
 
 	public JPasswordField getjPasswordFieldPasswordConfrim() {
 		return jPasswordFieldPasswordConfrim;
 	}
 
-	public void setjPasswordFieldPasswordConfrim(JPasswordField jPasswordFieldPasswordConfrim) {
-		this.jPasswordFieldPasswordConfrim = jPasswordFieldPasswordConfrim;
-	}
 
 	public String getFileName() {
 		return fileName;
@@ -199,10 +203,6 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 
 	public JButton getjButtonBrowser() {
 		return jButtonBrowser;
-	}
-
-	public void setjButtonBrowser(JButton jButtonBrowser) {
-		this.jButtonBrowser = jButtonBrowser;
 	}
 
 }

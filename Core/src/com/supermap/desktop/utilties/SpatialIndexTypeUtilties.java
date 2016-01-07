@@ -100,6 +100,9 @@ public class SpatialIndexTypeUtilties {
 	 * @return 支持的类型
 	 */
 	public static String[] getSupportSpatialIndexTypes(List<Dataset> datasets) {
+		if (datasets.size() <= 0) {
+			return new String[0];
+		}
 		HashMap<String, Integer> hashMap = new LinkedHashMap();
 
 		hashMap.put(SpatialIndexTypeUtilties.toString(SpatialIndexType.NONE), 0);
