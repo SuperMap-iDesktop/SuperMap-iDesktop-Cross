@@ -269,7 +269,6 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.tableDatasets.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				tableDatasets.requestFocus();
 				checkButtonStates();
 			}
 		});
@@ -497,7 +496,9 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		}
 		if (activeDatasets != null && activeDatasets.length > 0) {
 			spatialIndexTableModel.addDatasets(addDataset);
-			tableDatasets.setRowSelectionInterval(0, 0);
+			if (tableDatasets.getRowCount() > 0) {
+				tableDatasets.setRowSelectionInterval(0, 0);
+			}
 		}
 
 	}

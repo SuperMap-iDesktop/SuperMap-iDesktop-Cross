@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -12,6 +13,7 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 
 import javax.swing.table.DefaultTableModel;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +107,10 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 		boolean isAdded = false;
 		List<Dataset> currentDatasets = getCurrentDatasets();
 		for (Dataset selectedDataset : selectedDatasets) {
-			if (!currentDatasets.contains(selectedDataset) && SpatialIndexTableModelBean.isSupportDatasetType(selectedDataset.getType())) {
+			if (selectedDataset.isReadOnly()) {
+				String message = MessageFormat.format(DataEditorProperties.getString("String_DatasetSpatialIndexControl_ReadOnlyDatasetError"), selectedDataset.getName());
+				Application.getActiveApplication().getOutput().output(message);
+			} else if (!currentDatasets.contains(selectedDataset) && SpatialIndexTableModelBean.isSupportDatasetType(selectedDataset.getType())) {
 				datas.add(new SpatialIndexTableModelBean(selectedDataset));
 				isAdded = true;
 			}
