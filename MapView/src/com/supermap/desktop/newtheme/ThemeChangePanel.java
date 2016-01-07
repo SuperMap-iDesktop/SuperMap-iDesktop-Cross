@@ -29,4 +29,14 @@ public abstract class ThemeChangePanel extends JPanel {
 	 * 注销事件
 	 */
 	public abstract void unregistActionListener();
+	/**
+	 * 设置是否及时刷新
+	 * @param isRefreshAtOnce
+	 */
+	abstract void setRefreshAtOnce(boolean isRefreshAtOnce);
+	
+	/**
+	 * 刷新专题图图层和地图
+	 */
+	abstract void refreshMapAndLayer();
 }

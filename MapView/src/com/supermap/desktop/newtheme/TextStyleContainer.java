@@ -8,16 +8,19 @@ import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -26,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,8 +71,12 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JCheckBox checkBoxFixedSize = new JCheckBox();
 	private JCheckBox checkBoxOutlook = new JCheckBox();
 	private JCheckBox checkBoxBGTransparent = new JCheckBox();
+
 	private transient Map map;
 	private transient TextStyle textStyle;
+	private List<TextStyle> list = new ArrayList<TextStyle>();
+	private transient Layer themeLabelLayer;
+
 	// 对齐方式名称和对齐方式值构成的HashMap
 	private static HashMap<String, Integer> hashMapTextAlignment = new HashMap<String, Integer>();
 	private JTextField textFieldFontSize;
@@ -77,7 +85,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JTextField textFieldFontItalicAngl;
 	private JTextField textFieldFontRotationAngl;
 	// 对齐方式名称
-	private static final String[] TEXTALIGNMENT_NAMES = {ControlsProperties.getString("String_TextAlignment_LeftTop"),
+	private static final String[] TEXTALIGNMENT_NAMES = { ControlsProperties.getString("String_TextAlignment_LeftTop"),
 			ControlsProperties.getString("String_TextAlignment_MidTop"),
 			ControlsProperties.getString("String_TextAlignment_RightTop"),
 			ControlsProperties.getString("String_TextAlignment_LeftBaseline"),
@@ -94,6 +102,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 	// 显示精度
 	private String numeric = "0.00";
 	private boolean isRefreshAtOnece = true;
+	private boolean isUniformStyle = false;
+	private int[] selectRow;
+	private ThemeLabel themeLabel;
 
 	private transient LocalItemListener itemListener = new LocalItemListener();
 	private transient LocalChangedListener changedListener = new LocalChangedListener();
@@ -101,12 +112,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalCheckBoxActionListener checkBoxActionListener = new LocalCheckBoxActionListener();
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
 	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
-	
-	private List<TextStyle> list;
 
-	public TextStyleContainer(TextStyle textStyle, Map map) {
+	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle;
 		this.map = map;
+		this.themeLabelLayer = themeLabelLayer;
 		initComponent();
 		initResources();
 		registActionListener();
@@ -115,12 +125,26 @@ public class TextStyleContainer extends ThemeChangePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public TextStyleContainer(List<TextStyle> list, Map map) {
-		this.list = list;
+	public TextStyleContainer(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
+		this.themeLabel = themeLabel;
+		this.selectRow = selectRow;
 		this.map = map;
+		this.themeLabelLayer = themeLabelLayer;
+		initList();
 		initComponent();
 		initResources();
 		registActionListener();
+	}
+
+	private void initList() {
+		for (int i = 0; i < selectRow.length; i++) {
+			this.list.add(themeLabel.getItem(selectRow[i]).getStyle());
+		}
+		if (this.list.size()==1) {
+			this.textStyle = list.get(0);
+		}else {
+			this.textStyle = new TextStyle();
+		}
 	}
 
 	/**
@@ -167,6 +191,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			}else {
 				this.buttonFontColorSelect = new ColorSelectButton(list.get(0).getForeColor());
 				this.buttonBGColorSelect =new ColorSelectButton(list.get(0).getBackColor());
+				this.comboBoxFontName.setSelectedItem(list.get(0).getFontName());
 			}
 			initComboBoxAlign();
 			initComboBoxFontSize();
@@ -241,7 +266,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * 初始化字号下拉框和字高
 	 */
 	private void initComboBoxFontSize() {
-		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
+		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[] { "1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
 				"12", "14",
 				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
 		this.comboBoxFontSize.setEditable(true);
@@ -262,7 +287,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 				this.textFieldFontSize.setText(textFieldString);
 			}
 			double height = Double.parseDouble(textFieldString);
-			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height/EXPERIENCE));
+			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height / EXPERIENCE));
 		}
 	}
 
@@ -413,7 +438,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 				setFontSize();
 			}
 			if (isRefreshAtOnece && null != map) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 		}
 
@@ -467,7 +492,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 				setRotationAngl();
 			}
 			if (isRefreshAtOnece && null != map) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 		}
 
@@ -480,7 +505,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (e.getSource() == textFieldFontSize) {
 				setFontSize();
 				if (isRefreshAtOnece && null != map) {
-					map.refresh();
+					refreshMapAndLayer();
 				}
 			}
 		}
@@ -526,7 +551,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 				setBGOpare();
 			}
 			if (isRefreshAtOnece && null != map) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 		}
 
@@ -683,7 +708,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 				setBackgroundColor();
 			}
 			if (isRefreshAtOnece && null != map) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 		}
 
@@ -728,6 +753,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			changeFontSizeWithMapObject();
 		}
 	}
+
 	/**
 	 * 设置旋转角度
 	 */
@@ -826,7 +852,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 		}
 	}
 
-
 	private void changeFontSizeWithMapObject() {
 
 		try {
@@ -864,6 +889,27 @@ public class TextStyleContainer extends ThemeChangePanel {
 	@Override
 	public Theme getCurrentTheme() {
 		return null;
+	}
+
+	@Override
+	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+		this.isRefreshAtOnece = isRefreshAtOnce;
+	}
+
+	public void setUniformStyle(boolean isUniformStyle) {
+		this.isUniformStyle = isUniformStyle;
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		if (null != textStyle && isUniformStyle) {
+			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformStyle(textStyle);
+		} else {
+			for (int i = 0; i < selectRow.length; i++) {
+				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(selectRow[i]).setStyle(themeLabel.getItem(selectRow[i]).getStyle());
+			}
+		}
+		map.refresh();
 	}
 
 }

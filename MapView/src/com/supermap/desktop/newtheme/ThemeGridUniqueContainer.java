@@ -68,24 +68,14 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 
-	public ThemeGridUniqueContainer(DatasetGrid datasetGrid, ThemeGridUnique themeUnique) {
-		this.datasetGrid = datasetGrid;
-		this.themeUnique = themeUnique;
-		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeGridUniqueContainer(Layer layer) {
-		this.themeUniqueLayer = layer;
-		this.themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
-		this.datasetGrid = (DatasetGrid) layer.getDataset();
-		this.map = ThemeGuideFactory.getMapControl().getMap();
+	public ThemeGridUniqueContainer(DatasetGrid datasetGrid, ThemeGridUnique themeUnique) {
+		this.datasetGrid = datasetGrid;
+		this.themeUnique = new ThemeGridUnique(themeUnique);
+		this.map = initCurrentTheme(datasetGrid);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -101,7 +91,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(datasetGrid, themeUnique, true);
-			this.themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -328,7 +317,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			}
 			// 包含最后一行不能做删除操作
@@ -370,7 +359,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			// 修改单值项的单值
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 		}
 	}
@@ -421,7 +410,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			getTable();
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
 		}
@@ -466,7 +455,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				}
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			}
 		}
@@ -492,7 +481,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
@@ -525,7 +514,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			}
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 		}
 
@@ -566,7 +555,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		 */
 		private void deleteItem() {
 			int[] selectedRow = tableUniqueInfo.getSelectedRows();
-			themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
 			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[0]);
 
@@ -608,7 +596,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		 * 设置颜色方案与当前颜色方案反序
 		 */
 		private void setGeoStyleAntitone() {
-			themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
 			themeUnique.reverseColor();
 			getTable();
 		}
@@ -622,11 +609,11 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			if (hasInvisible(selectedRow) && !allItemInvisible(selectedRow)) {
 				if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 					for (int i = 0; i < selectedRow.length; i++) {
-						((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRow[i]).setVisible(false);
+						themeUnique.getItem(selectedRow[i]).setVisible(false);
 					}
 				} else {
 					for (int i = 0; i < selectedRow.length - 1; i++) {
-						((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRow[i]).setVisible(false);
+						themeUnique.getItem(selectedRow[i]).setVisible(false);
 					}
 				}
 			} else {
@@ -652,13 +639,13 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			int rowCounts = tableUniqueInfo.getRowCount() - 1;
 			if (selectedRows[selectedRows.length - 1] != rowCounts) {
 				for (int i = 0; i < selectedRows.length; i++) {
-					if (!((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						count++;
 					}
 				}
 			} else {
 				for (int i = 0; i < selectedRows.length - 1; i++) {
-					if (!((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						count++;
 					}
 				}
@@ -681,13 +668,13 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			boolean hasInvisible = false;
 			if (selectedRows[selectedRows.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 				for (int i = 0; i < selectedRows.length; i++) {
-					if (!((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						hasInvisible = true;
 					}
 				}
 			} else {
 				for (int i = 0; i < selectedRows.length - 1; i++) {
-					if (!((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						hasInvisible = true;
 					}
 				}
@@ -702,12 +689,12 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
-				boolean visible = ((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectRow).isVisible();
+				boolean visible = themeUnique.getItem(selectRow).isVisible();
 				if (visible) {
-					((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectRow).setVisible(false);
+					themeUnique.getItem(selectRow).setVisible(false);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.INVISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				} else {
-					((ThemeGridUnique) themeUniqueLayer.getTheme()).getItem(selectRow).setVisible(true);
+					themeUnique.getItem(selectRow).setVisible(true);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 			}
@@ -802,5 +789,20 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	@Override
 	public Theme getCurrentTheme() {
 		return themeUnique;
+	}
+
+	@Override
+	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		((ThemeGridUnique)themeUniqueLayer.getTheme()).clear();
+		for (int i = 0; i < themeUnique.getCount(); i++) {
+			((ThemeGridUnique)themeUniqueLayer.getTheme()).add(themeUnique.getItem(i));
+		}
+		map.refresh();
+		UICommonToolkit.getLayersManager().getLayersTree().reload();
 	}
 }

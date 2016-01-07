@@ -978,6 +978,7 @@ public class CommonFunction {
 		// 导入表中数据
 		if (selected.length > 0) {
 			final FormProgressTotal formProgress = new FormProgressTotal();
+			formProgress.setTitle(DataConversionProperties.getString("String_FormImport_FormText"));
 			if (null != formProgress) {
 				formProgress.doWork(new DataImportCallable(fileInfosTemp, jTable));
 			}

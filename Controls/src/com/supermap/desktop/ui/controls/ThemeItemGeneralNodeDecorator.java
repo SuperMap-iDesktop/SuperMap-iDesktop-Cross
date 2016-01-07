@@ -125,7 +125,7 @@ class ThemeItemGeneralNodeDecorator implements TreeNodeDecorator {
 		}
 		if (type.equals(DatasetType.LINE) || type.equals(DatasetType.LINE3D) || type.equals(DatasetType.LINEM) || type.equals(DatasetType.NETWORK)
 				|| type.equals(DatasetType.NETWORK3D)) {
-			Point2D[] pts = { new Point2D(0, 16), new Point2D(4, 0), new Point2D(12, 16), new Point2D(16, 0) };
+			Point2D[] pts = { new Point2D(0, 0), new Point2D(16, 16) };
 			Point2Ds ds = new Point2Ds(pts);
 			GeoLine geoLine = new GeoLine(ds);
 			return geoLine;
@@ -140,3 +140,4 @@ class ThemeItemGeneralNodeDecorator implements TreeNodeDecorator {
 	}
 
 }
+

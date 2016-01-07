@@ -678,6 +678,7 @@ public class DataExportFrame extends SmDialog {
 					UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ExportSettingPanel_Cue_AddFiles"));
 				} else {
 					FormProgressTotal formProgress = new FormProgressTotal();
+					formProgress.setTitle(DataConversionProperties.getString("String_FormExport_FormText"));
 					formProgress.doWork(new DataExportCallable(exports, table, radioButtonOK.isSelected()));
 					if (checkboxIsClose.isSelected()) {
 						dispose();

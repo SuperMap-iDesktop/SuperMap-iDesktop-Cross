@@ -54,6 +54,7 @@ import com.supermap.data.DatasourceCreatedListener;
 import com.supermap.data.DatasourceOpenedEvent;
 import com.supermap.data.DatasourceOpenedListener;
 import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.data.IDisposable;
 import com.supermap.data.LayoutAddedEvent;
 import com.supermap.data.LayoutAddedListener;
@@ -116,6 +117,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -278,6 +280,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
+	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
+			EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+	
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
@@ -2295,6 +2300,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 											}
 											if (isDoWork) {
 												FormProgressTotal formProgress = new FormProgressTotal();
+												formProgress.setTitle(ControlsProperties.getString("String_Copy"));
 												formProgress.doWork(new DatasetCopyCallable(datasource));
 											}
 										} else if (null != selectedNodeData && selectedNodeData.getData() instanceof Dataset) {
@@ -2343,4 +2349,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		this.workspaceDropTarget = workspaceDropTarget;
 	}
 
+	private boolean isSupportEngineType(EngineType engineType) {
+		boolean result = true;
+
+		for (EngineType type : UN_SUPPORT_TYPE) {
+			if (engineType == type) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
 }

@@ -68,6 +68,10 @@ public class SymbolDialog extends JDialog {
 		this.setModal(true);
 	}
 
+	public SymbolDialog(JDialog owner) {
+		super(owner);
+		this.setModal(true);
+	}
 	/**
 	 * 控制应用按钮是否可用，默认不可用
 	 * @param applyEnable 应用按钮是否可用

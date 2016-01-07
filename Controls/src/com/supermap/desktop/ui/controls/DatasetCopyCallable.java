@@ -46,6 +46,8 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				copyDatasets(this.datasource);
 			}
 		} catch (Exception ex) {
+			
+		}finally{
 			this.datasource.removeSteppedListener(percentListener);
 		}
 		return true;
@@ -71,7 +73,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
 			Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
 			if (!isSupportEngineType(dataset.getDatasource().getEngineType())) {
-				return;
+				break;
 			}
 			datasource = workspace.getDatasources().get(targetDatasourceStr);
 			Dataset resultDataset = null;
@@ -125,6 +127,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				Dataset targetDataset = datasets[0];
 				// web数据源不能复制到udb数据源中
 				if (!isSupportEngineType(targetDataset.getDatasource().getEngineType())) {
+					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_DatasetCopy_WarningForWebToUDB"));
 					return;
 				}
 				// 提示是否进行复制操作
@@ -140,7 +143,8 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 
 				for (int i = 0; i < datasets.length; i++) {
 					if (!isSupportEngineType(datasets[i].getDatasource().getEngineType())) {
-						return;
+						Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_DatasetCopy_WarningForWebToUDB"));
+						break;
 					}
 					percentListener = new PercentListener(i, datasets.length, datasets[i].getName());
 					datasource.addSteppedListener(percentListener);

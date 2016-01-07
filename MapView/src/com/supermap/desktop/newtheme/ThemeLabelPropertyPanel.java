@@ -13,6 +13,7 @@ import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	public ThemeLabelPropertyPanel(Layer themelabelLayer) {
 		this.themelabelLayer = themelabelLayer;
 		this.datasetVector = (DatasetVector) themelabelLayer.getDataset();
-		this.themeLabel = (ThemeLabel) themelabelLayer.getTheme();
+		this.themeLabel = new ThemeLabel((ThemeLabel) themelabelLayer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initResources();
 		initComponents();
@@ -219,13 +220,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxUnity();
 		initComboBoxOffsetX();
 		initComboBoxOffsetY();
-//		Dimension dimension = new Dimension(160,20);
-//		Dimension textDimension = new Dimension(160,20);
-//		this.labelOffsetUnity.setPreferredSize(dimension);
-//		this.labelOffsetX.setPreferredSize(dimension);
-//		this.labelOffsetY.setPreferredSize(dimension);
-//		this.comboBoxOffsetX.setPreferredSize(textDimension);
-//		this.comboBoxOffsetY.setPreferredSize(textDimension);
+		this.comboBoxOffsetUnity.setPreferredSize(new Dimension(200,23));
+		Dimension textDimension = new Dimension(160,23);
+		this.comboBoxOffsetX.setPreferredSize(textDimension);
+		this.comboBoxOffsetY.setPreferredSize(textDimension);
 		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,0));
 		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
@@ -528,7 +526,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					setTextPrecision();
 				}
 				if (isRefreshAtOnce) {
-					map.refresh();
+					refreshMapAndLayer();
 				}
 			}
 		}
@@ -686,7 +684,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				setShowTextExpression();
 			}
 			if (isRefreshAtOnce) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 
 		}
@@ -792,6 +790,27 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	@Override
 	public Theme getCurrentTheme() {
 		return themeLabel;
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		ThemeLabel themeLabelTemp = (ThemeLabel) this.themelabelLayer.getTheme();
+		themeLabelTemp.setLabelExpression(this.themeLabel.getLabelExpression());
+		themeLabelTemp.setBackShape(this.themeLabel.getBackShape());
+		themeLabelTemp.setBackStyle(this.themeLabel.getBackStyle());
+		themeLabelTemp.setOffsetFixed(this.themeLabel.isOffsetFixed());
+		themeLabelTemp.setOffsetX(this.themeLabel.getOffsetX());
+		themeLabelTemp.setOffsetY(this.themeLabel.getOffsetY());
+		themeLabelTemp.setFlowEnabled(this.themeLabel.isFlowEnabled());
+		themeLabelTemp.setTextExpression(this.themeLabel.isTextExpression());
+		themeLabelTemp.setSmallGeometryLabeled(this.themeLabel.isSmallGeometryLabeled());
+		themeLabelTemp.setVertical(this.themeLabel.isVertical());
+		themeLabelTemp.setOverlapAvoided(this.themeLabel.isOverlapAvoided());
+		themeLabelTemp.setAllDirectionsOverlappedAvoided(this.themeLabel.isAllDirectionsOverlappedAvoided());
+		themeLabelTemp.setLeaderLineDisplayed(this.themeLabel.isLeaderLineDisplayed());
+		themeLabelTemp.setLeaderLineStyle(this.themeLabel.getLeaderLineStyle());
+		themeLabelTemp.setNumericPrecision(this.themeLabel.getNumericPrecision());
+		map.refresh();
 	}
 
 }

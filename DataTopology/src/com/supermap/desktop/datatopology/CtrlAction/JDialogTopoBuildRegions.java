@@ -420,6 +420,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			this.topologyProcessingOptions.setUndershootsExtended(this.isUndershootsExtended);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
+			progress.setTitle(DataTopologyProperties.getString("String_TopoRegionTitle"));
 			progress.doWork(new LineTopoCleanCallable(datasetName, this.topologyProcessingOptions, datasource));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -440,6 +441,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			Dataset dataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
+			progress.setTitle(DataTopologyProperties.getString("String_TopoRegionTitle"));
 			progress.doWork(new TopoBuildRegionsCallable(resultDatasource, dataset, targetDatasetName, topologyProcessingOptions));
 		} catch (Exception e) {
 
