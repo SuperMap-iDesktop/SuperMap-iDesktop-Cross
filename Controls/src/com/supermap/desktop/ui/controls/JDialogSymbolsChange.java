@@ -63,7 +63,7 @@ public class JDialogSymbolsChange extends SmDialog {
 	private DialogResult showSymbolDialog() {
 		DialogResult result = DialogResult.CANCEL;
 		if (symbolDialog == null) {
-			symbolDialog = new SymbolDialog();
+			symbolDialog = new SymbolDialog(this);
 			result = symbolDialog.showDialog(Application.getActiveApplication().getWorkspace().getResources(), geoStylesBeforeList.get(0), this.symbolType);
 		} else {
 			symbolDialog.setVisible(true);
@@ -85,6 +85,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		registListeners();
 		initPanelEnabled();
 		this.setSize(new Dimension(600, 400));
+		this.setMinimumSize(new Dimension(500, 350));
 		this.setLocationRelativeTo(null);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -256,7 +257,7 @@ public class JDialogSymbolsChange extends SmDialog {
 	}
 
 	private void initResources() {
-		this.setTitle(getResources("String_ModifyThemeItemStyle"));
+		this.setTitle(getResources("String_BatchSettingStyle"));
 
 		panelPoint.setBorder(BorderFactory.createTitledBorder(getResources("String_SymbolStyle")));
 		panelPoint.initResources(new String[]{getResources("String_MarkType"), getResources("String_MarkSize"), getResources("String_MarkColor"),

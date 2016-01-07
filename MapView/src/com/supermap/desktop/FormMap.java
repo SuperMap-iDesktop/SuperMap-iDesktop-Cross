@@ -972,7 +972,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
-		}finally {
+		} finally {
 			if (recordset != null) {
 				recordset.dispose();
 			}
@@ -1117,6 +1117,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
 					this.getMapControl().getMap().refresh();
 				}
+				layersTree.updateUI();
 				// }
 			} else if (layer != null && selections.length == 1) {
 				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
@@ -1204,8 +1205,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
+								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1334,7 +1335,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
