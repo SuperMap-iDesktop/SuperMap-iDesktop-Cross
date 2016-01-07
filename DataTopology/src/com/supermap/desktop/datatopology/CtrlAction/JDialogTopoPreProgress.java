@@ -14,12 +14,14 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
+import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -407,8 +409,9 @@ public class JDialogTopoPreProgress extends SmDialog {
 		options.setVertexesSnapped(isVertexesSnapped);
 		options.setVertexArcInserted(isVertexArcInserted);
 		options.setPolygonsChecked(isPolygonsChecked);
-		// 进度条实现
-		FormProgressTotal totalProgress = new FormProgressTotal();
+		// 单进度条实现
+		FormProgress totalProgress = new FormProgress();
+		totalProgress.setTitle(DataTopologyProperties.getString("String_Text_Preprogress"));
 		totalProgress.doWork(new TopoPregressCallable(table, tolerance, options));
 	}
 

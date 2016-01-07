@@ -11,7 +11,6 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.data.EncodeType;
-import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -84,7 +83,6 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	public void initComponents() {
 		this.setModal(true);
-		setTitle("Template");
 		setBounds(100, 100, 677, 405);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -433,9 +431,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 			ArrayList<Datasource> datasourcesArray = new ArrayList<Datasource>();
 			for (int i = 0; i < datasources.getCount(); i++) {
-				if (!datasources.get(i).isReadOnly()) {
-					datasourcesArray.add(datasources.get(i));
-				}
+				datasourcesArray.add(datasources.get(i));
 			}
 			Datasource[] array = new Datasource[datasourcesArray.size()];
 			final DatasourceComboBox targetBox = new DatasourceComboBox(datasourcesArray.toArray(array));
@@ -568,6 +564,7 @@ public class JDialogDatasetCopy extends SmDialog {
 	private void copyDataset() {
 		// 进度条实现
 		FormProgressTotal formProgress = new FormProgressTotal();
+		formProgress.setTitle(DataEditorProperties.getString("String_CopyDataset"));
 		formProgress.doWork(new DatasetCopyCallable(table));
 		if (this.checkBoxAutoClose.isSelected()) {
 			this.dispose();

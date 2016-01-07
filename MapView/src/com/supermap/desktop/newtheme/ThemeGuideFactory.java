@@ -10,7 +10,6 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.mapping.*;
@@ -20,16 +19,16 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.text.MessageFormat;
+import java.util.HashMap;
 
 public class ThemeGuideFactory {
 
 	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
+	public static HashMap<String, ThemeChangePanel> themeTypeContainer = new HashMap<String, ThemeChangePanel>();
 
 	/**
 	 * 界面替换
@@ -54,33 +53,13 @@ public class ThemeGuideFactory {
 		return dockbarThemeContainer;
 	}
 
-	private static ThemeMainContainer addPanelToThemeMainContainer(ThemeChangePanel panel, String caption) {
+	private static ThemeMainContainer addPanelToThemeMainContainer(ThemeChangePanel panel) {
 		try {
 			dockbarThemeContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
 					.get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
 			if (dockbarThemeContainer != null) {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
-				// 新建时默认设置isTreeClicked为true
-				if (null != container.getPanelThemeInfo()) {
-					container.remove(container.getPanelThemeInfo());
-				}
-				for (int i = container.getComponents().length - 1; i >= 0; i--) {
-					if (container.getComponent(i) instanceof JPanel) {
-						container.remove(container.getComponent(i));
-					}
-				}
-				container.add(
-						panel,
-						new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
-								.setFill(GridBagConstraints.BOTH));
-				container.repaint();
-				panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
-
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						container.setThemeChange(true);
-					}
-				});
+				container.setPanel(panel);
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -123,10 +102,12 @@ public class ThemeGuideFactory {
 					CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), getDataset().getName()+"."+expression, ColorGradientType.GREENORANGEVIOLET);
+		ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + expression,
+				ColorGradientType.GREENORANGEVIOLET);
 		if (null != themeUnique) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
-			addPanelToThemeMainContainer(themeUniqueContainer, themeUniqueContainer.getThemeUniqueLayer().getCaption());
+			themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
+			addPanelToThemeMainContainer(themeUniqueContainer);
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -138,11 +119,13 @@ public class ThemeGuideFactory {
 	 * 新建分段专题图
 	 */
 	public static void buildRangeTheme() {
-		ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null, 0.1);
+		ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5,
+				ColorGradientType.GREENRED, null, 0.1);
 		if (null != themeRange) {
 			themeRange.setPrecision(0.1);
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange);
-			addPanelToThemeMainContainer(themeRangeContainer, themeRangeContainer.getThemeRangeLayer().getCaption());
+			themeTypeContainer.put(themeRangeContainer.getThemeRangeLayer().getCaption(), themeRangeContainer);
+			addPanelToThemeMainContainer(themeRangeContainer);
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -156,7 +139,8 @@ public class ThemeGuideFactory {
 		ThemeLabel themeLabel = new ThemeLabel();
 		themeLabel.setMaxLabelLength(8);
 		ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel);
-		addPanelToThemeMainContainer(themeLabelUniformContainer, themeLabelUniformContainer.getThemeLabelLayer().getCaption());
+		themeTypeContainer.put(themeLabelUniformContainer.getThemeLabelLayer().getCaption(), themeLabelUniformContainer);
+		addPanelToThemeMainContainer(themeLabelUniformContainer);
 		getDockbarThemeContainer().setVisible(true);
 	}
 
@@ -164,11 +148,13 @@ public class ThemeGuideFactory {
 	 * 新建分段风格标签专题图
 	 */
 	public static void buildLabelRangeTheme() {
-		ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
+		ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5,
+				ColorGradientType.GREENRED);
 		if (null != themeLabel && themeLabel.getCount() >= 2) {
 			themeLabel.setMaxLabelLength(8);
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel);
-			addPanelToThemeMainContainer(themeLabelRangeContainer, themeLabelRangeContainer.getThemeLabelLayer().getCaption());
+			themeTypeContainer.put(themeLabelRangeContainer.getThemeLabelLayer().getCaption(), themeLabelRangeContainer);
+			addPanelToThemeMainContainer(themeLabelRangeContainer);
 			getDockbarThemeContainer().setVisible(true);
 		} else {
 			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -191,7 +177,8 @@ public class ThemeGuideFactory {
 			ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
-				addPanelToThemeMainContainer(themeUniqueContainer, themeUniqueContainer.getThemeUniqueLayer().getCaption());
+				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
+				addPanelToThemeMainContainer(themeUniqueContainer);
 				getDockbarThemeContainer().setVisible(true);
 			} else {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -214,7 +201,8 @@ public class ThemeGuideFactory {
 			ThemeGridRange themeUnique = ThemeGridRange.makeDefault(datasetGrid, RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer((DatasetGrid) getDataset(), themeUnique);
-				addPanelToThemeMainContainer(themeGridRangeContainer, themeGridRangeContainer.getThemeRangeLayer().getCaption());
+				themeTypeContainer.put(themeGridRangeContainer.getThemeRangeLayer().getCaption(), themeGridRangeContainer);
+				addPanelToThemeMainContainer(themeGridRangeContainer);
 				getDockbarThemeContainer().setVisible(true);
 			} else {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -225,32 +213,6 @@ public class ThemeGuideFactory {
 					.getOutput()
 					.output(MessageFormat.format(MapViewProperties.getString("String_ThemeGridUnique_MessagePixelFormat"), datasetGrid.getName() + "@"
 							+ datasetGrid.getDatasource().getAlias()));
-		}
-	}
-
-	/**
-	 * 修改单值专题图
-	 *
-	 * @param layer
-	 */
-	public static void resetUniqueTheme(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
-			addPanelToThemeMainContainer(themeUniqueContainer, "");
-		}
-	}
-
-	/**
-	 * 刷新地图和图层
-	 */
-	public static void refreshMapAndLayer(Map map, String layerName, boolean isExpandPath) {
-		map.refresh();
-		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
-		tree.reload();
-		TreePath layerPath = getSelectionPath(tree, layerName);
-		tree.setSelectionPath(layerPath);
-		if (isExpandPath) {
-			tree.expandPath(layerPath);
 		}
 	}
 
@@ -275,14 +237,24 @@ public class ThemeGuideFactory {
 	}
 
 	/**
+	 * 修改单值专题图
+	 *
+	 * @param layer
+	 */
+	public static void resetUniqueTheme(Layer layer) {
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}
+	}
+
+	/**
 	 * 修改分段专题图
 	 *
 	 * @param layer
 	 */
 	public static void resetRangeTheme(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
-			addPanelToThemeMainContainer(themeRangeContainer, "");
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		}
 	}
 
@@ -292,9 +264,8 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelUniform(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
-			addPanelToThemeMainContainer(themeLabelUniformContainer, "");
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		}
 	}
 
@@ -304,9 +275,8 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelRange(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
-			addPanelToThemeMainContainer(themeLabelRangeContainer, "");
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		}
 	}
 
@@ -316,21 +286,19 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetGridUnique(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
-			addPanelToThemeMainContainer(themeGridUniqueContainer, "");
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		}
 	}
 
 	/**
 	 * 修改栅格分段专题图
 	 *
-	 * @return
+	 * @returnff
 	 */
 	public static void resetGridRange(Layer layer) {
-		if (null != layer.getDataset()) {
-			ThemeGridRangeContainer themeGridUniqueContainer = new ThemeGridRangeContainer(layer);
-			addPanelToThemeMainContainer(themeGridUniqueContainer, "");
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		}
 	}
 

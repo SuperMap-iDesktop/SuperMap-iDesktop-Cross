@@ -34,22 +34,11 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel) {
 		this.datasetVector = datasetVector;
-		this.themeLabel = themeLabel;
+		this.themeLabel = new ThemeLabel(themeLabel);
 		this.map = initCurrentTheme(datasetVector);
 		initComponents();
 	}
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeLabelUniformContainer(Layer layer) {
-		this.themeLabelLayer = layer;
-		this.themeLabel = (ThemeLabel) layer.getTheme();
-		this.datasetVector = (DatasetVector) layer.getDataset();
-		this.map = ThemeGuideFactory.getMapControl().getMap();
-		this.textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();
-		initComponents();
-	}
 
 	/**
 	 * 界面布局入口
@@ -58,7 +47,8 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.setLayout(new GridBagLayout());
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
-		this.textStyleContainer = new TextStyleContainer(textStyle, map);
+		this.textStyleContainer = new TextStyleContainer(textStyle, map,themeLabelLayer);
+		this.textStyleContainer.setUniformStyle(true);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), textStyleContainer);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
@@ -79,8 +69,8 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
 			String item = datasetVector.getName() + "." + fieldInfo.getName();
-			((ThemeLabel) themeLabelLayer.getTheme()).setLabelExpression(item);
-			textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();
+			((ThemeLabel)this.themeLabelLayer.getTheme()).setLabelExpression(item);
+			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -119,6 +109,20 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		panelProperty.unregistActionListener();
 		panelAdvance.unregistActionListener();
 		textStyleContainer.unregistActionListener();
+	}
+
+	@Override
+	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+		this.textStyleContainer.setRefreshAtOnce(isRefreshAtOnce);
+		this.panelProperty.setRefreshAtOnce(isRefreshAtOnce);
+		this.panelAdvance.setRefreshAtOnce(isRefreshAtOnce);
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		this.textStyleContainer.refreshMapAndLayer();
+		this.panelProperty.refreshMapAndLayer();
+		this.panelAdvance.refreshMapAndLayer();
 	}
 
 }

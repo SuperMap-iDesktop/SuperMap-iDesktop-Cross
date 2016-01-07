@@ -12,6 +12,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -58,7 +59,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JTextField textFieldVertical = new JTextField();
 	private JLabel labelVerticalUnity = new JLabel();
 	private Dimension textFieldDimension = new Dimension(400, 20);
-	private Dimension labelDimension = new Dimension(30,20);
+	private Dimension labelDimension = new Dimension(30, 20);
 	private transient Map map;
 	private transient ThemeLabel themeLabel;
 	private transient LocalItemChangedListener itemListener = new LocalItemChangedListener();
@@ -70,7 +71,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	public ThemeLabelAdvancePanel(Layer themelabelLayer) {
 		this.themeLabelLayer = themelabelLayer;
-		this.themeLabel = (ThemeLabel) themelabelLayer.getTheme();
+		this.themeLabel = new ThemeLabel((ThemeLabel) themelabelLayer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
@@ -254,7 +255,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private void initPanelFontHeight(JPanel panelFontHeight) {
 		initTextFieldMaxFontHeight();
 		initTextFieldMinFontHeight();
-		
+
 		//@formatter:off
 		panelFontHeight.setLayout(new GridBagLayout());
 		this.textFieldMaxFontHeight.setPreferredSize(textFieldDimension);
@@ -431,7 +432,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 					setOverLength();
 				}
 				if (isRefreshAtOnce) {
-					map.refresh();
+					refreshMapAndLayer();
 				}
 
 			}
@@ -501,7 +502,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				setRotateLabel();
 			}
 			if (isRefreshAtOnce) {
-				map.refresh();
+				refreshMapAndLayer();
 			}
 
 		}
@@ -577,7 +578,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置最小文本宽度
 				setMinFontWidth();
 			}
-			map.refresh();
+			if (isRefreshAtOnce) {
+				refreshMapAndLayer();
+			}
 		}
 
 		/**
@@ -728,7 +731,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置沿线字间距
 				setFontSpace();
 			}
-			map.refresh();
+			if (isRefreshAtOnce) {
+				refreshMapAndLayer();
+			}
 		}
 
 		/**
@@ -760,5 +765,24 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	@Override
 	public Theme getCurrentTheme() {
 		return themeLabel;
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
+		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
+		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
+		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
+		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
+		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
+		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
+		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
+		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
+		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
+		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
+		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
+		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
+		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
+		map.refresh();
 	}
 }

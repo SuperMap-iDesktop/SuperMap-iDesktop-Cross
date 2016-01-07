@@ -198,6 +198,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			this.topologyProcessingOptions.setUndershootsExtended(this.isUndershootsExtended);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
+			progress.setTitle(DataTopologyProperties.getString("String_TopoLineTitle"));
 			progress.doWork(new LineTopoCleanCallable(datasetName, this.topologyProcessingOptions, datasource));
 
 		} catch (Exception e) {

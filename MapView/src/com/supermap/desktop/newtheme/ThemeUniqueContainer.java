@@ -19,6 +19,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -86,24 +87,14 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique) {
 		this.datasetVector = datasetVector;
 		this.themeUnique = themeUnique;
 		this.map = initCurrentTheme(datasetVector);
 		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeUniqueContainer(Layer layer) {
-		this.themeUniqueLayer = layer;
-		this.themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
-		this.datasetVector = (DatasetVector) layer.getDataset();
-		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
 		registActionListener();
@@ -119,7 +110,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
-			this.themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
+			this.themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -259,12 +250,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
 				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
 		if (this.themeUnique.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
-			this.labelOffsetXUnity.setText("0.1mm");
-			this.labelOffsetYUnity.setText("0.1mm");
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
 			this.labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
@@ -272,42 +261,26 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 	}
 
+
 	/**
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		getFieldComboBox(this.comboBoxOffsetX, OFFSETX_TYPE);
-		this.comboBoxOffsetX.insertItemAt("0", this.comboBoxOffsetX.getItemCount() - 2);
-		String offsetX = themeUnique.getOffsetX();
-		if (StringUtilties.isNullOrEmpty(offsetX)) {
-			offsetX = "0";
-		}
-		this.comboBoxOffsetX.setSelectedItem(offsetX);
-		if (!offsetX.equals(this.comboBoxOffsetX.getSelectedItem())) {
-			this.comboBoxOffsetX.addItem(offsetX);
-			this.comboBoxOffsetX.setSelectedItem(offsetX);
-		}
-
+		getFieldComboBox(this.comboBoxOffsetX,OFFSETX_TYPE);
+		this.comboBoxOffsetX.addItem("0");
+		this.comboBoxOffsetX.setSelectedItem("0");
 	}
 
 	/**
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
-		getFieldComboBox(this.comboBoxOffsetY, OFFSETY_TYPE);
+		getFieldComboBox(this.comboBoxOffsetY,OFFSETY_TYPE);
 		this.comboBoxOffsetY.addItem("0");
-		String offsetY = themeUnique.getOffsetY();
-		if (StringUtilties.isNullOrEmpty(offsetY)) {
-			offsetY = "0";
-		}
-		this.comboBoxOffsetY.setSelectedItem(offsetY);
-		if (!offsetY.equals(this.comboBoxOffsetY.getSelectedItem())) {
-			this.comboBoxOffsetY.addItem(offsetY);
-			this.comboBoxOffsetY.setSelectedItem(offsetY);
-		}
-
+		this.comboBoxOffsetY.setSelectedItem("0");
 	}
 
+	
 	/**
 	 * 初始化工具条
 	 */
@@ -339,7 +312,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.toolBar.add(this.buttonDelete);
 		this.toolBar.add(this.buttonAntitone);
 		initToolBar();
-		initComboBoxExpression();
 		//@formatter:off
 		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
 		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
@@ -351,22 +323,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(tableUniqueInfo);		
 		//@formatter:on
-	}
-
-	/**
-	 * 初始化表达式
-	 */
-	private void initComboBoxExpression() {
-		this.comboBoxExpression.setEditable(true);
-		String expression = themeUnique.getUniqueExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
-		}
-		this.comboBoxExpression.setSelectedItem(expression);
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
-		}
 	}
 
 	/**
@@ -499,7 +455,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			}
 			// 包含最后一行不能做删除操作
@@ -541,7 +497,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			// 修改单值项的单值
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 		}
 	}
@@ -607,7 +563,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			getTable();
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
 			if (tableUniqueInfo.getRowCount() > 1) {
@@ -677,7 +633,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			}
 		}
@@ -698,11 +654,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			} else {
 				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET);
 				if (null != theme) {
-					((ThemeUnique) themeUniqueLayer.getTheme()).clear();
-					for (int i = 0; i < theme.getCount(); i++) {
-						((ThemeUnique) themeUniqueLayer.getTheme()).add(theme.getItem(i));
-					}
-					themeUnique = theme;
+					themeUnique = new ThemeUnique(theme);
 					themeUnique.setUniqueExpression(expression);
 					refreshColor();
 					getTable();
@@ -718,7 +670,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetX() {
 			String expressionOffsetX = comboBoxOffsetX.getSelectedItem().toString();
-			((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetX(expressionOffsetX);
+			themeUnique.setOffsetX(expressionOffsetX);
 
 		}
 
@@ -727,16 +679,16 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetY() {
 			String expressionOffsetY = comboBoxOffsetY.getSelectedItem().toString();
-			((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetY(expressionOffsetY);
+			themeUnique.setOffsetY(expressionOffsetY);
 		}
 
 		private void setOffsetUnity() {
 			if (MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit").equals(comboBoxOffsetUnity.getSelectedItem().toString())) {
-				((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetFixed(true);
+				themeUnique.setOffsetFixed(true);
 				labelOffsetXUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 				labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 			} else {
-				((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetFixed(false);
+				themeUnique.setOffsetFixed(false);
 				labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
 				labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
 			}
@@ -828,7 +780,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
@@ -863,7 +815,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			}
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeUniqueLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 			if (null != selectRows && e.getSource() != buttonDelete) {
 				for (int i = 0; i < selectRows.length; i++) {
@@ -911,7 +863,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		private void deleteItem() {
 			int[] selectedRow = tableUniqueInfo.getSelectedRows();
 			int uniqueCount = themeUnique.getCount();
-			themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
 			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeUniqueItem item = themeUnique.getItem(selectedRow[0]);
 
@@ -953,7 +904,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 * 设置颜色方案与当前颜色方案反序
 		 */
 		private void setGeoStyleAntitone() {
-			themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
 			themeUnique.reverseStyle();
 			getTable();
 		}
@@ -967,13 +917,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (hasInvisible(selectedRow) && !allItemInvisible(selectedRow)) {
 				if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 					for (int i = 0; i < selectedRow.length; i++) {
-						((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectedRow[i]).setVisible(false);
+						themeUnique.getItem(selectedRow[i]).setVisible(false);
 					}
 				} else {
 					for (int i = 0; i < selectedRow.length - 1; i++) {
-						((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectedRow[i]).setVisible(false);
+						themeUnique.getItem(selectedRow[i]).setVisible(false);
 					}
-					((ThemeUnique) themeUniqueLayer.getTheme()).setDefaultStyleVisible(false);
+					themeUnique.setDefaultStyleVisible(false);
 				}
 			} else {
 				for (int i = 0; i < selectedRow.length; i++) {
@@ -994,17 +944,17 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			boolean allItemInvisible = false;
 			if (selectedRows[selectedRows.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 				for (int i = 0; i < selectedRows.length; i++) {
-					if (!((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						count++;
 					}
 				}
 			} else {
 				for (int i = 0; i < selectedRows.length - 1; i++) {
-					if (!((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						count++;
 					}
 				}
-				if (!((ThemeUnique) themeUniqueLayer.getTheme()).isDefaultStyleVisible()) {
+				if (!themeUnique.isDefaultStyleVisible()) {
 					count++;
 				}
 			}
@@ -1024,12 +974,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			boolean hasInvisible = false;
 			if (selectedRows[selectedRows.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 				for (int i = 0; i < selectedRows.length; i++) {
-					if (!((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+					if (!themeUnique.getItem(selectedRows[i]).isVisible()) {
 						hasInvisible = true;
 					}
 				}
 			} else {
-				if (!((ThemeUnique) themeUniqueLayer.getTheme()).isDefaultStyleVisible()) {
+				if (!themeUnique.isDefaultStyleVisible()) {
 					hasInvisible = true;
 				}
 			}
@@ -1043,21 +993,21 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
-				boolean visible = ((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectRow).isVisible();
+				boolean visible = themeUnique.getItem(selectRow).isVisible();
 				if (visible) {
-					((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectRow).setVisible(false);
+					themeUnique.getItem(selectRow).setVisible(false);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.INVISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				} else {
-					((ThemeUnique) themeUniqueLayer.getTheme()).getItem(selectRow).setVisible(true);
+					themeUnique.getItem(selectRow).setVisible(true);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 			} else {
-				boolean visible = ((ThemeUnique) themeUniqueLayer.getTheme()).isDefaultStyleVisible();
+				boolean visible = themeUnique.isDefaultStyleVisible();
 				if (visible) {
-					((ThemeUnique) themeUniqueLayer.getTheme()).setDefaultStyleVisible(false);
+					themeUnique.setDefaultStyleVisible(false);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.INVISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				} else {
-					((ThemeUnique) themeUniqueLayer.getTheme()).setDefaultStyleVisible(true);
+					themeUnique.setDefaultStyleVisible(true);
 					tableUniqueInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 			}
@@ -1173,9 +1123,27 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.themeUniqueLayer = themeUniqueLayer;
 	}
 
+	void refreshMapAndLayer(){
+		((ThemeUnique) themeUniqueLayer.getTheme()).clear();
+		for (int i = 0; i < themeUnique.getCount(); i++) {
+			((ThemeUnique) themeUniqueLayer.getTheme()).add(themeUnique.getItem(i));
+		}
+		((ThemeUnique) themeUniqueLayer.getTheme()).setUniqueExpression(themeUnique.getUniqueExpression());
+		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetFixed(themeUnique.isOffsetFixed());
+		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetX(themeUnique.getOffsetX());
+		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetY(themeUnique.getOffsetY());
+		UICommonToolkit.getLayersManager().getLayersTree().reload();
+		map.refresh();
+	}
+	
+	// 获取当前的专题图
 	@Override
 	public Theme getCurrentTheme() {
 		return themeUnique;
 	}
 
+	@Override
+	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
 }

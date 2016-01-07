@@ -19,8 +19,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class ThemeMainContainer extends JPanel {
 
@@ -30,6 +33,7 @@ public class ThemeMainContainer extends JPanel {
 	private JPanel panelThemeInfo = new JPanel();
 	private JCheckBox checkBoxRefreshAtOnce = new JCheckBox();
 	private JButton buttonApply = new JButton();
+	private ThemeChangePanel panel;
 
 	private Map map;
 
@@ -41,7 +45,6 @@ public class ThemeMainContainer extends JPanel {
 	
 	private Layer newLayer;
 	private Layer oldLayer;
-	private boolean isThemeChange;
 	
 	public ThemeMainContainer() {
 		initComponents();
@@ -62,23 +65,18 @@ public class ThemeMainContainer extends JPanel {
 	 * 界面布局入口
 	 */
 	private void initComponents() {
-		initContentPanel();
-	}
-
-	/**
-	 * 界面布局
-	 */
-	private void initContentPanel() {
 		GridBagLayout layout = new GridBagLayout();
 		this.setLayout(layout);
 		this.comboBoxThemeLayer.setEditable(true);
+		this.buttonApply.setEnabled(false);
 		this.setLayout(new GridBagLayout());
 		// @formatter:off
-		this.add(labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(20, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
-		this.add(comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(80, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.checkBoxRefreshAtOnce.setSelected(true);
+		this.add(labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
+		this.add(comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 		this.add(panelThemeInfo,        new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		this.add(checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
-		this.add(buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(100, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
+		this.add(buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
 		// @formatter:on
 	}
 
@@ -103,7 +101,28 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
-
+		this.buttonApply.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (null!=panel) {
+					panel.refreshMapAndLayer();
+				}
+			}
+		});
+		this.checkBoxRefreshAtOnce.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				boolean selected = checkBoxRefreshAtOnce.isSelected();
+				panel.setRefreshAtOnce(selected);
+				if (selected) {
+					buttonApply.setEnabled(false);
+				}else {
+					buttonApply.setEnabled(true);
+				}
+			}
+		});
 	}
 
 	/**
@@ -183,8 +202,6 @@ public class ThemeMainContainer extends JPanel {
 	private void updateThemeMainContainer() {
 		for (int i = ThemeMainContainer.this.getComponentCount() - 1; i >= 0; i--) {
 			if (ThemeMainContainer.this.getComponent(i) instanceof ThemeChangePanel) {
-				ThemeChangePanel themeChangePanel = (ThemeChangePanel) ThemeMainContainer.this.getComponent(i);
-				themeChangePanel.unregistActionListener();
 				ThemeMainContainer.this.remove(i);
 			}
 		}
@@ -244,9 +261,6 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (1 == e.getClickCount()) {
-				isThemeChange = false;
-			}
 			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
 				resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
@@ -277,9 +291,8 @@ public class ThemeMainContainer extends JPanel {
 			// 当地图中不存在图层时刷新专题图
 			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
 				updateThemeMainContainer();
-			}
-			if (isThemeChange) {
-				return;
+				panel.unregistActionListener();
+				ThemeGuideFactory.themeTypeContainer.clear();
 			}
 			if (null == oldLayer || (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer))) {
 				isResetThemeMain = true;
@@ -318,14 +331,22 @@ public class ThemeMainContainer extends JPanel {
 		return layer;
 	}
 
-	// 判断专题图属性是否改变的字段
-	public boolean isThemeChange() {
-		return isThemeChange;
+	
+	public ThemeChangePanel getPanel() {
+		return panel;
 	}
 
-	// 设置专题图属性是否改变
-	public void setThemeChange(boolean isThemeChange) {
-		this.isThemeChange = isThemeChange;
+	public void setPanel(ThemeChangePanel panel) {
+		if (null != panelThemeInfo) {
+			remove(panelThemeInfo);
+		}
+		for (int i = getComponents().length - 1; i >= 0; i--) {
+			if (getComponent(i) instanceof JPanel) {
+				remove(getComponent(i));
+			}
+		}
+		add(panel,new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0).setFill(GridBagConstraints.BOTH));
+		repaint();
+		this.panel = panel;
 	}
-
 }

@@ -79,25 +79,15 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
-
-	public ThemeGridRangeContainer(DatasetGrid datasetGrid, ThemeGridRange themeGridRange) {
-		this.datasetGrid = datasetGrid;
-		this.themeGridRange = themeGridRange;
-		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeGridRangeContainer(Layer layer) {
-		this.themeRangeLayer = layer;
-		this.datasetGrid = (DatasetGrid) layer.getDataset();
-		this.themeGridRange = (ThemeGridRange) layer.getTheme();
-		this.map = ThemeGuideFactory.getMapControl().getMap();
+	public ThemeGridRangeContainer(DatasetGrid datasetGrid, ThemeGridRange themeGridRange) {
+		this.datasetGrid = datasetGrid;
+		this.themeGridRange = new ThemeGridRange(themeGridRange);
+		this.map = initCurrentTheme(datasetGrid);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -113,7 +103,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(datasetGrid, themeGridRange, true);
-			this.themeGridRange = (ThemeGridRange) themeRangeLayer.getTheme();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -422,7 +411,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			}
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 		}
 
@@ -488,7 +477,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			// 有不可见的项就全部设置为不可见，全部不可见，或者全部可见就设置为相反状态
 			if (hasInvisible(selectedRow) && !allItemInvisible(selectedRow)) {
 				for (int i = 0; i < selectedRow.length; i++) {
-					((ThemeGridRange) themeRangeLayer.getTheme()).getItem(selectedRow[i]).setVisible(false);
+					themeGridRange.getItem(selectedRow[i]).setVisible(false);
 				}
 			} else {
 				for (int i = 0; i < selectedRow.length; i++) {
@@ -511,7 +500,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			int count = 0;
 			boolean allItemInvisible = false;
 			for (int i = 0; i < selectedRows.length; i++) {
-				if (!((ThemeGridRange) themeRangeLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+				if (!themeGridRange.getItem(selectedRows[i]).isVisible()) {
 					count++;
 				}
 			}
@@ -530,7 +519,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		private boolean hasInvisible(int[] selectedRows) {
 			boolean hasInvisible = false;
 			for (int i = 0; i < selectedRows.length; i++) {
-				if (!((ThemeGridRange) themeRangeLayer.getTheme()).getItem(selectedRows[i]).isVisible()) {
+				if (!themeGridRange.getItem(selectedRows[i]).isVisible()) {
 					hasInvisible = true;
 				}
 			}
@@ -543,7 +532,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
-			ThemeGridRangeItem tempThemeRangeItem = ((ThemeGridRange) themeRangeLayer.getTheme()).getItem(selectRow);
+			ThemeGridRangeItem tempThemeRangeItem = themeGridRange.getItem(selectRow);
 			boolean visible = tempThemeRangeItem.isVisible();
 			if (visible) {
 				tempThemeRangeItem.setVisible(false);
@@ -590,13 +579,13 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				}
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				setItemColor(e.getX(), e.getY());
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			}
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
@@ -630,7 +619,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				}
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+					refreshMapAndLayer();
 					tableRangeInfo.setRowSelectionInterval(0, 0);
 				}
 			}
@@ -807,7 +796,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				tableRangeInfo.addRowSelectionInterval(selectRow, selectRow);
 				if (isRefreshAtOnce) {
 					firePropertyChange("ThemeChange", null, null);
-					ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+					refreshMapAndLayer();
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
@@ -843,13 +832,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 */
 	private void refreshThemeRange(ThemeGridRange theme) {
 		try {
-			((ThemeGridRange) themeRangeLayer.getTheme()).clear();
-			if (0 < theme.getCount()) {
-				for (int i = 0; i < theme.getCount(); i++) {
-					((ThemeGridRange) themeRangeLayer.getTheme()).addToTail(theme.getItem(i), true);
-				}
-			}
-			this.themeGridRange = (ThemeGridRange) themeRangeLayer.getTheme();
+			this.themeGridRange = new ThemeGridRange(theme);
 			refreshColor();
 			getTable();
 			if (2 <= themeGridRange.getCount()) {
@@ -889,7 +872,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			makeDefaultAsCustom();
 			if (isRefreshAtOnce) {
 				firePropertyChange("ThemeChange", null, null);
-				ThemeGuideFactory.refreshMapAndLayer(map, themeRangeLayer.getName(), true);
+				refreshMapAndLayer();
 			}
 		}
 
@@ -958,6 +941,21 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	@Override
 	public Theme getCurrentTheme() {
 		return themeGridRange;
+	}
+
+	@Override
+	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
+
+	@Override
+	void refreshMapAndLayer() {
+		((ThemeGridRange)this.themeRangeLayer.getTheme()).clear();
+		for (int i = 0; i < this.themeGridRange.getCount(); i++) {
+			((ThemeGridRange)this.themeRangeLayer.getTheme()).addToTail(this.themeGridRange.getItem(i), true);
+		}
+		this.map.refresh();
+		UICommonToolkit.getLayersManager().getLayersTree().reload();
 	}
 
 }
