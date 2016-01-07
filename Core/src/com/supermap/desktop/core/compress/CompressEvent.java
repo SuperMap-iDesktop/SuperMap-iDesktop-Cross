@@ -13,13 +13,17 @@ public class CompressEvent extends EventObject {
 
 	private FileSize totalSize = FileSize.ZERO;
 	private FileSize compressedSize = FileSize.ZERO;
+	private int currentEntry = 0;
+	private int totalEntry = 0;
 	private int percent = 0;
 	private boolean isCancel = false;
 
-	public CompressEvent(Object source, FileSize totalSize, FileSize compressedSize) {
+	public CompressEvent(Object source, FileSize totalSize, FileSize compressedSize, int currentEntry, int totalEntry) {
 		super(source);
 		this.totalSize = totalSize;
 		this.compressedSize = compressedSize;
+		this.currentEntry = currentEntry;
+		this.totalEntry = totalEntry;
 		this.percent = new Double(100 * FileSize.divide(this.compressedSize, this.totalSize)).intValue();
 	}
 
@@ -29,6 +33,14 @@ public class CompressEvent extends EventObject {
 
 	public FileSize getCompressedSize() {
 		return compressedSize;
+	}
+
+	public int getCurrentEntry() {
+		return this.currentEntry;
+	}
+
+	public int getTotalEntry() {
+		return this.totalEntry;
 	}
 
 	public int getPercent() {

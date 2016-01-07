@@ -26,7 +26,7 @@ public class FileUtilties {
 				File[] files = file.listFiles();
 
 				for (int i = 0; i < files.length; i++) {
-					fileSize += files[i].length();
+					fileSize += getFileSize(files[i]);
 				}
 			} else {
 				fileSize = file.length();
@@ -77,5 +77,13 @@ public class FileUtilties {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
+	}
+
+	public static boolean delete(String filePath) {
+		return delete(new File(filePath));
+	}
+
+	public static boolean exists(String filePath) {
+		return new File(filePath).exists();
 	}
 }

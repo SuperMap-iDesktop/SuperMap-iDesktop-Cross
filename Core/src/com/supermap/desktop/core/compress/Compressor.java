@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -37,6 +38,8 @@ public class Compressor {
 	private File srcFile;
 	private long totalSize = 0;
 	private long compressedSize = 0;
+	private int totalFileEntry = 0; // 待压缩项的文件总数
+	private int currentFileEntry = 0; // 当前正在压缩的文件项
 	private boolean isCancel = false;
 
 	// @formatter:off
@@ -246,13 +249,14 @@ public class Compressor {
 
 					compressedSize += readSize;
 					CompressEvent event = new CompressEvent(this, new FileSize(this.totalSize, FileSizeType.BYTE), new FileSize(compressedSize,
-							FileSizeType.BYTE));
+							FileSizeType.BYTE), this.currentFileEntry + 1, this.totalFileEntry);
 					fireCompressing(event);
 				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			this.currentFileEntry++;
 			zipArchiveOutputStream.closeArchiveEntry();
 			fileInputStream.close();
 		}
@@ -304,6 +308,31 @@ public class Compressor {
 		}
 
 		computeTotalSize();
+		computeTotalSize();
+	}
+
+	/**
+	 * 计算带压缩的文件总数（所有单个文件）
+	 */
+	private void computeTotalFileEntryCount() {
+		for (int i = 0; i < this.files.size(); i++) {
+			this.totalFileEntry += getFileEntryCount(this.files.get(i));
+		}
+	}
+
+	private int getFileEntryCount(File file) {
+		int result = 0;
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				File[] childFiles = file.listFiles();
+				for (int i = 0; i < childFiles.length; i++) {
+					result += getFileEntryCount(childFiles[i]);
+				}
+			} else {
+				result = 1;
+			}
+		}
+		return result;
 	}
 
 	/**

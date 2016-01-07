@@ -816,7 +816,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				}
 				JDialogFolderSelector folderSelector = new JDialogFolderSelector(files);
 				if (folderSelector.showDialog() == DialogResult.OK) {
-					serverRelease.getDirectories().clear();
 					serverRelease.getFiles().clear();
 
 					for (int i = 0; i < files.size(); i++) {
@@ -825,11 +824,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 							continue;
 						}
 
-						if (selectableFile.isDirectory()) {
-							serverRelease.getDirectories().add(selectableFile.getPath());
-						} else {
-							serverRelease.getFiles().add(selectableFile.getPath());
-						}
+						serverRelease.getFiles().add(selectableFile);
 					}
 				} else {
 					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Operation_Cancel"));
@@ -948,10 +943,10 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				for (int i = 0; i < jsonArray.size(); i++) {
 					JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-					if (jsonObject.containsKey(ResponseKey.ReleaseWorkspace.SERVICE_TYPE)
-							&& jsonObject.containsKey(ResponseKey.ReleaseWorkspace.SERVICE_ADDRESS)) {
-						result.add(jsonObject.get(ResponseKey.ReleaseWorkspace.SERVICE_TYPE) + ":"
-								+ jsonObject.get(ResponseKey.ReleaseWorkspace.SERVICE_ADDRESS) + ";");
+					if (jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE)
+							&& jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS)) {
+						result.add(jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE) + ":"
+								+ jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS) + ";");
 					}
 				}
 			} catch (Exception e) {

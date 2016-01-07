@@ -24,6 +24,9 @@ import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
+import com.supermap.desktop.core.compress.CompressEvent;
+import com.supermap.desktop.core.compress.CompressListener;
+import com.supermap.desktop.core.compress.Compressor;
 import com.supermap.desktop.core.http.HttpPostEvent;
 import com.supermap.desktop.core.http.HttpPostFile;
 import com.supermap.desktop.core.http.HttpPostListener;
@@ -38,7 +41,6 @@ public class ServerRelease {
 	private static final String UPLOAD_TASKS = "http://{0}:{1}/iserver/manager/filemanager/uploadtasks.rjson?token='{2}'";
 	private static final String SERVER_DATA_DIR = "../../Desktop";
 	private static final String CLOUDY_CACHE = "./CloudyCache";
-	private static final int BUFFER_SIZE = 5120;
 
 	private WorkspaceConnectionInfo connectionInfo;
 	// @formatter:off
@@ -54,17 +56,11 @@ public class ServerRelease {
 	private String adminPassword;
 	private int servicesType;
 	private String workspacePath;
-	private ArrayList<String> directories;
-	private ArrayList<String> files;
+	private ArrayList<File> files; // 需要压缩上传的文件以及文件夹（在工作空间同级目录下）
 	private String remoteFilePath; // 文件型工作空间+文件型数据源发布到远程服务器上之后的工作空间路径
-	private boolean cancel = false;
+	private boolean isCancel = false;
 	private String resultURL = "";
 	private EventListenerList listenerList = new EventListenerList();
-
-	private long totalSize = 0;
-	private long zippedSize = 0;
-	private int totalEntry = 0;
-	private int zippedEntry = 0;
 
 	private HttpPostListener httpPostListener = new HttpPostListener() {
 
@@ -74,9 +70,16 @@ public class ServerRelease {
 		}
 	};
 
+	private CompressListener compressListener = new CompressListener() {
+
+		@Override
+		public void compressing(CompressEvent e) {
+			fileCompressing(e);
+		}
+	};
+
 	public ServerRelease() {
-		this.directories = new ArrayList<String>();
-		this.files = new ArrayList<String>();
+		this.files = new ArrayList<File>();
 	}
 
 	public WorkspaceConnectionInfo getConnectionInfo() {
@@ -152,15 +155,7 @@ public class ServerRelease {
 		initializeZippingFiles(this.workspacePath);
 	}
 
-	public ArrayList<String> getDirectories() {
-		return this.directories;
-	}
-
-	// public void setDirectories(ArrayList<String> directories) {
-	// this.directories = directories;
-	// }
-
-	public ArrayList<String> getFiles() {
+	public ArrayList<File> getFiles() {
 		return this.files;
 	}
 
@@ -190,24 +185,28 @@ public class ServerRelease {
 
 	public Boolean release() {
 		Boolean result = false;
-		if (!this.cancel) {
-			closeCurrentFileWorkspace();
-			if (this.hostType == HostType.REMOTE
-					&& (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
-							|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU)) {
-				result = releaseWithUploading();
-			} else {
-				fireFunctionProgress(0, 0, "...", NetServicesProperties.getString("String_Releasing"));// 正在发布
-				result = releaseWithoutUploading();
-				fireFunctionProgress(100, 100, "...", NetServicesProperties.getString("String_ReleaseCompleted"));// 发布成功
-			}
-		}
 
+		try {
+			if (!this.isCancel) {
+				closeCurrentFileWorkspace();
+				if (this.hostType == HostType.REMOTE
+						&& (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
+								|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU)) {
+					result = releaseWithUploading();
+				} else {
+					fireFunctionProgress(0, 0, "...", NetServicesProperties.getString("String_Releasing"));// 正在发布
+					result = releaseWithoutUploading();
+					fireFunctionProgress(100, 100, "...", NetServicesProperties.getString("String_ReleaseCompleted"));// 发布成功
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 		return result;
 	}
 
 	public static void clearTmp() {
-		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE, true) + "/iServerZipCache");
+		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.pathSeparator + "iServerZipCache", true));
 		FileUtilties.delete(zipCacheDirectory);
 	}
 
@@ -222,31 +221,31 @@ public class ServerRelease {
 	private Boolean releaseWithUploading() {
 		Boolean result = false;
 		try {
-			if (this.cancel) {
+			if (this.isCancel) {
 				return false;
 			}
 			closeCurrentFileWorkspace();
 			// 将需要上传的数据打包
-			if (this.cancel) {
+			if (this.isCancel) {
 				return false;
 			}
 			String dataPath = zipWorkspaceData();
 			fireFunctionProgress(0, 49, "...", NetServicesProperties.getString("String_ZipCompleted"));// 正在进行上传预处理
 			if (!StringUtilties.isNullOrEmpty(dataPath)) {
 				// 创建一个上传任务
-				if (this.cancel) {
+				if (this.isCancel) {
 					return false;
 				}
 				String uploadURL = createUploadTask();
 				if (!StringUtilties.isNullOrEmpty(uploadURL)) {
 					// 开始上传
-					if (this.cancel) {
+					if (this.isCancel) {
 						return false;
 					}
 					String workspaceConnection = uploadTask(uploadURL, new File(dataPath));
 					fireFunctionProgress(0, 99, "...", NetServicesProperties.getString("String_UploadCompleted"));// 正在发布服务
 					// 发布服务
-					if (this.cancel) {
+					if (this.isCancel) {
 						return false;
 					}
 					result = releaseServerUploadFile(workspaceConnection);
@@ -294,82 +293,44 @@ public class ServerRelease {
 		fireFunctionProgress(currentProgress, totalProgress, currentMessage, NetServicesProperties.getString("String_Uploading"));
 	}
 
-	private boolean releaseServerUploadFile(String workspaceConnection) {
+	private boolean releaseServerUploadFile(String workspaceConnection) throws IOException {
 		this.remoteFilePath = workspaceConnection;
 		return releaseWithoutUploading();
 	}
 
 	private String zipWorkspaceData() {
 		String zipPath = "";
-		this.totalSize = 0;
-		this.zippedSize = 0;
-		this.totalEntry = 0;
-		this.zippedEntry = 0;
+
 		try {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZippingData"));
-			String zipCacheDirectory = "";
-			// String zipCacheDirectory = Path.GetFullPath(CloudyCache + @"/iServerZipCache");
-			// if (!Directory.Exists(zipCacheDirectory))
-			// {
-			// Directory.CreateDirectory(zipCacheDirectory);
-			// }
+			File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.pathSeparator + "iServerZipCache", true));
+			if (!zipCacheDirectory.exists() || !zipCacheDirectory.isDirectory()) {
+				zipCacheDirectory.mkdir();
+			}
+
 			String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) + new Date().hashCode();
-			zipPath = MessageFormat.format("{0}/{1}.zip", zipCacheDirectory, workspaceName);
-			//
-			// if (File.Exists(zipPath))
-			// {
-			// File.Delete(zipPath);
-			// }
-			//
-			// GetTotalSize();
-			//
-			// using (ZipFile zipFile = new ZipFile(zipPath, Encoding.UTF8))
-			// {
-			// zipFile.UseZip64WhenSaving = Zip64Option.AsNecessary;
-			// zipFile.SaveProgress += new EventHandler<SaveProgressEventArgs>(zipFile_SaveProgress);
-			// for (Int32 i = 0; i < this.m_directories.Count; i++)
-			// {
-			// String directory = this.m_directories[i];
-			// DirectoryInfo info = new DirectoryInfo(directory);
-			// zipFile.AddDirectory(directory, info.Name);
-			// }
-			// for (Int32 i = 0; i < this.m_files.Count; i++)
-			// {
-			// zipFile.AddFile(this.m_files[i], String.Empty);
-			// }
-			// this.m_totalEntry = zipFile.Count;
-			// zipFile.Save();
-			// zipFile.SaveProgress -= new EventHandler<SaveProgressEventArgs>(zipFile_SaveProgress);
-			// ServerReleaseMessage.OutputMessage(ServerReleaseMessage.ZipDataCompleted);
-			// }
+
+			Compressor compressor = new Compressor(this.getWorkDirectory(), zipCacheDirectory.getPath(), workspaceName, this.files);
+			compressor.addCompressingListener(this.compressListener);
+			compressor.compress();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZipDataFailed"));
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZipCompleted"));
 		}
 
 		return zipPath;
 	}
 
-	// 还需要处理压缩失败的问题
-	void zipFile_SaveProgress() {
-		// e.Cancel = this.m_cancel;
-		// if (!e.Cancel)
-		// {
-		// Int32 currentProgress = (Int32)((this.m_zippedSize + e.BytesTransferred) * 100.0 / this.m_totalSize);
-		// Int32 totalProgress = (Int32)(currentProgress * 0.49);
-		// SendFunctionProgressEvent(currentProgress, totalProgress, String.Format(ServerReleaseMessage.ZipDataCurrent, this.m_zippedEntry, this.m_totalEntry),
-		// ServerReleaseMessage.ZippingData);
-		// if (e.BytesTransferred == e.TotalBytesToTransfer)
-		// {
-		// this.m_zippedSize += e.BytesTransferred;
-		// }
-		// if (e.EventType == ZipProgressEventType.Saving_AfterWriteEntry)
-		// {
-		// this.m_zippedEntry = e.EntriesSaved;
-		// }
-		// }
+	private void fileCompressing(CompressEvent e) {
+		e.setCancel(this.isCancel);
+		if (!e.isCancel()) {
+			int totalProgress = new Double(e.getPercent() * 0.49).intValue();
+			fireFunctionProgress(e.getPercent(), totalProgress,
+					MessageFormat.format(NetServicesProperties.getString("String_ZipDataInfo"), e.getCurrentEntry(), e.getTotalEntry()),
+					NetServicesProperties.getString("String_ZippingData"));
+		}
 	}
 
 	private String createUploadTask() {
@@ -389,9 +350,9 @@ public class ServerRelease {
 					if (responseEntity != null) {
 						JSONObject responseJson = JSONObject.parseObject(EntityUtils.toString(responseEntity));
 
-						if (responseJson.containsKey(ResponseKey.CreateUpload.SUCCESS)
-								&& Boolean.valueOf(responseJson.get(ResponseKey.CreateUpload.SUCCESS).toString())) {
-							uploadTask = responseJson.get(ResponseKey.CreateUpload.NEW_RESOURCE_LOCATION).toString();
+						if (responseJson.containsKey(JsonKey.CreateUploadResponse.SUCCESS)
+								&& Boolean.valueOf(responseJson.get(JsonKey.CreateUploadResponse.SUCCESS).toString())) {
+							uploadTask = responseJson.get(JsonKey.CreateUploadResponse.NEW_RESOURCE_LOCATION).toString();
 						}
 					}
 				} else {
@@ -412,83 +373,34 @@ public class ServerRelease {
 		return uploadTask;
 	}
 
-	private boolean releaseWithoutUploading() {
-		// HttpWebRequest request = null;
-		// HttpWebResponse response = null;
-		// Stream requestStream = null;
-		// Stream responseStream = null;
-		// StreamReader reader = null;
+	private boolean releaseWithoutUploading() throws IOException {
 		Boolean result = false;
-		// try
-		// {
-		// String token = GetToken();
-		// String releaseURL = String.Format(ReleaseServer, this.m_host, this.m_port, token);
-		// String postData = GetEntityBody();
-		// Byte[] postBytes = Encoding.UTF8.GetBytes(postData);
-		//
-		// request = (HttpWebRequest)WebRequest.Create(releaseURL);
-		// request.Method = "POST";
-		// request.ContentLength = postBytes.Length;
-		// request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-		// request.Timeout = 300000;
-		//
-		// requestStream = request.GetRequestStream();
-		// requestStream.Write(postBytes, 0, postBytes.Length);
-		//
-		// response = (HttpWebResponse)request.GetResponse();
-		// responseStream = response.GetResponseStream();
-		// reader = new StreamReader(responseStream);
-		// this.m_resultURL = reader.ReadToEnd();
-		// if (!String.IsNullOrEmpty(this.m_resultURL))
-		// {
-		// result = true;
-		// }
-		// }
-		// catch (WebException ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.Message, InfoType.Information);
-		// HttpWebResponse webResponse = ex.Response as HttpWebResponse;
-		// if (webResponse != null)
-		// {
-		// OutputHttpStatus(webResponse.StatusCode);
-		// }
-		// if (Application.ActiveApplication.Workspace.Type == WorkspaceType.Default)
-		// {
-		// Application.ActiveApplication.Workspace.Open(this.m_connectionInfo);
-		// }
-		// }
-		// catch (Exception ex)
-		// {
-		// Application.ActiveApplication.Output.Output(ex.StackTrace, InfoType.Exception);
-		// }
-		// finally
-		// {
-		// if (request != null)
-		// {
-		// request.Abort();
-		// }
-		//
-		// if (response != null)
-		// {
-		// response.Close();
-		// }
-		//
-		// if (requestStream != null)
-		// {
-		// requestStream.Close();
-		// }
-		//
-		// if (response != null)
-		// {
-		// responseStream.Close();
-		// }
-		//
-		// if (reader != null)
-		// {
-		// reader.Close();
-		// }
-		// }
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = null;
 
+		try {
+			String token = getToken();
+			String releaseURL = MessageFormat.format(RELEASE_SERVER, this.host, this.port, token);
+			HttpPost httpPost = new HttpPost(releaseURL);
+
+			String postData = getEntityBody();
+			StringEntity stringEntity = new StringEntity(postData, ContentType.APPLICATION_JSON);
+			httpPost.setEntity(stringEntity);
+
+			response = httpClient.execute(httpPost);
+			this.resultURL = EntityUtils.toString(response.getEntity());
+			if (!StringUtilties.isNullOrEmpty(this.resultURL)) {
+				result = true;
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+
+		} finally {
+			httpClient.close();
+			if (response != null) {
+				response.close();
+			}
+		}
 		return result;
 	}
 

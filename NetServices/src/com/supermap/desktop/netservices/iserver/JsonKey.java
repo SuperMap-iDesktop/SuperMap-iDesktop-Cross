@@ -6,16 +6,16 @@ package com.supermap.desktop.netservices.iserver;
  * @author highsad
  *
  */
-public class ResponseKey {
+public class JsonKey {
 
-	public class CreateUpload {
+	public class CreateUploadResponse {
 		public static final String SUCCESS = "succeed";
 		public static final String POST_RESULT_TYPE = "postResultType";
 		public static final String NEW_RESOURCE_LOCATION = "newResourceLocation";
 		public static final String NEW_RESOURCE_ID = "newResourceID";
 	}
 
-	public class ReleaseWorkspace {
+	public class ReleaseWorkspaceResponse {
 		public static final String SERVICE_ADDRESS = "serviceAddress";
 		public static final String SERVICE_TYPE = "serviceType";
 	}
