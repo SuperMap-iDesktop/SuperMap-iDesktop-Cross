@@ -25,7 +25,7 @@ public class NetServicesActivator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Hello SuperMap === NetServices!!");
 		setContext(bundleContext);
-		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.NetServicesActivator", bundleContext.getBundle());
+		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.NetServices", bundleContext.getBundle());
 	}
 
 	/*

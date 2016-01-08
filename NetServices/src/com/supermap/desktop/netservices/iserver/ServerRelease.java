@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.swing.event.EventListenerList;
 
 import org.apache.http.HttpEntity;
+//import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -152,7 +153,6 @@ public class ServerRelease {
 
 	public void setWorkspacePath(String workspacePath) {
 		this.workspacePath = workspacePath;
-		initializeZippingFiles(this.workspacePath);
 	}
 
 	public ArrayList<File> getFiles() {
@@ -265,8 +265,8 @@ public class ServerRelease {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Uploading"));
 
 			String fileName = MessageFormat.format("{0}/{1}", this.SERVER_DATA_DIR, dataFile.getName());
-			HttpPostFile httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName,
-					getToken()));
+			HttpPostFile httpPostFile = new HttpPostFile(
+					MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName, getToken()));
 
 			String response = httpPostFile.post(dataFile);
 			if (!StringUtilties.isNullOrEmpty(response)) {
@@ -288,8 +288,8 @@ public class ServerRelease {
 		int currentProgress = new Double(FileSize.divide(FileSize.multiply(e.getPostedSize(), 100), e.getTotalSize())).intValue();
 		int totalProgress = 50 + (int) (currentProgress * 0.49);
 		String currentSpeedString = MessageFormat.format(NetServicesProperties.getString("String_UploadSpeedUnit"), e.getSpeed());
-		String currentMessage = MessageFormat.format(NetServicesProperties.getString("String_UploadingInfo"), e.getPostedSize().ToStringClever(), e
-				.getTotalSize().ToStringClever(), currentSpeedString);
+		String currentMessage = MessageFormat.format(NetServicesProperties.getString("String_UploadingInfo"), e.getPostedSize().ToStringClever(),
+				e.getTotalSize().ToStringClever(), currentSpeedString);
 		fireFunctionProgress(currentProgress, totalProgress, currentMessage, NetServicesProperties.getString("String_Uploading"));
 	}
 
@@ -345,16 +345,16 @@ public class ServerRelease {
 			CloseableHttpResponse response = httpClient.execute(httpPost);
 			try {
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					HttpEntity responseEntity = response.getEntity();
-
-					if (responseEntity != null) {
-						JSONObject responseJson = JSONObject.parseObject(EntityUtils.toString(responseEntity));
-
-						if (responseJson.containsKey(JsonKey.CreateUploadResponse.SUCCESS)
-								&& Boolean.valueOf(responseJson.get(JsonKey.CreateUploadResponse.SUCCESS).toString())) {
-							uploadTask = responseJson.get(JsonKey.CreateUploadResponse.NEW_RESOURCE_LOCATION).toString();
-						}
-					}
+					 HttpEntity responseEntity = response.getEntity();
+					
+					 if (responseEntity != null) {
+					 JSONObject responseJson = JSONObject.parseObject(EntityUtils.toString(responseEntity));
+					
+					 if (responseJson.containsKey(JsonKey.CreateUploadResponse.SUCCESS)
+					 && Boolean.valueOf(responseJson.get(JsonKey.CreateUploadResponse.SUCCESS).toString())) {
+					 uploadTask = responseJson.get(JsonKey.CreateUploadResponse.NEW_RESOURCE_LOCATION).toString();
+					 }
+					 }
 				} else {
 					outputHttpStatus(response.getStatusLine().getStatusCode());
 				}
@@ -622,39 +622,9 @@ public class ServerRelease {
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == FunctionProgressListener.class) {
-				((FunctionProgressListener) listeners[i + 1]).functionProgress(new FunctionProgressEvent(this, totalProgress, currentProgress, currentMessage,
-						totalMessage));
+				((FunctionProgressListener) listeners[i + 1])
+						.functionProgress(new FunctionProgressEvent(this, totalProgress, currentProgress, currentMessage, totalMessage));
 			}
 		}
-	}
-
-	// 根据工作空间文件初始化将要发布的文件夹和文件
-	private void initializeZippingFiles(String workspacePath) {
-		// if (!String.IsNullOrEmpty(workspacePath)
-		// && File.Exists(workspacePath))
-		// {
-		// DirectoryInfo workDirectoryInfo = new DirectoryInfo(this.WorkDirectory);
-		// DirectoryInfo[] directories = workDirectoryInfo.GetDirectories();
-		// FileInfo[] fileInfos = workDirectoryInfo.GetFiles();
-		// for (Int32 i = 0; i < directories.Length; i++)
-		// {
-		// DirectoryInfo directory = directories[i];
-		// if ((directory.Attributes & FileAttributes.System) != FileAttributes.System
-		// && (directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-		// {
-		// this.m_directories.Add(directory.FullName);
-		// }
-		// }
-		//
-		// for (Int32 i = 0; i < fileInfos.Length; i++)
-		// {
-		// FileInfo file = fileInfos[i];
-		// if ((file.Attributes & FileAttributes.System) != FileAttributes.System
-		// && (file.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-		// {
-		// this.m_files.Add(file.FullName);
-		// }
-		// }
-		// }
 	}
 }

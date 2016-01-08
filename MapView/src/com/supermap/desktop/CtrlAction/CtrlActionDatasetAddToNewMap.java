@@ -3,17 +3,10 @@ package com.supermap.desktop.CtrlAction;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Map;
-import com.supermap.ui.Action;
 
 public class CtrlActionDatasetAddToNewMap extends CtrlAction {
 

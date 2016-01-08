@@ -308,7 +308,7 @@ public class Compressor {
 		}
 
 		computeTotalSize();
-		computeTotalSize();
+		computeTotalFileEntryCount();
 	}
 
 	/**
