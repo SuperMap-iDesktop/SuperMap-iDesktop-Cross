@@ -432,8 +432,10 @@ public class ServerRelease {
 					|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU) {
 				String filePath = "";
 				if (this.hostType == HostType.LOCAL) {
+					filePath = this.connectionInfo.getServer();
 					// filePath = this.connectionInfo.getServer().replace(, Path.AltDirectorySeparatorChar);
 				} else {
+					filePath = this.remoteFilePath;
 					// filePath = this.remoteFilePath.replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 				}
 				if (StringUtilties.isNullOrEmpty(this.connectionInfo.getPassword())) {
@@ -445,7 +447,7 @@ public class ServerRelease {
 				}
 				workspaceConnection.append("\"");
 			} else if (this.connectionInfo.getType() == WorkspaceType.ORACLE || this.connectionInfo.getType() == WorkspaceType.SQL) {
-				String server = "";
+				String server = this.connectionInfo.getServer();
 				// String server = this.connectionInfo.getServer().replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 				String workspaceType = "";
 				String driverBase = "null";
