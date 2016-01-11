@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.DatasetType;
@@ -436,10 +437,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		return canRemoteRelease;
 	}
 
-	private boolean isFileWorkspace(WorkspaceType type) {
-		return (type == WorkspaceType.SMW || type == WorkspaceType.SMWU || type == WorkspaceType.SXW || type == WorkspaceType.SXWU || type == WorkspaceType.DEFAULT);
-	}
-
 	// 根据工作空间的数据类型默认发布超图规范的REST服务
 	// OGC服务默认不勾选
 	private void initializeParameters() {
@@ -480,6 +477,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	}
 
 	private void initializeControls() {
+		initializeUser();
 		initializeServicesTypes();
 		initializeHostType();
 		initializeHostValue();
@@ -557,6 +555,11 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	private void initializeUser() {
+		this.textFieldUserName.setText(this.adminName);
+		this.textFieldPassword.setText(this.adminPassword);
 	}
 
 	private void setButtonReleaseEnabled() {
@@ -964,15 +967,18 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		private ArrayList<String> getResultServers(String links) {
 			ArrayList<String> result = new ArrayList<>();
 			try {
-				JSONArray jsonArray = JSONArray.parseArray(links);
+				Object obj = JSON.parse(links);
+				if (obj instanceof JSONArray) {
+					JSONArray jsonArray = (JSONArray) obj;
 
-				for (int i = 0; i < jsonArray.size(); i++) {
-					JSONObject jsonObject = jsonArray.getJSONObject(i);
+					for (int i = 0; i < jsonArray.size(); i++) {
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-					if (jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE)
-							&& jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS)) {
-						result.add(jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE) + ":"
-								+ jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS) + ";");
+						if (jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE)
+								&& jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS)) {
+							result.add(jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE) + ":"
+									+ jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS) + ";");
+						}
 					}
 				}
 			} catch (Exception e) {

@@ -67,8 +67,17 @@ public class WorkspaceInfo {
 			if (workspace != null) {
 				this.containTypes = new ArrayList<DatasetType>();
 				// 拷贝一个，因为可能会在发布失败之后重新打开，传引用会拿到一个空的Info
+				WorkspaceConnectionInfo sourceConnection = workspace.getConnectionInfo();
 				this.workspaceConnectionInfo = new WorkspaceConnectionInfo();
-				// this.workspaceConnectionInfo = new WorkspaceConnectionInfo(workspace.getConnectionInfo());
+				this.workspaceConnectionInfo.setDatabase(sourceConnection.getDatabase());
+				this.workspaceConnectionInfo.setDriver(sourceConnection.getDriver());
+				this.workspaceConnectionInfo.setName(sourceConnection.getName());
+				this.workspaceConnectionInfo.setPassword(sourceConnection.getPassword());
+				this.workspaceConnectionInfo.setServer(sourceConnection.getServer());
+				this.workspaceConnectionInfo.setType(sourceConnection.getType());
+				this.workspaceConnectionInfo.setUser(sourceConnection.getUser());
+				this.workspaceConnectionInfo.setVersion(sourceConnection.getVersion());
+
 				// 记录文件型工作空间的路径与数据源的路径
 				if (IsFileWorkspace(workspace.getType())) {
 					this.workspacePath = workspace.getConnectionInfo().getServer();
@@ -106,7 +115,7 @@ public class WorkspaceInfo {
 				Datasource datasource = workspace.getDatasources().get(i);
 				if (datasource.getDatasets() != null && datasource.getDatasets().getCount() > 0) {
 					for (int index = 0; index < datasource.getDatasets().getCount(); index++) {
-						Dataset dataset = datasource.getDatasets().get(i);
+						Dataset dataset = datasource.getDatasets().get(index);
 						if (!this.containTypes.contains(dataset.getType())) {
 							this.containTypes.add(dataset.getType());
 						}

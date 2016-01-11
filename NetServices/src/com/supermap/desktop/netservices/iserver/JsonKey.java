@@ -20,6 +20,13 @@ public class JsonKey {
 		public static final String SERVICE_TYPE = "serviceType";
 	}
 
+	public class ReleaseWorkspaceResponseError {
+		public static final String ERROR = "error";
+		public static final String ERROR_CODE = "code";
+		public static final String ERROR_MESSAGE = "errorMsg";
+		public static final String SUCCESS = "succeed";
+	}
+
 	public class RestType {
 		public static final String RESTDATA = "RESTDATA";
 		public static final String RESTMAP = "RESTMAP";

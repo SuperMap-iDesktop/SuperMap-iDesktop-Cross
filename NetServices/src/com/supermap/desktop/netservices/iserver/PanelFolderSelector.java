@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
@@ -33,21 +34,6 @@ public class PanelFolderSelector extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		ArrayList<SelectableFile> files = new ArrayList<>();
-		File test = new File("D:/test");
-		File[] listFiles = test.listFiles();
-		for (int i = 0; i < listFiles.length; i++) {
-			files.add(SelectableFile.fromFile(listFiles[i], true));
-		}
-
-		PanelFolderSelector panel = new PanelFolderSelector(files);
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.add(panel, BorderLayout.CENTER);
-		frame.setVisible(true);
-	}
 
 	private static final int CONTENT_FILE = 1;
 	private static final int CONTENT_DIRECTORY = 2;
@@ -89,6 +75,8 @@ public class PanelFolderSelector extends JPanel {
 		this.table = new JTable();
 		FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
 		this.table.setModel(tableModel);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SELECTED).setPreferredWidth(20);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.HIDEN).setPreferredWidth(20);
 
 		JScrollPane scrollTable = new JScrollPane(this.table);
 		this.setLayout(new BorderLayout());

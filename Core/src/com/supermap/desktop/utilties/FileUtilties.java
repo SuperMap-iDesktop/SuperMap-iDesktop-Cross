@@ -35,6 +35,12 @@ public class FileUtilties {
 		return fileSize;
 	}
 
+	/**
+	 * 获取不带扩展名的文件名
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static String getFileNameWithoutExtension(File file) {
 		String fileName = file.getName();
 		int lastDotIndex = fileName.lastIndexOf(".");
@@ -79,10 +85,22 @@ public class FileUtilties {
 		return result;
 	}
 
+	/**
+	 * 删除指定文件
+	 * 
+	 * @param filePath
+	 * @return
+	 */
 	public static boolean delete(String filePath) {
 		return delete(new File(filePath));
 	}
 
+	/**
+	 * 判断指定文件是否存在
+	 * 
+	 * @param filePath
+	 * @return
+	 */
 	public static boolean exists(String filePath) {
 		return new File(filePath).exists();
 	}

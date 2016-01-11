@@ -10,6 +10,7 @@ import javax.swing.event.EventListenerList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -19,6 +20,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
@@ -36,9 +38,9 @@ import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 public class ServerRelease {
-	private static final String RELEASE_SERVER = "http://{0}:{1}/iserver/manager/workspaces.rjson?token='{2}'";
+	private static final String RELEASE_SERVER = "http://{0}:{1}/iserver/manager/workspaces.rjson?token={2}";
 	private static final String TOKEN_SERVER = "http://{0}:{1}/iserver/services/security/tokens.rjson";
-	private static final String UPLOAD_TASKS = "http://{0}:{1}/iserver/manager/filemanager/uploadtasks.rjson?token='{2}'";
+	private static final String UPLOAD_TASKS = "http://{0}:{1}/iserver/manager/filemanager/uploadtasks.rjson?token={2}";
 	private static final String SERVER_DATA_DIR = "../../Desktop";
 	private static final String CLOUDY_CACHE = "./CloudyCache";
 
@@ -189,8 +191,9 @@ public class ServerRelease {
 			if (!this.isCancel) {
 				closeCurrentFileWorkspace();
 				if (this.hostType == HostType.REMOTE
-						&& (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
-								|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU)) {
+						&& (this.connectionInfo.getType() == WorkspaceType.DEFAULT || this.connectionInfo.getType() == WorkspaceType.SMW
+								|| this.connectionInfo.getType() == WorkspaceType.SMWU || this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo
+								.getType() == WorkspaceType.SXWU)) {
 					result = releaseWithUploading();
 				} else {
 					fireFunctionProgress(0, 0, "...", NetServicesProperties.getString("String_Releasing"));// 正在发布
@@ -273,14 +276,14 @@ public class ServerRelease {
 
 				String dataDirectory = responseJson.getString("filePath");
 				// 服务器返回的解压缩之后的路径，经常改动，有时候带了工作空间文件名，有时候没带，这里随着 iserver的版本更改可能有问题，到时候再处理
-				workspaceConnection = MessageFormat.format("{0}/{1}/{2}", SERVER_DATA_DIR, dataDirectory, new File(this.connectionInfo.getServer()).getName());
+				workspaceConnection = MessageFormat.format("{0}{1}", dataDirectory, new File(this.connectionInfo.getServer()).getName());
 				Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_UploadCompleted"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
-
-		return workspaceConnection;
+		// 将字符串中的所有 \ 替换为 /
+		return workspaceConnection.replace(File.separator, "/");
 	}
 
 	private void httpPosting(HttpPostEvent e) {
@@ -302,16 +305,16 @@ public class ServerRelease {
 
 		try {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZippingData"));
-			File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.pathSeparator + "iServerZipCache", true));
+			File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
 			if (!zipCacheDirectory.exists() || !zipCacheDirectory.isDirectory()) {
-				zipCacheDirectory.mkdir();
+				zipCacheDirectory.mkdirs();
 			}
 
 			String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) + new Date().hashCode();
 
-			Compressor compressor = new Compressor(this.getWorkDirectory(), zipCacheDirectory.getPath(), workspaceName, this.files);
+			Compressor compressor = new Compressor(this.getWorkDirectory(), zipCacheDirectory.getPath(), workspaceName, this.files, false);
 			compressor.addCompressingListener(this.compressListener);
-			compressor.compress();
+			zipPath = compressor.compress();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZipDataFailed"));
 			Application.getActiveApplication().getOutput().output(ex);
@@ -343,7 +346,9 @@ public class ServerRelease {
 
 			CloseableHttpResponse response = httpClient.execute(httpPost);
 			try {
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				StatusLine responseStatus = response.getStatusLine();
+				if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
+						|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
 					HttpEntity responseEntity = response.getEntity();
 
 					if (responseEntity != null) {
@@ -387,9 +392,42 @@ public class ServerRelease {
 			httpPost.setEntity(stringEntity);
 
 			response = httpClient.execute(httpPost);
-			this.resultURL = EntityUtils.toString(response.getEntity());
-			if (!StringUtilties.isNullOrEmpty(this.resultURL)) {
-				result = true;
+			StatusLine responseStatus = response.getStatusLine();
+			String responseText = EntityUtils.toString(response.getEntity());
+
+			if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
+					|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+				this.resultURL = responseText;
+				if (!StringUtilties.isNullOrEmpty(this.resultURL)) {
+					result = true;
+				}
+			} else {
+				if (!StringUtilties.isNullOrEmpty(responseText)) {
+					Object obj = JSON.parse(responseText);
+
+					if (obj instanceof JSONObject) {
+						JSONObject jsonObject = (JSONObject) obj;
+
+						if (jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponseError.ERROR)) {
+							JSONObject errorObject = jsonObject.getJSONObject(JsonKey.ReleaseWorkspaceResponseError.ERROR);
+
+							if (errorObject != null && errorObject.containsKey(JsonKey.ReleaseWorkspaceResponseError.ERROR_CODE)) {
+								Application
+										.getActiveApplication()
+										.getOutput()
+										.output(NetServicesProperties.getString("String_ErrorCode")
+												+ errorObject.get(JsonKey.ReleaseWorkspaceResponseError.ERROR_CODE));
+							}
+							if (errorObject != null && errorObject.containsKey(JsonKey.ReleaseWorkspaceResponseError.ERROR_MESSAGE)) {
+								Application
+										.getActiveApplication()
+										.getOutput()
+										.output(NetServicesProperties.getString("String_ErrorMessage")
+												+ errorObject.get(JsonKey.ReleaseWorkspaceResponseError.ERROR_MESSAGE));
+							}
+						}
+					}
+				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
