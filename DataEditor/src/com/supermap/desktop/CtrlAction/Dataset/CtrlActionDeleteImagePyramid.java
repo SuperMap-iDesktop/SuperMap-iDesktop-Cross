@@ -102,6 +102,18 @@ public class CtrlActionDeleteImagePyramid extends CtrlAction {
 						enable = true;
 						break;
 					}
+				} else if (dataset.getType() == DatasetType.IMAGECOLLECTION) {
+					DatasetImageCollection datasetImageCollection = (DatasetImageCollection) dataset;
+					if (datasetImageCollection.getHasPyramid()) {
+						enable = true;
+						break;
+					}
+				} else if (dataset.getType() == DatasetType.GRIDCOLLECTION) {
+					DatasetGridCollection datasetGridCollection = (DatasetGridCollection) dataset;
+					if (datasetGridCollection.getHasPyramid()) {
+						enable = true;
+						break;
+					}
 				}
 			}
 		}
