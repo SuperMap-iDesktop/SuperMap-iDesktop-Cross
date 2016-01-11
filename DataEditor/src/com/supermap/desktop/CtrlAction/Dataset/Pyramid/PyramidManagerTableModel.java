@@ -60,7 +60,7 @@ public class PyramidManagerTableModel extends DefaultTableModel {
 			case 1:
 				return dataset.getDatasource();
 			case 2:
-				return isDatasetHasPyramid(dataset);
+				return isDatasetHasPyramid(dataset) ? CommonProperties.getString(CommonProperties.True) : CommonProperties.getString(CommonProperties.False);
 			case 3:
 				return getDatasetWidth(dataset);
 			case 4:

@@ -2,7 +2,9 @@ package com.supermap.desktop.CtrlAction.Dataset;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetGridCollection;
 import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
@@ -30,11 +32,12 @@ public class CtrlActionCreateImagePyramid extends CtrlAction {
 		try {
 			ArrayList<Dataset> datasets = new ArrayList<Dataset>();
 			for (Dataset dataset : Application.getActiveApplication().getActiveDatasets()) {
-				if (dataset instanceof DatasetGrid || dataset instanceof DatasetImage) {
+				if (dataset instanceof DatasetGrid || dataset instanceof DatasetImage || dataset instanceof DatasetImageCollection || dataset instanceof DatasetGridCollection) {
 					datasets.add(dataset);
 				}
 			}
 			List<Dataset> datasetClosed = DatasetUtilties.sureDatasetClosed(datasets);
+//			((DatasetImageCollection) datasetClosed.get(0)).buildPyramid();
 			if (datasetClosed.size() > 0) {
 				FormProgressTotal formProgressTotal = new FormProgressTotal(ControlsProperties.getString("String_Form_BuildDatasetPyramid"));
 				formProgressTotal.doWork(new CreateImagePyramidCallable(datasetClosed.toArray(new Dataset[datasetClosed.size()])));
@@ -78,6 +81,18 @@ public class CtrlActionCreateImagePyramid extends CtrlAction {
 				} else if (dataset.getType() == DatasetType.GRID) {
 					DatasetGrid datasetGrid = (DatasetGrid) dataset;
 					if (!datasetGrid.getHasPyramid()) {
+						enable = true;
+						break;
+					}
+				} else if (dataset.getType() == DatasetType.IMAGECOLLECTION) {
+					DatasetImageCollection datasetImageCollection = (DatasetImageCollection) dataset;
+					if (!datasetImageCollection.getHasPyramid()) {
+						enable = true;
+						break;
+					}
+				} else if (dataset.getType() == DatasetType.GRIDCOLLECTION) {
+					DatasetGridCollection datasetGridCollection = (DatasetGridCollection) dataset;
+					if (!datasetGridCollection.getHasPyramid()) {
 						enable = true;
 						break;
 					}

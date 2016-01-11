@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Dataset.Pyramid;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
+import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -334,6 +335,14 @@ public class JDialogPyramidManager extends SmDialog {
 			supportDatasetTypeList.add(CommonToolkit.DatasetTypeWrap.findType(supportDatasetType));
 		}
 		for (Dataset activeDataset : activeDatasets) {
+			if (activeDataset.getDatasource().getEngineType() == EngineType.IMAGEPLUGINS) {
+				String server = activeDataset.getDatasource().getConnectionInfo().getServer();
+				if (!server.toLowerCase().endsWith(".img") && !server.toLowerCase().endsWith(".tif") && !server.toLowerCase().endsWith(".tiff")) {
+					continue;
+				}
+			} else if (activeDataset.getDatasource().isReadOnly()) {
+				continue;
+			}
 			if (supportDatasetTypeList.contains(activeDataset.getType())) {
 				activeSupportDatasets.add(activeDataset);
 			}

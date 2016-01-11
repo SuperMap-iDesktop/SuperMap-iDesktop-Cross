@@ -48,41 +48,42 @@ public class CreateImagePyramidCallable extends UpdateProgressCallable {
 		}
 
 		boolean isSucceeded = false;
-
 		for (Dataset dataset : this.datasets) {
-			boolean isDatasetGridOrImage = !(dataset instanceof DatasetGrid) && !(dataset instanceof DatasetImage)&& !(dataset instanceof DatasetImageCollection)&& !(dataset instanceof DatasetGridCollection);
+			boolean isDatasetGridOrImage = !(dataset instanceof DatasetGrid) && !(dataset instanceof DatasetImage) && !(dataset instanceof DatasetImageCollection) && !(dataset instanceof DatasetGridCollection);
 			if (isCancel || isDatasetGridOrImage) {
 				this.completedCount++;
 				continue;
 			}
 
+			dataset.addSteppedListener(this.steppedListener);
 
-				try {
-					dataset.addSteppedListener(this.steppedListener);
-
-					if (dataset instanceof DatasetImage) {
-						isSucceeded = ((DatasetImage) dataset).buildPyramid();
-						dataset.close();
-					} else if (dataset instanceof DatasetGrid) {
-						isSucceeded = ((DatasetGrid) dataset).buildPyramid();
-						dataset.close();
-					} else if (dataset instanceof DatasetGridCollection) {
-						isSucceeded = ((DatasetGridCollection) dataset).buildPyramid();
-						dataset.close();
-					} else{
-						isSucceeded = ((DatasetImageCollection) dataset).buildPyramid();
-					}
-
-					if (isSucceeded) {
-						String message = MessageFormat.format(CoreProperties.getString("String_CreateImagePyramid_Success"), dataset.getName());
-						Application.getActiveApplication().getOutput().output(message);
-					} else {
-						String message = MessageFormat.format(CoreProperties.getString("String_CreateImagePyramid_Failed"), dataset.getName());
-						Application.getActiveApplication().getOutput().output(message);
-					}
-				} finally {
-					dataset.removeSteppedListener(this.steppedListener);
+			try {
+				if (dataset instanceof DatasetImage) {
+					isSucceeded = ((DatasetImage) dataset).buildPyramid();
+					dataset.close();
+				} else if (dataset instanceof DatasetGrid) {
+					isSucceeded = ((DatasetGrid) dataset).buildPyramid();
+					dataset.close();
+				} else if (dataset instanceof DatasetGridCollection) {
+					isSucceeded = ((DatasetGridCollection) dataset).buildPyramid();
+					dataset.close();
+				} else {
+					isSucceeded = ((DatasetImageCollection) dataset).buildPyramid();
+					dataset.close();
 				}
+
+				if (isSucceeded) {
+					String message = MessageFormat.format(CoreProperties.getString("String_CreateImagePyramid_Success"), dataset.getName());
+					Application.getActiveApplication().getOutput().output(message);
+				} else {
+					String message = MessageFormat.format(CoreProperties.getString("String_CreateImagePyramid_Failed"), dataset.getName());
+					Application.getActiveApplication().getOutput().output(message);
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				dataset.removeSteppedListener(this.steppedListener);
+			}
 
 			this.completedCount++;
 		}
