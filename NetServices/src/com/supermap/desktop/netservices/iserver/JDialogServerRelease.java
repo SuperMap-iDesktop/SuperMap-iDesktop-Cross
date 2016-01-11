@@ -31,6 +31,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -222,7 +224,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 		// 服务器设置面板
 		JPanel panelService = new JPanel();
-		panelService.setBorder(BorderFactory.createTitledBorder("Service"));
+		panelService.setBorder(BorderFactory.createTitledBorder(NetServicesProperties.getString("String_iServer_Panel_Services")));
 		this.radioButtonLocalHost = new JRadioButton("LocalHost");
 		this.radioButtonRemoteHost = new JRadioButton("RemoteHost");
 		this.labelServer = new JLabel("Server:");
@@ -235,22 +237,22 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		GridBagLayout gbl_panelService = new GridBagLayout();
 		panelService.setLayout(gbl_panelService);
 
-		panelService.add(this.radioButtonLocalHost,
-				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		panelService.add(this.radioButtonRemoteHost,
-				new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0, 0), 0, 0));
-		panelService.add(this.labelServer,
-				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0), 0, 0));
-		panelService.add(this.textFieldHost,
-				new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10, 0), 0, 0));
-		panelService.add(this.labelColon,
-				new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 0, 10, 0), 0, 0));
-		panelService.add(this.textFieldPort,
-				new GridBagConstraints(3, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10, 10), 0, 0));
+		panelService.add(this.radioButtonLocalHost, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,
+				10, 0, 0), 0, 0));
+		panelService.add(this.radioButtonRemoteHost, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,
+				5, 0, 0), 0, 0));
+		panelService.add(this.labelServer, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0),
+				0, 0));
+		panelService.add(this.textFieldHost, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(5, 5, 10, 0), 0, 0));
+		panelService.add(this.labelColon, new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 0, 10, 0),
+				0, 0));
+		panelService.add(this.textFieldPort, new GridBagConstraints(3, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(5, 5, 10, 10), 0, 0));
 
 		// 用户设置面板
 		JPanel panelUser = new JPanel();
-		panelUser.setBorder(BorderFactory.createTitledBorder("User"));
+		panelUser.setBorder(BorderFactory.createTitledBorder(NetServicesProperties.getString("String_iServer_Panel_Admin")));
 		this.labelUserName = new JLabel("UserName:");
 		this.textFieldUserName = new JTextField();
 		this.textFieldUserName.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
@@ -260,18 +262,18 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 		GridBagLayout gbl_panelUser = new GridBagLayout();
 		panelUser.setLayout(gbl_panelUser);
-		panelUser.add(this.labelUserName,
-				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		panelUser.add(this.textFieldUserName,
-				new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0, 10), 0, 0));
-		panelUser.add(this.labelPassword,
-				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0), 0, 0));
-		panelUser.add(this.textFieldPassword,
-				new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10, 10), 0, 0));
+		panelUser.add(this.labelUserName, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0),
+				0, 0));
+		panelUser.add(this.textFieldUserName, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0,
+				10), 0, 0));
+		panelUser.add(this.labelPassword, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0),
+				0, 0));
+		panelUser.add(this.textFieldPassword, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10,
+				10), 0, 0));
 
 		// Rest服务类型设置面板
 		JPanel panelRestService = new JPanel();
-		panelRestService.setBorder(BorderFactory.createTitledBorder("panelRestService"));
+		panelRestService.setBorder(BorderFactory.createTitledBorder(NetServicesProperties.getString("String_iServer_Panel_RestServices")));
 		this.checkBoxRestData = new JCheckBox("RestData");
 		this.checkBoxRestRealspace = new JCheckBox("Realspace");
 		this.checkBoxRestMap = new JCheckBox("RestMap");
@@ -280,20 +282,20 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 		GridBagLayout gbl_panelRestService = new GridBagLayout();
 		panelRestService.setLayout(gbl_panelRestService);
-		panelRestService.add(this.checkBoxRestData,
-				new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		panelRestService.add(this.checkBoxRestRealspace,
-				new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0, 10), 0, 0));
-		panelRestService.add(this.checkBoxRestMap,
-				new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 0), 0, 0));
-		panelRestService.add(this.checkBoxRestTransAnalyst,
-				new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0, 10), 0, 0));
-		panelRestService.add(this.checkBoxRestSpatialAnalyst,
-				new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0), 0, 0));
+		panelRestService.add(this.checkBoxRestData, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,
+				10, 0, 0), 0, 0));
+		panelRestService.add(this.checkBoxRestRealspace, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(
+				10, 5, 0, 10), 0, 0));
+		panelRestService.add(this.checkBoxRestMap, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+				0, 0), 0, 0));
+		panelRestService.add(this.checkBoxRestTransAnalyst, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(5, 5, 0, 10), 0, 0));
+		panelRestService.add(this.checkBoxRestSpatialAnalyst, new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(5, 10, 10, 0), 0, 0));
 
 		// OGC服务类型设置面板
 		JPanel panelOGCService = new JPanel();
-		panelOGCService.setBorder(BorderFactory.createTitledBorder("OGCService"));
+		panelOGCService.setBorder(BorderFactory.createTitledBorder(NetServicesProperties.getString("String_iServer_Panel_OGCServices")));
 		this.checkBoxWCS111 = new JCheckBox("WCS1.1.1");
 		this.checkBoxWMS111 = new JCheckBox("WMS1.1.1");
 		this.checkBoxWCS112 = new JCheckBox("WCS1.1.2");
@@ -305,32 +307,32 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 		GridBagLayout gbl_panelOGCService = new GridBagLayout();
 		panelOGCService.setLayout(gbl_panelOGCService);
-		panelOGCService.add(this.checkBoxWCS111,
-				new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMS111,
-				new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0, 10), 0, 0));
-		panelOGCService.add(this.checkBoxWCS112,
-				new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMS130,
-				new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0, 10), 0, 0));
-		panelOGCService.add(this.checkBoxWFS100,
-				new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMTS100,
-				new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0, 10), 0, 0));
-		panelOGCService.add(this.checkBoxWPS100,
-				new GridBagConstraints(0, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMTSCHINA,
-				new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10, 10), 0, 0));
+		panelOGCService.add(this.checkBoxWCS111, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10,
+				0, 0), 0, 0));
+		panelOGCService.add(this.checkBoxWMS111, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5,
+				0, 10), 0, 0));
+		panelOGCService.add(this.checkBoxWCS112, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+				0, 0), 0, 0));
+		panelOGCService.add(this.checkBoxWMS130, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0,
+				10), 0, 0));
+		panelOGCService.add(this.checkBoxWFS100, new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+				0, 0), 0, 0));
+		panelOGCService.add(this.checkBoxWMTS100, new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
+				0, 10), 0, 0));
+		panelOGCService.add(this.checkBoxWPS100, new GridBagConstraints(0, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+				0, 0), 0, 0));
+		panelOGCService.add(this.checkBoxWMTSCHINA, new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
+				10, 10), 0, 0));
 
 		// 附加设置面板
 		JPanel panelAdditionalSetting = new JPanel();
-		panelAdditionalSetting.setBorder(BorderFactory.createTitledBorder("AdditionalSetting"));
+		panelAdditionalSetting.setBorder(BorderFactory.createTitledBorder(NetServicesProperties.getString("String_iServer_Panel_Setting")));
 		this.checkBoxIsEditable = new JCheckBox("IsEditable");
 
 		GridBagLayout gbl_panelAdditionalSetting = new GridBagLayout();
 		panelAdditionalSetting.setLayout(gbl_panelAdditionalSetting);
-		panelAdditionalSetting.add(this.checkBoxIsEditable,
-				new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
+		panelAdditionalSetting.add(this.checkBoxIsEditable, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(10, 10, 10, 10), 0, 0));
 
 		// 主面板
 		JPanel panelMain = new JPanel();
@@ -340,26 +342,47 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 
 		GridBagLayout gbl_panelMain = new GridBagLayout();
 		setLayout(gbl_panelMain);
-		panelMain.add(panelService,
-				new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
+		panelMain
+				.add(panelService, new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
 		panelMain.add(panelUser, new GridBagConstraints(0, 1, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-		panelMain.add(panelRestService,
-				new GridBagConstraints(0, 2, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-		panelMain.add(panelOGCService,
-				new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-		panelMain.add(panelAdditionalSetting,
-				new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-		panelMain.add(this.buttonRelease,
-				new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 10, 10, 0), 0, 0));
-		panelMain.add(this.buttonClose,
-				new GridBagConstraints(1, 5, 1, 1, 0, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0, 0));
+		panelMain.add(panelRestService, new GridBagConstraints(0, 2, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
+				0));
+		panelMain.add(panelOGCService, new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
+				0));
+		panelMain.add(panelAdditionalSetting, new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0,
+				10), 0, 0));
+		panelMain.add(this.buttonRelease, new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 10, 10, 0),
+				0, 0));
+		panelMain.add(this.buttonClose, new GridBagConstraints(1, 5, 1, 1, 0, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0,
+				0));
 
 		setSize(new Dimension(450, 650));
 		setLocationRelativeTo(null);
 	}
 
 	private void initializeResources() {
-
+		this.setTitle(NetServicesProperties.getString("String_iServer_ServerRelease"));
+		this.radioButtonLocalHost.setText(NetServicesProperties.getString("String_iServer_RadioButton_LocalHost"));
+		this.radioButtonRemoteHost.setText(NetServicesProperties.getString("String_iServer_RadioButton_RemoteHost"));
+		this.labelServer.setText(NetServicesProperties.getString("String_iServer_Label_Server"));
+		this.labelUserName.setText(NetServicesProperties.getString("String_iServer_Label_UserName"));
+		this.labelPassword.setText(NetServicesProperties.getString("String_iServer_Label_UserPassword"));
+		this.checkBoxRestData.setText(NetServicesProperties.getString("String_iServer_ServicesType_RestData"));
+		this.checkBoxRestRealspace.setText(NetServicesProperties.getString("String_iServer_ServicesType_RestRealspace"));
+		this.checkBoxRestMap.setText(NetServicesProperties.getString("String_iServer_ServicesType_RestMap"));
+		this.checkBoxRestTransAnalyst.setText(NetServicesProperties.getString("String_iServer_ServicesType_RestTransprotationAnalyst"));
+		this.checkBoxRestSpatialAnalyst.setText(NetServicesProperties.getString("String_iServer_ServicesType_RestSpatialAnalyst"));
+		this.checkBoxWCS111.setText(NetServicesProperties.getString("String_iServer_ServicesType_WCS111"));
+		this.checkBoxWMS111.setText(NetServicesProperties.getString("String_iServer_ServicesType_WMS111"));
+		this.checkBoxWCS112.setText(NetServicesProperties.getString("String_iServer_ServicesType_WCS112"));
+		this.checkBoxWMS130.setText(NetServicesProperties.getString("String_iServer_ServicesType_WMS130"));
+		this.checkBoxWFS100.setText(NetServicesProperties.getString("String_iServer_ServicesType_WFS100"));
+		this.checkBoxWMTS100.setText(NetServicesProperties.getString("String_iServer_ServicesType_WMTS100"));
+		this.checkBoxWPS100.setText(NetServicesProperties.getString("String_iServer_ServicesType_WPS100"));
+		this.checkBoxWMTSCHINA.setText(NetServicesProperties.getString("String_iServer_ServicesType_WMTSCHINA"));
+		this.checkBoxIsEditable.setText(CommonProperties.getString(CommonProperties.IsEditable));
+		this.buttonRelease.setText(NetServicesProperties.getString("String_Release"));
+		this.buttonClose.setText(CommonProperties.getString(CommonProperties.Close));
 	}
 
 	private void registerEvents() {
@@ -414,8 +437,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	}
 
 	private boolean isFileWorkspace(WorkspaceType type) {
-		return (type == WorkspaceType.SMW || type == WorkspaceType.SMWU || type == WorkspaceType.SXW || type == WorkspaceType.SXWU
-				|| type == WorkspaceType.DEFAULT);
+		return (type == WorkspaceType.SMW || type == WorkspaceType.SMWU || type == WorkspaceType.SXW || type == WorkspaceType.SXWU || type == WorkspaceType.DEFAULT);
 	}
 
 	// 根据工作空间的数据类型默认发布超图规范的REST服务
@@ -907,8 +929,11 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				if (releaseResult) {
 					serverReleaseSetting();
 					long totalTime = (new Date().getTime()) - startTime.getTime(); // 单位毫秒
-					Application.getActiveApplication().getOutput().output(
-							MessageFormat.format(NetServicesProperties.getString("String_iServer_Message_ReleaseSuccess"), String.valueOf(totalTime / 1000)));
+					Application
+							.getActiveApplication()
+							.getOutput()
+							.output(MessageFormat.format(NetServicesProperties.getString("String_iServer_Message_ReleaseSuccess"),
+									String.valueOf(totalTime / 1000)));
 					Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_Message_ReleaseSuccessResult"));
 
 					ArrayList<String> resultServers = getResultServers(this.serverRelease.getResultURL());
