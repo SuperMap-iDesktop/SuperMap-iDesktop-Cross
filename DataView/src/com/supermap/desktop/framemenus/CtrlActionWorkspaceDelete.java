@@ -12,6 +12,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionWorkspaceDelete extends CtrlAction {
 
@@ -32,7 +33,7 @@ public class CtrlActionWorkspaceDelete extends CtrlAction {
 				info.setServer(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
 				info.setType(Application.getActiveApplication().getWorkspace().getConnectionInfo().getType());
 				info.setUser(Application.getActiveApplication().getWorkspace().getConnectionInfo().getUser());
-				CommonToolkit.WorkspaceWrap.closeWorkspace();
+				WorkspaceUtilties.closeWorkspace();
 				boolean result = Workspace.deleteWorkspace(info);
 				String resultInfo = "";
 				if (result) {

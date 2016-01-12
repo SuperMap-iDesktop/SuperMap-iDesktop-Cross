@@ -46,6 +46,8 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.docking.TabWindow;
+import com.supermap.desktop.utilties.DatasourceUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 import com.supermap.layout.MapLayout;
 import com.supermap.mapping.Map;
 import com.supermap.realspace.Scene;
@@ -142,8 +144,8 @@ public class FormBase extends JFrame implements IFormMain {
 			this.loadFrameMenu(workEnvironment);
 
 			// 初始化最近文件列表
-			CommonToolkit.WorkspaceWrap.initRecentFileMenu();
-			CommonToolkit.DatasourceWrap.initRecentFileMenu();
+			WorkspaceUtilties.initRecentFileMenu();
+			DatasourceUtilties.initRecentFileMenu();
 
 			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
 			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
@@ -290,11 +292,11 @@ public class FormBase extends JFrame implements IFormMain {
 							}
 							// 关闭当前工作空间
 							WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-							CommonToolkit.WorkspaceWrap.openWorkspace(connectionInfo, false);
+							WorkspaceUtilties.openWorkspace(connectionInfo, false);
 						}
 						// 打开数据源类型的文件
 						if (datasourceType == getFileType(file)) {
-							CommonToolkit.DatasourceWrap.openFileDatasource(file.getAbsolutePath(), null, true);
+							DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, true);
 						}
 					}
 					dtde.dropComplete(true);// 指示拖拽操作已完成
@@ -303,7 +305,7 @@ public class FormBase extends JFrame implements IFormMain {
 					DataFlavor[] dataFlavors = dtde.getCurrentDataFlavors();
 					for (int i = 0; i < dataFlavors.length; i++) {
 						// 拖拽的类型为空或者拖拽的源数据不为空时才能拖拽
-						if (null != dataFlavors[i]&&null != transferable.getTransferData(dataFlavors[i])) {
+						if (null != dataFlavors[i] && null != transferable.getTransferData(dataFlavors[i])) {
 							Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 							if (0 < datasets.length) {
 								MapViewUtilties.addDatasetsToNewWindow(datasets, true);

@@ -47,6 +47,7 @@ public class JsonKey {
 		public static final String WORKSPACECONNECTIONINFO = "workspaceConnectionInfo";
 		public static final String SERVICESTYPES = "servicesTypes";
 		public static final String ISDATAEDITABLE = "isDataEditable";
+		public static final String TRANSPORTATIONANALYSTSETTING = "transportationAnalystSetting";
 	}
 
 	public class GetToken {

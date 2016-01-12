@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 
@@ -50,7 +51,7 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 
 			if (!isCancel) {
 				JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-				JDialogWorkspaceSaveAs dialog = new JDialogWorkspaceSaveAs(parent, true,JDialogWorkspaceSaveAs.saveAsFile);
+				JDialogWorkspaceSaveAs dialog = new JDialogWorkspaceSaveAs(parent, true, JDialogWorkspaceSaveAs.saveAsFile);
 				dialogResult = dialog.showDialog();
 				if (dialogResult == DialogResult.OK || dialogResult == dialogResult.APPLY) {
 					if (info != null) {
@@ -58,9 +59,8 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 					} else {
 						WorkspaceConnectionInfo workspaceConnectionInfo = dialog.getWorkspaceConnectionInfo();
 						UICommonToolkit.getWorkspaceManager().getWorkspaceTree().updateUI();
-						if (workspaceConnectionInfo.getType() == WorkspaceType.SXWU
-								|| workspaceConnectionInfo.getType() == WorkspaceType.SMWU) {
-							CommonToolkit.WorkspaceWrap.addWorkspaceFileToRecentFile(workspaceConnectionInfo.getServer());
+						if (workspaceConnectionInfo.getType() == WorkspaceType.SXWU || workspaceConnectionInfo.getType() == WorkspaceType.SMWU) {
+							WorkspaceUtilties.addWorkspaceFileToRecentFile(workspaceConnectionInfo.getServer());
 						}
 					}
 				}

@@ -169,8 +169,10 @@ public class UICommonToolkit {
 	/**
 	 * 判断名称是否合法
 	 * 
-	 * @param name 要判断的名字
-	 * @param isAllowSpace 是否允许空格
+	 * @param name
+	 *            要判断的名字
+	 * @param isAllowSpace
+	 *            是否允许空格
 	 * @return
 	 */
 	public static boolean isLawName(String name, boolean isAllowSpace) {
@@ -229,6 +231,22 @@ public class UICommonToolkit {
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
 			result = JOptionPane.showConfirmDialog((java.awt.Component) parent, message, CoreProperties.getString("String_MessageBox_Title"),
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return result;
+	}
+
+	/**
+	 * @param message
+	 * @param title
+	 * @return 0 -- 是；1 -- 否；-1 -- 直接关闭。
+	 */
+	public static int showConfirmDialog(String message, String title) {
+		int result = 0;
+		try {
+			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+			result = JOptionPane.showConfirmDialog((java.awt.Component) parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

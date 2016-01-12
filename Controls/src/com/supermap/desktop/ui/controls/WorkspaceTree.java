@@ -106,7 +106,9 @@ import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -280,9 +282,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
-	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
-			EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
-	
+	private EngineType[] UN_SUPPORT_TYPE = new EngineType[] { EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
+			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD };
+
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
@@ -588,7 +590,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	/**
 	 * 刷新指定节点
 	 *
-	 * @param node 指定节点
+	 * @param node
+	 *            指定节点
 	 */
 	public void refreshNode(DefaultMutableTreeNode node) {
 		Object userObject = node.getUserObject();
@@ -1318,10 +1321,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	 * @param datasourceNode
 	 */
 	private DefaultMutableTreeNode addDataset(Dataset dataset, DefaultMutableTreeNode datasourceNode) {
-//		if (dataset instanceof DatasetVolume) {
-//			// 暂不支持的数据集类型
-//			return null;
-//		}
+		// if (dataset instanceof DatasetVolume) {
+		// // 暂不支持的数据集类型
+		// return null;
+		// }
 		DefaultMutableTreeNode datasetNode;
 		TreeNodeData datasetNodeData;
 
@@ -1493,7 +1496,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				TreeNodeData currentNodeData = (TreeNodeData) userObject;
 				Object data = currentNodeData.getData();
 				if (data instanceof Workspace) {
-					CommonToolkit.WorkspaceWrap.closeWorkspace();
+					WorkspaceUtilties.closeWorkspace();
 				} else if (data instanceof Datasource) {
 					try {
 						String message = MessageFormat.format(ControlsProperties.getString("String_CloseDatasourseInfo"), Application.getActiveApplication()
@@ -2239,11 +2242,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 									}
 									// 关闭当前工作空间
 									WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-									CommonToolkit.WorkspaceWrap.openWorkspace(connectionInfo, false);
+									WorkspaceUtilties.openWorkspace(connectionInfo, false);
 								}
 								// 打开数据源类型的文件
 								if (datasourceType == getFileType(file)) {
-									CommonToolkit.DatasourceWrap.openFileDatasource(file.getAbsolutePath(), null, true);
+									DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, true);
 								}
 							}
 							dtde.dropComplete(true);// 指示拖拽操作已完成

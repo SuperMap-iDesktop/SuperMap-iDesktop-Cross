@@ -5,6 +5,7 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionWorkspaceClose extends CtrlAction {
 
@@ -16,7 +17,7 @@ public class CtrlActionWorkspaceClose extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			CommonToolkit.WorkspaceWrap.closeWorkspace();
+			WorkspaceUtilties.closeWorkspace();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
