@@ -62,7 +62,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 				Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
 				JFrame frame = (JFrame) Application.getActiveApplication().getMainFrame();
 				DatasetChooserDataEditor dataSetChooser = new DatasetChooserDataEditor(frame, datasource, true);
-				dataSetChooser.setVisible(true);
+				dataSetChooser = null;
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

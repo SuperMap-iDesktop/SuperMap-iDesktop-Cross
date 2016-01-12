@@ -42,7 +42,6 @@ import com.supermap.data.DatasetRenamedListener;
 import com.supermap.data.DatasetTopology;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-//import com.supermap.data.DatasetVolume;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceAliasModifiedEvent;
@@ -115,9 +114,9 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -145,6 +144,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+
+//import com.supermap.data.DatasetVolume;
 
 public class WorkspaceTree extends JTree implements IDisposable {
 
@@ -2027,6 +2028,23 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			}
 		}
 		return dataset;
+	}
+
+	public void setSelectedDatasource(Datasource datasource) {
+		this.clearSelection();
+		DefaultTreeModel treeModel = (DefaultTreeModel) this.getModel();
+		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+		for (int i = 0; i < datasourceTreeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+			Datasource nodeDatasource = (Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData();
+			if (nodeDatasource == datasource) {
+				TreePath path = new TreePath(childDatasourceTreeNode.getPath());
+				this.scrollPathToVisible(path);
+				this.setSelectionPath(path);
+				break;
+			}
+		}
 	}
 
 	/**

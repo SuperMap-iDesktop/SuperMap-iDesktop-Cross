@@ -17,14 +17,12 @@ import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -447,13 +445,17 @@ public class JDialogTopoPreProgress extends SmDialog {
 		if (0 < Application.getActiveApplication().getActiveDatasources().length) {
 			datasource = Application.getActiveApplication().getActiveDatasources()[0];
 		}
+		DatasetType[] datasetTypes = new DatasetType[]{
+				DatasetType.POINT, DatasetType.LINE, DatasetType.REGION
+		};
 		String[] datasetType = new String[4];
 		datasetType[DatasetType_All] = CommonProperties.getString("String_DatasetType_All");
 		datasetType[DatasetType_Point] = CommonProperties.getString("String_DatasetType_Point");
 		datasetType[DatasetType_Line] = CommonProperties.getString("String_DatasetType_Line");
 		datasetType[DatasetType_Region] = CommonProperties.getString("String_DatasetType_Region");
-		DatasetChooserDataTopo chooser = new DatasetChooserDataTopo(this, true, datasource, table, datasetType);
-		chooser.setVisible(true);
+		DatasetChooserDataTopo chooser = new DatasetChooserDataTopo(this, true, datasource, table, datasetTypes);
+		chooser = null;
+//		chooser.setVisible(true);
 	}
 
 	public JTextField getTextFieldTolerance() {
