@@ -17,6 +17,7 @@ import javax.swing.event.EventListenerList;
 import org.apache.http.HttpStatus;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 public class HttpPostFile {
@@ -67,7 +68,7 @@ public class HttpPostFile {
 		try {
 			long totalSize = file.length();
 			if (StringUtilties.isNullOrEmpty(this.fileName)) {
-				this.fileName = file.getName().split(".")[0];
+				this.fileName = FileUtilties.getFileNameWithoutExtension(file);
 			}
 
 			StringBuilder prePostData = new StringBuilder();

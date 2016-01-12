@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.http.TruncatedChunkException;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
@@ -37,17 +39,18 @@ public class Compressor {
 	private File srcFile;
 	private long totalSize = 0;
 	private long compressedSize = 0;
+	private int totalFileEntry = 0; // 待压缩项的文件总数
+	private int currentFileEntry = 0; // 当前正在压缩的文件项
 	private boolean isCancel = false;
 
 	// @formatter:off
 	/**
-	 * 是否自定义结果名，主要对源文件是目录的情况生效。
-	 * 如果源文件是目录，那么该字段值不同会有以下结果：
-	 * 1.	值为 false，则压缩包以源文件目录名作为结果文件名，内部层级与源文件目录一致。
-	 * 2.	值为 true，则压缩包使用自定义文件名，内部层级的根为源文件目录，再往下与源文件目录一致。
+	 * 是否将源文件目录的根目录作为压缩包的第一级
+	 * 1.	值为 false，则压缩包没有第一级结构，解压之后的目录结构与源文件夹目录结构一致。
+	 * 2.	值为 true，则压缩包使用源文件目录的根目录作为第一级结构，解压之后的目录中只有一个目录，目录名与源文件目录的根目录一致。
 	 */
 	// @formatter:on
-	private boolean isCustomDesName = false;
+	private boolean isRootAsTopEntity = true;
 	/**
 	 * 待压缩的文件。如果 srcFile 是目录，那么该目录下的文件支持选择压缩一部分。
 	 */
@@ -60,7 +63,20 @@ public class Compressor {
 	 *            保存压缩结果的目录
 	 */
 	public Compressor(String srcFile, String desDir) {
-		this(srcFile, desDir, new ArrayList<File>());
+		this(srcFile, desDir, true);
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param isRootAsTopEntity
+	 *            是否使用源文件目录结构根目录作为压缩包的第一级
+	 */
+	public Compressor(String srcFile, String desDir, boolean isRootAsTopEntity) {
+		// 最后一个参数传递 null 会与 Compressor(String srcFile, String desDir, String desName , boolean isRootAsTopEntity) 冲突
+		this(srcFile, desDir, new ArrayList<File>(), isRootAsTopEntity);
 	}
 
 	/**
@@ -72,8 +88,23 @@ public class Compressor {
 	 *            指定需要压缩的文件
 	 */
 	public Compressor(String srcFile, String desDir, ArrayList<File> files) {
+		this(srcFile, desDir, files, true);
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param files
+	 *            指定需要压缩的文件
+	 * @param isRootAsTopEntity
+	 *            是否使用源文件目录结构根目录作为压缩包的第一级
+	 */
+	public Compressor(String srcFile, String desDir, ArrayList<File> files, boolean isRootAsTopEntity) {
 		this.srcFile = new File(srcFile);
 		this.desDir = desDir;
+		this.isRootAsTopEntity = isRootAsTopEntity;
 		getDesName();
 		initializeCompressFiles(files);
 	}
@@ -87,7 +118,21 @@ public class Compressor {
 	 *            压缩包文件名
 	 */
 	public Compressor(String srcFile, String desDir, String desName) {
-		this(srcFile, desDir, desName, null);
+		this(srcFile, desDir, desName, true);
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param desName
+	 *            压缩包文件名
+	 * @param isRootAsTopEntity
+	 *            是否使用源文件目录结构根目录作为压缩包的第一级
+	 */
+	public Compressor(String srcFile, String desDir, String desName, boolean isRootAsTopEntity) {
+		this(srcFile, desDir, desName, null, isRootAsTopEntity);
 	}
 
 	/**
@@ -101,8 +146,25 @@ public class Compressor {
 	 *            指定将要压缩的文件
 	 */
 	public Compressor(String srcFile, String desDir, String desName, ArrayList<File> files) {
+		this(srcFile, desDir, desName, files, true);
+	}
+
+	/**
+	 * @param srcFile
+	 *            需要压缩的源文件或者源文件夹
+	 * @param desDir
+	 *            保存压缩结果的目录
+	 * @param desName
+	 *            压缩包文件名
+	 * @param files
+	 *            指定将要压缩的文件
+	 * @param isRootAsTopEntity
+	 *            是否使用源文件目录结构根目录作为压缩包的第一级
+	 */
+	public Compressor(String srcFile, String desDir, String desName, ArrayList<File> files, boolean isRootAsTopEntity) {
 		this.srcFile = new File(srcFile);
 		this.desDir = desDir;
+		this.isRootAsTopEntity = isRootAsTopEntity;
 
 		if (StringUtilties.isNullOrEmpty(desName)) {
 			getDesName();
@@ -114,8 +176,6 @@ public class Compressor {
 			} else {
 				this.desName = MessageFormat.format(ZIP_NAME_FORMAT, desName, ".");
 			}
-
-			this.isCustomDesName = true;
 		}
 		initializeCompressFiles(files);
 	}
@@ -125,7 +185,7 @@ public class Compressor {
 	 * 
 	 * @throws IOException
 	 */
-	public void compress() throws IOException {
+	public String compress() throws IOException {
 		ZipArchiveOutputStream zipArchiveOutputStream = null;
 		String desFile = this.desDir + File.separator + this.desName;
 
@@ -135,8 +195,8 @@ public class Compressor {
 					new File(desFile)));
 
 			String entryName = "";
-			if (this.srcFile.isDirectory() && !this.isCustomDesName) {
-				// 源文件为目录，且非自定义结果文件名，则压缩包以源文件目录名作为结果文件名，内部层级与源文件目录一致。
+			if (this.srcFile.isDirectory() && !this.isRootAsTopEntity) {
+				// 源文件为目录，且不使用源文件目录的根目录作为压缩包的第一级
 				entryName = "";
 			} else {
 				entryName = this.srcFile.getName() + File.separator;
@@ -150,11 +210,13 @@ public class Compressor {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+			desFile = "";
 		} finally {
 			zipArchiveOutputStream.close();
 			this.isCancel = false;
 			this.compressedSize = 0;
 		}
+		return desFile;
 	}
 
 	public void addCompressingListener(CompressListener listener) {
@@ -246,13 +308,14 @@ public class Compressor {
 
 					compressedSize += readSize;
 					CompressEvent event = new CompressEvent(this, new FileSize(this.totalSize, FileSizeType.BYTE), new FileSize(compressedSize,
-							FileSizeType.BYTE));
+							FileSizeType.BYTE), this.currentFileEntry + 1, this.totalFileEntry);
 					fireCompressing(event);
 				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			this.currentFileEntry++;
 			zipArchiveOutputStream.closeArchiveEntry();
 			fileInputStream.close();
 		}
@@ -304,6 +367,31 @@ public class Compressor {
 		}
 
 		computeTotalSize();
+		computeTotalFileEntryCount();
+	}
+
+	/**
+	 * 计算带压缩的文件总数（所有单个文件）
+	 */
+	private void computeTotalFileEntryCount() {
+		for (int i = 0; i < this.files.size(); i++) {
+			this.totalFileEntry += getFileEntryCount(this.files.get(i));
+		}
+	}
+
+	private int getFileEntryCount(File file) {
+		int result = 0;
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				File[] childFiles = file.listFiles();
+				for (int i = 0; i < childFiles.length; i++) {
+					result += getFileEntryCount(childFiles[i]);
+				}
+			} else {
+				result = 1;
+			}
+		}
+		return result;
 	}
 
 	/**
