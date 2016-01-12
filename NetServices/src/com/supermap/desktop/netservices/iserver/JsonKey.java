@@ -45,9 +45,9 @@ public class JsonKey {
 
 	public class ReleasePostBody {
 		public static final String WORKSPACECONNECTIONINFO = "workspaceConnectionInfo";
-		public static final String SERVICESTYPES = "servicesTypes";
-		public static final String ISDATAEDITABLE = "isDataEditable";
-		public static final String TRANSPORTATIONANALYSTSETTING = "transportationAnalystSetting";
+		public static final String SERVICES_TYPES = "servicesTypes";
+		public static final String IS_DATA_EDITABLE = "isDataEditable";
+		public static final String TRANSPORTATION_ANALYST_SETTING = "transportationAnalystSetting";
 	}
 
 	public class GetToken {
@@ -55,5 +55,22 @@ public class JsonKey {
 		public static final String PASSWORD = "password";
 		public static final String CLIENTTYPE = "clientType";
 		public static final String EXPIRATION = "expiration";
+	}
+
+	public class TransportationAnalystSetting {
+		public static final String WEIGHTFIELDINFOS = "weightFieldInfos";
+		public static final String WORKSPACE_CONNECTSTRING = "workspaceConnectString";
+		public static final String DATASOURCE_NAME = "datasourceName";
+		public static final String DATASET_NAME = "datasetName";
+		public static final String NODEID_FIELD = "nodeIDField";
+		public static final String EDGEID_FIELD = "edgeIDField";
+		public static final String FROMNODEID_FIELD = "fromNodeIDField";
+		public static final String TONODEID_FIELD = "toNodeIDField";
+	}
+
+	public class WeightFieldInfos {
+		public static final String NAME = "name";
+		public static final String FORWARD_WEIGHTFIELD = "forwardWeightField";
+		public static final String BACK_WEIGHTFIELD = "backWeightField";
 	}
 }
