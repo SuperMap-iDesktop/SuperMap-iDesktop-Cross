@@ -1,5 +1,6 @@
 package com.supermap.desktop.Action;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
@@ -8,16 +9,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
+
+import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
 import com.supermap.data.Datasource;
+import com.supermap.data.PixelFormat;
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -27,9 +33,9 @@ import com.supermap.ui.MapControl;
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	TransparentBackground transparentBackground;
 	MapControl mapControl;
-	private final int DEFUALT_WIGHT = 200;
+	private final int DEFUALT_WIGHT = 240;
 	private final int DEFUALT_HEIGHT = 150;
-	private IFormMap formMap ;
+	private IFormMap formMap;
 
 	private void hideTransparentBackground() {
 		transparentBackground.setVisible(false);
@@ -61,7 +67,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		super(caller, formClass);
 
 	}
-
 
 	@Override
 	public void run() {
@@ -109,15 +114,15 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		String currentDataset = transparentBackground.getjLabelDataset().getText();
 		String currentPointX = transparentBackground.getjLabelPointX().getText();
 		String currentPointY = transparentBackground.getjLabelPointY().getText();
-		String currentRowOfGrid = transparentBackground.getjLabelRowOfGrid().getText();
-		String currentColumnOfGrid = transparentBackground.getjLabelColumnOfGrid().getText();
-		String currentGridValue = transparentBackground.getjLabelGridValue().getText();
+		String currentRow = "";
+		String currentColumn = "";
+		String currentValue = "";
 		Dataset dataset = null;
 		// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
 		for (int i = 0; i < layers.getCount(); i++) {
 			Layer layer = layers.get(i);
 			Dataset tempDataset = layer.getDataset();
-			if (tempDataset instanceof DatasetGrid && layer.getBounds().contains(point2D)) {
+			if ((tempDataset instanceof DatasetGrid || tempDataset instanceof DatasetImage) && layer.getBounds().contains(point2D)) {
 				dataset = tempDataset;
 			}
 
@@ -126,23 +131,53 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		String pointY = format.format(point2D.getY());
 		if (null != dataset) {
 			Datasource datasource = dataset.getDatasource();
-			Point grid = ((DatasetGrid) dataset).xyToGrid(point2D);
-			int row = (int) grid.getX();
-			int column = (int) grid.getY();
 			currentDatasource = getTargetString(currentDatasource, datasource.getAlias());
 			currentDataset = getTargetString(currentDataset, dataset.getName());
 			currentPointX = getTargetString(currentPointX, pointX);
 			currentPointY = getTargetString(currentPointY, pointY);
-			currentRowOfGrid = getTargetString(currentRowOfGrid, Integer.toString(row));
-			currentColumnOfGrid = getTargetString(currentColumnOfGrid, Integer.toString(column));
-			currentGridValue = getTargetString(currentGridValue, String.valueOf((int) ((DatasetGrid) dataset).getValue(row, column)));
+			if (dataset instanceof DatasetGrid) {
+				Point grid = ((DatasetGrid) dataset).xyToGrid(point2D);
+				int row = (int) grid.getX();
+				int column = (int) grid.getY();
+				currentRow = SpatialAnalystProperties.getString("String_QueryGridValue_Row").replace("{0}", String.valueOf(row));
+				currentColumn = SpatialAnalystProperties.getString("String_QueryGridValue_Collunm").replace("{0}", String.valueOf(column));
+				currentValue = SpatialAnalystProperties.getString("String_QueryGridValue_GridValue").replace("{0}",
+						String.valueOf((int) ((DatasetGrid) dataset).getValue(row, column)));
+			} else {
+				Point grid = ((DatasetImage) dataset).xyToImage(point2D);
+				int row = (int) grid.getY();
+				int column = (int) grid.getX();
+				currentRow = SpatialAnalystProperties.getString("String_QueryImageColor_Row").replace("{0}", String.valueOf(row));
+				currentColumn = SpatialAnalystProperties.getString("String_QueryImageColor_Column").replace("{0}", String.valueOf(column));
+				DatasetImage datasetImage = ((DatasetImage) dataset);
+				PixelFormat firstBandPixel = datasetImage.getPixelFormat(0);
+				if (firstBandPixel == PixelFormat.RGB || firstBandPixel == PixelFormat.RGBA) {
+					for (int i = 0; i < datasetImage.getBandCount(); i++)
+					{
+						int argb = (int) datasetImage.getValue(column, row, 0);
+						int[] argbs = new int[4];
+						argbs[0] = argb >> 24 & 0xFF;
+						argbs[1] = argb >> 16 & 0xFF;
+						argbs[2] = argb >> 8 & 0xFF;
+						argbs[3] = argb & 0xFF;
+						currentValue = SpatialAnalystProperties.getString("String_QueryImageBandColor").replace("{0}",
+								"[A=" + argbs[0] + ", R=" + argbs[1] + ", G=" + argbs[2] + ", B=" + argbs[3] + "]");
+					}
+				} else {
+					for (int i = 0; i < datasetImage.getBandCount(); i++)
+					{
+						currentValue = SpatialAnalystProperties.getString("String_QueryImageBandColor").replace("{0}",
+								String.valueOf((int) datasetImage.getValue(row, column, i)));
+					}
+				}
+			}
 			transparentBackground.getjLabelDatasource().setText(currentDatasource);
 			transparentBackground.getjLabelDataset().setText(currentDataset);
 			transparentBackground.getjLabelPointX().setText(currentPointX);
 			transparentBackground.getjLabelPointY().setText(currentPointY);
-			transparentBackground.getjLabelRowOfGrid().setText(currentRowOfGrid);
-			transparentBackground.getjLabelColumnOfGrid().setText(currentColumnOfGrid);
-			transparentBackground.getjLabelGridValue().setText(currentGridValue);
+			transparentBackground.getjLabelRowOfGrid().setText(currentRow);
+			transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
+			transparentBackground.getjLabelGridValue().setText(currentValue);
 			Dimension datasetDimension = transparentBackground.getjLabelDataset().getPreferredSize();
 			Dimension datasourceDimension = transparentBackground.getjLabelDatasource().getPreferredSize();
 			Dimension maxDimension = new Dimension();
@@ -163,16 +198,16 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			currentDataset = getTargetString(currentDataset, "-");
 			currentPointX = getTargetString(currentPointX, pointX);
 			currentPointY = getTargetString(currentPointY, pointY);
-			currentRowOfGrid = getTargetString(currentRowOfGrid, "-");
-			currentColumnOfGrid = getTargetString(currentColumnOfGrid, "-");
-			currentGridValue = getTargetString(currentGridValue, "-");
+			currentRow = SpatialAnalystProperties.getString("String_QueryGridValue_Row").replace("{0}", "-");
+			currentColumn = SpatialAnalystProperties.getString("String_QueryGridValue_Collunm").replace("{0}", "-");
+			currentValue = SpatialAnalystProperties.getString("String_QueryGridValue_GridValue").replace("{0}", "-");
 			transparentBackground.getjLabelDatasource().setText(currentDatasource);
 			transparentBackground.getjLabelDataset().setText(currentDataset);
 			transparentBackground.getjLabelPointX().setText(currentPointX);
 			transparentBackground.getjLabelPointY().setText(currentPointY);
-			transparentBackground.getjLabelRowOfGrid().setText(currentRowOfGrid);
-			transparentBackground.getjLabelColumnOfGrid().setText(currentColumnOfGrid);
-			transparentBackground.getjLabelGridValue().setText(currentGridValue);
+			transparentBackground.getjLabelRowOfGrid().setText(currentRow);
+			transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
+			transparentBackground.getjLabelGridValue().setText(currentValue);
 			transparentBackground.setSize(DEFUALT_WIGHT, DEFUALT_HEIGHT);
 			transparentBackground.repaint();
 		}
@@ -194,7 +229,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				for (int i = 0; i < map.getLayers().getCount(); i++) {
 					Layer layer = map.getLayers().get(i);
 					Dataset dataset = layer.getDataset();
-					if (dataset instanceof DatasetGrid) {
+					if (dataset instanceof DatasetGrid || dataset instanceof DatasetImage) {
 						enable = true;
 					}
 				}

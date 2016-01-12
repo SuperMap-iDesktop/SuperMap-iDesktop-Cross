@@ -7,6 +7,8 @@ import javax.swing.GroupLayout;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 
 public class TransparentBackground extends JPanel {
@@ -83,7 +85,7 @@ public class TransparentBackground extends JPanel {
 				);
 		setLayout(groupLayout);
 		setBackground(new Color(255, 255, 255, 220));
- }
+	}
 
 	public JLabel getjLabelDatasource() {
 		return jLabelDatasource;
