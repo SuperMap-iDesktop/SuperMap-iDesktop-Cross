@@ -6,38 +6,22 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.EncodeType;
 import com.supermap.data.EngineInfo;
 import com.supermap.data.EngineType;
-import com.supermap.data.ErrorInfo;
 import com.supermap.data.Geometry;
-import com.supermap.data.Toolkit;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceType;
-import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.event.SaveWorkspaceEvent;
-import com.supermap.desktop.event.SaveWorkspaceListener;
-import com.supermap.desktop.implement.SmMenu;
-import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
@@ -48,51 +32,17 @@ import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import javax.swing.*;
-
-import java.awt.*;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CommonToolkit {
 
 	private CommonToolkit() {
 		// 默认实现
-	}
-
-	public static class ApplicationWrap {
-		private ApplicationWrap() {
-			// 不提供构造函数
-		}
-
-		public static Datasource getActiveDatasource(boolean canWriteOnly) {
-			Datasource datasource = null;
-			try {
-				for (int index = 0; index < Application.getActiveApplication().getWorkspace().getDatasources().getCount(); index++) {
-					Datasource item = Application.getActiveApplication().getWorkspace().getDatasources().get(index);
-					if (!canWriteOnly || !item.isReadOnly()) {
-						datasource = item;
-						break;
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return datasource;
-		}
-
 	}
 
 	public static class AltitudeModeWrap {
@@ -828,276 +778,6 @@ public class CommonToolkit {
 		// {
 		// return (int)(Math.Round(opaqueRate / 100.0 * 255.0,
 		// MidpointRounding.AwayFromZero));
-		// }
-		// #endregion
-		//
-		// #region Function_Event
-		//
-		// #endregion
-		//
-		// #region Function_Private
-		//
-		// #endregion
-		//
-		// #region Event
-		//
-		// #endregion
-		//
-		// #region InterfaceMembers
-		//
-		// #endregion
-		//
-		// #region NestedTypes
-		//
-		// #endregion
-	}
-
-	public static class CtrlActionWrap {
-		private CtrlActionWrap() {
-			// 不提供构造函数
-		}
-
-		// #region Variable
-		//
-		// #endregion
-		//
-		// #region Property
-		// private static Keys[] keys;
-		// public static Keys[] AllKeys
-		// {
-		// get
-		// {
-		// if (keys == null)
-		// {
-		// List<Keys> keys = new List<Keys>();
-		// foreach (int i in Enum.getValues(typeof(Keys)))
-		// {
-		// keys.Add((Keys)i);
-		// }
-		// keys = keys.ToArray();
-		// }
-		// return keys;
-		// }
-		// }
-
-		/**
-		 * 根据具体参数构造CtrlAction
-		 *
-		 * @param xmlCommand
-		 * @param caller
-		 * @param formClass
-		 * @return
-		 */
-		public static ICtrlAction getCtrlAction(XMLCommand xmlCommand, IBaseItem caller, IForm formClass) {
-			ICtrlAction ctrlAction = null;
-			try {
-				// 这里先临时处理一下文件名
-				String[] names = xmlCommand.getPluginInfo().getBundleName().split("/");
-				String fileName = names[names.length - 1];
-				fileName = fileName.replaceAll(".dll", "");
-				fileName = fileName.replaceAll(".jar", "");
-
-				Class<?> ctrlActionClass = Application.getActiveApplication().getPluginManager()
-						.getBundleClass(fileName.toLowerCase(), xmlCommand.getCtrlActionClass());
-
-				if (ctrlActionClass != null) {
-					Class[] paramTypes = { IBaseItem.class, IForm.class };
-					Object[] params = { caller, formClass }; // 方法传入的参数
-					Constructor<?> constructor = ctrlActionClass.getConstructor(paramTypes);
-					ctrlAction = (ICtrlAction) constructor.newInstance(params);
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-				Application.getActiveApplication().getOutput().output(xmlCommand.getPluginInfo().getBundleName() + "&" + xmlCommand.getCtrlActionClass());
-			}
-			return ctrlAction;
-		}
-		//
-		// #region Function_Public
-		// /// <summary>
-		// /// 读取XML节点构造CtrlAction
-		// /// </summary>
-		// public static ICtrlAction getCtrlAction(XmlNode itemNode, IBaseItem
-		// caller, IForm formClass)
-		// {
-		// ICtrlAction ctrlAction = null;
-		//
-		// try
-		// {
-		// String className = _XMLTag.g_Empty;
-		// String assemblyName = _XMLTag.g_Empty;
-		// String codeType = _XMLTag.g_Empty;
-		// try
-		// {
-		// className = itemNode.Attributes[_XMLTag.g_OnAction].Value;
-		// }
-		// catch { }
-		// try
-		// {
-		// assemblyName =
-		// itemNode.Attributes[_XMLTag.g_AttributionAssemblyName].Value;
-		// }
-		// catch { }
-		// try
-		// {
-		// codeType = itemNode.Attributes[_XMLTag.g_AttributionCodeType].Value;
-		// }
-		// catch { }
-		// String code = itemNode.InnerText;
-		// if (className != _XMLTag.g_Empty)
-		// {
-		// ctrlAction = getCtrlAction(className, assemblyName, code, caller,
-		// formClass, codeType);
-		// }
-		// }catch (Exception ex) {
-		// Application.getActiveApplication().getOutput().output(ex);
-		// }
-		//
-		// return ctrlAction;
-		// }
-		//
-		// /// <summary>
-		// /// 根据具体参数构造CtrlAction
-		// /// </summary>
-		// public static ICtrlAction getCtrlAction(String className, String
-		// assemblyName, String code, IBaseItem caller, IForm formClass, String
-		// codeTypeString)
-		// {
-		// ICtrlAction ctrlAction = null;
-		// try
-		// {
-		// if (className != null && className.Equals(_XMLTag.g_ScriptCodeFlag))
-		// {
-		//
-		// //根据className属性确定是否为动态脚本
-		// //String code = itemNode.InnerText;
-		// CodeType codeType = CodeType.CSharp;
-		// if (codeTypeString.toLowerCase().Equals(_XMLTag.g_ValueCodeType_VB))
-		// {
-		// codeType = CodeType.VB;
-		// }
-		// ctrlAction =
-		// Application.getActiveApplication().Script.CompileCtrlActionCodeSnippet(codeType,
-		// code);
-		// }
-		// else if (className != null &&
-		// System.IO.File.Exists(CommonToolkit.PathWrap.getFullPathName(className)))
-		// {
-		//
-		// String extension = System.IO.Path.getExtension(className);
-		// CodeType codeType = CodeType.CSharp;
-		// if (extension.toLowerCase().Equals(CoreResources.String_VBExtension))
-		// {
-		// codeType = CodeType.VB;
-		// }
-		// ctrlAction =
-		// Application.getActiveApplication().Script.CompileCtrlActionClass(codeType,
-		// new String[] { CommonToolkit.PathWrap.getFullPathName(className) });
-		// }
-		// else
-		// {
-		// //根据类名在指定动态库里生成对象
-		// Assembly assembly = null;
-		//
-		// //查找一下是否已经加载进来了
-		// Assembly[] assemblys = AppDomain.CurrentDomain.getAssemblies();
-		// //非.net程序集的动态链接库没有元数据清单，因此虽然可以从当前AppDomain中知道它，但是无法读取
-		// //其中的字段、引用等信息，会抛异常，需要过滤
-		// foreach (Assembly a in assemblys)
-		// {
-		// if (!a.IsDynamic)
-		// {
-		// assembly = null;
-		// if (assemblyName.Length != 0 &&
-		// a.FullName.toLowerCase().IndexOf(assemblyName.toLowerCase()) == 0 ||
-		// a.Location.toLowerCase().Equals(assemblyName.toLowerCase()))
-		// {
-		// assembly = a;
-		// break;
-		// }
-		// }
-		// }
-		//
-		// //如果没有加载，加载一下
-		// if (assembly == null && assemblyName != null && assemblyName.Length
-		// != 0)
-		// {
-		// assemblyName = CommonToolkit.PathWrap.getFullPathName(assemblyName);
-		// assembly = System.Reflection.Assembly.LoadFrom(assemblyName);
-		// }
-		//
-		// String exceptionMessage = String.Empty;
-		// try
-		// {
-		// Type type = assembly.getType(className);
-		// if (type != null)
-		// {
-		// ConstructorInfo constructor = type.getConstructor(new Type[] {
-		// typeof(IBaseItem), typeof(IForm) });
-		// if (constructor != null)
-		// {
-		// ctrlAction = constructor.Invoke(new object[] { caller, formClass })
-		// as ICtrlAction;
-		// }
-		// }
-		// }
-		// catch (Exception ex)
-		// {
-		// exceptionMessage = ex.StackTrace;
-		// }
-		//
-		// try
-		// {
-		// if (ctrlAction == null)
-		// {
-		// exceptionMessage = String.Empty;
-		// ctrlAction = assembly.CreateInstance(className) as ICtrlAction;
-		// }
-		// }
-		// catch (Exception ex)
-		// {
-		// exceptionMessage = ex.StackTrace;
-		// }
-		//
-		// if (exceptionMessage.Length != 0)
-		// {
-		// Application.getActiveApplication().Output.Output(exceptionMessage,
-		// InfoType.Exception);
-		// }
-		//
-		// if (ctrlAction == null && Application.getActiveApplication().Output
-		// != null)
-		// {
-		// Application.getActiveApplication().Output.Output("_CtrlActionNotImplemented");
-		// }
-		// }
-		// }catch (Exception ex) {
-		// Application.getActiveApplication().getOutput().output(ex);
-		// }
-		// return ctrlAction;
-		// }
-		//
-		// public static System.Windows.Forms.Keys getKeysByName(String name)
-		// {
-		// Keys result = Keys.None;
-		// if
-		// (name.toLowerCase().Equals(CoreResources.String_ShortCut_Ctrl.toLowerCase()))
-		// {
-		// result = Keys.Control;
-		// }
-		// else
-		// {
-		// foreach (Keys key in AllKeys)
-		// {
-		// if (key.ToString().Equals(name))
-		// {
-		// result = key;
-		// break;
-		// }
-		// }
-		// }
-		//
-		// return result;
 		// }
 		// #endregion
 		//

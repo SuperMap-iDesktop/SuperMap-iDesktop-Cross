@@ -1,19 +1,13 @@
 package com.supermap.desktop.ui.controls;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.xml.crypto.Data;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.properties.CommonProperties;
+
+import javax.swing.*;
 
 // @formatter:off
 /**

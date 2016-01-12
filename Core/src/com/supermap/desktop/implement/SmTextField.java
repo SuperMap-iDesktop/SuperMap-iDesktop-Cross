@@ -1,17 +1,17 @@
 package com.supermap.desktop.implement;
 
-import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.utilties.CtrlActionUtilties;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SmTextField extends JTextField implements IBaseItem {
 	private static final long serialVersionUID = 1L;
@@ -50,7 +50,7 @@ public class SmTextField extends JTextField implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CommonToolkit.CtrlActionWrap.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {
