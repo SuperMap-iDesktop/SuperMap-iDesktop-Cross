@@ -31,18 +31,18 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	private static final int DEFUALT_PROGRESSBAR_HEIGHT = 30;
 
 	private transient SwingWorker<Boolean, Object> worker = null;
-	private String message = "";
+	private String totalMessage = "";
 	private String remainTime = "";
-	private String recentTask = "";
+	private String currentMessage = "";
 	private int percent = 0;
 	private int totalPercent = 0;
 	private boolean isCancel = false;
 
 	private JProgressBar progressBar = null;
 	private JProgressBar totalProgress = null;
-	private JLabel labelMessage = null;
+	private JLabel labelTotalMessage = null;
 	private JLabel labelRemaintime = null;
-	private JLabel labelRecentTask = null;
+	private JLabel labelCurrentMessage = null;
 	private JButton buttonCancel = null;
 
 	public FormProgressTotal() {
@@ -55,9 +55,9 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 		progressBar.setStringPainted(true);
 		totalProgress = new JProgressBar();
 		totalProgress.setStringPainted(true);
-		labelMessage = new JLabel("...");
+		labelTotalMessage = new JLabel("...");
 		labelRemaintime = new JLabel("...");
-		labelRecentTask = new JLabel("...");
+		labelCurrentMessage = new JLabel("...");
 		buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
@@ -67,25 +67,23 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 
 		// @formatter:off
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(this.labelMessage, 420, 420, 420)
+				.addComponent(this.labelTotalMessage, 420, 420, 420)
 				.addComponent(this.progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 420)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.labelRecentTask,210,210,210)
-						.addComponent(this.labelRemaintime, 210, 210, 210)
-						)
+				.addComponent(this.labelCurrentMessage, 420, 420, 420)
 				.addComponent(this.totalProgress, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, 420)
 				.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(this.labelRemaintime, 210, 210, 210)
 						.addContainerGap(10, Short.MAX_VALUE)
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addComponent(this.labelMessage)
+				.addComponent(this.labelTotalMessage)
 				.addComponent(this.progressBar, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT)
-				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelRecentTask)
-						.addComponent(this.labelRemaintime))
+				.addComponent(this.labelCurrentMessage)
 				.addComponent(this.totalProgress, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT)
-				.addComponent(this.buttonCancel, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT));
+				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+						.addComponent(this.labelRemaintime)
+						.addComponent(this.buttonCancel, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT)));
 		// @formatter:on
 
 		buttonCancel.addActionListener(new ActionListener() {
@@ -164,16 +162,16 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	}
 
 	public String getMessage() {
-		return this.message;
+		return this.totalMessage;
 	}
 
 	public void setMessage(final String message) {
-		this.message = message;
+		this.totalMessage = message;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				labelMessage.setText(message);
+				labelTotalMessage.setText(message);
 			}
 		});
 	}
@@ -194,16 +192,16 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	}
 
 	public String getRecentTask() {
-		return this.recentTask;
+		return this.currentMessage;
 	}
 
 	public void setRecentTask(final String recentTask) {
-		this.recentTask = recentTask;
+		this.currentMessage = recentTask;
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
-				labelRecentTask.setText(recentTask);
+				labelCurrentMessage.setText(recentTask);
 			}
 		});
 	}
@@ -285,7 +283,7 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 		this.percent = percent;
 		this.totalPercent = totalPercent;
 		this.remainTime = remainTime;
-		this.message = message;
+		this.totalMessage = message;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -293,7 +291,7 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 				progressBar.setValue(percent);
 				totalProgress.setValue(totalPercent);
 				labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
-				labelMessage.setText(message);
+				labelTotalMessage.setText(message);
 			}
 		});
 
@@ -308,16 +306,16 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 
 		this.percent = percent;
 		this.totalPercent = totalPercent;
-		this.recentTask = recentTask;
-		this.message = message;
+		this.currentMessage = recentTask;
+		this.totalMessage = message;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				progressBar.setValue(percent);
 				totalProgress.setValue(totalPercent);
-				labelRecentTask.setText(recentTask);
-				labelMessage.setText(message);
+				labelCurrentMessage.setText(recentTask);
+				labelTotalMessage.setText(message);
 			}
 		});
 
