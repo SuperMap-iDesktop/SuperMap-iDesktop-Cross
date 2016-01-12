@@ -20,6 +20,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
@@ -47,7 +49,6 @@ public class ThemeGuideFactory {
 						.get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return dockbarThemeContainer;
@@ -61,7 +62,13 @@ public class ThemeGuideFactory {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
 				container.setPanel(panel);
 			}
+			panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
 
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					container.getButtonApply().setEnabled(true);
+				}
+			});
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

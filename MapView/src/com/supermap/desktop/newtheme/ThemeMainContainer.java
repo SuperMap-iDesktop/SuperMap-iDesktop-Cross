@@ -42,10 +42,11 @@ public class ThemeMainContainer extends JPanel {
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
 	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
-	
+	private LocalActionListener actionListener = new LocalActionListener();
+
 	private Layer newLayer;
 	private Layer oldLayer;
-	
+
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -101,28 +102,8 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
-		this.buttonApply.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (null!=panel) {
-					panel.refreshMapAndLayer();
-				}
-			}
-		});
-		this.checkBoxRefreshAtOnce.addItemListener(new ItemListener() {
-			
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				boolean selected = checkBoxRefreshAtOnce.isSelected();
-				panel.setRefreshAtOnce(selected);
-				if (selected) {
-					buttonApply.setEnabled(false);
-				}else {
-					buttonApply.setEnabled(true);
-				}
-			}
-		});
+		this.buttonApply.addActionListener(this.actionListener);
+		this.checkBoxRefreshAtOnce.addItemListener(this.itemListener);
 	}
 
 	/**
@@ -133,25 +114,18 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.removeMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().removeActiveFormChangedListener(this.activeFormChangedListener);
+		this.buttonApply.removeActionListener(this.actionListener);
+		this.checkBoxRefreshAtOnce.removeItemListener(this.itemListener);
 	}
 
 	class LocalActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == checkBoxRefreshAtOnce) {
-				
-			} else {
-				refreshMap();
+			if (null != panel) {
+				panel.refreshMapAndLayer();
+				buttonApply.setEnabled(false);
 			}
-		}
-
-		/**
-		 * 刷新地图
-		 */
-		private void refreshMap() {
-			map = ThemeGuideFactory.getMapControl().getMap();
-			map.refresh();
 		}
 	}
 
@@ -185,12 +159,20 @@ public class ThemeMainContainer extends JPanel {
 	class LocalItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
+			if (e.getStateChange() == ItemEvent.SELECTED && e.getSource() == comboBoxThemeLayer) {
 				String layerCaption = (String) comboBoxThemeLayer.getSelectedItem();
 				if (null != ThemeGuideFactory.getMapControl()) {
 					map = ThemeGuideFactory.getMapControl().getMap();
 					Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
 					refreshThemeMainContainer(layer);
+				}
+			} else {
+				boolean selected = checkBoxRefreshAtOnce.isSelected();
+				panel.setRefreshAtOnce(selected);
+				if (selected) {
+					buttonApply.setEnabled(false);
+				} else {
+					buttonApply.setEnabled(true);
 				}
 			}
 		}
@@ -291,8 +273,10 @@ public class ThemeMainContainer extends JPanel {
 			// 当地图中不存在图层时刷新专题图
 			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
 				updateThemeMainContainer();
-				panel.unregistActionListener();
 				ThemeGuideFactory.themeTypeContainer.clear();
+				if (null != panel) {
+					panel.unregistActionListener();
+				}
 			}
 			if (null == oldLayer || (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer))) {
 				isResetThemeMain = true;
@@ -331,7 +315,6 @@ public class ThemeMainContainer extends JPanel {
 		return layer;
 	}
 
-	
 	public ThemeChangePanel getPanel() {
 		return panel;
 	}
@@ -345,8 +328,15 @@ public class ThemeMainContainer extends JPanel {
 				remove(getComponent(i));
 			}
 		}
-		add(panel,new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0).setFill(GridBagConstraints.BOTH));
+		add(panel,
+				new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
+						.setFill(GridBagConstraints.BOTH));
 		repaint();
 		this.panel = panel;
 	}
+
+	public JButton getButtonApply() {
+		return buttonApply;
+	}
+
 }
