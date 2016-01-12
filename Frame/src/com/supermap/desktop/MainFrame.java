@@ -2,6 +2,7 @@ package com.supermap.desktop;
 
 import com.supermap.desktop.ui.FormBase;
 import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -52,7 +53,7 @@ public class MainFrame extends FormBase implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// nothing
- }
+	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
@@ -60,7 +61,7 @@ public class MainFrame extends FormBase implements WindowListener {
 		// 先把窗口关闭状态恢复成默认状态：收到关闭消息即退出
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		boolean result = CommonToolkit.WorkspaceWrap.closeWorkspace();
+		boolean result = WorkspaceUtilties.closeWorkspace();
 		if (!result) {
 			// 取消关闭操作
 			setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

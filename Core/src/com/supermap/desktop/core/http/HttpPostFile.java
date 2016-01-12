@@ -17,6 +17,8 @@ import javax.swing.event.EventListenerList;
 import org.apache.http.HttpStatus;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.FileSize;
+import com.supermap.desktop.core.FileSizeType;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -60,6 +62,10 @@ public class HttpPostFile {
 		this.boundary = boundary;
 	}
 
+	/**
+	 * @param file
+	 * @return
+	 */
 	public String post(File file) {
 		String result = "";
 		FileInputStream fileInputStream = null;
@@ -105,6 +111,13 @@ public class HttpPostFile {
 
 			// 写入数据
 			fileInputStream = new FileInputStream(file);
+
+			FileSize totalFileSize = new FileSize(totalSize, FileSizeType.BYTE);
+			// 每一个时间片的起点
+			// 将上传过程分为不同的时间片段，用来计算上传速度，剩余时间等
+			Date startTime = new Date();
+			long segment = 0;
+
 			while (uploadOffset < totalSize) {
 				if (this.isCancel) {
 					break;
@@ -113,13 +126,41 @@ public class HttpPostFile {
 				int realReadSize = fileInputStream.read(buffer, 0, BUFFER_SIZE);
 				outputStream.write(buffer, 0, realReadSize);
 				uploadOffset += realReadSize;
+				segment += realReadSize;
 				outputStream.flush();
+
+				Date currentDate = new Date();
+				if (currentDate.getTime() - startTime.getTime() > 1000) {
+					try {
+						FileSize uploadedFileSize = new FileSize(uploadOffset, FileSizeType.BYTE);
+						// 还剩下多少没有
+						FileSize restFileSize = new FileSize(totalSize - uploadOffset, FileSizeType.BYTE);
+						// 每一个时间片内传输的数据量
+						FileSize segmentFileSize = new FileSize(segment, FileSizeType.BYTE);
+						// 传输速度
+						FileSize speed = FileSize.divide(segmentFileSize, (currentDate.getTime() - startTime.getTime()) / 1000d);
+						// 剩余时间
+						int remainTime = new Double(FileSize.divide(restFileSize, speed)).intValue();
+
+						HttpPostEvent event = new HttpPostEvent(this, totalFileSize, uploadedFileSize, speed, remainTime);
+						fireHttpPost(event);
+
+						// 如果取消了，结束上传
+						if (event.isCancel()) {
+							this.isCancel = true;
+						}
+					} finally {
+						segment = 0;
+						startTime = new Date();
+					}
+				}
 			}
 			// 写入结束边界符
 			outputStream.writeBytes(endBoundary);
 			outputStream.flush();
 			// 关闭请求流
 			outputStream.close();
+			fireHttpPost(new HttpPostEvent(this, totalFileSize, totalFileSize, FileSize.ZERO, 0));
 
 			int responseCode = connection.getResponseCode();
 			if (responseCode == HttpStatus.SC_OK || responseCode == HttpStatus.SC_CREATED || responseCode == HttpStatus.SC_ACCEPTED) {

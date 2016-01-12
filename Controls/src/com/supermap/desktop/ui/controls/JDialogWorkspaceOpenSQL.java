@@ -8,9 +8,11 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +37,8 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	/**
 	 * 创建一个打开的配置窗口
 	 *
-	 * @param DataBase 数据库类型(SQL/Oracle)
+	 * @param DataBase
+	 *            数据库类型(SQL/Oracle)
 	 */
 	public JDialogWorkspaceOpenSQL(java.awt.Frame parent, boolean modal, String DataBase) {
 		super(parent, modal);
@@ -89,7 +92,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jButtonOpen.setPreferredSize(new java.awt.Dimension(75, 23));
 
 		// TODO Oracle或Sql Server实例列表初始化
-		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[]{}));
+		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
 		jComboBoxServer.setEditable(true);
 
 		jComboBoxServer.getEditor().getEditorComponent().addFocusListener(new FocusListener() {
@@ -181,7 +184,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 				}
 			}
 		});
-		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[]{""}));
+		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
 		jComboBoxWorkspaceName.setEditable(true);
 		jComboBoxWorkspaceName.getComponent(0).addMouseListener(new MouseAdapter() {
 			@Override
@@ -368,9 +371,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	}
 
 	/**
-	 * open按钮点击事件
-	 * <li>标记出不能为空的项目
-	 * <li>打开工作空间
+	 * open按钮点击事件 <li>标记出不能为空的项目 <li>打开工作空间
 	 */
 	private void jButtonOpenActionPerformed() {
 		int flag = 0;
@@ -412,7 +413,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			Workspace workspaceTemp = new Workspace();
 			boolean openResult = workspaceTemp.open(Info);
-			if (openResult && CommonToolkit.WorkspaceWrap.closeWorkspace()) {
+			if (openResult && WorkspaceUtilties.closeWorkspace()) {
 				Application.getActiveApplication().getWorkspace().open(Info);
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenWorkspaceSuccessful"));
 				DialogExit();

@@ -8,6 +8,8 @@ import java.util.Date;
 
 import javax.swing.event.EventListenerList;
 
+import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -21,6 +23,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
@@ -185,6 +188,13 @@ public class ServerRelease {
 
 		try {
 			if (!this.isCancel) {
+
+				// 校验用户名和密码是否正确
+				String token = getToken();
+				if (StringUtilties.isNullOrEmpty(token)) {
+					return false;
+				}
+
 				closeCurrentFileWorkspace();
 				if (this.hostType == HostType.REMOTE
 						&& (this.connectionInfo.getType() == WorkspaceType.DEFAULT || this.connectionInfo.getType() == WorkspaceType.SMW
@@ -204,7 +214,7 @@ public class ServerRelease {
 	}
 
 	public static void clearTmp() {
-		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.pathSeparator + "iServerZipCache", true));
+		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
 		FileUtilties.delete(zipCacheDirectory);
 	}
 
@@ -258,14 +268,14 @@ public class ServerRelease {
 
 	private String uploadTask(String uploadURL, File dataFile) {
 		String workspaceConnection = "";
+		HttpPostFile httpPostFile = null;
 
 		try {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_Uploading"));
 
-			String fileName = MessageFormat.format("{0}/{1}", this.SERVER_DATA_DIR, dataFile.getName());
-			HttpPostFile httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName,
-					getToken()));
-
+			String fileName = MessageFormat.format("{0}/{1}", SERVER_DATA_DIR, dataFile.getName());
+			httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName, getToken()));
+			httpPostFile.addHttpPostListener(this.httpPostListener);
 			String response = httpPostFile.post(dataFile);
 			if (!StringUtilties.isNullOrEmpty(response)) {
 				JSONObject responseJson = JSONObject.parseObject(response);
@@ -277,6 +287,10 @@ public class ServerRelease {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (httpPostFile != null) {
+				httpPostFile.removeHttpPostListener(this.httpPostListener);
+			}
 		}
 		return workspaceConnection;
 	}
@@ -284,9 +298,9 @@ public class ServerRelease {
 	private void httpPosting(HttpPostEvent e) {
 		int currentProgress = new Double(FileSize.divide(FileSize.multiply(e.getPostedSize(), 100), e.getTotalSize())).intValue();
 		int totalProgress = 50 + (int) (currentProgress * 0.49);
-		String currentSpeedString = MessageFormat.format(NetServicesProperties.getString("String_UploadSpeedUnit"), e.getSpeed());
+		String currentSpeedString = MessageFormat.format(NetServicesProperties.getString("String_UploadSpeedUnit"), e.getSpeed().ToStringClever());
 		String currentMessage = MessageFormat.format(NetServicesProperties.getString("String_UploadingInfo"), e.getPostedSize().ToStringClever(), e
-				.getTotalSize().ToStringClever(), currentSpeedString);
+				.getTotalSize().ToStringClever(), currentSpeedString, e.getRemainTime());
 		fireFunctionProgress(currentProgress, totalProgress, currentMessage, NetServicesProperties.getString("String_Uploading"));
 	}
 
@@ -437,28 +451,19 @@ public class ServerRelease {
 	}
 
 	private String getEntityBody() {
-		StringBuilder entityBody = new StringBuilder();
-		entityBody.append("{");
-		entityBody.append("\r\n");
-		entityBody.append(getWorkspaceConnectionString());
-		entityBody.append(",");
-		entityBody.append("\r\n");
-		entityBody.append(getServicesTypes());
+		JSONObject entityBody = new JSONObject();
+		entityBody.put(JsonKey.ReleasePostBody.WORKSPACECONNECTIONINFO, getWorkspaceConnectionString());
+		entityBody.put(JsonKey.ReleasePostBody.SERVICESTYPES, getServicesTypes());
+
 		if ((this.servicesType & ServiceType.RESTDATA) == ServiceType.RESTDATA || (this.servicesType & ServiceType.WFS100) == ServiceType.WFS100
 				|| (this.servicesType & ServiceType.WCS111) == ServiceType.WCS111 || (this.servicesType & ServiceType.WCS112) == ServiceType.WCS112) {
-			entityBody.append(",");
-			entityBody.append("\r\n");
-			entityBody.append(getIsDataEditable());
+			entityBody.put(JsonKey.ReleasePostBody.ISDATAEDITABLE, this.isEditable);
 		}
-		entityBody.append("\r\n");
-		entityBody.append("}");
-
 		return entityBody.toString();
 	}
 
 	private String getWorkspaceConnectionString() {
 		StringBuilder workspaceConnection = new StringBuilder();
-		workspaceConnection.append("\"workspaceConnectionInfo\":\"");
 		if (this.connectionInfo != null) {
 			if (this.connectionInfo.getType() == WorkspaceType.SMW || this.connectionInfo.getType() == WorkspaceType.SMWU
 					|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU) {
@@ -475,7 +480,6 @@ public class ServerRelease {
 					workspaceConnection.append(";");
 					workspaceConnection.append("password=" + this.connectionInfo.getPassword());
 				}
-				workspaceConnection.append("\"");
 			} else if (this.connectionInfo.getType() == WorkspaceType.ORACLE || this.connectionInfo.getType() == WorkspaceType.SQL) {
 				String server = this.connectionInfo.getServer().replace(File.separator, "/");
 				String workspaceType = "";
@@ -500,87 +504,59 @@ public class ServerRelease {
 				workspaceConnection.append("name=" + this.connectionInfo.getName());
 				workspaceConnection.append(";");
 				workspaceConnection.append("driver=" + driverBase);
-				workspaceConnection.append("\"");
 			}
 		}
 
 		return workspaceConnection.toString();
 	}
 
-	private String getServicesTypes() {
-		StringBuilder servicesTypes = new StringBuilder();
-		servicesTypes.append("\"servicesTypes\":[");
-		if ((this.servicesType & ServiceType.RESTDATA) == ServiceType.RESTDATA) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"RESTDATA\"");
-		}
-		if ((this.servicesType & ServiceType.RESTMAP) == ServiceType.RESTMAP) {
-			// 分两行追加只是为了让数据结构看起来更清晰
-			appendComma(servicesTypes);
-			servicesTypes.append("\"RESTMAP\"");
-		}
-		if ((this.servicesType & ServiceType.RESTREALSPACE) == ServiceType.RESTREALSPACE) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"RESTREALSPACE\"");
-		}
-		if ((this.servicesType & ServiceType.RESTSPATIALANALYST) == ServiceType.RESTSPATIALANALYST) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"RESTSPATIALANALYST\"");
-		}
-		if ((this.servicesType & ServiceType.RESTTRANSPORTATIONANALYST) == ServiceType.RESTTRANSPORTATIONANALYST) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"RESTTRANSPORTATIONANALYST\"");
-		}
-		if ((this.servicesType & ServiceType.WCS111) == ServiceType.WCS111) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WCS111\"");
-		}
-		if ((this.servicesType & ServiceType.WCS112) == ServiceType.WCS112) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WCS112\"");
-		}
-		if ((this.servicesType & ServiceType.WFS100) == ServiceType.WFS100) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WFS100\"");
-		}
-		if ((this.servicesType & ServiceType.WMS111) == ServiceType.WMS111) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WMS111\"");
-		}
-		if ((this.servicesType & ServiceType.WMS130) == ServiceType.WMS130) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WMS130\"");
-		}
-		if ((this.servicesType & ServiceType.WMTS100) == ServiceType.WMTS100) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WMTS100\"");
-		}
-		if ((this.servicesType & ServiceType.WMTSCHINA) == ServiceType.WMTSCHINA) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WMTSCHINA\"");
-		}
-		if ((this.servicesType & ServiceType.WPS100) == ServiceType.WPS100) {
-			appendComma(servicesTypes);
-			servicesTypes.append("\"WPS100\"");
-		}
-		servicesTypes.append("]");
+	private ArrayList<String> getServicesTypes() {
+		ArrayList<String> servicesTypes = new ArrayList<>();
 
-		return servicesTypes.toString();
-	}
-
-	// 拼凑请求体的时候是否需要逗号
-	private void appendComma(StringBuilder servicesTypes) {
-		if (servicesTypes != null && servicesTypes.length() > 0 && servicesTypes.charAt(servicesTypes.length() - 1) != '[') {
-			servicesTypes.append(",");
+		try {
+			if ((this.servicesType & ServiceType.RESTDATA) == ServiceType.RESTDATA) {
+				servicesTypes.add(JsonKey.RestType.RESTDATA);
+			}
+			if ((this.servicesType & ServiceType.RESTMAP) == ServiceType.RESTMAP) {
+				servicesTypes.add(JsonKey.RestType.RESTMAP);
+			}
+			if ((this.servicesType & ServiceType.RESTREALSPACE) == ServiceType.RESTREALSPACE) {
+				servicesTypes.add(JsonKey.RestType.RESTREALSPACE);
+			}
+			if ((this.servicesType & ServiceType.RESTSPATIALANALYST) == ServiceType.RESTSPATIALANALYST) {
+				servicesTypes.add(JsonKey.RestType.RESTSPATIALANALYST);
+			}
+			if ((this.servicesType & ServiceType.RESTTRANSPORTATIONANALYST) == ServiceType.RESTTRANSPORTATIONANALYST) {
+				servicesTypes.add(JsonKey.RestType.RESTTRANSPORTATIONANALYST);
+			}
+			if ((this.servicesType & ServiceType.WCS111) == ServiceType.WCS111) {
+				servicesTypes.add(JsonKey.RestType.WCS111);
+			}
+			if ((this.servicesType & ServiceType.WCS112) == ServiceType.WCS112) {
+				servicesTypes.add(JsonKey.RestType.WCS112);
+			}
+			if ((this.servicesType & ServiceType.WFS100) == ServiceType.WFS100) {
+				servicesTypes.add(JsonKey.RestType.WFS100);
+			}
+			if ((this.servicesType & ServiceType.WMS111) == ServiceType.WMS111) {
+				servicesTypes.add(JsonKey.RestType.WMS111);
+			}
+			if ((this.servicesType & ServiceType.WMS130) == ServiceType.WMS130) {
+				servicesTypes.add(JsonKey.RestType.WMS130);
+			}
+			if ((this.servicesType & ServiceType.WMTS100) == ServiceType.WMTS100) {
+				servicesTypes.add(JsonKey.RestType.WMTS100);
+			}
+			if ((this.servicesType & ServiceType.WMTSCHINA) == ServiceType.WMTSCHINA) {
+				servicesTypes.add(JsonKey.RestType.WMTSCHINA);
+			}
+			if ((this.servicesType & ServiceType.WPS100) == ServiceType.WPS100) {
+				servicesTypes.add(JsonKey.RestType.WPS100);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
-	}
-
-	private String getIsDataEditable() {
-		StringBuilder isDataEditable = new StringBuilder();
-		isDataEditable.append("\"isDataEditable\":");
-		isDataEditable.append(String.valueOf(this.isEditable).toLowerCase());
-
-		return isDataEditable.toString();
+		return servicesTypes;
 	}
 
 	private String getToken() {
@@ -590,9 +566,14 @@ public class ServerRelease {
 		try {
 			HttpPost httpPost = new HttpPost(MessageFormat.format(TOKEN_SERVER, this.host, this.port));
 			httpPost.setConfig(RequestConfig.custom().setConnectTimeout(120000).build());
-			String postData = "{\"userName\":\"" + this.adminName + "\",\"password\":\"" + this.adminPassword + "\",\"clientType\":\"RequestIP"
-					+ "\",\"expiration\":60}";
-			StringEntity entity = new StringEntity(postData, ContentType.APPLICATION_JSON);
+
+			JSONObject postJSON = new JSONObject();
+			postJSON.put(JsonKey.GetToken.USERNAME, this.adminName);
+			postJSON.put(JsonKey.GetToken.PASSWORD, this.adminPassword);
+			postJSON.put(JsonKey.GetToken.CLIENTTYPE, "RequestIP");
+			postJSON.put(JsonKey.GetToken.EXPIRATION, 60);
+
+			StringEntity entity = new StringEntity(postJSON.toString(), ContentType.APPLICATION_JSON);
 			httpPost.setEntity(entity);
 
 			CloseableHttpResponse response = httpClient.execute(httpPost);
@@ -642,20 +623,22 @@ public class ServerRelease {
 	private void outputHttpStatus(int httpStatus) {
 		if (httpStatus == HttpStatus.SC_UNAUTHORIZED) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_MessageStatusCode_Unauthorized"));
-		}
-		if (httpStatus == HttpStatus.SC_NOT_FOUND) {
-			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("NetServicesResources.String_IserverNeedUpdate"));
+		} else if (httpStatus == HttpStatus.SC_NOT_FOUND) {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_NeedUpdate"));
+		} else {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_MessageStatusCode_Unauthorized"));
 		}
 	}
 
 	private void fireFunctionProgress(int currentProgress, int totalProgress, String currentMessage, String totalMessage) {
 		Object[] listeners = listenerList.getListenerList();
+		FunctionProgressEvent event = new FunctionProgressEvent(this, totalProgress, currentProgress, currentMessage, totalMessage);
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == FunctionProgressListener.class) {
-				((FunctionProgressListener) listeners[i + 1]).functionProgress(new FunctionProgressEvent(this, totalProgress, currentProgress, currentMessage,
-						totalMessage));
+				((FunctionProgressListener) listeners[i + 1]).functionProgress(event);
 			}
 		}
+		this.isCancel = event.isCancel();
 	}
 }

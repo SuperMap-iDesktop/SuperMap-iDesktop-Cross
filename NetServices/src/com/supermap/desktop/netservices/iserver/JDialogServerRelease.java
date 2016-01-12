@@ -908,7 +908,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 			@Override
 			public void functionProgress(FunctionProgressEvent event) {
 				try {
-					updateProgressTotal(event.getCurrentProgress(), event.getTotalProgress(), "", event.getCurrentMessage());
+					updateProgressTotal(event.getCurrentProgress(), event.getCurrentMessage(), event.getTotalProgress(), event.getTotalMessage());
 				} catch (CancellationException e) {
 					event.setCancel(true);
 				}
@@ -952,6 +952,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				Application.getActiveApplication().getOutput().output(e);
 			} finally {
 				this.serverRelease.removeFunctionProgressListener(this.functionProgressListener);
+				ServerRelease.clearTmp();
 			}
 			return result;
 		}

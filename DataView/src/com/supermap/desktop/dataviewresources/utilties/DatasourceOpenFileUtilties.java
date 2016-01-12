@@ -35,6 +35,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 /**
@@ -148,7 +149,8 @@ public class DatasourceOpenFileUtilties {
 	/**
 	 * 根据文件打开数据源，失败时返回null。 如果单独使用此方法需要先调用resetReadOnlyProperties方法。
 	 * 
-	 * @param file 数据源文件
+	 * @param file
+	 *            数据源文件
 	 * @return
 	 */
 	public static Datasource openFileDatasource(File file) {
@@ -160,7 +162,8 @@ public class DatasourceOpenFileUtilties {
 	/**
 	 * 根据文件打开数据源，失败时返回null。 如果单独使用此方法需要先调用resetReadOnlyProperties方法。
 	 * 
-	 * @param file 数据源文件
+	 * @param file
+	 *            数据源文件
 	 * @return
 	 */
 	public static Datasource openDatasourceFile(File file, boolean isReadOnlyOpen) {
@@ -244,13 +247,13 @@ public class DatasourceOpenFileUtilties {
 			Datasource resultDatasource = DatasourceOpenFileUtilties.isDatasourceOpened(filePath);
 			if (null != resultDatasource) {
 				UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-				DatasourceWrap.addDatasourceToRecentFile(resultDatasource);
+				DatasourceUtilties.addDatasourceToRecentFile(resultDatasource);
 				return resultDatasource;
 			} else {
 				// 数据源没打开，老实自己打开吧。
 				final DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
 				connectionInfo.setServer(filePath);
-				connectionInfo.setAlias(DatasourceWrap.getAvailableDatasourceAlias(file.getName().substring(0, file.getName().lastIndexOf(".")), 0));
+				connectionInfo.setAlias(DatasourceUtilties.getAvailableDatasourceAlias(file.getName().substring(0, file.getName().lastIndexOf(".")), 0));
 				connectionInfo.setEngineType(engineType);
 				connectionInfo.setReadOnly(isReadOnlyOpenTemp);
 				try {
@@ -263,7 +266,7 @@ public class DatasourceOpenFileUtilties {
 				}
 				if (resultDatasource != null) {
 					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-					DatasourceWrap.addDatasourceToRecentFile(resultDatasource);
+					DatasourceUtilties.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
 				} else {
 					// 判断是否为密码错误
@@ -305,7 +308,7 @@ public class DatasourceOpenFileUtilties {
 									return false;
 								} else {
 									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-									DatasourceWrap.addDatasourceToRecentFile(datasource);
+									DatasourceUtilties.addDatasourceToRecentFile(datasource);
 									return true;
 								}
 							}
@@ -342,7 +345,8 @@ public class DatasourceOpenFileUtilties {
 	/**
 	 * 判断当前数据源是否已经打开
 	 * 
-	 * @param filePath 数据源的文件路径
+	 * @param filePath
+	 *            数据源的文件路径
 	 * @return
 	 */
 	public static Datasource isDatasourceOpened(String filePath) {

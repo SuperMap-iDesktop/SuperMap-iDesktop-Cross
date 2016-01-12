@@ -35,6 +35,7 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import com.supermap.mapping.Layer;
@@ -46,12 +47,14 @@ import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -781,7 +784,8 @@ public class CommonToolkit {
 		/**
 		 * 根据字符集资源字符串获取对应的字符集类型
 		 *
-		 * @param charsetString 字符集名称
+		 * @param charsetString
+		 *            字符集名称
 		 * @return 字符集类型
 		 */
 		public static Charset getCharset(String charsetString) {
@@ -897,8 +901,8 @@ public class CommonToolkit {
 						.getBundleClass(fileName.toLowerCase(), xmlCommand.getCtrlActionClass());
 
 				if (ctrlActionClass != null) {
-					Class[] paramTypes = {IBaseItem.class, IForm.class};
-					Object[] params = {caller, formClass}; // 方法传入的参数
+					Class[] paramTypes = { IBaseItem.class, IForm.class };
+					Object[] params = { caller, formClass }; // 方法传入的参数
 					Constructor<?> constructor = ctrlActionClass.getConstructor(paramTypes);
 					ctrlAction = (ICtrlAction) constructor.newInstance(params);
 				}
@@ -1165,7 +1169,8 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集类型资源字符串获取对应的数据集类型
 		 *
-		 * @param typeName 数据集类型字符串
+		 * @param typeName
+		 *            数据集类型字符串
 		 * @return 数据集类型
 		 */
 		public static DatasetType findType(String typeName) {
@@ -1190,7 +1195,8 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集类型获取对应的资源字符串
 		 *
-		 * @param type 数据集类型
+		 * @param type
+		 *            数据集类型
 		 * @return 数据集类型字符串
 		 */
 		public static String findName(DatasetType type) {
@@ -1211,7 +1217,8 @@ public class CommonToolkit {
 		/**
 		 * 验证数据集类型是否存在于枚举中
 		 *
-		 * @param type 数据集类型
+		 * @param type
+		 *            数据集类型
 		 * @return
 		 */
 		public static boolean isValidType(DatasetType type) {
@@ -1288,7 +1295,8 @@ public class CommonToolkit {
 		/**
 		 * 判断数据集是否已经打开
 		 *
-		 * @param dataset 需要判断的数据集
+		 * @param dataset
+		 *            需要判断的数据集
 		 * @return true-数据集已打开 false-数据集未打开
 		 */
 		public static boolean isDatasetOpened(Dataset dataset) {
@@ -1378,8 +1386,10 @@ public class CommonToolkit {
 		/**
 		 * 删除图层中包含对应数据集的图层。 组件的方法有缺陷而且不改，所以自行实现。
 		 *
-		 * @param layers        需要删除地图的layers对象
-		 * @param closeDatasets 关闭的数据集集合
+		 * @param layers
+		 *            需要删除地图的layers对象
+		 * @param closeDatasets
+		 *            关闭的数据集集合
 		 * @return
 		 */
 		public static void removeByDatasets(Layers layers, Dataset... closeDatasets) {
@@ -1394,7 +1404,8 @@ public class CommonToolkit {
 		/**
 		 * 关闭数据集
 		 *
-		 * @param closeDataset 需要关闭的数据集
+		 * @param closeDataset
+		 *            需要关闭的数据集
 		 */
 		public static void CloseDataset(Dataset... closeDataset) {
 			try {
@@ -1471,22 +1482,23 @@ public class CommonToolkit {
 		/**
 		 * 关闭数据集
 		 *
-		 * @param closeDatasets ：需要关闭的数据集集合类
+		 * @param closeDatasets
+		 *            ：需要关闭的数据集集合类
 		 */
 		public static void CloseDataset(Datasets closeDatasets) {
 			if (null == closeDatasets || 0 == closeDatasets.getCount()) {
 				return;
 			}
 			List<Dataset> datasets = new ArrayList<>();
-//			Dataset[] datasets = new Dataset[closeDatasets.getCount()];
+			// Dataset[] datasets = new Dataset[closeDatasets.getCount()];
 			for (int i = 0; i < closeDatasets.getCount(); i++) {
 				Dataset dataset = closeDatasets.get(i);
 				datasets.add(dataset);
-//				if (dataset instanceof  DatasetVector) {
-//					if (null != ((DatasetVector) dataset).getChildDataset()) {
-//						datasets.add(((DatasetVector) dataset).getChildDataset());
-//					}
-//				}
+				// if (dataset instanceof DatasetVector) {
+				// if (null != ((DatasetVector) dataset).getChildDataset()) {
+				// datasets.add(((DatasetVector) dataset).getChildDataset());
+				// }
+				// }
 			}
 			CloseDataset((Dataset[]) datasets.toArray(new Dataset[datasets.size()]));
 		}
@@ -1512,8 +1524,10 @@ public class CommonToolkit {
 		/**
 		 * 根据已有的数据集名，获取指定前缀字符串的唯一数据集名
 		 *
-		 * @param datasetName     指定的数据集名称
-		 * @param allDatasetNames 即将增加的数据集的名称
+		 * @param datasetName
+		 *            指定的数据集名称
+		 * @param allDatasetNames
+		 *            即将增加的数据集的名称
 		 * @return 可用数据集名称
 		 */
 		public static String getAvailableDatasetName(String datasetName, String[] allDatasetNames) {
@@ -1558,9 +1572,12 @@ public class CommonToolkit {
 		/**
 		 * 根据已有的数据源和即将创建的数据集，获取指定前缀字符串的唯一数据集名
 		 *
-		 * @param datasource      保存数据集的数据源
-		 * @param datasetName     指定的数据集名称
-		 * @param allDatasetNames 即将增加的数据集的名称
+		 * @param datasource
+		 *            保存数据集的数据源
+		 * @param datasetName
+		 *            指定的数据集名称
+		 * @param allDatasetNames
+		 *            即将增加的数据集的名称
 		 * @return 可用数据集名称
 		 */
 		public static String getAvailableDatasetName(Datasource datasource, String datasetName, String[] newDatasetNames) {
@@ -2119,159 +2136,6 @@ public class CommonToolkit {
 
 	public static class DatasourceWrap {
 
-		// #region Variable
-		// private static DataTable CurrentDataTable;
-
-		private static ArrayList<EngineInfo> loadedFileEngines = null;
-		private static PluginInfo pluginInfo;
-
-		private DatasourceWrap() {
-			// 不提供构造函数
-		}
-
-		public static PluginInfo getPluginInfo() {
-			return DatasourceWrap.pluginInfo;
-		}
-
-		public static void setPluginInfo(PluginInfo pluginInfo) {
-			DatasourceWrap.pluginInfo = pluginInfo;
-		}
-
-		private static SmMenu recentDatasourceMenu = null;
-
-		public static SmMenu getRecentDatasourceMenu() {
-			return recentDatasourceMenu;
-		}
-
-		public static void setRecentDatasourceMenu(SmMenu recentDatasourceMenu) {
-			DatasourceWrap.recentDatasourceMenu = recentDatasourceMenu;
-		}
-
-		/**
-		 * 刚刚打开失败的数据源，是不是因为密码错误
-		 */
-		private static boolean passwordWrong = false;
-
-		public static boolean isPasswordWrong() {
-			return passwordWrong;
-		}
-
-		// private static EngineType[] fileEngineTypes;
-		// private static EngineType[] databaseEngineTypes;
-		// private static EngineType[] webEngineTypes;
-		// #endregion
-
-		/**
-		 * 打开指定路径与密码的文件型数据源
-		 *
-		 * @param fileName
-		 * @param passWord
-		 * @param isReadOnly
-		 * @return
-		 */
-		public static Datasource openFileDatasource(String fileName, String passWord, boolean isReadOnly) {
-			Datasource datasource = null;
-			Workspace workspace = Application.getActiveApplication().getWorkspace();
-			try {
-				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.WAIT_CURSOR);
-				DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-
-				// 看看该文件是否已经打开了
-				boolean alreadyOpen = false;
-				String server = "";
-				String fileNameTemp = fileName.toLowerCase();
-				fileNameTemp = fileNameTemp.replace("\\", "/");
-				for (int index = 0; index < workspace.getDatasources().getCount(); index++) {
-					server = workspace.getDatasources().get(index).getConnectionInfo().getServer().toLowerCase();
-					server = server.replace("\\", "/");
-					if (server.indexOf(".") > -1
-							&& (server.equals(fileNameTemp) || (server.substring(0, server.lastIndexOf(".")) + ".udd").equals(fileNameTemp) || (server
-							.substring(0, server.lastIndexOf(".")) + ".udb").equals(fileNameTemp))) {
-						datasource = workspace.getDatasources().get(index);
-						alreadyOpen = true;
-						break;
-					}
-				}
-
-				if (!alreadyOpen) {
-					File file = new File(fileName);
-					String alias = file.getName();
-					String fileExt = "udb";
-					int dot = alias.lastIndexOf('.');
-					if ((dot > -1) && (dot < (alias.length()))) {
-						fileExt = alias.substring(dot, alias.length());
-						alias = alias.substring(0, dot);
-					}
-
-					// 找一个合适的别名
-					alias = getAvailableDatasourceAlias(alias, 0);
-
-					info.setAlias(alias);
-					info.setServer(fileName);
-					info.setPassword(passWord);
-					info.setEngineType(CommonToolkit.EngineTypeWrap.getEngineType(fileExt));
-					info.setReadOnly(!file.canWrite() || isReadOnly || info.getEngineType() == EngineType.VECTORFILE);
-
-					try {
-						datasource = workspace.getDatasources().open(info);
-						if (datasource != null) {
-							// 数据源打开成功后将其添加到最近文件列表中 [12/12/2011 zhoujt]
-							addDatasourceToRecentFile(datasource);
-						}
-					} catch (Exception ex) {
-						if ("supermap_license_error_wronglicensedata".equalsIgnoreCase(ex.getMessage())) {
-							Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_Wronglicensedata"));
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} finally {
-				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.DEFAULT_CURSOR);
-			}
-
-			return datasource;
-		}
-
-		public static Datasource openFileDatasource(String fileName, String passWord, boolean isReadOnly, boolean isFirst) {
-			DatasourceWrap.passwordWrong = false;
-			Datasource datasource = null;
-			try {
-				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.WAIT_CURSOR);
-				Toolkit.clearErrors();
-				datasource = openFileDatasource(fileName, passWord, isReadOnly);
-				if (datasource == null) {
-					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
-
-					// 首先判断一下是不是已知的错误，目前已知的就是密码错误
-					for (int i = 0; i < errorInfos.length; i++) {
-						if (errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORD"))
-								|| errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
-							DatasourceWrap.passwordWrong = true;
-							break;
-						}
-					}
-
-					// 不是第一次打开，输出错误信息
-					if (!isFirst) {
-						if (DatasourceWrap.passwordWrong) {
-							Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_CurrentPasswordWrong"));
-						} else {
-							for (int i = 0; i < errorInfos.length; i++) {
-								Application.getActiveApplication().getOutput().output(errorInfos[i].getMessage());
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} finally {
-				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.DEFAULT_CURSOR);
-			}
-
-			return datasource;
-		}
-
 		// // 关闭相应的数据源
 		// public static void CloseDatasources(Datasource[] datasources)
 		// {
@@ -2345,202 +2209,6 @@ public class CommonToolkit {
 		// }
 		//
 
-		/**
-		 * 将指定数据源添加到最近文件列表中
-		 *
-		 * @param datasource
-		 */
-		public static void addDatasourceToRecentFile(Datasource datasource) {
-			try {
-				if (datasource != null) {
-					String filePath = datasource.getConnectionInfo().getServer().replace("\\", "/");
-					// File file = new File(filePath);
-
-					if (recentDatasourceMenu != null) {
-						removeRecentFile(filePath);
-
-						XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-						xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-						xmlCommand.setLabel(filePath);
-						xmlCommand.setTooltip(filePath);
-						SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentDatasourceMenu);
-						if (menuItem != null) {
-							recentDatasourceMenu.insert((IBaseItem) menuItem, 0);
-							if (recentDatasourceMenu.getItemCount() > 7) {
-								removeRecentFile(((SmMenuItem) recentDatasourceMenu.getItem(7)).getText());
-							}
-							saveRecentFile(filePath);
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void initRecentFileMenu() {
-			try {
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Element element = XmlUtilties.getRootNode(recentFilePath);
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentDatasource"))) {
-										NodeList childnNodes = item.getChildNodes();
-										for (int j = 0; j < childnNodes.getLength(); j++) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												String filePath = childItem.getAttribute(_XMLTag.g_NodeContent);
-												XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-												xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-												xmlCommand.setLabel(filePath);
-												xmlCommand.setTooltip(filePath);
-												SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentDatasourceMenu);
-												if (menuItem != null) {
-													recentDatasourceMenu.add((IBaseItem) menuItem);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void saveRecentFile(String filePath) {
-			try {
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Document document = XmlUtilties.getDocument(recentFilePath);
-					Element element = document.getDocumentElement();
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentDatasource"))) {
-										// 把原来的记录全部取出来保存
-										NodeList childnNodes = item.getChildNodes();
-										ArrayList<String> recentFiles = new ArrayList<String>();
-										for (int j = childnNodes.getLength() - 1; j >= 0; j--) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												recentFiles.add(0, childItem.getAttribute(_XMLTag.g_NodeContent));
-											}
-											item.removeChild(childnNodes.item(j));
-										}
-
-										// 添加新纪录
-										Element newItem = document.createElement("item");
-										newItem.setAttribute(_XMLTag.g_NodeContent, filePath);
-										item.appendChild(newItem);
-
-										// 把之前的记录再写入
-										for (int j = 0; j < recentFiles.size(); j++) {
-											newItem = document.createElement("item");
-											newItem.setAttribute(_XMLTag.g_NodeContent, recentFiles.get(j));
-											item.appendChild(newItem);
-										}
-
-										// 保存文件
-										XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void removeRecentFile(String filePath) {
-			try {
-				for (IBaseItem item : recentDatasourceMenu.items()) {
-					if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-						recentDatasourceMenu.remove((IBaseItem) item);
-					}
-				}
-
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Document document = XmlUtilties.getDocument(recentFilePath);
-					Element element = document.getDocumentElement();
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentDatasource"))) {
-										NodeList childnNodes = item.getChildNodes();
-										for (int j = 0; j < childnNodes.getLength(); j++) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												String itemPath = childItem.getAttribute(_XMLTag.g_NodeContent);
-												if (itemPath.equalsIgnoreCase(filePath)) {
-													item.removeChild(childnNodes.item(j));
-												}
-											}
-										}
-
-										// 保存文件
-										XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static String getAvailableDatasourceAlias(String alias, int index) {
-			int indexTemp = index;
-			String availableName = alias;
-			try {
-				Datasource datasource = null;
-				if (indexTemp == 0) {
-					datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(availableName);
-				} else {
-					availableName += "_" + String.valueOf(indexTemp);
-					datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(availableName);
-				}
-
-				if (datasource != null) {
-					indexTemp++;
-
-					availableName = getAvailableDatasourceAlias(alias, indexTemp);
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-
-			return availableName;
-		}
-
 		//
 		// #region Property
 		// /// <summary>
@@ -2609,37 +2277,6 @@ public class CommonToolkit {
 		// }
 		// return result;
 		// }
-
-		/**
-		 * 获取当前组件支持加载打开的文件引擎信息集合
-		 *
-		 * @return 文件引擎信息集合
-		 */
-		public static EngineInfo[] getLoadedFileEngines() {
-			EngineInfo[] result = null;
-			try {
-				if (loadedFileEngines == null) {
-					loadedFileEngines = new ArrayList<EngineInfo>();
-					// modify by huchenpu 2015-07-09
-					// 组件有问题，下面这行代码直接抛异常
-					// EngineInfo[] infos =
-					// Environment.getCurrentLoadedEngineInfos();
-					// int length = infos.length;
-					// for (EngineInfo engInfo :
-					// Environment.getCurrentLoadedEngineInfos()) {
-					// if (engInfo.getEngineFamily() == EngineFamilyType.FILE) {
-					// loadedFileEngines.add(engInfo);
-					// }
-					// }
-
-					result = loadedFileEngines.toArray(new EngineInfo[loadedFileEngines.size()]);
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-
-			return result;
-		}
 
 		// /// <summary>
 		// /// 获取当前组件支持的某种数据源的所有引擎类型集合
@@ -2732,64 +2369,6 @@ public class CommonToolkit {
 		// return result;
 		// }
 
-		/**
-		 * 关闭所有内存数据源
-		 */
-		public static void CloseMemoryDatasource() {
-			for (int i = 0; i < Application.getActiveApplication().getWorkspace().getDatasources().getCount(); ) {
-				Datasource item = Application.getActiveApplication().getWorkspace().getDatasources().get(i);
-				if (":memory:".equalsIgnoreCase(item.getConnectionInfo().getServer())) {
-					Application.getActiveApplication().getWorkspace().getDatasources().close(item.getAlias());
-					// 关闭内存数据源时不保存工作空间
-					// Application.getActiveApplication().getWorkspace().Save();
-				} else {
-					i++;
-				}
-			}
-		}
-
-		/**
-		 * 判断工作空间中是否存在内存数据源
-		 *
-		 * @param workspace
-		 * @return
-		 */
-		public static boolean isContianMemoryDatasource(Workspace workspace) {
-			boolean isContian = false;
-			try {
-				for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
-					Datasource datasource = workspace.getDatasources().get(i);
-					if (":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer())) {
-						isContian = true;
-						break;
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return isContian;
-		}
-
-		/**
-		 * 获取工作空间中的内存数据源
-		 *
-		 * @param workspace
-		 * @return
-		 */
-		public static String[] getMemoryDatasources(Workspace workspace) {
-			ArrayList<String> datasources = new ArrayList<String>();
-			try {
-				for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
-					Datasource datasource = workspace.getDatasources().get(i);
-					if (":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer())) {
-						datasources.add(datasource.getAlias());
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return datasources.toArray(new String[datasources.size()]);
-		}
 		//
 		// /// <summary>
 		// /// 将组件的文件引擎信息集合转化为桌面的文件引擎信息封装类，主要用于构造打开数据源对话框的过滤条件
@@ -3103,7 +2682,8 @@ public class CommonToolkit {
 		/**
 		 * 根据编码类型资源字符串获取对应的编码类型
 		 *
-		 * @param typeName 编码类型
+		 * @param typeName
+		 *            编码类型
 		 * @return 指定的编码
 		 */
 		public static EncodeType findType(String typeName) {
@@ -3128,7 +2708,8 @@ public class CommonToolkit {
 		/**
 		 * 根据编码类型获取对应的资源字符串
 		 *
-		 * @param type 编码类型
+		 * @param type
+		 *            编码类型
 		 * @return 编码名称
 		 */
 		public static String findName(EncodeType type) {
@@ -3172,7 +2753,8 @@ public class CommonToolkit {
 		/**
 		 * 根据指定的文件后缀获取相应的文件引擎类型
 		 *
-		 * @param fileExt 文件的扩展名
+		 * @param fileExt
+		 *            文件的扩展名
 		 * @return 对应的引擎类型
 		 */
 		private EngineTypeWrap() {
@@ -3181,7 +2763,7 @@ public class CommonToolkit {
 
 		public static EngineType getEngineType(String fileExt) {
 			EngineType engType = EngineType.UDB;
-			EngineInfo[] loadedFileEngines = CommonToolkit.DatasourceWrap.getLoadedFileEngines();
+			EngineInfo[] loadedFileEngines = DatasourceUtilties.getLoadedFileEngines();
 
 			if (loadedFileEngines != null) {
 				for (EngineInfo engInfo : loadedFileEngines) {
@@ -3830,7 +3412,8 @@ public class CommonToolkit {
 		/**
 		 * 发送创建子窗体的事件
 		 *
-		 * @param windowType 子窗口类型
+		 * @param windowType
+		 *            子窗口类型
 		 * @return
 		 */
 		public static IForm fireNewWindowEvent(WindowType windowType) {
@@ -3840,8 +3423,10 @@ public class CommonToolkit {
 		/**
 		 * 发送创建子窗体的事件
 		 *
-		 * @param windowType 子窗口类型
-		 * @param name       指定的窗口名称，如果是地图、场景或者布局子窗体，则默认打开指定名称的地图、布局或者场景。
+		 * @param windowType
+		 *            子窗口类型
+		 * @param name
+		 *            指定的窗口名称，如果是地图、场景或者布局子窗体，则默认打开指定名称的地图、布局或者场景。
 		 * @return
 		 */
 		public static IForm fireNewWindowEvent(WindowType windowType, String name) {
@@ -4820,8 +4405,10 @@ public class CommonToolkit {
 		/**
 		 * 获取具有指定前缀的可用布局名称
 		 *
-		 * @param layoutName  指定前缀
-		 * @param isNewWindow 是否是新窗口
+		 * @param layoutName
+		 *            指定前缀
+		 * @param isNewWindow
+		 *            是否是新窗口
 		 * @return
 		 */
 		public static String getAvailableLayoutName(String layoutName, boolean isNewWindow) {
@@ -4882,7 +4469,7 @@ public class CommonToolkit {
 				}
 				if (message != ""
 						&& (JOptionPane.showConfirmDialog(null, message, CoreProperties.getString("String_LayoutDelete"), JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION)) {
+								JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION)) {
 					for (String mapLayoutName : mapLatoutNames) {
 						Application.getActiveApplication().getWorkspace().getLayouts().remove(mapLayoutName);
 					}
@@ -5994,8 +5581,10 @@ public class CommonToolkit {
 		/**
 		 * 在当前的工作空间中获取一个唯一可用的场景名称
 		 *
-		 * @param sceneName  指定前缀
-		 * @param bNewWindow 是否是新窗口
+		 * @param sceneName
+		 *            指定前缀
+		 * @param bNewWindow
+		 *            是否是新窗口
 		 * @return
 		 */
 		public static String getAvailableSceneName(String sceneName, boolean isNewWindow) {
@@ -7582,534 +7171,6 @@ public class CommonToolkit {
 		// #region NestedTypes
 		//
 		// #endregion
-	}
-
-	public static class WorkspaceWrap {
-
-		private static transient CopyOnWriteArrayList<SaveWorkspaceListener> saveWorkspaceListeners = new CopyOnWriteArrayList<SaveWorkspaceListener>();
-		private static PluginInfo pluginInfo;
-
-		private WorkspaceWrap() {
-			// 不提供构造函数
-		}
-
-		public static PluginInfo getPluginInfo() {
-			return WorkspaceWrap.pluginInfo;
-		}
-
-		public static void setPluginInfo(PluginInfo pluginInfo) {
-			WorkspaceWrap.pluginInfo = pluginInfo;
-		}
-
-		private static SmMenu recentWorkspaceMenu = null;
-
-		public static SmMenu getRecentWorkspaceMenu() {
-			return recentWorkspaceMenu;
-		}
-
-		public static void setRecentWorkspaceMenu(SmMenu recentWorkspaceMenu) {
-			WorkspaceWrap.recentWorkspaceMenu = recentWorkspaceMenu;
-		}
-
-		public static synchronized void addSaveWorkspaceListener(SaveWorkspaceListener listener) {
-			if (saveWorkspaceListeners == null) {
-				saveWorkspaceListeners = new CopyOnWriteArrayList<SaveWorkspaceListener>();
-			}
-
-			if (!saveWorkspaceListeners.contains(listener)) {
-				saveWorkspaceListeners.add(listener);
-			}
-		}
-
-		public static void removeSaveWorkspaceListener(SaveWorkspaceListener listener) {
-			if (saveWorkspaceListeners != null && saveWorkspaceListeners.contains(listener)) {
-				saveWorkspaceListeners.remove(listener);
-			}
-		}
-
-		public static boolean fireSaveWorkspaceEvent(boolean isSaveCurrentWorkspace, boolean isCloseAllOpenedWindows, boolean isCloseWorkspace,
-		                                             WorkspaceConnectionInfo info) {
-			boolean result = true;
-			try {
-				SaveWorkspaceEvent event = new SaveWorkspaceEvent(Application.getActiveApplication().getMainFrame(), isSaveCurrentWorkspace,
-						isCloseAllOpenedWindows, isCloseWorkspace, info);
-				fireSaveWorkspaceEvent(event);
-				result = event.getHandled();
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return result;
-		}
-
-		private static void fireSaveWorkspaceEvent(SaveWorkspaceEvent event) {
-			if (saveWorkspaceListeners != null) {
-				Iterator<SaveWorkspaceListener> iter = saveWorkspaceListeners.iterator();
-				while (iter.hasNext()) {
-					SaveWorkspaceListener listener = iter.next();
-					listener.saveWorkspace(event);
-				}
-			}
-		}
-
-		/**
-		 * 打开所有类型的工作空间，建议其他地方在调用的时候直接构造WorkspaceConnectionInfo 调用该方法。
-		 *
-		 * @param info  工作空间连接信息
-		 * @param first 是否是第一次打开
-		 * @return 打开工作空间的结果
-		 */
-		public static OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo info, boolean first) {
-			OpenWorkspaceResult result = OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
-			try {
-				// 打开新的工作空间之前需要先关闭当前工作空间
-				if (CommonToolkit.WorkspaceWrap.closeWorkspace()) {
-					Component parent = (Component) Application.getActiveApplication().getMainFrame();
-					((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.WAIT_CURSOR);
-					Toolkit.clearErrors();
-					boolean isOpened = false;
-					HashMap<String, String> readOnlyDatasourceDictionary = new HashMap<String, String>();
-					try {
-						// 如果数据源中含有只读文件，则给出提示是否已只读打开。
-						// 先构造一个工作空间，判断一下是否需要进行提示（这个主要是处理UI问题，因为数据源只有在打开工作空间的情况下才能够判断
-						// 如果直接在application下的工作空间下判断，界面上就会出现 打开失败-
-						// 提示是否只读打开-重新打开的现象，体验不好）
-						Workspace workspace = new Workspace();
-						isOpened = workspace.open(info);
-
-						if (isOpened
-								&& (workspace.getType() == WorkspaceType.SMW || workspace.getType() == WorkspaceType.SMWU
-								|| workspace.getType() == WorkspaceType.SXW || workspace.getType() == WorkspaceType.SXWU)) {
-							boolean isAllExcuteThisOperation = false;
-							for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
-								Datasource datasource = workspace.getDatasources().get(i);
-								// 如果上一次是以只读打开形式打开的文件，则保存工作空间后可以成功打开，故不需要给出提示。
-								// 所以如果数据源没有成功打开，且文件类型是只读类型，则给出提示。
-								if (!datasource.isOpened()) {
-									String datasourceFilePath = datasource.getConnectionInfo().getServer();
-									if (!datasourceFilePath.contains(":memory:")) {
-										File file = new File(datasourceFilePath);
-										// 仅限于文件型工作空间与文件型数据源，sdb已淘汰，不进行判断
-										if (file.getName().toLowerCase().endsWith(".udb")) {
-											String datasourceUddPath = datasourceFilePath.substring(0, datasourceFilePath.lastIndexOf(".")) + ".udd";// datasource.getConnectionInfo().getServer().toLowerCase().replace("udb",
-											// "udd");
-											File uddFile = new File(datasourceUddPath);
-											if ((file.exists() && uddFile.exists()) && (!file.canWrite() || !uddFile.canWrite())) {
-												String message = MessageFormat.format(CoreProperties.getString("String_OpenReadOnlyDatasourceWarning"),
-														datasourceFilePath);
-												if (!isAllExcuteThisOperation) {
-													int dialogResult = JOptionPane.showConfirmDialog(parent, message);
-													if (dialogResult == JOptionPane.YES_OPTION) {
-														readOnlyDatasourceDictionary.put(datasourceFilePath, datasource.getAlias());
-														isAllExcuteThisOperation = true;
-													}
-												} else if (isAllExcuteThisOperation) {
-													readOnlyDatasourceDictionary.put(datasourceFilePath, datasource.getAlias());
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-						workspace.close();
-						workspace.dispose();
-
-						// 真正的打开Application下面的工作空间
-						isOpened = Application.getActiveApplication().getWorkspace().open(info);
-						if (isOpened) {
-							result = OpenWorkspaceResult.SUCCESSED;
-							for (Entry<String, String> entry : readOnlyDatasourceDictionary.entrySet()) {
-								Application.getActiveApplication().getWorkspace().getDatasources().close(entry.getValue());
-								CommonToolkit.DatasourceWrap.openFileDatasource(entry.getKey(), "", true, true);
-							}
-							/*
-							 * 
-							 * Iterator iterator = readOnlyDatasourceDictionary.keySet().iterator(); while (iterator.hasNext()) { Object a = iterator.next();
-							 * String entry = (String) iterator.next(); Application.getActiveApplication( ).getWorkspace().getDatasources().close(entry);
-							 * readOnlyDatasourceDictionary .get(iterator.next()); Datasource datasource = CommonToolkit
-							 * .DatasourceWrap.openFileDatasource(entry, "", true, true); }
-							 */
-
-							for (int index = Application.getActiveApplication().getWorkspace().getDatasources().getCount() - 1; index >= 0; index--) {
-								Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(index);
-								if (!datasource.isOpened()) {
-									if (!datasource.getConnectionInfo().getServer().contains(":memory:")) {
-										String failedInfo = String.format(CommonProperties.getString("String_Message_DataSource_Openfail"),
-												datasource.getAlias());
-										Application.getActiveApplication().getOutput().output(failedInfo);
-									} else {
-										Application.getActiveApplication().getWorkspace().getDatasources().close(datasource.getAlias());
-									}
-								}
-							}
-						} else {
-							ErrorInfo[] errorInfos = Toolkit.getLastErrors(2);
-							for (int i = 0; i < errorInfos.length; i++) {
-								if (errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORD"))) {
-									if (!first) {
-										// Application.getActiveApplication().getOutput().output(errorInfos[i].getMessage());
-									}
-									result = OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
-									break;
-								} else {
-									result = OpenWorkspaceResult.FAILED_UNKNOW;
-								}
-							}
-						}
-					} catch (Exception ex) {
-						if ("supermap_license_error_wronglicensedata".equalsIgnoreCase(ex.getMessage())) {
-							Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_Wronglicensedata"));
-						} else if (ex.getMessage().equalsIgnoreCase(CoreProperties.getString("String_UGS_PASSWORD_Message"))) {
-							result = OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
-						} else {
-							ErrorInfo[] errorInfos = Toolkit.getLastErrors(2);
-							for (int i = 0; i < errorInfos.length; i++) {
-								if (errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORD"))) {
-									if (!first) {
-										Application.getActiveApplication().getOutput().output(errorInfos[i].getMessage());
-									}
-									result = OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
-									break;
-								} else {
-									Application.getActiveApplication().getOutput().output(errorInfos[i].getMessage());
-									result = OpenWorkspaceResult.FAILED_UNKNOW;
-								}
-							}
-						}
-						if (result != OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
-							Application.getActiveApplication().getOutput().output(ex);
-						}
-					}
-
-					if ((info.getType() == WorkspaceType.SMW || info.getType() == WorkspaceType.SMWU || info.getType() == WorkspaceType.SXWU || info.getType() == WorkspaceType.SXW)
-							&& result == OpenWorkspaceResult.SUCCESSED) {
-						// 如果是文件型工作空间并且打开成功了，则需要添加到最近文件列表中
-						addWorkspaceFileToRecentFile(info.getServer());
-					}
-				} else {
-					result = OpenWorkspaceResult.FAILED_CANCEL;
-				}
-			} catch (Exception ex) {
-				// Application.getActiveApplication().getOutput().output(ex);
-			} finally {
-				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.DEFAULT_CURSOR);
-			}
-
-			return result;
-		}
-
-		/**
-		 * 将指定路径的工作空间添加到最近文件列表
-		 *
-		 * @param filePath 要加入列表的文件路径
-		 * @return 添加成功返回true，失败返回false
-		 */
-		public static void addWorkspaceFileToRecentFile(String filePath) {
-			String filePathTemp = filePath;
-			try {
-				filePathTemp = filePathTemp.replace("\\", "/");
-				if (recentWorkspaceMenu != null) {
-					removeRecentFile(filePathTemp);
-
-					XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-					xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-					xmlCommand.setLabel(filePathTemp);
-					xmlCommand.setTooltip(filePathTemp);
-					SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentWorkspaceMenu);
-					if (menuItem != null) {
-						recentWorkspaceMenu.insert((IBaseItem) menuItem, 0);
-						if (recentWorkspaceMenu.getItemCount() > 7) {
-							removeRecentFile(((SmMenuItem) recentWorkspaceMenu.getItem(7)).getText());
-						}
-						saveRecentFile(filePathTemp);
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void initRecentFileMenu() {
-			try {
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Element element = XmlUtilties.getRootNode(recentFilePath);
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-										NodeList childnNodes = item.getChildNodes();
-										for (int j = 0; j < childnNodes.getLength(); j++) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												String filePath = childItem.getAttribute(_XMLTag.g_NodeContent);
-												XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-												xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-												xmlCommand.setLabel(filePath);
-												xmlCommand.setTooltip(filePath);
-												SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentWorkspaceMenu);
-												if (menuItem != null) {
-													recentWorkspaceMenu.add((IBaseItem) menuItem);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void saveRecentFile(String filePath) {
-			try {
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Document document = XmlUtilties.getDocument(recentFilePath);
-					Element element = document.getDocumentElement();
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-										// 把原来的记录全部取出来保存
-										NodeList childnNodes = item.getChildNodes();
-										ArrayList<String> recentFiles = new ArrayList<String>();
-										for (int j = childnNodes.getLength() - 1; j >= 0; j--) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												recentFiles.add(0, childItem.getAttribute(_XMLTag.g_NodeContent));
-											}
-											item.removeChild(childnNodes.item(j));
-										}
-
-										// 添加新纪录
-										Element newItem = document.createElement("item");
-										newItem.setAttribute(_XMLTag.g_NodeContent, filePath);
-										item.appendChild(newItem);
-
-										// 把之前的记录再写入
-										for (int j = 0; j < recentFiles.size(); j++) {
-											newItem = document.createElement("item");
-											newItem.setAttribute(_XMLTag.g_NodeContent, recentFiles.get(j));
-											item.appendChild(newItem);
-										}
-
-										// 保存文件
-										XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		public static void removeRecentFile(String filePath) {
-			try {
-				for (IBaseItem item : recentWorkspaceMenu.items()) {
-					if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-						recentWorkspaceMenu.remove((IBaseItem) item);
-						break;
-					}
-				}
-
-				String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
-				File file = new File(recentFilePath);
-				if (file.exists()) {
-					Document document = XmlUtilties.getDocument(recentFilePath);
-					Element element = document.getDocumentElement();
-					if (element != null) {
-						NodeList nodes = element.getChildNodes();
-						for (int i = 0; i < nodes.getLength(); i++) {
-							if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-								Element item = (Element) (nodes.item(i));
-								if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-									String type = item.getAttribute(_XMLTag.g_ControlLabel);
-									if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-										NodeList childnNodes = item.getChildNodes();
-										for (int j = 0; j < childnNodes.getLength(); j++) {
-											if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-												Element childItem = (Element) (childnNodes.item(j));
-												String itemPath = childItem.getAttribute(_XMLTag.g_NodeContent);
-												if (itemPath.equalsIgnoreCase(filePath)) {
-													item.removeChild(childnNodes.item(j));
-												}
-											}
-										}
-
-										// 保存文件
-
-										XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
-
-		/**
-		 * 判断当前工作空间文件是否只读
-		 *
-		 * @return
-		 */
-		public static boolean isWorkspaceReadonly() {
-			String path = Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer();
-			boolean isReadOnly = false;
-
-			File file = new File(path);
-			if (file.exists()) {
-				isReadOnly = !file.canWrite();
-			}
-
-			if (isReadOnly) {
-				JOptionPane.showConfirmDialog(null, CoreProperties.getString("String_workspaceReadonly"),
-						CoreProperties.getString("String_workspaceReadonlyTitle"), JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
-			}
-
-			return isReadOnly;
-		}
-
-		/**
-		 * 判断工作空间是否被修改过
-		 *
-		 * @return
-		 */
-		public static boolean isWorkspaceModified() {
-			boolean result = false;
-			try {
-				result = Application.getActiveApplication().getWorkspace().isModified();
-				if (!result) {
-					for (int index = 0; index < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); index++) {
-						IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
-						if (form == null) {
-							continue;
-						} else if (form instanceof IFormMap && ((IFormMap) form).getMapControl() != null && ((IFormMap) form).getMapControl().getMap() != null
-								&& ((IFormMap) form).getMapControl().getMap().isModified()) {
-							result = true;
-							break;
-						} else if (form instanceof IFormLayout && ((IFormLayout) form).getMapLayoutControl() != null
-								&& ((IFormLayout) form).getMapLayoutControl().getMapLayout() != null
-								&& ((IFormLayout) form).getMapLayoutControl().getMapLayout().isModified()) {
-							result = true;
-							break;
-						} else if (form instanceof IFormScene) {
-							result = true;
-							break;
-						}
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return result;
-		}
-
-		/**
-		 * 关闭工作空间
-		 */
-		public static boolean closeWorkspace() {
-			boolean isClose = true;
-			int result = -1;
-			try {
-				boolean needSave = false;
-				boolean isContinue = true;
-				Component parent = (Component) Application.getActiveApplication().getMainFrame();
-				// 提示保存内存型数据源
-				if (CommonToolkit.DatasourceWrap.isContianMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
-					String[] datasources = CommonToolkit.DatasourceWrap.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
-					String datasourcesName = "";
-					for (int i = 0; i < datasources.length - 1; i++) {
-						datasourcesName += datasources[i] + "、";
-					}
-					datasourcesName += datasources[datasources.length - 1];//
-					String message = MessageFormat.format(CommonProperties.getString("String_Message_CloseMemoryDatasource"), datasourcesName);
-					result = JOptionPane.showConfirmDialog(parent, message, CommonProperties.getString("String_Title_CloseWorkspace"),
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (result == JOptionPane.NO_OPTION || result == JOptionPane.CLOSED_OPTION) {
-						isContinue = false;
-					} else {
-						CommonToolkit.DatasourceWrap.CloseMemoryDatasource();
-					}
-				}
-
-				if (isContinue) {
-					if (CommonToolkit.WorkspaceWrap.isWorkspaceModified()) {
-						if (GlobalParameters.isShowFormClosingInfo()) {
-							result = JOptionPane.showConfirmDialog(parent, CoreProperties.getString("String_SaveWorkspacePrompt"),
-									CoreProperties.getString("String_SaveWorkspace"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-							if (result == JOptionPane.NO_OPTION) {
-								if (Application.getActiveApplication().getMainFrame().getFormManager().closeAll(false)) {
-									Application.getActiveApplication().getWorkspace().close();
-								}
-							} else if (result == JOptionPane.YES_OPTION) {
-								needSave = true;
-							} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-								isClose = false;
-							}
-						} else {
-							needSave = true;
-						}
-
-						if (needSave) {
-							if (Application.getActiveApplication().getMainFrame().getFormManager().closeAll(true)) {
-								if (isWorkspaceReadonly()) {
-									isClose = fireSaveWorkspaceEvent(true, true, true, null);
-								} else {
-									if (Application.getActiveApplication().getWorkspace().getType() == WorkspaceType.DEFAULT) {
-										isClose = fireSaveWorkspaceEvent(true, true, true, null);// 对于默认工作空间来说，这时候需要另存
-									} else {
-										if (!Application.getActiveApplication().getWorkspace().save()) {
-											isClose = fireSaveWorkspaceEvent(true, true, true, null);
-										}
-									}
-								}
-
-								if (!CommonToolkit.WorkspaceWrap.isWorkspaceModified()) {
-									Application.getActiveApplication().getWorkspace().close();
-									isClose = true;
-								}
-							} else {
-								isClose = false;
-							}
-						}
-					} else {
-						if (Application.getActiveApplication().getMainFrame().getFormManager().closeAll(true)) {
-							Application.getActiveApplication().getWorkspace().close();
-						} else {
-							isClose = false;
-						}
-					}
-				} else {
-					isClose = false;
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-			return isClose;
-		}
 	}
 
 	/**

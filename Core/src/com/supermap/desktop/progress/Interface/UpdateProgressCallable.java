@@ -50,12 +50,12 @@ public abstract class UpdateProgressCallable implements Callable<Boolean> {
 	 * 总进度
 	 * 
 	 * @param percent
-	 * @param recentTask
+	 * @param currentMessage
 	 * @param totalPercent
-	 * @param message
+	 * @param totalMessage
 	 * @throws CancellationException
 	 */
-	public void updateProgressTotal(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-		this.update.updateProgress(percent, recentTask, totalPercent, message);
+	public void updateProgressTotal(int percent, String currentMessage, int totalPercent, String totalMessage) throws CancellationException {
+		this.update.updateProgress(percent, currentMessage, totalPercent, totalMessage);
 	}
 }

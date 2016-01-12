@@ -310,6 +310,9 @@ public class Compressor {
 					CompressEvent event = new CompressEvent(this, new FileSize(this.totalSize, FileSizeType.BYTE), new FileSize(compressedSize,
 							FileSizeType.BYTE), this.currentFileEntry + 1, this.totalFileEntry);
 					fireCompressing(event);
+					if (event.isCancel()) {
+						this.isCancel = true;
+					}
 				}
 			}
 		} catch (Exception e) {

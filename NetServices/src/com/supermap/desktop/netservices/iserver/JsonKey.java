@@ -42,4 +42,18 @@ public class JsonKey {
 		public static final String WMTSCHINA = "WMTSCHINA";
 		public static final String WPS100 = "WPS100";
 	}
+
+	public class ReleasePostBody {
+		public static final String WORKSPACECONNECTIONINFO = "workspaceConnectionInfo";
+		public static final String SERVICESTYPES = "servicesTypes";
+		public static final String ISDATAEDITABLE = "isDataEditable";
+		public static final String TRANSPORTATIONANALYSTSETTING = "transportationAnalystSetting";
+	}
+
+	public class GetToken {
+		public static final String USERNAME = "userName";
+		public static final String PASSWORD = "password";
+		public static final String CLIENTTYPE = "clientType";
+		public static final String EXPIRATION = "expiration";
+	}
 }

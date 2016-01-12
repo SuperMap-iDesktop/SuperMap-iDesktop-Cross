@@ -13,11 +13,13 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -121,7 +123,6 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		this.jTextFieldAlias.setText(getAvaliableDatasourceName("MemoryDatasource"));
 	}
 
-
 	private void initializeResources() {
 		try {
 			this.setTitle(DataEditorProperties.getString("String_Title_NewDatasourceMemory"));
@@ -141,7 +142,7 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 			info.setServer(":memory:");
 			String alias = jTextFieldAlias.getText();
 			if (null != alias && !alias.isEmpty() && "" != alias) {
-				alias = DatasourceWrap.getAvailableDatasourceAlias(alias, 0);
+				alias = DatasourceUtilties.getAvailableDatasourceAlias(alias, 0);
 				info.setAlias(alias);
 				result = Application.getActiveApplication().getWorkspace().getDatasources().create(info);
 			} else {

@@ -2,18 +2,15 @@ package com.supermap.desktop.framemenus;
 
 import java.io.File;
 
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceConnectionInfo;
-import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.implement.SmMenuItem;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionExampleData extends CtrlAction {
 
@@ -30,9 +27,9 @@ public class CtrlActionExampleData extends CtrlAction {
 				File file = new File(configFile);
 				if (isWorkSpaceFile(file)) {
 					WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-					CommonToolkit.WorkspaceWrap.openWorkspace(connectionInfo, true);
+					WorkspaceUtilties.openWorkspace(connectionInfo, true);
 				} else {
-					CommonToolkit.DatasourceWrap.openFileDatasource(file.getAbsolutePath(), null, false);
+					DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, false);
 				}
 
 			}
