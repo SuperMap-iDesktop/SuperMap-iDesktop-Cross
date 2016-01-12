@@ -181,7 +181,7 @@ public class DatasetChooser extends SmDialog {
 				compositeSearch();
 			}
 		});
-		datasetTypeComboBox.setMaximumRowCount(20);
+		datasetTypeComboBox.setMaximumRowCount(10);
 
 		toolBar.add(datasetTypeComboBox);
 
