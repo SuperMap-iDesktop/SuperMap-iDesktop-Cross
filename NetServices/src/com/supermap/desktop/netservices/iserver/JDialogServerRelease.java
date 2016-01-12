@@ -28,14 +28,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.DatasetType;
-import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -92,7 +90,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	private int hostType;
 	// 能否发布：目前，只有文件型工作空间+文件型数据源发布到远程服务器，并且它们不在同一个目录下时，为false
 	private boolean canRelease;
-	private FormProgressTotal formProgress;
 
 	private DocumentListener textFieldHostDocumentListener = new DocumentListener() {
 
@@ -234,7 +231,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		this.textFieldHost = new JTextField("localhost");
 		this.labelColon = new JLabel(":");
 		this.textFieldPort = new JTextField("8090");
-		this.textFieldPort.setEditable(false);
 		this.textFieldPort.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
 		GridBagLayout gbl_panelService = new GridBagLayout();
