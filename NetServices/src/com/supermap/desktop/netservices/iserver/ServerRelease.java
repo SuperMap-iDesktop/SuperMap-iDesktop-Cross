@@ -160,10 +160,6 @@ public class ServerRelease {
 		return this.files;
 	}
 
-	// public void setFiles(ArrayList<String> files) {
-	// this.files = files;
-	// }
-
 	public String getResultURL() {
 		return resultURL;
 	}
@@ -282,8 +278,7 @@ public class ServerRelease {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
-		// 将字符串中的所有 \ 替换为 /
-		return workspaceConnection.replace(File.separator, "/");
+		return workspaceConnection;
 	}
 
 	private void httpPosting(HttpPostEvent e) {
@@ -469,11 +464,9 @@ public class ServerRelease {
 					|| this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo.getType() == WorkspaceType.SXWU) {
 				String filePath = "";
 				if (this.hostType == HostType.LOCAL) {
-					filePath = this.connectionInfo.getServer();
-					// filePath = this.connectionInfo.getServer().replace(, Path.AltDirectorySeparatorChar);
+					filePath = this.connectionInfo.getServer().replace(File.separator, "/");
 				} else {
-					filePath = this.remoteFilePath;
-					// filePath = this.remoteFilePath.replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+					filePath = this.remoteFilePath.replace(File.separator, "/");
 				}
 				if (StringUtilties.isNullOrEmpty(this.connectionInfo.getPassword())) {
 					workspaceConnection.append(filePath);
@@ -484,8 +477,7 @@ public class ServerRelease {
 				}
 				workspaceConnection.append("\"");
 			} else if (this.connectionInfo.getType() == WorkspaceType.ORACLE || this.connectionInfo.getType() == WorkspaceType.SQL) {
-				String server = this.connectionInfo.getServer();
-				// String server = this.connectionInfo.getServer().replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				String server = this.connectionInfo.getServer().replace(File.separator, "/");
 				String workspaceType = "";
 				String driverBase = "null";
 				if (this.connectionInfo.getType() == WorkspaceType.ORACLE) {
@@ -605,7 +597,9 @@ public class ServerRelease {
 
 			CloseableHttpResponse response = httpClient.execute(httpPost);
 			try {
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				StatusLine responseStatus = response.getStatusLine();
+				if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
+						|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
 					token = EntityUtils.toString(response.getEntity());
 				} else {
 					outputHttpStatus(response.getStatusLine().getStatusCode());
