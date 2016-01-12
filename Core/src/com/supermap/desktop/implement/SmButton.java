@@ -1,22 +1,18 @@
 package com.supermap.desktop.implement;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.utilties.CtrlActionUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
+
+import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 
 public class SmButton extends JButton implements IBaseItem {
 	private static final long serialVersionUID = 1L;
@@ -43,7 +39,7 @@ public class SmButton extends JButton implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CommonToolkit.CtrlActionWrap.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {

@@ -327,7 +327,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
 			Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
 			DatasetChooserDataEditor dataSetChooser = new DatasetChooserDataEditor(this, datasource, table, true);
-			dataSetChooser.setVisible(true);
+			dataSetChooser = null;
 		}
 	}
 

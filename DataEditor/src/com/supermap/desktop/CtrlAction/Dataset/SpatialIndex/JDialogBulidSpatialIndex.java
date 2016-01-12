@@ -1,11 +1,11 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.Dataset.Pyramid.JDialogDatasetChoosePyramidManager;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -13,6 +13,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -61,8 +62,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private JTable tableDatasets;
 	private SpatialIndexTableModel spatialIndexTableModel;
 
-	Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-	JDialogDatasetChoosePyramidManager dialogDatasetChoosePyramidManager = new JDialogDatasetChoosePyramidManager(this, true, datasource, SpatialIndexTableModelBean.SUPPORT_DATASET_TYPES);
+	DatasetChooser datasetChooser;
 
 	private final int rowHeight = 23;
 
@@ -83,7 +83,10 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private JButton buttonOk;
 	private JButton buttonCancle;
 
-
+	private DatasetType[] supportDatasetTypes = new DatasetType[]{
+			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
+			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D
+	};
 	//endregion
 
 	public JDialogBulidSpatialIndex() {
@@ -135,6 +138,14 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.panelButton = new JPanel();
 		this.buttonOk = new JButton();
 		this.buttonCancle = new JButton();
+
+		datasetChooser = new DatasetChooser(this) {
+			@Override
+			protected boolean isSupportDatasource(Datasource datasource) {
+				return !datasource.isReadOnly() && super.isSupportDatasource(datasource);
+			}
+		};
+		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
 	}
 
 	//region 初始化布局
@@ -336,9 +347,9 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	private void buttonAddClicked() {
-		if (dialogDatasetChoosePyramidManager.showDialog() == DialogResult.OK) {
+		if (datasetChooser.showDialog() == DialogResult.OK) {
 			int preRowCount = tableDatasets.getRowCount();
-			spatialIndexTableModel.addDatasets(dialogDatasetChoosePyramidManager.getSelectedDatasets());
+			spatialIndexTableModel.addDatasets(datasetChooser.getSelectedDatasets());
 			int currentRowCount = tableDatasets.getRowCount();
 			if (currentRowCount > preRowCount) {
 				tableDatasets.setRowSelectionInterval(preRowCount, currentRowCount - 1);
