@@ -952,6 +952,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				Application.getActiveApplication().getOutput().output(e);
 			} finally {
 				this.serverRelease.removeFunctionProgressListener(this.functionProgressListener);
+				ServerRelease.clearTmp();
 			}
 			return result;
 		}

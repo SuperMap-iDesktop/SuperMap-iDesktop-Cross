@@ -8,6 +8,8 @@ import java.util.Date;
 
 import javax.swing.event.EventListenerList;
 
+import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -186,6 +188,13 @@ public class ServerRelease {
 
 		try {
 			if (!this.isCancel) {
+
+				// 校验用户名和密码是否正确
+				String token = getToken();
+				if (StringUtilties.isNullOrEmpty(token)) {
+					return false;
+				}
+
 				closeCurrentFileWorkspace();
 				if (this.hostType == HostType.REMOTE
 						&& (this.connectionInfo.getType() == WorkspaceType.DEFAULT || this.connectionInfo.getType() == WorkspaceType.SMW
@@ -205,7 +214,7 @@ public class ServerRelease {
 	}
 
 	public static void clearTmp() {
-		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.pathSeparator + "iServerZipCache", true));
+		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
 		FileUtilties.delete(zipCacheDirectory);
 	}
 
@@ -557,9 +566,14 @@ public class ServerRelease {
 		try {
 			HttpPost httpPost = new HttpPost(MessageFormat.format(TOKEN_SERVER, this.host, this.port));
 			httpPost.setConfig(RequestConfig.custom().setConnectTimeout(120000).build());
-			String postData = "{\"userName\":\"" + this.adminName + "\",\"password\":\"" + this.adminPassword + "\",\"clientType\":\"RequestIP"
-					+ "\",\"expiration\":60}";
-			StringEntity entity = new StringEntity(postData, ContentType.APPLICATION_JSON);
+
+			JSONObject postJSON = new JSONObject();
+			postJSON.put(JsonKey.GetToken.USERNAME, this.adminName);
+			postJSON.put(JsonKey.GetToken.PASSWORD, this.adminPassword);
+			postJSON.put(JsonKey.GetToken.CLIENTTYPE, "RequestIP");
+			postJSON.put(JsonKey.GetToken.EXPIRATION, 60);
+
+			StringEntity entity = new StringEntity(postJSON.toString(), ContentType.APPLICATION_JSON);
 			httpPost.setEntity(entity);
 
 			CloseableHttpResponse response = httpClient.execute(httpPost);
@@ -609,9 +623,10 @@ public class ServerRelease {
 	private void outputHttpStatus(int httpStatus) {
 		if (httpStatus == HttpStatus.SC_UNAUTHORIZED) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_MessageStatusCode_Unauthorized"));
-		}
-		if (httpStatus == HttpStatus.SC_NOT_FOUND) {
-			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("NetServicesResources.String_IserverNeedUpdate"));
+		} else if (httpStatus == HttpStatus.SC_NOT_FOUND) {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_NeedUpdate"));
+		} else {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_MessageStatusCode_Unauthorized"));
 		}
 	}
 
