@@ -192,6 +192,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private void setRowHeaderMousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 			int pick = jTableTabular.rowAtPoint(e.getPoint());
+			if (pick < 0) {
+				return;
+			}
 			tableClickedRow = pick;
 			if (e.isShiftDown()) {
 				if (tableClickedRow > jTableTabular.getSelectedRow()) {
