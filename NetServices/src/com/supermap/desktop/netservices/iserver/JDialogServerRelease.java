@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -27,13 +30,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.DatasetType;
-import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -41,7 +43,7 @@ import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
-public class JDialogServerRelease extends SmDialog implements ActionListener {
+public class JDialogServerRelease extends SmDialog implements ActionListener, ItemListener {
 
 	/**
 	 * 
@@ -90,7 +92,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	private int hostType;
 	// 能否发布：目前，只有文件型工作空间+文件型数据源发布到远程服务器，并且它们不在同一个目录下时，为false
 	private boolean canRelease;
-	private FormProgressTotal formProgress;
 
 	private DocumentListener textFieldHostDocumentListener = new DocumentListener() {
 
@@ -181,12 +182,17 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == this.radioButtonLocalHost) {
 			radioButtonLocalHostSelectedChange();
 		} else if (e.getSource() == this.radioButtonRemoteHost) {
 			radioButtonRemoteHostSelectedChange();
-		} else if (e.getSource() == this.buttonRelease) {
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == this.buttonRelease) {
 			buttonReleaseClicked();
 		} else if (e.getSource() == this.buttonClose) {
 			buttonCloseClicked();
@@ -232,7 +238,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 		this.textFieldHost = new JTextField("localhost");
 		this.labelColon = new JLabel(":");
 		this.textFieldPort = new JTextField("8090");
-		this.textFieldPort.setEditable(false);
 		this.textFieldPort.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
 		GridBagLayout gbl_panelService = new GridBagLayout();
@@ -387,8 +392,8 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	}
 
 	private void registerEvents() {
-		this.radioButtonLocalHost.addActionListener(this);
-		this.radioButtonRemoteHost.addActionListener(this);
+		this.radioButtonLocalHost.addItemListener(this);
+		this.radioButtonRemoteHost.addItemListener(this);
 		this.textFieldHost.getDocument().addDocumentListener(this.textFieldHostDocumentListener);
 		this.textFieldPort.getDocument().addDocumentListener(this.textFieldPortDocumentListener);
 		this.textFieldUserName.getDocument().addDocumentListener(this.textFieldUserNameDocumentListener);
@@ -577,7 +582,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 	}
 
 	private void textFieldPasswordChange() {
-		this.adminPassword = this.textFieldPassword.getText();
+		this.adminPassword = new String(this.textFieldPassword.getPassword());
 		setButtonReleaseEnabled();
 	}
 
@@ -805,6 +810,8 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				this.canRelease = true;
 				setButtonReleaseEnabled();
 				this.radioButtonRemoteHost.setSelected(false);
+			} else {
+				this.radioButtonRemoteHost.setSelected(true);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -825,6 +832,8 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 				}
 				setButtonReleaseEnabled();
 				this.radioButtonLocalHost.setSelected(false);
+			} else {
+				this.radioButtonLocalHost.setSelected(true);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -862,7 +871,25 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 			}
 
 			FormProgressTotal formProgressTotal = new FormProgressTotal();
-			formProgressTotal.doWork(new ServerReleaseCallable(serverRelease));
+			formProgressTotal.doWork(new ServerReleaseCallable(serverRelease), new IAfterWork<Boolean>() {
+
+				@Override
+				public void afterWork(Boolean param) {
+					if (param) {
+						if (SwingUtilities.isEventDispatchThread()) {
+							JDialogServerRelease.this.setVisible(false);
+						} else {
+							SwingUtilities.invokeLater(new Runnable() {
+
+								@Override
+								public void run() {
+									JDialogServerRelease.this.setVisible(false);
+								}
+							});
+						}
+					}
+				}
+			});
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -988,4 +1015,5 @@ public class JDialogServerRelease extends SmDialog implements ActionListener {
 			return result;
 		}
 	}
+
 }

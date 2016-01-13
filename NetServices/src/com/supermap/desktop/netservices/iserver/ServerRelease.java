@@ -25,6 +25,10 @@ import org.apache.http.util.EntityUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
@@ -453,13 +457,77 @@ public class ServerRelease {
 	private String getEntityBody() {
 		JSONObject entityBody = new JSONObject();
 		entityBody.put(JsonKey.ReleasePostBody.WORKSPACECONNECTIONINFO, getWorkspaceConnectionString());
-		entityBody.put(JsonKey.ReleasePostBody.SERVICESTYPES, getServicesTypes());
+		entityBody.put(JsonKey.ReleasePostBody.SERVICES_TYPES, getServicesTypes());
+
+		if ((this.servicesType & ServiceType.RESTTRANSPORTATIONANALYST) == ServiceType.RESTTRANSPORTATIONANALYST) {
+			entityBody.put(JsonKey.ReleasePostBody.TRANSPORTATION_ANALYST_SETTING, gettTransportationAnalystSetting());
+		}
 
 		if ((this.servicesType & ServiceType.RESTDATA) == ServiceType.RESTDATA || (this.servicesType & ServiceType.WFS100) == ServiceType.WFS100
 				|| (this.servicesType & ServiceType.WCS111) == ServiceType.WCS111 || (this.servicesType & ServiceType.WCS112) == ServiceType.WCS112) {
-			entityBody.put(JsonKey.ReleasePostBody.ISDATAEDITABLE, this.isEditable);
+			entityBody.put(JsonKey.ReleasePostBody.IS_DATA_EDITABLE, this.isEditable);
 		}
 		return entityBody.toString();
+	}
+
+	private JSONObject gettTransportationAnalystSetting() {
+		JSONObject transportationAnalystSettingJSON = new JSONObject();
+		String[] networkData = getNetworkDataString();
+
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.WEIGHTFIELDINFOS, getWeightFieldInfos());
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.WORKSPACE_CONNECTSTRING, getWorkspaceConnectionString());
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.DATASOURCE_NAME, networkData[0]);
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.DATASET_NAME, networkData[1]);
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.NODEID_FIELD, "SmNodeID");
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.EDGEID_FIELD, "SmEdgeID");
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.FROMNODEID_FIELD, "SmFNode");
+		transportationAnalystSettingJSON.put(JsonKey.TransportationAnalystSetting.TONODEID_FIELD, "SmTNode");
+		return transportationAnalystSettingJSON;
+	}
+
+	private ArrayList<JSONObject> getWeightFieldInfos() {
+		ArrayList<JSONObject> result = new ArrayList<>();
+
+		try {
+			JSONObject weightFieldInfoJSON = new JSONObject();
+			weightFieldInfoJSON.put(JsonKey.WeightFieldInfos.NAME, "SmLength");
+			weightFieldInfoJSON.put(JsonKey.WeightFieldInfos.FORWARD_WEIGHTFIELD, "SmLength");
+			weightFieldInfoJSON.put(JsonKey.WeightFieldInfos.BACK_WEIGHTFIELD, "SmLength");
+			result.add(weightFieldInfoJSON);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return result;
+	}
+
+	/**
+	 * 获取一个网络数据集
+	 * 
+	 * @return
+	 */
+	private String[] getNetworkDataString() {
+		String[] result = new String[2];
+		if (this.connectionInfo != null) {
+			Workspace worksace = new Workspace();
+			worksace.open(this.connectionInfo);
+
+			for (int i = 0; i < worksace.getDatasources().getCount(); i++) {
+				Datasource datasource = worksace.getDatasources().get(i);
+
+				for (int j = 0; j < datasource.getDatasets().getCount(); j++) {
+					Dataset dataset = datasource.getDatasets().get(j);
+
+					if (dataset.getType() == DatasetType.NETWORK) {
+						result[0] = datasource.getAlias();
+						result[1] = dataset.getName();
+						break;
+					}
+				}
+			}
+
+			worksace.close();
+		}
+		return result;
 	}
 
 	private String getWorkspaceConnectionString() {

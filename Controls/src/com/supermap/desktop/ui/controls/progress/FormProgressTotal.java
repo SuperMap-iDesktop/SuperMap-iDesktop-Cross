@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
@@ -134,6 +135,57 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 								}
 							});
 						}
+					}
+				} catch (InterruptedException e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} catch (ExecutionException e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} finally {
+					isCancel = false;
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
+							buttonCancel.setEnabled(true);
+							setVisible(false);
+						}
+					});
+				}
+			}
+		};
+
+		worker.execute();
+		if (null != this) {
+			this.setVisible(true);
+		}
+	}
+
+	public void doWork(final UpdateProgressCallable doWork, final IAfterWork<Boolean> afterWork) {
+		doWork.setUpdate(this);
+		worker = new SwingWorker<Boolean, Object>() {
+
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				return doWork.call();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					if (null != this.get()) {
+						Boolean result = this.get();
+
+						if (result) {
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									setVisible(false);
+								}
+							});
+						}
+						afterWork.afterWork(result);
 					}
 				} catch (InterruptedException e) {
 					Application.getActiveApplication().getOutput().output(e);
