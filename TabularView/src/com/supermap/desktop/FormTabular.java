@@ -80,7 +80,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	};
 
@@ -93,13 +93,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
 				showContextMenu(e);
 			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-				TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+				TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
 	};
@@ -117,11 +117,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
 				}
 			}
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
 	};
-	;
+
 	private MouseAdapter rowHeaderMouseListener = new MouseAdapter() {
 
 		@Override
@@ -134,7 +134,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			tableClickedRow = -1;
 		}
 	};
-	;
+
 	private MouseAdapter columnHeaderMouseMotionListener = new MouseAdapter() {
 		@Override
 		public void mouseDragged(MouseEvent e) {
@@ -142,13 +142,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				int column = jTableTabular.columnAtPoint(e.getPoint());
 				if (column >= 0 && column < jTableTabular.getColumnCount()) {
 					setSelectedColumn(tableClickedColumn, column);
-//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
+					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
 				}
 			}
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	};
-	;
+
 	//endregion
 
 	public FormTabular() {
@@ -244,7 +244,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			this.setSelectedColumn(jTableTabular.getColumnCount() - 1, 0);
 
 		}
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	/**
@@ -487,7 +487,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// 设置行高
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		this.jTableTabular.updateUI();
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {
@@ -528,7 +528,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		Rectangle aRect = this.jTableTabular.getCellRect(goToRow, 0, true);
 		this.jTableTabular.scrollRectToVisible(aRect);
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	@Override
@@ -660,7 +660,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			tableClickedColumn = -1;
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
 	}
