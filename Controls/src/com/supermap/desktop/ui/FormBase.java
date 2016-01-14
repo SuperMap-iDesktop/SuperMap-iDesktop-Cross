@@ -1,30 +1,11 @@
 package com.supermap.desktop.ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
@@ -37,6 +18,7 @@ import com.supermap.desktop.Interface.IFrameMenuManager;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.Interface.IStatusbarManager;
 import com.supermap.desktop.Interface.IToolbarManager;
+import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.property.JDialogDataPropertyContainer;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
@@ -52,10 +34,24 @@ import com.supermap.layout.MapLayout;
 import com.supermap.mapping.Map;
 import com.supermap.realspace.Scene;
 
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.List;
+
 public class FormBase extends JFrame implements IFormMain {
 
 	/**
-	 * 
+	 *
 	 */
 	private DropTarget dropTargetTemp;
 
@@ -158,7 +154,7 @@ public class FormBase extends JFrame implements IFormMain {
 			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
 			dockbar.load(workEnvironment);
 			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			this.setVisible(true);
 			this.formManager.setRootContainer(dockbar.getRootWindow());
 			this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
@@ -197,7 +193,7 @@ public class FormBase extends JFrame implements IFormMain {
 	}
 
 	private void formBase_windowClosing() {
-		((ToolbarManager) this.toolbarManager).saveChange();
+		this.toolbarManager.saveChange();
 		Application.getActiveApplication().getWorkEnvironmentManager().getActiveWorkEnvironment().toXML();
 	}
 
@@ -241,7 +237,7 @@ public class FormBase extends JFrame implements IFormMain {
 
 	/**
 	 * 得到文件类型
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -258,7 +254,9 @@ public class FormBase extends JFrame implements IFormMain {
 		return flag;
 	}
 
-	/** 拖动实现打开文件型工作空间或者打开地图 */
+	/**
+	 * 拖动实现打开文件型工作空间或者打开地图
+	 */
 	private void initDrag() {
 		this.dropTargetTemp = new DropTarget(this, new WorkspaceTreeDropTargetAdapter());
 	}
@@ -270,7 +268,7 @@ public class FormBase extends JFrame implements IFormMain {
 
 	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-	 * 
+	 *
 	 * @author xie
 	 */
 	private class WorkspaceTreeDropTargetAdapter extends DropTargetAdapter {

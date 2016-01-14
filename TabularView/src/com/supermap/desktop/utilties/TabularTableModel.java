@@ -51,7 +51,7 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		if (recordset == null) {
+		if (recordset == null || recordset.isClosed()) {
 			return 0;
 		} else {
 			return recordset.getRecordCount();
@@ -60,7 +60,7 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		if (recordset == null) {
+		if (recordset == null || recordset.isClosed()) {
 			return 0;
 		} else {
 			return recordset.getFieldCount();
@@ -70,7 +70,7 @@ public class TabularTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 //		return 0;
-		if (recordset == null) {
+		if (recordset == null || recordset.isClosed()) {
 			return null;
 		}
 		// 缓存用处效果不明显
@@ -96,7 +96,7 @@ public class TabularTableModel extends AbstractTableModel {
 	 * @param rowIndex
 	 */
 	private void moveToRow(int rowIndex) {
-		if (recordset == null) {
+		if (recordset == null || recordset.isClosed()) {
 			return;
 		}
 
@@ -113,7 +113,7 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (recordset == null || recordset.getDataset().isReadOnly()) {
+		if (recordset == null || recordset.getDataset().isReadOnly() || recordset.isClosed()) {
 			return false;
 		}
 		if (fieldInfos.get(getColumnName(column)) == null) {

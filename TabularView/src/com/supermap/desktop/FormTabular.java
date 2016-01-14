@@ -114,7 +114,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				int row = jTableTabular.rowAtPoint(e.getPoint());
 				if (row >= 0 && row < jTableTabular.getRowCount()) {
 					jTableTabular.setRowSelectionInterval(tableClickedRow, row);
-//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
+					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
 				}
 			}
 			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
