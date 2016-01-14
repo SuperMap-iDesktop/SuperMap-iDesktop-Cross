@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.concurrent.CancellationException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -239,6 +240,9 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		this.labelColon = new JLabel(":");
 		this.textFieldPort = new JTextField("8090");
 		this.textFieldPort.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(this.radioButtonLocalHost);
+		buttonGroup.add(this.radioButtonRemoteHost);
 
 		GridBagLayout gbl_panelService = new GridBagLayout();
 		panelService.setLayout(gbl_panelService);
@@ -809,9 +813,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 				initializeHostValue();
 				this.canRelease = true;
 				setButtonReleaseEnabled();
-				this.radioButtonRemoteHost.setSelected(false);
-			} else {
-				this.radioButtonRemoteHost.setSelected(true);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -831,9 +832,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 					this.canRelease = true;
 				}
 				setButtonReleaseEnabled();
-				this.radioButtonLocalHost.setSelected(false);
-			} else {
-				this.radioButtonLocalHost.setSelected(true);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
