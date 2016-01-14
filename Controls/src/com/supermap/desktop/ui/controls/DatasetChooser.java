@@ -285,9 +285,10 @@ public class DatasetChooser extends SmDialog {
 
 			Datasource datasource = (Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData();
 			if (!isSupportDatasource(datasource)) {
-				datasourceTreeNode.remove(datasourceTreeNode);
+				datasourceTreeNode.remove(childDatasourceTreeNode);
 			}
 		}
+		workspaceTree.updateUI();
 	}
 
 	private void initResources() {
