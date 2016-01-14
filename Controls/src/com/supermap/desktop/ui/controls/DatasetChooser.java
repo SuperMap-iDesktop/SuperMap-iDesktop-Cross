@@ -338,9 +338,10 @@ public class DatasetChooser extends SmDialog {
 
 	@Override
 	public DialogResult showDialog() {
+		this.workspaceTree.removeTreeSelectionListener(selectChangeListener);
+		this.workspaceTree.addTreeSelectionListener(selectChangeListener);
 		this.table.clearSelection();
 		this.selectedDatasets.clear();
-
 		this.addWindowListener(windowAdapter);
 		return super.showDialog();
 	}
