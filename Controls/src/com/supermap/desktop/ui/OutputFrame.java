@@ -1,27 +1,20 @@
 package com.supermap.desktop.ui;
 
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Logger;
 
-import javax.swing.Icon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
-import com.supermap.desktop.implement.SmMenuItem;
-import com.supermap.ui.Action;
-import com.supermap.ui.TrackMode;
 
 public class OutputFrame extends JScrollPane implements IOutput {
 	/**

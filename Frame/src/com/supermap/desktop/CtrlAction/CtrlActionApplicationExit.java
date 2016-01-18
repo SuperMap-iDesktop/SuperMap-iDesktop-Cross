@@ -9,6 +9,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionApplicationExit extends CtrlAction {
 
@@ -19,7 +20,7 @@ public class CtrlActionApplicationExit extends CtrlAction {
 	@Override
 	public void run() {
 		JFrame mainFrame = (JFrame)Application.getActiveApplication().getMainFrame();
-		if(CommonToolkit.WorkspaceWrap.closeWorkspace()){
+		if(WorkspaceUtilties.closeWorkspace()){
 			mainFrame.dispose();
 			System.exit(0);
 		}

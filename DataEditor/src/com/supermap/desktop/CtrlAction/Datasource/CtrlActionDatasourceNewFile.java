@@ -20,6 +20,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 
 public class CtrlActionDatasourceNewFile extends CtrlAction {
 
@@ -83,7 +84,7 @@ public class CtrlActionDatasourceNewFile extends CtrlAction {
 					DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treeRoot.getChildAt(0).getChildAt(treeRoot.getChildAt(0).getChildCount() - 1);
 					TreePath path = new TreePath(treeNode.getPath());
 					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().setSelectionPath(path);
-					CommonToolkit.DatasourceWrap.addDatasourceToRecentFile(datasource);
+					DatasourceUtilties.addDatasourceToRecentFile(datasource);
 					resultInfo = DataEditorProperties.getString("String_CreateDatasourseSuccessful");
 				} else {
 					resultInfo = DataEditorProperties.getString("String_CreateDatasourseFailed");

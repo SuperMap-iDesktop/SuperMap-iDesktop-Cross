@@ -5,11 +5,11 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -60,13 +60,13 @@ public class JDialogPyramidManager extends SmDialog {
 	public static final int ColumnSourceDatasetIndex = 0;
 	public static final int ColumnSourceDatasourceIndex = 1;
 
-	private JDialogDatasetChoosePyramidManager jDialogDatasetChoosePyramidManager;
+	private DatasetChooser datasetChooser;
 
-	private final java.lang.String[] supportDatasetTypes = new java.lang.String[]{
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRID),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.GRIDCOLLECTION),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGE),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.IMAGECOLLECTION)};
+	private DatasetType[] supportDatasetTypes = new DatasetType[]{
+			DatasetType.GRID, DatasetType.GRIDCOLLECTION,
+			DatasetType.IMAGE, DatasetType.IMAGECOLLECTION
+	};
+
 	//endregion
 
 	public JDialogPyramidManager() {
@@ -102,8 +102,23 @@ public class JDialogPyramidManager extends SmDialog {
 		this.buttonClose = new JButton();
 
 
-		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-		jDialogDatasetChoosePyramidManager = new JDialogDatasetChoosePyramidManager(this, true, datasource, supportDatasetTypes);
+		datasetChooser = new DatasetChooser(this) {
+			@Override
+			protected boolean isSupportDatasource(Datasource datasource) {
+				if (datasource.isReadOnly()) {
+					if (datasource.getEngineType() == EngineType.IMAGEPLUGINS) {
+						String server = datasource.getConnectionInfo().getServer().toLowerCase();
+						if (!server.endsWith(".img") && !server.endsWith(".tif") && !server.endsWith(".tiff")) {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+				return super.isSupportDatasource(datasource);
+			}
+		};
+		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
 	}
 
 
@@ -249,9 +264,9 @@ public class JDialogPyramidManager extends SmDialog {
 	}
 
 	private void showDatasetChooseDialog() {
-		if (jDialogDatasetChoosePyramidManager.showDialog() == DialogResult.OK) {
+		if (datasetChooser.showDialog() == DialogResult.OK) {
 			int beforeRowCount = tableDatasets.getRowCount();
-			pyramidManagerTableModel.addDataset(jDialogDatasetChoosePyramidManager.getSelectedDatasets());
+			pyramidManagerTableModel.addDataset(datasetChooser.getSelectedDatasets());
 			int afterRowCount = tableDatasets.getRowCount();
 			if (afterRowCount > beforeRowCount) {
 				tableDatasets.setRowSelectionInterval(beforeRowCount, afterRowCount - 1);
@@ -260,7 +275,6 @@ public class JDialogPyramidManager extends SmDialog {
 		}
 
 	}
-
 
 	private void bulidPyramid() {
 		if (pyramidManagerTableModel.bulidPyramid() && checkBoxAutoClose.isSelected()) {
@@ -331,13 +345,13 @@ public class JDialogPyramidManager extends SmDialog {
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 		java.util.List<Dataset> activeSupportDatasets = new ArrayList<>();
 		java.util.List<DatasetType> supportDatasetTypeList = new ArrayList<>();
-		for (String supportDatasetType : supportDatasetTypes) {
-			supportDatasetTypeList.add(CommonToolkit.DatasetTypeWrap.findType(supportDatasetType));
+		for (DatasetType datasetType : supportDatasetTypes) {
+			supportDatasetTypeList.add(datasetType);
 		}
 		for (Dataset activeDataset : activeDatasets) {
 			if (activeDataset.getDatasource().getEngineType() == EngineType.IMAGEPLUGINS) {
-				String server = activeDataset.getDatasource().getConnectionInfo().getServer();
-				if (!server.toLowerCase().endsWith(".img") && !server.toLowerCase().endsWith(".tif") && !server.toLowerCase().endsWith(".tiff")) {
+				String server = activeDataset.getDatasource().getConnectionInfo().getServer().toLowerCase();
+				if (!server.endsWith(".img") && !server.endsWith(".tif") && !server.endsWith(".tiff")) {
 					continue;
 				}
 			} else if (activeDataset.getDatasource().isReadOnly()) {
@@ -353,7 +367,7 @@ public class JDialogPyramidManager extends SmDialog {
 
 	@Override
 	public void dispose() {
-		jDialogDatasetChoosePyramidManager.dispose();
+		datasetChooser.dispose();
 		super.dispose();
 	}
 }

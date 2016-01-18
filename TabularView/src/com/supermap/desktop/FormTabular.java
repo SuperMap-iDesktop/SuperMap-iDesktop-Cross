@@ -6,7 +6,6 @@ import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
@@ -29,17 +28,24 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
+	//region 变量定义
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	private final SetMouseAdapter columnHeaderMouseListener = new SetMouseAdapter();
+	private static final int ROW_HEADER_WIDTH = 70;
 
 	/**
 	 * 序号列的列号，第0列为序号列
@@ -51,10 +57,10 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private String title = "";
 	private JScrollPane jScrollPaneChildWindow;
 	private JPopupMenu FormSuperTabularContextMenu;
-	private static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
-	private static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
-	private static final Color COLOR_EDITABLE_SELECTED = new Color(196, 225, 255);
-	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
+	public static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
+	public static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
+	public static final Color COLOR_EDITABLE_SELECTED = new Color(196, 225, 255);
+	public static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
 	private static final int PREFER_ROW_HEIGHT = 23;
 	private static final int PREFER_COLUMN_WIDTH = 100;
@@ -70,23 +76,80 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 	};
 
-	private MouseListener mouseListener = new MouseAdapter() {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			ToolbarUtilties.updataToolbarsState();
-		}
-	};
-
 	private KeyListener keyListener = new KeyAdapter() {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	};
 
 	private int tableClickedRow = -1;
 	private int tableClickedColumn = -1;
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+				showContextMenu(e);
+			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+				TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		}
+
+	};
+	;
+	private JList rowHeader;
+	private MouseAdapter rowHeaderMouseMotionListener = new MouseAdapter() {
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+
+			if (!e.isControlDown() && tableClickedRow != -1) {
+				int row = jTableTabular.rowAtPoint(e.getPoint());
+				if (row >= 0 && row < jTableTabular.getRowCount()) {
+					jTableTabular.setRowSelectionInterval(tableClickedRow, row);
+					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
+				}
+			}
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		}
+
+	};
+
+	private MouseAdapter rowHeaderMouseListener = new MouseAdapter() {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			setRowHeaderMousePressed(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			tableClickedRow = -1;
+		}
+	};
+
+	private MouseAdapter columnHeaderMouseMotionListener = new MouseAdapter() {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (!e.isControlDown() && tableClickedColumn != -1) {
+				int column = jTableTabular.columnAtPoint(e.getPoint());
+				if (column >= 0 && column < jTableTabular.getColumnCount()) {
+					setSelectedColumn(tableClickedColumn, column);
+					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
+				}
+			}
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		}
+	};
+
+	//endregion
 
 	public FormTabular() {
 		this("");
@@ -101,43 +164,17 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
 		// 设置行高
+
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		jScrollPaneChildWindow = new JScrollPane(jTableTabular);
 		jScrollPaneChildWindow.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		// TODO 设置行表头
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
-		JList rowHeader = new JList(listModel);
-		rowHeader.setFixedCellWidth(60);
+		rowHeader = new JList(listModel);
+		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
-		rowHeader.addMouseMotionListener(new MouseAdapter() {
 
-			@Override
-			public void mouseDragged(MouseEvent e) {
-
-				if (!e.isControlDown() && tableClickedRow != -1) {
-					int row = jTableTabular.rowAtPoint(e.getPoint());
-					if (row >= 0 && row < jTableTabular.getRowCount()) {
-						jTableTabular.setRowSelectionInterval(tableClickedRow, row);
-//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(row, 0, true));
-					}
-				}
-				TabularStatisticUtilties.updataSatusbars(FormTabular.this);
-			}
-
-		});
-		rowHeader.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				setRowHeaderMousePressed(e);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				tableClickedRow = -1;
-			}
-		});
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 
@@ -146,28 +183,12 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");
 		}
-		jTableTabular.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
-					showContextMenu(e);
-				} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-					TabularStatisticUtilties.updataSatusbars(FormTabular.this);
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				TabularStatisticUtilties.updataSatusbars(FormTabular.this);
-			}
-
-		});
 
 		this.addListener(new DockingWindowAdapter() {
 			@Override
 			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-				if (evt.getSource().equals(this)) {
+				if (evt.getSource().equals(FormTabular.this)) {
+					removeListener(this);
 					unRegisterEvents();
 					recordset.dispose();
 				}
@@ -178,20 +199,34 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	private void registerEvents() {
-		this.jTableTabular.addMouseListener(mouseListener);
+		this.jTableTabular.addMouseListener(mouseAdapter);
 		this.jTableTabular.addKeyListener(keyListener);
 		this.jTableTabular.getSelectionModel().addListSelectionListener(listSelectionListener);
+		this.rowHeader.addMouseMotionListener(rowHeaderMouseMotionListener);
+		this.rowHeader.addMouseListener(rowHeaderMouseListener);
+		// 表头点击选中一列
+		this.jTableTabular.getTableHeader().addMouseMotionListener(columnHeaderMouseMotionListener);
+
+		this.jTableTabular.getTableHeader().addMouseListener(columnHeaderMouseListener);
 	}
 
 	private void unRegisterEvents() {
-		this.jTableTabular.removeMouseListener(mouseListener);
+		this.jTableTabular.removeMouseListener(mouseAdapter);
 		this.jTableTabular.removeKeyListener(keyListener);
 		this.jTableTabular.getSelectionModel().removeListSelectionListener(listSelectionListener);
+		this.rowHeader.removeMouseMotionListener(rowHeaderMouseMotionListener);
+		this.rowHeader.removeMouseListener(rowHeaderMouseListener);
+
+		this.jTableTabular.getTableHeader().removeMouseMotionListener(columnHeaderMouseMotionListener);
+		this.jTableTabular.getTableHeader().removeMouseListener(columnHeaderMouseListener);
 	}
 
 	private void setRowHeaderMousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 			int pick = jTableTabular.rowAtPoint(e.getPoint());
+			if (pick < 0) {
+				return;
+			}
 			tableClickedRow = pick;
 			if (e.isShiftDown()) {
 				if (tableClickedRow > jTableTabular.getSelectedRow()) {
@@ -209,7 +244,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			this.setSelectedColumn(jTableTabular.getColumnCount() - 1, 0);
 
 		}
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	/**
@@ -292,8 +327,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-
 			Component component = super.prepareRenderer(renderer, row, column);
+
 			if (!this.isCellEditable(row, column)) {
 				if (isCellSelected(row, column)) {
 					component.setBackground(COLOR_SYSTEM_SELECTED);
@@ -416,22 +451,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// 设置选中字体颜色不变
 		jTableTabular.setSelectionForeground(COLOR_WORD_SELECTED);
 
-		// 表头点击选中一列
-		jTableTabular.getTableHeader().addMouseMotionListener(new MouseAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				if (!e.isControlDown() && tableClickedColumn != -1) {
-					int column = jTableTabular.columnAtPoint(e.getPoint());
-					if (column >= 0 && column < jTableTabular.getColumnCount()) {
-						setSelectedColumn(tableClickedColumn, column);
-//						jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
-					}
-				}
-				TabularStatisticUtilties.updataSatusbars(FormTabular.this);
-			}
-		});
 
-		jTableTabular.getTableHeader().addMouseListener(new SetMouseAdapter());
 		// 设置多选可用
 		jTableTabular.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -467,7 +487,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// 设置行高
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		this.jTableTabular.updateUI();
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {
@@ -508,7 +528,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		Rectangle aRect = this.jTableTabular.getCellRect(goToRow, 0, true);
 		this.jTableTabular.scrollRectToVisible(aRect);
-		TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
 	@Override
@@ -640,7 +660,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			tableClickedColumn = -1;
-			TabularStatisticUtilties.updataSatusbars(FormTabular.this);
+			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
 	}

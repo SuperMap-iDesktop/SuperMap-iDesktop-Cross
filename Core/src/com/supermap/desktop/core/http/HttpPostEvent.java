@@ -12,11 +12,11 @@ public class HttpPostEvent extends EventObject {
 
 	private FileSize totalSize = FileSize.ZERO;
 	private FileSize postedSize = FileSize.ZERO;
-	private double speed = 0d;
+	private FileSize speed = FileSize.ZERO;
 	private int remainTime = 0;
 	private boolean isCancel = false;
 
-	public HttpPostEvent(Object source, FileSize totalSize, FileSize postedSize, double speed, int remainTime) {
+	public HttpPostEvent(Object source, FileSize totalSize, FileSize postedSize, FileSize speed, int remainTime) {
 		super(source);
 		this.totalSize = totalSize;
 		this.postedSize = postedSize;
@@ -40,7 +40,7 @@ public class HttpPostEvent extends EventObject {
 		return postedSize;
 	}
 
-	public double getSpeed() {
+	public FileSize getSpeed() {
 		return speed;
 	}
 

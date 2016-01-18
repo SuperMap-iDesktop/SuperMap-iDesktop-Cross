@@ -56,7 +56,7 @@ public class TabularStatisticUtilties {
 					.getComponent(STATISTIC_RESULT_INDEX);
 			jTextFieldStatisticResult.setText(result);
 		} catch (Exception e) {
-			throw e;
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return true;
 	}
@@ -68,20 +68,17 @@ public class TabularStatisticUtilties {
 	 */
 	public static boolean isStatisticsEnable() {
 		try {
-			if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount() == 1) {
-				return true;
-			} else {
-				return false;
-			}
+			return ((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount() == 1;
 		} catch (Exception e) {
-			throw e;
+			Application.getActiveApplication().getOutput().output(e);
 		}
+		return false;
 	}
 
 	/**
 	 * 当前选中列是否为支持的统计类型
-	 * 
-	 * @return
+	 *
+	 * @return 是否支持
 	 */
 	public static boolean isStatisticsSupportType(Recordset recordset, int columnIndex) {
 		FieldType fieldType = recordset.getFieldInfos().get(columnIndex).getType();
@@ -106,7 +103,7 @@ public class TabularStatisticUtilties {
 	 * 更新状态栏
 	 * 根据当前选中情况更新出统计结果外的数据
 	 */
-	public static void updataSatusbars(IFormTabular formTabular ){
+	public static void updateSatusbars(IFormTabular formTabular) {
 		SmStatusbar smStatusbar = ((FormBaseChild) formTabular).getStatusbar();
 		
 		// 如果选中为空

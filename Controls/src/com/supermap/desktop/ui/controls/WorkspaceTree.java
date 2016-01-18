@@ -42,7 +42,6 @@ import com.supermap.data.DatasetRenamedListener;
 import com.supermap.data.DatasetTopology;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-//import com.supermap.data.DatasetVolume;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceAliasModifiedEvent;
@@ -106,7 +105,9 @@ import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -115,9 +116,9 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -145,6 +146,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+
+//import com.supermap.data.DatasetVolume;
 
 public class WorkspaceTree extends JTree implements IDisposable {
 
@@ -280,9 +283,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
-	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
-			EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
-	
+	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
+			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
@@ -385,7 +388,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				if (isDatasourcesNodeVisible) {
 					treeModelTemp.insertNodeInto(treeNodeDatasources, treeNodeWorkspace, 0);
 
-					for (; datasourcesTreePath != null && datasourcesTreePath.hasMoreElements();) {
+					for (; datasourcesTreePath != null && datasourcesTreePath.hasMoreElements(); ) {
 						this.setExpandedState(datasourcesTreePath.nextElement(), true);
 					}
 				} else {
@@ -417,7 +420,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeMaps, treeNodeWorkspace, 1);
 					}
 
-					for (; mapsTreePath != null && mapsTreePath.hasMoreElements();) {
+					for (; mapsTreePath != null && mapsTreePath.hasMoreElements(); ) {
 						this.setExpandedState(mapsTreePath.nextElement(), true);
 					}
 				} else {
@@ -451,7 +454,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeLayouts, treeNodeWorkspace, 2);
 					}
 
-					for (; layoutsTreePath != null && layoutsTreePath.hasMoreElements();) {
+					for (; layoutsTreePath != null && layoutsTreePath.hasMoreElements(); ) {
 						this.setExpandedState(layoutsTreePath.nextElement(), true);
 					}
 				} else {
@@ -485,7 +488,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						treeModelTemp.insertNodeInto(treeNodeScenes, treeNodeWorkspace, treeNodeWorkspace.getChildCount() - 1);
 					}
 
-					for (; scenesTreePath != null && scenesTreePath.hasMoreElements();) {
+					for (; scenesTreePath != null && scenesTreePath.hasMoreElements(); ) {
 						this.setExpandedState(scenesTreePath.nextElement(), true);
 					}
 				} else {
@@ -513,7 +516,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				if (isResourcesNodeVisible) {
 					treeModelTemp.insertNodeInto(treeNodeResources, treeNodeWorkspace, treeNodeWorkspace.getChildCount());
 
-					for (; resourcesTreePath != null && resourcesTreePath.hasMoreElements();) {
+					for (; resourcesTreePath != null && resourcesTreePath.hasMoreElements(); ) {
 						this.setExpandedState(resourcesTreePath.nextElement(), true);
 					}
 
@@ -655,7 +658,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addDatasetListener(datasets);
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 		} catch (Exception e) {
@@ -705,7 +708,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addDatasourceListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -735,7 +738,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addMapListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -765,7 +768,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addLayoutsListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 		} catch (Exception e) {
@@ -794,7 +797,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			addScenesListener();
 
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 
@@ -1318,10 +1321,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	 * @param datasourceNode
 	 */
 	private DefaultMutableTreeNode addDataset(Dataset dataset, DefaultMutableTreeNode datasourceNode) {
-//		if (dataset instanceof DatasetVolume) {
-//			// 暂不支持的数据集类型
-//			return null;
-//		}
+		// if (dataset instanceof DatasetVolume) {
+		// // 暂不支持的数据集类型
+		// return null;
+		// }
 		DefaultMutableTreeNode datasetNode;
 		TreeNodeData datasetNodeData;
 
@@ -1493,7 +1496,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				TreeNodeData currentNodeData = (TreeNodeData) userObject;
 				Object data = currentNodeData.getData();
 				if (data instanceof Workspace) {
-					CommonToolkit.WorkspaceWrap.closeWorkspace();
+					WorkspaceUtilties.closeWorkspace();
 				} else if (data instanceof Datasource) {
 					try {
 						String message = MessageFormat.format(ControlsProperties.getString("String_CloseDatasourseInfo"), Application.getActiveApplication()
@@ -2029,6 +2032,23 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		return dataset;
 	}
 
+	public void setSelectedDatasource(Datasource datasource) {
+		this.clearSelection();
+		DefaultTreeModel treeModel = (DefaultTreeModel) this.getModel();
+		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+		for (int i = 0; i < datasourceTreeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+			Datasource nodeDatasource = (Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData();
+			if (nodeDatasource == datasource) {
+				TreePath path = new TreePath(childDatasourceTreeNode.getPath());
+				this.scrollPathToVisible(path);
+				this.setSelectionPath(path);
+				break;
+			}
+		}
+	}
+
 	/**
 	 * 点击enter键打开地图
 	 */
@@ -2163,8 +2183,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			this.treeNode = treeNode;
 		}
 
-		DataFlavor[] flavors = { DataFlavor.javaFileListFlavor };
-		DataFlavor[] flavosString = { DataFlavor.stringFlavor };
+		DataFlavor[] flavors = {DataFlavor.javaFileListFlavor};
+		DataFlavor[] flavosString = {DataFlavor.stringFlavor};
 
 		@Override
 		public DataFlavor[] getTransferDataFlavors() {
@@ -2239,11 +2259,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 									}
 									// 关闭当前工作空间
 									WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-									CommonToolkit.WorkspaceWrap.openWorkspace(connectionInfo, false);
+									WorkspaceUtilties.openWorkspace(connectionInfo, false);
 								}
 								// 打开数据源类型的文件
 								if (datasourceType == getFileType(file)) {
-									CommonToolkit.DatasourceWrap.openFileDatasource(file.getAbsolutePath(), null, true);
+									DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, true);
 								}
 							}
 							dtde.dropComplete(true);// 指示拖拽操作已完成

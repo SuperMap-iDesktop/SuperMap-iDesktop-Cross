@@ -20,7 +20,8 @@ public class CtrlActionSortOrderAscending extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		int tabularSelectNumberCount = ((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount();
-		return tabularSelectNumberCount > 0;
+		IFormTabular activeForm = (IFormTabular) Application.getActiveApplication().getActiveForm();
+		int tabularSelectNumberCount = activeForm.getSelectColumnCount();
+		return tabularSelectNumberCount > 0 && activeForm.getRecordset().getRecordCount() > 0;
 	}
 }

@@ -19,7 +19,9 @@ import com.supermap.desktop.ui.XMLMenu;
 import com.supermap.desktop.ui.XMLMenuButton;
 import com.supermap.desktop.ui.XMLMenuButtonDropdown;
 import com.supermap.desktop.ui.XMLMenuGroup;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class SmMenu extends JMenu implements IMenu {
 	private static final long serialVersionUID = 1L;
@@ -304,21 +306,21 @@ public class SmMenu extends JMenu implements IMenu {
 
 			if ("RecentFile".equals(xmlMenuGroup.getID())) {
 				if ("WorkspaceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (CommonToolkit.WorkspaceWrap.getPluginInfo() == null) {
-						CommonToolkit.WorkspaceWrap.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (WorkspaceUtilties.getPluginInfo() == null) {
+						WorkspaceUtilties.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 						;
 					}
 
-					if (CommonToolkit.WorkspaceWrap.getRecentWorkspaceMenu() == null) {
-						CommonToolkit.WorkspaceWrap.setRecentWorkspaceMenu(menuButtonDropdown);
+					if (WorkspaceUtilties.getRecentWorkspaceMenu() == null) {
+						WorkspaceUtilties.setRecentWorkspaceMenu(menuButtonDropdown);
 					}
 				} else if ("DatasourceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (CommonToolkit.DatasourceWrap.getPluginInfo() == null) {
-						CommonToolkit.DatasourceWrap.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (DatasourceUtilties.getPluginInfo() == null) {
+						DatasourceUtilties.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 					}
 
-					if (CommonToolkit.DatasourceWrap.getRecentDatasourceMenu() == null) {
-						CommonToolkit.DatasourceWrap.setRecentDatasourceMenu(menuButtonDropdown);
+					if (DatasourceUtilties.getRecentDatasourceMenu() == null) {
+						DatasourceUtilties.setRecentDatasourceMenu(menuButtonDropdown);
 					}
 				}
 			}

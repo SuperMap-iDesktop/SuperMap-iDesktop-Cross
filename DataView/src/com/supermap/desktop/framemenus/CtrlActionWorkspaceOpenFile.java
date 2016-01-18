@@ -13,6 +13,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 
@@ -35,21 +36,21 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 			SmFileChoose fileChooser = new SmFileChoose("WorkspaceOpenFile");
 			if (fileChooser.showDefaultDialog() == JFileChooser.APPROVE_OPTION && !"".equals(fileChooser.getSelectedFile().getAbsolutePath())) {
 				info = new WorkspaceConnectionInfo(fileChooser.getFilePath());
-				result = CommonToolkit.WorkspaceWrap.openWorkspace(info, true);
+				result = WorkspaceUtilties.openWorkspace(info, true);
 				if (result == OpenWorkspaceResult.SUCCESSED) {
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 						Application.getActiveApplication().getMainFrame().getFormManager().closeAll();
 					}
 				} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
-					JDialogGetPassword dialogGetPassword = new JDialogGetPassword(CoreProperties.getString("String_WorkspacePasswordPrompt")){
-						
+					JDialogGetPassword dialogGetPassword = new JDialogGetPassword(CoreProperties.getString("String_WorkspacePasswordPrompt")) {
+
 						private static final long serialVersionUID = 1L;
 
-						public boolean isRightPassword(String password){
+						public boolean isRightPassword(String password) {
 							info.setPassword(getPassword());
-							result = CommonToolkit.WorkspaceWrap.openWorkspace(info, false);
+							result = WorkspaceUtilties.openWorkspace(info, false);
 							return result != OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
-							
+
 						}
 					};
 					dialogGetPassword.showDialog();
