@@ -168,7 +168,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		jScrollPaneChildWindow = new JScrollPane(jTableTabular);
 		jScrollPaneChildWindow.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		// TODO 设置行表头
+
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
 		rowHeader = new JList(listModel);
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
@@ -554,6 +554,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		if (recordset != null) {
 			flag = true;
 		}
+		setColumnsWidth();
 		return flag;
 	}
 

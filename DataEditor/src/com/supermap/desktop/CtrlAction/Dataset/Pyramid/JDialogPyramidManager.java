@@ -13,6 +13,7 @@ import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -43,7 +44,7 @@ public class JDialogPyramidManager extends SmDialog {
 
 	// 表
 	private JScrollPane scrollPaneTable;
-	private JTable tableDatasets;
+	private SortTable tableDatasets;
 	private PyramidManagerTableModel pyramidManagerTableModel;
 
 	// 按钮栏
@@ -91,7 +92,7 @@ public class JDialogPyramidManager extends SmDialog {
 
 		// 表
 		this.scrollPaneTable = new JScrollPane();
-		this.tableDatasets = new JTable();
+		this.tableDatasets = new SortTable();
 		this.pyramidManagerTableModel = new PyramidManagerTableModel();
 
 		// 按钮栏
