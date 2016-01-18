@@ -266,7 +266,7 @@ public class TabularTableModel extends AbstractTableModel {
 		}
 
 		try {
-			QueryParameter queryParameter = new QueryParameter();
+			QueryParameter queryParameter = recordset.getQueryParameter();
 			queryParameter.setOrderBy(buffer.toString().split("#"));
 			queryParameter.setCursorType(CursorType.DYNAMIC);
 
