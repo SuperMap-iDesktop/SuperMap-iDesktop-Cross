@@ -315,8 +315,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				int selectRow = tableUniqueInfo.getSelectedRow();
 				setItemColor(e.getX(), e.getY());
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -357,8 +357,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 		}
@@ -408,8 +408,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
@@ -453,8 +453,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 						tableUniqueInfo.setRowSelectionInterval(0, 0);
 					}
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -479,8 +479,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} catch (Exception ex) {
@@ -512,8 +512,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				setGeoStyleAntitone();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 		}

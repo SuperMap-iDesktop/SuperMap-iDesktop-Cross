@@ -39,21 +39,8 @@ public class CtrlActionNewMap extends CtrlAction {
 						DatasetType.LINEM, DatasetType.GRID, DatasetType.IMAGE, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D,
 						DatasetType.GRIDCOLLECTION, DatasetType.IMAGECOLLECTION, DatasetType.PARAMETRICLINE, DatasetType.PARAMETRICREGION
 				};
-//				String[] datasetType = new String[] { CommonProperties.getString("String_DatasetType_All"),
-//						CommonProperties.getString("String_DatasetType_Point"), CommonProperties.getString("String_DatasetType_Line"),
-//						CommonProperties.getString("String_DatasetType_Region"), CommonProperties.getString("String_DatasetType_Text"),
-//						CommonProperties.getString("String_DatasetType_CAD"), CommonProperties.getString("String_DatasetType_Network"),
-//						CommonProperties.getString("String_DatasetType_LineM"), CommonProperties.getString("String_DatasetType_Grid"),
-//						CommonProperties.getString("String_DatasetType_Image"), CommonProperties.getString("String_DatasetType_Point3D"),
-//						CommonProperties.getString("String_DatasetType_Line3D"), CommonProperties.getString("String_DatasetType_Region3D"),
-//						// CommonProperties.getString("String_DatasetType_Topology"),
-//						CommonProperties.getString("String_DatasetType_GridCollection"), CommonProperties.getString("String_DatasetType_ImageCollection"),
-//						CommonProperties.getString("String_DatasetType_ParametricLine"), CommonProperties.getString("String_DatasetType_ParametricRegion"),
-//				// CommonProperties.getString("String_DatasetType_WCS"),CommonProperties.getString("String_DatasetType_WMS")
-//				};
 				DatasetChooserNewMap datasetChooser = new DatasetChooserNewMap(frame, formMap, datasetTypes);
 				datasetChooser = null;
-//				datasetChooser.setVisible(true);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

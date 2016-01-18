@@ -1,12 +1,13 @@
 package com.supermap.desktop.ui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -20,22 +21,21 @@ import javax.swing.text.Document;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSettingCSV;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonComboBoxModel;
+import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  *
  * @author Administrator 实现右侧导入CSV数据类型的界面
  */
-public class ImportPanelCSV extends JPanel {
+public class ImportPanelCSV extends AbstractImportPanel {
 	private static final long serialVersionUID = 1L;
 
 	private JButton buttonProperty;
@@ -54,244 +54,158 @@ public class ImportPanelCSV extends JPanel {
 	private JPanel panelTransformParam;
 	private JTextField textFieldFilePath;
 	private JTextField textFieldResultSet;
-	private transient JTextField textFieldSperator;
+	private transient JTextField textFieldSperator = new JTextField();
 	private transient ImportFileInfo fileInfo;
 	private transient ArrayList<ImportFileInfo> fileInfos;
 	private transient ArrayList<JPanel> panels;
 	private transient ImportSettingCSV importsetting = null;
 	private transient DataImportFrame dataImportFrame;
-
-	public ImportPanelCSV() {
-		initComponents();
-	}
-
+	private Document document = this.textFieldSperator.getDocument();
+	private transient LocalDocumentListener documentListener = new LocalDocumentListener();
+	private transient LocalActionListener actionListener = new LocalActionListener();
+	
 	public ImportPanelCSV(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
 		this.dataImportFrame = dataImportFrame;
 		this.fileInfo = fileInfo;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelCSV(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
-	private void initResource() {
-		buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
-		labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
-		labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
-		labelImportType.setText(DataConversionProperties.getString("string_label_lblImportType"));
-		labelSeparator.setText(DataConversionProperties.getString("string_label_lblSeparator"));
-		labelDatasource.setText(DataConversionProperties.getString("string_label_lblDatasource"));
-		labelDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
-		checkboxDataInfo.setText(DataConversionProperties.getString("string_checkbox_chckbxDataInfo"));
-		textFieldSperator.setText(DataConversionProperties.getString("string_index_comma"));
-		buttonProperty.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
-			}
-		});
-		panelResultSetting.setBorder(
+	void initResource() {
+		this.buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
+		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
+		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
+		this.labelImportType.setText(DataConversionProperties.getString("string_label_lblImportType"));
+		this.labelSeparator.setText(DataConversionProperties.getString("string_label_lblSeparator"));
+		this.labelDatasource.setText(DataConversionProperties.getString("string_label_lblDatasource"));
+		this.labelDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
+		this.checkboxDataInfo.setText(DataConversionProperties.getString("string_checkbox_chckbxDataInfo"));
+		this.textFieldSperator.setText(DataConversionProperties.getString("string_index_comma"));
+		this.panelResultSetting.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelTransformParam.setBorder(
+		this.panelTransformParam.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelFileInfo.setBorder(
+		this.panelFileInfo.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		comboBoxCharset.setModel(new CommonComboBoxModel());
-		comboBoxCharset.setAutoscrolls(true);
-		comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
+		this.comboBoxCharset.setModel(new CommonComboBoxModel());
+		this.comboBoxCharset.setAutoscrolls(true);
+		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
 	}
 
-	private void initComponents() {
+	void initComponents() {
 
-		panelResultSetting = new JPanel();
-		labelDatasource = new JLabel();
-		comboBoxDatasource = new DatasourceComboBox();
-		labelDataset = new JLabel();
-		textFieldResultSet = new JTextField();
-		textFieldResultSet.setColumns(10);
-		panelTransformParam = new JPanel();
-		labelImportType = new JLabel();
-		comboBoxImportMode = new JComboBox<Object>();
-		labelSeparator = new JLabel();
-		textFieldSperator = new JTextField();
-		checkboxDataInfo = new JCheckBox();
-		panelFileInfo = new JPanel();
-		labelFilePath = new JLabel();
-		textFieldFilePath = new JTextField();
-		textFieldFilePath.setEditable(false);
-		buttonProperty = new JButton();
-		labelCharset = new JLabel();
-		comboBoxCharset = new CharsetComboBox();
-		initResource();
-		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
-		comboBoxDatasource.setSelectedDatasource(datasource);
-		setPreferredSize(new java.awt.Dimension(483, 300));
+		this.panelResultSetting = new JPanel();
+		this.labelDatasource = new JLabel();
+		this.comboBoxDatasource = new DatasourceComboBox();
+		this.labelDataset = new JLabel();
+		this.textFieldResultSet = new JTextField();
+		this.textFieldResultSet.setColumns(10);
+		this.panelTransformParam = new JPanel();
+		this.labelImportType = new JLabel();
+		this.comboBoxImportMode = new JComboBox<Object>();
+		this.labelSeparator = new JLabel();
+		this.checkboxDataInfo = new JCheckBox();
+		this.panelFileInfo = new JPanel();
+		this.labelFilePath = new JLabel();
+		this.textFieldFilePath = new JTextField();
+		this.textFieldFilePath.setEditable(false);
+		this.buttonProperty = new JButton();
+		this.labelCharset = new JLabel();
+		this.comboBoxCharset = new CharsetComboBox();
+		Datasource datasource = CommonFunction.getDatasource();
+		this.comboBoxDatasource.setSelectedDatasource(datasource);
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 		// 设置fileInfo
-		importsetting = (ImportSettingCSV) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting, textFieldResultSet);
+		this.importsetting = (ImportSettingCSV) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
+				textFieldResultSet);
 		// 设置结果数据集名称
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
 		// 设置导入模式
 		ImportInfoUtil.setImportMode(panels, importsetting, comboBoxImportMode);
 
-		Document document = textFieldSperator.getDocument();
-		// 设置分隔符
-		document.addDocumentListener(new LocalDocumentListener());
-		// 设置首行为字段信息
-		checkboxDataInfo.addActionListener(new java.awt.event.ActionListener() {
-			@Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				boolean isFrist = checkboxDataInfo.isSelected();
-				if (null != importsetting) {
-					importsetting.setFirstRowIsField(isFrist);
-				} else {
-					for (int i = 0; i < panels.size(); i++) {
-						ImportPanelCSV tempPanel = (ImportPanelCSV) panels.get(i);
-						tempPanel.getChckbxDataInfo().setSelected(isFrist);
-					}
-				}
-
-			}
-		});
 		// 设置源文件字符集
 		ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
 
-		// @formatter:off
-		GroupLayout gl_panelCSV=new GroupLayout(this);
-		gl_panelCSV.setAutoCreateContainerGaps(true);
-		gl_panelCSV.setAutoCreateGaps(true);
-		this.setLayout(gl_panelCSV);
-		
-		gl_panelCSV.setHorizontalGroup(gl_panelCSV.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-				.addComponent(panelTransformParam,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-				.addComponent(panelFileInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE));
-		
-		gl_panelCSV.setVerticalGroup(gl_panelCSV.createSequentialGroup()
-				.addComponent(panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-				.addComponent(panelTransformParam,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-				.addComponent(panelFileInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE));
-				
-				GroupLayout gl_panelResultSetting=new GroupLayout(panelResultSetting);
-				gl_panelResultSetting.setAutoCreateContainerGaps(true);
-				gl_panelResultSetting.setAutoCreateGaps(true);
-				panelResultSetting.setLayout(gl_panelResultSetting);
-				
-				gl_panelResultSetting.setHorizontalGroup(gl_panelResultSetting.createSequentialGroup()
-						.addComponent(labelDatasource, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(comboBoxDatasource, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addGap(46)
-						.addComponent(labelDataset, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(textFieldResultSet,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE));
+		initPanelCSV();
 
-				gl_panelResultSetting.setVerticalGroup(gl_panelResultSetting.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelDatasource)
-						.addComponent(comboBoxDatasource,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(labelDataset)
-						.addComponent(textFieldResultSet,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
-				
-				GroupLayout gl_panelTransformParam=new GroupLayout(panelTransformParam);
-				gl_panelTransformParam.setAutoCreateContainerGaps(true);
-				gl_panelTransformParam.setAutoCreateGaps(true);
-				panelTransformParam.setLayout(gl_panelTransformParam);
-				
-				gl_panelTransformParam.setHorizontalGroup(gl_panelTransformParam.createSequentialGroup()
-						.addGroup(gl_panelTransformParam.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panelTransformParam.createSequentialGroup()
-										.addComponent(labelImportType, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(comboBoxImportMode, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE))
-								.addComponent(checkboxDataInfo))
-						.addGap(46)
-						.addGroup(gl_panelTransformParam.createSequentialGroup()
-								.addComponent(labelSeparator, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(textFieldSperator, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)));
-				
-				gl_panelTransformParam.setVerticalGroup(gl_panelTransformParam.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelTransformParam.createSequentialGroup()
-								.addGroup(gl_panelTransformParam.createParallelGroup(Alignment.CENTER)
-										.addComponent(labelImportType)
-										.addComponent(comboBoxImportMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addComponent(checkboxDataInfo))
-						.addGroup(gl_panelTransformParam.createParallelGroup(Alignment.CENTER)
-								.addComponent(labelSeparator)
-								.addComponent(textFieldSperator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-				
-				GroupLayout gl_panelFileInfo=new GroupLayout(this.panelFileInfo);
-				gl_panelFileInfo.setAutoCreateContainerGaps(true);
-				gl_panelFileInfo.setAutoCreateGaps(true);
-				this.panelFileInfo.setLayout(gl_panelFileInfo);
-				
-				gl_panelFileInfo.setHorizontalGroup(gl_panelFileInfo.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelFileInfo.createSequentialGroup()
-								.addComponent(labelFilePath, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH, packageInfo.DEFAULT_LABEL_WIDTH)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(textFieldFilePath, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(buttonProperty))
-						.addGroup(gl_panelFileInfo.createSequentialGroup()
-								.addComponent(labelCharset)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(comboBoxCharset,GroupLayout.PREFERRED_SIZE,packageInfo.DEFAULT_COMPONENT_WIDTH,packageInfo.DEFAULT_COMPONENT_WIDTH)));
-				
-				gl_panelFileInfo.setVerticalGroup(gl_panelFileInfo.createSequentialGroup()
-						.addGroup(gl_panelFileInfo.createParallelGroup(Alignment.CENTER)
-								.addComponent(labelFilePath)
-								.addComponent(textFieldFilePath,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(buttonProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panelFileInfo.createParallelGroup(Alignment.CENTER)
-								.addComponent(labelCharset)
-								.addComponent(comboBoxCharset,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-				// @formatter:on
+		initResultSetting();
+
+		initPanelTransformParam();
+
+		initPanelFileInfo();
+
+	}
+
+	private void initPanelCSV() {
+		//@formatter:off
+		this.setLayout(new GridBagLayout());
+		this.add(this.panelResultSetting,  new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelTransformParam, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelFileInfo,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		//@formatter:on
+	}
+
+	private void initResultSetting() {
+		// @formatter:off
+		this.panelResultSetting.setLayout(new GridBagLayout());
+		this.panelResultSetting.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelResultSetting.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSetting.add(this.labelDataset,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 10, 5));
+		this.panelResultSetting.add(this.textFieldResultSet, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(5, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		// @formatter:on
+	}
+
+	private void initPanelTransformParam() {
+		// @formatter:off
+		this.panelTransformParam.setLayout(new GridBagLayout());
+		this.panelTransformParam.add(this.labelImportType,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelTransformParam.add(this.comboBoxImportMode, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(35, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransformParam.add(this.labelSeparator,     new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelTransformParam.add(this.textFieldSperator,  new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransformParam.add(this.checkboxDataInfo,   new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0, 5, 10, 10));
+		// @formatter:on
+	}
+
+	private void initPanelFileInfo() {
+		// @formatter:off
+		this.panelFileInfo.setLayout(new GridBagLayout());
+		this.panelFileInfo.add(this.labelFilePath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(10, 10, 5, 5));
+		this.panelFileInfo.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelFileInfo.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelFileInfo.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(0, 10, 10, 5));
+		this.panelFileInfo.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(0, 0, 10, 5).setIpad(20, 0));
+		// @formatter:on
 	}
 
 	public JCheckBox getChckbxDataInfo() {
 		return checkboxDataInfo;
 	}
 
-	public void setChckbxDataInfo(JCheckBox chckbxDataInfo) {
-		this.checkboxDataInfo = chckbxDataInfo;
-	}
-
 	public JComboBox<Object> getComboBox() {
 		return comboBoxImportMode;
-	}
-
-	public void setComboBox(JComboBox<Object> comboBox) {
-		this.comboBoxImportMode = comboBox;
 	}
 
 	public CharsetComboBox getComboBoxCharset() {
 		return comboBoxCharset;
 	}
 
-	public void setComboBoxCharset(CharsetComboBox comboBoxCharset) {
-		this.comboBoxCharset = comboBoxCharset;
-	}
-
 	public DatasourceComboBox getComboBoxDatasource() {
 		return comboBoxDatasource;
 	}
 
-	public void setComboBoxDatasource(DatasourceComboBox comboBoxDatasource) {
-		this.comboBoxDatasource = comboBoxDatasource;
-	}
-
 	public JTextField getTextFieldSperator() {
 		return textFieldSperator;
-	}
-
-	public void setTextFieldSperator(JTextField textFieldSperator) {
-		this.textFieldSperator = textFieldSperator;
 	}
 
 	class LocalDocumentListener implements DocumentListener {
@@ -311,6 +225,7 @@ public class ImportPanelCSV extends JPanel {
 
 		}
 
+		// 设置分隔符
 		private void setSeperator() {
 			String text = textFieldSperator.getText();
 			if (!text.isEmpty()) {
@@ -327,5 +242,39 @@ public class ImportPanelCSV extends JPanel {
 
 			}
 		}
+	}
+
+	class LocalActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == checkboxDataInfo) {
+				// 设置首行为字段信息
+				boolean isFrist = checkboxDataInfo.isSelected();
+				if (null != importsetting) {
+					importsetting.setFirstRowIsField(isFrist);
+				} else {
+					for (int i = 0; i < panels.size(); i++) {
+						ImportPanelCSV tempPanel = (ImportPanelCSV) panels.get(i);
+						tempPanel.getChckbxDataInfo().setSelected(isFrist);
+					}
+				}
+			} else {
+				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
+			}
+		}
+	}
+
+	@Override
+	void registActionListener() {
+		this.document.addDocumentListener(this.documentListener);
+		this.checkboxDataInfo.addActionListener(this.actionListener);
+		this.buttonProperty.addActionListener(this.actionListener);
+	}
+
+	@Override
+	void unregistActionListener() {
+		this.document.removeDocumentListener(this.documentListener);
+		this.checkboxDataInfo.removeActionListener(this.actionListener);
+		this.buttonProperty.removeActionListener(this.actionListener);
 	}
 }

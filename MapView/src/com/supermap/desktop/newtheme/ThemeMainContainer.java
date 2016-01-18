@@ -22,8 +22,6 @@ import javax.swing.tree.TreePath;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class ThemeMainContainer extends JPanel {
 
@@ -171,8 +169,6 @@ public class ThemeMainContainer extends JPanel {
 				panel.setRefreshAtOnce(selected);
 				if (selected) {
 					buttonApply.setEnabled(false);
-				} else {
-					buttonApply.setEnabled(true);
 				}
 			}
 		}
@@ -182,10 +178,8 @@ public class ThemeMainContainer extends JPanel {
 	 * 移除所有的控件
 	 */
 	private void updateThemeMainContainer() {
-		for (int i = ThemeMainContainer.this.getComponentCount() - 1; i >= 0; i--) {
-			if (ThemeMainContainer.this.getComponent(i) instanceof ThemeChangePanel) {
-				ThemeMainContainer.this.remove(i);
-			}
+		if (null != this.panel) {
+			ThemeMainContainer.this.remove(this.panel);
 		}
 		ThemeMainContainer.this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
 				.setIpad(0, 0).setFill(GridBagConstraints.BOTH));
@@ -333,6 +327,14 @@ public class ThemeMainContainer extends JPanel {
 						.setFill(GridBagConstraints.BOTH));
 		repaint();
 		this.panel = panel;
+		if (null != panel) {
+			this.panel.setRefreshAtOnce(this.checkBoxRefreshAtOnce.isSelected());
+			this.buttonApply.setEnabled(false);
+		}
+	}
+
+	public JCheckBox getCheckBoxRefreshAtOnce() {
+		return checkBoxRefreshAtOnce;
 	}
 
 	public JButton getButtonApply() {

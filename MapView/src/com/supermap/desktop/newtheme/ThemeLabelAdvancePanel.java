@@ -431,6 +431,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 					// 设置超长处理方式
 					setOverLength();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
 					refreshMapAndLayer();
 				}
@@ -501,6 +502,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置沿线标注项可设置
 				setRotateLabel();
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
 				refreshMapAndLayer();
 			}
@@ -547,12 +549,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	}
 
-	class LocalKeyListener implements KeyListener {
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			// something
-		}
+	class LocalKeyListener extends KeyAdapter {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -578,6 +575,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置最小文本宽度
 				setMinFontWidth();
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
 				refreshMapAndLayer();
 			}
@@ -731,6 +729,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置沿线字间距
 				setFontSpace();
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
 				refreshMapAndLayer();
 			}

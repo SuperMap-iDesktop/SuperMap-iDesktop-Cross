@@ -13,7 +13,10 @@ import com.supermap.mapping.ThemeLabel;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
@@ -31,6 +34,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	private transient TextStyleContainer textStyleContainer;
 
 	private boolean isRefreshAtOnece = true;
+	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
 	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel) {
 		this.datasetVector = datasetVector;
@@ -39,7 +43,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		initComponents();
 	}
 
-
 	/**
 	 * 界面布局入口
 	 */
@@ -47,7 +50,10 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.setLayout(new GridBagLayout());
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
-		this.textStyleContainer = new TextStyleContainer(textStyle, map,themeLabelLayer);
+		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
+		this.textStyleContainer.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
+		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
+		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.textStyleContainer.setUniformStyle(true);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), textStyleContainer);
@@ -69,7 +75,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
 			String item = datasetVector.getName() + "." + fieldInfo.getName();
-			((ThemeLabel)this.themeLabelLayer.getTheme()).setLabelExpression(item);
+			((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(item);
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -125,4 +131,11 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.panelAdvance.refreshMapAndLayer();
 	}
 
+	class LocalPropertyChangeListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			ThemeLabelUniformContainer.this.firePropertyChange("ThemeChange", null, null);
+		}
+	}
 }

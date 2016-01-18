@@ -409,8 +409,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				// 批量修改单值段的符号方案
 				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight() - 60);
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 		}
@@ -577,14 +577,14 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					item.setVisible(true);
 					tableRangeInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				setItemColor(e.getX(), e.getY());
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -617,8 +617,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					// 设置标题格式
 					setRangeFormat();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 					tableRangeInfo.setRowSelectionInterval(0, 0);
 				}
@@ -794,8 +794,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableRangeInfo.addRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} catch (Exception e) {
@@ -870,8 +870,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			makeDefaultAsCustom();
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 		}

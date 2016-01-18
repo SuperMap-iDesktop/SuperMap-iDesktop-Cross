@@ -1,5 +1,6 @@
 package com.supermap.desktop.action;
 
+import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import javax.swing.JTable;
 
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.ui.DataImportFrame;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.FileInfoModel;
 
@@ -23,7 +25,7 @@ import com.supermap.desktop.util.FileInfoModel;
  */
 public class CommonMouseListener extends MouseAdapter {
 	private JTable table;
-	private JPanel contentPane;
+	private JPanel panelImportInfo;
 	private JPanel newPanel;
 	private ArrayList<ImportFileInfo> fileInfos;
 	private JLabel lblDataimportType;
@@ -33,13 +35,13 @@ public class CommonMouseListener extends MouseAdapter {
 	private boolean hasImportInfo;
 
 	public CommonMouseListener(DataImportFrame dataImportFrame, JPanel newPanel, JTable table,
-			JPanel contentPane, List<ImportFileInfo> fileInfos,
+			JPanel panelImportInfo, List<ImportFileInfo> fileInfos,
 			List<JPanel> panels, JLabel lblDataimportType,
 			FileInfoModel model) {
 		this.dataImportFrame = dataImportFrame;
 		this.newPanel = newPanel;
 		this.table = table;
-		this.contentPane = contentPane;
+		this.panelImportInfo = panelImportInfo;
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		this.lblDataimportType = lblDataimportType;
@@ -53,21 +55,19 @@ public class CommonMouseListener extends MouseAdapter {
 			table.setRowSelectionAllowed(true);
 			if (!fileInfos.isEmpty()) {
 				// 刷新右边界面
-				CommonFunction.refreshPanel(table, contentPane, fileInfos,
+				CommonFunction.refreshPanel(table, panelImportInfo, fileInfos,
 						panels, lblDataimportType);
 			}
 			// 如果没有选择行数据时，将右边界面替换为默认界面
 			if (0 == table.getSelectedRowCount()) {
-				JPanel tempPanel = CommonFunction.getRightPanel(contentPane);
-				GroupLayout thisLayout = (GroupLayout) contentPane.getLayout();
-				thisLayout.replace(tempPanel, newPanel);
+				CommonFunction.replace(panelImportInfo, newPanel);
 			}
 		}
 		if (2 == e.getClickCount()) {
 			refreshTable();
 			// 刷新右边界面
 			if (0 < table.getRowCount()) {
-				CommonFunction.refreshPanel(table, contentPane, fileInfos, panels, lblDataimportType);
+				CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels, lblDataimportType);
 				hasImportInfo = true;
 			}
 			if (hasImportInfo) {
@@ -101,7 +101,7 @@ public class CommonMouseListener extends MouseAdapter {
 	public void mouseReleased(MouseEvent e) {
 		// 刷新右边界面
 		if (0 < table.getRowCount()) {
-			CommonFunction.refreshPanel(table, contentPane, fileInfos, panels,
+			CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels,
 					lblDataimportType);
 		}
 	}
