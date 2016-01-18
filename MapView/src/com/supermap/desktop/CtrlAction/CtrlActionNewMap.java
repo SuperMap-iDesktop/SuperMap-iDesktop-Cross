@@ -41,10 +41,8 @@ public class CtrlActionNewMap extends CtrlAction {
 						CommonProperties.getString("String_DatasetType_LineM"), CommonProperties.getString("String_DatasetType_Grid"),
 						CommonProperties.getString("String_DatasetType_Image"), CommonProperties.getString("String_DatasetType_Point3D"),
 						CommonProperties.getString("String_DatasetType_Line3D"), CommonProperties.getString("String_DatasetType_Region3D"),
-						// CommonProperties.getString("String_DatasetType_Topology"),
 						CommonProperties.getString("String_DatasetType_GridCollection"), CommonProperties.getString("String_DatasetType_ImageCollection"),
 						CommonProperties.getString("String_DatasetType_ParametricLine"), CommonProperties.getString("String_DatasetType_ParametricRegion"),
-				// CommonProperties.getString("String_DatasetType_WCS"),CommonProperties.getString("String_DatasetType_WMS")
 				};
 				DatasetChooserNewMap datasetChooser = new DatasetChooserNewMap(frame, formMap, datasetType);
 				datasetChooser.setVisible(true);

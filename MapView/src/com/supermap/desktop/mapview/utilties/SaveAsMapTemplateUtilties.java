@@ -1,5 +1,6 @@
 package com.supermap.desktop.mapview.utilties;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -38,6 +39,7 @@ public class SaveAsMapTemplateUtilties {
 					MapViewProperties.getString("String_Title_SavaAsTemplate"), moduleName, "SaveOne");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+		smFileChoose.setSelectedFile(new File("MapTemplate.xml"));
 		int state = smFileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			try {

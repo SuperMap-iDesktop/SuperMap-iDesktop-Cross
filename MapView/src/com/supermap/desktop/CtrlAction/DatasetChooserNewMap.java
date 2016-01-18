@@ -12,18 +12,14 @@ import java.util.Vector;
 import javax.swing.JFrame;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
 public class DatasetChooserNewMap extends DatasetChooser {

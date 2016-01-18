@@ -128,6 +128,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private int CENTER_Y = 6;
 	private int SCALE = 8;
 	private boolean isRegisterEvents = false;
+	private boolean isResetComboBox = false;
 
 	private Layer[] rememberActiveLayers = null;
 
@@ -236,6 +237,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			initCenter();
+			isResetComboBox = false;
 			initScaleComboBox();
 		}
 	};
@@ -447,6 +449,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.jScrollPaneChildWindow = new JScrollPane(mapControl);
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
+		this.scaleBox.setEditable(true);
 		this.pointXField = (SmTextField) getStatusbar().getComponent(CENTER_X);
 		this.pointYField = (SmTextField) getStatusbar().getComponent(CENTER_Y);
 	}
@@ -638,6 +641,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				ScaleModel model = new ScaleModel(scaleString);
 				double value = model.getScale();
 				if (Double.compare(value, mapControl.getMap().getScale()) != 0 && value < MAX_SCALE_VALUE && value > MIN_SCALE_VALUE) {
+					isResetComboBox = true;
 					mapControl.getMap().setScale(model.getScale());
 					mapControl.getMap().refresh();
 				}
@@ -656,21 +660,22 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@SuppressWarnings("unchecked")
 	private void initScaleComboBox() {
 		try {
-			this.scaleBox.removeAllItems();
-			String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
-			if ("NONE".equals(scale)) {
-				scale = String.valueOf(mapControl.getMap().getScale());
+			if (!isResetComboBox) {
+				this.scaleBox.removeAllItems();
+				String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
+				if ("NONE".equals(scale)) {
+					scale = String.valueOf(mapControl.getMap().getScale());
+				}
+				this.scaleBox.addItem(scale);
+				this.scaleBox.addItem(ScaleModel.SCALE_5000);
+				this.scaleBox.addItem(ScaleModel.SCALE_10000);
+				this.scaleBox.addItem(ScaleModel.SCALE_25000);
+				this.scaleBox.addItem(ScaleModel.SCALE_50000);
+				this.scaleBox.addItem(ScaleModel.SCALE_100000);
+				this.scaleBox.addItem(ScaleModel.SCALE_250000);
+				this.scaleBox.addItem(ScaleModel.SCALE_500000);
+				this.scaleBox.addItem(ScaleModel.SCALE_1000000);
 			}
-
-			this.scaleBox.addItem(scale);
-			this.scaleBox.addItem(ScaleModel.SCALE_5000);
-			this.scaleBox.addItem(ScaleModel.SCALE_10000);
-			this.scaleBox.addItem(ScaleModel.SCALE_25000);
-			this.scaleBox.addItem(ScaleModel.SCALE_50000);
-			this.scaleBox.addItem(ScaleModel.SCALE_100000);
-			this.scaleBox.addItem(ScaleModel.SCALE_250000);
-			this.scaleBox.addItem(ScaleModel.SCALE_500000);
-			this.scaleBox.addItem(ScaleModel.SCALE_1000000);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

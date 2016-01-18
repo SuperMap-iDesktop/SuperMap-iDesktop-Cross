@@ -63,8 +63,8 @@ public class CtrlActionLoadMapTemplate extends CtrlAction {
 				if (formMap != null) {
 					Map map = formMap.getMapControl().getMap();
 					map.fromXML(mapTemplateXml.toString());
-					map.refresh();
 					UICommonToolkit.getLayersManager().setMap(map);
+					map.refresh();
 					map.viewEntire();
 				}
 			}

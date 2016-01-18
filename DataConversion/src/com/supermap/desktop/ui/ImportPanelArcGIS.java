@@ -1,12 +1,13 @@
 package com.supermap.desktop.ui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -24,22 +25,20 @@ import com.supermap.data.conversion.ImportSettingGRD;
 import com.supermap.data.conversion.ImportSettingRAW;
 import com.supermap.data.conversion.ImportSettingTEMSClutter;
 import com.supermap.data.conversion.ImportSettingUSGSDEM;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonComboBoxModel;
+import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
-
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  *
  * @author Administrator 实现右侧导入dem,bil,bip,bsq,raw,grd,txt栅格数据类型的界面
  */
-public class ImportPanelArcGIS extends JPanel {
+public class ImportPanelArcGIS extends AbstractImportPanel {
 	private static final long serialVersionUID = 1L;
 	private JButton buttonProperty;
 	private JCheckBox checkBoxImageInfo;
@@ -63,21 +62,22 @@ public class ImportPanelArcGIS extends JPanel {
 	private ArrayList<JPanel> panels = null;
 	private transient ImportSetting importsetting = null;
 	private transient DataImportFrame dataImportFrame;
-
-	public ImportPanelArcGIS() {
-		initComponents();
-	}
+	private transient LocalActionListener actionListener = new LocalActionListener();
 
 	public ImportPanelArcGIS(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
 		this.dataImportFrame = dataImportFrame;
 		this.fileInfo = fileInfo;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelArcGIS(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	private void setImageInfo(boolean flag, ImportSetting importsetting) {
@@ -111,61 +111,53 @@ public class ImportPanelArcGIS extends JPanel {
 		}
 	}
 
-	private void initResource() {
-		labelDatapath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
-		labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
-		labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
-		labelDatasource.setText(DataConversionProperties.getString("string_label_lblDatasource"));
-		labelDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
-		labelCodingType.setText(DataConversionProperties.getString("string_label_lblCodingtype"));
-		checkBoxImageInfo.setText(DataConversionProperties.getString("string_checkbox_chckbxImageInfo"));
-		buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
-		buttonProperty.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
-			}
-		});
-		panelDataSet.setBorder(
+	void initResource() {
+		this.labelDatapath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
+		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
+		this.labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
+		this.labelDatasource.setText(DataConversionProperties.getString("string_label_lblDatasource"));
+		this.labelDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
+		this.labelCodingType.setText(DataConversionProperties.getString("string_label_lblCodingtype"));
+		this.checkBoxImageInfo.setText(DataConversionProperties.getString("string_checkbox_chckbxImageInfo"));
+		this.buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
+		this.panelDataSet.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelTransform.setBorder(
+		this.panelTransform.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelDatapath.setBorder(
+		this.panelDatapath.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		comboBoxCharset.setModel(new CommonComboBoxModel());
-		comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
+		this.comboBoxCharset.setModel(new CommonComboBoxModel());
+		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
-		comboBoxCodingType.setModel(
+		this.comboBoxCodingType.setModel(
 				new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_nullcoding"), "SGL", "LZW" }));
 	}
 
-	private void initComponents() {
+	void initComponents() {
 
-		panelDataSet = new JPanel();
-		labelDatasource = new JLabel();
-		labelCodingType = new JLabel();
-		comboBoxDatasource = new DatasourceComboBox();
-		comboBoxCodingType = new JComboBox<Object>();
-		labelDataset = new JLabel();
-		textFieldResultSet = new JTextField();
-		textFieldResultSet.setColumns(10);
-		panelTransform = new JPanel();
-		labelImportModel = new JLabel();
-		comboBoxImportModel = new JComboBox<Object>();
-		checkBoxImageInfo = new JCheckBox();
-		panelDatapath = new JPanel();
-		labelDatapath = new JLabel();
-		textFieldFilePath = new JTextField();
-		textFieldFilePath.setEditable(false);
-		buttonProperty = new JButton();
-		labelCharset = new JLabel();
-		comboBoxCharset = new CharsetComboBox();
-		initResource();
-
-		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
-		comboBoxDatasource.setSelectedDatasource(datasource);
-		importsetting = ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting, textFieldResultSet);
+		this.panelDataSet = new JPanel();
+		this.labelDatasource = new JLabel();
+		this.labelCodingType = new JLabel();
+		this.comboBoxDatasource = new DatasourceComboBox();
+		this.comboBoxCodingType = new JComboBox<Object>();
+		this.labelDataset = new JLabel();
+		this.textFieldResultSet = new JTextField();
+		this.textFieldResultSet.setColumns(10);
+		this.panelTransform = new JPanel();
+		this.labelImportModel = new JLabel();
+		this.comboBoxImportModel = new JComboBox<Object>();
+		this.checkBoxImageInfo = new JCheckBox();
+		this.panelDatapath = new JPanel();
+		this.labelDatapath = new JLabel();
+		this.textFieldFilePath = new JTextField();
+		this.textFieldFilePath.setEditable(false);
+		this.buttonProperty = new JButton();
+		this.labelCharset = new JLabel();
+		this.comboBoxCharset = new CharsetComboBox();
+		Datasource datasource = CommonFunction.getDatasource();
+		this.comboBoxDatasource.setSelectedDatasource(datasource);
+		this.importsetting = ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
+				textFieldResultSet);
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 		// 设置结果数据集名称
@@ -177,10 +169,97 @@ public class ImportPanelArcGIS extends JPanel {
 		// 设置源文件字符集类型
 		ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
 
-		// 设置是否建立影像金字塔
-		checkBoxImageInfo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		// 主panel添加三个子panel
+		initPanelArcGIS();
+
+		// 结果设置panel
+		initPanelDataSet();
+
+		// 转换参数panelTransform
+		initPanelTransform();
+		// 源文件信息panelDatapath
+		initPanelDatapath();
+	}
+
+	private void initPanelDatapath() {
+		//@formatter:off
+		this.panelDatapath.setLayout(new GridBagLayout());
+		this.panelDatapath.add(this.labelDatapath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelDatapath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDatapath.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDatapath.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelDatapath.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 5).setIpad(20, 0));
+		//@formatter:on
+	}
+
+	private void initPanelTransform() {
+		//@formatter:off
+		this.panelTransform.setLayout(new GridBagLayout());
+		this.panelTransform.add(this.labelImportModel,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelTransform.add(this.comboBoxImportModel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransform.add(this.checkBoxImageInfo,   new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(10, 0, 10, 10));
+		//@formatter:on
+	}
+
+	private void initPanelDataSet() {
+		//@formatter:off
+		this.panelDataSet.setLayout(new GridBagLayout());
+		this.panelDataSet.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelDataSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDataSet.add(this.labelDataset,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelDataSet.add(this.textFieldResultSet, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDataSet.add(this.labelCodingType,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelDataSet.add(this.comboBoxCodingType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on
+	}
+
+	private void initPanelArcGIS() {
+		//@formatter:off
+		this.setLayout(new GridBagLayout());
+		this.add(this.panelDataSet,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 0));
+		this.add(this.panelTransform, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 0));
+		this.add(this.panelDatapath,  new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 0));
+		////@formatter:on
+	}
+
+	public JCheckBox getChckbxImageInfo() {
+		return checkBoxImageInfo;
+	}
+
+	public JComboBox<Object> getComboBox() {
+		return comboBoxImportModel;
+	}
+
+	public CharsetComboBox getComboBoxCharset() {
+		return comboBoxCharset;
+	}
+
+	public JComboBox<Object> getComboBoxCodingType() {
+		return comboBoxCodingType;
+	}
+
+	public DatasourceComboBox getComboBoxDatasource() {
+		return comboBoxDatasource;
+	}
+
+	@Override
+	void registActionListener() {
+		this.buttonProperty.addActionListener(this.actionListener);
+		this.checkBoxImageInfo.addActionListener(this.actionListener);
+	}
+
+	@Override
+	void unregistActionListener() {
+		this.buttonProperty.removeActionListener(this.actionListener);
+		this.buttonProperty.removeActionListener(this.actionListener);
+	}
+
+	class LocalActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == checkBoxImageInfo) {
+				// 设置是否建立影像金字塔
 				boolean flag = checkBoxImageInfo.isSelected();
 				if (null != importsetting) {
 					setImageInfo(flag, importsetting);
@@ -190,134 +269,11 @@ public class ImportPanelArcGIS extends JPanel {
 						tempPanel.getChckbxImageInfo().setSelected(flag);
 					}
 				}
+			} else {
+				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
 			}
-		});
+		}
 
-		// @formatter:off
-		//主panel添加三个子panel
-		GroupLayout gl_panelArcGIS = new GroupLayout(this);
-		gl_panelArcGIS.setAutoCreateGaps(true);
-		gl_panelArcGIS.setAutoCreateContainerGaps(true);
-		this.setLayout(gl_panelArcGIS);
-		gl_panelArcGIS.setHorizontalGroup(gl_panelArcGIS.createParallelGroup(Alignment.LEADING)
-					.addComponent(panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-					.addComponent(panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-					.addComponent(panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE));
-		gl_panelArcGIS.setVerticalGroup(gl_panelArcGIS.createSequentialGroup()			
-					.addComponent(panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-					.addComponent(panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-					.addComponent(panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE));
-		
-		//结果设置panel 
-		GroupLayout gl_panel = new GroupLayout(panelDataSet);
-		gl_panel.setAutoCreateContainerGaps(true);
-		gl_panel.setAutoCreateGaps(true);
-		panelDataSet.setLayout(gl_panel);
-		gl_panel.setHorizontalGroup(gl_panel.createSequentialGroup()
-			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(labelDatasource,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-						.addComponent(labelCodingType,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE))
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxDatasource,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH,Short.MAX_VALUE)
-						.addComponent(comboBoxCodingType,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH,Short.MAX_VALUE))
-			.addGap(packageInfo.DEFAULT_COMPONENT_GAP)
-			.addComponent(labelDataset, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addComponent(textFieldResultSet,GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH,Short.MAX_VALUE));
-		gl_panel.setVerticalGroup(gl_panel.createSequentialGroup()
-			.addGroup(gl_panel.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelDatasource,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(comboBoxDatasource,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(labelDataset,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(textFieldResultSet,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addGroup(gl_panel.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelCodingType,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(comboBoxCodingType,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)));
-		
-		//转换参数panelTransform
-		GroupLayout gl_panelTransform = new GroupLayout(panelTransform);
-		gl_panelTransform.setAutoCreateContainerGaps(true);
-		gl_panelTransform.setAutoCreateGaps(true);
-		panelTransform.setLayout(gl_panelTransform);
-		gl_panelTransform.setHorizontalGroup(gl_panelTransform.createSequentialGroup()
-			.addComponent(labelImportModel, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addComponent(comboBoxImportModel, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-			.addGap(packageInfo.DEFAULT_COMPONENT_GAP)
-			.addComponent(checkBoxImageInfo, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-			.addGap(GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE));
-		
-		gl_panelTransform.setVerticalGroup(gl_panelTransform.createParallelGroup (Alignment.CENTER)
-		    .addComponent(labelImportModel,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-		    .addComponent(comboBoxImportModel,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-		    .addComponent(checkBoxImageInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE));
-		
-		//源文件信息panelDatapath
-		GroupLayout gl_panelDatapath = new GroupLayout(panelDatapath);
-		gl_panelDatapath.setAutoCreateContainerGaps(true);
-		gl_panelDatapath.setAutoCreateGaps(true);
-		panelDatapath.setLayout(gl_panelDatapath);
-		gl_panelDatapath.setHorizontalGroup(gl_panelDatapath.createParallelGroup(Alignment.LEADING)
-			.addGroup(gl_panelDatapath.createSequentialGroup()
-						.addComponent(labelDatapath, GroupLayout.PREFERRED_SIZE,packageInfo.DEFAULT_LABEL_WIDTH,packageInfo.DEFAULT_LABEL_WIDTH)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(textFieldFilePath, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(buttonProperty, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH,packageInfo.DEFAULT_COMPONENT_WIDTH))
-			.addGroup(gl_panelDatapath.createSequentialGroup()
-						.addComponent(labelCharset, GroupLayout.PREFERRED_SIZE,packageInfo.DEFAULT_LABEL_WIDTH,packageInfo.DEFAULT_LABEL_WIDTH)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(comboBoxCharset, GroupLayout.PREFERRED_SIZE, packageInfo.DEFAULT_COMPONENT_WIDTH,packageInfo.DEFAULT_COMPONENT_WIDTH)));
-		gl_panelDatapath.setVerticalGroup(gl_panelDatapath.createSequentialGroup()
-			.addGroup(gl_panelDatapath.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelDatapath, GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(textFieldFilePath, GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(buttonProperty, GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
-			.addGroup(gl_panelDatapath.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelCharset, GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-				.addComponent(comboBoxCharset,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)));
-	}
-
-	public JCheckBox getChckbxImageInfo() {
-		return checkBoxImageInfo;
-	}
-
-	public void setChckbxImageInfo(JCheckBox chckbxImageInfo) {
-		this.checkBoxImageInfo = chckbxImageInfo;
-	}
-
-	public JComboBox<Object> getComboBox() {
-		return comboBoxImportModel;
-	}
-
-	public void setComboBox(JComboBox<Object> comboBox) {
-		this.comboBoxImportModel = comboBox;
-	}
-
-	public CharsetComboBox getComboBoxCharset() {
-		return comboBoxCharset;
-	}
-
-	public void setComboBoxCharset(CharsetComboBox comboBoxCharset) {
-		this.comboBoxCharset = comboBoxCharset;
-	}
-
-	public JComboBox<Object> getComboBoxCodingType() {
-		return comboBoxCodingType;
-	}
-
-	public void setComboBoxCodingType(JComboBox<Object> comboBoxCodingType) {
-		this.comboBoxCodingType = comboBoxCodingType;
-	}
-
-	public DatasourceComboBox getComboBoxDatasource() {
-		return comboBoxDatasource;
-	}
-
-	public void setComboBoxDatasource(DatasourceComboBox comboBoxDatasource) {
-		this.comboBoxDatasource = comboBoxDatasource;
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.supermap.desktop.util;
 
-import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+
+import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingBIL;
 import com.supermap.data.conversion.ImportSettingBIP;
@@ -51,6 +53,7 @@ import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.AbstractImportPanel;
 import com.supermap.desktop.ui.DataImportFrame;
 import com.supermap.desktop.ui.ImportPanelEXCEL;
 import com.supermap.desktop.ui.ImportPanelLIDAR;
@@ -73,6 +76,7 @@ import com.supermap.desktop.ui.ImportPanelVECTOR;
 import com.supermap.desktop.ui.ImportPanelVandG;
 import com.supermap.desktop.ui.ImportPanelWOR;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
@@ -183,33 +187,30 @@ public class CommonFunction {
 
 	/**
 	 * 暂时没用
-	 *
-	 * @param contentPane
+	 * 
+	 * @param panelImportInfo
 	 * @param tempFileType
 	 * @param panels
-	 * @param table
 	 * @param lblDataimportType
 	 */
-	public static void refreshPanelForKey(JPanel contentPane, List<ImportFileInfo> tempFileType, List<JPanel> panels, JLabel lblDataimportType) {
-		JPanel tempPane = getRightPanel(contentPane);
-		GroupLayout layout = (GroupLayout) contentPane.getLayout();
-		replacePanel(layout, tempFileType, panels, lblDataimportType, tempPane);
+
+	public static void refreshPanelForKey(JPanel panelImportInfo, List<ImportFileInfo> tempFileType, List<JPanel> panels, JLabel lblDataimportType) {
+		replacePanel(panelImportInfo, tempFileType, panels, lblDataimportType);
 	}
 
 	/**
 	 * 刷新右边界面方法
-	 *
+	 * 
 	 * @param table
-	 * @param contentPane
+	 * @param panelImportInfo
 	 * @param fileInfos
 	 * @param panels
 	 * @param lblDataimportType
 	 */
-	public static void refreshPanel(JTable table, JPanel contentPane, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
+
+	public static void refreshPanel(JTable table, JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
 		// 刷新页面方法
 		int[] selectedRowCounts = table.getSelectedRows();
-		GroupLayout layout = (GroupLayout) contentPane.getLayout();
-		JPanel tempPane = getRightPanel(contentPane);
 
 		if (1 <= selectedRowCounts.length) {
 			// 界面处理方法，点击左边数据显示右边界面交互情况
@@ -220,7 +221,7 @@ public class CommonFunction {
 				tempPanels.add(panels.get(selectedRowCounts[i]));
 			}
 
-			replacePanel(layout, tempFileType, tempPanels, lblDataimportType, tempPane);
+			replacePanel(panelImportInfo, tempFileType, tempPanels, lblDataimportType);
 		}
 
 	}
@@ -234,37 +235,34 @@ public class CommonFunction {
 	 * @param table
 	 * @param lblDataimportType
 	 */
-	public static void refreshPanelSingal(JPanel contentPane, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
+	public static void refreshPanelSingal(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
 		ImportFileInfo tempFile = null;
 		JPanel tempPane = null;
 		if (!fileInfos.isEmpty()) {
 			tempFile = fileInfos.get(0);
 			tempPane = panels.get(0);
 		}
-		JPanel tempPanel = CommonFunction.getRightPanel(contentPane);
 		ArrayList<ImportFileInfo> selectedFileInfos = new ArrayList<ImportFileInfo>();
 		ArrayList<JPanel> selectedPanels = new ArrayList<JPanel>();
 		selectedFileInfos.add(tempFile);
 		selectedPanels.add(tempPane);
-		GroupLayout layout = (GroupLayout) contentPane.getLayout();
-		replacePanel(layout, selectedFileInfos, selectedPanels, lblDataimportType, tempPanel);
+
+		replacePanel(panelImportInfo, selectedFileInfos, selectedPanels, lblDataimportType);
 	}
 
 	/**
 	 * 数据被全部选中时的刷新
-	 *
-	 * @param contentPane
+	 * 
+	 * @param panelImportInfo
 	 * @param fileInfos
 	 * @param panels
-	 * @param table
 	 * @param lblDataimportType
 	 */
-	public static void refreshPanelSelectedAll(JPanel contentPane, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
+
+	public static void refreshPanelSelectedAll(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
 		// 选中多个选项时刷新页面方法
 		// 如果
-		JPanel tempPane = getRightPanel(contentPane);
-		GroupLayout layout = (GroupLayout) contentPane.getLayout();
-		replacePanel(layout, fileInfos, panels, lblDataimportType, tempPane);
+		replacePanel(panelImportInfo, fileInfos, panels, lblDataimportType);
 	}
 
 	/**
@@ -547,7 +545,7 @@ public class CommonFunction {
 	/**
 	 * 界面刷新的具体方法
 	 *
-	 * @param layout
+	 * @param panelImportInfo
 	 * @param fileInfos
 	 * @param panels
 	 * @param table
@@ -555,7 +553,7 @@ public class CommonFunction {
 	 * @param tempPane
 	 * @return
 	 */
-	private static JPanel replacePanel(GroupLayout layout, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType, JPanel tempPane) {
+	private static JPanel replacePanel(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
 		JPanel dataPane = new JPanel();
 
 		// 类型全部相同
@@ -853,9 +851,9 @@ public class CommonFunction {
 				}
 				if (fileType.equalsIgnoreCase(FileTypeLocale.SCV_STRING)) {
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportSCV_Text"));
-				}else if(fileType.equalsIgnoreCase(FileTypeLocale.VCT_STRING)){
+				} else if (fileType.equalsIgnoreCase(FileTypeLocale.VCT_STRING)) {
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportVCT_Text"));
-				}else{
+				} else {
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDBF_Text"));
 				}
 			}
@@ -868,61 +866,53 @@ public class CommonFunction {
 				}
 				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportMrSID_Text"));
 			}
-			if (null != dataPane && null != tempPane) {
-
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		} else if (isGrdOnly(fileInfos)) {
 			dataPane = new ImportPanelArcGIS(fileInfos, panels);
 			lblDataimportType.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
-			if (null != dataPane && null != tempPane) {
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		} else if (isMapGisOnly((ArrayList<ImportFileInfo>) fileInfos)) {
 			dataPane = new ImportPanelMapGIS(fileInfos, panels);
 			lblDataimportType.setText(DataConversionProperties.getString("String_FormImportMAPGIS_Text"));
-			if (null != dataPane && null != tempPane) {
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		} else if (isGridTypeOnly((ArrayList<ImportFileInfo>) fileInfos)) {
 			dataPane = new ImportPanelGRID(fileInfos, panels);
 			lblDataimportType.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
-			if (null != dataPane && null != tempPane) {
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		} else if (isVectorTypeOnly(fileInfos)) {
 			dataPane = new ImportPanelVECTOR(fileInfos, panels);
 			lblDataimportType.setText(DataConversionProperties.getString("String_FormImportVector_Text"));
-			if (null != dataPane && null != tempPane) {
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		} else {
 			dataPane = new ImportPanelVandG(fileInfos, panels);
 			lblDataimportType.setText(DataConversionProperties.getString("String_FormImportMix_Text"));
-			if (null != dataPane && null != tempPane) {
-				layout.replace(tempPane, dataPane);
+			if (null != dataPane) {
+				replace(panelImportInfo, dataPane);
 			}
 		}
 
 		return dataPane;
 	}
 
-	/**
-	 * 得到已有的界面
-	 *
-	 * @param contentPane
-	 * @return
-	 */
-	public static JPanel getRightPanel(JPanel contentPane) {
-		int count = contentPane.getComponentCount();
-		Component[] component = contentPane.getComponents();
-		JPanel result = null;
-		for (int i = 0; i < count; i++) {
-			if (component[i] instanceof JPanel && 1 != i) {
-				result = (JPanel) contentPane.getComponent(i);
+	public static void replace(JPanel parentPanel, JPanel newPanel) {
+		for (int i = 0; i < parentPanel.getComponentCount(); i++) {
+			if (parentPanel.getComponent(i) instanceof JPanel) {
+				parentPanel.remove(i);
 			}
 		}
-		return result;
+		parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
+				.setWeight(1, 3));
+		parentPanel.updateUI();
 	}
 
 	/**
@@ -948,6 +938,16 @@ public class CommonFunction {
 			result.add(fileType);
 		}
 		return result;
+	}
+
+	public static Datasource getDatasource() {
+		Datasource datasource = null;
+		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
+			datasource = Application.getActiveApplication().getActiveDatasources()[0];
+		} else {
+			datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+		}
+		return datasource;
 	}
 
 	/**
@@ -995,12 +995,12 @@ public class CommonFunction {
 	 * @param panels
 	 * @param table
 	 * @param model
-	 * @param contentPane
+	 * @param panelImportInfo
 	 * @param lblDataimportType
 	 * @return
 	 */
 	public static void addData(DataImportFrame dataImportFrame, List<ImportFileInfo> fileInfos, List<JPanel> panels, JTable table, FileInfoModel model,
-			JPanel contentPane, JLabel lblDataimportType) {
+			JPanel panelImportInfo, JLabel lblDataimportType) {
 		// 添加文件
 		int select = 0;
 		if (0 != table.getRowCount()) {
@@ -1022,12 +1022,22 @@ public class CommonFunction {
 		table.updateUI();
 		if (!fileInfos.isEmpty()) {
 			// 刷新右边界面
-			CommonFunction.refreshPanelSelectedAll(contentPane, fileInfos, panels, lblDataimportType);
+			CommonFunction.refreshPanelSelectedAll(panelImportInfo, fileInfos, panels, lblDataimportType);
 		}
 	}
 
-	// 点击删除时的处理方法
-	public static void deleteData(JTable table, List<ImportFileInfo> fileInfos, List<JPanel> panels, FileInfoModel model, JPanel contentPane,
+	/**
+	 * 点击删除时的处理方法
+	 * 
+	 * @param table
+	 * @param fileInfos
+	 * @param panels
+	 * @param model
+	 * @param panelImportInfo
+	 * @param lblDataimportType
+	 * @param newPanel
+	 */
+	public static void deleteData(JTable table, List<ImportFileInfo> fileInfos, List<JPanel> panels, FileInfoModel model, JPanel panelImportInfo,
 			JLabel lblDataimportType, JPanel newPanel) {
 		// 执行删除
 		int[] selectedRow = table.getSelectedRows();
@@ -1041,11 +1051,10 @@ public class CommonFunction {
 		}
 		// 如果表中没有数据，右边部分显示为默认界面。
 		if (fileInfos.isEmpty()) {
-			JPanel tempPanel = CommonFunction.getRightPanel(contentPane);
-			GroupLayout thisLayout = (GroupLayout) contentPane.getLayout();
-			thisLayout.replace(tempPanel, newPanel);
+			lblDataimportType.setText(DataConversionProperties.getString("string_label_importData"));
+			CommonFunction.replace(panelImportInfo, newPanel);
 		} else {
-			CommonFunction.refreshPanelSingal(contentPane, fileInfos, panels, lblDataimportType);
+			CommonFunction.refreshPanelSingal(panelImportInfo, fileInfos, panels, lblDataimportType);
 			table.setRowSelectionInterval(0, 0);
 		}
 	}

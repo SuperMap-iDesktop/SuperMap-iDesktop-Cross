@@ -525,6 +525,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					// 设置数值文本精度
 					setTextPrecision();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
 					refreshMapAndLayer();
 				}
@@ -683,6 +684,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				// 设置是否显示上下标
 				setShowTextExpression();
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
 				refreshMapAndLayer();
 			}

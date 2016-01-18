@@ -66,7 +66,9 @@ public class ThemeGuideFactory {
 
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
-					container.getButtonApply().setEnabled(true);
+					if (!container.getCheckBoxRefreshAtOnce().isSelected()) {
+						container.getButtonApply().setEnabled(true);
+					}
 				}
 			});
 		} catch (ClassNotFoundException e) {

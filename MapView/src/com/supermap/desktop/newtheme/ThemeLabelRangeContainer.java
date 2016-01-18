@@ -21,6 +21,8 @@ import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -81,7 +83,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-
+	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -384,6 +386,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	void registActionListener() {
 		unregistActionListener();
+		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
+		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
 		this.buttonMerge.addActionListener(this.actionListener);
@@ -434,22 +438,22 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 合并选中项
 					mergeItem();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} else if (e.getSource() == buttonSplit) {
 				// 拆分选中项
 				splitItem();
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} else if (e.getSource() == buttonVisible) {
 				// 批量修改分段的可见状态
 				setItemVisble();
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} else if (e.getSource() == buttonStyle) {
@@ -598,6 +602,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			int y = buttonStyle.getLocationOnScreen().y + height;
 			if (selectedRow.length > 0) {
 				textStyleDialog = new TextStyleDialog(themeLabel, selectedRow, map, themeLabelLayer);
+				textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange",ThemeLabelRangeContainer.this.propertyChangeListener);
 				textStyleDialog.setRefreshAtOnce(isRefreshAtOnce);
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
@@ -641,8 +646,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					tableLabelInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 				tableLabelInfo.setRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -679,8 +684,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 设置标题格式
 					setRangeFormat();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -1004,8 +1009,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
 					themeLabel.getItem(selectRow).setCaption(caption);
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 				getTable();
@@ -1080,5 +1085,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		map.refresh();
 		UICommonToolkit.getLayersManager().getLayersTree().reload();
 	}
+	class LocalPropertyChangeListener implements PropertyChangeListener {
 
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			ThemeLabelRangeContainer.this.firePropertyChange("ThemeChange", null, null);
+		}
+	}
 }

@@ -453,8 +453,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				int selectRow = tableUniqueInfo.getSelectedRow();
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -495,8 +495,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 		}
@@ -561,8 +561,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
@@ -631,8 +631,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					// 修改偏移量单位
 					setOffsetUnity();
 				}
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			}
@@ -778,8 +778,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
+				firePropertyChange("ThemeChange", null, null);
 				if (isRefreshAtOnce) {
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAndLayer();
 				}
 			} catch (Exception ex) {
@@ -813,8 +813,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				// 颜色方案反序
 				setGeoStyleAntitone();
 			}
+			firePropertyChange("ThemeChange", null, null);
 			if (isRefreshAtOnce) {
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAndLayer();
 			}
 			if (null != selectRows && e.getSource() != buttonDelete) {

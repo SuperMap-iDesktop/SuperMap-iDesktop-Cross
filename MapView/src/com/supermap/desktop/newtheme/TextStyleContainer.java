@@ -101,7 +101,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	// 字号与字高之间的转换精度
 	// 显示精度
 	private String numeric = "0.00";
-	private boolean isRefreshAtOnece = true;
+	private boolean isRefreshAtOnce = true;
 	private boolean isUniformStyle = false;
 	private int[] selectRow;
 	private ThemeLabel themeLabel;
@@ -437,7 +437,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 				// 设置字号
 				setFontSize();
 			}
-			if (isRefreshAtOnece && null != map) {
+			firePropertyChange("ThemeChange", null, null);
+			if (isRefreshAtOnce && null != map) {
 				refreshMapAndLayer();
 			}
 		}
@@ -491,7 +492,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 				// 设置旋转角度
 				setRotationAngl();
 			}
-			if (isRefreshAtOnece && null != map) {
+			firePropertyChange("ThemeChange", null, null);
+			if (isRefreshAtOnce && null != map) {
 				refreshMapAndLayer();
 			}
 		}
@@ -504,7 +506,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 		public void keyReleased(KeyEvent e) {
 			if (e.getSource() == textFieldFontSize) {
 				setFontSize();
-				if (isRefreshAtOnece && null != map) {
+				firePropertyChange("ThemeChange", null, null);
+				if (isRefreshAtOnce && null != map) {
 					refreshMapAndLayer();
 				}
 			}
@@ -550,7 +553,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 				// 设置背景透明
 				setBGOpare();
 			}
-			if (isRefreshAtOnece && null != map) {
+			firePropertyChange("ThemeChange", null, null);
+			if (isRefreshAtOnce && null != map) {
 				refreshMapAndLayer();
 			}
 		}
@@ -707,7 +711,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 				// 设置背景颜色
 				setBackgroundColor();
 			}
-			if (isRefreshAtOnece && null != map) {
+			firePropertyChange("ThemeChange", null, null);
+			if (isRefreshAtOnce && null != map) {
 				refreshMapAndLayer();
 			}
 		}
@@ -893,7 +898,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	void setRefreshAtOnce(boolean isRefreshAtOnce) {
-		this.isRefreshAtOnece = isRefreshAtOnce;
+		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 
 	public void setUniformStyle(boolean isUniformStyle) {

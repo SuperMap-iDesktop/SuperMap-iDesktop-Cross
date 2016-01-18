@@ -7,13 +7,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.List;
 
 public class TextStyleDialog extends SmDialog {
 
@@ -49,6 +44,10 @@ public class TextStyleDialog extends SmDialog {
 	 */
 	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		textStyleContainer.setRefreshAtOnce(isRefreshAtOnce);
+	}
+	
+	public TextStyleContainer getTextStyleContainer() {
+		return textStyleContainer;
 	}
 
 	/**
