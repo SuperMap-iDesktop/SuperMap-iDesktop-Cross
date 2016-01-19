@@ -74,11 +74,18 @@ public class SpatialIndexTableModelBean {
 	private void initSpatialIndexInfo() {
 		if (this.spatialIndexInfo.getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
 			// 动态
-			Rectangle2D bounds = dataset.getBounds();
-			if (((DatasetVector) dataset).getRecordCount() > 200) {
-				double v = bounds.getHeight() * bounds.getWidth() * 200 / ((DatasetVector) dataset).getRecordCount();
-				this.spatialIndexInfo.setGridSize0(Math.sqrt(v));
+			int objectCount = ((DatasetVector) dataset).getRecordCount();
+			Rectangle2D rec = dataset.getBounds();
+			int gridCount = objectCount / 200;
+			if (gridCount != 0) {
+				this.spatialIndexInfo.setGridSize0(Math.sqrt(rec.getWidth() * rec.getHeight() / gridCount));
 			}
+
+//			Rectangle2D bounds = dataset.getBounds();
+//			if (((DatasetVector) dataset).getRecordCount() > 200) {
+//				double v = bounds.getHeight() * bounds.getWidth() * 200 / ((DatasetVector) dataset).getRecordCount();
+//				this.spatialIndexInfo.setGridSize0(Math.sqrt(v));
+//			}
 		} else {
 			this.spatialIndexInfo.setTileHeight(dataset.getBounds().getHeight() / 30);
 			this.spatialIndexInfo.setTileWidth(dataset.getBounds().getWidth() / 30);

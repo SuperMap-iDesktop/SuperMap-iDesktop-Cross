@@ -21,6 +21,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private transient Recordset recordset;
 	private transient FieldInfos fieldInfos;
+	private transient FieldInfos fieldInfosDataset;
 	private int nowRow = 0;
 //	private TabularCache tabularCache = new TabularCache();
 
@@ -34,6 +35,7 @@ public class TabularTableModel extends AbstractTableModel {
 			this.recordset.moveFirst();
 			nowRow = 0;
 			this.fieldInfos = recordset.getFieldInfos();
+			this.fieldInfosDataset = recordset.getDataset().getFieldInfos();
 		}
 	}
 
@@ -116,7 +118,7 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null || recordset.getDataset().isReadOnly() || recordset.isClosed()) {
 			return false;
 		}
-		if (fieldInfos.get(getColumnName(column)) == null) {
+		if (fieldInfosDataset.get(getColumnName(column)) == null) {
 			return false;
 		}
 		boolean flag = true;
@@ -127,7 +129,7 @@ public class TabularTableModel extends AbstractTableModel {
 	}
 
 	public void setRecordset(Recordset recordset) {
-		if (this.recordset != null) {
+		if (this.recordset != null && !this.recordset.isClosed()) {
 			this.recordset.dispose();
 			this.recordset = null;
 		}
@@ -264,7 +266,7 @@ public class TabularTableModel extends AbstractTableModel {
 		}
 
 		try {
-			QueryParameter queryParameter = new QueryParameter();
+			QueryParameter queryParameter = recordset.getQueryParameter();
 			queryParameter.setOrderBy(buffer.toString().split("#"));
 			queryParameter.setCursorType(CursorType.DYNAMIC);
 

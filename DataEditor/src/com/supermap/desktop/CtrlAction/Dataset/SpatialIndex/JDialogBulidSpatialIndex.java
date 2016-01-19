@@ -1,10 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.SpatialIndexInfo;
-import com.supermap.data.SpatialIndexType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.DatasetUtilties;
@@ -17,6 +13,7 @@ import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -28,13 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,10 +50,11 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	// 表
 	private JScrollPane scrollPaneTable;
-	private JTable tableDatasets;
+	private SortTable tableDatasets;
 	private SpatialIndexTableModel spatialIndexTableModel;
 
 	DatasetChooser datasetChooser;
+
 
 	private final int rowHeight = 23;
 
@@ -117,7 +109,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.comboBoxIndexType = new JComboBox();
 		// 表
 		this.scrollPaneTable = new JScrollPane();
-		this.tableDatasets = new JTable();
+		this.tableDatasets = new SortTable();
 		this.spatialIndexTableModel = new SpatialIndexTableModel();
 		// 右下的描述
 		this.scrollPaneDescribe = new JScrollPane();

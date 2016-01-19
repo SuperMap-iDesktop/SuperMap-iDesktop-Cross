@@ -12,16 +12,17 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 
-import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by SillyB on 2016/1/1.
  */
-public class PyramidManagerTableModel extends DefaultTableModel {
+public class PyramidManagerTableModel extends SortableTableModel {
 
 	private List<Dataset> currentDatasets = new ArrayList<>();
 	private String[] columnNames = new String[]{
@@ -53,6 +54,10 @@ public class PyramidManagerTableModel extends DefaultTableModel {
 
 	@Override
 	public Object getValueAt(int row, int column) {
+		int resultRow = getIndexRow(row)[0];
+		if (resultRow != -1) {
+			row = resultRow;
+		}
 		Dataset dataset = currentDatasets.get(row);
 		switch (column) {
 			case 0:
@@ -120,6 +125,14 @@ public class PyramidManagerTableModel extends DefaultTableModel {
 	}
 
 	public void deleteRows(int[] selectedRows) {
+		if (indexes != null) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				int selectedRow = selectedRows[i];
+				selectedRows[i] = (int) indexes.get(selectedRow);
+			}
+		}
+		super.removeRows(selectedRows);
+		Arrays.sort(selectedRows);
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
 			currentDatasets.remove(selectedRows[i]);
 		}
@@ -202,6 +215,7 @@ public class PyramidManagerTableModel extends DefaultTableModel {
 		for (Dataset selectedDataset : selectedDatasets) {
 			if (!currentDatasets.contains(selectedDataset)) {
 				currentDatasets.add(selectedDataset);
+				super.addIndexRow(getRowCount() - 1);
 				isAdded = true;
 			}
 		}
@@ -216,6 +230,7 @@ public class PyramidManagerTableModel extends DefaultTableModel {
 		} else {
 			this.currentDatasets = activeSupportDatasets;
 		}
+		indexes = null;
 		fireTableDataChanged();
 	}
 }

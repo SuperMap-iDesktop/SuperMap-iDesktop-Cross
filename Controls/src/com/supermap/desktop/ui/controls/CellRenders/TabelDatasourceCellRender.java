@@ -17,6 +17,9 @@ import java.awt.*;
 public class TabelDatasourceCellRender extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		if (!(value instanceof Datasource)) {
+			return new JLabel(String.valueOf(value));
+		}
 		Datasource datasource = (Datasource) value;
 		DataCell dataCell = new DataCell();
 		dataCell.initDatasourceType(datasource);
@@ -25,6 +28,7 @@ public class TabelDatasourceCellRender extends DefaultTableCellRenderer {
 		} else {
 			dataCell.setBackground(table.getBackground());
 		}
+		dataCell.setForeground(Color.red);
 		return dataCell;
 	}
 }
