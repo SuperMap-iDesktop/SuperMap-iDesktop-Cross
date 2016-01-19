@@ -1,10 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.SpatialIndexInfo;
-import com.supermap.data.SpatialIndexType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.DatasetUtilties;
@@ -29,13 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +54,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private SpatialIndexTableModel spatialIndexTableModel;
 
 	DatasetChooser datasetChooser;
+
 
 	private final int rowHeight = 23;
 
