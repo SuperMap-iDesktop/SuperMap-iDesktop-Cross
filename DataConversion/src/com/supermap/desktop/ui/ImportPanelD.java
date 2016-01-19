@@ -1,21 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
@@ -29,12 +13,20 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 实现右侧导入DWG,DXF数据类型的界面
- * 
+ *
  * @author Administrator
  */
 public class ImportPanelD extends AbstractImportPanel {
@@ -102,6 +94,7 @@ public class ImportPanelD extends AbstractImportPanel {
 		registActionListener();
 	}
 
+	@Override
 	void initResource() {
 		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
@@ -126,11 +119,11 @@ public class ImportPanelD extends AbstractImportPanel {
 				null, null));
 		this.panelTransform.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
-				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
-		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_nullcoding"),
+		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
+				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
+		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"),
 				DataConversionProperties.getString("string_comboboxitem_byte"), DataConversionProperties.getString("string_comboboxitem_int16"),
-				DataConversionProperties.getString("string_comboboxitem_int24"), DataConversionProperties.getString("string_comboboxitem_int32") }));
+				DataConversionProperties.getString("string_comboboxitem_int24"), DataConversionProperties.getString("string_comboboxitem_int32")}));
 	}
 
 	private void setDataset(String dataset, ImportSetting tempSetting) {
@@ -226,6 +219,7 @@ public class ImportPanelD extends AbstractImportPanel {
 		}
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelResultSetting = new JPanel();
@@ -623,6 +617,7 @@ public class ImportPanelD extends AbstractImportPanel {
 				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
 			}
 		};
+		unregistActionListener();
 		this.comboBoxDatatype.addActionListener(this.comboboxDatatypeAction);
 		this.checkboxFieldIndex.addActionListener(this.checkboxFieldIndexAction);
 		this.checkboxSpatialIndex.addActionListener(this.checkboxSpatialIndexAction);

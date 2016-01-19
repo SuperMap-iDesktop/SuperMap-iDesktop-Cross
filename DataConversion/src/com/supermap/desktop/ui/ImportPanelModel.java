@@ -1,48 +1,33 @@
 package com.supermap.desktop.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.Point3D;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingModel3DS;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelFLT;
-import com.supermap.data.conversion.ImportSettingModelOSG;
-import com.supermap.data.conversion.ImportSettingModelX;
-import com.supermap.desktop.Application;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.action.VoteElectKeyListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonComboBoxModel;
+import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Administrator 实现右侧导入Model(3ds,osgb,.x,flt)数据类型的界面
  */
-public class ImportPanelModel extends JPanel {
+public class ImportPanelModel extends AbstractImportPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JButton buttonProperty;
@@ -59,7 +44,7 @@ public class ImportPanelModel extends JPanel {
 	private JLabel labelLongitude;
 	private JLabel labelLatitude;
 	private JLabel labelElevation;
-	private JPanel panel;
+	private JPanel panelResultSet;
 	private JPanel panelAnchor;
 	private JPanel panelDatapath;
 	private JPanel panelTransform;
@@ -74,73 +59,55 @@ public class ImportPanelModel extends JPanel {
 	private ArrayList<JPanel> panels;
 	private transient DataImportFrame dataImportFrame;
 
-	public ImportPanelModel() {
-		initComponents();
-	}
+	private ActionListener comboBoxDataTypeAction;
+	private VoteElectKeyListener electKeyListener = new VoteElectKeyListener();
+	private CommonDocumnetListener documnetListener;
+	private ActionListener buttonPropertyAction;
 
 	public ImportPanelModel(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
 		this.dataImportFrame = dataImportFrame;
 		this.fileInfo = fileInfo;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelModel(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
-	private void initResource() {
-		labelLongitude.setText(DataConversionProperties.getString("string_label_lblx"));
-		labelLatitude.setText(DataConversionProperties.getString("string_label_lbly"));
-		labelElevation.setText(DataConversionProperties.getString("string_label_lblz"));
-		labelCharset.setText(DataConversionProperties
-				.getString("string_label_lblCharset"));
-		labelFilePath.setText(DataConversionProperties
-				.getString("string_label_lblDataPath"));
-		labelImportModel.setText(DataConversionProperties
-				.getString("string_label_lblImportType"));
-		labelDatasource.setText(DataConversionProperties
-				.getString("string_label_lblDatasource"));
-		labelDataset.setText(DataConversionProperties
-				.getString("string_label_lblDataset"));
-		labelDatasetType.setText(DataConversionProperties
-				.getString("string_label_lblDatasetType"));
-		buttonProperty.setText(DataConversionProperties
-				.getString("string_button_property"));
-		buttonProperty.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
-			}
-		});
-		panel.setBorder(new TitledBorder(null, DataConversionProperties
-				.getString("string_border_panel"), TitledBorder.LEADING,
+	@Override
+	void initResource() {
+		this.labelLongitude.setText(DataConversionProperties.getString("string_label_lblx"));
+		this.labelLatitude.setText(DataConversionProperties.getString("string_label_lbly"));
+		this.labelElevation.setText(DataConversionProperties.getString("string_label_lblz"));
+		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
+		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
+		this.labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
+		this.labelDatasource.setText(DataConversionProperties.getString("string_label_lblDatasource"));
+		this.labelDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
+		this.labelDatasetType.setText(DataConversionProperties.getString("string_label_lblDatasetType"));
+		this.buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
+		this.panelResultSet.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		panelTransform.setBorder(new TitledBorder(null,
-				DataConversionProperties
-						.getString("string_border_panelTransform"),
+		this.panelTransform.setBorder(new TitledBorder(null,
+				DataConversionProperties.getString("string_border_panelTransform"),
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelAnchor.setBorder(new TitledBorder(null, DataConversionProperties
-				.getString("string_border_panelAnchor"), TitledBorder.LEADING,
+		this.panelAnchor.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelAnchor"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties
-				.getString("string_border_panelDatapath"),
+		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"),
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
-						DataConversionProperties
-								.getString("string_comboboxitem_null"),
-						DataConversionProperties
-								.getString("string_comboboxitem_add"),
-						DataConversionProperties
-								.getString("string_comboboxitem_cover") }));
-		comboBoxCharset.setModel(new CommonComboBoxModel());
-		comboBoxCharset.setAutoscrolls(true);
-		comboBoxDataType = new DatasetComboBox(new String[] { DataConversionProperties.getString("string_comboboxitem_composite"),
-				DataConversionProperties.getString("string_comboboxitem_model") });
-		comboBoxDataType.setSelectedIndex(1);
+		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
+				new String[]{
+						DataConversionProperties.getString("string_comboboxitem_null"),
+						DataConversionProperties.getString("string_comboboxitem_add"),
+						DataConversionProperties.getString("string_comboboxitem_cover")}));
+		this.comboBoxCharset.setModel(new CommonComboBoxModel());
+		this.comboBoxCharset.setAutoscrolls(true);
 	}
 
 	private void setDatasetType(String dataType, ImportSetting importsetting) {
@@ -181,276 +148,146 @@ public class ImportPanelModel extends JPanel {
 		}
 	}
 
-	private void initComponents() {
+	@Override
+	void initComponents() {
+		this.panelResultSet = new JPanel();
+		this.labelDatasource = new JLabel();
+		this.comboBoxDatasource = new DatasourceComboBox();
+		this.labelDataset = new JLabel();
+		this.textFieldResultSet = new JTextField();
+		this.textFieldResultSet.setColumns(10);
+		this.labelDatasetType = new JLabel();
+		this.panelTransform = new JPanel();
+		this.labelImportModel = new JLabel();
+		this.comboBoxImportModel = new JComboBox<Object>();
+		this.panelAnchor = new JPanel();
+		this.labelLongitude = new JLabel();
+		this.textFieldLongitude = new JTextField();
+		this.labelLatitude = new JLabel();
+		this.textFieldLatitude = new JTextField();
+		this.labelElevation = new JLabel();
+		this.textFieldElevation = new JTextField();
+		this.panelDatapath = new JPanel();
+		this.labelFilePath = new JLabel();
+		this.textFieldFilePath = new JTextField();
+		this.textFieldFilePath.setEditable(false);
+		this.buttonProperty = new JButton();
+		this.labelCharset = new JLabel();
+		this.comboBoxCharset = new CharsetComboBox();
 
-		panel = new JPanel();
-		labelDatasource = new JLabel();
-		comboBoxDatasource = new DatasourceComboBox();
-		labelDataset = new JLabel();
-		textFieldResultSet = new JTextField();
-		textFieldResultSet.setColumns(10);
-		labelDatasetType = new JLabel();
-		panelTransform = new JPanel();
-		labelImportModel = new JLabel();
-		comboBoxImportModel = new JComboBox<Object>();
-		panelAnchor = new JPanel();
-		labelLongitude = new JLabel();
-		textFieldLongitude = new JTextField();
-		labelLatitude = new JLabel();
-		textFieldLatitude = new JTextField();
-		labelElevation = new JLabel();
-		textFieldElevation = new JTextField();
-		panelDatapath = new JPanel();
-		labelFilePath = new JLabel();
-		textFieldFilePath = new JTextField();
-		textFieldFilePath.setEditable(false);
-		buttonProperty = new JButton();
-		labelCharset = new JLabel();
-		comboBoxCharset = new CharsetComboBox();
-
-		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
-		comboBoxDatasource.setSelectedDatasource(datasource);
-		initResource();
+		Datasource datasource = CommonFunction.getDatasource();
+		this.comboBoxDatasource.setSelectedDatasource(datasource);
 
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 
 		// 设置fileInfo
-		importsetting = ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo,
+		this.importsetting = ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo,
 				textFieldFilePath, importsetting, textFieldResultSet);
 		// 设置目标数据集名称
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
-		// 设置数据集类型
-		comboBoxDataType.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String dataType = comboBoxDataType.getSelectItem();
-				int select = comboBoxDataType.getSelectedIndex();
-				if (null != importsetting) {
-					setDatasetType(dataType, importsetting);
-				} else {
-					for (int i = 0; i < panels.size(); i++) {
-						ImportPanelModel tempPanel = (ImportPanelModel) panels
-								.get(i);
-						tempPanel.getComboBoxDataType().setSelectedIndex(select);
-					}
-				}
-			}
-		});
+
 		// 设置导入模式
 		ImportInfoUtil.setImportMode(panels, importsetting, comboBoxImportModel);
-		textFieldLongitude.setText("0");
-		textFieldLatitude.setText("0");
-		textFieldElevation.setText("0");
-		// 设置文本内框部只能输入数字
-		textFieldLongitude.addKeyListener(new VoteElectKeyListener());
-		textFieldLatitude.addKeyListener(new VoteElectKeyListener());
-		textFieldElevation.addKeyListener(new VoteElectKeyListener());
-		// 设置模型定位点
-		textFieldLongitude.getDocument().addDocumentListener(
-				new CommonDocumnetListener(textFieldLongitude, textFieldLatitude, textFieldElevation));
-		textFieldLatitude.getDocument().addDocumentListener(
-				new CommonDocumnetListener(textFieldLongitude, textFieldLatitude, textFieldElevation));
-		textFieldElevation.getDocument().addDocumentListener(
-				new CommonDocumnetListener(textFieldLongitude, textFieldLatitude, textFieldElevation));
+		this.textFieldLongitude.setText("0");
+		this.textFieldLatitude.setText("0");
+		this.textFieldElevation.setText("0");
 		// 设置源文件字符集
 		ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
 
-		setPreferredSize(new java.awt.Dimension(483, 300));
-		// @formatter:off
-        GroupLayout panelLayout = new GroupLayout(panel);
-        panel.setLayout(panelLayout);
-        panelLayout.setHorizontalGroup(
-            panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelLayout.createSequentialGroup()
-                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(labelDatasetType, GroupLayout.Alignment.LEADING, 72, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelDatasource, GroupLayout.Alignment.LEADING, 72, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addComponent(comboBoxDatasource, 0, 104, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboBoxDataType, 0, 104, GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addComponent(labelDataset, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(textFieldResultSet, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        panelLayout.setVerticalGroup(
-            panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelLayout.createSequentialGroup()
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelDatasource)
-                    .addComponent(comboBoxDatasource, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelDataset)
-                    .addComponent(textFieldResultSet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelDatasetType)
-                    .addComponent(comboBoxDataType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-        );
+		initPanelResultSet();
 
-        GroupLayout panelTransformLayout = new GroupLayout(panelTransform);
-        panelTransform.setLayout(panelTransformLayout);
-        panelTransformLayout.setHorizontalGroup(
-            panelTransformLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelTransformLayout.createSequentialGroup()
-                .addComponent(labelImportModel, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(comboBoxImportModel, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        panelTransformLayout.setVerticalGroup(
-            panelTransformLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelTransformLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(labelImportModel)
-                .addComponent(comboBoxImportModel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        );
+		initPanelTransform();
 
-      
-        
+		initPanelAnchor();
 
-        GroupLayout panelAnchorLayout = new GroupLayout(panelAnchor);
-        panelAnchor.setLayout(panelAnchorLayout);
-        panelAnchorLayout.setHorizontalGroup(
-            panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelAnchorLayout.createSequentialGroup()
-                .addGroup(panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(labelElevation, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelLongitude, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addComponent(textFieldLongitude)
-                    .addComponent(textFieldElevation, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE))
-                .addGap(46, 46, 46)
-                .addComponent(labelLatitude, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(textFieldLatitude, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        panelAnchorLayout.setVerticalGroup(
-            panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(panelAnchorLayout.createSequentialGroup()
-                .addGroup(panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelLongitude)
-                    .addComponent(textFieldLongitude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelLatitude)
-                    .addComponent(textFieldLatitude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelAnchorLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelElevation)
-                    .addComponent(textFieldElevation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-        );
+		initPanelDatapath();
 
-        GroupLayout panelDatapathLayout = new GroupLayout(panelDatapath);
-        panelDatapathLayout.setHorizontalGroup(
-        	panelDatapathLayout.createParallelGroup(Alignment.LEADING)
-        		.addGroup(panelDatapathLayout.createSequentialGroup()
-        			.addGroup(panelDatapathLayout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(labelFilePath)
-        				.addComponent(labelCharset))
-        			.addGap(12)
-        			.addGroup(panelDatapathLayout.createParallelGroup(Alignment.LEADING)
-        				.addGroup(panelDatapathLayout.createSequentialGroup()
-        					.addComponent(textFieldFilePath, GroupLayout.PREFERRED_SIZE, 257, GroupLayout.PREFERRED_SIZE)
-        					.addPreferredGap(ComponentPlacement.UNRELATED)
-        					.addComponent(buttonProperty, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE))
-        				.addComponent(comboBoxCharset, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE))
-        			.addContainerGap(38, Short.MAX_VALUE))
-        );
-        panelDatapathLayout.setVerticalGroup(
-        	panelDatapathLayout.createParallelGroup(Alignment.LEADING)
-        		.addGroup(panelDatapathLayout.createSequentialGroup()
-        			.addGroup(panelDatapathLayout.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(labelFilePath)
-        				.addComponent(textFieldFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        				.addComponent(buttonProperty))
-        			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addGroup(panelDatapathLayout.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(labelCharset)
-        				.addComponent(comboBoxCharset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        			.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panelDatapath.setLayout(panelDatapathLayout);
+		initPanelModel();
+	}
 
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panelTransform, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panelAnchor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panelDatapath, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelTransform, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelAnchor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelDatapath, GroupLayout.PREFERRED_SIZE, 79, Short.MAX_VALUE))
-        );
-     // @formatter:on
+	private void initPanelModel() {
+		//@formatter:off
+		this.setLayout(new GridBagLayout());
+		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(0,5,0,5).setWeight(1, 1));
+		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(0,5,0,5).setWeight(1, 1));
+		this.add(this.panelAnchor,          new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(0,5,0,5).setWeight(1, 1));
+		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(0,5,0,5).setWeight(1, 1));
+		//@formatter:on
+	}
+
+	private void initPanelDatapath() {
+		//@formatter:off
+		this.panelDatapath.setLayout(new GridBagLayout());
+		this.panelDatapath.add(this.labelFilePath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelDatapath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDatapath.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDatapath.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelDatapath.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 5).setIpad(20, 0));
+		//@formatter:on
+	}
+
+	private void initPanelAnchor() {
+		//@formatter:off
+		this.panelAnchor.setLayout(new GridBagLayout());
+		this.panelAnchor.add(this.labelLongitude,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelAnchor.add(this.textFieldLongitude, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelAnchor.add(this.labelLatitude,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelAnchor.add(this.textFieldLatitude,  new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10,10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelAnchor.add(this.labelElevation,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelAnchor.add(this.textFieldElevation, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0,  0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on		
+	}
+
+	private void initPanelTransform() {
+		//@formatter:off
+		this.panelTransform.setLayout(new GridBagLayout());
+		this.panelTransform.add(this.labelImportModel,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelTransform.add(this.comboBoxImportModel,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20).setIpad(120, 0));
+		//@formatter:on
+	}
+
+	private void initPanelResultSet() {
+		//@formatter:off
+		this.comboBoxDataType = new DatasetComboBox(new String[] { DataConversionProperties.getString("string_comboboxitem_composite"),
+				DataConversionProperties.getString("string_comboboxitem_model") });
+		this.comboBoxDataType.setSelectedIndex(1);
+		this.panelResultSet.setLayout(new GridBagLayout());
+		this.panelResultSet.add(this.labelDatasource,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelResultSet.add(this.comboBoxDatasource,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelDataset,         new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelResultSet.add(this.textFieldResultSet,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelDatasetType,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelResultSet.add(this.comboBoxDataType,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		// @formatter:on
 	}
 
 	public JComboBox<Object> getComboBox() {
 		return comboBoxImportModel;
 	}
 
-	public void setComboBox(JComboBox<Object> comboBox) {
-		this.comboBoxImportModel = comboBox;
-	}
-
 	public DatasetComboBox getComboBoxDataType() {
 		return comboBoxDataType;
-	}
-
-	public void setComboBoxDataType(DatasetComboBox comboBoxDataType) {
-		this.comboBoxDataType = comboBoxDataType;
 	}
 
 	public CharsetComboBox getComboBoxCharset() {
 		return comboBoxCharset;
 	}
 
-	public void setComboBoxCharset(CharsetComboBox comboBoxCharset) {
-		this.comboBoxCharset = comboBoxCharset;
-	}
-
 	public JTextField getTextFieldx() {
 		return textFieldLongitude;
-	}
-
-	public void setTextFieldx(JTextField textFieldx) {
-		this.textFieldLongitude = textFieldx;
 	}
 
 	public JTextField getTextFieldy() {
 		return textFieldLatitude;
 	}
 
-	public void setTextFieldy(JTextField textFieldy) {
-		this.textFieldLatitude = textFieldy;
-	}
-
 	public JTextField getTextFieldz() {
 		return textFieldElevation;
 	}
 
-	public void setTextFieldz(JTextField textFieldz) {
-		this.textFieldElevation = textFieldz;
-	}
-
 	public DatasourceComboBox getComboBoxDatasource() {
 		return comboBoxDatasource;
-	}
-
-	public void setComboBoxDatasource(DatasourceComboBox comboBoxDatasource) {
-		this.comboBoxDatasource = comboBoxDatasource;
 	}
 
 	class CommonDocumnetListener implements DocumentListener {
@@ -458,7 +295,7 @@ public class ImportPanelModel extends JPanel {
 		private JTextField textFieldLongitude, textFieldLatitude, textFieldElevation;
 
 		public CommonDocumnetListener(JTextField textFieldx,
-				JTextField textFieldy, JTextField textFieldz) {
+		                              JTextField textFieldy, JTextField textFieldz) {
 			this.textFieldLongitude = textFieldx;
 			this.textFieldLatitude = textFieldy;
 			this.textFieldElevation = textFieldz;
@@ -518,5 +355,57 @@ public class ImportPanelModel extends JPanel {
 			}
 		}
 
+	}
+
+	@Override
+	void registActionListener() {
+		// 设置数据集类型
+		this.comboBoxDataTypeAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String dataType = comboBoxDataType.getSelectItem();
+				int select = comboBoxDataType.getSelectedIndex();
+				if (null != importsetting) {
+					setDatasetType(dataType, importsetting);
+				} else {
+					for (int i = 0; i < panels.size(); i++) {
+						ImportPanelModel tempPanel = (ImportPanelModel) panels
+								.get(i);
+						tempPanel.getComboBoxDataType().setSelectedIndex(select);
+					}
+				}
+			}
+		};
+		this.buttonPropertyAction = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
+			}
+		};
+		this.documnetListener = new CommonDocumnetListener(this.textFieldLongitude, this.textFieldLatitude, this.textFieldElevation);
+		unregistActionListener();
+		this.comboBoxDataType.addActionListener(this.comboBoxDataTypeAction);
+		// 设置文本内框部只能输入数字
+		this.textFieldLongitude.addKeyListener(this.electKeyListener);
+		this.textFieldLatitude.addKeyListener(this.electKeyListener);
+		this.textFieldElevation.addKeyListener(this.electKeyListener);
+		// 设置模型定位点
+		this.textFieldLongitude.getDocument().addDocumentListener(this.documnetListener);
+		this.textFieldLatitude.getDocument().addDocumentListener(this.documnetListener);
+		this.textFieldElevation.getDocument().addDocumentListener(this.documnetListener);
+		this.buttonProperty.addActionListener(this.buttonPropertyAction);
+	}
+
+	@Override
+	void unregistActionListener() {
+		this.comboBoxDataType.removeActionListener(this.comboBoxDataTypeAction);
+		this.textFieldLongitude.removeKeyListener(this.electKeyListener);
+		this.textFieldLatitude.removeKeyListener(this.electKeyListener);
+		this.textFieldElevation.removeKeyListener(this.electKeyListener);
+		this.textFieldLongitude.getDocument().removeDocumentListener(this.documnetListener);
+		this.textFieldLatitude.getDocument().removeDocumentListener(this.documnetListener);
+		this.textFieldElevation.getDocument().removeDocumentListener(this.documnetListener);
+		this.buttonProperty.removeActionListener(this.buttonPropertyAction);
 	}
 }

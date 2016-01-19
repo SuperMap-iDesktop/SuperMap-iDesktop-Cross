@@ -131,10 +131,13 @@ public class DatasetChooserDataEditor {
 			int rowCount = datasetCopyTable.getRowCount();
 			for (Dataset dataset : selectedDatasets) {
 				Object[] temp = new Object[6];
-				temp[COLUMN_INDEX_SOURCEDATASET] = new DataCell(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()), dataset.getName());
+				DataCell datasetCell = new DataCell();
+				datasetCell.initDatasetType(dataset);
+				temp[COLUMN_INDEX_SOURCEDATASET] = datasetCell;
 				Datasource datasource = dataset.getDatasource();
-				String imagePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-				DataCell datasoureCell = new DataCell(imagePath, datasource.getAlias());
+				DataCell datasourceCell = new DataCell();
+				datasourceCell.initDatasourceType(datasource);
+				DataCell datasoureCell = datasourceCell;
 				temp[COLUMN_INDEX_SOURCEDATASOURCE] = datasoureCell;
 				temp[COLUMN_INDEX_TARGETDATASOURCE] = datasoureCell;
 				temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());

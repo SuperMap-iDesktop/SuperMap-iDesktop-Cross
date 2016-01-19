@@ -81,7 +81,8 @@ public class JDialogJoinItems extends SmDialog {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Dataset dataset = joinItemsTable.getCurrentDataset().getDatasource().getDatasets().get(value.toString());
-				DataCell dataCell = new DataCell(new ImageIcon( JDialogJoinItems.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()))), dataset.getName());
+				DataCell dataCell = new DataCell();
+				dataCell.initDatasetType(dataset);
 				if(isSelected){
 					dataCell.setBackground(table.getSelectionBackground());
 				}else{

@@ -1,23 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSettingIMG;
 import com.supermap.data.conversion.MultiBandImportMode;
@@ -32,11 +14,16 @@ import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- *
  * @author Administrator 实现右侧导入image数据类型的界面
  */
 public class ImportPanelIMG extends AbstractImportPanel {
@@ -69,10 +56,12 @@ public class ImportPanelIMG extends AbstractImportPanel {
 	private transient DataImportFrame dataImportFrame;
 
 	private transient CommonActionLitener actionLitener = new CommonActionLitener();
+	private ActionListener buttonPropertyAction;
 
 	public ImportPanelIMG() {
 		initComponents();
 		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelIMG(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
@@ -80,6 +69,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.fileInfo = fileInfo;
 		initComponents();
 		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelIMG(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
@@ -90,15 +80,15 @@ public class ImportPanelIMG extends AbstractImportPanel {
 
 	private void setImportsave(int save, ImportSettingIMG tempsetting) {
 		switch (save) {
-		case 0:
-			tempsetting.setMultiBandImportMode(MultiBandImportMode.SINGLEBAND);
-			break;
-		case 1:
-			tempsetting.setMultiBandImportMode(MultiBandImportMode.MULTIBAND);
-			break;
-		default:
-			Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImageGridParam_Failed"));
-			break;
+			case 0:
+				tempsetting.setMultiBandImportMode(MultiBandImportMode.SINGLEBAND);
+				break;
+			case 1:
+				tempsetting.setMultiBandImportMode(MultiBandImportMode.MULTIBAND);
+				break;
+			default:
+				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImageGridParam_Failed"));
+				break;
 		}
 	}
 
@@ -111,6 +101,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		}
 	}
 
+	@Override
 	void initResource() {
 		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
@@ -121,13 +112,6 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.labelCodingType.setText(DataConversionProperties.getString("string_label_lblCodingtype"));
 		this.labelDatasetType.setText(DataConversionProperties.getString("string_label_lblDatasetType"));
 		this.buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
-		this.buttonProperty.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
-			}
-		});
 		this.panelResultSet.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
 		this.panelTransform.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING,
@@ -137,21 +121,22 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties.getString("string_comboboxitem_null"),
 						DataConversionProperties.getString("string_comboboxitem_add"),
-						DataConversionProperties.getString("string_comboboxitem_cover") }));
+						DataConversionProperties.getString("string_comboboxitem_cover")}));
 		this.comboBoxImportSave.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties.getString("string_comboboxitem_mssave"),
-						DataConversionProperties.getString("string_comboboxitem_msave") }));
+						DataConversionProperties.getString("string_comboboxitem_msave")}));
 		this.comboBoxImportSave.setSelectedIndex(1);
 		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
-						DataConversionProperties.getString("string_comboboxitem_nullcoding"), "DCT", "PNG", "LZW" }));
+				new String[]{
+						DataConversionProperties.getString("string_comboboxitem_nullcoding"), "DCT", "PNG", "LZW"}));
 		this.comboBoxCodingType.setSelectedIndex(1);
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelResultSet = new JPanel();
@@ -207,7 +192,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 	}
 
 	private void initPanelIMG() {
-	//@formatter:off
+		//@formatter:off
 		this.setLayout(new GridBagLayout());
 		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
 		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
@@ -216,7 +201,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 	}
 
 	private void initPanelDatapath() {
-	//@formatter:off
+		//@formatter:off
 		this.panelDatapath.setLayout(new GridBagLayout());
 		this.panelDatapath.add(this.labelFilePath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
 		this.panelDatapath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
@@ -227,21 +212,20 @@ public class ImportPanelIMG extends AbstractImportPanel {
 	}
 
 	private void initPanelTransform() {
-	//@formatter:off
+		//@formatter:off
 		this.panelTransform.setLayout(new GridBagLayout());
 		this.panelTransform.add(this.labelImportModel,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.panelTransform.add(this.comboBoxImportModel,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 5).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransform.add(this.comboBoxImportModel,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelTransform.add(this.labelImportSave,   	new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 10, 5));
 		this.panelTransform.add(this.comboBoxImportSave,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
 	//@formatter:on
 	}
 
 	private void initPanelResultSet() {
-	//@formatter:off
+		//@formatter:off
 		this.comboBoxDatatype = new DatasetComboBox(new String[] {
 				DataConversionProperties.getString("string_comboboxitem_image"),
 				DataConversionProperties.getString("string_comboboxitem_grid") });
-		// 设置字符集类型
 		this.panelResultSet.setLayout(new GridBagLayout());
 		this.panelResultSet.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
 		this.panelResultSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
@@ -309,16 +293,26 @@ public class ImportPanelIMG extends AbstractImportPanel {
 
 	@Override
 	void registActionListener() {
+		this.buttonPropertyAction = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new FileProperty(dataImportFrame, fileInfo).setVisible(true);
+			}
+		};
+		unregistActionListener();
 		// 设置结果数据集类型
 		this.comboBoxDatatype.addActionListener(this.actionLitener);
 		// 设置波段导入模式
 		this.comboBoxImportSave.addActionListener(this.actionLitener);
+		this.buttonProperty.addActionListener(this.buttonPropertyAction);
 	}
 
 	@Override
 	void unregistActionListener() {
 		this.comboBoxDatatype.removeActionListener(this.actionLitener);
 		this.comboBoxImportSave.removeActionListener(this.actionLitener);
+		this.buttonProperty.removeActionListener(this.buttonPropertyAction);
 	}
 
 }

@@ -146,8 +146,8 @@ public class JDialogTopoAdvance extends SmDialog {
 				for (int i = 0; i < targetDataset.getDatasource().getDatasets().getCount(); i++) {
 					Dataset tempDataset = targetDataset.getDatasource().getDatasets().get(i);
 					if (tempDataset.getType() == DatasetType.POINT) {
-						String path = CommonToolkit.DatasetImageWrap.getImageIconPath(tempDataset.getType());
-						DataCell cell = new DataCell(path, tempDataset.getName());
+						DataCell cell = new DataCell();
+						cell.initDatasetType(tempDataset);
 						this.comboBoxNotCutting.addItem(cell);
 					}
 				}

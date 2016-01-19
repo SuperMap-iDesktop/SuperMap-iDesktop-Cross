@@ -19,7 +19,8 @@ public class TableDatasetCellRender extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		Dataset dataset = (Dataset) value;
-		DataCell dataCell = new DataCell(new ImageIcon(TableDatasetCellRender.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()))), dataset.getName());
+		DataCell dataCell = new DataCell();
+		dataCell.initDatasetType(dataset);
 		if (isSelected) {
 			dataCell.setBackground(table.getSelectionBackground());
 		} else {

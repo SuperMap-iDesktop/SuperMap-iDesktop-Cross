@@ -81,14 +81,22 @@ public class DataImportFrame extends SmDialog {
 	private JPanel panelImportInfo = new JPanel();
 	private JCheckBox checkBoxAutoClose = new JCheckBox("string_chcekbox_autoCloseIn");
 	private JToolBar toolBar = new JToolBar();
+	private JScrollPane scrollPane;
+
 	private DropTarget dropTargetTemper;
+
 	private transient CommonButtonAction buttonAction = new CommonButtonAction();
 	private transient LocalWindowListener windowListener = new LocalWindowListener();
+	private transient CommonMouseListener commonMouseListener;
+	private transient CommonKeyAction commonKeyListener;
 
 	/**
 	 * 注册事件
 	 */
 	private void registActionListener() {
+		this.commonMouseListener = new CommonMouseListener(this, panelParams, table, panelImportInfo, fileInfos, panels, labelTitle, model);
+		this.commonKeyListener = new CommonKeyAction();
+		unRegistAcitonListener();
 		this.buttonAddFile.addActionListener(new CommonButtonAction(this));
 		this.buttonDelete.addActionListener(this.buttonAction);
 		this.buttonSelectAll.addActionListener(this.buttonAction);
@@ -96,6 +104,9 @@ public class DataImportFrame extends SmDialog {
 		this.buttonImport.addActionListener(this.buttonAction);
 		this.buttonClose.addActionListener(this.buttonAction);
 		this.addWindowListener(this.windowListener);
+		this.table.addKeyListener(this.commonKeyListener);
+		this.scrollPane.addMouseListener(this.commonMouseListener);
+		this.table.addMouseListener(this.commonMouseListener);
 	}
 
 	/**
@@ -108,6 +119,9 @@ public class DataImportFrame extends SmDialog {
 		this.buttonInvertSelect.removeActionListener(this.buttonAction);
 		this.buttonImport.removeActionListener(this.buttonAction);
 		this.buttonClose.removeActionListener(this.buttonAction);
+		this.table.removeKeyListener(this.commonKeyListener);
+		this.scrollPane.removeMouseListener(this.commonMouseListener);
+		this.table.removeMouseListener(this.commonMouseListener);
 	}
 
 	public void initComponents() {
@@ -131,7 +145,7 @@ public class DataImportFrame extends SmDialog {
 
 	private void initPanelFiles() {
 		this.toolBar.setFloatable(false);
-		JScrollPane scrollPane = new JScrollPane();
+		this.scrollPane = new JScrollPane();
 		initToolBar();
 		//@formatter:off
 		this.panelFiles.setLayout(new GridBagLayout());
@@ -147,9 +161,6 @@ public class DataImportFrame extends SmDialog {
 		this.table = new JTable();
 		this.table.setModel(this.model);
 		scrollPane.setViewportView(this.table);
-		this.table.addKeyListener(new CommonKeyAction());
-		scrollPane.addMouseListener(new CommonMouseListener(this, panelParams, table, panelImportInfo, fileInfos, panels, labelTitle, model));
-		this.table.addMouseListener(new CommonMouseListener(this, panelParams, table, panelImportInfo, fileInfos, panels, labelTitle, model));
 	}
 
 	private void initToolBar() {
@@ -350,6 +361,13 @@ public class DataImportFrame extends SmDialog {
 		@Override
 		public void windowClosed(WindowEvent e) {
 			DataImportFrame.this.unRegistAcitonListener();
+			if (null != panels) {
+				for (int i = 0; i < panels.size(); i++) {
+					if (panels.get(i) instanceof AbstractImportPanel) {
+						((AbstractImportPanel)panels.get(i)).unregistActionListener();
+					}
+				}
+			}
 		}
 	}
 

@@ -48,6 +48,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	private transient GroupLayout gl_contentPanel;
 	private DatasourceOperatorType datasourceOperatorType;
 	private transient EngineType engineTypeTemp;
+	private CommonListCellRenderer commonCellRender = new CommonListCellRenderer();
 
 	// UI End of variables declaration
 
@@ -151,16 +152,16 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			switch (type) {
 			case NEWDATABASE:
 				this.listDatasourceType.setModel(getListItemForOpenOrNew());
-				this.listDatasourceType.setCellRenderer(new CommonListCellRenderer());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
 				break;
 			case OPENDATABASE:
 				this.listDatasourceType.setModel(getListItemForOpenOrNew());
-				this.listDatasourceType.setCellRenderer(new CommonListCellRenderer());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
 				// 暂不支持ArcSDE数据源
 				break;
 			case OPENWEB:
 				this.listDatasourceType.setModel(getListItemForOpenWebDatasource());
-				this.listDatasourceType.setCellRenderer(new CommonListCellRenderer());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
 				// 暂不支持天地图
 				break;
 			default:
@@ -176,12 +177,18 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
 		String commonPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(null);
 		String ogcPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.OGC);
-		DataCell ogcDataCell = new DataCell(ogcPath, ControlsProperties.getString("String_OGC"));
-		DataCell iServerRestDataCell = new DataCell(commonPath, ControlsProperties.getString("String_iServerRest"));
-		DataCell superMapCloudDataCell = new DataCell(commonPath, ControlsProperties.getString("String_SuperMapCloud"));
-		DataCell googleMapsDataCell = new DataCell(commonPath, ControlsProperties.getString("String_GoogleMaps"));
-		DataCell baiduMapDataCell = new DataCell(commonPath, ControlsProperties.getString("String_BaiduMap"));
-		DataCell openStreetMapsdCell = new DataCell(commonPath, ControlsProperties.getString("String_OpenStreetMaps"));
+		DataCell ogcDataCell = new DataCell();
+		ogcDataCell.initDatasourceType(EngineType.OGC, ControlsProperties.getString("String_OGC"));
+		DataCell iServerRestDataCell = new DataCell();
+		iServerRestDataCell.initDatasourceType(null, ControlsProperties.getString("String_iServerRest"));
+		DataCell superMapCloudDataCell = new DataCell();
+		superMapCloudDataCell.initDatasourceType(null, ControlsProperties.getString("String_SuperMapCloud"));
+		DataCell googleMapsDataCell = new DataCell();
+		googleMapsDataCell.initDatasourceType(null, ControlsProperties.getString("String_GoogleMaps"));
+		DataCell baiduMapDataCell = new DataCell();
+		baiduMapDataCell.initDatasourceType(null, ControlsProperties.getString("String_BaiduMap"));
+		DataCell openStreetMapsdCell = new DataCell();
+		openStreetMapsdCell.initDatasourceType(null, ControlsProperties.getString("String_OpenStreetMaps"));
 		listModel.addElement(ogcDataCell);
 		listModel.addElement(iServerRestDataCell);
 		listModel.addElement(superMapCloudDataCell);
@@ -194,19 +201,25 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	private DefaultListModel<Object> getListItemForOpenOrNew() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
 		String commonPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(null);
-		String sqlPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.SQLPLUS);
-		DataCell sqlDataCell = new DataCell(sqlPath, ControlsProperties.getString("String_SQL"));
+		DataCell sqlDataCell = new DataCell();
+		sqlDataCell.initDatasourceType(EngineType.SQLPLUS, ControlsProperties.getString("String_SQL"));
 		String oraclePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.ORACLEPLUS);
-		DataCell oracleDataCell = new DataCell(oraclePath, ControlsProperties.getString("String_Oracle"));
+		DataCell oracleDataCell = new DataCell();
+		oracleDataCell.initDatasourceType(EngineType.ORACLEPLUS, ControlsProperties.getString("String_Oracle"));
 		String oracleSpatialPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.ORACLESPATIAL);
-		DataCell oracleSpatialDataCell = new DataCell(oracleSpatialPath, ControlsProperties.getString("String_OracleSpatial"));
+		DataCell oracleSpatialDataCell = new DataCell();
+		oracleSpatialDataCell.initDatasourceType(EngineType.ORACLESPATIAL, ControlsProperties.getString("String_OracleSpatial"));
 		String postgreSqlPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.POSTGRESQL);
-		DataCell postgreSqlDataCell = new DataCell(postgreSqlPath, ControlsProperties.getString("String_PostgreSQL"));
-		String db2Path = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.DB2);
-		DataCell db2DataCell = new DataCell(db2Path, ControlsProperties.getString("String_DB2"));
-		DataCell dmDataCell = new DataCell(commonPath, ControlsProperties.getString("String_DM"));
-		DataCell kingBaseDataCell = new DataCell(commonPath, ControlsProperties.getString("String_KingBase"));
-		DataCell mySqlDataCell = new DataCell(commonPath, ControlsProperties.getString("String_MySQL"));
+		DataCell postgreSqlDataCell = new DataCell();
+		postgreSqlDataCell.initDatasourceType(EngineType.POSTGRESQL,ControlsProperties.getString("String_PostgreSQL"));
+		DataCell db2DataCell = new DataCell();
+		db2DataCell.initDatasourceType(EngineType.DB2, ControlsProperties.getString("String_DB2"));
+		DataCell dmDataCell = new DataCell();
+		dmDataCell.initDatasourceType(EngineType.DM, ControlsProperties.getString("String_DM"));
+		DataCell kingBaseDataCell = new DataCell();
+		kingBaseDataCell.initDatasourceType(EngineType.KINGBASE, ControlsProperties.getString("String_KingBase"));
+		DataCell mySqlDataCell = new DataCell();
+		mySqlDataCell.initDatasourceType(EngineType.MYSQL, ControlsProperties.getString("String_MySQL"));
 		if (SystemPropertyUtilties.isWindows()) {
 			listModel.addElement(sqlDataCell);
 			listModel.addElement(oracleDataCell);

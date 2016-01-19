@@ -18,7 +18,8 @@ public class TabelDatasourceCellRender extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		Datasource datasource = (Datasource) value;
-		DataCell dataCell = new DataCell(CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType()), datasource.getAlias(), datasource);
+		DataCell dataCell = new DataCell();
+		dataCell.initDatasourceType(datasource);
 		if (isSelected) {
 			dataCell.setBackground(table.getSelectionBackground());
 		} else {

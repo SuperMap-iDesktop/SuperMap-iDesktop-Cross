@@ -79,12 +79,11 @@ public class JDialogTopoPreProgress extends SmDialog {
 					if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.POINT) {
 						Object[] temp = new Object[3];
 						temp[COLUMN_INDEX_COUNT] = table.getRowCount() + 1;
-						String datasetImagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-						DataCell datasetCell = new DataCell(datasetImagePath, dataset.getName());
+						DataCell datasetCell = new DataCell();
+						datasetCell.initDatasetType(dataset);
 						getComboBoxConsultDataset().addItem(datasetCell);
 						temp[COLUMN_INDEX_DATASET] = datasetCell;
 						Datasource dataSource = dataset.getDatasource();
-						String datasourcePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(dataSource.getEngineType());
 						if (dataset.getType() == DatasetType.REGION) {
 							getCheckBoxArcsInserted().setEnabled(true);
 							getCheckBoxPolygonsChecked().setEnabled(true);
@@ -97,7 +96,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 						} else if (dataset.getType() == DatasetType.POINT) {
 							getCheckBoxVertexesSnapped().setEnabled(true);
 						}
-						DataCell cell = new DataCell(datasourcePath, dataSource.getAlias());
+						DataCell cell = new DataCell();
+						cell.initDatasourceType(dataSource);
 						temp[COLUMN_INDEX_DATASOURCE] = cell;
 						table.addRow(temp);
 					}

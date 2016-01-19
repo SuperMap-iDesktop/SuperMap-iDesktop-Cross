@@ -377,8 +377,8 @@ public class DatasetChooser extends SmDialog {
 					Dataset dataset = datasets.get(i);
 					if (isAllowedDataset(dataset)) {
 						Object[] data = new Object[3];
-						String path = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-						DataCell datasetCell = new DataCell(path, dataset.getName());
+						DataCell datasetCell = new DataCell();
+						datasetCell.initDatasetType(dataset);
 						data[COLUMN_INDEX_DATASET] = datasetCell;
 						data[COLUMN_INDEX_CURRENT_DATASOURCE] = dataset.getDatasource().getAlias();
 						data[COLUMN_INDEX_DATASET_TYPE] = CommonToolkit.DatasetTypeWrap.findName(dataset.getType());

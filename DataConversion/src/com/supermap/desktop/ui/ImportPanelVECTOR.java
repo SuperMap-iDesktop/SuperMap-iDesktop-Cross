@@ -1,47 +1,30 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.data.Datasource;
+import com.supermap.data.SpatialIndexInfo;
+import com.supermap.data.SpatialIndexType;
+import com.supermap.data.conversion.*;
+import com.supermap.desktop.ImportFileInfo;
+import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.controls.CharsetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.util.CommonComboBoxModel;
+import com.supermap.desktop.util.CommonFunction;
+import com.supermap.desktop.util.ImportInfoUtil;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-import javax.swing.border.TitledBorder;
-
-import com.supermap.data.Datasource;
-import com.supermap.data.SpatialIndexInfo;
-import com.supermap.data.SpatialIndexType;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingDWG;
-import com.supermap.data.conversion.ImportSettingDXF;
-import com.supermap.data.conversion.ImportSettingE00;
-import com.supermap.data.conversion.ImportSettingMAPGIS;
-import com.supermap.data.conversion.ImportSettingMIF;
-import com.supermap.data.conversion.ImportSettingSHP;
-import com.supermap.data.conversion.ImportSettingTAB;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.ImportFileInfo;
-import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.ui.controls.CharsetComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.util.CommonComboBoxModel;
-import com.supermap.desktop.util.ImportInfoUtil;
-
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 /**
- *
  * @author Administrator 实现右侧导入矢量数据类型的界面
  */
-public class ImportPanelVECTOR extends JPanel {
+public class ImportPanelVECTOR extends AbstractImportPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JCheckBox checkboxExtendsData;
@@ -53,7 +36,7 @@ public class ImportPanelVECTOR extends JPanel {
 	private JCheckBox checkboxMergeLayer;
 	private JCheckBox checkboxSpatialIndex;
 	private JCheckBox checkboxSymbol;
-	private JComboBox<Object> comboBox;
+	private JComboBox<Object> comboBoxImportModel;
 	private transient CharsetComboBox comboBoxCharset;
 	private JComboBox<Object> comboBoxCodingType;
 	private transient DatasourceComboBox comboBoxDatasource;
@@ -63,7 +46,7 @@ public class ImportPanelVECTOR extends JPanel {
 	private JLabel labelDataset;
 	private JLabel labelDatasource;
 	private JLabel labelImportModel;
-	private JPanel panel;
+	private JPanel panelResultSet;
 	private JPanel panelDatapath;
 	private JPanel panelTransform;
 	private JTextField textFieldCure;
@@ -71,250 +54,169 @@ public class ImportPanelVECTOR extends JPanel {
 	private ArrayList<ImportFileInfo> fileInfos;
 	private ArrayList<JPanel> panels;
 	private transient ImportSetting importsetting = null;
-
-	public ImportPanelVECTOR() {
-		initComponents();
-	}
+	private LocalActionListener localActionListener;
+	private LocalTextActionListener textActionListener;
 
 	public ImportPanelVECTOR(List<ImportFileInfo> fileInfos) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelVECTOR(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
-	}
-
-	public void initResource() {
-		labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
-		labelCurve.setText(DataConversionProperties.getString("string_label_lblCurve"));
-		labelDatasource.setText(DataConversionProperties.getString("string_label_targetDatasource"));
-		labelDataset.setText(DataConversionProperties.getString("string_label_targetDataset"));
-		labelCodingType.setText(DataConversionProperties.getString("string_label_encodingType"));
-		labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
-
-		checkboxMergeLayer.setEnabled(false);
-		checkboxMergeLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxMergeLayer"));
-		checkboxImportLayer.setEnabled(false);
-		checkboxImportLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxImportLayer"));
-		checkboxSymbol.setEnabled(false);
-		checkboxSymbol.setText(DataConversionProperties.getString("string_checkbox_chckbxSymbol"));
-		checkboxImport.setEnabled(false);
-		checkboxImport.setText(DataConversionProperties.getString("string_checkbox_chckbxImport"));
-		checkboxImportProperty.setEnabled(false);
-		checkboxImportProperty.setText(DataConversionProperties.getString("string_checkbox_chckbxImportProperty"));
-		checkboxExtendsData.setEnabled(false);
-		checkboxExtendsData.setText(DataConversionProperties.getString("string_checkbox_chckbxExtendsData"));
-		checkboxLineWidth.setEnabled(false);
-		checkboxLineWidth.setText(DataConversionProperties.getString("string_checkbox_chckbxLineWidth"));
-		checkboxFieldIndex.setText(DataConversionProperties.getString("string_checkbox_chckbxFieldIndex"));
-		checkboxSpatialIndex.setText(DataConversionProperties.getString("string_checkbox_chckbxSpatialIndex"));
-		panel.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelTransform.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING,
-				TitledBorder.TOP, null, null));
-		panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING,
-				TitledBorder.TOP, null, null));
-		comboBoxCharset.setModel(new CommonComboBoxModel());
-		comboBoxCharset.setAutoscrolls(true);
-		comboBox.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
-				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
-		comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_nullcoding"),
-				DataConversionProperties.getString("string_comboboxitem_byte"), DataConversionProperties.getString("string_comboboxitem_int16"),
-				DataConversionProperties.getString("string_comboboxitem_int24"), DataConversionProperties.getString("string_comboboxitem_int32") }));
-	}
-
-	private void initComponents() {
-
-		panel = new JPanel();
-		labelDatasource = new JLabel();
-		labelCodingType = new JLabel();
-		comboBoxDatasource = new DatasourceComboBox();
-		comboBoxCodingType = new JComboBox<Object>();
-		labelDataset = new JLabel();
-		textFieldResultSet = new JTextField();
-		textFieldResultSet.setColumns(10);
-		checkboxFieldIndex = new JCheckBox();
-		checkboxSpatialIndex = new JCheckBox();
-		panelTransform = new JPanel();
-		labelImportModel = new JLabel();
-		comboBox = new JComboBox<Object>();
-		labelCurve = new JLabel();
-		textFieldCure = new JTextField();
-		checkboxSymbol = new JCheckBox();
-		checkboxMergeLayer = new JCheckBox();
-		checkboxExtendsData = new JCheckBox();
-		checkboxImportLayer = new JCheckBox();
-		checkboxImport = new JCheckBox();
-		checkboxImportProperty = new JCheckBox();
-		checkboxLineWidth = new JCheckBox();
-		panelDatapath = new JPanel();
-		labelCharset = new JLabel();
-		comboBoxCharset = new CharsetComboBox();
-
-		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
-		comboBoxDatasource.setSelectedDatasource(datasource);
 		initResource();
+		registActionListener();
+	}
+
+	@Override
+	void initResource() {
+		this.labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
+		this.labelCurve.setText(DataConversionProperties.getString("string_label_lblCurve"));
+		this.labelDatasource.setText(DataConversionProperties.getString("string_label_targetDatasource"));
+		this.labelDataset.setText(DataConversionProperties.getString("string_label_targetDataset"));
+		this.labelCodingType.setText(DataConversionProperties.getString("string_label_encodingType"));
+		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
+
+		this.checkboxMergeLayer.setEnabled(false);
+		this.checkboxMergeLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxMergeLayer"));
+		this.checkboxImportLayer.setEnabled(false);
+		this.checkboxImportLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxImportLayer"));
+		this.checkboxSymbol.setEnabled(false);
+		this.checkboxSymbol.setText(DataConversionProperties.getString("string_checkbox_chckbxSymbol"));
+		this.checkboxImport.setEnabled(false);
+		this.checkboxImport.setText(DataConversionProperties.getString("string_checkbox_chckbxImport"));
+		this.checkboxImportProperty.setEnabled(false);
+		this.checkboxImportProperty.setText(DataConversionProperties.getString("string_checkbox_chckbxImportProperty"));
+		this.checkboxExtendsData.setEnabled(false);
+		this.checkboxExtendsData.setText(DataConversionProperties.getString("string_checkbox_chckbxExtendsData"));
+		this.checkboxLineWidth.setEnabled(false);
+		this.checkboxLineWidth.setText(DataConversionProperties.getString("string_checkbox_chckbxLineWidth"));
+		this.checkboxFieldIndex.setText(DataConversionProperties.getString("string_checkbox_chckbxFieldIndex"));
+		this.checkboxSpatialIndex.setText(DataConversionProperties.getString("string_checkbox_chckbxSpatialIndex"));
+		this.panelResultSet.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel"), TitledBorder.LEADING, TitledBorder.TOP,
+				null, null));
+		this.panelTransform.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
+		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
+		this.comboBoxCharset.setModel(new CommonComboBoxModel());
+		this.comboBoxCharset.setAutoscrolls(true);
+		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
+				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
+		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"),
+				DataConversionProperties.getString("string_comboboxitem_byte"), DataConversionProperties.getString("string_comboboxitem_int16"),
+				DataConversionProperties.getString("string_comboboxitem_int24"), DataConversionProperties.getString("string_comboboxitem_int32")}));
+	}
+
+	@Override
+	void initComponents() {
+
+		this.panelResultSet = new JPanel();
+		this.labelDatasource = new JLabel();
+		this.labelCodingType = new JLabel();
+		this.comboBoxDatasource = new DatasourceComboBox();
+		this.comboBoxCodingType = new JComboBox<Object>();
+		this.labelDataset = new JLabel();
+		this.textFieldResultSet = new JTextField();
+		this.textFieldResultSet.setColumns(10);
+		this.checkboxFieldIndex = new JCheckBox();
+		this.checkboxSpatialIndex = new JCheckBox();
+		this.panelTransform = new JPanel();
+		this.labelImportModel = new JLabel();
+		this.comboBoxImportModel = new JComboBox<Object>();
+		this.labelCurve = new JLabel();
+		this.textFieldCure = new JTextField();
+		this.checkboxSymbol = new JCheckBox();
+		this.checkboxMergeLayer = new JCheckBox();
+		this.checkboxExtendsData = new JCheckBox();
+		this.checkboxImportLayer = new JCheckBox();
+		this.checkboxImport = new JCheckBox();
+		this.checkboxImportProperty = new JCheckBox();
+		this.checkboxLineWidth = new JCheckBox();
+		this.panelDatapath = new JPanel();
+		this.labelCharset = new JLabel();
+		this.comboBoxCharset = new CharsetComboBox();
+
+		Datasource datasource = CommonFunction.getDatasource();
+		this.comboBoxDatasource.setSelectedDatasource(datasource);
 
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, null, comboBoxDatasource);
-		// 创建字段索引
-		checkboxFieldIndex.addActionListener(new LocalTextActionListener());
-		// 创建空间索引
-		checkboxSpatialIndex.addActionListener(new LocalActionListener());
 		// 设置编码类型
 		ImportInfoUtil.setCodingType(panels, importsetting, comboBoxCodingType);
 		// 设置导入模式
-		ImportInfoUtil.setImportMode(panels, importsetting, comboBox);
+		ImportInfoUtil.setImportMode(panels, importsetting, comboBoxImportModel);
 		// 设置源文件字符集
 		ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
 
-		setPreferredSize(new java.awt.Dimension(483, 300));
+		initPanelResultSet();
 
-		GroupLayout panelLayout = new GroupLayout(panel);
-		panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				panelLayout
-						.createSequentialGroup()
-						.addGroup(
-								panelLayout.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(labelDatasource, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(labelCodingType, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addGap(18)
-						.addGroup(
-								panelLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(comboBoxDatasource, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-										.addComponent(comboBoxCodingType, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE))
-						.addGap(46)
-						.addGroup(
-								panelLayout
-										.createParallelGroup(Alignment.LEADING, false)
-										.addGroup(
-												panelLayout.createSequentialGroup()
-														.addComponent(labelDataset, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE).addGap(18)
-														.addComponent(textFieldResultSet))
-										.addGroup(
-												panelLayout.createSequentialGroup().addComponent(checkboxFieldIndex)
-														.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(checkboxSpatialIndex)))
-						.addGap(0, 41, Short.MAX_VALUE)));
-		panelLayout.setVerticalGroup(panelLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				panelLayout
-						.createSequentialGroup()
-						.addContainerGap(12, Short.MAX_VALUE)
-						.addGroup(
-								panelLayout.createParallelGroup(Alignment.BASELINE).addComponent(labelDatasource)
-										.addComponent(comboBoxDatasource, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(labelDataset)
-										.addComponent(textFieldResultSet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addGroup(
-								panelLayout.createParallelGroup(Alignment.BASELINE).addComponent(labelCodingType)
-										.addComponent(comboBoxCodingType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(checkboxFieldIndex).addComponent(checkboxSpatialIndex))));
-		panel.setLayout(panelLayout);
+		initpanelTransform();
 
-		textFieldCure.setEnabled(false);
+		initPanelDatapath();
 
-		checkboxSymbol.setEnabled(false);
-		checkboxMergeLayer.setEnabled(false);
-		checkboxExtendsData.setEnabled(false);
-		checkboxImportLayer.setEnabled(false);
-		checkboxImport.setEnabled(false);
-		checkboxImportProperty.setEnabled(false);
-		checkboxLineWidth.setEnabled(false);
+		initPanelVECTOR();
+		this.textFieldCure.setEnabled(false);
 
-		GroupLayout panelTransformLayout = new GroupLayout(panelTransform);
-		panelTransform.setLayout(panelTransformLayout);
-		panelTransformLayout.setHorizontalGroup(panelTransformLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-				panelTransformLayout
-						.createSequentialGroup()
-						.addGroup(
-								panelTransformLayout
-										.createParallelGroup(GroupLayout.Alignment.LEADING)
-										.addGroup(
-												panelTransformLayout
-														.createSequentialGroup()
-														.addGroup(
-																panelTransformLayout
-																		.createParallelGroup(GroupLayout.Alignment.LEADING)
-																		.addComponent(checkboxExtendsData)
-																		.addGroup(
-																				GroupLayout.Alignment.TRAILING,
-																				panelTransformLayout
-																						.createSequentialGroup()
-																						.addComponent(labelImportModel, GroupLayout.PREFERRED_SIZE,
-																								GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-																						.addGap(28)
-																						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 104,
-																								GroupLayout.PREFERRED_SIZE).addGap(46, 46, 46)
-																						.addComponent(labelCurve)))
-														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGap(12)
-														.addComponent(textFieldCure, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE))
-										.addComponent(checkboxLineWidth)
-										.addGroup(
-												panelTransformLayout
-														.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-														.addGroup(
-																GroupLayout.Alignment.LEADING,
-																panelTransformLayout.createSequentialGroup().addComponent(checkboxSymbol).addGap(154, 154, 154)
-																		.addComponent(checkboxImportLayer))
-														.addGroup(
-																panelTransformLayout
-																		.createSequentialGroup()
-																		.addComponent(checkboxMergeLayer)
-																		.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
-																				Short.MAX_VALUE)
-																		.addGroup(
-																				panelTransformLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-																						.addComponent(checkboxImportProperty).addComponent(checkboxImport)))))
-						.addGap(0, 0, Short.MAX_VALUE)));
-		panelTransformLayout.setVerticalGroup(panelTransformLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-				panelTransformLayout
-						.createSequentialGroup()
-						.addGroup(
-								panelTransformLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(labelImportModel)
-										.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(labelCurve)
-										.addComponent(textFieldCure, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(
-								panelTransformLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(checkboxSymbol)
-										.addComponent(checkboxImportLayer))
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(
-								panelTransformLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(checkboxMergeLayer)
-										.addComponent(checkboxImport))
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(
-								panelTransformLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(checkboxExtendsData)
-										.addComponent(checkboxImportProperty)).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(checkboxLineWidth)));
+		this.checkboxSymbol.setEnabled(false);
+		this.checkboxMergeLayer.setEnabled(false);
+		this.checkboxExtendsData.setEnabled(false);
+		this.checkboxImportLayer.setEnabled(false);
+		this.checkboxImport.setEnabled(false);
+		this.checkboxImportProperty.setEnabled(false);
+		this.checkboxLineWidth.setEnabled(false);
+	}
 
-		GroupLayout panelDatapathLayout = new GroupLayout(panelDatapath);
-		panelDatapath.setLayout(panelDatapathLayout);
-		panelDatapathLayout.setHorizontalGroup(panelDatapathLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-				panelDatapathLayout.createSequentialGroup().addComponent(labelCharset).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(comboBoxCharset, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE).addGap(0, 0, Short.MAX_VALUE)));
-		panelDatapathLayout.setVerticalGroup(panelDatapathLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-				panelDatapathLayout
-						.createSequentialGroup()
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(
-								panelDatapathLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(labelCharset)
-										.addComponent(comboBoxCharset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))));
+	private void initPanelVECTOR() {
+		//@formatter:off
+		this.setLayout(new GridBagLayout());
+		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		//@formatter:on
+	}
 
-		GroupLayout layout = new GroupLayout(this);
-		this.setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(panelTransform, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(panelDatapath, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-		layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-				layout.createSequentialGroup().addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(panelTransform, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(panelDatapath, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+	private void initPanelDatapath() {
+		//@formatter:off
+		this.panelDatapath.setLayout(new GridBagLayout());
+		this.panelDatapath.add(this.labelCharset,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelDatapath.add(this.comboBoxCharset,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20));
+		//@formatter:on
+	}
+
+	private void initpanelTransform() {
+		//@formatter:off
+		this.panelTransform.setLayout(new GridBagLayout());
+		this.panelTransform.add(this.labelImportModel,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelTransform.add(this.comboBoxImportModel,    new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransform.add(this.labelCurve,             new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelTransform.add(this.textFieldCure,          new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransform.add(this.checkboxSymbol,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 10, 5, 20));
+		this.panelTransform.add(this.checkboxImportLayer,    new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 0,  5, 10));
+		this.panelTransform.add(this.checkboxMergeLayer,     new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 10, 5, 20));
+		this.panelTransform.add(this.checkboxImport,         new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 0,  5, 10));
+		this.panelTransform.add(this.checkboxExtendsData,    new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 10, 5, 20));
+		this.panelTransform.add(this.checkboxImportProperty, new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 0,  5, 10));
+		this.panelTransform.add(this.checkboxLineWidth,      new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(0, 10, 10,10));
+		// @formatter:on
+	}
+
+	private void initPanelResultSet() {
+		//@formatter:off
+		this.panelResultSet.setLayout(new GridBagLayout());
+		this.panelResultSet.add(this.labelDatasource,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelResultSet.add(this.comboBoxDatasource,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelDataset,         new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelResultSet.add(this.textFieldResultSet,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelCodingType,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelResultSet.add(this.comboBoxCodingType,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.checkboxFieldIndex,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 0, 10, 5));
+		this.panelResultSet.add(this.checkboxSpatialIndex, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 10));
+		// @formatter:on
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -426,5 +328,22 @@ public class ImportPanelVECTOR extends JPanel {
 			}
 		}
 
+	}
+
+	@Override
+	void registActionListener() {
+		this.localActionListener = new LocalActionListener();
+		this.textActionListener = new LocalTextActionListener();
+		unregistActionListener();
+		// 创建字段索引
+		this.checkboxFieldIndex.addActionListener(this.textActionListener);
+		// 创建空间索引
+		this.checkboxSpatialIndex.addActionListener(this.localActionListener);
+	}
+
+	@Override
+	void unregistActionListener() {
+		this.checkboxFieldIndex.removeActionListener(this.textActionListener);
+		this.checkboxSpatialIndex.removeActionListener(this.localActionListener);
 	}
 }

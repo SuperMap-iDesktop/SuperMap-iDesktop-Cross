@@ -18,7 +18,6 @@ import java.util.concurrent.CancellationException;
 public class DataImportCallable extends UpdateProgressCallable {
 	private ArrayList<ImportFileInfo> fileInfos;
 	private JTable table;
-	private boolean isWor = false;
 
 	public DataImportCallable(List<ImportFileInfo> fileInfos, JTable table) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
@@ -42,7 +41,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 				ImportSetting importSetting = fileInfo.getImportSetting();
 				importSetting.setSourceFilePath(fileInfo.getFilePath());
 				if (importSetting instanceof ImportSettingWOR) {
-					isWor = true;
 					Workspace workspace = Application.getActiveApplication().getWorkspace();
 					((ImportSettingWOR) importSetting).setTargetWorkspace(workspace);
 					((ImportSettingWOR) importSetting).setTargetDatasource(importSetting.getTargetDatasource());
@@ -70,13 +68,9 @@ public class DataImportCallable extends UpdateProgressCallable {
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
-			if (isWor) {
-				UICommonToolkit.getWorkspaceManager().getWorkspaceTree().reload();
-			} else {
-				for (Map.Entry<String, Integer> entry : map.entrySet()) {
-					if (entry.getValue() > 0) {
-						UICommonToolkit.refreshSelectedDatasourceNode(entry.getKey());
-					}
+			for (Map.Entry<String, Integer> entry : map.entrySet()) {
+				if (entry.getValue() > 0) {
+					UICommonToolkit.refreshSelectedDatasourceNode(entry.getKey());
 				}
 			}
 		}

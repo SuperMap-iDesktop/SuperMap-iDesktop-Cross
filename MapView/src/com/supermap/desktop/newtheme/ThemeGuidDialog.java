@@ -110,11 +110,16 @@ public class ThemeGuidDialog extends SmDialog {
 	 */
 	private void addListItem() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		DataCell uniqueDataCell = new DataCell(InternalImageIconFactory.THEMEGUIDE_UNIQUE, MapViewProperties.getString("String_Theme_Unique"));
-		DataCell rangeDataCell = new DataCell(InternalImageIconFactory.THEMEGUIDE_RANGE, MapViewProperties.getString("String_Theme_Range"));
-		DataCell labelDataCell = new DataCell(InternalImageIconFactory.THEMEGUIDE_UNIFORM, MapViewProperties.getString("String_ThemeLabel"));
-		DataCell gridUniqueCell = new DataCell(InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE, MapViewProperties.getString("String_ThemeGrid_Unique"));
-		DataCell gridRangeCell = new DataCell(InternalImageIconFactory.THEMEGUIDE_GRIDRANGE, MapViewProperties.getString("String_ThemeGrid_Range"));
+		DataCell uniqueDataCell = new DataCell();
+		uniqueDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_UNIQUE, MapViewProperties.getString("String_Theme_Unique"));
+		DataCell rangeDataCell = new DataCell();
+		rangeDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_RANGE, MapViewProperties.getString("String_Theme_Range"));
+		DataCell labelDataCell = new DataCell();
+		labelDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_UNIFORM, MapViewProperties.getString("String_ThemeLabel"));
+		DataCell gridUniqueCell = new DataCell();
+		gridUniqueCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE, MapViewProperties.getString("String_ThemeGrid_Unique"));
+		DataCell gridRangeCell = new DataCell();
+		gridRangeCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_GRIDRANGE, MapViewProperties.getString("String_ThemeGrid_Range"));
 		if (isCadType) {
 			listModel.addElement(labelDataCell);
 		} else if (isGridType) {

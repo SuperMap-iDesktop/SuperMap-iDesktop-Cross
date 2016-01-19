@@ -122,20 +122,20 @@ public class DatasetComboBox extends JComboBox<Object> {
 	}
 
 	private static JPanel[] initDatasetComboBoxItem(DatasetType[] datasetTypes) {
-		JPanel[] result = new JPanel[datasetTypes.length];
+		DataCell[] result = new DataCell[datasetTypes.length];
 		for (int i = 0; i < datasetTypes.length; i++) {
-			String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasetTypes[i]);
 			String datasetType = CommonToolkit.DatasetTypeWrap.findName(datasetTypes[i]);
-			result[i] = new DataCell(filePath, datasetType);
+			result[i] = new DataCell();
+			result[i].initDatasetType(datasetTypes[i], datasetType);
 		}
 		return result;
 	}
 
-	private static JPanel[] initDatasetComboBoxItem(Dataset[] datasets) {
-		JPanel[] result = new JPanel[datasets.length];
+	private static DataCell[] initDatasetComboBoxItem(Dataset[] datasets) {
+		DataCell[] result = new DataCell[datasets.length];
 		for (int i = 0; i < datasets.length; i++) {
 			String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasets[i].getType());
-			result[i] = new DataCell(filePath, datasets[i].getName());
+			result[i].initDatasetType(datasets[i]);
 		}
 		return result;
 	}
@@ -147,7 +147,7 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 */
 	public String getSelectItem() {
 		DataCell temp = (DataCell) getSelectedItem();
-		return temp.getDatasetName();
+		return temp.getDataName();
 	}
 
 	private static JPanel[] initDatasetComboBoxItem() {
@@ -178,7 +178,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 		DataCell[] result = new DataCell[datasetTypes.length];
 		for (int i = 0; i < datasetTypes.length; i++) {
 			String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasetTypes[i]);
-			result[i] = new DataCell(filePath, datasetTypes[i]);
+			result[i] = new DataCell();
+			result[i].initDataType(filePath, datasetTypes[i]);
 		}
 		return result;
 	}
@@ -187,8 +188,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 		DataCell[] result = new DataCell[datasets.getCount()];
 		for (int i = 0; i < datasets.getCount(); i++) {
 			Dataset dataset = datasets.get(i);
-			String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-			result[i] = new DataCell(filePath, dataset.getName(), datasets.get(i));
+			result[i] = new DataCell();
+			result[i].initDatasetType(datasets.get(i));
 		}
 		return result;
 	}
@@ -225,8 +226,9 @@ public class DatasetComboBox extends JComboBox<Object> {
 						if (this.getDatasetTypes() != null && this.getDatasetTypes().length > 0 && !isSupportDatasetType(type)) {
 							continue;
 						} else {
-							String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-							this.addItem(new DataCell(filePath, dataset.getName(), dataset));
+							DataCell datasetTypeCell = new DataCell();
+							datasetTypeCell.initDatasetType(dataset);
+							this.addItem(datasetTypeCell);
 						}
 					}
 				} catch (Exception ex) {

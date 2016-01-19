@@ -39,25 +39,25 @@ public class LayerComboBox extends JComboBox<Object> {
 	 */
 	public String getSelectItem() {
 		DataCell temp = (DataCell) getSelectedItem();
-		return temp.getDatasetName();
+		return temp.getDataName();
 	}
 
 	private static JPanel[] initLayerComboBoxItem(Datasets datasets) {
-		JPanel[] result = new JPanel[datasets.getCount()];
+		DataCell[] result = new DataCell[datasets.getCount()];
 		for (int i = 0; i < datasets.getCount(); i++) {
 			String filePath = CommonToolkit.LayerImageWrap.getImageIconPath(datasets.get(i).getType());
 			String datasourceAlis = datasets.get(i).getName();
-			result[i] = new DataCell(filePath, datasourceAlis);
+			result[i] = new DataCell();
+			result[i].initDatasetType(datasets.get(i));
 		}
 		return result;
 	}
 
 	private static JPanel[] initLayerComboBoxItem(Layers layers) {
-		JPanel[] result = new JPanel[layers.getCount()];
+		DataCell[] result = new DataCell[layers.getCount()];
 		for (int i = 0; i < layers.getCount(); i++) {
-			String filePath = CommonToolkit.LayerImageWrap.getImageIconPath(layers.get(i).getDataset().getType());
-			String datasourceAlis = layers.get(i).getName();
-			result[i] = new DataCell(filePath, datasourceAlis);
+			result[i] = new DataCell();
+			result[i].initDatasetType(layers.get(i).getDataset());
 		}
 		return result;
 	}

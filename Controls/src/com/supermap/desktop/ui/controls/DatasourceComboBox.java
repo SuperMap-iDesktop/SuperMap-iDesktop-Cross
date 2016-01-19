@@ -3,7 +3,6 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 
 import javax.swing.*;
 
@@ -56,7 +55,7 @@ public class DatasourceComboBox extends JComboBox<Object> {
 	 */
 	public String getSelectItem() {
 		DataCell temp = (DataCell) getSelectedItem();
-		return temp.getDatasetName();
+		return temp.getDataName();
 	}
 
 	/**
@@ -111,10 +110,8 @@ public class DatasourceComboBox extends JComboBox<Object> {
 
 		for (int i = 0; i < datasources.getCount(); i++) {
 			Datasource datasource = datasources.get(i);
-			String filePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-			String datasourceAlis = datasource.getAlias();
-			DataCell dataCell = new DataCell(filePath, datasourceAlis, datasource);
-
+			DataCell dataCell = new DataCell();
+			dataCell.initDatasourceType(datasource);
 			this.addItem(dataCell);
 			if (datasource == selectedDatasource) {
 				selectedIndex = getItemCount() - 1;
@@ -132,10 +129,8 @@ public class DatasourceComboBox extends JComboBox<Object> {
 		DataCell[] result = new DataCell[datasources.getCount()];
 		for (int i = 0; i < datasources.getCount(); i++) {
 			Datasource datasource = datasources.get(i);
-
-			String filePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasources.get(i).getEngineType());
-			String datasourceAlis = datasource.getAlias();
-			result[i] = new DataCell(filePath, datasourceAlis, datasource);
+			result[i] = new DataCell();
+			result[i].initDatasourceType(datasource);
 		}
 		return result;
 	}
@@ -149,10 +144,8 @@ public class DatasourceComboBox extends JComboBox<Object> {
 		DataCell[] result = new DataCell[datasources.length];
 		for (int i = 0; i < datasources.length; i++) {
 			Datasource datasource = datasources[i];
-
-			String filePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasources[i].getEngineType());
-			String datasourceAlis = datasource.getAlias();
-			result[i] = new DataCell(filePath, datasourceAlis, datasource);
+			result[i] = new DataCell();
+			result[i].initDatasourceType(datasource);
 		}
 		return result;
 	}
