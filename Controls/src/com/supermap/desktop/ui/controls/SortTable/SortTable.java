@@ -84,7 +84,6 @@ public class SortTable extends JTable {
 		}
 
 		public void mouseReleased(MouseEvent e) {
-//			int col = header.columnAtPoint(e.getPoint());
 			renderer.setPressedColumn(-1);                // clear
 			header.repaint();
 		}

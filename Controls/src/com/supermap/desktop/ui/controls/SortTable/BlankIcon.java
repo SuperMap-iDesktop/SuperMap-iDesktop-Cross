@@ -25,7 +25,7 @@ public class BlankIcon implements Icon {
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		if (fillColor != null) {
 			g.setColor(fillColor);
-			g.drawRect(x, y, size - 1, size - 1);
+			g.drawRect(x, y, size, size);
 		}
 	}
 

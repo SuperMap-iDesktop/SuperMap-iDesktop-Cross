@@ -1,5 +1,9 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.desktop.ui.controls.DataCell;
+
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,11 +31,11 @@ public class TableSorter {
 			for (int j = i + 1; j < rows.length; j++) {
 				row2 = rows[j];
 				if (isAscent) {
-					if (compare(column, row1, row2) < 0) {
+					if (compare(column, k, row2) < 0) {
 						k = row2;
 					}
 				} else {
-					if (compare(column, row1, row2) > 0) {
+					if (compare(column, k, row2) > 0) {
 						k = row2;
 					}
 				}
@@ -65,10 +69,42 @@ public class TableSorter {
 				return compare((Date) o1, (Date) o2);
 			} else if (o1 instanceof Boolean) {
 				return compare((Boolean) o1, (Boolean) o2);
+			} else if (o1 instanceof DataCell) {
+				return compare((DataCell) o1, (DataCell) o2);
+			} else if (o1 instanceof Dataset) {
+				return compare((Dataset) o1, (Dataset) o2);
+			} else if (o1 instanceof Datasource) {
+				return compare((Datasource) o1, (Datasource) o2);
 			} else {
-				// TODO 类型未补全
 				return String.valueOf(o1).compareTo(String.valueOf(o2));
 			}
+		}
+	}
+
+	private int compare(DataCell o1, DataCell o2) {
+		if (o1.getData() == null) {
+			return String.valueOf(o1).compareTo(String.valueOf(o2));
+		} else if (o1.getData() instanceof Datasource) {
+			return compare(((Datasource) o1.getData()), ((Datasource) o2.getData()));
+		} else if (o1.getData() instanceof Dataset) {
+			return compare(((Dataset) o1.getData()), ((Dataset) o2.getData()));
+		}
+		return 0;
+	}
+
+	private int compare(Datasource data, Datasource data1) {
+		if (data.getEngineType() != data1.getEngineType()) {
+			return data.getEngineType().value() - data1.getEngineType().value();
+		} else {
+			return data.getAlias().compareTo(data.getAlias());
+		}
+	}
+
+	private int compare(Dataset data, Dataset data1) {
+		if (data.getType() != data1.getType()) {
+			return data.getType().value() - data1.getType().value();
+		} else {
+			return data.getName().compareTo(data.getName());
 		}
 	}
 

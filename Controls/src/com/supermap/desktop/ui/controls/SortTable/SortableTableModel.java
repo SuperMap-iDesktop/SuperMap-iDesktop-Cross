@@ -79,7 +79,7 @@ public class SortableTableModel extends DefaultTableModel {
 	/**
 	 * 删除行的时候从indexes删除
 	 *
-	 * @param selectedRows
+	 * @param selectedRows 选中需要删除的行
 	 */
 	protected void removeRows(int[] selectedRows) {
 		if (indexes == null) {

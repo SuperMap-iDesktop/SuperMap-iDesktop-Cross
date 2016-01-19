@@ -1,9 +1,7 @@
 package com.supermap.desktop.utilties;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.EngineType;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.SpatialIndexTypeProperties;
@@ -18,6 +16,14 @@ public class SpatialIndexTypeUtilties {
 	private SpatialIndexTypeUtilties() {
 		// 工具类不提供构造函数
 	}
+
+	public static final SpatialIndexType[] ALL_SPATIAL_INDEX_TYPE = new SpatialIndexType[]{
+			SpatialIndexType.NONE,
+			SpatialIndexType.RTREE,
+			SpatialIndexType.QTREE,
+			SpatialIndexType.MULTI_LEVEL_GRID,
+			SpatialIndexType.TILE
+	};
 
 	public static String toString(SpatialIndexType data) {
 		String result = "";
@@ -68,26 +74,13 @@ public class SpatialIndexTypeUtilties {
 	 * @return 支持的类型
 	 */
 	public static String[] getSupportSpatialIndexType(Dataset dataset) {
-		if (!(dataset instanceof DatasetVector)) {
+		if (dataset == null || !(dataset instanceof DatasetVector)) {
 			return null;
 		}
 		List<String> supportSpatialIndex = new ArrayList<>();
-		supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.NONE));
-		EngineType engineType = dataset.getDatasource().getEngineType();
-		if (engineType == EngineType.UDB) {
-			supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.RTREE));
-		} else if (engineType == EngineType.DB2) {
-			supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.MULTI_LEVEL_GRID));
-		} else if (engineType == EngineType.SQLPLUS || engineType == EngineType.ORACLEPLUS) {
-			if (dataset.getType() != DatasetType.POINT) {
-				supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.RTREE));
-				supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.QTREE));
-			}
-			supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.MULTI_LEVEL_GRID));
-			supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.TILE));
-		} else if (engineType == EngineType.POSTGRESQL) {
-			if (dataset.getType() != DatasetType.POINT) {
-				supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(SpatialIndexType.RTREE));
+		for (SpatialIndexType spatialIndexType : ALL_SPATIAL_INDEX_TYPE) {
+			if (((DatasetVector) dataset).isSpatialIndexTypeSupported(spatialIndexType)) {
+				supportSpatialIndex.add(SpatialIndexTypeUtilties.toString(spatialIndexType));
 			}
 		}
 		return supportSpatialIndex.toArray(new String[supportSpatialIndex.size()]);

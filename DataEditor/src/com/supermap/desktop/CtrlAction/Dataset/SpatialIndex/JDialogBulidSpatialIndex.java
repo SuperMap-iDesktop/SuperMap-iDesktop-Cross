@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -59,7 +60,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	// 表
 	private JScrollPane scrollPaneTable;
-	private JTable tableDatasets;
+	private SortTable tableDatasets;
 	private SpatialIndexTableModel spatialIndexTableModel;
 
 	DatasetChooser datasetChooser;
@@ -117,7 +118,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.comboBoxIndexType = new JComboBox();
 		// 表
 		this.scrollPaneTable = new JScrollPane();
-		this.tableDatasets = new JTable();
+		this.tableDatasets = new SortTable();
 		this.spatialIndexTableModel = new SpatialIndexTableModel();
 		// 右下的描述
 		this.scrollPaneDescribe = new JScrollPane();

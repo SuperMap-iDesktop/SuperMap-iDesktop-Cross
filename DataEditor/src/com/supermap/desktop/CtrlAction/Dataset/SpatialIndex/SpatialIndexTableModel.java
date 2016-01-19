@@ -9,10 +9,10 @@ import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 
-import javax.swing.table.DefaultTableModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author XiaJT
  */
-public class SpatialIndexTableModel extends DefaultTableModel {
+public class SpatialIndexTableModel extends SortableTableModel {
 
 	private List<SpatialIndexTableModelBean> datas = new ArrayList<>();
 
@@ -63,6 +63,7 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 
 	@Override
 	public Object getValueAt(int row, int column) {
+		row = getIndexRow(row);
 		SpatialIndexTableModelBean spatialIndexTableModelBean = datas.get(row);
 		switch (column) {
 			case COLUMN_DATASET:
@@ -80,6 +81,7 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
+		row = getIndexRow(row);
 		if (column != COLUMN_DEAL_INDEX_TYPE) {
 			return;
 		}
@@ -112,6 +114,9 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 				Application.getActiveApplication().getOutput().output(message);
 			} else if (!currentDatasets.contains(selectedDataset) && SpatialIndexTableModelBean.isSupportDatasetType(selectedDataset.getType())) {
 				datas.add(new SpatialIndexTableModelBean(selectedDataset));
+				if (indexes != null) {
+					indexes.put(getRowCount() - 1, getRowCount() - 1);
+				}
 				isAdded = true;
 			}
 
@@ -135,10 +140,15 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 	 * @param selectedRows 选中行
 	 */
 	public void removeDatasets(int[] selectedRows) {
-		for (int i = selectedRows.length - 1; i >= 0; i--) {
-			datas.get(selectedRows[i]).dispose();
-			datas.remove(selectedRows[i]);
+		int realRows[] = new int[selectedRows.length];
+		for (int i = 0; i < selectedRows.length; i++) {
+			realRows[i] = getIndexRow(selectedRows[i]);
 		}
+		for (int i = selectedRows.length - 1; i >= 0; i--) {
+			datas.get(realRows[i]).dispose();
+			datas.remove(realRows[i]);
+		}
+		removeRows(selectedRows);
 		fireTableDataChanged();
 	}
 
@@ -172,6 +182,7 @@ public class SpatialIndexTableModel extends DefaultTableModel {
 	}
 
 	public void setSpatialIndexInfoValue(int selectedRow, String propetName, Object value) {
+		selectedRow = getIndexRow(selectedRow);
 		datas.get(selectedRow).updateVaule(propetName, value);
 	}
 }

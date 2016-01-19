@@ -115,7 +115,6 @@ public class SpatialIndexInfoUtilties {
 
 	public static String getSpatialIndexInfoTileField(List<SpatialIndexInfo> spatialIndexInfos) {
 		String result = "";
-		boolean isDifferent = false;
 		for (int i = 0; i < spatialIndexInfos.size(); i++) {
 			String value = spatialIndexInfos.get(i).getTileField();
 			if (i == 0) {
