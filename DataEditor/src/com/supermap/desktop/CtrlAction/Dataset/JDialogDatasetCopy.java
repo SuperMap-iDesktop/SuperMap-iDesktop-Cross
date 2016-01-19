@@ -365,8 +365,7 @@ public class JDialogDatasetCopy extends SmDialog {
 				Object[] datas = new Object[6];
 				DataCell datasetCell = new DataCell();
 				datasetCell.initDatasetType(dataset);
-				DataCell dataCell = new DataCell();
-				datas[COLUMN_INDEX_Dataset] = dataCell;
+				datas[COLUMN_INDEX_Dataset] = datasetCell;
 				Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
 				DataCell datasourceCell = new DataCell();
 				datasourceCell.initDatasourceType(datasource);

@@ -166,7 +166,9 @@ public class ThemeMainContainer extends JPanel {
 				}
 			} else {
 				boolean selected = checkBoxRefreshAtOnce.isSelected();
-				panel.setRefreshAtOnce(selected);
+				if (null != panel) {
+					panel.setRefreshAtOnce(selected);
+				}
 				if (selected) {
 					buttonApply.setEnabled(false);
 				}
