@@ -96,7 +96,7 @@ public class TableSorter {
 		if (data.getEngineType() != data1.getEngineType()) {
 			return data.getEngineType().value() - data1.getEngineType().value();
 		} else {
-			return data.getAlias().compareTo(data.getAlias());
+			return data.getAlias().compareTo(data1.getAlias());
 		}
 	}
 
@@ -104,7 +104,7 @@ public class TableSorter {
 		if (data.getType() != data1.getType()) {
 			return data.getType().value() - data1.getType().value();
 		} else {
-			return data.getName().compareTo(data.getName());
+			return data.getName().compareTo(data1.getName());
 		}
 	}
 
