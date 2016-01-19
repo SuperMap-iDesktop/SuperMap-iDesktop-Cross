@@ -54,7 +54,7 @@ public class PyramidManagerTableModel extends SortableTableModel {
 
 	@Override
 	public Object getValueAt(int row, int column) {
-		int resultRow = getIndexRow(row);
+		int resultRow = getIndexRow(row)[0];
 		if (resultRow != -1) {
 			row = resultRow;
 		}
@@ -215,9 +215,7 @@ public class PyramidManagerTableModel extends SortableTableModel {
 		for (Dataset selectedDataset : selectedDatasets) {
 			if (!currentDatasets.contains(selectedDataset)) {
 				currentDatasets.add(selectedDataset);
-				if (indexes != null) {
-					indexes.put(this.getRowCount() - 1, this.getRowCount() - 1);
-				}
+				super.addIndexRow(getRowCount() - 1);
 				isAdded = true;
 			}
 		}

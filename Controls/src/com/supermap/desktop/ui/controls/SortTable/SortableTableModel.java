@@ -15,25 +15,29 @@ public class SortableTableModel extends DefaultTableModel {
 	}
 
 	public Object getValueAt(int row, int col) {
-		return super.getValueAt(getIndexRow(row), col);
+		return super.getValueAt(getIndexRow(row)[0], col);
 	}
 
 	public void setValueAt(Object value, int row, int col) {
 		int rowIndex = row;
-		int row1 = getIndexRow(row);
+		int row1 = getIndexRow(row)[0];
 		if (row1 != -1) {
 			rowIndex = row1;
 		}
 		super.setValueAt(value, rowIndex, col);
 	}
 
-	protected int getIndexRow(int row) {
+	protected int[] getIndexRow(int... rows) {
+
 		if (indexes != null) {
-			if (indexes.get(row) != null) {
-				return (int) indexes.get(row);
+			for (int i = 0; i < rows.length; i++) {
+				int row = rows[i];
+				if (indexes.get(row) != null) {
+					rows[i] = (int) indexes.get(row);
+				}
 			}
 		}
-		return row;
+		return rows;
 	}
 
 
@@ -81,7 +85,7 @@ public class SortableTableModel extends DefaultTableModel {
 	 *
 	 * @param selectedRows 选中需要删除的行
 	 */
-	protected void removeRows(int[] selectedRows) {
+	protected void removeRows(int... selectedRows) {
 		if (indexes == null) {
 			return;
 		}
@@ -110,5 +114,11 @@ public class SortableTableModel extends DefaultTableModel {
 			}
 		}
 		return value - count;
+	}
+
+	public void addIndexRow(int i) {
+		if (indexes != null) {
+			indexes.put(i, i);
+		}
 	}
 }

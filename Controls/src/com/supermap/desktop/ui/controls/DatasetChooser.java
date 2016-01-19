@@ -6,12 +6,13 @@ import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
+import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.SortTable.SortTable;
+import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
+import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
@@ -29,17 +30,19 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * 数据集选择界面
@@ -49,7 +52,8 @@ import java.util.Vector;
  */
 public class DatasetChooser extends SmDialog {
 	private static final long serialVersionUID = 1L;
-	protected MutiTable table;
+	protected SortTable table;
+	protected MySortableTableModel tableModel;
 	protected JButton buttonOk = new JButton("string_button_sure");
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
@@ -224,22 +228,16 @@ public class DatasetChooser extends SmDialog {
 		buttonOk.setActionCommand("OK");
 		cancelButton.addActionListener(new CommonButtonAction());
 
-		table = new MutiTable();
-		@SuppressWarnings("serial")
-		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] {
-				"Dataset", "CurrentDatasource", "DatasetType"}) {
-			boolean[] columnEditables = new boolean[] { false, false,false};
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		};
+		table = new SortTable();
+		tableModel = new MySortableTableModel();
 		table.setModel(tableModel);
 		table.setShowHorizontalLines(false);
 		table.setShowVerticalLines(false);
-		CommonListCellRenderer render = new CommonListCellRenderer();
-		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setCellRenderer(render);
-		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setResizable(true);
+//		CommonListCellRenderer render = new CommonListCellRenderer();
+		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASET_NAME).setCellRenderer(new TableDatasetCellRender());
+		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TabelDatasourceCellRender());
+//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setCellRenderer(render);
+//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setResizable(true);
 		scrollPaneTable.setViewportView(table);
 		panelTable.setLayout(gl_panelTable);
 
@@ -288,13 +286,26 @@ public class DatasetChooser extends SmDialog {
 				datasourceTreeNode.remove(childDatasourceTreeNode);
 			}
 		}
+		// 不可编辑
+		workspaceTree.setEditable(false);
+
+		// 拖拽监听事件删除
+		for (MouseMotionListener mouseMotionListener : this.workspaceTree.getMouseMotionListeners()) {
+			this.workspaceTree.removeMouseMotionListener(mouseMotionListener);
+		}
+
+		// 移除按键删除节点的监听器
+		for (KeyListener keyListener : this.workspaceTree.getKeyListeners()) {
+			this.workspaceTree.removeKeyListener(keyListener);
+		}
+		this.workspaceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		workspaceTree.updateUI();
 	}
 
 	private void initResources() {
-		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
-		table.getColumnModel().getColumn(COLUMN_INDEX_CURRENT_DATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDatasource"));
-		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET_TYPE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_DatasetType"));
+//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
+//		table.getColumnModel().getColumn(COLUMN_INDEX_CURRENT_DATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDatasource"));
+//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET_TYPE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_DatasetType"));
 		labelPath.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelPath"));
 		labelScense.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelDisplayType"));
 		buttonSelectAll.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
@@ -356,7 +367,7 @@ public class DatasetChooser extends SmDialog {
 	private void compositeSearch() {
 		try {
 			table.clearSelection();
-			table.removeRows(0, table.getRowCount());
+			tableModel.removeAll();
 			initializeTableInfo();
 			checkButtonOkState();
 		} catch (Exception e) {
@@ -376,13 +387,7 @@ public class DatasetChooser extends SmDialog {
 				for (int i = 0; i < datasets.getCount(); i++) {
 					Dataset dataset = datasets.get(i);
 					if (isAllowedDataset(dataset)) {
-						Object[] data = new Object[3];
-						String path = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-						DataCell datasetCell = new DataCell(path, dataset.getName());
-						data[COLUMN_INDEX_DATASET] = datasetCell;
-						data[COLUMN_INDEX_CURRENT_DATASOURCE] = dataset.getDatasource().getAlias();
-						data[COLUMN_INDEX_DATASET_TYPE] = CommonToolkit.DatasetTypeWrap.findName(dataset.getType());
-						table.addRow(data);
+						tableModel.addDataset(dataset);
 					}
 				}
 			}
@@ -408,6 +413,12 @@ public class DatasetChooser extends SmDialog {
 		return StringUtilties.isNullOrEmpty(text) || name.toLowerCase().contains(text);
 	}
 
+	/**
+	 * 判断数据集是否显示
+	 *
+	 * @param dataset 数据集
+	 * @return true显示
+	 */
 	protected boolean isAllowedDatasetShown(Dataset dataset) {
 		return true;
 	}
@@ -434,7 +445,28 @@ public class DatasetChooser extends SmDialog {
 	}
 
 
-	class CommonButtonAction implements ActionListener {
+	private void buttonOkClicked() {
+		setDialogResult(DialogResult.OK);
+		resetSelectDataset();
+		dispose();
+	}
+
+	private void resetSelectDataset() {
+		int[] selectedRows = table.getSelectedRows();
+		selectedDatasets.clear();
+		selectedDatasets = tableModel.getSelectedDatasets(selectedRows);
+	}
+
+	public void checkButtonOkState() {
+		buttonOk.setEnabled(table.getSelectedRowCount() > 0);
+	}
+
+	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
+		this.datasetTypeComboBox.setDatasetTypes(datasetTypes);
+		compositeSearch();
+	}
+
+	private class CommonButtonAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -459,32 +491,95 @@ public class DatasetChooser extends SmDialog {
 		}
 	}
 
-	private void buttonOkClicked() {
-		setDialogResult(DialogResult.OK);
-		resetSelectDataset();
-		dispose();
-	}
+	private class MySortableTableModel extends SortableTableModel {
+		private List<Dataset> datasetList = new ArrayList<>();
+		public static final int COLUMN_DATASET_NAME = 0;
+		public static final int COLUMN_DATASOURCE = 1;
+		public static final int COLUMN_DATASET_TYPE = 2;
 
-	private void resetSelectDataset() {
-		int[] selectedRows = table.getSelectedRows();
-		selectedDatasets.clear();
-		MutiTableModel model = (MutiTableModel) table.getModel();
-		for (int selectedRow : selectedRows) {
-			Vector<Object> tempVector = model.getTagValue(selectedRow);
-			String datasetName = tempVector.get(COLUMN_INDEX_DATASET).toString();
-			String datasourceName = tempVector.get(COLUMN_INDEX_CURRENT_DATASOURCE).toString();
-			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-			Dataset dataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
-			selectedDatasets.add(dataset);
+		private final String[] columnNames = {
+				CommonProperties.getString(CommonProperties.stringDataset),
+				CommonProperties.getString(CommonProperties.stringDatasource),
+				CommonProperties.getString(CommonProperties.STRING_DATASET_TYPE)
+		};
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			if (datasetList == null || datasetList.size() <= 0) {
+				return null;
+			}
+			row = getIndexRow(row)[0];
+			Dataset dataset = datasetList.get(row);
+			switch (col) {
+				case COLUMN_DATASET_NAME:
+					return dataset;
+				case COLUMN_DATASOURCE:
+					return dataset.getDatasource();
+				case COLUMN_DATASET_TYPE:
+					return DatasetTypeUtilties.toString(dataset.getType());
+				default:
+					return null;
+			}
 		}
-	}
 
-	public void checkButtonOkState() {
-		buttonOk.setEnabled(table.getSelectedRowCount() > 0);
-	}
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
 
-	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
-		this.datasetTypeComboBox.setDatasetTypes(datasetTypes);
-		compositeSearch();
+		@Override
+		public int getRowCount() {
+			if (datasetList == null) {
+				return 0;
+			}
+			return datasetList.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex == COLUMN_DATASET_NAME || columnIndex == COLUMN_DATASOURCE) {
+				return DataCell.class;
+			} else {
+				return String.class;
+			}
+		}
+
+		public void removeAll() {
+			int[] deleteRows = new int[datasetList.size()];
+			for (int i = 0; i < datasetList.size(); i++) {
+				deleteRows[i] = i;
+			}
+			super.removeRows(deleteRows);
+			this.datasetList.clear();
+			fireTableDataChanged();
+		}
+
+		public void addDataset(Dataset dataset) {
+			if (datasetList == null) {
+				datasetList = new ArrayList<>();
+			}
+			datasetList.add(dataset);
+			super.addIndexRow(getRowCount() - 1);
+			fireTableDataChanged();
+		}
+
+		public List<Dataset> getSelectedDatasets(int[] selectedRows) {
+			selectedRows = getIndexRow(selectedRows);
+			List<Dataset> resultDataset = new ArrayList<>();
+			for (int selectedRow : selectedRows) {
+				resultDataset.add(datasetList.get(selectedRow));
+			}
+			return resultDataset;
+		}
 	}
 }

@@ -63,7 +63,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 
 	@Override
 	public Object getValueAt(int row, int column) {
-		row = getIndexRow(row);
+		row = getIndexRow(row)[0];
 		SpatialIndexTableModelBean spatialIndexTableModelBean = datas.get(row);
 		switch (column) {
 			case COLUMN_DATASET:
@@ -81,7 +81,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
-		row = getIndexRow(row);
+		row = getIndexRow(row)[0];
 		if (column != COLUMN_DEAL_INDEX_TYPE) {
 			return;
 		}
@@ -114,9 +114,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 				Application.getActiveApplication().getOutput().output(message);
 			} else if (!currentDatasets.contains(selectedDataset) && SpatialIndexTableModelBean.isSupportDatasetType(selectedDataset.getType())) {
 				datas.add(new SpatialIndexTableModelBean(selectedDataset));
-				if (indexes != null) {
-					indexes.put(getRowCount() - 1, getRowCount() - 1);
-				}
+				super.addIndexRow(getRowCount() - 1);
 				isAdded = true;
 			}
 
@@ -142,7 +140,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 	public void removeDatasets(int[] selectedRows) {
 		int realRows[] = new int[selectedRows.length];
 		for (int i = 0; i < selectedRows.length; i++) {
-			realRows[i] = getIndexRow(selectedRows[i]);
+			realRows[i] = getIndexRow(selectedRows[i])[0];
 		}
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
 			datas.get(realRows[i]).dispose();
@@ -182,7 +180,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 	}
 
 	public void setSpatialIndexInfoValue(int selectedRow, String propetName, Object value) {
-		selectedRow = getIndexRow(selectedRow);
+		selectedRow = getIndexRow(selectedRow)[0];
 		datas.get(selectedRow).updateVaule(propetName, value);
 	}
 }

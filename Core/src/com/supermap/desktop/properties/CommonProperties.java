@@ -58,4 +58,7 @@ public class CommonProperties extends Properties {
 	public static final String File = "String_File";
 	public static final String Directory = "String_Directory";
 	public static final String IsEditable = "String_IsEditable";
+	public static final String stringDataset = "String_ColumnHeader_Dataset";
+	public static final String stringDatasource = "String_ColumnHeader_Datasource";
+	public static final String STRING_DATASET_TYPE = "String_DatasetType";
 }

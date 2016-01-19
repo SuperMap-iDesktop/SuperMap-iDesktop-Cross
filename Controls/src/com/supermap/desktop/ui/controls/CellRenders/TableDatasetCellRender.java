@@ -18,6 +18,9 @@ public class TableDatasetCellRender extends DefaultTableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		if (!(value instanceof Dataset)) {
+			return new JLabel(String.valueOf(value));
+		}
 		Dataset dataset = (Dataset) value;
 		DataCell dataCell = new DataCell(new ImageIcon(TableDatasetCellRender.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()))), dataset.getName());
 		if (isSelected) {

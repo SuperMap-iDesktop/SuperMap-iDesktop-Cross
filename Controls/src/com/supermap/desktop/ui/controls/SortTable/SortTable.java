@@ -41,6 +41,7 @@ public class SortTable extends JTable {
 			header.addMouseListener(headerListener);
 			header.setReorderingAllowed(false);
 		}
+		this.setRowHeight(23);
 	}
 
 	class HeaderListener extends MouseAdapter {
