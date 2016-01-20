@@ -1,30 +1,7 @@
 package com.supermap.desktop.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingBIL;
-import com.supermap.data.conversion.ImportSettingBIP;
-import com.supermap.data.conversion.ImportSettingBSQ;
-import com.supermap.data.conversion.ImportSettingGRD;
-import com.supermap.data.conversion.ImportSettingRAW;
-import com.supermap.data.conversion.ImportSettingTEMSClutter;
-import com.supermap.data.conversion.ImportSettingUSGSDEM;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
@@ -34,8 +11,15 @@ import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Administrator 实现右侧导入dem,bil,bip,bsq,raw,grd,txt栅格数据类型的界面
  */
 public class ImportPanelArcGIS extends AbstractImportPanel {
@@ -111,6 +95,7 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
 		}
 	}
 
+	@Override
 	void initResource() {
 		this.labelDatapath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
@@ -127,12 +112,13 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
 		this.panelDatapath.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		this.comboBoxCharset.setModel(new CommonComboBoxModel());
-		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
-				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
+		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
+				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
 		this.comboBoxCodingType.setModel(
-				new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_nullcoding"), "SGL", "LZW" }));
+				new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"), "SGL", "LZW"}));
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelDataSet = new JPanel();
@@ -244,6 +230,7 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
 
 	@Override
 	void registActionListener() {
+		unregistActionListener();
 		this.buttonProperty.addActionListener(this.actionListener);
 		this.checkBoxImageInfo.addActionListener(this.actionListener);
 	}

@@ -288,7 +288,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			if (null != currentDatasource) {
 				this.comboBoxDatasource = new DatasourceComboBox(datasources);
 				for (int i = 0; i < this.comboBoxDatasource.getItemCount(); i++) {
-					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDatasetName().equals(currentDatasource.getAlias())) {
+					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDataName().equals(currentDatasource.getAlias())) {
 						this.comboBoxDatasource.setSelectedIndex(i);
 						break;
 					}
@@ -298,7 +298,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 				this.hasDataset = insertItemToComboBox(currentDatasource);
 				if (null != lineDataset) {
 					for (int i = 0; i < this.comboBoxDataset.getItemCount(); i++) {
-						if (((DataCell) this.comboBoxDataset.getItemAt(i)).getDatasetName().equals(lineDataset.getName())) {
+						if (((DataCell) this.comboBoxDataset.getItemAt(i)).getDataName().equals(lineDataset.getName())) {
 							this.comboBoxDataset.setSelectedIndex(i);
 							break;
 						}
@@ -329,8 +329,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			Datasets datasets = datasource.getDatasets();
 			for (int i = 0; i < datasets.getCount(); i++) {
 				if (datasets.get(i).getType() == DatasetType.LINE || datasets.get(i).getType() == DatasetType.NETWORK) {
-					String path = CommonToolkit.DatasetImageWrap.getImageIconPath(datasets.get(i).getType());
-					DataCell cell = new DataCell(path, datasets.get(i).getName());
+					DataCell cell = new DataCell();
+					cell.initDatasetType(datasets.get(i));
 					this.comboBoxDataset.addItem(cell);
 					count++;
 				}

@@ -1,28 +1,7 @@
 package com.supermap.desktop.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingBMP;
-import com.supermap.data.conversion.ImportSettingGIF;
-import com.supermap.data.conversion.ImportSettingIMG;
-import com.supermap.data.conversion.ImportSettingJPG;
-import com.supermap.data.conversion.ImportSettingPNG;
-import com.supermap.data.conversion.ImportSettingTIF;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -34,8 +13,15 @@ import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Administrator 实现右侧导入栅格数据类型的界面
  */
 public class ImportPanelGRID extends AbstractImportPanel {
@@ -84,6 +70,7 @@ public class ImportPanelGRID extends AbstractImportPanel {
 		registActionListener();
 	}
 
+	@Override
 	void initResource() {
 		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
@@ -104,22 +91,23 @@ public class ImportPanelGRID extends AbstractImportPanel {
 		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties
 								.getString("string_comboboxitem_null"),
 						DataConversionProperties
 								.getString("string_comboboxitem_add"),
 						DataConversionProperties
-								.getString("string_comboboxitem_cover") }));
+								.getString("string_comboboxitem_cover")}));
 
 		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties
 								.getString("string_comboboxitem_nullcoding"),
-						"DCT", "SGL", "PNG", "LZW" }));
+						"DCT", "SGL", "PNG", "LZW"}));
 		this.comboBoxCodingType.setSelectedIndex(1);
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelResultSet = new JPanel();
@@ -206,7 +194,6 @@ public class ImportPanelGRID extends AbstractImportPanel {
 		//@formatter:off
 		this.comboBoxDataType = new DatasetComboBox(new String[] { DataConversionProperties.getString("string_comboboxitem_image"),
 				DataConversionProperties.getString("string_comboboxitem_grid") });
-		this.comboBoxCodingType.setSelectedIndex(1);
 		// 设置字符集类型
 		this.panelResultSet.setLayout(new GridBagLayout());
 		this.panelResultSet.add(this.labelDatasource,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
@@ -284,6 +271,7 @@ public class ImportPanelGRID extends AbstractImportPanel {
 
 	@Override
 	void registActionListener() {
+		unregistActionListener();
 		this.comboBoxDataType.addActionListener(this.actionListener);
 	}
 

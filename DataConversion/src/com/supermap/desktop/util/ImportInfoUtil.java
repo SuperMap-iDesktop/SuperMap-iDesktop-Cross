@@ -1,18 +1,5 @@
 package com.supermap.desktop.util;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.data.Charset;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
@@ -21,44 +8,39 @@ import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.ui.ImportPanelArcGIS;
-import com.supermap.desktop.ui.ImportPanelCSV;
-import com.supermap.desktop.ui.ImportPanelD;
-import com.supermap.desktop.ui.ImportPanelE00;
-import com.supermap.desktop.ui.ImportPanelIMG;
-import com.supermap.desktop.ui.ImportPanelKML;
-import com.supermap.desktop.ui.ImportPanelLIDAR;
-import com.supermap.desktop.ui.ImportPanelMapGIS;
-import com.supermap.desktop.ui.ImportPanelMapInfo;
-import com.supermap.desktop.ui.ImportPanelModel;
-import com.supermap.desktop.ui.ImportPanelPI;
-import com.supermap.desktop.ui.ImportPanelSCV;
-import com.supermap.desktop.ui.ImportPanelSHP;
-import com.supermap.desktop.ui.ImportPanelSIT;
-import com.supermap.desktop.ui.ImportPanelTIF;
-import com.supermap.desktop.ui.ImportPanelWOR;
+import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class ImportInfoUtil {
 
 	/**
 	 * 得到目标数据源
-	 * 
+	 *
 	 * @param panels
 	 * @param fileInfos
 	 * @param fileInfo
 	 * @param comboBoxDatasource
 	 */
 	public static void setDataSource(List<JPanel> panels, List<ImportFileInfo> fileInfos, ImportFileInfo fileInfo,
-			DatasourceComboBox comboBoxDatasource) {
+	                                 DatasourceComboBox comboBoxDatasource) {
 		ImportInfoUtil util = new ImportInfoUtil();
 		comboBoxDatasource.addActionListener(util.new ComboBoxDatasourceListener(comboBoxDatasource, fileInfo, panels, fileInfos));
 	}
 
 	/**
 	 * 得到选中的数据源
-	 * 
+	 *
 	 * @param item
 	 * @return
 	 */
@@ -68,7 +50,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置设置导入模式
-	 * 
+	 *
 	 * @param panels
 	 * @param importsetting
 	 * @param comboBox
@@ -81,7 +63,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置编码类型的默认选项
-	 * 
+	 *
 	 * @param tempPanel
 	 * @param dataType
 	 */
@@ -98,7 +80,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置编码类型
-	 * 
+	 *
 	 * @param panels
 	 * @param importsetting
 	 * @param comboBoxCodingType
@@ -111,7 +93,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置数据集类型
-	 * 
+	 *
 	 * @param panels
 	 * @param importsetting
 	 * @param comboBoxCharset
@@ -124,31 +106,31 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置ImportSetting的导入模式
-	 * 
+	 *
 	 * @param item
 	 * @param importsetting
 	 */
 	private static void setImportInfo(int item, ImportSetting importsetting) {
 		switch (item) {
-		case 0:
-			importsetting.setImportMode(ImportMode.NONE);
-			break;
-		case 1:
-			importsetting.setImportMode(ImportMode.APPEND);
-			break;
-		case 2:
-			importsetting.setImportMode(ImportMode.OVERWRITE);
-			break;
+			case 0:
+				importsetting.setImportMode(ImportMode.NONE);
+				break;
+			case 1:
+				importsetting.setImportMode(ImportMode.APPEND);
+				break;
+			case 2:
+				importsetting.setImportMode(ImportMode.OVERWRITE);
+				break;
 
-		default:
-			Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImportModel_Failed"));
-			break;
+			default:
+				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImportModel_Failed"));
+				break;
 		}
 	}
 
 	/**
 	 * 判断多个文件的文件类型是否相同
-	 * 
+	 *
 	 * @param fileInfos
 	 * @return
 	 */
@@ -168,7 +150,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 显示结果数据集名称，源文件路径并初始化ImportSetting
-	 * 
+	 *
 	 * @param fileInfos
 	 * @param fileInfo
 	 * @param textField
@@ -177,12 +159,12 @@ public class ImportInfoUtil {
 	 * @return
 	 */
 	public static ImportSetting setFileInfo(Datasource datasource, List<ImportFileInfo> fileInfos, ImportFileInfo fileInfo, JTextField textField,
-			ImportSetting importsetting,
-			JTextField textFieldResultSet) {
+	                                        ImportSetting importsetting,
+	                                        JTextField textFieldResultSet) {
 		ImportSetting resultSetting = importsetting;
 		// 设置显示的文件名及结果数据集名称
 		if (null != fileInfo) {
-			if (null!=textField) {
+			if (null != textField) {
 				textField.setText(fileInfo.getFilePath());
 			}
 			resultSetting = fileInfo.getImportSetting();
@@ -190,30 +172,29 @@ public class ImportInfoUtil {
 			String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
 			textFieldResultSet.setText(resultSetName);
 			resultSetting.setTargetDatasource(datasource);
-		}
-		else {
+		} else {
 			if (isSameFiles(fileInfos)) {
-				if (null!=textField) {
+				if (null != textField) {
 					textField.setText(fileInfos.get(0).getFilePath());
 				}
 				String fileName = fileInfos.get(0).getFileName();
 				String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
 				textFieldResultSet.setText(resultSetName);
-			}else {
+			} else {
 				for (int i = 0; i < fileInfos.size(); i++) {
 					ImportFileInfo tempFileInfo = fileInfos.get(i);
 					ImportSetting tempSetting = tempFileInfo.getImportSetting();
 					tempSetting.setTargetDatasource(datasource);
 				}
 			}
-			
+
 		}
 		return resultSetting;
 	}
 
 	/**
 	 * 设置importsetting的目标数据集名称
-	 * 
+	 *
 	 * @param textFieldResultSet
 	 * @param importsetting
 	 */
@@ -227,9 +208,8 @@ public class ImportInfoUtil {
 
 	/**
 	 * 文本内容修改监听类
-	 * 
-	 * @author xie
 	 *
+	 * @author xie
 	 */
 	class DocumentChangeListener implements DocumentListener {
 		private JTextField textFieldResultSet;
@@ -267,9 +247,8 @@ public class ImportInfoUtil {
 
 	/**
 	 * 数据源下拉选择框事件响应类
-	 * 
-	 * @author xie
 	 *
+	 * @author xie
 	 */
 	class ComboBoxDatasourceListener implements ActionListener {
 		private DatasourceComboBox comboBoxDatasource;
@@ -278,7 +257,7 @@ public class ImportInfoUtil {
 		private ArrayList<ImportFileInfo> fileInfos;
 
 		public ComboBoxDatasourceListener(DatasourceComboBox comboBoxDatasource, ImportFileInfo fileInfo, List<JPanel> panels,
-				List<ImportFileInfo> fileInfos) {
+		                                  List<ImportFileInfo> fileInfos) {
 			this.comboBoxDatasource = comboBoxDatasource;
 			this.fileInfo = fileInfo;
 			this.panels = (ArrayList<JPanel>) panels;
@@ -294,9 +273,8 @@ public class ImportInfoUtil {
 
 	/**
 	 * 导入模式下拉选择框事件响应类
-	 * 
-	 * @author xie
 	 *
+	 * @author xie
 	 */
 	class ComboBoxListener implements ActionListener {
 		private ArrayList<JPanel> panels;
@@ -318,9 +296,8 @@ public class ImportInfoUtil {
 
 	/**
 	 * 编码类型下拉选择框事件响应类
-	 * 
-	 * @author xie
 	 *
+	 * @author xie
 	 */
 	class ComboBoxCodingTypeListener implements ActionListener {
 		private ArrayList<JPanel> panels;
@@ -360,7 +337,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 点击导入模式下拉选择框，修改导入的导入模式
-	 * 
+	 *
 	 * @param comboBox
 	 * @param importsetting
 	 * @param panels
@@ -369,7 +346,7 @@ public class ImportInfoUtil {
 		int item = comboBox.getSelectedIndex();
 		if (null != importsetting) {
 			setImportInfo(item, importsetting);
-		} else {
+		} else if (null != panels) {
 			for (int i = 0; i < panels.size(); i++) {
 				JPanel tempJPanel = panels.get(i);
 				if (tempJPanel instanceof ImportPanelPI) {
@@ -426,21 +403,21 @@ public class ImportInfoUtil {
 
 	/**
 	 * 点击目标数据源下拉选择框，修改导入的目标数据源
-	 * 
+	 *
 	 * @param comboBoxDatasource
 	 * @param fileInfo
 	 * @param panels
 	 * @param fileInfos
 	 */
 	private void comboBoxDatasourceChange(DatasourceComboBox comboBoxDatasource, ImportFileInfo fileInfo, ArrayList<JPanel> panels,
-			ArrayList<ImportFileInfo> fileInfos) {
+	                                      ArrayList<ImportFileInfo> fileInfos) {
 
 		String item = comboBoxDatasource.getSelectItem();
 		DataCell cell = (DataCell) comboBoxDatasource.getSelectedItem();
 		if (null != fileInfo) {
 			ImportSetting importSetting = fileInfo.getImportSetting();
 			importSetting.setTargetDatasource(getSelectDatasource(item));
-		} else {
+		} else if (null != panels) {
 			for (int i = 0; i < fileInfos.size(); i++) {
 				ImportFileInfo tempFileInfo = fileInfos.get(i);
 				ImportSetting tempImportSetting = tempFileInfo.getImportSetting();
@@ -501,7 +478,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 点击编码类型下拉选择框，修改导入的编码类型
-	 * 
+	 *
 	 * @param comboBoxCodingType
 	 * @param importsetting
 	 * @param panels
@@ -511,7 +488,7 @@ public class ImportInfoUtil {
 		String codingType = comboBoxCodingType.getSelectedItem().toString();
 		if (null != importsetting) {
 			setCodingInfo(codingType, importsetting);
-		} else {
+		} else if (null != panels) {
 			for (int i = 0; i < panels.size(); i++) {
 				JPanel tempJPanel = panels.get(i);
 				if (tempJPanel instanceof ImportPanelPI) {
@@ -633,7 +610,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 点击字符集下拉选择框，修改导入的字符集
-	 * 
+	 *
 	 * @param comboBoxCharset
 	 * @param importsetting
 	 * @param panels
@@ -643,7 +620,7 @@ public class ImportInfoUtil {
 		int type = comboBoxCharset.getSelectedIndex();
 		if (null != importsetting) {
 			setCharInfo(type, importsetting);
-		} else {
+		} else if (null != panels) {
 			for (int i = 0; i < panels.size(); i++) {
 				JPanel tempJPanel = panels.get(i);
 				if (tempJPanel instanceof ImportPanelPI) {
@@ -695,7 +672,7 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置编码类型
-	 * 
+	 *
 	 * @param codingType
 	 * @param importsetting
 	 */
@@ -734,108 +711,108 @@ public class ImportInfoUtil {
 
 	/**
 	 * 设置源文件字符集
-	 * 
+	 *
 	 * @param type
 	 * @param importsetting
 	 */
 	private static void setCharInfo(int type, ImportSetting importsetting) {
 		switch (type) {
-		case 0:
-			importsetting.setSourceFileCharset(Charset.ANSI);
-			break;
-		case 1:
-			importsetting.setSourceFileCharset(Charset.DEFAULT);
-			break;
-		case 2:
-			importsetting.setSourceFileCharset(Charset.OEM);
-			break;
-		case 3:
-			importsetting.setSourceFileCharset(Charset.CHINESEBIG5);
-			break;
-		case 4:
-			importsetting.setSourceFileCharset(Charset.GB18030);
-			break;
-		case 5:
-			importsetting.setSourceFileCharset(Charset.CYRILLIC);
-			break;
-		case 6:
-			importsetting.setSourceFileCharset(Charset.XIA5);
-			break;
-		case 7:
-			importsetting.setSourceFileCharset(Charset.XIA5GERMAN);
-			break;
-		case 8:
-			importsetting.setSourceFileCharset(Charset.XIA5NORWEGIAN);
-			break;
-		case 9:
-			importsetting.setSourceFileCharset(Charset.XIA5SWEDISH);
-			break;
-		case 10:
-			importsetting.setSourceFileCharset(Charset.MAC);
-			break;
-		case 11:
-			importsetting.setSourceFileCharset(Charset.UNICODE);
-			break;
-		case 12:
-			importsetting.setSourceFileCharset(Charset.UTF7);
-			break;
-		case 13:
-			importsetting.setSourceFileCharset(Charset.UTF8);
-			break;
-		case 14:
-			importsetting.setSourceFileCharset(Charset.WINDOWS1252);
-			break;
-		case 15:
-			importsetting.setSourceFileCharset(Charset.ARABIC);
-			break;
-		case 16:
-			importsetting.setSourceFileCharset(Charset.BALTIC);
-			break;
-		case 17:
-			importsetting.setSourceFileCharset(Charset.JOHAB);
-			break;
-		case 18:
-			importsetting.setSourceFileCharset(Charset.HANGEUL);
-			break;
-		case 19:
-			importsetting.setSourceFileCharset(Charset.EASTEUROPE);
-			break;
-		case 20:
-			importsetting.setSourceFileCharset(Charset.RUSSIAN);
-			break;
-		case 21:
-			importsetting.setSourceFileCharset(Charset.SYMBOL);
-			break;
-		case 22:
-			importsetting.setSourceFileCharset(Charset.KOREAN);
-			break;
-		case 23:
-			importsetting.setSourceFileCharset(Charset.SHIFTJIS);
-			break;
-		case 24:
-			importsetting.setSourceFileCharset(Charset.THAI);
-			break;
-		case 25:
-			importsetting.setSourceFileCharset(Charset.TURKISH);
-			break;
-		case 26:
-			importsetting.setSourceFileCharset(Charset.HEBREW);
-			break;
-		case 27:
-			importsetting.setSourceFileCharset(Charset.GREEK);
-			break;
-		case 28:
-			importsetting.setSourceFileCharset(Charset.VIETNAMESE);
-			break;
-		default:
-			Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_Charset_Failed"));
-			break;
+			case 0:
+				importsetting.setSourceFileCharset(Charset.ANSI);
+				break;
+			case 1:
+				importsetting.setSourceFileCharset(Charset.DEFAULT);
+				break;
+			case 2:
+				importsetting.setSourceFileCharset(Charset.OEM);
+				break;
+			case 3:
+				importsetting.setSourceFileCharset(Charset.CHINESEBIG5);
+				break;
+			case 4:
+				importsetting.setSourceFileCharset(Charset.GB18030);
+				break;
+			case 5:
+				importsetting.setSourceFileCharset(Charset.CYRILLIC);
+				break;
+			case 6:
+				importsetting.setSourceFileCharset(Charset.XIA5);
+				break;
+			case 7:
+				importsetting.setSourceFileCharset(Charset.XIA5GERMAN);
+				break;
+			case 8:
+				importsetting.setSourceFileCharset(Charset.XIA5NORWEGIAN);
+				break;
+			case 9:
+				importsetting.setSourceFileCharset(Charset.XIA5SWEDISH);
+				break;
+			case 10:
+				importsetting.setSourceFileCharset(Charset.MAC);
+				break;
+			case 11:
+				importsetting.setSourceFileCharset(Charset.UNICODE);
+				break;
+			case 12:
+				importsetting.setSourceFileCharset(Charset.UTF7);
+				break;
+			case 13:
+				importsetting.setSourceFileCharset(Charset.UTF8);
+				break;
+			case 14:
+				importsetting.setSourceFileCharset(Charset.WINDOWS1252);
+				break;
+			case 15:
+				importsetting.setSourceFileCharset(Charset.ARABIC);
+				break;
+			case 16:
+				importsetting.setSourceFileCharset(Charset.BALTIC);
+				break;
+			case 17:
+				importsetting.setSourceFileCharset(Charset.JOHAB);
+				break;
+			case 18:
+				importsetting.setSourceFileCharset(Charset.HANGEUL);
+				break;
+			case 19:
+				importsetting.setSourceFileCharset(Charset.EASTEUROPE);
+				break;
+			case 20:
+				importsetting.setSourceFileCharset(Charset.RUSSIAN);
+				break;
+			case 21:
+				importsetting.setSourceFileCharset(Charset.SYMBOL);
+				break;
+			case 22:
+				importsetting.setSourceFileCharset(Charset.KOREAN);
+				break;
+			case 23:
+				importsetting.setSourceFileCharset(Charset.SHIFTJIS);
+				break;
+			case 24:
+				importsetting.setSourceFileCharset(Charset.THAI);
+				break;
+			case 25:
+				importsetting.setSourceFileCharset(Charset.TURKISH);
+				break;
+			case 26:
+				importsetting.setSourceFileCharset(Charset.HEBREW);
+				break;
+			case 27:
+				importsetting.setSourceFileCharset(Charset.GREEK);
+				break;
+			case 28:
+				importsetting.setSourceFileCharset(Charset.VIETNAMESE);
+				break;
+			default:
+				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_Charset_Failed"));
+				break;
 		}
 	}
 
 	/**
 	 * 判断文件是否存在
-	 * 
+	 *
 	 * @param worldFile
 	 * @return
 	 */

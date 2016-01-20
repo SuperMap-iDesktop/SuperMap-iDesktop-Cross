@@ -22,7 +22,8 @@ public class TableDatasetCellRender extends DefaultTableCellRenderer {
 			return new JLabel(String.valueOf(value));
 		}
 		Dataset dataset = (Dataset) value;
-		DataCell dataCell = new DataCell(new ImageIcon(TableDatasetCellRender.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType()))), dataset.getName());
+		DataCell dataCell = new DataCell();
+		dataCell.initDatasetType(dataset);
 		if (isSelected) {
 			dataCell.setBackground(table.getSelectionBackground());
 		} else {

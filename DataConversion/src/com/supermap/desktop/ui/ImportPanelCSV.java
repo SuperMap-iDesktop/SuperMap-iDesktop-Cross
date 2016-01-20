@@ -1,24 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSettingCSV;
 import com.supermap.desktop.ImportFileInfo;
@@ -30,9 +11,19 @@ import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- *
  * @author Administrator 实现右侧导入CSV数据类型的界面
  */
 public class ImportPanelCSV extends AbstractImportPanel {
@@ -63,7 +54,7 @@ public class ImportPanelCSV extends AbstractImportPanel {
 	private Document document = this.textFieldSperator.getDocument();
 	private transient LocalDocumentListener documentListener = new LocalDocumentListener();
 	private transient LocalActionListener actionListener = new LocalActionListener();
-	
+
 	public ImportPanelCSV(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
 		this.dataImportFrame = dataImportFrame;
 		this.fileInfo = fileInfo;
@@ -80,6 +71,7 @@ public class ImportPanelCSV extends AbstractImportPanel {
 		registActionListener();
 	}
 
+	@Override
 	void initResource() {
 		this.buttonProperty.setText(DataConversionProperties.getString("string_button_property"));
 		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
@@ -98,10 +90,11 @@ public class ImportPanelCSV extends AbstractImportPanel {
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
-		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
-				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));
+		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
+				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelResultSetting = new JPanel();
@@ -266,6 +259,7 @@ public class ImportPanelCSV extends AbstractImportPanel {
 
 	@Override
 	void registActionListener() {
+		unregistActionListener();
 		this.document.addDocumentListener(this.documentListener);
 		this.checkboxDataInfo.addActionListener(this.actionListener);
 		this.buttonProperty.addActionListener(this.actionListener);

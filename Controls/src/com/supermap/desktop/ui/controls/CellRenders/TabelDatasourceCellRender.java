@@ -21,7 +21,8 @@ public class TabelDatasourceCellRender extends DefaultTableCellRenderer {
 			return new JLabel(String.valueOf(value));
 		}
 		Datasource datasource = (Datasource) value;
-		DataCell dataCell = new DataCell(CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType()), datasource.getAlias(), datasource);
+		DataCell dataCell = new DataCell();
+		dataCell.initDatasourceType(datasource);
 		if (isSelected) {
 			dataCell.setBackground(table.getSelectionBackground());
 		} else {

@@ -44,9 +44,8 @@ public class ExportFileInfo {
 
 	public DataCell getDatasourceCell() {
 		Datasource tempDatasource = getDatasource();
-		String datasourceName = tempDatasource.getAlias();
-		String datasourcePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(tempDatasource.getEngineType());
-		DataCell resultdatasourceCell = new DataCell(datasourcePath, datasourceName);
+		DataCell resultdatasourceCell = new DataCell();
+		resultdatasourceCell.initDatasourceType(tempDatasource);
 		return resultdatasourceCell;
 	}
 
@@ -56,8 +55,8 @@ public class ExportFileInfo {
 
 	public DataCell getDatasetCell() {
 		Dataset tempDataset = getDataset();
-		String datasetPath = CommonToolkit.DatasetImageWrap.getImageIconPath(tempDataset.getType());
-		datasetCell = new DataCell(datasetPath, getDatasetName());
+		datasetCell = new DataCell();
+		datasetCell.initDatasetType(tempDataset);
 		return datasetCell;
 	}
 

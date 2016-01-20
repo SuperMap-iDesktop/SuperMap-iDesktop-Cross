@@ -39,23 +39,21 @@ public class DatasetChooserDataTopo {
 		try {
 			List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 
-//			int[] selectIndex = table.getSelectedRows();
-//			MutiTableModel model = (MutiTableModel) table.getModel();
 			int rowCount = selectedDatasets.size();
 			HashSet<DatasetType> datasetTypes = new HashSet<DatasetType>();
 			for (int i = 0; i < selectedDatasets.size(); i++) {
 				Dataset dataset = selectedDatasets.get(i);
 				Object[] temp = new Object[3];
 				temp[0] = preprocessTable.getRowCount() + 1;
-				String datacellPath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-				DataCell datasetCell = new DataCell(datacellPath, dataset.getName());
+				DataCell datasetCell = new DataCell();
+				datasetCell.initDatasetType(dataset);
 				topoPreProgress.getComboBoxConsultDataset().addItem(datasetCell);
 				temp[1] = datasetCell;
 				String datasourceName = dataset.getDatasource().getAlias();
 				Datasource dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-				String path = CommonToolkit.DatasourceImageWrap.getImageIconPath(dataSource.getEngineType());
 				datasetTypes.add(dataset.getType());
-				DataCell cell = new DataCell(path, datasourceName);
+				DataCell cell = new DataCell();
+				cell.initDatasourceType(dataSource);
 				temp[2] = cell;
 				// 设置容限值为最后一个矢量数据集的结点容限
 				topoPreProgress.getTextFieldTolerance().setText(((DatasetVector) dataset).getTolerance().getNodeSnap() + "");

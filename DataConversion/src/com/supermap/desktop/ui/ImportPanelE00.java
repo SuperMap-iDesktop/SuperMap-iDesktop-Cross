@@ -1,21 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
@@ -29,8 +13,15 @@ import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Administrator 实现右侧导入E00数据类型的界面
  */
 public class ImportPanelE00 extends AbstractImportPanel {
@@ -80,6 +71,7 @@ public class ImportPanelE00 extends AbstractImportPanel {
 		registActionListener();
 	}
 
+	@Override
 	void initResource() {
 		this.labelDataPath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
@@ -99,15 +91,15 @@ public class ImportPanelE00 extends AbstractImportPanel {
 		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties
 								.getString("string_comboboxitem_null"),
 						DataConversionProperties
 								.getString("string_comboboxitem_add"),
 						DataConversionProperties
-								.getString("string_comboboxitem_cover") }));
+								.getString("string_comboboxitem_cover")}));
 		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(
-				new String[] {
+				new String[]{
 						DataConversionProperties
 								.getString("string_comboboxitem_nullcoding"),
 						DataConversionProperties
@@ -117,9 +109,10 @@ public class ImportPanelE00 extends AbstractImportPanel {
 						DataConversionProperties
 								.getString("string_comboboxitem_int24"),
 						DataConversionProperties
-								.getString("string_comboboxitem_int32") }));
+								.getString("string_comboboxitem_int32")}));
 	}
 
+	@Override
 	void initComponents() {
 
 		this.panelResultSet = new JPanel();
@@ -280,6 +273,7 @@ public class ImportPanelE00 extends AbstractImportPanel {
 				}
 			}
 		};
+		unregistActionListener();
 		this.buttonProperty.addActionListener(this.buttonPropertyAction);
 		this.checkboxIngoreProperty.addActionListener(this.checkboxIngorePropertyAction);
 		this.checkboxSpatialIndex.addActionListener(checkboxSpatialIndexAction);

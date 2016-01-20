@@ -459,8 +459,8 @@ public class JDialogDatasetNew extends SmDialog {
 				datas[COLUMN_INDEX_INDEX] = "1";
 				if (0 < Application.getActiveApplication().getActiveDatasources().length) {
 					targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-					String filePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(targetDatasource.getEngineType());
-					DataCell datasourceCell = new DataCell(filePath, targetDatasource.getAlias());
+					DataCell datasourceCell = new DataCell();
+					datasourceCell.initDatasourceType(targetDatasource);
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = datasourceCell;
 					String datasetName = this.getDefaultDatasetName(DatasetType.POINT);
 					defaultDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
@@ -469,9 +469,9 @@ public class JDialogDatasetNew extends SmDialog {
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = "";
 					datas[COLUMN_INDEX_DatasetName] = "";
 				}
-				String path = CommonToolkit.DatasetImageWrap.getImageIconPath(DatasetType.POINT);
 				String dataTypeName = CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT);
-				DataCell datasetTypeCell = new DataCell(path, dataTypeName);
+				DataCell datasetTypeCell = new DataCell();
+				datasetTypeCell.initDatasetType(DatasetType.POINT, dataTypeName);
 				datas[COLUMN_INDEX_DatasetType] = datasetTypeCell;
 
 				datas[COLUMN_INDEX_EncodeType] = CommonProperties.getString("String_EncodeType_None");
@@ -759,13 +759,13 @@ public class JDialogDatasetNew extends SmDialog {
 					boolean isDatasetTypeChanged = false;
 
 					if (dialogTargetDatasource != null
-							&& (!((DataCell) table.getValueAt(i, COLUMN_INDEX_TARGETDATASOURCE)).getDatasetName().equals(
-									((DataCell) dialogTargetDatasource).getDatasetName()))) {
+							&& (!((DataCell) table.getValueAt(i, COLUMN_INDEX_TARGETDATASOURCE)).getDataName().equals(
+									((DataCell) dialogTargetDatasource).getDataName()))) {
 						table.setValueAt(dialogTargetDatasource, i, COLUMN_INDEX_TARGETDATASOURCE);
 						isDatasourceChanged = true;
 					}
 					if (datasetType != null
-							&& (!((DataCell) table.getValueAt(i, COLUMN_INDEX_DatasetType)).getDatasetName().equals(((DataCell) datasetType).getDatasetName()))) {
+							&& (!((DataCell) table.getValueAt(i, COLUMN_INDEX_DatasetType)).getDataName().equals(((DataCell) datasetType).getDataName()))) {
 						table.setValueAt(datasetType, i, COLUMN_INDEX_DatasetType);
 						isDatasetTypeChanged = true;
 					}

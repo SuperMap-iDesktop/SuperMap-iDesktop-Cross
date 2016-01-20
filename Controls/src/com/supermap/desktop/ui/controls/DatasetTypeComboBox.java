@@ -68,14 +68,15 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 			for (int i = 0; i < datasetTypeModel.size(); i++) {
 				String name = datasetTypeModel.get(i);
 				String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(name);
-				result[i] = new DataCell(filePath, name);
+				result[i] = new DataCell();
+				result[i].initDataType(filePath, name);
 			}
 			this.setModel(new DefaultComboBoxModel<>(result));
 		}
 	}
 
 	public DatasetType[] getSelectedDatasetTypes() {
-		String selectedItem = (String) ((DataCell) this.getSelectedItem()).getDatasetName();
+		String selectedItem = (String) ((DataCell) this.getSelectedItem()).getDataName();
 		if (selectedItem == null) {
 			return null;
 		} else if (selectedItem.equals(CommonProperties.getString("String_DatasetType_All"))) {

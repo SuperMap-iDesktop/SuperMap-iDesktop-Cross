@@ -363,14 +363,13 @@ public class JDialogDatasetCopy extends SmDialog {
 			for (int i = 0; i < datasets.length; i++) {
 				Dataset dataset = datasets[i];
 				Object[] datas = new Object[6];
-				String imagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-				DataCell dataCell = new DataCell(imagePath, dataset.getName());
-				datas[COLUMN_INDEX_Dataset] = dataCell;
+				DataCell datasetCell = new DataCell();
+				datasetCell.initDatasetType(dataset);
+				datas[COLUMN_INDEX_Dataset] = datasetCell;
 				Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
-				String datasourceImage = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-				datas[COLUMN_INDEX_CurrentDatasource] = new DataCell(datasourceImage, datasource.getAlias());
-				String path = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-				DataCell datasourceCell = new DataCell(path, datasource.getAlias());
+				DataCell datasourceCell = new DataCell();
+				datasourceCell.initDatasourceType(datasource);
+				datas[COLUMN_INDEX_CurrentDatasource] = datasourceCell;
 				datas[COLUMN_INDEX_TargetDatasource] = datasourceCell;
 				datas[COLUMN_INDEX_TargetDataset] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
 				datas[COLUMN_INDEX_EncodeType] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
