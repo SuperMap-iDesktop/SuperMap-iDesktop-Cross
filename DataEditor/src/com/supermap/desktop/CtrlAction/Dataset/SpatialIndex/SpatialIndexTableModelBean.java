@@ -73,7 +73,8 @@ public class SpatialIndexTableModelBean {
 	}
 
 	private void initSpatialIndexInfo() {
-		if (this.spatialIndexInfo.getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
+		// 初始一次，再不修改
+//		if (this.spatialIndexInfo.getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
 			// 动态
 			int objectCount = ((DatasetVector) dataset).getRecordCount();
 			Rectangle2D rec = dataset.getBounds();
@@ -87,10 +88,10 @@ public class SpatialIndexTableModelBean {
 //				double v = bounds.getHeight() * bounds.getWidth() * 200 / ((DatasetVector) dataset).getRecordCount();
 //				this.spatialIndexInfo.setGridSize0(Math.sqrt(v));
 //			}
-		} else {
+//		} else {
 			this.spatialIndexInfo.setTileHeight(dataset.getBounds().getHeight() / 30);
 			this.spatialIndexInfo.setTileWidth(dataset.getBounds().getWidth() / 30);
-		}
+//		}
 	}
 
 	public SpatialIndexInfo getSpatialIndexInfo() {
