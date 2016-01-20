@@ -12,6 +12,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -67,6 +68,9 @@ public class CtrlActionLoadMapTemplate extends CtrlAction {
 					map.refresh();
 					// 全幅显示导致保存的比例尺不正确
 //					map.viewEntire();
+					formMap.getMapControl().setAction(Action.PAN);
+					// 手动触发刷新面板
+					Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 				}
 			}
 		} catch (Exception e) {
