@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * 动态索引参数设置界面
@@ -42,6 +44,7 @@ public class JPanelDynamicIndex extends JPanel {
 	// 说明
 	private JPanelDescribe panelDescribe = new JPanelDescribe();
 
+
 	public JPanelDynamicIndex() {
 		initComponent();
 		initLayout();
@@ -53,6 +56,8 @@ public class JPanelDynamicIndex extends JPanel {
 
 	private void addListeners() {
 		FocusAdapter focusAdapter = new FocusAdapter() {
+
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				fireSpatialIndexPropertyChanged(getPropertyName(e.getSource()), getPropertyValue(e.getSource()));
@@ -63,6 +68,21 @@ public class JPanelDynamicIndex extends JPanel {
 		this.textFieldFirstGridWidth.addFocusListener(focusAdapter);
 		this.textFieldSecondGridWidth.addFocusListener(focusAdapter);
 		this.textFieldThirdGridWidth.addFocusListener(focusAdapter);
+		KeyAdapter keyAdapter = new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char keyChar = e.getKeyChar();
+				if (keyChar != '-' && keyChar != '.' && (keyChar > '9' || keyChar < '0')) {
+					e.consume();
+				}
+			}
+		};
+		this.textFieldX.addKeyListener(keyAdapter);
+		this.textFieldY.addKeyListener(keyAdapter);
+		this.textFieldFirstGridWidth.addKeyListener(keyAdapter);
+		this.textFieldSecondGridWidth.addKeyListener(keyAdapter);
+		this.textFieldThirdGridWidth.addKeyListener(keyAdapter);
+
 	}
 
 	private void fireSpatialIndexPropertyChanged(String propertyName, Object value) {
@@ -220,4 +240,5 @@ public class JPanelDynamicIndex extends JPanel {
 	public void setPropertyListener(SpatialIndexInfoPropertyListener propertyListener) {
 		this.propertyListener = propertyListener;
 	}
+
 }

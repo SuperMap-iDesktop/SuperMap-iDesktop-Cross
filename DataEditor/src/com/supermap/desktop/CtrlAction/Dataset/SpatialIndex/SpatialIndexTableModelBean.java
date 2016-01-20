@@ -74,24 +74,20 @@ public class SpatialIndexTableModelBean {
 
 	private void initSpatialIndexInfo() {
 		// 初始一次，再不修改
-//		if (this.spatialIndexInfo.getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
-			// 动态
-			int objectCount = ((DatasetVector) dataset).getRecordCount();
-			Rectangle2D rec = dataset.getBounds();
-			int gridCount = objectCount / 200;
-			if (gridCount != 0) {
-				this.spatialIndexInfo.setGridSize0(Math.sqrt(rec.getWidth() * rec.getHeight() / gridCount));
-			}
+		// 动态
+		int objectCount = ((DatasetVector) dataset).getRecordCount();
+		Rectangle2D rec = dataset.getBounds();
+		int gridCount = objectCount / 200;
+		if (gridCount != 0) {
+			this.spatialIndexInfo.setGridSize0(Math.sqrt(rec.getWidth() * rec.getHeight() / gridCount));
+		}
 
-//			Rectangle2D bounds = dataset.getBounds();
-//			if (((DatasetVector) dataset).getRecordCount() > 200) {
-//				double v = bounds.getHeight() * bounds.getWidth() * 200 / ((DatasetVector) dataset).getRecordCount();
-//				this.spatialIndexInfo.setGridSize0(Math.sqrt(v));
-//			}
-//		} else {
+		if (dataset.getBounds().getHeight() / 30 > 0) {
 			this.spatialIndexInfo.setTileHeight(dataset.getBounds().getHeight() / 30);
+		}
+		if (dataset.getBounds().getWidth() / 30 > 0) {
 			this.spatialIndexInfo.setTileWidth(dataset.getBounds().getWidth() / 30);
-//		}
+		}
 	}
 
 	public SpatialIndexInfo getSpatialIndexInfo() {

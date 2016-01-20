@@ -1,7 +1,6 @@
 package com.supermap.desktop.ui.controls.CellRenders;
 
 import com.supermap.data.Dataset;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
 
 import javax.swing.*;
@@ -22,8 +21,7 @@ public class TableDatasetCellRender extends DefaultTableCellRenderer {
 			return new JLabel(String.valueOf(value));
 		}
 		Dataset dataset = (Dataset) value;
-		DataCell dataCell = new DataCell();
-		dataCell.initDatasetType(dataset);
+		DataCell dataCell = new DataCell(dataset);
 		if (isSelected) {
 			dataCell.setBackground(table.getSelectionBackground());
 		} else {
