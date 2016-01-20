@@ -22,9 +22,9 @@ import java.util.List;
  * @author XiaJT.
  */
 public class SpatialIndexTableModelBean {
-	Dataset dataset;
-	SpatialIndexType spatialIndexType;
-	SpatialIndexInfo spatialIndexInfo;
+	private Dataset dataset;
+	private SpatialIndexType spatialIndexType;
+	private SpatialIndexInfo spatialIndexInfo;
 
 	public static final String[] SUPPORT_DATASET_TYPES = new String[]{
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT),
@@ -35,7 +35,8 @@ public class SpatialIndexTableModelBean {
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.LINEM),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK3D),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D)};
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D)
+	};
 
 	public SpatialIndexTableModelBean(Dataset dataset) {
 		this.setDataset(dataset);
