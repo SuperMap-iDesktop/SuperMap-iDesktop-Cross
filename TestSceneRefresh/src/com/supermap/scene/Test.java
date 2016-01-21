@@ -8,8 +8,9 @@ public class Test {
 	public static Workspace workspace = new Workspace();
 	
 	public static void main(String[] args) {
-		EditJTree tree = new EditJTree();
-		tree.init();
+		
+		sceneFrame = new SceneFrame();
+		sceneFrame.setVisible(true);
 	}
 
 }
