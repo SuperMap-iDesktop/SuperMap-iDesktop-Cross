@@ -13,6 +13,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * 图库索引
@@ -131,6 +133,19 @@ public class JPanelGraphIndex extends JPanel {
 				}
 			}
 		});
+
+		KeyAdapter keyAdapter = new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char keyChar = e.getKeyChar();
+				if (keyChar != '-' && keyChar != '.' && (keyChar > '9' || keyChar < '0')) {
+					e.consume();
+				}
+			}
+		};
+
+		this.textFieldHeight.addKeyListener(keyAdapter);
+		this.textFieldWidth.addKeyListener(keyAdapter);
 	}
 
 	private String getPropertyName(Object source) {
@@ -204,7 +219,7 @@ public class JPanelGraphIndex extends JPanel {
 	 *
 	 * @param b 是否选中
 	 */
-	public void setRadiaFieldSelected(boolean b) {
+	public void setRadioFieldSelected(boolean b) {
 		if (b) {
 			this.radioButtonFieldIndex.setSelected(true);
 		} else {
@@ -212,6 +227,13 @@ public class JPanelGraphIndex extends JPanel {
 		}
 	}
 
+	public boolean isRadioFieldSelected() {
+		return this.radioButtonFieldIndex.isSelected();
+	}
+
+	public boolean isRadioRangeSelected() {
+		return this.radioButtonRangeIndex.isSelected();
+	}
 	public void setPropertyListener(SpatialIndexInfoPropertyListener propertyListener) {
 		this.propertyListener = propertyListener;
 	}

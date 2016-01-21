@@ -1,22 +1,16 @@
 package com.supermap.desktop.CtrlAction.Map;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.dialog.DialogSaveAsMap;
-import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.mapping.Map;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CtrlActionBrowserMap extends CtrlAction {
 
@@ -32,14 +26,7 @@ public class CtrlActionBrowserMap extends CtrlAction {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 			String mapName = (String)selectedNodeData.getData();
-			
-			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
-			if (formMap != null) {
-				Map map = formMap.getMapControl().getMap();
-				map.open(mapName);
-				map.refresh();
-				UICommonToolkit.getLayersManager().setMap(map);
-			}
+			MapViewUtilties.openMap(mapName);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

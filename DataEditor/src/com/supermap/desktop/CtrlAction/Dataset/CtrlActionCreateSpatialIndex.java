@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.SpatialIndex.JDialogBulidSpatialIndex;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -29,10 +30,11 @@ public class CtrlActionCreateSpatialIndex extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean enable = false;
-		if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
-			enable = !Application.getActiveApplication().getActiveDatasets()[0].getDatasource().isReadOnly();
+		boolean result = false;
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		if (workspace != null && workspace.getDatasources() != null && workspace.getDatasources().getCount() > 0) {
+			result = true;
 		}
-		return enable;
+		return result;
 	}
 }

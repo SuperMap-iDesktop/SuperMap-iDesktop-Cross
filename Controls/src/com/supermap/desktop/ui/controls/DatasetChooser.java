@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
@@ -388,6 +389,12 @@ public class DatasetChooser extends SmDialog {
 					Dataset dataset = datasets.get(i);
 					if (isAllowedDataset(dataset)) {
 						tableModel.addDataset(dataset);
+					}
+					if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getChildDataset() != null) {
+						DatasetVector childDataset = ((DatasetVector) dataset).getChildDataset();
+						if (isAllowedDataset(childDataset)) {
+							tableModel.addDataset(childDataset);
+						}
 					}
 				}
 			}

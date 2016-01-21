@@ -1,8 +1,5 @@
 package com.supermap.desktop.controls.utilties;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
@@ -12,12 +9,9 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.implement.SmLabel;
-import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -28,7 +22,9 @@ import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
-import com.supermap.ui.MapControl;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
 
 public class MapViewUtilties {
 
@@ -98,9 +94,9 @@ public class MapViewUtilties {
 				// 如果带有纯属性数据集，在单独的属性窗口中打开
 				TabularUtilties.openDatasetVectorFormTabular(dataset);
 			} else if (dataset.getType() == DatasetType.LINKTABLE) {
-				// 暂时什么都不做
+				// todo 暂时什么都不做
 			} else if (dataset.getType() == DatasetType.TOPOLOGY) {
-				// 暂时什么都不做
+				// todo 暂时什么都不做
 			} else {
 				datasetsToMap.add(dataset);
 			}
@@ -125,8 +121,8 @@ public class MapViewUtilties {
 	/**
 	 * 获取数据集的 bounds
 	 *
-	 * @param datasets
-	 * @return
+	 * @param datasets 需要获取bounds的数据集数组
+	 * @return bounds 如果数据集全为空，返回Null
 	 */
 	public static Rectangle2D getDatasetsBounds(Dataset[] datasets) {
 		Rectangle2D bounds = null;
@@ -148,7 +144,7 @@ public class MapViewUtilties {
 	/**
 	 * 全选指定 IFormMap 可编辑图层的 Geometry
 	 *
-	 * @param IFormMap 指定的 IFormMap
+	 * @param formMap 指定的 IFormMap
 	 * @return 选中的对象数
 	 */
 	public static int selectAllGeometry(IFormMap formMap) {
@@ -227,5 +223,24 @@ public class MapViewUtilties {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * 打开工作空间中已存在的地图
+	 *
+	 * @param mapName 地图名称
+	 * @return 是否打开
+	 */
+	public static boolean openMap(String mapName) {
+		IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
+		if (formMap != null) {
+			Map map = formMap.getMapControl().getMap();
+			map.open(mapName);
+			Application.getActiveApplication().resetActiveForm();
+			map.refresh();
+			UICommonToolkit.getLayersManager().setMap(map);
+			return true;
+		}
+		return false;
 	}
 }

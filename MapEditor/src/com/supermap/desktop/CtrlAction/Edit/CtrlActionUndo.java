@@ -17,6 +17,7 @@ public class CtrlActionUndo extends CtrlAction {
 		try {
 			IFormMap form = (IFormMap) Application.getActiveApplication().getActiveForm();
 			form.getMapControl().undo();
+			form.setSelectedGeometryProperty();
 			form.getMapControl().getMap().refresh();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

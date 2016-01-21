@@ -1,10 +1,5 @@
 package com.supermap.desktop.CtrlAction;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -17,6 +12,12 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * 加载地图模板
@@ -65,7 +66,11 @@ public class CtrlActionLoadMapTemplate extends CtrlAction {
 					map.fromXML(mapTemplateXml.toString());
 					UICommonToolkit.getLayersManager().setMap(map);
 					map.refresh();
-					map.viewEntire();
+					// 全幅显示导致保存的比例尺不正确
+//					map.viewEntire();
+					formMap.getMapControl().setAction(Action.PAN);
+					// 手动触发刷新面板
+					Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 				}
 			}
 		} catch (Exception e) {

@@ -1,6 +1,10 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.SpatialIndexInfo;
+import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.DatasetUtilties;
@@ -25,7 +29,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +87,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	private DatasetType[] supportDatasetTypes = new DatasetType[]{
 			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
-			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D
+			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D,
+			DatasetType.LINE3D, DatasetType.REGION3D
 	};
 	//endregion
 
@@ -276,7 +287,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			}
 		});
 
-		spatialIndexTableModel.addTableModelListener(new TableModelListener() {
+		this.spatialIndexTableModel.addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				checkButtonStates();
@@ -285,6 +296,11 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 
 		MouseAdapter openDatasetChooseMouseListener = new MouseAdapter() {
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				tableDatasets.requestFocus();
+//			}
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 &&
@@ -300,7 +316,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				setDialogResult(DialogResult.OK);
 				buttonOkClick();
-				JDialogBulidSpatialIndex.this.dispose();
+//				JDialogBulidSpatialIndex.this.dispose();
 			}
 		});
 		this.buttonCancle.addActionListener(new ActionListener() {
@@ -316,7 +332,11 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 				if (e.getStateChange() == ItemEvent.SELECTED && key) {
 					try {
 						key = false;
-						setTableValues(comboBoxIndexType.getSelectedItem());
+						Object selectedItem = comboBoxIndexType.getSelectedItem();
+						if (tableDatasets.getCellEditor() != null) {
+							tableDatasets.getCellEditor().stopCellEditing();
+						}
+						setTableValues(selectedItem);
 					} finally {
 						key = true;
 					}
@@ -328,14 +348,29 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		SpatialIndexInfoPropertyListener propertyListener = new SpatialIndexInfoPropertyListener() {
 			@Override
 			public void propertyChanged(String propetName, Object value) {
-				int[] selectedRows = tableDatasets.getSelectedRows();
-				for (int selectedRow : selectedRows) {
-					spatialIndexTableModel.setSpatialIndexInfoValue(selectedRow, propetName, value);
+				if (key) {
+					int[] selectedRows = tableDatasets.getSelectedRows();
+					for (int selectedRow : selectedRows) {
+						spatialIndexTableModel.setSpatialIndexInfoValue(selectedRow, propetName, value);
+					}
+				}
+				try {
+					key = false;
+					checkScrollPanelDescribe();
+				} finally {
+					key = true;
 				}
 			}
 		};
 		this.panelGraphIndex.setPropertyListener(propertyListener);
 		this.panelDynamicIndex.setPropertyListener(propertyListener);
+
+		this.tableDatasets.addMouseMotionListener(new MouseAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				tableDatasets.requestFocus();
+			}
+		});
 	}
 
 	private void buttonAddClicked() {
@@ -450,14 +485,16 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 		String spatialIndexInfoTileField = SpatialIndexInfoUtilties.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
 		this.panelGraphIndex.setField(spatialIndexInfoTileField);
-		if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
-			this.panelGraphIndex.setRadiaFieldSelected(true);
-		} else {
-			this.panelGraphIndex.setRadiaFieldSelected(false);
-		}
 		this.panelGraphIndex.setWidth(SpatialIndexInfoUtilties.getSpatialIndexInfoTileWidth(selectedSpatialIndexInfo));
 		this.panelGraphIndex.setHeight(SpatialIndexInfoUtilties.getSpatialIndexInfoTileHeight(selectedSpatialIndexInfo));
 
+		if (!this.panelGraphIndex.isRadioFieldSelected() && !this.panelGraphIndex.isRadioRangeSelected()) {
+			if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+				this.panelGraphIndex.setRadioFieldSelected(true);
+			} else {
+				this.panelGraphIndex.setRadioFieldSelected(false);
+			}
+		}
 	}
 
 	private List<SpatialIndexInfo> getSpatialIndexInfos() {

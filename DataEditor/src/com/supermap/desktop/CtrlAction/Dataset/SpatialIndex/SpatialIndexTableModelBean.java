@@ -22,9 +22,9 @@ import java.util.List;
  * @author XiaJT.
  */
 public class SpatialIndexTableModelBean {
-	Dataset dataset;
-	SpatialIndexType spatialIndexType;
-	SpatialIndexInfo spatialIndexInfo;
+	private Dataset dataset;
+	private SpatialIndexType spatialIndexType;
+	private SpatialIndexInfo spatialIndexInfo;
 
 	public static final String[] SUPPORT_DATASET_TYPES = new String[]{
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT),
@@ -35,7 +35,11 @@ public class SpatialIndexTableModelBean {
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.LINEM),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK3D),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D)};
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.LINE3D),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.REGION3D)
+
+	};
 
 	public SpatialIndexTableModelBean(Dataset dataset) {
 		this.setDataset(dataset);
@@ -72,22 +76,19 @@ public class SpatialIndexTableModelBean {
 	}
 
 	private void initSpatialIndexInfo() {
-		if (this.spatialIndexInfo.getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
-			// 动态
-			int objectCount = ((DatasetVector) dataset).getRecordCount();
-			Rectangle2D rec = dataset.getBounds();
-			int gridCount = objectCount / 200;
-			if (gridCount != 0) {
-				this.spatialIndexInfo.setGridSize0(Math.sqrt(rec.getWidth() * rec.getHeight() / gridCount));
-			}
+		// 初始一次，再不修改
+		// 动态
+		int objectCount = ((DatasetVector) dataset).getRecordCount();
+		Rectangle2D rec = dataset.getBounds();
+		int gridCount = objectCount / 200;
+		if (gridCount != 0) {
+			this.spatialIndexInfo.setGridSize0(Math.sqrt(rec.getWidth() * rec.getHeight() / gridCount));
+		}
 
-//			Rectangle2D bounds = dataset.getBounds();
-//			if (((DatasetVector) dataset).getRecordCount() > 200) {
-//				double v = bounds.getHeight() * bounds.getWidth() * 200 / ((DatasetVector) dataset).getRecordCount();
-//				this.spatialIndexInfo.setGridSize0(Math.sqrt(v));
-//			}
-		} else {
+		if (dataset.getBounds().getHeight() / 30 > 0) {
 			this.spatialIndexInfo.setTileHeight(dataset.getBounds().getHeight() / 30);
+		}
+		if (dataset.getBounds().getWidth() / 30 > 0) {
 			this.spatialIndexInfo.setTileWidth(dataset.getBounds().getWidth() / 30);
 		}
 	}
@@ -119,6 +120,12 @@ public class SpatialIndexTableModelBean {
 	 */
 	public void bulid() {
 		boolean result;
+//		dataset.addSteppedListener(new SteppedListener() {
+//			@Override
+//			public void stepped(SteppedEvent steppedEvent) {
+//				System.out.println(steppedEvent.getPercent());
+//			}
+//		});
 		if (spatialIndexType == SpatialIndexType.NONE || spatialIndexType == SpatialIndexType.RTREE || spatialIndexType == SpatialIndexType.QTREE) {
 			result = ((DatasetVector) dataset).buildSpatialIndex(spatialIndexType);
 		} else {
@@ -149,11 +156,9 @@ public class SpatialIndexTableModelBean {
 		if (StringUtilties.isNullOrEmpty(String.valueOf(value))) {
 			value = "0";
 		}
-		Double doubleValue = Double.valueOf(String.valueOf(value));
-		if (doubleValue <= 0) {
-			return;
-		}
+
 		if (this.getSpatialIndexInfo().getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
+			Double doubleValue = Double.valueOf(String.valueOf(value));
 			switch (propetName) {
 				case SpatialIndexInfoPropertyListener.GRID_X:
 					this.getSpatialIndexInfo().setGridCenter(new Point2D(doubleValue, this.getSpatialIndexInfo().getGridCenter().getY()));
@@ -162,24 +167,43 @@ public class SpatialIndexTableModelBean {
 					this.getSpatialIndexInfo().setGridCenter(new Point2D(this.getSpatialIndexInfo().getGridCenter().getX(), doubleValue));
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_0:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize0(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_1:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize1(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_2:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize2(doubleValue);
 					break;
 			}
 		} else {
+			double doubleValue;
 			switch (propetName) {
 				case SpatialIndexInfoPropertyListener.TILE_FIELD:
 					this.getSpatialIndexInfo().setTileField(String.valueOf(value));
 					break;
 				case SpatialIndexInfoPropertyListener.TILE_WIDTH:
+					doubleValue = Double.valueOf(String.valueOf(value));
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setTileWidth(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.TILE_HEIGHT:
+					doubleValue = Double.valueOf(String.valueOf(value));
+
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setTileHeight(doubleValue);
 					break;
 			}

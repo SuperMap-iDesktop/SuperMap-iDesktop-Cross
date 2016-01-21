@@ -11,7 +11,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
@@ -24,7 +23,6 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
 import com.supermap.layout.MapLayout;
-import com.supermap.mapping.Map;
 import com.supermap.realspace.Scene;
 
 import javax.swing.*;
@@ -559,13 +557,7 @@ public class WorkspaceComponentManager extends JComponent {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {
 						nodeText = ((TreeNodeData) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject()).getData().toString();
-						IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, nodeText);
-						if (formMap != null) {
-							Map map = formMap.getMapControl().getMap();
-							map.open(nodeText);
-							map.refresh();
-							UICommonToolkit.getLayersManager().setMap(map);
-						}
+						MapViewUtilties.openMap(nodeText);
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();

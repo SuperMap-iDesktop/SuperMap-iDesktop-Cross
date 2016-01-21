@@ -12,7 +12,6 @@ import com.supermap.desktop.Interface.IDockbarManager;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IFrameMenuManager;
 import com.supermap.desktop.Interface.IPropertyManager;
@@ -31,7 +30,6 @@ import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
 import com.supermap.layout.MapLayout;
-import com.supermap.mapping.Map;
 import com.supermap.realspace.Scene;
 
 import javax.swing.*;
@@ -315,7 +313,7 @@ public class FormBase extends JFrame implements IFormMain {
 									String name = (String) selectedNodeData.getData();
 									if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 										// 节点对应的数据为地图，直接拖拽打开地图
-										openMap(name);
+										MapViewUtilties.openMap(name);
 									} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 										// 节点对应的数据为场景，直接拖拽打开场景
 										openScence(name);
@@ -353,16 +351,6 @@ public class FormBase extends JFrame implements IFormMain {
 				scene.open(name);
 				scene.refresh();
 				UICommonToolkit.getLayersManager().setScene(scene);
-			}
-		}
-
-		private void openMap(String name) {
-			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-			if (formMap != null) {
-				Map map = formMap.getMapControl().getMap();
-				map.open(name);
-				map.refresh();
-				UICommonToolkit.getLayersManager().setMap(map);
 			}
 		}
 	}

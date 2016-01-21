@@ -1,28 +1,5 @@
 package com.supermap.desktop.mapview.geometry.property;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
@@ -36,6 +13,21 @@ import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * 对象属性信息
@@ -270,6 +262,9 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	 */
 	private void checkBoxHideDetailClicked() {
 		checkIsSelected();
+		if (this.propertyTable.getCellEditor() != null) {
+			this.propertyTable.getCellEditor().stopCellEditing();
+		}
 		this.propertyTable.getColumnModel().getColumn(((PropertyTableModel) this.propertyTable.getModel()).getColumnCount() - 1)
 				.setCellEditor(new PropertyTableCellEditor(new JTextField()));
 		setColumnSize();
@@ -279,11 +274,15 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	 * 隐藏显示系统字段
 	 */
 	private void checkBoxHideSysFieldClicked() {
+		if (this.propertyTable.getCellEditor() != null) {
+			this.propertyTable.getCellEditor().stopCellEditing();
+		}
 		((PropertyTableModel) this.propertyTable.getModel()).setHiddenSysField(this.checkBoxHideSysField.isSelected());
 		((PropertyTableModel) this.propertyTable.getModel()).intializeModelData(this.fieldInfos, this.recordset);
 	}
 
 	private void checkIsSelected() {
+
 		((PropertyTableModel) this.propertyTable.getModel()).setHiddenDetailed(this.checkBoxHideDetail.isSelected());
 		((PropertyTableModel) this.propertyTable.getModel()).fireTableStructureChanged();
 	}

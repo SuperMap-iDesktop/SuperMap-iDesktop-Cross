@@ -38,4 +38,6 @@ public interface IFormMap extends IForm {
 	void showPopupMenu();
 
 	void updataSelectNumber();
+
+	void setSelectedGeometryProperty();
 }
