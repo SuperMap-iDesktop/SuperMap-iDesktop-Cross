@@ -10,11 +10,15 @@ import java.util.List;
  * @author xiajt
  */
 public class SpatialIndexInfoUtilties {
+
+	private static final int DOUBLE_PRECISION = 6;
+
 	private SpatialIndexInfoUtilties() {
 
 	}
 
 	private static int POW = 10;
+
 	public static String getSpatialIndexInfoX(List<SpatialIndexInfo> spatialIndexInfos) {
 		double result = 0;
 		boolean isDifferent = false;
@@ -30,7 +34,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -49,7 +53,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -71,7 +75,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -90,7 +94,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -109,7 +113,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -142,7 +146,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 
@@ -161,7 +165,7 @@ public class SpatialIndexInfoUtilties {
 		if (isDifferent) {
 			return "";
 		} else {
-			return String.valueOf(result);
+			return DoubleUtilties.toString(result, DOUBLE_PRECISION);
 		}
 	}
 }

@@ -224,4 +224,23 @@ public class MapViewUtilties {
 		}
 		return count;
 	}
+
+	/**
+	 * 打开工作空间中已存在的地图
+	 *
+	 * @param mapName 地图名称
+	 * @return 是否打开
+	 */
+	public static boolean openMap(String mapName) {
+		IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
+		if (formMap != null) {
+			Map map = formMap.getMapControl().getMap();
+			map.open(mapName);
+			Application.getActiveApplication().resetActiveForm();
+			map.refresh();
+			UICommonToolkit.getLayersManager().setMap(map);
+			return true;
+		}
+		return false;
+	}
 }

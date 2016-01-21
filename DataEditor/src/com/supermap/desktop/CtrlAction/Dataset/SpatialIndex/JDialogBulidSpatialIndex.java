@@ -72,7 +72,6 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 * 防止多次刷新
 	 */
 	private boolean key = true;
-	private boolean keyProperty = true;
 	// 右下的描述
 	private JScrollPane scrollPaneDescribe;
 	private JTextArea textAreaNull;
@@ -88,7 +87,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	private DatasetType[] supportDatasetTypes = new DatasetType[]{
 			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
-			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D
+			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D,
+			DatasetType.LINE3D, DatasetType.REGION3D
 	};
 	//endregion
 

@@ -35,7 +35,10 @@ public class SpatialIndexTableModelBean {
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.LINEM),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK),
 			CommonToolkit.DatasetTypeWrap.findName(DatasetType.NETWORK3D),
-			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D)
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.POINT3D),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.LINE3D),
+			CommonToolkit.DatasetTypeWrap.findName(DatasetType.REGION3D)
+
 	};
 
 	public SpatialIndexTableModelBean(Dataset dataset) {
@@ -117,6 +120,12 @@ public class SpatialIndexTableModelBean {
 	 */
 	public void bulid() {
 		boolean result;
+//		dataset.addSteppedListener(new SteppedListener() {
+//			@Override
+//			public void stepped(SteppedEvent steppedEvent) {
+//				System.out.println(steppedEvent.getPercent());
+//			}
+//		});
 		if (spatialIndexType == SpatialIndexType.NONE || spatialIndexType == SpatialIndexType.RTREE || spatialIndexType == SpatialIndexType.QTREE) {
 			result = ((DatasetVector) dataset).buildSpatialIndex(spatialIndexType);
 		} else {
