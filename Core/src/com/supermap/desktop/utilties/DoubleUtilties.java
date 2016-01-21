@@ -32,12 +32,12 @@ public class DoubleUtilties {
 	 * @return 对应的String
 	 */
 	public static String toString(double value, int bit) {
-		StringBuilder builder = new StringBuilder("0.");
+		StringBuilder builder = new StringBuilder("#.");
 		if (bit == 0) {
-			builder.append("0");
+			builder.append("#");
 		} else {
 			for (int i = 0; i < bit; i++) {
-				builder.append("0");
+				builder.append("#");
 			}
 		}
 		DecimalFormat decimalFormat = new DecimalFormat(builder.toString());

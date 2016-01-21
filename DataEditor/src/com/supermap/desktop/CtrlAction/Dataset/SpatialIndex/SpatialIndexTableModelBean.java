@@ -156,11 +156,9 @@ public class SpatialIndexTableModelBean {
 		if (StringUtilties.isNullOrEmpty(String.valueOf(value))) {
 			value = "0";
 		}
-		Double doubleValue = Double.valueOf(String.valueOf(value));
-		if (doubleValue <= 0) {
-			return;
-		}
+
 		if (this.getSpatialIndexInfo().getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
+			Double doubleValue = Double.valueOf(String.valueOf(value));
 			switch (propetName) {
 				case SpatialIndexInfoPropertyListener.GRID_X:
 					this.getSpatialIndexInfo().setGridCenter(new Point2D(doubleValue, this.getSpatialIndexInfo().getGridCenter().getY()));
@@ -169,24 +167,43 @@ public class SpatialIndexTableModelBean {
 					this.getSpatialIndexInfo().setGridCenter(new Point2D(this.getSpatialIndexInfo().getGridCenter().getX(), doubleValue));
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_0:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize0(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_1:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize1(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_2:
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setGridSize2(doubleValue);
 					break;
 			}
 		} else {
+			double doubleValue;
 			switch (propetName) {
 				case SpatialIndexInfoPropertyListener.TILE_FIELD:
 					this.getSpatialIndexInfo().setTileField(String.valueOf(value));
 					break;
 				case SpatialIndexInfoPropertyListener.TILE_WIDTH:
+					doubleValue = Double.valueOf(String.valueOf(value));
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setTileWidth(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.TILE_HEIGHT:
+					doubleValue = Double.valueOf(String.valueOf(value));
+
+					if (doubleValue <= 0) {
+						return;
+					}
 					this.getSpatialIndexInfo().setTileHeight(doubleValue);
 					break;
 			}

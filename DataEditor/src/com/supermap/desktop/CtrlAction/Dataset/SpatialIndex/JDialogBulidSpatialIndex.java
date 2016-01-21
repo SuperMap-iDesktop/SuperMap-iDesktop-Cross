@@ -485,14 +485,16 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 		String spatialIndexInfoTileField = SpatialIndexInfoUtilties.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
 		this.panelGraphIndex.setField(spatialIndexInfoTileField);
-		if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
-			this.panelGraphIndex.setRadiaFieldSelected(true);
-		} else {
-			this.panelGraphIndex.setRadiaFieldSelected(false);
-		}
 		this.panelGraphIndex.setWidth(SpatialIndexInfoUtilties.getSpatialIndexInfoTileWidth(selectedSpatialIndexInfo));
 		this.panelGraphIndex.setHeight(SpatialIndexInfoUtilties.getSpatialIndexInfoTileHeight(selectedSpatialIndexInfo));
 
+		if (!this.panelGraphIndex.isRadioFieldSelected() && !this.panelGraphIndex.isRadioRangeSelected()) {
+			if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+				this.panelGraphIndex.setRadioFieldSelected(true);
+			} else {
+				this.panelGraphIndex.setRadioFieldSelected(false);
+			}
+		}
 	}
 
 	private List<SpatialIndexInfo> getSpatialIndexInfos() {

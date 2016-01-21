@@ -219,7 +219,7 @@ public class JPanelGraphIndex extends JPanel {
 	 *
 	 * @param b 是否选中
 	 */
-	public void setRadiaFieldSelected(boolean b) {
+	public void setRadioFieldSelected(boolean b) {
 		if (b) {
 			this.radioButtonFieldIndex.setSelected(true);
 		} else {
@@ -227,6 +227,13 @@ public class JPanelGraphIndex extends JPanel {
 		}
 	}
 
+	public boolean isRadioFieldSelected() {
+		return this.radioButtonFieldIndex.isSelected();
+	}
+
+	public boolean isRadioRangeSelected() {
+		return this.radioButtonRangeIndex.isSelected();
+	}
 	public void setPropertyListener(SpatialIndexInfoPropertyListener propertyListener) {
 		this.propertyListener = propertyListener;
 	}
