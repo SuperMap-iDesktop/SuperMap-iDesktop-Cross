@@ -58,8 +58,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTable tableRangeInfo = new JTable();
 
-	private static String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
+	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_Title_RangeValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient DatasetGrid datasetGrid;
 	private transient Map map;
 	private transient ThemeGridRange themeGridRange;
@@ -79,7 +79,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -88,6 +88,16 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.themeGridRange = new ThemeGridRange(themeGridRange);
 		this.map = initCurrentTheme(datasetGrid);
 		this.isNewTheme = true;
+		initComponents();
+		initResources();
+		registActionListener();
+	}
+
+	public ThemeGridRangeContainer(Layer layer) {
+		this.themeRangeLayer = layer;
+		this.datasetGrid = (DatasetGrid) layer.getDataset();
+		this.themeGridRange = (ThemeGridRange) layer.getTheme();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
 		registActionListener();
@@ -159,9 +169,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 初始化分段方法项
 	 */
 	private void initComboBoxRangMethod() {
-		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
-				MapViewProperties.getString("String_RangeMode_SquareRoot"),
-				MapViewProperties.getString("String_RangeMode_Logarithm"),
+		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
+				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_Logarithm"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
 		if (themeGridRange.getRangeMode() == RangeMode.NONE) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
@@ -178,7 +187,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
 				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		this.comboBoxRangeCount.setEditable(true);
 		int rangeCountNumber = themeGridRange.getCount();
@@ -190,7 +199,11 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeFormat() {
 		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
-		this.comboBoxRangeFormat.setSelectedIndex(1);
+		if (this.themeGridRange.getItem(0).getCaption().contains("X")) {
+			this.comboBoxRangeFormat.setSelectedIndex(1);
+		} else {
+			this.comboBoxRangeFormat.setSelectedIndex(0);
+		}
 	}
 
 	/*
@@ -659,11 +672,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为平方根分段
-					JOptionPane.showMessageDialog(
-							null,
-							MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"),
-							"",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -677,11 +686,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为对数分段
-					JOptionPane.showMessageDialog(
-							null,
-							MapViewProperties.getString("String_UnMakeGridRangeTheme"),
-							"",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeTheme"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -950,12 +955,12 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		((ThemeGridRange)this.themeRangeLayer.getTheme()).clear();
+		((ThemeGridRange) this.themeRangeLayer.getTheme()).clear();
 		for (int i = 0; i < this.themeGridRange.getCount(); i++) {
-			((ThemeGridRange)this.themeRangeLayer.getTheme()).addToTail(this.themeGridRange.getItem(i), true);
+			((ThemeGridRange) this.themeRangeLayer.getTheme()).addToTail(this.themeGridRange.getItem(i), true);
 		}
 		this.map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().reload();
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
 	}
 
 }

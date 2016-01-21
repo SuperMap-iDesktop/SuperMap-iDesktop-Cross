@@ -907,14 +907,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		if (null != textStyle && isUniformStyle) {
-			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformStyle(textStyle);
+		if (null != this.textStyle && this.isUniformStyle) {
+			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformStyle(this.textStyle);
 		} else {
-			for (int i = 0; i < selectRow.length; i++) {
-				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(selectRow[i]).setStyle(themeLabel.getItem(selectRow[i]).getStyle());
+			for (int i = 0; i < this.selectRow.length; i++) {
+				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.themeLabel.getItem(this.selectRow[i]).getStyle());
 			}
 		}
-		map.refresh();
+		this.map.refresh();
 	}
 
 }

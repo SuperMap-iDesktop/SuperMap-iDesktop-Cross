@@ -782,6 +782,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
 		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
 		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
-		map.refresh();
+		this.map.refresh();
 	}
 }

@@ -46,8 +46,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private JButton buttonAntitone = new JButton();
 
 	private AddItemPanel addItemPanel;
-	private String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
+	private String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient ThemeGridUnique themeUnique;
 	private transient DatasetGrid datasetGrid;
 	private transient Layer themeUniqueLayer;
@@ -76,6 +76,16 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.themeUnique = new ThemeGridUnique(themeUnique);
 		this.map = initCurrentTheme(datasetGrid);
 		this.isNewTheme = true;
+		initComponents();
+		initResources();
+		registActionListener();
+	}
+
+	public ThemeGridUniqueContainer(Layer layer) {
+		this.themeUniqueLayer = layer;
+		this.themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
+		this.datasetGrid = (DatasetGrid) layer.getDataset();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
 		registActionListener();
@@ -290,8 +300,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		}
 		Color defualtColor = themeUnique.getDefaultColor();
 		this.tableUniqueInfo.setValueAt(ThemeItemLabelDecorator.buildColorIcon(datasetGrid, defualtColor), uniqueCount, TABLE_COLUMN_GEOSTYLE);
-		this.tableUniqueInfo.setValueAt(MapViewProperties.getString("String_defualt_style"),
-				uniqueCount, TABLE_COLUMN_CAPTION);
+		this.tableUniqueInfo.setValueAt(MapViewProperties.getString("String_defualt_style"), uniqueCount, TABLE_COLUMN_CAPTION);
 	}
 
 	class LocalTableMouseListener extends MouseAdapter {
@@ -528,8 +537,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			addItemPanel.setDeleteGridUniqueItems(deleteItems);
 			addItemPanel.init();
 			addItemPanel.addPopupMenuListener(popmenuListener);
-			addItemPanel.show(buttonAdd, -addItemPanel.getWidth() / 2,
-					buttonAdd.getHeight());
+			addItemPanel.show(buttonAdd, -addItemPanel.getWidth() / 2, buttonAdd.getHeight());
 			addItemPanel.setVisible(true);
 		}
 
@@ -798,11 +806,11 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		((ThemeGridUnique)themeUniqueLayer.getTheme()).clear();
-		for (int i = 0; i < themeUnique.getCount(); i++) {
-			((ThemeGridUnique)themeUniqueLayer.getTheme()).add(themeUnique.getItem(i));
+		((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
+		for (int i = 0; i < this.themeUnique.getCount(); i++) {
+			((ThemeGridUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
 		}
-		map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().reload();
+		this.map.refresh();
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
 	}
 }

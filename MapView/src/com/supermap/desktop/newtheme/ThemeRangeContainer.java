@@ -105,6 +105,16 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		initResources();
 		registActionListener();
 	}
+	public ThemeRangeContainer(Layer layer) {
+		this.themeRangeLayer = layer;
+		this.datasetVector = (DatasetVector) layer.getDataset();
+		this.themeRange = (ThemeRange) layer.getTheme();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		this.precision = themeRange.getPrecision();
+		initComponents();
+		initResources();
+		registActionListener();
+	}
 
 	/**
 	 * 初始化单值专题图
@@ -185,14 +195,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		rangeExpression = this.themeRange.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
+		this.rangeExpression = this.themeRange.getRangeExpression();
+		if (StringUtilties.isNullOrEmpty(this.rangeExpression)) {
 			rangeExpression = "0";
 		}
-		this.comboBoxExpression.setSelectedItem(rangeExpression);
-		if (!rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(rangeExpression);
-			this.comboBoxExpression.setSelectedItem(rangeExpression);
+		this.comboBoxExpression.setSelectedItem(this.rangeExpression);
+		if (!this.rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
+			this.comboBoxExpression.addItem(this.rangeExpression);
+			this.comboBoxExpression.setSelectedItem(this.rangeExpression);
 		}
 	}
 
@@ -297,8 +307,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
 				"15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
 		this.comboBoxRangeCount.setEditable(true);
-		int rangeCountNumber = this.themeRange.getCount();
-		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCountNumber));
+		this.comboBoxRangeCount.setSelectedItem(String.valueOf(this.themeRange.getCount()));
 	}
 
 	/**
@@ -342,7 +351,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeFormat() {
 		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
-		if (themeRange.getItem(0).getCaption().contains("X")) {
+		if (this.themeRange.getItem(0).getCaption().contains("X")) {
 			this.comboBoxRangeFormat.setSelectedIndex(1);
 		} else {
 			this.comboBoxRangeFormat.setSelectedIndex(0);
@@ -1374,14 +1383,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		((ThemeRange) themeRangeLayer.getTheme()).clear();
-		if (0 < themeRange.getCount()) {
-			for (int i = 0; i < themeRange.getCount(); i++) {
-				((ThemeRange) themeRangeLayer.getTheme()).addToTail(themeRange.getItem(i), true);
+		((ThemeRange) this.themeRangeLayer.getTheme()).clear();
+		if (0 < this.themeRange.getCount()) {
+			for (int i = 0; i < this.themeRange.getCount(); i++) {
+				((ThemeRange) this.themeRangeLayer.getTheme()).addToTail(this.themeRange.getItem(i), true);
 			}
 		}
-		UICommonToolkit.getLayersManager().getLayersTree().reload();
-		map.refresh();
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);;
+		this.map.refresh();
 	}
 
 }

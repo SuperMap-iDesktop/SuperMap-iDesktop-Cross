@@ -39,6 +39,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
@@ -62,6 +63,12 @@ import com.supermap.mapping.MapDrawingListener;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Selection;
+import com.supermap.mapping.ThemeGridRangeItem;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeGridUniqueItem;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeUniqueItem;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometryAddedListener;
 import com.supermap.ui.GeometryDeletedListener;
@@ -78,6 +85,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -95,6 +103,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -1063,8 +1073,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 						if (layer.getTheme() == null) {
 							// 设置图层属性
 							this.showStyleSetDialog();
-						} else {
-							// 修改专题图风格
+						} 
+					}else{
+						// 修改专题图风格
+						DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
+						TreeNodeData parentNodeData = (TreeNodeData) parentNode.getUserObject();
+						if (parentNodeData.getData() instanceof Layer) {
+							Layer parentLayer = (Layer) parentNodeData.getData();
+							this.showThemeItemStyleSetDialog(parentLayer);
 						}
 					}
 				}
@@ -1113,11 +1129,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
 				}
 
-				// GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
-				// GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
-				// if (geostyle != null) {
-				// LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
-				// layerSetting.setStyle(geostyle);
 				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
 				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
 					this.getMapControl().getMap().refresh();
@@ -1131,6 +1142,103 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
 					layerSetting.setStyle(geostyle);
 					this.getMapControl().getMap().refresh();
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private SymbolType getSymbolType(Dataset dataset) {
+		SymbolType symbolType = SymbolType.MARKER;
+		if (CommonToolkit.DatasetTypeWrap.isPoint(dataset.getType())) {
+			symbolType = SymbolType.MARKER;
+		} else if (CommonToolkit.DatasetTypeWrap.isLine(dataset.getType())) {
+			symbolType = SymbolType.LINE;
+		} else if (CommonToolkit.DatasetTypeWrap.isRegion(dataset.getType())) {
+			symbolType = SymbolType.FILL;
+		}
+		return symbolType;
+	}
+
+	private void showThemeItemStyleSetDialog(Layer layer) {
+		try {
+			SymbolType symbolType = getSymbolType(layer.getDataset());
+			TreePath[] selections = this.layersTree.getSelectionPaths();
+			// notify by xie
+			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
+			if (selections.length > 1) {
+				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+				for (TreePath selection : selections) {
+					TreeNodeData treeNodeData = (TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject();
+					if (treeNodeData.getData() instanceof ThemeUniqueItem) {
+						ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+						geoStyleList.add(item.getStyle());
+					} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
+						ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+						geoStyleList.add(item.getStyle());
+					}
+				}
+				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
+					this.getMapControl().getMap().refresh();
+				}
+				this.layersTree.updateUI();
+			} else {
+				DefaultMutableTreeNode selecTreeNode = (DefaultMutableTreeNode) this.layersTree.getLastSelectedPathComponent();
+				TreeNodeData treeNodeData = (TreeNodeData) (selecTreeNode).getUserObject();
+				int row = this.layersTree.getRowForPath(new TreePath(selecTreeNode.getPath()));
+				int x = this.layersTree.getRowBounds(row).x;
+				int y = this.layersTree.getRowBounds(row).y;
+				if (treeNodeData.getData() instanceof ThemeUniqueItem) {
+					ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+					GeoStyle itemStyle = item.getStyle();
+					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+					if (geostyle != null) {
+						item.setStyle(geostyle);
+						this.getMapControl().getMap().refresh();
+					}
+
+				} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
+					ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+					GeoStyle itemStyle = item.getStyle();
+					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+					if (geostyle != null) {
+						item.setStyle(geostyle);
+						this.getMapControl().getMap().refresh();
+					}
+				} else if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
+					final ThemeGridUniqueItem item = (ThemeGridUniqueItem) treeNodeData.getData();
+					final JPopupMenu popupMenu = new JPopupMenu();
+					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+					popupMenu.show(this.layersTree, x, y);
+					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							Color color = (Color) evt.getNewValue();
+							item.setColor(color);
+							popupMenu.setVisible(false);
+							getMapControl().getMap().refresh();
+						}
+					});
+				} else if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
+					final ThemeGridRangeItem item = (ThemeGridRangeItem) treeNodeData.getData();
+					final JPopupMenu popupMenu = new JPopupMenu();
+					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+					popupMenu.show(this.layersTree, x, y);
+					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							Color color = (Color) evt.getNewValue();
+							item.setColor(color);
+							popupMenu.setVisible(false);
+							getMapControl().getMap().refresh();
+						}
+					});
 				}
 			}
 		} catch (Exception ex) {
@@ -1210,8 +1318,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
+								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1340,7 +1448,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));

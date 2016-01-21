@@ -20,6 +20,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -253,6 +255,9 @@ public class ThemeGuideFactory {
 	public static void resetUniqueTheme(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeUniqueContainer);
 		}
 	}
 
@@ -264,6 +269,9 @@ public class ThemeGuideFactory {
 	public static void resetRangeTheme(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeRangeContainer);
 		}
 	}
 
@@ -275,6 +283,9 @@ public class ThemeGuideFactory {
 	public static void resetLabelUniform(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeLabelUniformContainer);
 		}
 	}
 
@@ -286,6 +297,9 @@ public class ThemeGuideFactory {
 	public static void resetLabelRange(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeLabelRangeContainer);
 		}
 	}
 
@@ -297,6 +311,9 @@ public class ThemeGuideFactory {
 	public static void resetGridUnique(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeGridUniqueContainer);
 		}
 	}
 
@@ -308,6 +325,9 @@ public class ThemeGuideFactory {
 	public static void resetGridRange(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else {
+			ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeGridRangeContainer);
 		}
 	}
 

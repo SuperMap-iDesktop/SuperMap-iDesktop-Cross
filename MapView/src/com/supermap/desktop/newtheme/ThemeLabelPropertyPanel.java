@@ -812,7 +812,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		themeLabelTemp.setLeaderLineDisplayed(this.themeLabel.isLeaderLineDisplayed());
 		themeLabelTemp.setLeaderLineStyle(this.themeLabel.getLeaderLineStyle());
 		themeLabelTemp.setNumericPrecision(this.themeLabel.getNumericPrecision());
-		map.refresh();
+		this.map.refresh();
 	}
 
 }

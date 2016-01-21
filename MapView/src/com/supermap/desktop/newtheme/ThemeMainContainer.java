@@ -11,6 +11,8 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 
@@ -43,7 +45,6 @@ public class ThemeMainContainer extends JPanel {
 	private LocalActionListener actionListener = new LocalActionListener();
 
 	private Layer newLayer;
-	private Layer oldLayer;
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -250,9 +251,6 @@ public class ThemeMainContainer extends JPanel {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
-			if (null == newLayer) {
-				layersTree.setSelectionRow(0);
-			}
 			resetThemeMainContainer(newLayer);
 		}
 	}
@@ -261,25 +259,10 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-			oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-			boolean isResetThemeMain = false;
-			if (null != ThemeGuideFactory.getMapControl()) {
-				map = ThemeGuideFactory.getMapControl().getMap();
+			if (null!=ThemeGuideFactory.getDockbarThemeContainer()) {
+				ThemeGuideFactory.modifyTheme(newLayer);
 			}
-			// 当地图中不存在图层时刷新专题图
-			if (null == map.getLayers() || 0 == map.getLayers().getCount()) {
-				updateThemeMainContainer();
-				ThemeGuideFactory.themeTypeContainer.clear();
-				if (null != panel) {
-					panel.unregistActionListener();
-				}
-			}
-			if (null == oldLayer || (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer))) {
-				isResetThemeMain = true;
-			}
-			if (isResetThemeMain) {
-				resetThemeMainContainer(newLayer);
-			}
+			resetThemeMainContainer(newLayer);
 		}
 	}
 

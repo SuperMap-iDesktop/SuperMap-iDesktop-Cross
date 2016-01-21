@@ -100,6 +100,16 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		registActionListener();
 	}
 
+	public ThemeUniqueContainer(Layer layer) {
+		this.themeUniqueLayer = layer;
+		this.themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
+		this.datasetVector = (DatasetVector) layer.getDataset();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		initComponents();
+		initResources();
+		registActionListener();
+	}
+
 	/**
 	 * 初始化单值专题图
 	 *
@@ -266,18 +276,36 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		getFieldComboBox(this.comboBoxOffsetX,OFFSETX_TYPE);
-		this.comboBoxOffsetX.addItem("0");
-		this.comboBoxOffsetX.setSelectedItem("0");
+		getFieldComboBox(this.comboBoxOffsetX, OFFSETX_TYPE);
+		this.comboBoxOffsetX.insertItemAt("0", this.comboBoxOffsetX.getItemCount() - 2);
+		String offsetX = themeUnique.getOffsetX();
+		if (StringUtilties.isNullOrEmpty(offsetX)) {
+			offsetX = "0";
+		}
+		this.comboBoxOffsetX.setSelectedItem(offsetX);
+		if (!offsetX.equals(this.comboBoxOffsetX.getSelectedItem())) {
+			this.comboBoxOffsetX.addItem(offsetX);
+			this.comboBoxOffsetX.setSelectedItem(offsetX);
+		}
+
 	}
 
 	/**
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
-		getFieldComboBox(this.comboBoxOffsetY,OFFSETY_TYPE);
+		getFieldComboBox(this.comboBoxOffsetY, OFFSETY_TYPE);
 		this.comboBoxOffsetY.addItem("0");
-		this.comboBoxOffsetY.setSelectedItem("0");
+		String offsetY = themeUnique.getOffsetY();
+		if (StringUtilties.isNullOrEmpty(offsetY)) {
+			offsetY = "0";
+		}
+		this.comboBoxOffsetY.setSelectedItem(offsetY);
+		if (!offsetY.equals(this.comboBoxOffsetY.getSelectedItem())) {
+			this.comboBoxOffsetY.addItem(offsetY);
+			this.comboBoxOffsetY.setSelectedItem(offsetY);
+		}
+
 	}
 
 	
@@ -312,6 +340,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.toolBar.add(this.buttonDelete);
 		this.toolBar.add(this.buttonAntitone);
 		initToolBar();
+		initComboBoxExpression();
 		//@formatter:off
 		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
 		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
@@ -323,6 +352,22 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(tableUniqueInfo);		
 		//@formatter:on
+	}
+	/**
+	 * 初始化表达式
+	 */
+	private void initComboBoxExpression() {
+		this.comboBoxExpression.setEditable(true);
+		String expression = themeUnique.getUniqueExpression();
+		expression = datasetVector.getName() + "." + expression;
+		if (StringUtilties.isNullOrEmpty(expression)) {
+			expression = "0";
+		}
+		this.comboBoxExpression.setSelectedItem(expression);
+		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
+			this.comboBoxExpression.addItem(expression);
+			this.comboBoxExpression.setSelectedItem(expression);
+		}
 	}
 
 	/**
@@ -1124,16 +1169,16 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	void refreshMapAndLayer(){
-		((ThemeUnique) themeUniqueLayer.getTheme()).clear();
-		for (int i = 0; i < themeUnique.getCount(); i++) {
-			((ThemeUnique) themeUniqueLayer.getTheme()).add(themeUnique.getItem(i));
+		((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
+		for (int i = 0; i < this.themeUnique.getCount(); i++) {
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
 		}
-		((ThemeUnique) themeUniqueLayer.getTheme()).setUniqueExpression(themeUnique.getUniqueExpression());
-		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetFixed(themeUnique.isOffsetFixed());
-		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetX(themeUnique.getOffsetX());
-		((ThemeUnique) themeUniqueLayer.getTheme()).setOffsetY(themeUnique.getOffsetY());
-		UICommonToolkit.getLayersManager().getLayersTree().reload();
-		map.refresh();
+		((ThemeUnique) this.themeUniqueLayer.getTheme()).setUniqueExpression(this.themeUnique.getUniqueExpression());
+		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetFixed(this.themeUnique.isOffsetFixed());
+		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetX(this.themeUnique.getOffsetX());
+		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetY(this.themeUnique.getOffsetY());
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+		this.map.refresh();
 	}
 	
 	// 获取当前的专题图

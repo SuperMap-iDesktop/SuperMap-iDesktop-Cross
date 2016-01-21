@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -36,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import java.awt.*;
@@ -59,6 +61,7 @@ import java.awt.event.MouseEvent;
 import java.beans.Beans;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 /**
@@ -86,6 +89,7 @@ public class LayersTree extends JTree {
 
 	private DefaultMutableTreeNode dropTargetNode = null;
 	private DefaultMutableTreeNode draggedNode = null;
+	private DefaultTreeModel treeModeltemp;
 
 	private static DataFlavor localObjectFlavor;
 	private static DataFlavor[] supportedFlavors = { localObjectFlavor };
@@ -100,7 +104,8 @@ public class LayersTree extends JTree {
 
 	public LayersTree() {
 		super();
-		this.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new Map())));
+		this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(new Map()));
+		this.setModel(this.treeModeltemp);
 		this.setEditable(true);
 		this.setRootVisible(false);
 		this.setShowsRootHandles(true);
@@ -111,10 +116,12 @@ public class LayersTree extends JTree {
 		super();
 		if (map == null) {
 			TreeNodeData data = new TreeNodeData("", NodeDataType.UNKNOWN);
-			this.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(data)));
+			this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(data));
+			this.setModel(this.treeModeltemp);
 		} else {
 			this.currentMap = map;
-			this.setModel(getTreeModel());
+			this.treeModeltemp = getTreeModel();
+			this.setModel(this.treeModeltemp);
 			LayersTreeCellRenderer cellRenderer = new LayersTreeCellRenderer();
 			this.setCellRenderer(cellRenderer);
 			this.setCellEditor(new LayersTreeCellEditor(this, cellRenderer));
@@ -150,9 +157,11 @@ public class LayersTree extends JTree {
 			currentMap = map;
 			if (currentMap == null) {
 				TreeNodeData data = new TreeNodeData("", NodeDataType.UNKNOWN);
-				this.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(data)));
+				this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(data));
+				this.setModel(this.treeModeltemp);
 			} else {
-				this.setModel(getTreeModel());
+				this.treeModeltemp = getTreeModel();
+				this.setModel(this.treeModeltemp);
 				LayersTreeCellRenderer cellRenderer = new LayersTreeCellRenderer();
 				this.setCellRenderer(cellRenderer);
 				this.setCellEditor(new LayersTreeCellEditor(this, cellRenderer));
@@ -210,19 +219,104 @@ public class LayersTree extends JTree {
 
 		return result;
 	}
-
-	public void refreshNode(DefaultMutableTreeNode node){
-		
-		Object userObject = node.getUserObject();
-		TreeNodeData data = (TreeNodeData) userObject;
-		if (data.getType()==NodeDataType.LAYER) {
+	/**
+	 * 针对专题图的刷新
+	 * @param layer
+	 */
+	public void refreshNode(Layer layer) {
+		try {
+			DefaultMutableTreeNode lastselectDefaultMutableTreeNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+			TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
+			DefaultMutableTreeNode layerNode = null;
+			if (treeNodeData.getData() instanceof Layer) {
+				layerNode = lastselectDefaultMutableTreeNode;
+			}else {
+				layerNode = (DefaultMutableTreeNode) lastselectDefaultMutableTreeNode.getParent();
+			}
+			// 记住刷新之前树的状态
+			Enumeration<TreePath> tempTreePath = null;
+			if (null!=layerNode) {
+				tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
+				// 删除指定节点
+				layerNode.removeAllChildren();
+				// // 第三步：添加子树，
+				addLayerItem(layer, layerNode);
+				// 恢复到刷新之前的状态
+				for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+					this.setExpandedState(tempTreePath.nextElement(), true);
+				}
+			}
 			
+			updateUI();
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
-		
 	}
-	
-	
-	private TreeModel getTreeModel() {
+
+	private void addLayerItem(Layer layer, DefaultMutableTreeNode layerNode) {
+		// 单值专题图
+		if (layer.getTheme() instanceof ThemeUnique && ((ThemeUnique) layer.getTheme()).getCount() > 0) {
+			ThemeUnique themeUnique = (ThemeUnique) layer.getTheme();
+			for (int i = 0; i < themeUnique.getCount(); i++) {
+				ThemeUniqueItem uniqueItem = themeUnique.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(uniqueItem, NodeDataType.THEME_UNIQUE_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+			return;
+		}
+
+		// 分段专题图
+		if (layer.getTheme() instanceof ThemeRange && ((ThemeRange) layer.getTheme()).getCount() > 0) {
+			ThemeRange themeRange = (ThemeRange) layer.getTheme();
+			for (int i = 0; i < themeRange.getCount(); i++) {
+				ThemeRangeItem rangeItem = themeRange.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(rangeItem, NodeDataType.THEME_RANGE_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+			return;
+		}
+
+		// 标签专题图
+		if (layer.getTheme() instanceof ThemeLabel && ((ThemeLabel) layer.getTheme()).getCount() > 0) {
+			ThemeLabel themeLabel = (ThemeLabel) layer.getTheme();
+
+			for (int i = 0; i < themeLabel.getCount(); i++) {
+				ThemeLabelItem labelItem = themeLabel.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(labelItem, NodeDataType.THEME_LABEL_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+			return;
+		}
+		// 栅格单值专题图
+		if (layer.getTheme() instanceof ThemeGridUnique && ((ThemeGridUnique) layer.getTheme()).getCount() > 0) {
+			ThemeGridUnique themeGridUnique = (ThemeGridUnique) layer.getTheme();
+
+			for (int i = 0; i < themeGridUnique.getCount(); i++) {
+				ThemeGridUniqueItem gridUniqueItem = themeGridUnique.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(gridUniqueItem, NodeDataType.THEME_GRID_UNIQUE_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+			return;
+		}
+		// 栅格分段专题图
+		if (layer.getTheme() instanceof ThemeGridRange && ((ThemeGridRange) layer.getTheme()).getCount() > 0) {
+			ThemeGridRange themeGridRange = (ThemeGridRange) layer.getTheme();
+
+			for (int i = 0; i < themeGridRange.getCount(); i++) {
+				ThemeGridRangeItem themeGridItem = themeGridRange.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(themeGridItem, NodeDataType.THEME_GRID_RANGE_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+			return;
+		}
+	}
+
+	private void insertNode(TreeNodeData itemNodeData, DefaultMutableTreeNode parentNode, int count) {
+		DefaultMutableTreeNode itemNode = new DefaultMutableTreeNode(itemNodeData);
+		this.treeModeltemp.insertNodeInto(itemNode, parentNode, count);
+	}
+
+	private DefaultTreeModel getTreeModel() {
 		TreeNodeData mapData = new TreeNodeData(currentMap.getName(), NodeDataType.UNKNOWN);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(mapData);
 		if (currentMap.getWorkspace() != null) {
@@ -624,7 +718,7 @@ public class LayersTree extends JTree {
 
 			if (parentGroup != null) {
 				DefaultMutableTreeNode parentNode = groupNodeMap.get(parentGroup);
-				
+
 				DefaultMutableTreeNode removedNode = groupNodeMap.get(layerGroup);
 
 				if (parentNode != null && removedNode != null) {

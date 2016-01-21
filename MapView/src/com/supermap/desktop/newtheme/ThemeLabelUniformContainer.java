@@ -43,6 +43,15 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		initComponents();
 	}
 
+	public ThemeLabelUniformContainer(Layer layer) {
+		this.themeLabelLayer = layer;
+		this.themeLabel = (ThemeLabel) layer.getTheme();
+		this.datasetVector = (DatasetVector) layer.getDataset();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		this.textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();
+		initComponents();
+	}
+
 	/**
 	 * 界面布局入口
 	 */

@@ -26,7 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
@@ -84,6 +83,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
+
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -97,8 +97,18 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		registActionListener();
 	}
 
+	public ThemeLabelRangeContainer(Layer layer) {
+		this.themeLabelLayer = layer;
+		this.datasetVector = (DatasetVector) layer.getDataset();
+		this.themeLabel = (ThemeLabel) layer.getTheme();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		initComponents();
+		initResources();
+		registActionListener();
+	}
+
 	/**
-	 * 初始化单值专题图
+	 * 初始化分段专题图
 	 *
 	 * @param dataset
 	 * @return
@@ -135,7 +145,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				.setWeight(1, 1));
 		initPanelStyle();
 		this.comboBoxColorStyle.setSelectedIndex(3);
-		if (isNewTheme) {
+		if (this.isNewTheme) {
 			refreshColor();
 		}
 	}
@@ -179,12 +189,12 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
-		rangeExpression = themeLabel.getRangeExpression();
+		this.rangeExpression = themeLabel.getRangeExpression();
 		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
-			rangeExpression = "0";
+			this.rangeExpression = "0";
 		}
 		this.comboBoxExpression.setSelectedItem(rangeExpression);
-		if (!rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
+		if (!this.rangeExpression.equals(this.comboBoxExpression.getSelectedItem())) {
 			this.comboBoxExpression.addItem(rangeExpression);
 			this.comboBoxExpression.setSelectedItem(rangeExpression);
 		}
@@ -217,18 +227,26 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 初始化段数
 	 */
 	private void initComboBoxRangeCount() {
-		comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+		this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
 				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" }));
-		comboBoxRangeCount.setEditable(true);
-		int rangeCount = themeLabel.getCount();
-		comboBoxRangeCount.setSelectedIndex(rangeCount - 2);
+		this.comboBoxRangeCount.setEditable(true);
+		int rangeCount = this.themeLabel.getCount();
+		this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
 
 	}
 
+	/**
+	 * 初始化段标题格式
+	 */
 	private void initComboBoxRangeFormat() {
-		comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
-		comboBoxRangeFormat.setSelectedIndex(1);
+		this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[] { "0-100", "0<=x<100" }));
+		if (this.themeLabel.getItem(0).getCaption().contains("X")) {
+			this.comboBoxRangeFormat.setSelectedIndex(1);
+		} else {
+			this.comboBoxRangeFormat.setSelectedIndex(0);
+		}
 	}
+
 
 	/**
 	 * 资源化
@@ -602,7 +620,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			int y = buttonStyle.getLocationOnScreen().y + height;
 			if (selectedRow.length > 0) {
 				textStyleDialog = new TextStyleDialog(themeLabel, selectedRow, map, themeLabelLayer);
-				textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange",ThemeLabelRangeContainer.this.propertyChangeListener);
+				textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", ThemeLabelRangeContainer.this.propertyChangeListener);
 				textStyleDialog.setRefreshAtOnce(isRefreshAtOnce);
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
@@ -1000,8 +1018,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			try {
 				if (selectColumn == TABLE_COLUMN_RANGEVALUE && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String rangeValue = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
-					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow))
-							&& (selectRow != tableLabelInfo.getRowCount() - 1)) {
+					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) && (selectRow != tableLabelInfo.getRowCount() - 1)) {
 						// 如果输入为数值且段值合法时修改段值
 						setLabelRangeValue(selectRow, rangeValue);
 					}
@@ -1074,17 +1091,18 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	void refreshMapAndLayer() {
 		this.panelAdvance.refreshMapAndLayer();
 		this.panelProperty.refreshMapAndLayer();
-		((ThemeLabel) themeLabelLayer.getTheme()).clear();
-		if (0 < themeLabel.getCount()) {
-			for (int i = 0; i < themeLabel.getCount(); i++) {
-				if (null != themeLabel.getItem(i)) {
-					((ThemeLabel) themeLabelLayer.getTheme()).addToTail(themeLabel.getItem(i), true);
+		((ThemeLabel) this.themeLabelLayer.getTheme()).clear();
+		if (0 < this.themeLabel.getCount()) {
+			for (int i = 0; i < this.themeLabel.getCount(); i++) {
+				if (null != this.themeLabel.getItem(i)) {
+					((ThemeLabel) themeLabelLayer.getTheme()).addToTail(this.themeLabel.getItem(i), true);
 				}
 			}
 		}
-		map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().reload();
+		this.map.refresh();
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(themeLabelLayer);
 	}
+
 	class LocalPropertyChangeListener implements PropertyChangeListener {
 
 		@Override
