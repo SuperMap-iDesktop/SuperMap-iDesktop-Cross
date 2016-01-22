@@ -7,7 +7,6 @@ import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
@@ -16,8 +15,6 @@ import com.supermap.data.PrjCoordSys;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
@@ -39,23 +36,18 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.ActionUtilties;
-import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
 import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerSettingVector;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawingEvent;
@@ -63,12 +55,6 @@ import com.supermap.mapping.MapDrawingListener;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Selection;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeUniqueItem;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometryAddedListener;
 import com.supermap.ui.GeometryDeletedListener;
@@ -103,8 +89,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -122,15 +106,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private SmComboBox scaleBox;
 	private SmTextField pointXField;
 	private SmTextField pointYField;
-	@SuppressWarnings("unused")
 	private transient DropTarget dropTargeted;
 	private transient PrjCoordSysType prjCoordSysType = null;
-	private transient MouseAdapter layersTreeMouseAdapter = new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			layersTreeMouseClicked(e);
-		}
-	};
 	private int SELECT_NUMBER = 1;
 	private int LOCATION = 2;
 	private int PRJCOORSYS = 3;
@@ -406,7 +383,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void resetSmStatusbarLayout() {
 		SmStatusbar statusbar = getStatusbar();
-		java.util.List<Component> list = new ArrayList();
+		java.util.List<Component> list = new ArrayList<Component>();
 		for (int i = 0; i < statusbar.getCount(); i++) {
 			list.add(((Component) statusbar.get(i)));
 		}
@@ -493,7 +470,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.pointYField.addKeyListener(this.keyAdapter);
 			addDrag();
 			this.layersTree.addTreeSelectionListener(this.layersTreeSelectionListener);
-			this.layersTree.addMouseListener(this.layersTreeMouseAdapter);
+//			this.layersTree.addMouseListener(this.layersTreeMouseAdapter);
 		}
 	}
 
@@ -522,7 +499,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		if (null != layersTree) {
 			this.layersTree.removeTreeSelectionListener(this.layersTreeSelectionListener);
-			this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
+//			this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
 		}
 
 	}
@@ -1059,193 +1036,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		// do nothing
 	}
 
-	public void layersTreeMouseClicked(MouseEvent e) {
-		try {
-			if (e.getButton() == 1 && e.getClickCount() == 2) {
-				TreePath path = this.layersTree.getPathForLocation(e.getX(), e.getY());
-				if (path != null) {
-					Object object = path.getLastPathComponent();
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
-					TreeNodeData data = (TreeNodeData) node.getUserObject();
-					NodeDataType type = data.getType();
-					if (type.equals(NodeDataType.LAYER)) {
-						Layer layer = (Layer) data.getData();
-						if (layer.getTheme() == null) {
-							// 设置图层属性
-							this.showStyleSetDialog();
-						} 
-					}else{
-						// 修改专题图风格
-						DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
-						TreeNodeData parentNodeData = (TreeNodeData) parentNode.getUserObject();
-						if (parentNodeData.getData() instanceof Layer) {
-							Layer parentLayer = (Layer) parentNodeData.getData();
-							this.showThemeItemStyleSetDialog(parentLayer);
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	/**
-	 * 弹出风格设置窗口，返回选中的新风格
-	 */
-	public void showStyleSetDialog() {
-		try {
-			SymbolType symbolType = SymbolType.MARKER;
-			TreePath[] selections = this.layersTree.getSelectionPaths();
-
-			Layer layer = null;
-			for (int index = 0; index < selections.length; index++) {
-				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) selections[index].getLastPathComponent();
-				TreeNodeData treeNodeData = (TreeNodeData) treeNode.getUserObject();
-				Layer tempLayer = (Layer) treeNodeData.getData();
-				if (tempLayer != null && tempLayer.getTheme() == null && tempLayer.getDataset() != null) {
-					if (CommonToolkit.DatasetTypeWrap.isPoint(tempLayer.getDataset().getType())) {
-						symbolType = SymbolType.MARKER;
-						layer = tempLayer;
-						break;
-					} else if (CommonToolkit.DatasetTypeWrap.isLine(tempLayer.getDataset().getType())) {
-						symbolType = SymbolType.LINE;
-						layer = tempLayer;
-						break;
-					} else if (CommonToolkit.DatasetTypeWrap.isRegion(tempLayer.getDataset().getType())) {
-						symbolType = SymbolType.FILL;
-						layer = tempLayer;
-						break;
-					}
-				}
-			}
-
-			// notify by huchenpu 2015-06-30
-			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
-			if (layer != null && selections.length > 1) {
-				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
-				for (TreePath selection : selections) {
-					Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
-					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
-				}
-
-				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
-				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
-					this.getMapControl().getMap().refresh();
-				}
-				layersTree.updateUI();
-				// }
-			} else if (layer != null && selections.length == 1) {
-				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
-				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
-				if (geostyle != null) {
-					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
-					layerSetting.setStyle(geostyle);
-					this.getMapControl().getMap().refresh();
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	private SymbolType getSymbolType(Dataset dataset) {
-		SymbolType symbolType = SymbolType.MARKER;
-		if (CommonToolkit.DatasetTypeWrap.isPoint(dataset.getType())) {
-			symbolType = SymbolType.MARKER;
-		} else if (CommonToolkit.DatasetTypeWrap.isLine(dataset.getType())) {
-			symbolType = SymbolType.LINE;
-		} else if (CommonToolkit.DatasetTypeWrap.isRegion(dataset.getType())) {
-			symbolType = SymbolType.FILL;
-		}
-		return symbolType;
-	}
-
-	private void showThemeItemStyleSetDialog(Layer layer) {
-		try {
-			SymbolType symbolType = getSymbolType(layer.getDataset());
-			TreePath[] selections = this.layersTree.getSelectionPaths();
-			// notify by xie
-			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
-			if (selections.length > 1) {
-				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
-				for (TreePath selection : selections) {
-					TreeNodeData treeNodeData = (TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject();
-					if (treeNodeData.getData() instanceof ThemeUniqueItem) {
-						ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
-						geoStyleList.add(item.getStyle());
-					} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
-						ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
-						geoStyleList.add(item.getStyle());
-					}
-				}
-				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
-				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
-					this.getMapControl().getMap().refresh();
-				}
-				this.layersTree.updateUI();
-			} else {
-				DefaultMutableTreeNode selecTreeNode = (DefaultMutableTreeNode) this.layersTree.getLastSelectedPathComponent();
-				TreeNodeData treeNodeData = (TreeNodeData) (selecTreeNode).getUserObject();
-				int row = this.layersTree.getRowForPath(new TreePath(selecTreeNode.getPath()));
-				int x = this.layersTree.getRowBounds(row).x;
-				int y = this.layersTree.getRowBounds(row).y;
-				if (treeNodeData.getData() instanceof ThemeUniqueItem) {
-					ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
-					GeoStyle itemStyle = item.getStyle();
-					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
-					if (geostyle != null) {
-						item.setStyle(geostyle);
-						this.getMapControl().getMap().refresh();
-					}
-
-				} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
-					ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
-					GeoStyle itemStyle = item.getStyle();
-					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
-					if (geostyle != null) {
-						item.setStyle(geostyle);
-						this.getMapControl().getMap().refresh();
-					}
-				} else if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
-					final ThemeGridUniqueItem item = (ThemeGridUniqueItem) treeNodeData.getData();
-					final JPopupMenu popupMenu = new JPopupMenu();
-					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-					popupMenu.show(this.layersTree, x, y);
-					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							Color color = (Color) evt.getNewValue();
-							item.setColor(color);
-							popupMenu.setVisible(false);
-							getMapControl().getMap().refresh();
-						}
-					});
-				} else if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
-					final ThemeGridRangeItem item = (ThemeGridRangeItem) treeNodeData.getData();
-					final JPopupMenu popupMenu = new JPopupMenu();
-					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-					popupMenu.show(this.layersTree, x, y);
-					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							Color color = (Color) evt.getNewValue();
-							item.setColor(color);
-							popupMenu.setVisible(false);
-							getMapControl().getMap().refresh();
-						}
-					});
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
 	public void removeLayers(Layer[] layers) {
 		try {
 			if (layers != null && layers.length > 0) {
@@ -1367,27 +1157,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 */
 	public void reverseSelection() {
 		mapControlGeometrySelected(MapViewUtilties.reverseSelection(this));
-	}
-
-	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType) {
-		GeoStyle result = null;
-		SymbolDialog symbolDialog = null;
-		try {
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-
-			CursorUtilties.setWaitCursor();
-			symbolDialog = new SymbolDialog();
-			symbolDialog.setApplyEnable(true);
-			DialogResult dialogResult = symbolDialog.showDialog(resources, beforeStyle, symbolType);
-			if (dialogResult == DialogResult.OK) {
-				result = symbolDialog.getStyle();
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			CursorUtilties.setDefaultCursor();
-		}
-		return result;
 	}
 
 	private void mapControlGeometrySelected(int selectGeometryCount) {
