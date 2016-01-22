@@ -34,6 +34,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	private transient TextStyleContainer textStyleContainer;
 
 	private boolean isRefreshAtOnece = true;
+	
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
 	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel) {
@@ -45,7 +46,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	public ThemeLabelUniformContainer(Layer layer) {
 		this.themeLabelLayer = layer;
-		this.themeLabel = (ThemeLabel) layer.getTheme();
+		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();

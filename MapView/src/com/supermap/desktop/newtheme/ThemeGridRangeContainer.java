@@ -11,6 +11,8 @@ import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
@@ -37,6 +39,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private static final int TABLE_COLUMN_GEOSTYLE = 1;
 	private static final int TABLE_COLUMN_RANGEVALUE = 2;
 	private static final int TABLE_COLUMN_CAPTION = 3;
+	private String layerName;
 
 	private JTabbedPane tabbedPaneInfo = new JTabbedPane();
 	private JPanel panelProperty = new JPanel();
@@ -72,6 +75,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
+	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -79,6 +83,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
+	private PropertyChangeListener layersTreePropertyChangeListener;
 
 	/**
 	 * @wbp.parser.constructor
@@ -96,7 +101,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	public ThemeGridRangeContainer(Layer layer) {
 		this.themeRangeLayer = layer;
 		this.datasetGrid = (DatasetGrid) layer.getDataset();
-		this.themeGridRange = (ThemeGridRange) layer.getTheme();
+		this.themeGridRange = new ThemeGridRange((ThemeGridRange) layer.getTheme());
+		this.layerName = this.themeRangeLayer.getName();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
@@ -113,6 +119,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(datasetGrid, themeGridRange, true);
+			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -322,6 +329,20 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				int[] selectRows = tableRangeInfo.getSelectedRows();
+				map = ThemeGuideFactory.getMapControl().getMap();
+				themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+				themeGridRange = new ThemeGridRange((ThemeGridRange) themeRangeLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		};
 		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonForeGroundColor.addActionListener(this.actionListener);
@@ -337,6 +358,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -356,6 +378,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**

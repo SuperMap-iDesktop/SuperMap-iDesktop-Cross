@@ -3,9 +3,14 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Resources;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerAddedEvent;
 import com.supermap.mapping.LayerAddedListener;
@@ -17,6 +22,7 @@ import com.supermap.mapping.LayerGroupRemovedListener;
 import com.supermap.mapping.LayerRemovedEvent;
 import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.LayerSettingImage;
+import com.supermap.mapping.LayerSettingVector;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeGraph;
@@ -59,8 +65,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Beans;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -219,23 +228,25 @@ public class LayersTree extends JTree {
 
 		return result;
 	}
+
 	/**
 	 * 针对专题图的刷新
+	 * 
 	 * @param layer
 	 */
 	public void refreshNode(Layer layer) {
 		try {
-			DefaultMutableTreeNode lastselectDefaultMutableTreeNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+			DefaultMutableTreeNode lastselectDefaultMutableTreeNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 			TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
 			DefaultMutableTreeNode layerNode = null;
 			if (treeNodeData.getData() instanceof Layer) {
 				layerNode = lastselectDefaultMutableTreeNode;
-			}else {
+			} else {
 				layerNode = (DefaultMutableTreeNode) lastselectDefaultMutableTreeNode.getParent();
 			}
 			// 记住刷新之前树的状态
 			Enumeration<TreePath> tempTreePath = null;
-			if (null!=layerNode) {
+			if (null != layerNode) {
 				tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
 				// 删除指定节点
 				layerNode.removeAllChildren();
@@ -245,8 +256,9 @@ public class LayersTree extends JTree {
 				for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
 					this.setExpandedState(tempTreePath.nextElement(), true);
 				}
+				this.setSelectionPath(new TreePath(layerNode.getPath()));
 			}
-			
+
 			updateUI();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -772,6 +784,7 @@ public class LayersTree extends JTree {
 	private class TreeMouseListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			layersTreeMouseClicked(e);
 			TreePath path = LayersTree.this.getPathForLocation(e.getX(), e.getY());
 			if (path != null) {
 				HitTestInfo hitTestInfo = hitTest(e.getX(), e.getY());
@@ -791,6 +804,7 @@ public class LayersTree extends JTree {
 					} else if (type == 4 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseFour(obj);
 					}
+					firePropertyChangeWithLayerSelect();
 				}
 				updateUI();
 				currentMap.refresh();
@@ -822,28 +836,278 @@ public class LayersTree extends JTree {
 			if (obj instanceof Layer) {
 				Layer layer = (Layer) obj;
 				layer.setVisible(!layer.isVisible());
+				if (null != layer.getTheme()) {
+					Theme tempTheme = layer.getTheme();
+					if (tempTheme instanceof ThemeUnique && 0 < ((ThemeUnique) tempTheme).getCount()) {
+						for (int i = 0; i < ((ThemeUnique) tempTheme).getCount(); i++) {
+							((ThemeUnique) tempTheme).getItem(i).setVisible(layer.isVisible());
+						}
+						return;
+					}
+					if (tempTheme instanceof ThemeRange && 0 < ((ThemeRange) tempTheme).getCount()) {
+						for (int i = 0; i < ((ThemeRange) tempTheme).getCount(); i++) {
+							((ThemeRange) tempTheme).getItem(i).setVisible(layer.isVisible());
+						}
+						return;
+					}
+					if (tempTheme instanceof ThemeLabel && 0 < ((ThemeLabel) tempTheme).getCount()) {
+						for (int i = 0; i < ((ThemeLabel) tempTheme).getCount(); i++) {
+							((ThemeLabel) tempTheme).getItem(i).setVisible(layer.isVisible());
+						}
+						return;
+					}
+					if (tempTheme instanceof ThemeGridUnique && 0 < ((ThemeGridUnique) tempTheme).getCount()) {
+						for (int i = 0; i < ((ThemeGridUnique) tempTheme).getCount(); i++) {
+							((ThemeGridUnique) tempTheme).getItem(i).setVisible(layer.isVisible());
+						}
+						return;
+					}
+					if (tempTheme instanceof ThemeGridRange && 0 < ((ThemeGridRange) tempTheme).getCount()) {
+						for (int i = 0; i < ((ThemeGridRange) tempTheme).getCount(); i++) {
+							((ThemeGridRange) tempTheme).getItem(i).setVisible(layer.isVisible());
+						}
+						return;
+					}
+				}
 			}
 			if (obj instanceof ThemeUniqueItem) {
 				ThemeUniqueItem item = (ThemeUniqueItem) obj;
 				item.setVisible(!item.isVisible());
+				return;
 			}
 			if (obj instanceof ThemeRangeItem) {
 				ThemeRangeItem item = (ThemeRangeItem) obj;
 				item.setVisible(!item.isVisible());
+				return;
 			}
 			if (obj instanceof ThemeGridUniqueItem) {
 				ThemeGridUniqueItem item = (ThemeGridUniqueItem) obj;
 				item.setVisible(!item.isVisible());
+				return;
 			}
 			if (obj instanceof ThemeGridRangeItem) {
 				ThemeGridRangeItem item = (ThemeGridRangeItem) obj;
 				item.setVisible(!item.isVisible());
+				return;
 			}
 			if (obj instanceof ThemeLabelItem) {
 				ThemeLabelItem item = (ThemeLabelItem) obj;
 				item.setVisible(!item.isVisible());
+				return;
 			}
 		}
+
+		private void layersTreeMouseClicked(MouseEvent e) {
+			try {
+				if (e.getButton() == 1 && e.getClickCount() == 2) {
+					TreePath path = getPathForLocation(e.getX(), e.getY());
+					if (path != null) {
+						Object object = path.getLastPathComponent();
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
+						TreeNodeData data = (TreeNodeData) node.getUserObject();
+						NodeDataType type = data.getType();
+						if (type.equals(NodeDataType.LAYER)) {
+							Layer layer = (Layer) data.getData();
+							if (layer.getTheme() == null) {
+								// 设置图层属性
+								showStyleSetDialog();
+								firePropertyChangeWithLayerSelect();
+							}
+						} else {
+							// 修改专题图风格
+							DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) node.getParent();
+							TreeNodeData parentNodeData = (TreeNodeData) parentNode.getUserObject();
+							if (parentNodeData.getData() instanceof Layer) {
+								Layer parentLayer = (Layer) parentNodeData.getData();
+								showThemeItemStyleSetDialog(parentLayer);
+							}
+						}
+					}
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+		}
+	}
+
+	/**
+	 * 弹出风格设置窗口，返回选中的新风格
+	 */
+	public void showStyleSetDialog() {
+		try {
+			SymbolType symbolType = SymbolType.MARKER;
+			TreePath[] selections = this.getSelectionPaths();
+
+			Layer layer = null;
+			for (int index = 0; index < selections.length; index++) {
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) selections[index].getLastPathComponent();
+				TreeNodeData treeNodeData = (TreeNodeData) treeNode.getUserObject();
+				Layer tempLayer = (Layer) treeNodeData.getData();
+				if (tempLayer != null && tempLayer.getTheme() == null && tempLayer.getDataset() != null) {
+					if (CommonToolkit.DatasetTypeWrap.isPoint(tempLayer.getDataset().getType())) {
+						symbolType = SymbolType.MARKER;
+						layer = tempLayer;
+						break;
+					} else if (CommonToolkit.DatasetTypeWrap.isLine(tempLayer.getDataset().getType())) {
+						symbolType = SymbolType.LINE;
+						layer = tempLayer;
+						break;
+					} else if (CommonToolkit.DatasetTypeWrap.isRegion(tempLayer.getDataset().getType())) {
+						symbolType = SymbolType.FILL;
+						layer = tempLayer;
+						break;
+					}
+				}
+			}
+
+			// notify by huchenpu 2015-06-30
+			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
+			if (layer != null && selections.length > 1) {
+				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+				for (TreePath selection : selections) {
+					Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
+					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
+				}
+
+				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
+					this.currentMap.refresh();
+				}
+				this.updateUI();
+				// }
+			} else if (layer != null && selections.length == 1) {
+				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
+				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
+				if (geostyle != null) {
+					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
+					layerSetting.setStyle(geostyle);
+					this.currentMap.refresh();
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private SymbolType getSymbolType(Dataset dataset) {
+		SymbolType symbolType = SymbolType.MARKER;
+		if (CommonToolkit.DatasetTypeWrap.isPoint(dataset.getType())) {
+			symbolType = SymbolType.MARKER;
+		} else if (CommonToolkit.DatasetTypeWrap.isLine(dataset.getType())) {
+			symbolType = SymbolType.LINE;
+		} else if (CommonToolkit.DatasetTypeWrap.isRegion(dataset.getType())) {
+			symbolType = SymbolType.FILL;
+		}
+		return symbolType;
+	}
+
+	private void showThemeItemStyleSetDialog(Layer layer) {
+		try {
+			SymbolType symbolType = getSymbolType(layer.getDataset());
+			TreePath[] selections = this.getSelectionPaths();
+			// notify by xie
+			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
+			if (selections.length > 1) {
+				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+				for (TreePath selection : selections) {
+					TreeNodeData treeNodeData = (TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject();
+					if (treeNodeData.getData() instanceof ThemeUniqueItem) {
+						ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+						geoStyleList.add(item.getStyle());
+					} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
+						ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+						geoStyleList.add(item.getStyle());
+					}
+				}
+				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
+					this.currentMap.refresh();
+				}
+				this.updateUI();
+			} else {
+				DefaultMutableTreeNode selecTreeNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+				TreeNodeData treeNodeData = (TreeNodeData) (selecTreeNode).getUserObject();
+				int row = this.getRowForPath(new TreePath(selecTreeNode.getPath()));
+				int x = this.getRowBounds(row).x;
+				int y = this.getRowBounds(row).y;
+				if (treeNodeData.getData() instanceof ThemeUniqueItem) {
+					ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+					GeoStyle itemStyle = item.getStyle();
+					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+					if (geostyle != null) {
+						item.setStyle(geostyle);
+						this.currentMap.refresh();
+						firePropertyChangeWithLayerSelect();
+					}
+				} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
+					ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+					GeoStyle itemStyle = item.getStyle();
+					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+					if (geostyle != null) {
+						item.setStyle(geostyle);
+						this.currentMap.refresh();
+						firePropertyChangeWithLayerSelect();
+					}
+				} else if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
+					final ThemeGridUniqueItem item = (ThemeGridUniqueItem) treeNodeData.getData();
+					final JPopupMenu popupMenu = new JPopupMenu();
+					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+					popupMenu.show(this, x, y);
+					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							Color color = (Color) evt.getNewValue();
+							item.setColor(color);
+							popupMenu.setVisible(false);
+							currentMap.refresh();
+							firePropertyChangeWithLayerSelect();
+						}
+					});
+				} else if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
+					final ThemeGridRangeItem item = (ThemeGridRangeItem) treeNodeData.getData();
+					final JPopupMenu popupMenu = new JPopupMenu();
+					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+					popupMenu.show(this, x, y);
+					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							Color color = (Color) evt.getNewValue();
+							item.setColor(color);
+							popupMenu.setVisible(false);
+							currentMap.refresh();
+							firePropertyChangeWithLayerSelect();
+						}
+					});
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType) {
+		GeoStyle result = null;
+		SymbolDialog symbolDialog = null;
+		try {
+			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+
+			CursorUtilties.setWaitCursor();
+			symbolDialog = new SymbolDialog();
+			symbolDialog.setApplyEnable(true);
+			DialogResult dialogResult = symbolDialog.showDialog(resources, beforeStyle, symbolType);
+			if (dialogResult == DialogResult.OK) {
+				result = symbolDialog.getStyle();
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			CursorUtilties.setDefaultCursor();
+		}
+		return result;
 	}
 
 	/**

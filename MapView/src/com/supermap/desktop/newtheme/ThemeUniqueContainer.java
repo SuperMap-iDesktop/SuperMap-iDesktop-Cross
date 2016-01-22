@@ -7,6 +7,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
@@ -22,6 +23,8 @@ import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -59,8 +62,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private JLabel labelOffsetYUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
 	private AddItemPanel addItemPanel;
-	private String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
+	private String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient ThemeUnique themeUnique;
 	private transient DatasetVector datasetVector;
 	private SQLExpressionDialog sqlDialog;
@@ -70,6 +73,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private String expression;
 	private boolean isNewTheme = false;
+	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+	private String layerName;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -86,13 +91,14 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
+	private PropertyChangeListener layersTreePropertyChangeListener;
 
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique) {
 		this.datasetVector = datasetVector;
-		this.themeUnique = themeUnique;
+		this.themeUnique = new ThemeUnique(themeUnique);
 		this.map = initCurrentTheme(datasetVector);
 		this.isNewTheme = true;
 		initComponents();
@@ -102,7 +108,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	public ThemeUniqueContainer(Layer layer) {
 		this.themeUniqueLayer = layer;
-		this.themeUnique = (ThemeUnique) themeUniqueLayer.getTheme();
+		this.layerName = this.themeUniqueLayer.getName();
+		this.themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
@@ -120,7 +127,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
-			this.themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
+			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -172,6 +179,21 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 控件注册事件
 	 */
 	void registActionListener() {
+		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				int[] selectRows = tableUniqueInfo.getSelectedRows();
+				// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
+				map = ThemeGuideFactory.getMapControl().getMap();
+				themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+				themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		};
 		unregistActionListener();
 		this.comboBoxExpression.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.addItemListener(this.comboBoxItemListener);
@@ -187,6 +209,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.addKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -232,6 +255,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -271,7 +295,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 	}
 
-
 	/**
 	 * 初始化水平偏移量
 	 */
@@ -308,7 +331,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	}
 
-	
 	/**
 	 * 初始化工具条
 	 */
@@ -353,6 +375,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.scollPane.setViewportView(tableUniqueInfo);		
 		//@formatter:on
 	}
+
 	/**
 	 * 初始化表达式
 	 */
@@ -1168,7 +1191,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.themeUniqueLayer = themeUniqueLayer;
 	}
 
-	void refreshMapAndLayer(){
+	void refreshMapAndLayer() {
 		((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
 		for (int i = 0; i < this.themeUnique.getCount(); i++) {
 			((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
@@ -1180,7 +1203,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
 		this.map.refresh();
 	}
-	
+
 	// 获取当前的专题图
 	@Override
 	public Theme getCurrentTheme() {

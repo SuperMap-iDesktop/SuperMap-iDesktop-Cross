@@ -78,6 +78,7 @@ public class ThemeGuideFactory {
 		} finally {
 			if (null == getDockbarThemeContainer()) {
 				container.unregistActionListener();
+//				themeTypeContainer.clear();
 			}
 		}
 		if (null != container) {

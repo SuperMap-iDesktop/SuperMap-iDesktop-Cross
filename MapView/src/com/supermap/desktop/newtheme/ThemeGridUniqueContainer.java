@@ -10,6 +10,8 @@ import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
@@ -21,6 +23,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -55,6 +58,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private ArrayList<ThemeGridUniqueItem> deleteItems = new ArrayList<ThemeGridUniqueItem>();
 	private boolean isRefreshAtOnce = true;
 	private boolean isNewTheme = false;
+	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+	private String layerName;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -67,6 +72,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
+	private PropertyChangeListener layersTreePropertyChangeListener;
 
 	/**
 	 * @wbp.parser.constructor
@@ -83,7 +89,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 	public ThemeGridUniqueContainer(Layer layer) {
 		this.themeUniqueLayer = layer;
-		this.themeUnique = (ThemeGridUnique) themeUniqueLayer.getTheme();
+		this.layerName = this.themeUniqueLayer.getName();
+		this.themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
 		this.datasetGrid = (DatasetGrid) layer.getDataset();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
@@ -101,6 +108,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(datasetGrid, themeUnique, true);
+			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -142,6 +150,20 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 * 控件注册事件
 	 */
 	void registActionListener() {
+		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				int[] selectRows = tableUniqueInfo.getSelectedRows();
+				map = ThemeGuideFactory.getMapControl().getMap();
+				themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		};
 		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
@@ -153,6 +175,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.addKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -194,6 +217,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**

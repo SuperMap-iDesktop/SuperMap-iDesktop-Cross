@@ -7,6 +7,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
@@ -23,6 +24,8 @@ import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -85,6 +88,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
+	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+	private String layerName;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -92,6 +97,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
+	private PropertyChangeListener layersTreePropertyChangeListener;
+
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -105,10 +112,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		initResources();
 		registActionListener();
 	}
+
 	public ThemeRangeContainer(Layer layer) {
 		this.themeRangeLayer = layer;
+		this.layerName = this.themeRangeLayer.getName();
 		this.datasetVector = (DatasetVector) layer.getDataset();
-		this.themeRange = (ThemeRange) layer.getTheme();
+		this.themeRange = new ThemeRange((ThemeRange) layer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.precision = themeRange.getPrecision();
 		initComponents();
@@ -126,6 +135,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(dataset, themeRange, true);
+			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -314,8 +324,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化段值精度项
 	 */
 	private void initComboBoxRangePrecision() {
-		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100",
-				"10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
+		this.comboBoxRangePrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "10000000", "1000000", "100000", "10000", "1000", "100", "10",
+				"1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001", "0.0000001" }));
 		String numeric = initPrecision(String.valueOf(this.themeRange.getPrecision()));
 		this.comboBoxRangePrecision.setSelectedItem(numeric);
 	}
@@ -521,6 +531,20 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
+		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				int[] selectRows = tableRangeInfo.getSelectedRows();
+				map = ThemeGuideFactory.getMapControl().getMap();
+				themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		};
 		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
@@ -542,6 +566,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -564,6 +589,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
 	/**
@@ -1389,7 +1415,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				((ThemeRange) this.themeRangeLayer.getTheme()).addToTail(this.themeRange.getItem(i), true);
 			}
 		}
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);;
+		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
+		;
 		this.map.refresh();
 	}
 
