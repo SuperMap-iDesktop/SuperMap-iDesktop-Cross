@@ -1,6 +1,5 @@
 package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
-import com.supermap.desktop.CtrlAction.SQLQuery.JDialogSQLQuery;
 import com.supermap.desktop.CtrlAction.SQLQuery.SqlUtilties;
 
 import javax.swing.*;
@@ -21,7 +20,7 @@ public class SQLTextfield extends JTextField implements ISQLBuildComponent {
 //			// 直接添加，不作处理
 //		} else if (addMode == JDialogSQLQuery.ADD_OPERATOR) {
 //			reSize = SqlUtilties.resizeCursorPlace(data);
-//		} else if (addMode == JDialogSQLQuery.ADD_FOUNCTION_OR_FIELD) {
+//		} else if (addMode == JDialogSQLQuery.ADD_FUNCTION_OR_FIELD) {
 //
 //		}
 		if (selectStart > 0 && !builder.substring(selectStart - 1, selectStart).equals(",") && !builder.substring(selectStart - 1, selectStart).equals("(")) {

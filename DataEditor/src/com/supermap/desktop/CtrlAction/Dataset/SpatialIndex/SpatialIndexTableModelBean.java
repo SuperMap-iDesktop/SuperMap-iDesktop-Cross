@@ -173,13 +173,13 @@ public class SpatialIndexTableModelBean {
 					this.getSpatialIndexInfo().setGridSize0(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_1:
-					if (doubleValue <= 0) {
+					if (doubleValue < 0) {
 						return;
 					}
 					this.getSpatialIndexInfo().setGridSize1(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_2:
-					if (doubleValue <= 0) {
+					if (doubleValue < 0) {
 						return;
 					}
 					this.getSpatialIndexInfo().setGridSize2(doubleValue);

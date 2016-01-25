@@ -1,14 +1,10 @@
 package com.supermap.desktop.iDesktop;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.ui.UICommonToolkit;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 public class DesktopActivator implements BundleActivator {
 
@@ -25,9 +21,9 @@ public class DesktopActivator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Hello SuperMap === iDesktop!!");
-		
-		DesktopActivator.setContext(bundleContext);		
-		
+
+		DesktopActivator.setContext(bundleContext);
+
 		IFormMain formMain = Application.getActiveApplication().getMainFrame();
 		if (formMain == null) {
 			UICommonToolkit.showMessageDialog(DesktopProperties.getString("PermissionCheckFailed"));
@@ -45,8 +41,8 @@ public class DesktopActivator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		DesktopActivator.setContext(null);
 	}
-	
-	public static void setContext(BundleContext context){
+
+	public static void setContext(BundleContext context) {
 		DesktopActivator.CONTEXT = context;
 	}
 

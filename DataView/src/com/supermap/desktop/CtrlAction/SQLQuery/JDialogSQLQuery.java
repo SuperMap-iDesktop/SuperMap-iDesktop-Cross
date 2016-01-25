@@ -77,7 +77,7 @@ public class JDialogSQLQuery extends SmDialog {
 	/**
 	 * 需要考虑加','的情况，并将光标放置在括号中
 	 */
-	public static final int ADD_FOUNCTION_OR_FIELD = 2;
+	public static final int ADD_FUNCTION_OR_FIELD = 2;
 	/**
 	 * 添加运算符号，需要判断位置是否需要在中间
 	 */
@@ -309,45 +309,45 @@ public class JDialogSQLQuery extends SmDialog {
 	 */
 	private void registListeners() {
 		// 编辑框
-		this.textFieldGroupField.addFocusListener(focusAdapter);
-		this.textareaQueryCondition.addFocusListener(focusAdapter);
-		this.textareaQueryField.addFocusListener(focusAdapter);
-		this.sqlTableOrderByField.addFocusListener(focusAdapter);
+		this.textFieldGroupField.addFocusListener(this.focusAdapter);
+		this.textareaQueryCondition.addFocusListener(this.focusAdapter);
+		this.textareaQueryField.addFocusListener(this.focusAdapter);
+		this.sqlTableOrderByField.addFocusListener(this.focusAdapter);
 		// 排序字段
-		this.scrollPaneOrderByField.addMouseListener(scrollPaneorderByField);
+		this.scrollPaneOrderByField.addMouseListener(this.scrollPaneorderByField);
 		// 下拉框
 
-		this.jComboBoxOperator.addActionListener(comboBoxOperatorActionListener);
-		this.jComboBoxAggregationFunction.addItemListener(itemListener);
-		this.jComboBoxMathsOperation.addItemListener(itemListener);
-		this.jComboBoxStringFunction.addItemListener(itemListener);
-		this.jComboBoxTimeFunction.addItemListener(itemListener);
+		this.jComboBoxOperator.addActionListener(this.comboBoxOperatorActionListener);
+		this.jComboBoxAggregationFunction.addItemListener(this.itemListener);
+		this.jComboBoxMathsOperation.addItemListener(this.itemListener);
+		this.jComboBoxStringFunction.addItemListener(this.itemListener);
+		this.jComboBoxTimeFunction.addItemListener(this.itemListener);
 		// 工作空间树
-		this.workspaceTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
+		this.workspaceTree.getSelectionModel().addTreeSelectionListener(this.treeSelectionListener);
 		// 字段信息表
-		this.tableFieldInfo.addMouseListener(mouseAdapter);
-		this.tableFieldInfo.getSelectionModel().addListSelectionListener(listSelectionListener);
+		this.tableFieldInfo.addMouseListener(this.mouseAdapter);
+		this.tableFieldInfo.getSelectionModel().addListSelectionListener(this.listSelectionListener);
 		// 查询模式
-		this.radioButtonQueryAttributeInfo.addChangeListener(changeListener);
+		this.radioButtonQueryAttributeInfo.addChangeListener(this.changeListener);
 		// 获取唯一值按钮
-		this.buttonGetAllValue.addActionListener(actionListener);
+		this.buttonGetAllValue.addActionListener(this.actionListener);
 		// 定位文本框
-		this.textFieldGOTO.addKeyListener(keyAdapter);
+		this.textFieldGOTO.addKeyListener(this.keyAdapter);
 		// 唯一值列表
-		this.listAllValue.addMouseListener(listAllValueMouseAdapter);
+		this.listAllValue.addMouseListener(this.listAllValueMouseAdapter);
 		// 查询字段内容改变判断查询按钮状态
-		textareaQueryField.getDocument().addDocumentListener(documentListenerCheckQueryState);
+		this.textareaQueryField.getDocument().addDocumentListener(this.documentListenerCheckQueryState);
 		// 查询
-		buttonQuery.addActionListener(queryActionListener);
+		this.buttonQuery.addActionListener(this.queryActionListener);
 		// 清除
-		buttonClear.addActionListener(clearActionListener);
+		this.buttonClear.addActionListener(this.clearActionListener);
 		// 关闭
-		buttonClose.addActionListener(closeActionlistener);
+		this.buttonClose.addActionListener(this.closeActionlistener);
 
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				clean();
+				dispose();
 			}
 
 		});
@@ -359,39 +359,39 @@ public class JDialogSQLQuery extends SmDialog {
 
 	private void unRegistListeners() {
 		// 编辑框
-		this.textFieldGroupField.removeFocusListener(focusAdapter);
-		this.textareaQueryCondition.removeFocusListener(focusAdapter);
-		this.textareaQueryField.removeFocusListener(focusAdapter);
-		this.sqlTableOrderByField.removeFocusListener(focusAdapter);
+		this.textFieldGroupField.removeFocusListener(this.focusAdapter);
+		this.textareaQueryCondition.removeFocusListener(this.focusAdapter);
+		this.textareaQueryField.removeFocusListener(this.focusAdapter);
+		this.sqlTableOrderByField.removeFocusListener(this.focusAdapter);
 		// 排序字段
-		this.scrollPaneOrderByField.removeMouseListener(scrollPaneorderByField);
+		this.scrollPaneOrderByField.removeMouseListener(this.scrollPaneorderByField);
 		// 下拉框
-		this.jComboBoxOperator.removeActionListener(comboBoxOperatorActionListener);
-		this.jComboBoxAggregationFunction.removeItemListener(itemListener);
-		this.jComboBoxMathsOperation.removeItemListener(itemListener);
-		this.jComboBoxStringFunction.removeItemListener(itemListener);
-		this.jComboBoxTimeFunction.removeItemListener(itemListener);
+		this.jComboBoxOperator.removeActionListener(this.comboBoxOperatorActionListener);
+		this.jComboBoxAggregationFunction.removeItemListener(this.itemListener);
+		this.jComboBoxMathsOperation.removeItemListener(this.itemListener);
+		this.jComboBoxStringFunction.removeItemListener(this.itemListener);
+		this.jComboBoxTimeFunction.removeItemListener(this.itemListener);
 		// 工作空间树
-		this.workspaceTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
+		this.workspaceTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectionListener);
 		// 字段信息表
-		this.tableFieldInfo.removeMouseListener(mouseAdapter);
-		this.tableFieldInfo.getSelectionModel().removeListSelectionListener(listSelectionListener);
+		this.tableFieldInfo.removeMouseListener(this.mouseAdapter);
+		this.tableFieldInfo.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
 		// 查询模式
-		this.radioButtonQueryAttributeInfo.removeChangeListener(changeListener);
+		this.radioButtonQueryAttributeInfo.removeChangeListener(this.changeListener);
 		// 获取唯一值按钮
-		this.buttonGetAllValue.removeActionListener(actionListener);
+		this.buttonGetAllValue.removeActionListener(this.actionListener);
 		// 定位文本框
-		this.textFieldGOTO.removeKeyListener(keyAdapter);
+		this.textFieldGOTO.removeKeyListener(this.keyAdapter);
 		// 唯一值列表
-		this.listAllValue.removeMouseListener(listAllValueMouseAdapter);
+		this.listAllValue.removeMouseListener(this.listAllValueMouseAdapter);
 		// 查询字段内容改变判断查询按钮状态
-		textareaQueryField.getDocument().removeDocumentListener(documentListenerCheckQueryState);
+		this.textareaQueryField.getDocument().removeDocumentListener(this.documentListenerCheckQueryState);
 		// 查询
-		buttonQuery.removeActionListener(queryActionListener);
+		this.buttonQuery.removeActionListener(this.queryActionListener);
 		// 清除
-		buttonClear.removeActionListener(clearActionListener);
+		this.buttonClear.removeActionListener(this.clearActionListener);
 		// 关闭
-		buttonClose.removeActionListener(closeActionlistener);
+		this.buttonClose.removeActionListener(this.closeActionlistener);
 	}
 
 	/**
@@ -660,7 +660,7 @@ public class JDialogSQLQuery extends SmDialog {
 				int addMode = 0;
 				Object selectItem = e.getItem();
 				if (!((JComboBox) e.getSource()).getItemAt(0).equals(selectItem)) {
-					addMode = ADD_FOUNCTION_OR_FIELD;
+					addMode = ADD_FUNCTION_OR_FIELD;
 					((JComboBox) e.getSource()).setSelectedIndex(0);
 				}
 
@@ -722,7 +722,7 @@ public class JDialogSQLQuery extends SmDialog {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 				if (row == 0) {
 					if (lastComponent == textareaQueryField) {
-						lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FOUNCTION_OR_FIELD);
+						lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
 					} else {
 						// donothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
 					}
@@ -736,7 +736,7 @@ public class JDialogSQLQuery extends SmDialog {
 					}
 				}*/
 				else if (row != -1) {
-					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FOUNCTION_OR_FIELD);
+					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
 				}
 			}
 		}
@@ -880,14 +880,15 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener closeActionlistener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JDialogSQLQuery.this.clean();
+			JDialogSQLQuery.this.dispose();
 		}
 	};
 
-	private void clean() {
+	@Override
+	public void dispose() {
 		this.unRegistListeners();
 		this.workspaceTree.dispose();
-		this.dispose();
+		super.dispose();
 	}
 
 	/**
@@ -896,7 +897,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener queryActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Boolean isSuccessed = false;
+			boolean isSuccessed;
 			QueryParameter queryParameter = null;
 			Recordset resultRecord = null;
 			try {
@@ -960,7 +961,7 @@ public class JDialogSQLQuery extends SmDialog {
 						}
 						isSuccessed = true;
 						if (isSuccessed) {
-							JDialogSQLQuery.this.clean();
+							JDialogSQLQuery.this.dispose();
 						}
 					} else {
 						Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SQLQueryFailed"));
@@ -1141,8 +1142,8 @@ public class JDialogSQLQuery extends SmDialog {
 		public void resetValue(String[] allValue) {
 			this.removeAllElements();
 			if (allValue != null && allValue.length > 0) {
-				for (int i = 0; i < allValue.length; i++) {
-					((DefaultListModel<String>) this.getModel()).addElement(allValue[i]);
+				for (String anAllValue : allValue) {
+					((DefaultListModel<String>) this.getModel()).addElement(anAllValue);
 				}
 				this.setSelectedIndex(0);
 			}
