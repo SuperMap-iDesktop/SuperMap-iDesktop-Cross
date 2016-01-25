@@ -24,8 +24,7 @@ public class CtrlActionLayerStyle extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
-			formMap.showStyleSetDialog();
+			UICommonToolkit.getLayersManager().getLayersTree().showStyleSetDialog();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

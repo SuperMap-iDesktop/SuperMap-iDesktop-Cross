@@ -34,6 +34,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -68,20 +72,150 @@ public class JDialogDatasetCopy extends SmDialog {
 	private JButton buttonCancel;
 	private JButton buttonAdd;
 	private transient Dataset[] datasets;
+	private JScrollPane scrollPaneTable;
+	private DatasourceComboBox targetBox;
+	
+	private MouseAdapter tableMouseListener;
+	private KeyAdapter tableKeyListener;
+	private MouseAdapter scrollPaneMouseListener;
+	private ActionListener buttonSelectAllListener;
+	private ActionListener buttonAddListener;
+	private ActionListener buttonDeleteListener;
+	private ActionListener buttonSelectInvertListener;
+	private ActionListener buttonSettingListener;
+	private ActionListener buttonOkListener;
+	private ActionListener buttonCancelListener;
+	private ActionListener targetBoxListener;
 
 	/**
 	 * Create the dialog.
 	 */
 	public JDialogDatasetCopy() {
 		initComponents();
+		initResources();
+		registActionListener();
 	}
-
 	public JDialogDatasetCopy(Dataset[] datasets) {
 		this.datasets = datasets;
 		initComponents();
 		initializeCopyInfo();
+		initResources();
+		registActionListener();
 	}
 
+	private void registActionListener() {
+		this.tableMouseListener = new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				tableOrScrollPanel_pressed(e);
+			}
+		};
+		this.tableKeyListener = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					deleteSelectedRow();
+					setButtonState();
+				}
+			}
+		};
+		this.scrollPaneMouseListener = new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				tableOrScrollPanel_pressed(e);
+			}
+		};
+		this.buttonSelectAllListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonSelectAll_Click();
+			}
+		};
+		this.buttonAddListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonAdd_Click();
+				setButtonState();
+			}
+		};
+		this.buttonDeleteListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonDelete_Click();
+			}
+		};
+		this.buttonSelectInvertListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonSelectInvert_Click();
+			}
+		};
+		this.buttonSettingListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonSetting_Click();
+			}
+		};
+		this.buttonOkListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		};
+		this.buttonCancelListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		};
+		this.targetBoxListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				extractInitilizeColumnTryBlock(targetBox);
+			}
+		};
+		unregistActionListener();
+		this.table.addMouseListener(this.tableMouseListener);
+		this.table.addKeyListener(this.tableKeyListener);
+		this.scrollPaneTable.addMouseListener(this.scrollPaneMouseListener);
+		this.buttonSelectAll.addActionListener(this.buttonSelectAllListener);
+		this.buttonAdd.addActionListener(this.buttonAddListener);
+		this.buttonDelete.addActionListener(this.buttonDeleteListener);
+		this.buttonSelectInvert.addActionListener(this.buttonSelectInvertListener);
+		this.buttonSetting.addActionListener(this.buttonSettingListener);
+		this.buttonOk.addActionListener(this.buttonOkListener);
+		this.buttonCancel.addActionListener(this.buttonCancelListener);
+		this.targetBox.addActionListener(this.targetBoxListener);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				unregistActionListener();
+			}
+		});
+	}
+
+	private void unregistActionListener(){
+		this.table.removeMouseListener(this.tableMouseListener);
+		this.table.removeKeyListener(this.tableKeyListener);
+		this.scrollPaneTable.removeMouseListener(this.scrollPaneMouseListener);
+		this.buttonSelectAll.removeActionListener(this.buttonSelectAllListener);
+		this.buttonAdd.removeActionListener(this.buttonAddListener);
+		this.buttonDelete.removeActionListener(this.buttonDeleteListener);
+		this.buttonSelectInvert.removeActionListener(this.buttonSelectInvertListener);
+		this.buttonSetting.removeActionListener(this.buttonSettingListener);
+		this.buttonOk.removeActionListener(this.buttonOkListener);
+		this.buttonCancel.removeActionListener(this.buttonCancelListener);
+		this.targetBox.removeActionListener(this.targetBoxListener);
+	}
+	
 	public void initComponents() {
 		this.setModal(true);
 		setBounds(100, 100, 677, 405);
@@ -108,28 +242,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.table.putClientProperty("terminateEditOnFocusLost", true);
 		initializeColumns();
 
-		JScrollPane scrollPaneTable = new JScrollPane(table);
-		this.table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				tableOrScrollPanel_pressed(e);
-			}
-		});
-		this.table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-					deleteSelectedRow();
-					setButtonState();
-				}
-			}
-		});
-		scrollPaneTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				tableOrScrollPanel_pressed(e);
-			}
-		});
+		this.scrollPaneTable = new JScrollPane(table);
 		// @formatter:off
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
@@ -150,24 +263,10 @@ public class JDialogDatasetCopy extends SmDialog {
 		buttonSelectAll.setEnabled(false);
 		buttonSelectAll.setIcon(new ImageIcon(JDialogDatasetCopy.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		buttonSelectAll.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonSelectAll_Click();
-			}
-		});
 
 		buttonAdd = new JButton();
 		buttonAdd.setIcon(new ImageIcon(JDialogDatasetCopy.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
-		buttonAdd.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonAdd_Click();
-				setButtonState();
-			}
-		});
 		toolBar.add(buttonAdd);
 		toolBar.add(buttonSelectAll);
 
@@ -175,26 +274,14 @@ public class JDialogDatasetCopy extends SmDialog {
 		buttonSelectInvert.setEnabled(false);
 		buttonSelectInvert.setIcon(new ImageIcon(JDialogDatasetCopy.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		buttonSelectInvert.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonSelectInvert_Click();
-			}
-		});
+		
 		this.toolBar.add(buttonSelectInvert);
 		this.toolBar.add(createSeparator());
 		this.buttonDelete = new JButton();
 		this.buttonDelete.setEnabled(false);
 		this.buttonDelete
 				.setIcon(new ImageIcon(JDialogDatasetCopy.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
-		this.buttonDelete.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonDelete_Click();
-			}
-		});
 		this.buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		this.toolBar.add(buttonDelete);
 		this.toolBar.add(createSeparator());
@@ -203,13 +290,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.buttonSetting.setEnabled(false);
 		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetCopy.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
-		this.buttonSetting.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonSetting_Click();
-			}
-		});
+		
 		this.toolBar.add(buttonSetting);
 		this.contentPanel.setLayout(gl_contentPanel);
 
@@ -222,25 +303,13 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.checkBoxAutoClose.setSelected(true);
 		this.buttonOk = new JButton("OK");
 		this.buttonOk.setEnabled(false);
-		this.buttonOk.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButton_Click();
-			}
-		});
+		
 		this.buttonOk.setToolTipText("");
 		this.buttonOk.setActionCommand("OK");
 		getRootPane().setDefaultButton(buttonOk);
 
 		this.buttonCancel = new JButton("Cancel");
-		this.buttonCancel.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		});
+		
 		this.buttonCancel.setToolTipText("");
 		this.buttonCancel.setActionCommand("Cancel");
 
@@ -270,7 +339,6 @@ public class JDialogDatasetCopy extends SmDialog {
 		// @formatter:on
 		buttonPane.setLayout(gl_buttonPane);
 		table.getColumnModel().getColumn(COLUMN_INDEX_TargetDatasource).setPreferredWidth(40);
-		initializeResources();
 		this.setLocationRelativeTo(null);
 	}
 
@@ -396,7 +464,7 @@ public class JDialogDatasetCopy extends SmDialog {
 	/**
 	 * 资源化
 	 */
-	private void initializeResources() {
+	private void initResources() {
 		try {
 			this.setTitle(DataEditorProperties.getString("String_CopyDataset"));
 			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
@@ -423,7 +491,6 @@ public class JDialogDatasetCopy extends SmDialog {
 	/**
 	 * 初始化下拉框信息
 	 */
-	@SuppressWarnings("unchecked")
 	private void initializeColumns() {
 		try {
 			// 目标数据源
@@ -433,14 +500,7 @@ public class JDialogDatasetCopy extends SmDialog {
 				datasourcesArray.add(datasources.get(i));
 			}
 			Datasource[] array = new Datasource[datasourcesArray.size()];
-			final DatasourceComboBox targetBox = new DatasourceComboBox(datasourcesArray.toArray(array));
-			targetBox.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					extractInitilizeColumnTryBlock(targetBox);
-				}
-			});
+			this.targetBox = new DatasourceComboBox(datasourcesArray.toArray(array));
 
 			TableColumn targetDatasourceColumn = table.getColumnModel().getColumn(COLUMN_INDEX_TargetDatasource);
 			TableCellEditor targetDatasourceCellEditor = new DefaultCellEditor(targetBox);

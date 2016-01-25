@@ -3,6 +3,11 @@ package com.supermap.desktop.ui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -24,12 +29,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.SwingConstants;
@@ -39,6 +46,7 @@ import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.action.CommonMouseListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.util.CommonFunction;
@@ -150,7 +158,7 @@ public class DataImportFrame extends SmDialog {
 		//@formatter:off
 		this.panelFiles.setLayout(new GridBagLayout());
 		this.panelFiles.add(this.toolBar,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
-		this.panelFiles.add(scrollPane,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,5,5,5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
+		this.panelFiles.add(this.scrollPane,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,5,5,5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
 		this.panelFiles.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,5,5,5).setWeight(0, 0));
 		//@formatter:on
 		// 为scrollPane和table添加事件响应
@@ -160,7 +168,7 @@ public class DataImportFrame extends SmDialog {
 		this.model = new FileInfoModel(this.fileInfos);
 		this.table = new JTable();
 		this.table.setModel(this.model);
-		scrollPane.setViewportView(this.table);
+		this.scrollPane.setViewportView(this.table);
 	}
 
 	private void initToolBar() {

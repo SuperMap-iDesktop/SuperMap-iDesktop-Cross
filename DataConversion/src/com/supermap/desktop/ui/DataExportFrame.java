@@ -6,6 +6,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -113,6 +116,14 @@ public class DataExportFrame extends SmDialog {
 	private JRadioButton radioButtonOK = new JRadioButton("yes");
 	private JComboBox<String> comboBoxFileType = new JComboBox<String>();
 	private transient Dataset[] datasets;
+	private JScrollPane scrollPane;
+
+	private CommonListener commonListenerDataExport;
+	private ExportKeyAction exportKeyAction;
+	private OutportMouseListener outportMouseListener;
+	private CommonListener commonListener;
+	private LocalKeyAdapter keyAdapter;
+	private LocalDocumentListener documentListener;
 
 	/**
 	 * @wbp.parser.constructor
@@ -121,8 +132,73 @@ public class DataExportFrame extends SmDialog {
 		super(owner, flag);
 		this.datasets = datasets;
 		initResources();
-		initCompanent();
+		initComponent();
+		registActionListener();
 		setButtonState();
+	}
+
+	private void registActionListener() {
+		this.commonListenerDataExport = new CommonListener(this);
+		this.exportKeyAction = new ExportKeyAction(this);
+		this.outportMouseListener =new OutportMouseListener(this);
+		this.commonListener = new CommonListener();
+		this.keyAdapter = new LocalKeyAdapter();
+		this.documentListener = new LocalDocumentListener();
+		
+		this.buttonAddFile.addActionListener(this.commonListenerDataExport);
+		this.buttonDelete.addActionListener(this.commonListenerDataExport);
+		this.buttonClose.addActionListener(this.commonListenerDataExport);
+		this.buttonSelectAll.addActionListener(this.commonListenerDataExport);
+		this.buttonInvertSelect.addActionListener(this.commonListenerDataExport);
+		this.buttonExport.addActionListener(this.commonListenerDataExport);
+		this.table.addKeyListener(this.exportKeyAction);
+		this.table.addMouseListener(this.outportMouseListener);
+		this.scrollPane.addMouseListener(this.outportMouseListener);
+		// 为comboBoxFileType添加响应事件,设置选中行的导出类型
+		this.comboBoxFileType.addActionListener(this.commonListenerDataExport);
+		this.radioButtonOK.addActionListener(this.commonListener);
+		this.radioButtonNO.addActionListener(this.commonListener);
+		this.filePath.getButton().addActionListener(this.commonListener);
+		this.fileChooser.getButton().addActionListener(this.commonListener);
+		this.checkboxTFW.addActionListener(this.commonListener);
+		this.checkboxExtends.addActionListener(this.commonListener);
+		this.comboBoxCAD.addActionListener(this.commonListener);
+		// 设置密码
+		this.textFieldConfrim.addKeyListener(this.keyAdapter);
+		this.textFieldPassword.addKeyListener(this.keyAdapter);
+		this.textFieldCompression.getDocument().addDocumentListener(this.documentListener);
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				unregistActionListener();
+			}
+		});
+	}
+
+	private void unregistActionListener() {
+		this.buttonAddFile.removeActionListener(this.commonListenerDataExport);
+		this.buttonDelete.removeActionListener(this.commonListenerDataExport);
+		this.buttonClose.removeActionListener(this.commonListenerDataExport);
+		this.buttonSelectAll.removeActionListener(this.commonListenerDataExport);
+		this.buttonInvertSelect.removeActionListener(this.commonListenerDataExport);
+		this.buttonExport.removeActionListener(this.commonListenerDataExport);
+		this.table.removeKeyListener(this.exportKeyAction);
+		this.table.removeMouseListener(this.outportMouseListener);
+		this.scrollPane.removeMouseListener(this.outportMouseListener);
+		// 为comboBoxFileType添加响应事件,设置选中行的导出类型
+		this.comboBoxFileType.removeActionListener(this.commonListenerDataExport);
+		this.radioButtonOK.removeActionListener(this.commonListener);
+		this.radioButtonNO.removeActionListener(this.commonListener);
+		this.filePath.getButton().removeActionListener(this.commonListener);
+		this.fileChooser.getButton().removeActionListener(this.commonListener);
+		this.checkboxTFW.removeActionListener(this.commonListener);
+		this.checkboxExtends.removeActionListener(this.commonListener);
+		this.comboBoxCAD.removeActionListener(this.commonListener);
+		// 设置密码
+		this.textFieldConfrim.addKeyListener(this.keyAdapter);
+		this.textFieldPassword.addKeyListener(this.keyAdapter);
+		this.textFieldCompression.getDocument().addDocumentListener(this.documentListener);
 	}
 
 	/**
@@ -164,28 +240,28 @@ public class DataExportFrame extends SmDialog {
 		return result;
 	}
 
-	public void initCompanent() {
+	public void initComponent() {
 		setLocationByPlatform(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(400, 280, 860, 475);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		this.contentPane = new JPanel();
+		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(this.contentPane);
 
-		textFieldCompression = new JTextField("75");
-		textFieldCompression.setEnabled(false);
-		textFieldCompression.setColumns(10);
+		this.textFieldCompression = new JTextField("75");
+		this.textFieldCompression.setEnabled(false);
+		this.textFieldCompression.setColumns(10);
 
-		textFieldPassword = new JPasswordField();
-		textFieldPassword.setEnabled(false);
-		textFieldPassword.setColumns(10);
+		this.textFieldPassword = new JPasswordField();
+		this.textFieldPassword.setEnabled(false);
+		this.textFieldPassword.setColumns(10);
 
-		textFieldConfrim = new JPasswordField();
-		textFieldConfrim.setEnabled(false);
-		textFieldConfrim.setColumns(10);
+		this.textFieldConfrim = new JPasswordField();
+		this.textFieldConfrim.setEnabled(false);
+		this.textFieldConfrim.setColumns(10);
 		ButtonGroup bg = new ButtonGroup();
-		bg.add(radioButtonOK);
-		bg.add(radioButtonNO);
+		bg.add(this.radioButtonOK);
+		bg.add(this.radioButtonNO);
 		//@formatter:off
 		
 		//labelCompression textFieldCompression
@@ -199,113 +275,113 @@ public class DataExportFrame extends SmDialog {
 		//checkBoxFileType comboBoxFileType
 		//checkBoxCover radioButtonOK radioButtonNO
 		//checkBoxFilePath filePath
-		GroupLayout gl_panelCommon = new GroupLayout(panelCommon);
+		GroupLayout gl_panelCommon = new GroupLayout(this.panelCommon);
 		gl_panelCommon.setAutoCreateContainerGaps(true);
 		gl_panelCommon.setAutoCreateGaps(true);
 		gl_panelCommon.setHorizontalGroup(
 			gl_panelCommon.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelCommon.createSequentialGroup()
-					.addComponent(labelCompression, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
+					.addComponent(this.labelCompression, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(textFieldCompression, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE))
-				.addComponent(labelRecordFile)
-				.addComponent(fileChooser, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-				.addComponent(checkboxTFW)
-				.addComponent(checkboxExtends)
+					.addComponent(this.textFieldCompression, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE))
+				.addComponent(this.labelRecordFile)
+				.addComponent(this.fileChooser, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
+				.addComponent(this.checkboxTFW)
+				.addComponent(this.checkboxExtends)
 				.addGroup(gl_panelCommon.createSequentialGroup()
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.TRAILING)
-						.addComponent(labelCAD, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
-						.addComponent(labelPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
-						.addComponent(labelConfrimPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
-						.addComponent(labelExportType,packageInfo.DEFAULT_ZERO,packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
-						.addComponent(labelCover, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
-						.addComponent(labelFilePath, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE))
+						.addComponent(this.labelCAD, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.labelPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.labelConfrimPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.labelExportType,packageInfo.DEFAULT_ZERO,packageInfo.DEFAULT_LABEL_WIDTH,Short.MAX_VALUE)
+						.addComponent(this.labelCover, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.labelFilePath, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_LABEL_WIDTH, Short.MAX_VALUE))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxCAD, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
-						.addComponent(textFieldPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
-						.addComponent(textFieldConfrim, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
-						.addComponent(comboBoxFileType, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.comboBoxCAD, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldPassword, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldConfrim, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.comboBoxFileType, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)
 						.addGroup(gl_panelCommon.createSequentialGroup()
-							.addComponent(radioButtonOK)
-							.addComponent(radioButtonNO))
-						.addComponent(filePath, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)))
+							.addComponent(this.radioButtonOK)
+							.addComponent(this.radioButtonNO))
+						.addComponent(this.filePath, packageInfo.DEFAULT_ZERO, packageInfo.DEFAULT_TEXT_WIDTH, Short.MAX_VALUE)))
 		);
 		gl_panelCommon.setVerticalGroup(
 			gl_panelCommon.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelCommon.createSequentialGroup()
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelCompression)
-						.addComponent(textFieldCompression))
-					.addComponent(labelRecordFile)
-					.addComponent(fileChooser)
-					.addComponent(checkboxTFW)
-					.addComponent(checkboxExtends)
+						.addComponent(this.labelCompression)
+						.addComponent(this.textFieldCompression))
+					.addComponent(this.labelRecordFile)
+					.addComponent(this.fileChooser)
+					.addComponent(this.checkboxTFW)
+					.addComponent(this.checkboxExtends)
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelCAD)
-						.addComponent(comboBoxCAD))
+						.addComponent(this.labelCAD)
+						.addComponent(this.comboBoxCAD))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelPassword)
-						.addComponent(textFieldPassword))
+						.addComponent(this.labelPassword)
+						.addComponent(this.textFieldPassword))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelConfrimPassword)
-						.addComponent(textFieldConfrim))
+						.addComponent(this.labelConfrimPassword)
+						.addComponent(this.textFieldConfrim))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelExportType)
-						.addComponent(comboBoxFileType))
+						.addComponent(this.labelExportType)
+						.addComponent(this.comboBoxFileType))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelCover)
-						.addComponent(radioButtonOK)
-						.addComponent(radioButtonNO))
+						.addComponent(this.labelCover)
+						.addComponent(this.radioButtonOK)
+						.addComponent(this.radioButtonNO))
 					.addGroup(gl_panelCommon.createParallelGroup(Alignment.CENTER)
-						.addComponent(labelFilePath)
-						.addComponent(filePath)))
+						.addComponent(this.labelFilePath)
+						.addComponent(this.filePath)))
 		);
 		gl_panelCommon.setAutoCreateContainerGaps(true);
 		gl_panelCommon.setAutoCreateGaps(true);
 		
-		radioButtonNO.setSelected(true);
-		fileChooser.getEditor().setEnabled(false);
-		fileChooser.getButton().setEnabled(false);
-		checkboxTFW.setEnabled(false);
-		checkboxExtends.setEnabled(false);
-		comboBoxCAD.setEnabled(false);
-								comboBoxCAD.setModel(new DefaultComboBoxModel<Object>(new String[] {
+		this.radioButtonNO.setSelected(true);
+		this.fileChooser.getEditor().setEnabled(false);
+		this.fileChooser.getButton().setEnabled(false);
+		this.checkboxTFW.setEnabled(false);
+		this.checkboxExtends.setEnabled(false);
+		this.comboBoxCAD.setEnabled(false);
+		this.comboBoxCAD.setModel(new DefaultComboBoxModel<Object>(new String[] {
 										"CAD12", "CAD13", "CAD14", "CAD2000", "CAD2004", "CAD2007" }));
-								comboBoxCAD.setSelectedIndex(5);
-								panelCommon.setLayout(gl_panelCommon);
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+								this.comboBoxCAD.setSelectedIndex(5);
+								this.panelCommon.setLayout(gl_panelCommon);
+		GroupLayout gl_contentPane = new GroupLayout(this.contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelTable, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-						.addComponent(checkboxIsClose))
+						.addComponent(this.panelTable, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+						.addComponent(this.checkboxIsClose))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(176)
-							.addComponent(buttonExport, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+							.addComponent(this.buttonExport, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(buttonClose, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE))
+							.addComponent(this.buttonClose, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(3)
-							.addComponent(panelCommon, GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)))
+							.addComponent(this.panelCommon, GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)))
 					.addGap(20))
 		);
-		buttonExport.setEnabled(false);
-		checkboxIsClose.setSelected(true);
+		this.buttonExport.setEnabled(false);
+		this.checkboxIsClose.setSelected(true);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(panelTable, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(panelCommon, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(this.panelTable, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(this.panelCommon, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(buttonExport)
-						.addComponent(buttonClose)
-						.addComponent(checkboxIsClose))
+						.addComponent(this.buttonExport)
+						.addComponent(this.buttonClose)
+						.addComponent(this.checkboxIsClose))
 					.addGap(37))
 		);
 		gl_contentPane.setAutoCreateContainerGaps(true);
@@ -316,8 +392,8 @@ public class DataExportFrame extends SmDialog {
 		toolBar.setBackground(UIManager.getColor("Button.light"));
 		toolBar.setFloatable(false);
 
-		JScrollPane scrollPane = new JScrollPane();
-		GroupLayout gl_panelTable = new GroupLayout(panelTable);
+		this.scrollPane = new JScrollPane();
+		GroupLayout gl_panelTable = new GroupLayout(this.panelTable);
 		gl_panelTable.setHorizontalGroup(
 			gl_panelTable.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelTable.createSequentialGroup()
@@ -327,7 +403,7 @@ public class DataExportFrame extends SmDialog {
 							.addComponent(toolBar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 						.addGroup(gl_panelTable.createSequentialGroup()
 							.addGap(2)
-							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 465, Short.MAX_VALUE)))
+							.addComponent(this.scrollPane, GroupLayout.PREFERRED_SIZE, 465, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 		gl_panelTable.setVerticalGroup(
@@ -336,59 +412,37 @@ public class DataExportFrame extends SmDialog {
 					.addGap(7)
 					.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 					.addGap(1)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
+					.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
 		);
 		//@formatter:on
-		toolBar.add(buttonAddFile);
-		buttonDelete.setEnabled(false);
+		toolBar.add(this.buttonAddFile);
+		this.buttonDelete.setEnabled(false);
 
-		toolBar.add(buttonDelete);
-		buttonSelectAll.setEnabled(false);
+		toolBar.add(this.buttonDelete);
+		this.buttonSelectAll.setEnabled(false);
 
-		toolBar.add(buttonSelectAll);
-		buttonInvertSelect.setEnabled(false);
+		toolBar.add(this.buttonSelectAll);
+		this.buttonInvertSelect.setEnabled(false);
 
-		toolBar.add(buttonInvertSelect);
+		toolBar.add(this.buttonInvertSelect);
 
-		table = new JTable();
-		table.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		exports = initExports();
-		model = new ExportModel(exports);
-		table.setModel(model);
-		table.getColumnModel().getColumn(0).setCellRenderer(new CommonListCellRenderer());
-		table.getColumnModel().getColumn(1).setCellRenderer(new CommonListCellRenderer());
-		table.setRowHeight(20);
-		if (0 < table.getRowCount()) {
-			table.setRowSelectionInterval(0, 0);
+		this.table = new JTable();
+		this.table.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		this.exports = initExports();
+		this.model = new ExportModel(this.exports);
+		this.table.setModel(this.model);
+		this.table.setRowHeight(20);
+		if (0 < this.table.getRowCount()) {
+			this.table.setRowSelectionInterval(0, 0);
 		}
 		ExportFunction.getRigthPanel(this, table);
-		table.getColumnModel().getColumn(1).setPreferredWidth(10);
-		table.getColumnModel().getColumn(2).setPreferredWidth(10);
-		scrollPane.setViewportView(table);
-		panelTable.setLayout(gl_panelTable);
-		buttonAddFile.addActionListener(new CommonListener(this));
-		buttonDelete.addActionListener(new CommonListener(this));
-		buttonClose.addActionListener(new CommonListener(this));
-		buttonSelectAll.addActionListener(new CommonListener(this));
-		buttonInvertSelect.addActionListener(new CommonListener(this));
-		buttonExport.addActionListener(new CommonListener(this));
-		table.addKeyListener(new ExportKeyAction(this));
-		table.addMouseListener(new OutportMouseListener(this));
-		scrollPane.addMouseListener(new OutportMouseListener(this));
-		contentPane.setLayout(gl_contentPane);
-		// 为comboBoxFileType添加响应事件,设置选中行的导出类型
-		comboBoxFileType.addActionListener(new CommonListener(this));
-		radioButtonOK.addActionListener(new CommonListener());
-		radioButtonNO.addActionListener(new CommonListener());
-		filePath.getButton().addActionListener(new CommonListener());
-		fileChooser.getButton().addActionListener(new CommonListener());
-		checkboxTFW.addActionListener(new CommonListener());
-		checkboxExtends.addActionListener(new CommonListener());
-		comboBoxCAD.addActionListener(new CommonListener());
-		// 设置密码
-		textFieldConfrim.addKeyListener(new LocalKeyAdapter());
-		textFieldPassword.addKeyListener(new LocalKeyAdapter());
-		textFieldCompression.getDocument().addDocumentListener(new LocalDocumentListener());
+		this.table.getColumnModel().getColumn(1).setPreferredWidth(10);
+		this.table.getColumnModel().getColumn(2).setPreferredWidth(10);
+		this.table.getColumnModel().getColumn(0).setCellRenderer(new CommonListCellRenderer());
+		this.table.getColumnModel().getColumn(1).setCellRenderer(new CommonListCellRenderer());
+		this.scrollPane.setViewportView(table);
+		this.panelTable.setLayout(gl_panelTable);
+		this.contentPane.setLayout(gl_contentPane);
 	}
 
 	public void initResources() {
@@ -704,9 +758,9 @@ public class DataExportFrame extends SmDialog {
 				datasetChooser.setVisible(true);
 				ExportFunction.getRigthPanel(frame, table);
 				setButtonState();
-			} else if (DataExportFrame.this.table.getSelectedRows().length==1 && 1 == e.getClickCount()) {
+			} else if (DataExportFrame.this.table.getSelectedRows().length == 1 && 1 == e.getClickCount()) {
 				ExportFunction.getRigthPanelAsSet(frame, table);
-			}else {
+			} else {
 				ExportFunction.getRigthPanel(frame, table);
 				setButtonState();
 			}
@@ -816,24 +870,12 @@ public class DataExportFrame extends SmDialog {
 		return filePath;
 	}
 
-	public void setFilePath(FileChooserControl filePath) {
-		this.filePath = filePath;
-	}
-
 	public FileChooserControl getFileChooser() {
 		return fileChooser;
 	}
 
-	public void setFileChooser(FileChooserControl fileChooser) {
-		this.fileChooser = fileChooser;
-	}
-
 	public JTextField getTextFieldCompression() {
 		return textFieldCompression;
-	}
-
-	public void setTextFieldCompression(JTextField textFieldCompression) {
-		this.textFieldCompression = textFieldCompression;
 	}
 
 	public JTextField getTextFieldPassword() {
@@ -848,32 +890,16 @@ public class DataExportFrame extends SmDialog {
 		return checkboxTFW;
 	}
 
-	public void setCheckboxTFW(JCheckBox checkboxTFW) {
-		this.checkboxTFW = checkboxTFW;
-	}
-
 	public JCheckBox getCheckboxExtends() {
 		return checkboxExtends;
-	}
-
-	public void setCheckboxExtends(JCheckBox checkboxExtends) {
-		this.checkboxExtends = checkboxExtends;
 	}
 
 	public JComboBox<Object> getComboBoxCAD() {
 		return comboBoxCAD;
 	}
 
-	public void setComboBoxCAD(JComboBox<Object> comboBoxCAD) {
-		this.comboBoxCAD = comboBoxCAD;
-	}
-
 	public JRadioButton getRadioButtonOK() {
 		return radioButtonOK;
-	}
-
-	public void setRadioButtonOK(JRadioButton radioButtonOK) {
-		this.radioButtonOK = radioButtonOK;
 	}
 
 	public JRadioButton getRadioButtonNO() {
@@ -882,10 +908,6 @@ public class DataExportFrame extends SmDialog {
 
 	public JComboBox<String> getComboBoxFileType() {
 		return comboBoxFileType;
-	}
-
-	public void setComboBoxFileType(JComboBox<String> comboBoxFileType) {
-		this.comboBoxFileType = comboBoxFileType;
 	}
 
 }
