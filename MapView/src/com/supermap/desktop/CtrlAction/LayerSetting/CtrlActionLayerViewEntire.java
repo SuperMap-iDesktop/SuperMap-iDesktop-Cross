@@ -1,16 +1,8 @@
 package com.supermap.desktop.CtrlAction.LayerSetting;
 
-import java.util.ArrayList;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
 import com.supermap.data.Point2D;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,6 +13,8 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.LayerUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CtrlActionLayerViewEntire extends CtrlAction {
 
@@ -33,21 +27,20 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 	public void run() {
 		try {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-
 			LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) layersTree.getSelectionPaths()[0].getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 			Layer layer = (Layer) selectedNodeData.getData();
-			Rectangle2D rectangle2D = Rectangle2D.getEMPTY();
+			Rectangle2D rectangle2D;
 			if (layer instanceof LayerGroup) {
 				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
 			} else {
 				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
 			}
 
-			if(rectangle2D.getHeight()>0){
+			if (rectangle2D.getHeight() > 0) {
 				formMap.getMapControl().getMap().setViewBounds(rectangle2D);
-			}else {
+			} else {
 				formMap.getMapControl().getMap().setCenter(new Point2D(0, 0));
 			}
 			formMap.getMapControl().getMap().refresh();
@@ -60,7 +53,7 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 	public boolean enable() {
 		boolean enable = false;
 		LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-		if (layersTree.getSelectionPaths().length == 1) {
+		if (layersTree != null && layersTree.getSelectionPaths() != null && layersTree.getSelectionPaths().length == 1) {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) layersTree.getSelectionPaths()[0].getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 			if (selectedNodeData != null && selectedNodeData.getData() != null && selectedNodeData.getData() instanceof Layer) {

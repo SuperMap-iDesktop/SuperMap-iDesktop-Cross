@@ -343,23 +343,23 @@ public class DatasetChooser extends SmDialog {
 
 	@Override
 	public void dispose() {
-		workspaceTree.removeTreeSelectionListener(selectChangeListener);
-		workspaceTree.dispose();
+		this.workspaceTree.removeTreeSelectionListener(this.selectChangeListener);
+		this.workspaceTree.dispose();
 		super.dispose();
 	}
 
 	@Override
 	public DialogResult showDialog() {
-		this.workspaceTree.removeTreeSelectionListener(selectChangeListener);
-		this.workspaceTree.addTreeSelectionListener(selectChangeListener);
+		this.workspaceTree.removeTreeSelectionListener(this.selectChangeListener);
+		this.workspaceTree.addTreeSelectionListener(this.selectChangeListener);
 		this.table.clearSelection();
 		this.selectedDatasets.clear();
-		this.addWindowListener(windowAdapter);
+		this.addWindowListener(this.windowAdapter);
 		return super.showDialog();
 	}
 
 	public List<Dataset> getSelectedDatasets() {
-		return selectedDatasets;
+		return this.selectedDatasets;
 	}
 
 	/**
@@ -367,8 +367,8 @@ public class DatasetChooser extends SmDialog {
 	 */
 	private void compositeSearch() {
 		try {
-			table.clearSelection();
-			tableModel.removeAll();
+			this.table.clearSelection();
+			this.tableModel.removeAll();
 			initializeTableInfo();
 			checkButtonOkState();
 		} catch (Exception e) {
@@ -380,20 +380,20 @@ public class DatasetChooser extends SmDialog {
 	 * 初始化表格信息
 	 */
 	private void initializeTableInfo() {
-		if (workspaceTree.getLastSelectedPathComponent() != null) {
-			TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject();
+		if (this.workspaceTree.getLastSelectedPathComponent() != null) {
+			TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) this.workspaceTree.getLastSelectedPathComponent()).getUserObject();
 			if (userObject != null && userObject.getData() instanceof Datasource) {
 				Datasource datasource = (Datasource) userObject.getData();
 				Datasets datasets = datasource.getDatasets();
 				for (int i = 0; i < datasets.getCount(); i++) {
 					Dataset dataset = datasets.get(i);
 					if (isAllowedDataset(dataset)) {
-						tableModel.addDataset(dataset);
+						this.tableModel.addDataset(dataset);
 					}
 					if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getChildDataset() != null) {
 						DatasetVector childDataset = ((DatasetVector) dataset).getChildDataset();
 						if (isAllowedDataset(childDataset)) {
-							tableModel.addDataset(childDataset);
+							this.tableModel.addDataset(childDataset);
 						}
 					}
 				}
@@ -406,7 +406,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	private boolean isAllowedDatasetType(DatasetType type) {
-		DatasetType[] selectedDatasetTypes = datasetTypeComboBox.getSelectedDatasetTypes();
+		DatasetType[] selectedDatasetTypes = this.datasetTypeComboBox.getSelectedDatasetTypes();
 		for (DatasetType selectedDatasetType : selectedDatasetTypes) {
 			if (selectedDatasetType == type) {
 				return true;
@@ -416,7 +416,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	private boolean isAllowedDatasetName(String name) {
-		String text = textFieldSearch.getText().toLowerCase();
+		String text = this.textFieldSearch.getText().toLowerCase();
 		return StringUtilties.isNullOrEmpty(text) || name.toLowerCase().contains(text);
 	}
 
@@ -431,7 +431,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	public void setSelectedDatasource(Datasource datasource) {
-		workspaceTree.setSelectedDatasource(datasource);
+		this.workspaceTree.setSelectedDatasource(datasource);
 	}
 
 	class WorkspaceSelectChangeListener implements TreeSelectionListener {
@@ -444,8 +444,8 @@ public class DatasetChooser extends SmDialog {
 			if (null != selectedNode) {
 				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 				if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
-					datasource = (Datasource) selectedNodeData.getData();
-					textFieldPath.setText(datasource.getConnectionInfo().getServer());
+					DatasetChooser.this.datasource = (Datasource) selectedNodeData.getData();
+					DatasetChooser.this.textFieldPath.setText(DatasetChooser.this.datasource.getConnectionInfo().getServer());
 				}
 			}
 		}
@@ -459,13 +459,13 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	private void resetSelectDataset() {
-		int[] selectedRows = table.getSelectedRows();
-		selectedDatasets.clear();
-		selectedDatasets = tableModel.getSelectedDatasets(selectedRows);
+		int[] selectedRows = this.table.getSelectedRows();
+		this.selectedDatasets.clear();
+		this.selectedDatasets = this.tableModel.getSelectedDatasets(selectedRows);
 	}
 
 	public void checkButtonOkState() {
-		buttonOk.setEnabled(table.getSelectedRowCount() > 0);
+		this.buttonOk.setEnabled(this.table.getSelectedRowCount() > 0);
 	}
 
 	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
@@ -478,20 +478,20 @@ public class DatasetChooser extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 
 			JComponent c = (JComponent) e.getSource();
-			if (c == buttonSelectAll) {
+			if (c == DatasetChooser.this.buttonSelectAll) {
 				// 全选
-				table.setRowSelectionAllowed(true);
-				if (table != null && table.getRowCount() > 0) {
-					table.setRowSelectionInterval(0, table.getRowCount() - 1);
+				DatasetChooser.this.table.setRowSelectionAllowed(true);
+				if (DatasetChooser.this.table != null && DatasetChooser.this.table.getRowCount() > 0) {
+					DatasetChooser.this.table.setRowSelectionInterval(0, DatasetChooser.this.table.getRowCount() - 1);
 				}
-			} else if (c == buttonInvertSelect) {
+			} else if (c == DatasetChooser.this.buttonInvertSelect) {
 				// 反选
-				TableUtilties.invertSelection(table);
-			} else if (c == cancelButton) {
+				TableUtilties.invertSelection(DatasetChooser.this.table);
+			} else if (c == DatasetChooser.this.cancelButton) {
 				// 关闭
 				setDialogResult(DialogResult.CANCEL);
 				dispose();
-			} else if (c == buttonOk) {
+			} else if (c == DatasetChooser.this.buttonOk) {
 				// 确定
 				buttonOkClicked();
 			}
@@ -512,11 +512,11 @@ public class DatasetChooser extends SmDialog {
 
 		@Override
 		public Object getValueAt(int row, int col) {
-			if (datasetList == null || datasetList.size() <= 0) {
+			if (this.datasetList == null || this.datasetList.size() <= 0) {
 				return null;
 			}
 			row = getIndexRow(row)[0];
-			Dataset dataset = datasetList.get(row);
+			Dataset dataset = this.datasetList.get(row);
 			switch (col) {
 				case COLUMN_DATASET_NAME:
 					return dataset;
@@ -536,20 +536,20 @@ public class DatasetChooser extends SmDialog {
 
 		@Override
 		public int getRowCount() {
-			if (datasetList == null) {
+			if (this.datasetList == null) {
 				return 0;
 			}
-			return datasetList.size();
+			return this.datasetList.size();
 		}
 
 		@Override
 		public int getColumnCount() {
-			return columnNames.length;
+			return this.columnNames.length;
 		}
 
 		@Override
 		public String getColumnName(int column) {
-			return columnNames[column];
+			return this.columnNames[column];
 		}
 
 		@Override
@@ -562,8 +562,8 @@ public class DatasetChooser extends SmDialog {
 		}
 
 		public void removeAll() {
-			int[] deleteRows = new int[datasetList.size()];
-			for (int i = 0; i < datasetList.size(); i++) {
+			int[] deleteRows = new int[this.datasetList.size()];
+			for (int i = 0; i < this.datasetList.size(); i++) {
 				deleteRows[i] = i;
 			}
 			super.removeRows(deleteRows);
@@ -572,10 +572,10 @@ public class DatasetChooser extends SmDialog {
 		}
 
 		public void addDataset(Dataset dataset) {
-			if (datasetList == null) {
-				datasetList = new ArrayList<>();
+			if (this.datasetList == null) {
+				this.datasetList = new ArrayList<>();
 			}
-			datasetList.add(dataset);
+			this.datasetList.add(dataset);
 			super.addIndexRow(getRowCount() - 1);
 			fireTableDataChanged();
 		}
@@ -584,7 +584,7 @@ public class DatasetChooser extends SmDialog {
 			selectedRows = getIndexRow(selectedRows);
 			List<Dataset> resultDataset = new ArrayList<>();
 			for (int selectedRow : selectedRows) {
-				resultDataset.add(datasetList.get(selectedRow));
+				resultDataset.add(this.datasetList.get(selectedRow));
 			}
 			return resultDataset;
 		}
