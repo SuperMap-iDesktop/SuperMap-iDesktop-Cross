@@ -19,17 +19,18 @@ import com.supermap.realspace.Scene;
  */
 public class SceneUtilties {
 
-	/**
-	 * 添加指定数据集到指定场景上
-	 * 
-	 * @param scene
-	 * @param dataset
-	 * @param addToHead
-	 */
+
 	private SceneUtilties() {
 		// 工具类不提供构造函数
 	}
 
+	/**
+	 * 添加指定数据集到指定场景上
+	 *
+	 * @param scene
+	 * @param dataset
+	 * @param addToHead
+	 */
 	public static void addDatasetToScene(Scene scene, Dataset dataset, boolean addToHead) {
 		Layer3DSetting layer3DSetting = null;
 

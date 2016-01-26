@@ -990,7 +990,7 @@ public class JDialogSQLQuery extends SmDialog {
 		char[] fieldNamesChars = queryFields.toCharArray();
 		StringBuilder builderFieldName = new StringBuilder();
 		for (char fieldNamesChar : fieldNamesChars) {
-			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0 ) {
+			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
 				fieldNames.add(builderFieldName.toString());
 				builderFieldName.setLength(0);
 			} else {
