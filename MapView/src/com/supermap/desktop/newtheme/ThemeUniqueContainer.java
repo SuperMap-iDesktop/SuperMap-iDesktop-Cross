@@ -335,6 +335,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化工具条
 	 */
 	private void initToolBar() {
+		this.toolBar.setFloatable(false);
+		this.toolBar.add(this.buttonVisble);
+		this.toolBar.add(this.buttonGeoStyle);
+		this.toolBar.addSeparator();
+		this.toolBar.add(this.buttonAdd);
+		this.toolBar.add(this.buttonDelete);
+		this.toolBar.add(this.buttonAntitone);
 		this.buttonVisble.setIcon(InternalImageIconFactory.VISIBLE);
 		if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
 			this.buttonGeoStyle.setIcon(InternalImageIconFactory.REGION_STYLE);
@@ -354,13 +361,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 */
 	private void initPanelProperty() {
 		this.panelProperty.setLayout(new GridBagLayout());
-		toolBar.setFloatable(false);
-		this.toolBar.add(this.buttonVisble);
-		this.toolBar.add(this.buttonGeoStyle);
-		this.toolBar.addSeparator();
-		this.toolBar.add(this.buttonAdd);
-		this.toolBar.add(this.buttonDelete);
-		this.toolBar.add(this.buttonAntitone);
 		initToolBar();
 		initComboBoxExpression();
 		//@formatter:off
