@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * 栅格数据管理器
@@ -355,9 +356,7 @@ public class JDialogPyramidManager extends SmDialog {
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 		java.util.List<Dataset> activeSupportDatasets = new ArrayList<>();
 		java.util.List<DatasetType> supportDatasetTypeList = new ArrayList<>();
-		for (DatasetType datasetType : supportDatasetTypes) {
-			supportDatasetTypeList.add(datasetType);
-		}
+		Collections.addAll(supportDatasetTypeList, supportDatasetTypes);
 		for (Dataset activeDataset : activeDatasets) {
 			if (activeDataset.getDatasource().getEngineType() == EngineType.IMAGEPLUGINS) {
 				String server = activeDataset.getDatasource().getConnectionInfo().getServer().toLowerCase();

@@ -11,27 +11,27 @@ public class SmDialog extends JDialog implements WindowListener {
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
-		this.addWindowListener((WindowListener) this);
+		this.addWindowListener(this);
 	}
 
 	public SmDialog(JFrame owner) {
 		super(owner, false);
-		this.addWindowListener((WindowListener) this);
+		this.addWindowListener(this);
 	}
 
 	public SmDialog(JDialog owner) {
 		super(owner, false);
-		this.addWindowListener((WindowListener) this);
+		this.addWindowListener(this);
 	}
 
 	public SmDialog(JFrame owner, boolean modal) {
 		super(owner, modal);
-		this.addWindowListener((WindowListener) this);
+		this.addWindowListener(this);
 	}
 
 	public SmDialog(JDialog owner, boolean modal) {
 		super(owner, modal);
-		this.addWindowListener((WindowListener) this);
+		this.addWindowListener(this);
 	}
 
 	public DialogResult showDialog() {

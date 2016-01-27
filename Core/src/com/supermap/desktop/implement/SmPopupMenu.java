@@ -1,23 +1,18 @@
 package com.supermap.desktop.implement;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IPopupMenu;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.ui.XMLMenu;
 import com.supermap.desktop.ui.XMLMenuButton;
 import com.supermap.desktop.ui.XMLMenuButtonDropdown;
 import com.supermap.desktop.ui.XMLMenuGroup;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 	private static final long serialVersionUID = 1L;
