@@ -1409,6 +1409,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
+		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeRange) this.themeRangeLayer.getTheme()).clear();
 		if (0 < this.themeRange.getCount()) {
 			for (int i = 0; i < this.themeRange.getCount(); i++) {

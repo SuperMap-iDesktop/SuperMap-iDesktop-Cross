@@ -32,8 +32,7 @@ public class ImportInfoUtil {
 	 * @param fileInfo
 	 * @param comboBoxDatasource
 	 */
-	public static void setDataSource(List<JPanel> panels, List<ImportFileInfo> fileInfos, ImportFileInfo fileInfo,
-	                                 DatasourceComboBox comboBoxDatasource) {
+	public static void setDataSource(List<JPanel> panels, List<ImportFileInfo> fileInfos, ImportFileInfo fileInfo, DatasourceComboBox comboBoxDatasource) {
 		ImportInfoUtil util = new ImportInfoUtil();
 		comboBoxDatasource.addActionListener(util.new ComboBoxDatasourceListener(comboBoxDatasource, fileInfo, panels, fileInfos));
 	}
@@ -112,19 +111,19 @@ public class ImportInfoUtil {
 	 */
 	private static void setImportInfo(int item, ImportSetting importsetting) {
 		switch (item) {
-			case 0:
-				importsetting.setImportMode(ImportMode.NONE);
-				break;
-			case 1:
-				importsetting.setImportMode(ImportMode.APPEND);
-				break;
-			case 2:
-				importsetting.setImportMode(ImportMode.OVERWRITE);
-				break;
+		case 0:
+			importsetting.setImportMode(ImportMode.NONE);
+			break;
+		case 1:
+			importsetting.setImportMode(ImportMode.APPEND);
+			break;
+		case 2:
+			importsetting.setImportMode(ImportMode.OVERWRITE);
+			break;
 
-			default:
-				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImportModel_Failed"));
-				break;
+		default:
+			Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_ImportModel_Failed"));
+			break;
 		}
 	}
 
@@ -159,8 +158,7 @@ public class ImportInfoUtil {
 	 * @return
 	 */
 	public static ImportSetting setFileInfo(Datasource datasource, List<ImportFileInfo> fileInfos, ImportFileInfo fileInfo, JTextField textField,
-	                                        ImportSetting importsetting,
-	                                        JTextField textFieldResultSet) {
+			ImportSetting importsetting, JTextField textFieldResultSet) {
 		ImportSetting resultSetting = importsetting;
 		// 设置显示的文件名及结果数据集名称
 		if (null != fileInfo) {
@@ -170,7 +168,9 @@ public class ImportInfoUtil {
 			resultSetting = fileInfo.getImportSetting();
 			String fileName = fileInfo.getFileName();
 			String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
-			textFieldResultSet.setText(resultSetName);
+			if (null != textFieldResultSet) {
+				textFieldResultSet.setText(resultSetName);
+			}
 			resultSetting.setTargetDatasource(datasource);
 		} else {
 			if (isSameFiles(fileInfos)) {
@@ -256,8 +256,7 @@ public class ImportInfoUtil {
 		private ArrayList<JPanel> panels;
 		private ArrayList<ImportFileInfo> fileInfos;
 
-		public ComboBoxDatasourceListener(DatasourceComboBox comboBoxDatasource, ImportFileInfo fileInfo, List<JPanel> panels,
-		                                  List<ImportFileInfo> fileInfos) {
+		public ComboBoxDatasourceListener(DatasourceComboBox comboBoxDatasource, ImportFileInfo fileInfo, List<JPanel> panels, List<ImportFileInfo> fileInfos) {
 			this.comboBoxDatasource = comboBoxDatasource;
 			this.fileInfo = fileInfo;
 			this.panels = (ArrayList<JPanel>) panels;
@@ -410,7 +409,7 @@ public class ImportInfoUtil {
 	 * @param fileInfos
 	 */
 	private void comboBoxDatasourceChange(DatasourceComboBox comboBoxDatasource, ImportFileInfo fileInfo, ArrayList<JPanel> panels,
-	                                      ArrayList<ImportFileInfo> fileInfos) {
+			ArrayList<ImportFileInfo> fileInfos) {
 
 		String item = comboBoxDatasource.getSelectItem();
 		DataCell cell = (DataCell) comboBoxDatasource.getSelectedItem();
@@ -717,96 +716,96 @@ public class ImportInfoUtil {
 	 */
 	private static void setCharInfo(int type, ImportSetting importsetting) {
 		switch (type) {
-			case 0:
-				importsetting.setSourceFileCharset(Charset.ANSI);
-				break;
-			case 1:
-				importsetting.setSourceFileCharset(Charset.DEFAULT);
-				break;
-			case 2:
-				importsetting.setSourceFileCharset(Charset.OEM);
-				break;
-			case 3:
-				importsetting.setSourceFileCharset(Charset.CHINESEBIG5);
-				break;
-			case 4:
-				importsetting.setSourceFileCharset(Charset.GB18030);
-				break;
-			case 5:
-				importsetting.setSourceFileCharset(Charset.CYRILLIC);
-				break;
-			case 6:
-				importsetting.setSourceFileCharset(Charset.XIA5);
-				break;
-			case 7:
-				importsetting.setSourceFileCharset(Charset.XIA5GERMAN);
-				break;
-			case 8:
-				importsetting.setSourceFileCharset(Charset.XIA5NORWEGIAN);
-				break;
-			case 9:
-				importsetting.setSourceFileCharset(Charset.XIA5SWEDISH);
-				break;
-			case 10:
-				importsetting.setSourceFileCharset(Charset.MAC);
-				break;
-			case 11:
-				importsetting.setSourceFileCharset(Charset.UNICODE);
-				break;
-			case 12:
-				importsetting.setSourceFileCharset(Charset.UTF7);
-				break;
-			case 13:
-				importsetting.setSourceFileCharset(Charset.UTF8);
-				break;
-			case 14:
-				importsetting.setSourceFileCharset(Charset.WINDOWS1252);
-				break;
-			case 15:
-				importsetting.setSourceFileCharset(Charset.ARABIC);
-				break;
-			case 16:
-				importsetting.setSourceFileCharset(Charset.BALTIC);
-				break;
-			case 17:
-				importsetting.setSourceFileCharset(Charset.JOHAB);
-				break;
-			case 18:
-				importsetting.setSourceFileCharset(Charset.HANGEUL);
-				break;
-			case 19:
-				importsetting.setSourceFileCharset(Charset.EASTEUROPE);
-				break;
-			case 20:
-				importsetting.setSourceFileCharset(Charset.RUSSIAN);
-				break;
-			case 21:
-				importsetting.setSourceFileCharset(Charset.SYMBOL);
-				break;
-			case 22:
-				importsetting.setSourceFileCharset(Charset.KOREAN);
-				break;
-			case 23:
-				importsetting.setSourceFileCharset(Charset.SHIFTJIS);
-				break;
-			case 24:
-				importsetting.setSourceFileCharset(Charset.THAI);
-				break;
-			case 25:
-				importsetting.setSourceFileCharset(Charset.TURKISH);
-				break;
-			case 26:
-				importsetting.setSourceFileCharset(Charset.HEBREW);
-				break;
-			case 27:
-				importsetting.setSourceFileCharset(Charset.GREEK);
-				break;
-			case 28:
-				importsetting.setSourceFileCharset(Charset.VIETNAMESE);
-				break;
-			default:
-				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_Charset_Failed"));
-				break;
+		case 0:
+			importsetting.setSourceFileCharset(Charset.ANSI);
+			break;
+		case 1:
+			importsetting.setSourceFileCharset(Charset.DEFAULT);
+			break;
+		case 2:
+			importsetting.setSourceFileCharset(Charset.OEM);
+			break;
+		case 3:
+			importsetting.setSourceFileCharset(Charset.CHINESEBIG5);
+			break;
+		case 4:
+			importsetting.setSourceFileCharset(Charset.GB18030);
+			break;
+		case 5:
+			importsetting.setSourceFileCharset(Charset.CYRILLIC);
+			break;
+		case 6:
+			importsetting.setSourceFileCharset(Charset.XIA5);
+			break;
+		case 7:
+			importsetting.setSourceFileCharset(Charset.XIA5GERMAN);
+			break;
+		case 8:
+			importsetting.setSourceFileCharset(Charset.XIA5NORWEGIAN);
+			break;
+		case 9:
+			importsetting.setSourceFileCharset(Charset.XIA5SWEDISH);
+			break;
+		case 10:
+			importsetting.setSourceFileCharset(Charset.MAC);
+			break;
+		case 11:
+			importsetting.setSourceFileCharset(Charset.UNICODE);
+			break;
+		case 12:
+			importsetting.setSourceFileCharset(Charset.UTF7);
+			break;
+		case 13:
+			importsetting.setSourceFileCharset(Charset.UTF8);
+			break;
+		case 14:
+			importsetting.setSourceFileCharset(Charset.WINDOWS1252);
+			break;
+		case 15:
+			importsetting.setSourceFileCharset(Charset.ARABIC);
+			break;
+		case 16:
+			importsetting.setSourceFileCharset(Charset.BALTIC);
+			break;
+		case 17:
+			importsetting.setSourceFileCharset(Charset.JOHAB);
+			break;
+		case 18:
+			importsetting.setSourceFileCharset(Charset.HANGEUL);
+			break;
+		case 19:
+			importsetting.setSourceFileCharset(Charset.EASTEUROPE);
+			break;
+		case 20:
+			importsetting.setSourceFileCharset(Charset.RUSSIAN);
+			break;
+		case 21:
+			importsetting.setSourceFileCharset(Charset.SYMBOL);
+			break;
+		case 22:
+			importsetting.setSourceFileCharset(Charset.KOREAN);
+			break;
+		case 23:
+			importsetting.setSourceFileCharset(Charset.SHIFTJIS);
+			break;
+		case 24:
+			importsetting.setSourceFileCharset(Charset.THAI);
+			break;
+		case 25:
+			importsetting.setSourceFileCharset(Charset.TURKISH);
+			break;
+		case 26:
+			importsetting.setSourceFileCharset(Charset.HEBREW);
+			break;
+		case 27:
+			importsetting.setSourceFileCharset(Charset.GREEK);
+			break;
+		case 28:
+			importsetting.setSourceFileCharset(Charset.VIETNAMESE);
+			break;
+		default:
+			Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("String_Charset_Failed"));
+			break;
 		}
 	}
 

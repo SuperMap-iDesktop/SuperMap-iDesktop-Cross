@@ -67,14 +67,10 @@ public class FileTypeUtil {
 				|| filePath.equalsIgnoreCase(FileTypeLocale.BSQ_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.BIP_STRING)
 				|| filePath.equalsIgnoreCase(FileTypeLocale.SID_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.B_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_GRID");
-			// 栅格文件(*.dem,*.bil,*.raw,*.bsq,*.bip,*.sid,*.b)
+			// 栅格文件(*.bil,*.raw,*.bsq,*.bip,*.sid,*.b)
 		}
 		if (filePath.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
-			if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetypeForLinux_arcgis"))) {
 				fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
-			} else {
-				fileType = DataConversionProperties.getString("String_FormImport_GRID");
-			}
 		}
 		if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
 			// LIDAR文件(*.txt)

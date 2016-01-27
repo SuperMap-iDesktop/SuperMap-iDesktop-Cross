@@ -24,6 +24,8 @@ import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,21 +38,30 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.SwingConstants;
 
+import com.supermap.data.conversion.ImportSettingBIL;
+import com.supermap.data.conversion.ImportSettingDXF;
+import com.supermap.data.conversion.ImportSettingGBDEM;
+import com.supermap.data.conversion.ImportSettingGRD;
+import com.supermap.data.conversion.ImportSettingLIDAR;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingTEMSClutter;
+import com.supermap.data.conversion.ImportSettingUSGSDEM;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.action.CommonMouseListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SteppedComboBox;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.FileInfoModel;
+import com.supermap.desktop.util.TableRowCellEditor;
 
 import javax.swing.JCheckBox;
 
@@ -92,6 +103,9 @@ public class DataImportFrame extends SmDialog {
 	private JScrollPane scrollPane;
 
 	private DropTarget dropTargetTemper;
+
+	private int count;
+	private String fileTypeInfo;
 
 	private transient CommonButtonAction buttonAction = new CommonButtonAction();
 	private transient LocalWindowListener windowListener = new LocalWindowListener();
@@ -167,8 +181,103 @@ public class DataImportFrame extends SmDialog {
 		this.panels = new ArrayList<JPanel>();
 		this.model = new FileInfoModel(this.fileInfos);
 		this.table = new JTable();
+
 		this.table.setModel(this.model);
 		this.scrollPane.setViewportView(this.table);
+	}
+
+	/**
+	 * 为table添加下拉列表
+	 */
+	@SuppressWarnings("unchecked")
+	public void initComboBoxColumns() {
+		SteppedComboBox steppedComboBox;
+		TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
+		for (int i = 0; i < this.fileInfos.size(); i++) {
+			final ImportFileInfo tempFileInfo = this.fileInfos.get(i);
+			steppedComboBox = new SteppedComboBox(new String[] {});
+			steppedComboBox.removeAllItems();
+			String fileName = tempFileInfo.getFileName();
+			this.fileTypeInfo = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+			if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_CAD"));
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterModel"));
+				labelTitle.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
+			} else if (fileTypeInfo.equals(FileTypeLocale.BIL_STRING)) {
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_GRID"));
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_BIL"));
+				labelTitle.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
+			} else if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_ArcGIS"));
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_DEM"));
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_GBDEM"));
+				labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+			} else if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.TXT_STRING)) {
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_ArcGIS"));
+				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterLIDAR"));
+				labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+			} else {
+				steppedComboBox.addItem(tempFileInfo.getFileType());
+			}
+			Dimension d = steppedComboBox.getPreferredSize();
+			steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));
+			steppedComboBox.setPopupWidth(d.width);
+			
+			rowEditor.setEditorAt(i, new DefaultCellEditor(steppedComboBox));
+			this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellEditor(rowEditor);
+			steppedComboBox.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						String nowType = e.getItem().toString();
+						tempFileInfo.setFileType(nowType);
+						((FileInfoModel) table.getModel()).updateRows(fileInfos);
+						if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_BIL"))) {
+							// bil 导入为BIL文件
+							tempFileInfo.setImportSetting(new ImportSettingBIL());
+							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportBIL_Text"));
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GRID"))) {
+							// 导入为电信栅格文件
+							tempFileInfo.setImportSetting(new ImportSettingTEMSClutter());
+							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_CAD"))) {
+							// DXF 导入为CAD格式文件
+							tempFileInfo.setImportSetting(new ImportSettingDXF());
+							CommonFunction.replace(panelImportInfo, new ImportPanelD(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterModel"))) {
+							// DXF 导入为三维模型文件
+							tempFileInfo.setImportSetting(new ImportSettingModelDXF());
+							CommonFunction.replace(panelImportInfo, new ImportPanelModel(DataImportFrame.this,tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportDXFMODEL_Text"));
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_ArcGIS"))) {
+							// txt,dem 导入为ArcGIS类型文件
+							tempFileInfo.setImportSetting(new ImportSettingGRD());
+							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterLIDAR"))) {
+							// txt 导入为LIDAR类型文件
+							tempFileInfo.setImportSetting(new ImportSettingLIDAR());
+							CommonFunction.replace(panelImportInfo, new ImportPanelLIDAR(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportLIDAR_Text"));
+						}else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))) {
+							// dem 导入为美国标准DEM文件
+							tempFileInfo.setImportSetting(new ImportSettingUSGSDEM());
+							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
+						}else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GBDEM"))) {
+							// dem 导入为中国标准DEM文件
+							tempFileInfo.setImportSetting(new ImportSettingGBDEM());
+							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
+							labelTitle.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
+						}
+					}
+				}
+			});
+		}
 	}
 
 	private void initToolBar() {
@@ -292,6 +401,7 @@ public class DataImportFrame extends SmDialog {
 			if (c == buttonAddFile) {
 				// 添加
 				CommonFunction.addData(dataImportFrame, fileInfos, panels, table, model, panelImportInfo, labelTitle);
+				initComboBoxColumns();
 				setButtonState();
 			} else if (c == buttonDelete) {
 				// 删除
@@ -354,6 +464,7 @@ public class DataImportFrame extends SmDialog {
 					@SuppressWarnings("unchecked")
 					List<File> files = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 					CommonFunction.setImportFileInfos(files.toArray(new File[files.size()]), dataImportFrame, panels, model, "");
+					initComboBoxColumns();
 					if (0 < table.getRowCount()) {
 						table.setRowSelectionInterval(0, table.getRowCount() - 1);
 						CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels, labelTitle);
@@ -372,10 +483,11 @@ public class DataImportFrame extends SmDialog {
 			if (null != panels) {
 				for (int i = 0; i < panels.size(); i++) {
 					if (panels.get(i) instanceof AbstractImportPanel) {
-						((AbstractImportPanel)panels.get(i)).unregistActionListener();
+						((AbstractImportPanel) panels.get(i)).unregistActionListener();
 					}
 				}
 			}
+			DataImportFrame.this.fileInfos.clear();
 		}
 	}
 

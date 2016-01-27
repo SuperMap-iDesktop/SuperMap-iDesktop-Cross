@@ -978,6 +978,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
+		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeGridRange) this.themeRangeLayer.getTheme()).clear();
 		for (int i = 0; i < this.themeGridRange.getCount(); i++) {
 			((ThemeGridRange) this.themeRangeLayer.getTheme()).addToTail(this.themeGridRange.getItem(i), true);

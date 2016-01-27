@@ -830,6 +830,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
+		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
 		for (int i = 0; i < this.themeUnique.getCount(); i++) {
 			((ThemeGridUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));

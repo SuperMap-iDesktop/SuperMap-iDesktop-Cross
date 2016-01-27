@@ -52,6 +52,7 @@ public class ImportPanelWOR extends AbstractImportPanel {
 		this.fileInfo = fileInfo;
 		initComponents();
 		initResource();
+		registActionListener();
 	}
 
 	public ImportPanelWOR(List<ImportFileInfo> fileInfos, List<JPanel> panels) {
@@ -59,6 +60,7 @@ public class ImportPanelWOR extends AbstractImportPanel {
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
 		initResource();
+		registActionListener();
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class ImportPanelWOR extends AbstractImportPanel {
 		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
 		this.comboBoxDatasource.setSelectedDatasource(datasource);
 
-		ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, null, importsetting, textFieldFilePath);
+		ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting, null);
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 		// 设置编码类型
@@ -148,7 +150,7 @@ public class ImportPanelWOR extends AbstractImportPanel {
 		//@formatter:off
 		this.panelTransform.setLayout(new GridBagLayout());
 		this.panelTransform.add(this.labelImportModel,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.panelTransform.add(this.comboBoxImportModel,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20));
+		this.panelTransform.add(this.comboBoxImportModel,       new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20).setIpad(130, 0));
 		//@formatter:on
 	}
 

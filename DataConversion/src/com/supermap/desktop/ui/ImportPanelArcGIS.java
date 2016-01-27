@@ -86,12 +86,15 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
 			((ImportSettingGRD) importsetting).setPyramidBuilt(flag);
 		}
 		if (importsetting instanceof ImportSettingUSGSDEM) {
-			// 如果选择的是dem格式的文件
+			// 如果选择的是DEM格式的文件
 			((ImportSettingUSGSDEM) importsetting).setPyramidBuilt(flag);
 		}
 		if (importsetting instanceof ImportSettingRAW) {
 			// 如果选择的是raw格式的文件
 			((ImportSettingRAW) importsetting).setPyramidBuilt(flag);
+		}
+		if (importsetting instanceof ImportSettingGBDEM) {
+			((ImportSettingGBDEM) importsetting).setPyramidBuilt(flag);
 		}
 	}
 

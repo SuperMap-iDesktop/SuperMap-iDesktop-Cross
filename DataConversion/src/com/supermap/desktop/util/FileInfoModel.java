@@ -3,6 +3,7 @@ package com.supermap.desktop.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.table.AbstractTableModel;
 
 import com.supermap.desktop.ImportFileInfo;
@@ -73,6 +74,9 @@ public class FileInfoModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex==1) {
+			return true;
+		}
 		return false;
 	}
 

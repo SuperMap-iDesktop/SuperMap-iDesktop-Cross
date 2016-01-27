@@ -21,6 +21,7 @@ import com.supermap.data.conversion.ImportSettingDBF;
 import com.supermap.data.conversion.ImportSettingDWG;
 import com.supermap.data.conversion.ImportSettingDXF;
 import com.supermap.data.conversion.ImportSettingE00;
+import com.supermap.data.conversion.ImportSettingGBDEM;
 import com.supermap.data.conversion.ImportSettingGIF;
 import com.supermap.data.conversion.ImportSettingGRD;
 import com.supermap.data.conversion.ImportSettingIMG;
@@ -53,7 +54,6 @@ import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.AbstractImportPanel;
 import com.supermap.desktop.ui.DataImportFrame;
 import com.supermap.desktop.ui.ImportPanelEXCEL;
 import com.supermap.desktop.ui.ImportPanelLIDAR;
@@ -498,7 +498,7 @@ public class CommonFunction {
 			panel = new ImportPanelTIF(dataImportFrame, fileInfo);
 		}
 		if (fileType.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
-			importSetting = new ImportSettingUSGSDEM();
+			importSetting = new ImportSettingGRD();
 			fileInfo.setImportSetting(importSetting);
 			panel = new ImportPanelArcGIS(dataImportFrame, fileInfo);
 		}
@@ -544,13 +544,11 @@ public class CommonFunction {
 
 	/**
 	 * 界面刷新的具体方法
-	 *
+	 * 
 	 * @param panelImportInfo
 	 * @param fileInfos
 	 * @param panels
-	 * @param table
 	 * @param lblDataimportType
-	 * @param tempPane
 	 * @return
 	 */
 	private static JPanel replacePanel(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
@@ -558,6 +556,8 @@ public class CommonFunction {
 
 		// 类型全部相同
 		if (isSame(fileInfos)) {
+			ImportFileInfo tempFileInfo =  fileInfos.get(0);
+			String fileTypeInfo = fileInfos.get(0).getFileType();
 			String fileName = fileInfos.get(0).getFileName();
 			String fileType = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
 			if (fileType.equalsIgnoreCase(FileTypeLocale.BMP_STRING)) {
@@ -609,10 +609,13 @@ public class CommonFunction {
 					if (fileInfos.get(0).getImportSetting() instanceof ImportSettingModelDXF) {
 						dataPane = new ImportPanelModel(fileInfos, panels);
 					}
-				} else {
+				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_CAD"))){
 					dataPane = getRightPanel(panels);
+				}else {
+					tempFileInfo.setImportSetting(new ImportSettingModelDXF());
+					dataPane = new ImportPanelModel(null,tempFileInfo);
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDXFMODEL_Text"));
 				}
-				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
 			}
 			if (fileType.equalsIgnoreCase(FileTypeLocale.GRD_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.TXT_STRING)
 					|| fileType.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
@@ -624,13 +627,20 @@ public class CommonFunction {
 					if (fileInfos.get(0).getImportSetting() instanceof ImportSettingLIDAR) {
 						dataPane = new ImportPanelLIDAR(fileInfos, panels);
 					}
-				} else {
+				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_ArcGIS"))){
 					dataPane = getRightPanel(panels);
-				}
-				if (dataPane instanceof ImportPanelLIDAR) {
+				}else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterLIDAR"))){
+					tempFileInfo.setImportSetting(new ImportSettingLIDAR());
+					dataPane = new ImportPanelLIDAR(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportLIDAR_Text"));
-				} else {
-					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+				}else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))){
+					tempFileInfo.setImportSetting(new ImportSettingUSGSDEM());
+					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
+				}else {
+					tempFileInfo.setImportSetting(new ImportSettingGBDEM());
+					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
 				}
 			}
 			if (fileType.equalsIgnoreCase(FileTypeLocale.XLSX_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.XLS_STRING)) {
@@ -809,10 +819,13 @@ public class CommonFunction {
 				// 将右边替换为放置电信栅格文件类型的容器
 				if (1 != fileInfos.size()) {
 					dataPane = new ImportPanelArcGIS(fileInfos, panels);
-				} else {
+				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GRID"))){
 					dataPane = getRightPanel(panels);
+				}else{
+					tempFileInfo.setImportSetting(new ImportSettingBIL());
+					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportBIL_Text"));
 				}
-				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportBIL_Text"));
 			}
 			if (fileType.equalsIgnoreCase(FileTypeLocale.BIP_STRING)) {
 				// 将右边替换为放置电信栅格文件类型的容器

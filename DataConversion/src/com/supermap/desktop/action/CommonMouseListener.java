@@ -86,6 +86,7 @@ public class CommonMouseListener extends MouseAdapter {
 			select = table.getRowCount() - 1;
 		}
 		CommonFunction.setTableInfo(dataImportFrame, panels, model);
+		this.dataImportFrame.initComboBoxColumns();
 		if (table.getRowCount() - 1 < 0) {
 			// 设置表格的所有行可选
 			table.setRowSelectionAllowed(true);

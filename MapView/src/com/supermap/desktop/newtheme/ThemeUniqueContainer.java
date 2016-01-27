@@ -1192,6 +1192,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	void refreshMapAndLayer() {
+		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
 		for (int i = 0; i < this.themeUnique.getCount(); i++) {
 			((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
