@@ -11,8 +11,6 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerRemovedEvent;
-import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 
@@ -24,6 +22,8 @@ import javax.swing.tree.TreePath;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class ThemeMainContainer extends JPanel {
 
@@ -232,6 +232,13 @@ public class ThemeMainContainer extends JPanel {
 				ThemeMainContainer.this.updateUI();
 			}
 		} else {
+			HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
+			Iterator<?> iterator = themeContainers.entrySet().iterator();
+			while (iterator.hasNext()) {
+				java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
+				((ThemeChangePanel)entry.getValue()).unregistActionListener();
+			}
+			ThemeGuideFactory.themeTypeContainer.clear();
 			updateThemeMainContainer();
 		}
 	}
@@ -259,10 +266,10 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-			if (null!=ThemeGuideFactory.getDockbarThemeContainer()) {
+			if (null != ThemeGuideFactory.getDockbarThemeContainer() &&null!=newLayer) {
 				ThemeGuideFactory.modifyTheme(newLayer);
+				resetThemeMainContainer(newLayer);
 			}
-			resetThemeMainContainer(newLayer);
 		}
 	}
 

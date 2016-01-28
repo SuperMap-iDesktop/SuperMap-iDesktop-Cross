@@ -4,13 +4,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+
 /**
  * 
  * @author xie
@@ -23,14 +26,18 @@ public class CompTitledPane extends JPanel {
 	protected JComponent component;
 	protected JPanel panel;
 
-	public CompTitledPane(JComponent component,JPanel panel) {
+	public CompTitledPane(JComponent component, JPanel panel) {
 		this.component = component;
-		border = new CompTitledBorder(component);
-		setBorder(border);
 		this.panel = panel;
-		setLayout(null);
-		add(component);
-		add(panel);
+		initComponents();
+	}
+
+	private void initComponents() {
+		this.border = new CompTitledBorder(component);
+		setBorder(this.border);
+		setLayout(new GridBagLayout());
+		add(this.component, new GridBagConstraintsHelper(0, 0, 1, 1));
+		add(this.panel, new GridBagConstraintsHelper(0, 1, 1, 1));
 	}
 
 	public JComponent getTitleComponent() {
@@ -66,6 +73,7 @@ public class CompTitledPane extends JPanel {
 
 /**
  * 自定义的TitledBorder，可以在将标题栏存放控件
+ * 
  * @author xie
  *
  */

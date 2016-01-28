@@ -119,7 +119,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		this.checkBoxtopologyPropress.setToolTipText(DataTopologyProperties.getString("String_TopoLineTipsInfo"));
 		this.panelDatasource.setBorder(new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
-		this.panelTopoProcessingOptions.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		this.panelResultData.setBorder(new TitledBorder(null, CommonProperties.getString("String_GroupBox_ResultData"), TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
 	}
@@ -208,12 +207,10 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	// 初始化contentPanel
 	private void initContentPanel() {
 		// @formatter:off
-		
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.getContentPane().add(this.panelDatasource,           new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10).setWeight(3, 1).setIpad(60, 0).setFill(GridBagConstraints.BOTH));
-//		this.getContentPane().add(this.checkBoxtopologyPropress,  new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,20,0,10).setWeight(3, 1));
-		this.getContentPane().add(this.panelTopoProcessingOptions,new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setWeight(3, 1).setFill(GridBagConstraints.BOTH));
-		this.getContentPane().add(this.panelResultData,           new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 10).setWeight(3, 1).setIpad(60, 0).setFill(GridBagConstraints.BOTH));
+		this.getContentPane().add(this.panelTopoProcessingOptions,new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 5, 10).setWeight(3, 1).setFill(GridBagConstraints.BOTH));
+		this.getContentPane().add(this.panelResultData,           new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 5, 10).setWeight(3, 1).setIpad(60, 0).setFill(GridBagConstraints.BOTH));
 		this.getContentPane().add(this.buttonOk,                  new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(3, 1).setInsets(0, 20, 10, 10));
 		this.getContentPane().add(this.buttonCancel,              new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(3, 1).setInsets(0, 5, 10, 0));
 	}
@@ -287,7 +284,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		initComboBoxItem();
 		this.setSize(new Dimension(315, 440));
 		this.setLocationRelativeTo(null);
-		initContentPanel();
 		initPanelResultData();
 		initPanelTopoProcessingOptions();
 		this.checkboxLinesIntersected.setEnabled(false);
@@ -313,6 +309,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			}
 		});
 		initPanelDatasource();
+		initContentPanel();
 		registAction();
 	}
 
