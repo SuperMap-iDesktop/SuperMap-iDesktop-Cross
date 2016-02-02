@@ -169,7 +169,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 				tableModelBeans.add(data);
 			}
 		}
-
+		fireTableDataChanged();
 		FormProgress formProgress = new FormProgress(DataEditorProperties.getString("String_CreateDatasetSpatialIndex"));
 		formProgress.doWork(new BulidSpatialIndexCallable(tableModelBeans, this));
 		return true;

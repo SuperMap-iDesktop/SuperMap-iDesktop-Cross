@@ -63,7 +63,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private SortTable tableDatasets;
 	private SpatialIndexTableModel spatialIndexTableModel;
 
-	DatasetChooser datasetChooser;
+	private DatasetChooser datasetChooser;
 
 
 	private final int rowHeight = 23;
@@ -84,6 +84,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private JPanel panelButton;
 	private JButton buttonOk;
 	private JButton buttonCancle;
+	private JCheckBox checkBoxAutoClose;
 
 	private DatasetType[] supportDatasetTypes = new DatasetType[]{
 			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
@@ -141,14 +142,15 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.panelButton = new JPanel();
 		this.buttonOk = new JButton();
 		this.buttonCancle = new JButton();
+		this.checkBoxAutoClose = new JCheckBox();
 
-		datasetChooser = new DatasetChooser(this) {
+		this.datasetChooser = new DatasetChooser(this) {
 			@Override
 			protected boolean isSupportDatasource(Datasource datasource) {
 				return !datasource.isReadOnly() && super.isSupportDatasource(datasource);
 			}
 		};
-		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
+		this.datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
 	}
 
 	//region 初始化布局
@@ -234,8 +236,10 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 */
 	private void initPanelButton() {
 		this.panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(99, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+		panelButton.add(checkBoxAutoClose, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(98, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
+		panelButton.add(buttonOk, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
+		panelButton.add(buttonCancle, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+
 	}
 
 	//endregion
@@ -507,7 +511,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	private void buttonOkClick() {
-		if (spatialIndexTableModel.bulid()) {
+		if (spatialIndexTableModel.bulid() && checkBoxAutoClose.isSelected()) {
 			this.dispose();
 		}
 	}
@@ -526,6 +530,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.buttonSelectInvert.setEnabled(false);
 		this.buttonDelete.setEnabled(false);
 		this.buttonOk.setEnabled(false);
+		this.checkBoxAutoClose.setSelected(true);
 
 		java.util.List<Dataset> addDataset = new ArrayList<>();
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
@@ -551,6 +556,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.labelIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.checkBoxAutoClose.setText(CommonProperties.getString("String_CheckBox_CloseDialog"));
 	}
 
 	@Override
