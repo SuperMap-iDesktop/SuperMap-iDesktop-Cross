@@ -17,7 +17,7 @@ public class RangeThemePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel labelRangeTheme = new JLabel("");
-	private transient LocalMouseListener mouserListener = new LocalMouseListener();
+	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 	private transient ThemeGuidDialog themeGuidDialog;
 
 	public RangeThemePanel(ThemeGuidDialog themeGuidDialog) {
@@ -59,11 +59,11 @@ public class RangeThemePanel extends JPanel {
 	}
 
 	private void registListener() {
-		this.labelRangeTheme.addMouseListener(this.mouserListener);
+		this.labelRangeTheme.addMouseListener(this.mouseListener);
 	}
 
 	public void unregistListener() {
-		this.labelRangeTheme.removeMouseListener(this.mouserListener);
+		this.labelRangeTheme.removeMouseListener(this.mouseListener);
 	}
 
 	class LocalMouseListener extends MouseAdapter {

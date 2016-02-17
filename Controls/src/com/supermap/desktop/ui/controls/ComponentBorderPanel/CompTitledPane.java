@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls.ComponentBorderPanel;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -7,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -35,9 +37,8 @@ public class CompTitledPane extends JPanel {
 	private void initComponents() {
 		this.border = new CompTitledBorder(component);
 		setBorder(this.border);
-		setLayout(new GridBagLayout());
-		add(this.component, new GridBagConstraintsHelper(0, 0, 1, 1));
-		add(this.panel, new GridBagConstraintsHelper(0, 1, 1, 1));
+		add(this.component, BorderLayout.NORTH);
+		add(this.panel, BorderLayout.CENTER);
 	}
 
 	public JComponent getTitleComponent() {

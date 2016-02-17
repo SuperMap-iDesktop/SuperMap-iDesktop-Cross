@@ -9,7 +9,8 @@ import java.awt.*;
 
 /**
  * Table对应的getValueAt()得到的对象为数据集时可使用
- * <P>得到带图片的数据集
+ * <P>
+ * 得到带图片的数据集
  *
  * @author XiaJT
  */

@@ -67,23 +67,17 @@ public class ThemeGuidDialog extends SmDialog {
 		}
 		panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		panel.setBackground(Color.WHITE);
-		gl_panelContent.setHorizontalGroup(
-				gl_panelContent.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelContent.createSequentialGroup()
-								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGap(20)
-								.addComponent(panel, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
-								.addContainerGap())
-				);
-		gl_panelContent.setVerticalGroup(
-				gl_panelContent.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelContent.createSequentialGroup()
-								.addGap(2)
-								.addGroup(gl_panelContent.createParallelGroup(Alignment.LEADING)
-										.addComponent(panel, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-										.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)))
-				);
+		gl_panelContent.setHorizontalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
+				gl_panelContent.createSequentialGroup().addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED).addGap(20).addComponent(panel, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+						.addContainerGap()));
+		gl_panelContent.setVerticalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
+				gl_panelContent
+						.createSequentialGroup()
+						.addGap(2)
+						.addGroup(
+								gl_panelContent.createParallelGroup(Alignment.LEADING).addComponent(panel, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+										.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))));
 		addListItem();
 		scrollPane.setViewportView(listContent);
 		this.panelContent.setLayout(gl_panelContent);
@@ -110,16 +104,12 @@ public class ThemeGuidDialog extends SmDialog {
 	 */
 	private void addListItem() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		DataCell uniqueDataCell = new DataCell();
-		uniqueDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_UNIQUE, MapViewProperties.getString("String_Theme_Unique"));
-		DataCell rangeDataCell = new DataCell();
-		rangeDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_RANGE, MapViewProperties.getString("String_Theme_Range"));
-		DataCell labelDataCell = new DataCell();
-		labelDataCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_UNIFORM, MapViewProperties.getString("String_ThemeLabel"));
-		DataCell gridUniqueCell = new DataCell();
-		gridUniqueCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE, MapViewProperties.getString("String_ThemeGrid_Unique"));
-		DataCell gridRangeCell = new DataCell();
-		gridRangeCell.initDataImage(InternalImageIconFactory.THEMEGUIDE_GRIDRANGE, MapViewProperties.getString("String_ThemeGrid_Range"));
+		DataCell uniqueDataCell = new DataCell(MapViewProperties.getString("String_Theme_Unique"), InternalImageIconFactory.THEMEGUIDE_UNIQUE);
+		DataCell rangeDataCell = new DataCell(MapViewProperties.getString("String_Theme_Range"), InternalImageIconFactory.THEMEGUIDE_RANGE);
+		DataCell labelDataCell = new DataCell(MapViewProperties.getString("String_ThemeLabel"), InternalImageIconFactory.THEMEGUIDE_UNIFORM);
+		DataCell gridUniqueCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Unique"), InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE);
+		DataCell gridRangeCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Range"), InternalImageIconFactory.THEMEGUIDE_GRIDRANGE);
+		DataCell graphCell = new DataCell(MapViewProperties.getString("String_Theme_Graph"), InternalImageIconFactory.THEMEGUIDE_GRAPH);
 		if (isCadType) {
 			listModel.addElement(labelDataCell);
 		} else if (isGridType) {
@@ -129,6 +119,7 @@ public class ThemeGuidDialog extends SmDialog {
 			listModel.addElement(uniqueDataCell);
 			listModel.addElement(rangeDataCell);
 			listModel.addElement(labelDataCell);
+			listModel.addElement(graphCell);
 		}
 		this.listContent.setModel(listModel);
 		this.listContent.setSelectedIndex(0);
@@ -183,7 +174,10 @@ public class ThemeGuidDialog extends SmDialog {
 				this.gl_panelContent.replace(getRightPanel(), newLabelThemePanel());
 			}
 			break;
-
+		case 3:
+			if (null!=getRightPanel()) {
+				this.gl_panelContent.replace(getRightPanel(), new GraphThemePanel(this));
+			}
 		default:
 			break;
 		}
@@ -219,12 +213,12 @@ public class ThemeGuidDialog extends SmDialog {
 			int selectRow = ThemeGuidDialog.this.listContent.getSelectedIndex();
 			if (!isCadType && !isGridType) {
 				replaceCurrentPanelByListSelection(selectRow);
-			}else if(isGridType) {
+			} else if (isGridType) {
 				replaceGridPanelByListSelection(selectRow);
 			}
 		}
 	}
-	
+
 	private void replaceGridPanelByListSelection(int selectRow) {
 		switch (selectRow) {
 		case 0:
@@ -241,6 +235,7 @@ public class ThemeGuidDialog extends SmDialog {
 			break;
 		}
 	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -277,15 +272,18 @@ public class ThemeGuidDialog extends SmDialog {
 
 		private void createThemeContainer() {
 			int clickCount = listContent.getSelectedIndex();
-			if (0 == clickCount) {
+			switch (clickCount) {
+			case 0:
 				// 单值专题图
 				ThemeGuideFactory.buildUniqueTheme();
 				ThemeGuidDialog.this.dispose();
-			} else if (1 == clickCount) {
+				break;
+			case 1:
 				// 分段专题图
 				ThemeGuideFactory.buildRangeTheme();
 				ThemeGuidDialog.this.dispose();
-			} else if (2 == clickCount) {
+				break;
+			case 2:
 				// 标签统一风格专题图
 				if (isUniform) {
 					ThemeGuideFactory.buildLabelUnformTheme();
@@ -294,6 +292,14 @@ public class ThemeGuidDialog extends SmDialog {
 					ThemeGuideFactory.buildLabelRangeTheme();
 					ThemeGuidDialog.this.dispose();
 				}
+				break;
+			case 3:
+				//统计专题图
+				ThemeGuideFactory.buildGraphTheme();
+				ThemeGuidDialog.this.dispose();
+				break;
+			default:
+				break;
 			}
 		}
 

@@ -59,9 +59,9 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SteppedComboBox;
+import com.supermap.desktop.ui.controls.TableRowCellEditor;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.FileInfoModel;
-import com.supermap.desktop.util.TableRowCellEditor;
 
 import javax.swing.JCheckBox;
 
@@ -111,6 +111,8 @@ public class DataImportFrame extends SmDialog {
 	private transient LocalWindowListener windowListener = new LocalWindowListener();
 	private transient CommonMouseListener commonMouseListener;
 	private transient CommonKeyAction commonKeyListener;
+	private ItemListener aListener;
+	private transient SteppedComboBox steppedComboBox;
 
 	/**
 	 * 注册事件
@@ -191,41 +193,41 @@ public class DataImportFrame extends SmDialog {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initComboBoxColumns() {
-		SteppedComboBox steppedComboBox;
+		this.steppedComboBox.removeItemListener(this.aListener);
 		TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
 		for (int i = 0; i < this.fileInfos.size(); i++) {
 			final ImportFileInfo tempFileInfo = this.fileInfos.get(i);
-			steppedComboBox = new SteppedComboBox(new String[] {});
-			steppedComboBox.removeAllItems();
+			this.steppedComboBox = new SteppedComboBox(new String[] {});
+			this.steppedComboBox.removeAllItems();
 			String fileName = tempFileInfo.getFileName();
 			this.fileTypeInfo = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
-			if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_CAD"));
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterModel"));
-				labelTitle.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
-			} else if (fileTypeInfo.equals(FileTypeLocale.BIL_STRING)) {
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_GRID"));
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_BIL"));
-				labelTitle.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
+			if (this.fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_CAD"));
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterModel"));
+				this.labelTitle.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
+			} else if (this.fileTypeInfo.equals(FileTypeLocale.BIL_STRING)) {
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_GRID"));
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_BIL"));
+				this.labelTitle.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
 			} else if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
 				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_ArcGIS"));
 				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_DEM"));
 				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_GBDEM"));
 				labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
 			} else if (fileTypeInfo.equalsIgnoreCase(FileTypeLocale.TXT_STRING)) {
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_ArcGIS"));
-				steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterLIDAR"));
-				labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_ArcGIS"));
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterLIDAR"));
+				this.labelTitle.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
 			} else {
-				steppedComboBox.addItem(tempFileInfo.getFileType());
+				this.steppedComboBox.addItem(tempFileInfo.getFileType());
 			}
-			Dimension d = steppedComboBox.getPreferredSize();
-			steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));
-			steppedComboBox.setPopupWidth(d.width);
+			Dimension d = this.steppedComboBox.getPreferredSize();
+			this.steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));
+			this.steppedComboBox.setPopupWidth(d.width);
 			
 			rowEditor.setEditorAt(i, new DefaultCellEditor(steppedComboBox));
 			this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellEditor(rowEditor);
-			steppedComboBox.addItemListener(new ItemListener() {
+			this.aListener = new ItemListener() {
 
 				@Override
 				public void itemStateChanged(ItemEvent e) {
@@ -276,10 +278,12 @@ public class DataImportFrame extends SmDialog {
 						}
 					}
 				}
-			});
+			};
+			this.steppedComboBox.addItemListener(this.aListener);
 		}
 	}
 
+	
 	private void initToolBar() {
 		this.toolBar.add(this.buttonAddFile);
 		this.buttonDelete.setEnabled(false);
@@ -342,6 +346,7 @@ public class DataImportFrame extends SmDialog {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 				// 键盘点击delete,删除
 				CommonFunction.deleteData(table, fileInfos, panels, model, panelImportInfo, labelTitle, panelParams);
+				initComboBoxColumns();
 				setButtonState();
 			}
 
@@ -406,6 +411,7 @@ public class DataImportFrame extends SmDialog {
 			} else if (c == buttonDelete) {
 				// 删除
 				CommonFunction.deleteData(table, fileInfos, panels, model, panelImportInfo, labelTitle, panelParams);
+				initComboBoxColumns();
 				setButtonState();
 			} else if (c == buttonSelectAll) {
 				// 全选

@@ -321,6 +321,15 @@ public class LayersTree extends JTree {
 			}
 			return;
 		}
+		//统计专题图
+		if (layer.getTheme() instanceof ThemeGraph && ((ThemeGraph)layer.getTheme()).getCount()>0) {
+			ThemeGraph themeGraph = (ThemeGraph) layer.getTheme();
+			for (int i = 0; i < themeGraph.getCount(); i++) {
+				ThemeGraphItem themeGraphItem = themeGraph.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(themeGraphItem, NodeDataType.THEME_GRAPH_ITEM, layer);
+				insertNode(itemData, layerNode, i);
+			}
+		}
 	}
 
 	private void insertNode(TreeNodeData itemNodeData, DefaultMutableTreeNode parentNode, int count) {

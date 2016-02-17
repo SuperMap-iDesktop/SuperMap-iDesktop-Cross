@@ -14,14 +14,10 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
-
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -238,6 +234,25 @@ public class ThemeGuideFactory {
 	}
 
 	/**
+	 * 新建统计专题图
+	 */
+	public static void buildGraphTheme() {
+		if (null != getDataset()) {
+			DatasetVector datasetVector = (DatasetVector) getDataset();
+			ThemeGraph themeGraph = new ThemeGraph();
+			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
+			themeGraphItem.setGraphExpression("SmID");
+			themeGraphItem.setCaption("SmID");
+			themeGraph.insert(0, themeGraphItem);
+			themeGraph.setGraphType(ThemeGraphType.PIE3D);
+			ThemeGraphContainer themeLabelRangeContainer = new ThemeGraphContainer(datasetVector,themeGraph);
+			themeTypeContainer.put(themeLabelRangeContainer.getThemeGraphLayer().getCaption(), themeLabelRangeContainer);
+			addPanelToThemeMainContainer(themeLabelRangeContainer);
+			getDockbarThemeContainer().setVisible(true);
+		}
+	}
+
+	/**
 	 * 根据图层名称获得展开的节点
 	 *
 	 * @param tree
@@ -341,6 +356,15 @@ public class ThemeGuideFactory {
 		}
 	}
 
+	public static void resetGraph(Layer layer) {
+		if (null!=layer.getDataset()&&null!=themeTypeContainer.get(layer.getCaption())) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
+		}else if (null!=layer.getDataset()) {
+			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(layer);
+			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
+		}
+	}
+	
 	private static Dataset getDataset() {
 		Dataset dataset = null;
 		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
@@ -373,6 +397,8 @@ public class ThemeGuideFactory {
 				resetGridUnique(layer);
 			} else if (layer.getTheme() instanceof ThemeGridRange) {
 				resetGridRange(layer);
+			}else if (layer.getTheme() instanceof ThemeGraph) {
+				resetGraph(layer);
 			}
 		}
 	}

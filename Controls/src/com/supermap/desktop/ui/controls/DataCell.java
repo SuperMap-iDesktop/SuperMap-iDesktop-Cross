@@ -11,8 +11,7 @@ import java.awt.*;
 import java.net.URL;
 
 /**
- * @author xie 控件中用于显示数据集图标，可用于每一个有单元格的控件 如JComBox,JList等，使用时需要调用setRenderer()
- *         方法将渲染器设置为CommonListCellRenderer 不然不会添加图片效果，具体用法请参见DatasetComboBox类
+ * @author xie 控件中用于显示数据集图标，可用于每一个有单元格的控件 如JComBox,JList等，使用时需要调用setRenderer() 方法将渲染器设置为CommonListCellRenderer 不然不会添加图片效果，具体用法请参见DatasetComboBox类
  */
 public class DataCell extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -159,12 +158,12 @@ public class DataCell extends JPanel {
 		return getDataName();
 	}
 
-
-	//region 构造函数
+	// region 构造函数
 
 	/**
 	 * 不支持传入图片路径方式构建
-	 * <p>根据图片路径和数据文字请使用initDataType()
+	 * <p>
+	 * 根据图片路径和数据文字请使用initDataType()
 	 *
 	 * @param objects 传入的参数
 	 * @see DataCell#initDataType(String imagePath, String dataName)
@@ -173,7 +172,6 @@ public class DataCell extends JPanel {
 		EngineType engineType = null;
 		DatasetType datasetType = null;
 		ImageIcon icon = null;
-
 		String name = null;
 
 		for (Object object : objects) {
@@ -223,5 +221,5 @@ public class DataCell extends JPanel {
 			}
 		}
 	}
-	//endregion
+	// endregion
 }

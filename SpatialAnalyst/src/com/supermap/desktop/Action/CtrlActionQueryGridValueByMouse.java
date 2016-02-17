@@ -1,16 +1,11 @@
 package com.supermap.desktop.Action;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
-
-import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
@@ -18,7 +13,6 @@ import com.supermap.data.Datasource;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -33,8 +27,6 @@ import com.supermap.ui.MapControl;
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	TransparentBackground transparentBackground;
 	MapControl mapControl;
-	private final int DEFUALT_WIGHT = 240;
-	private final int DEFUALT_HEIGHT = 150;
 	private IFormMap formMap;
 
 	private void hideTransparentBackground() {
@@ -84,7 +76,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				});
 				if (null == transparentBackground) {
 					transparentBackground = new TransparentBackground();
-					transparentBackground.setSize(DEFUALT_WIGHT, DEFUALT_HEIGHT);
 				} else if (false == transparentBackground.isVisible()) {
 					transparentBackground.setVisible(true);
 				}
@@ -96,8 +87,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				mapControl.addKeyListener(keyAdapter);
 
 				mapControl.setLayout(null);
-				mapControl.add(transparentBackground);
-
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -107,7 +96,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private void abstractMapcontrolMouseMoved(final DecimalFormat format, MouseEvent arg0) {
 		Point point = arg0.getPoint();
 		Point2D point2D = mapControl.getMap().pixelToMap(point);
-		transparentBackground.setLocation(point.x + 15, point.y);
+		transparentBackground.show(mapControl, arg0.getX(), arg0.getY());
 		Map map = mapControl.getMap();
 		Layers layers = map.getLayers();
 		String currentDatasource = transparentBackground.getjLabelDatasource().getText();
@@ -178,21 +167,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			transparentBackground.getjLabelRowOfGrid().setText(currentRow);
 			transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
 			transparentBackground.getjLabelGridValue().setText(currentValue);
-			Dimension datasetDimension = transparentBackground.getjLabelDataset().getPreferredSize();
-			Dimension datasourceDimension = transparentBackground.getjLabelDatasource().getPreferredSize();
-			Dimension maxDimension = new Dimension();
-			if (datasetDimension.getWidth() > datasourceDimension.getWidth()) {
-				maxDimension = datasetDimension;
-			} else {
-				maxDimension = datasourceDimension;
-			}
-			// 重新设定半透明界面宽高
-			if (DEFUALT_WIGHT > (int) maxDimension.getWidth() + 15) {
-				transparentBackground.setSize(DEFUALT_WIGHT, DEFUALT_HEIGHT);
-			} else {
-				transparentBackground.setSize((int) maxDimension.getWidth() + 15, DEFUALT_HEIGHT);
-			}
-			transparentBackground.repaint();
 		} else {
 			currentDatasource = getTargetString(currentDatasource, "-");
 			currentDataset = getTargetString(currentDataset, "-");
@@ -208,7 +182,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			transparentBackground.getjLabelRowOfGrid().setText(currentRow);
 			transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
 			transparentBackground.getjLabelGridValue().setText(currentValue);
-			transparentBackground.setSize(DEFUALT_WIGHT, DEFUALT_HEIGHT);
 			transparentBackground.repaint();
 		}
 	}
@@ -217,7 +190,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		return targetString.replace(targetString.substring(targetString.indexOf(":") + 1, targetString.length()), replaceInfo);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public boolean enable() {
 		boolean enable = false;

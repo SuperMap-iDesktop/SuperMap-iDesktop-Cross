@@ -96,7 +96,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-	private transient LocalDefualTableModel tableModel;
 	private PropertyChangeListener layersTreePropertyChangeListener;
 
 	/**
@@ -400,17 +399,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private JTable getTable() {
 		this.rangeCount = this.themeRange.getCount();
-		this.tableModel = new LocalDefualTableModel(new Object[this.rangeCount][4], this.nameStrings);
-		this.tableRangeInfo.setModel(this.tableModel);
+		this.tableRangeInfo.setModel(new LocalDefualTableModel(new Object[this.rangeCount][4], this.nameStrings));
 		initColumnIcon();
 		this.tableRangeInfo.setRowHeight(20);
-
-		TableColumn visibleColumn = this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_Visible"));
-		TableColumn viewColumn = this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_Sytle"));
-		TableColumn rangeValueColumn = this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_RangeValue"));
-		visibleColumn.setMaxWidth(40);
-		viewColumn.setMaxWidth(100);
-		rangeValueColumn.setMaxWidth(200);
+		this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_Visible")).setMaxWidth(40);
+		this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_Sytle")).setMaxWidth(100);
+		this.tableRangeInfo.getColumn(MapViewProperties.getString("String_Title_RangeValue")).setMaxWidth(200);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableRangeInfo;
@@ -538,10 +532,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				int[] selectRows = tableRangeInfo.getSelectedRows();
 				map = ThemeGuideFactory.getMapControl().getMap();
 				themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
-				getTable();
-				for (int i = 0; i < selectRows.length; i++) {
-					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				if (null != themeRangeLayer.getTheme()) {
+					themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
+					getTable();
+					for (int i = 0; i < selectRows.length; i++) {
+						tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+					}
 				}
 			}
 		};
@@ -622,10 +618,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (dialogResult.equals(DialogResult.OK)) {
 				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
 				if (selectedRow.length == 1) {
-					resetGeoSytle(selectedRow[0], nowGeoStyle, symbolType);
+					resetGeoSytle(selectedRow[0], nowGeoStyle);
 				} else {
 					for (int i = 0; i < selectedRow.length; i++) {
-						resetGeoSytle(selectedRow[i], nowGeoStyle, symbolType);
+						resetGeoSytle(selectedRow[i], nowGeoStyle);
 					}
 				}
 			}
@@ -653,7 +649,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @param nowGeoStyle 新的文本风格
 	 * @param symbolType 文本的风格类型
 	 */
-	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle, SymbolType symbolType) {
+	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeRangeItem item = themeRange.getItem(selectRow);
 		item.setStyle(nowGeoStyle);
 		ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildGeoStyleIcon(this.datasetVector, nowGeoStyle);
@@ -1345,7 +1341,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 
 		@Override
-		public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
+		public Class getColumnClass(int column) {
+			// 要这样定义table，要重写这个方法(0,0)的意思就是别的格子的类型都跟(0,0)的一样。
 			if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
 				return getValueAt(0, 0).getClass();
 			}
@@ -1417,7 +1414,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 		}
 		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
-		;
 		this.map.refresh();
 	}
 

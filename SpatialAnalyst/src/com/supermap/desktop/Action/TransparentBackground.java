@@ -5,13 +5,14 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 
-public class TransparentBackground extends JPanel {
+public class TransparentBackground extends JPopupMenu {
 	/**
 	 * 
 	 */
@@ -84,7 +85,6 @@ public class TransparentBackground extends JPanel {
 						.addComponent(jLabelGridValue)
 				);
 		setLayout(groupLayout);
-		setBackground(new Color(255, 255, 255, 220));
 	}
 
 	public JLabel getjLabelDatasource() {

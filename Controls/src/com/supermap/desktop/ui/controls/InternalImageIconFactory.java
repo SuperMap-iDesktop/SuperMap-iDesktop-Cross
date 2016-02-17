@@ -369,6 +369,14 @@ public final class InternalImageIconFactory {
 
 	public final static ImageIcon FOREGROUND_COLOR = createIconFromFile("ForegroundColor.png");
 
+	public final static ImageIcon MOVE_TO_FRIST = createIconFromFile("Image_MoveToFrist.png");
+
+	public final static ImageIcon MOVE_TO_FORWARD = createIconFromFile("Image_MoveToForward.png");
+	
+	public final static ImageIcon MOVE_TO_NEXT = createIconFromFile("Image_MoveToNext.png");
+	
+	public final static ImageIcon MOVE_TO_LAST = createIconFromFile("Image_MoveToLast.png");
+
 	private InternalImageIconFactory() {
 		// 工具类不提供构造函数
 	}
