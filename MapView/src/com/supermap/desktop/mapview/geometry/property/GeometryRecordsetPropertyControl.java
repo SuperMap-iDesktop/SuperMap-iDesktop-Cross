@@ -261,10 +261,10 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	 * 隐藏显示详细信息
 	 */
 	private void checkBoxHideDetailClicked() {
-		checkIsSelected();
 		if (this.propertyTable.getCellEditor() != null) {
 			this.propertyTable.getCellEditor().stopCellEditing();
 		}
+		checkIsSelected();
 		this.propertyTable.getColumnModel().getColumn(((PropertyTableModel) this.propertyTable.getModel()).getColumnCount() - 1)
 				.setCellEditor(new PropertyTableCellEditor(new JTextField()));
 		setColumnSize();

@@ -39,21 +39,21 @@ public class SpatialIndexTableModel extends SortableTableModel {
 
 	@Override
 	public int getRowCount() {
-		if (datas == null) {
+		if (this.datas == null) {
 			return 0;
 		} else {
-			return datas.size();
+			return this.datas.size();
 		}
 	}
 
 	@Override
 	public int getColumnCount() {
-		return columnNames.length;
+		return this.columnNames.length;
 	}
 
 	@Override
 	public String getColumnName(int column) {
-		return columnNames[column];
+		return this.columnNames[column];
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 	@Override
 	public Object getValueAt(int row, int column) {
 		row = getIndexRow(row)[0];
-		SpatialIndexTableModelBean spatialIndexTableModelBean = datas.get(row);
+		SpatialIndexTableModelBean spatialIndexTableModelBean = this.datas.get(row);
 		switch (column) {
 			case COLUMN_DATASET:
 				return spatialIndexTableModelBean.getDataset();
@@ -86,7 +86,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 			return;
 		}
 		SpatialIndexType spatialIndexType = SpatialIndexTypeUtilties.valueOf(String.valueOf(aValue));
-		datas.get(row).setSpatialIndexType(spatialIndexType);
+		this.datas.get(row).setSpatialIndexType(spatialIndexType);
 		fireTableCellUpdated(row, column);
 	}
 
@@ -113,7 +113,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 				String message = MessageFormat.format(DataEditorProperties.getString("String_DatasetSpatialIndexControl_ReadOnlyDatasetError"), selectedDataset.getName());
 				Application.getActiveApplication().getOutput().output(message);
 			} else if (!currentDatasets.contains(selectedDataset) && SpatialIndexTableModelBean.isSupportDatasetType(selectedDataset.getType())) {
-				datas.add(new SpatialIndexTableModelBean(selectedDataset));
+				this.datas.add(new SpatialIndexTableModelBean(selectedDataset));
 				super.addIndexRow(getRowCount() - 1);
 				isAdded = true;
 			}
@@ -143,8 +143,8 @@ public class SpatialIndexTableModel extends SortableTableModel {
 			realRows[i] = getIndexRow(selectedRows[i])[0];
 		}
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
-			datas.get(realRows[i]).dispose();
-			datas.remove(realRows[i]);
+			this.datas.get(realRows[i]).dispose();
+			this.datas.remove(realRows[i]);
 		}
 		removeRows(selectedRows);
 		fireTableDataChanged();
@@ -169,7 +169,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 				tableModelBeans.add(data);
 			}
 		}
-
+		fireTableDataChanged();
 		FormProgress formProgress = new FormProgress(DataEditorProperties.getString("String_CreateDatasetSpatialIndex"));
 		formProgress.doWork(new BulidSpatialIndexCallable(tableModelBeans, this));
 		return true;

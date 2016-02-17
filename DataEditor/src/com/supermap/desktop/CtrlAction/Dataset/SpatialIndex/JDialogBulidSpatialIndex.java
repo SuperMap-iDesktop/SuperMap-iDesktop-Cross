@@ -63,7 +63,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private SortTable tableDatasets;
 	private SpatialIndexTableModel spatialIndexTableModel;
 
-	DatasetChooser datasetChooser;
+	private DatasetChooser datasetChooser;
 
 
 	private final int rowHeight = 23;
@@ -84,6 +84,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private JPanel panelButton;
 	private JButton buttonOk;
 	private JButton buttonCancle;
+	private JCheckBox checkBoxAutoClose;
 
 	private DatasetType[] supportDatasetTypes = new DatasetType[]{
 			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
@@ -141,14 +142,15 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.panelButton = new JPanel();
 		this.buttonOk = new JButton();
 		this.buttonCancle = new JButton();
+		this.checkBoxAutoClose = new JCheckBox();
 
-		datasetChooser = new DatasetChooser(this) {
+		this.datasetChooser = new DatasetChooser(this) {
 			@Override
 			protected boolean isSupportDatasource(Datasource datasource) {
 				return !datasource.isReadOnly() && super.isSupportDatasource(datasource);
 			}
 		};
-		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
+		this.datasetChooser.setSupportDatasetTypes(this.supportDatasetTypes);
 	}
 
 	//region 初始化布局
@@ -211,8 +213,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 * 初始化表格
 	 */
 	private void initTableDatasets() {
-		this.tableDatasets.setRowHeight(rowHeight);
-		this.scrollPaneTable.setViewportView(tableDatasets);
+		this.tableDatasets.setRowHeight(this.rowHeight);
+		this.scrollPaneTable.setViewportView(this.tableDatasets);
 		this.tableDatasets.setModel(this.spatialIndexTableModel);
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASET).setCellRenderer(new TableDatasetCellRender());
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASOURCE).setCellRenderer(new TabelDatasourceCellRender());
@@ -224,9 +226,9 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 */
 	private void initPanelDescribe() {
 		Dimension size = new Dimension(300, 100);
-		scrollPaneDescribe.setMinimumSize(size);
-		scrollPaneDescribe.setPreferredSize(size);
-		scrollPaneDescribe.setMaximumSize(size);
+		this.scrollPaneDescribe.setMinimumSize(size);
+		this.scrollPaneDescribe.setPreferredSize(size);
+		this.scrollPaneDescribe.setMaximumSize(size);
 	}
 
 	/**
@@ -234,8 +236,10 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 */
 	private void initPanelButton() {
 		this.panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(99, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+		this.panelButton.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(98, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
+		this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
+		this.panelButton.add(this.buttonCancle, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+
 	}
 
 	//endregion
@@ -374,13 +378,13 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	private void buttonAddClicked() {
-		if (datasetChooser.showDialog() == DialogResult.OK) {
-			int preRowCount = tableDatasets.getRowCount();
-			spatialIndexTableModel.addDatasets(datasetChooser.getSelectedDatasets());
-			int currentRowCount = tableDatasets.getRowCount();
+		if (this.datasetChooser.showDialog() == DialogResult.OK) {
+			int preRowCount = this.tableDatasets.getRowCount();
+			this.spatialIndexTableModel.addDatasets(this.datasetChooser.getSelectedDatasets());
+			int currentRowCount = this.tableDatasets.getRowCount();
 			if (currentRowCount > preRowCount) {
-				tableDatasets.setRowSelectionInterval(preRowCount, currentRowCount - 1);
-				tableDatasets.scrollRectToVisible(tableDatasets.getCellRect(currentRowCount - 1, 0, true));
+				this.tableDatasets.setRowSelectionInterval(preRowCount, currentRowCount - 1);
+				this.tableDatasets.scrollRectToVisible(this.tableDatasets.getCellRect(currentRowCount - 1, 0, true));
 			}
 		}
 	}
@@ -392,16 +396,16 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	private void checkButtonSelectAllAndInvertAndOkState() {
-		if (tableDatasets.getRowCount() > 0 != buttonSelectAll.isEnabled()) {
-			buttonSelectAll.setEnabled(tableDatasets.getRowCount() > 0);
-			buttonSelectInvert.setEnabled(tableDatasets.getRowCount() > 0);
-			buttonOk.setEnabled(tableDatasets.getRowCount() > 0);
+		if (this.tableDatasets.getRowCount() > 0 != this.buttonSelectAll.isEnabled()) {
+			this.buttonSelectAll.setEnabled(this.tableDatasets.getRowCount() > 0);
+			this.buttonSelectInvert.setEnabled(this.tableDatasets.getRowCount() > 0);
+			this.buttonOk.setEnabled(this.tableDatasets.getRowCount() > 0);
 		}
 	}
 
 	private void checkButtonDeleteState() {
-		if (tableDatasets.getSelectedRows().length > 0 != buttonDelete.isEnabled()) {
-			buttonDelete.setEnabled(tableDatasets.getSelectedRows().length > 0);
+		if (this.tableDatasets.getSelectedRows().length > 0 != this.buttonDelete.isEnabled()) {
+			this.buttonDelete.setEnabled(this.tableDatasets.getSelectedRows().length > 0);
 		}
 	}
 
@@ -412,46 +416,46 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	private void resetComboboxIndexTypeModel() {
-		int[] selectedRows = tableDatasets.getSelectedRows();
+		int[] selectedRows = this.tableDatasets.getSelectedRows();
 		java.util.List<Dataset> datasetList = new ArrayList<>();
 		for (int selectedRow : selectedRows) {
-			datasetList.add((Dataset) tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
+			datasetList.add((Dataset) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
-		comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilties.getSupportSpatialIndexTypes(datasetList)));
+		this.comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilties.getSupportSpatialIndexTypes(datasetList)));
 	}
 
 	private void resetComboboxIndexTypeSelectItem() {
 		String currentSpatialIndexType = null;
-		int[] selectedRows = tableDatasets.getSelectedRows();
+		int[] selectedRows = this.tableDatasets.getSelectedRows();
 		for (int selectedRow : selectedRows) {
 			if (currentSpatialIndexType == null) {
-				currentSpatialIndexType = (String) tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
-			} else if (!currentSpatialIndexType.equals((String) tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
+				currentSpatialIndexType = (String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
+			} else if (!currentSpatialIndexType.equals((String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
 				currentSpatialIndexType = null;
 				break;
 			}
 		}
 		// 不先置为-1会导致不能正确触发事件
-		comboBoxIndexType.setSelectedIndex(-1);
-		comboBoxIndexType.setSelectedItem(currentSpatialIndexType);
+		this.comboBoxIndexType.setSelectedIndex(-1);
+		this.comboBoxIndexType.setSelectedItem(currentSpatialIndexType);
 
 	}
 
 	private void checkScrollPanelDescribe() {
-		Object selectedItem = comboBoxIndexType.getSelectedItem();
+		Object selectedItem = this.comboBoxIndexType.getSelectedItem();
 		if (selectedItem == null) {
-			scrollPaneDescribe.setViewportView(null);
+			this.scrollPaneDescribe.setViewportView(null);
 		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.NONE))) {
-			scrollPaneDescribe.setViewportView(textAreaNull);
+			this.scrollPaneDescribe.setViewportView(this.textAreaNull);
 		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.RTREE))) {
-			scrollPaneDescribe.setViewportView(textAreaRTree);
+			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
 		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.QTREE))) {
-			scrollPaneDescribe.setViewportView(textAreaRTree);
+			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
 		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.MULTI_LEVEL_GRID))) {
-			scrollPaneDescribe.setViewportView(panelDynamicIndex);
+			this.scrollPaneDescribe.setViewportView(this.panelDynamicIndex);
 			initPanelDynamic();
 		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.TILE))) {
-			scrollPaneDescribe.setViewportView(panelGraphIndex);
+			this.scrollPaneDescribe.setViewportView(this.panelGraphIndex);
 			initPanelGraph();
 		}
 	}
@@ -476,9 +480,9 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		java.util.List<SpatialIndexInfo> selectedSpatialIndexInfo = getSpatialIndexInfos();
 
 		List<Dataset> selectedDatasets = new ArrayList<>();
-		int[] selectedRows = tableDatasets.getSelectedRows();
+		int[] selectedRows = this.tableDatasets.getSelectedRows();
 		for (int selectedRow : selectedRows) {
-			selectedDatasets.add((Dataset) spatialIndexTableModel.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
+			selectedDatasets.add((Dataset) this.spatialIndexTableModel.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
 
 		this.panelGraphIndex.setFieldModel(DatasetUtilties.getCommonFields(selectedDatasets));
@@ -499,23 +503,23 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	private List<SpatialIndexInfo> getSpatialIndexInfos() {
 		List<SpatialIndexInfo> selectedSpatialIndexInfo = new ArrayList<>();
-		int[] selectedRows = tableDatasets.getSelectedRows();
+		int[] selectedRows = this.tableDatasets.getSelectedRows();
 		for (int selectedRow : selectedRows) {
-			selectedSpatialIndexInfo.add(spatialIndexTableModel.getSpatialIndexInfo(selectedRow));
+			selectedSpatialIndexInfo.add(this.spatialIndexTableModel.getSpatialIndexInfo(selectedRow));
 		}
 		return selectedSpatialIndexInfo;
 	}
 
 	private void buttonOkClick() {
-		if (spatialIndexTableModel.bulid()) {
+		if (this.spatialIndexTableModel.bulid() && this.checkBoxAutoClose.isSelected()) {
 			this.dispose();
 		}
 	}
 
 	private void setTableValues(Object selectedItem) {
-		int[] selectedRows = tableDatasets.getSelectedRows();
+		int[] selectedRows = this.tableDatasets.getSelectedRows();
 		for (int selectedRow : selectedRows) {
-			tableDatasets.setValueAt(selectedItem, selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
+			this.tableDatasets.setValueAt(selectedItem, selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
 		}
 	}
 	//endregion
@@ -526,6 +530,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.buttonSelectInvert.setEnabled(false);
 		this.buttonDelete.setEnabled(false);
 		this.buttonOk.setEnabled(false);
+		this.checkBoxAutoClose.setSelected(true);
 
 		java.util.List<Dataset> addDataset = new ArrayList<>();
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
@@ -535,9 +540,9 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			}
 		}
 		if (activeDatasets != null && activeDatasets.length > 0) {
-			spatialIndexTableModel.addDatasets(addDataset);
-			if (tableDatasets.getRowCount() > 0) {
-				tableDatasets.setRowSelectionInterval(0, 0);
+			this.spatialIndexTableModel.addDatasets(addDataset);
+			if (this.tableDatasets.getRowCount() > 0) {
+				this.tableDatasets.setRowSelectionInterval(0, 0);
 			}
 		}
 
@@ -551,6 +556,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.labelIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.checkBoxAutoClose.setText(CommonProperties.getString("String_CheckBox_CloseDialog"));
 	}
 
 	@Override

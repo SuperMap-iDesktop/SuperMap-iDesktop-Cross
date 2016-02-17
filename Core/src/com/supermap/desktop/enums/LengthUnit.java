@@ -1,6 +1,10 @@
 package com.supermap.desktop.enums;
 
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.properties.CommonProperties;
 
 public enum LengthUnit {
 	// @formatter:off
@@ -22,23 +26,28 @@ public enum LengthUnit {
 	private int value = 0;
 	private transient Unit unit = Unit.METER;
 
-	private LengthUnit(int value, Unit unit) {
+	LengthUnit(int value, Unit unit) {
 		this.value = value;
 		this.unit = unit;
+	}
+
+	public Unit getUnit() {
+		return this.unit;
 	}
 
 	public static LengthUnit convertForm(Unit unit) {
 		LengthUnit result = LengthUnit.METER;
 
 		LengthUnit[] lengthUnits = LengthUnit.values();
-		for (int i = 0; i < lengthUnits.length; i++) {
-			if (lengthUnits[i].unit == unit) {
-				result = lengthUnits[i];
+		for (LengthUnit lengthUnit : lengthUnits) {
+			if (lengthUnit.unit == unit) {
+				result = lengthUnit;
 				break;
 			}
 		}
 		return result;
 	}
+
 
 	public int getValue() {
 		return this.value;
@@ -47,5 +56,72 @@ public enum LengthUnit {
 	@Override
 	public String toString() {
 		return this.unit.toString();
+	}
+
+	public static LengthUnit getValueOf(String name) {
+		if (name.equals(CommonProperties.getString("String_DistanceUnit_Meter"))) {
+			return METER;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Kilometer"))) {
+			return KILOMETER;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Centimeter"))) {
+			return CENTIMETER;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Decimeter"))) {
+			return DECIMETER;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Mile"))) {
+			return MILE;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Inch"))) {
+			return INCH;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Yard"))) {
+			return YARD;
+		} else if (name.equals(CommonProperties.getString("String_AngleUnit_Second"))) {
+			return SECOND;
+		} else if (name.equals(CommonProperties.getString("String_AngleUnit_Minute"))) {
+			return MINUTE;
+		} else if (name.equals(CommonProperties.getString("String_AngleUnit_Degree"))) {
+			return DEGREE;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Foot"))) {
+			return FOOT;
+		} else if (name.equals(CommonProperties.getString("String_DistanceUnit_Millimeter"))) {
+			return MILLIMETER;
+		}
+		return RADIAN;
+	}
+
+	public static double ConvertDistance(Unit srcUnit, Unit desUnit,
+	                                     double distance) {
+		double resultDistance = distance;
+		try {
+			if (srcUnit != desUnit) // 两种单位不相同时才进行转换
+			{
+				resultDistance = distance * (srcUnit.value() / desUnit.value());
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return resultDistance;
+	}
+
+	/**
+	 * 以投影系统的坐标单位作为参照，进行距离单位换算，平面坐标系使用坐标单位，其他坐标系单位默认为米
+	 *
+	 * @param prjCoordSys
+	 * @param desUnit
+	 * @param distance
+	 * @return
+	 */
+	public static double ConvertDistance(PrjCoordSys prjCoordSys, Unit
+			desUnit, double distance) {
+		double resultDistance = distance;
+		try {
+			Unit unit = Unit.METER;
+			if (prjCoordSys.getType() == PrjCoordSysType.PCS_NON_EARTH) {
+				unit = prjCoordSys.getCoordUnit();
+			}
+
+			resultDistance = ConvertDistance(unit, desUnit, distance);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return resultDistance;
 	}
 }

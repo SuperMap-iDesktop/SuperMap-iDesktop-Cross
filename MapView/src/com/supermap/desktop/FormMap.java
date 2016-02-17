@@ -22,6 +22,8 @@ import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
+import com.supermap.desktop.enums.AreaUnit;
+import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
@@ -71,7 +73,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -116,6 +117,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private int SCALE = 8;
 	private boolean isRegisterEvents = false;
 	private boolean isResetComboBox = false;
+
+	private LengthUnit lengthUnit = LengthUnit.METER;
+	private AreaUnit areaUnit = AreaUnit.METER;
+	private int angleMode = 0;
+
 
 	private Layer[] rememberActiveLayers = null;
 
@@ -297,6 +303,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				clearSelection();
 			} else if (KeyEvent.VK_A == e.getKeyCode() && e.isControlDown()) {
 				selectAll();
+			} else if (KeyEvent.VK_Z == e.getKeyCode() && e.isControlDown() && Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+				setSelectedGeometryProperty();
 			}
 		}
 	};
@@ -361,7 +369,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		this.mapControl.getMap().setName(title);
-		this.setComponent(jScrollPaneChildWindow);
+		this.setComponent(this.jScrollPaneChildWindow);
 
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
@@ -1108,8 +1116,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
+								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1217,7 +1225,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
@@ -1285,4 +1293,28 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	}
 
+
+	public int getAngleMode() {
+		return angleMode;
+	}
+
+	public void setAngleMode(int angleMode) {
+		this.angleMode = angleMode;
+	}
+
+	public AreaUnit getAreaUnit() {
+		return areaUnit;
+	}
+
+	public void setAreaUnit(AreaUnit areaUnit) {
+		this.areaUnit = areaUnit;
+	}
+
+	public LengthUnit getLengthUnit() {
+		return lengthUnit;
+	}
+
+	public void setLengthUnit(LengthUnit lengthUnit) {
+		this.lengthUnit = lengthUnit;
+	}
 }

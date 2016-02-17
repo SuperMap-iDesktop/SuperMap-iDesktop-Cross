@@ -221,9 +221,9 @@ public class JDialogOperationSetting extends SmDialog {
 	}
 
 	private void buttonOkClicked() {
-		if (formMap != null) {
+		if (this.formMap != null) {
 			MapControl mapControl = this.formMap.getMapControl();
-			mapControl.setRollingWheelWithoutDelay(this.checkBoxRollingWheelWithoutDelay.isSelected());
+			mapControl.setRollingWheelWithoutDelay(!this.checkBoxRollingWheelWithoutDelay.isSelected());
 			mapControl.setMarginPanEnabled(this.checkBoxAutoScroll.isSelected());
 			// todo 导航条
 			mapControl.setRefreshInInvalidArea(this.checkBoxRefreshInInvalidArea.isSelected());
@@ -244,7 +244,7 @@ public class JDialogOperationSetting extends SmDialog {
 	private void initComponentStates() {
 		if (formMap != null) {
 			MapControl mapControl = formMap.getMapControl();
-			this.checkBoxRollingWheelWithoutDelay.setSelected(mapControl.getRollingWheelWithoutDelay());
+			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());
 			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());
 			// todo 导航条
 			this.checkBoxShowNavigationBar.setSelected(false);

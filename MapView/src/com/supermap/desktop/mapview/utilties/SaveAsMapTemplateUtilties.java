@@ -1,12 +1,5 @@
 package com.supermap.desktop.mapview.utilties;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -16,19 +9,27 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 public class SaveAsMapTemplateUtilties {
 
-	/**
-	 * 将地图输出为地图模板
-	 * 
-	 * @param mapXml 需要输出的地图的xml字符串
-	 * @return 输出的地图模板路径
-	 */
+
 
 	private SaveAsMapTemplateUtilties() {
 		// 工具类不提供构造函数
 	}
 
+	/**
+	 * 将地图输出为地图模板
+	 *
+	 * @param mapXml 需要输出的地图的xml字符串
+	 * @return 输出的地图模板路径
+	 */
 	public static String saveAsMapTemplate(String mapXml) {
 		String moduleName = "SavaAsMapTemplate";
 		String mapTemplatePath = null;
@@ -42,13 +43,16 @@ public class SaveAsMapTemplateUtilties {
 		smFileChoose.setSelectedFile(new File("MapTemplate.xml"));
 		int state = smFileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
-			try {
+			String filePath = smFileChoose.getFilePath();
+			File file = new File(filePath);
+			if (file.isFile() && file.exists()) {
+				file.delete();
+			}
+			try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(filePath, true),"UTF-8")) {
 				// 保存地图信息
-				FileWriter fileWriter = new FileWriter(smFileChoose.getFilePath());
-				fileWriter.write(mapXml);
-				fileWriter.flush();
-				fileWriter.close();
-				mapTemplatePath = smFileChoose.getFilePath();
+				osw.write(mapXml);
+				osw.flush();
+				mapTemplatePath = filePath;
 			} catch (IOException e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

@@ -6,20 +6,20 @@ import com.supermap.desktop.properties.CommonProperties;
 public enum AreaUnit {
 	// @formatter:off
 	MILIMETER(UnitValue.MILLIMETER * UnitValue.MILLIMETER), 
-	CENTIMETER(UnitValue.CENTIMETER*UnitValue.CENTIMETER), 
-	DECIMETER(UnitValue.DECIMETER*UnitValue.DECIMETER), 
-	METER(UnitValue.METER*UnitValue.METER), 
-	KILOMETER(UnitValue.KILOMETER*UnitValue.KILOMETER), 
-	MILE(UnitValue.MILE*UnitValue.MILE), 
-	INCH(UnitValue.INCH*UnitValue.INCH), 
-	FOOT(UnitValue.FOOT*UnitValue.FOOT), 
-	YARD(UnitValue.YARD*UnitValue.YARD), 
+	CENTIMETER(UnitValue.CENTIMETER * UnitValue.CENTIMETER),
+	DECIMETER(UnitValue.DECIMETER * UnitValue.DECIMETER),
+	METER(UnitValue.METER * UnitValue.METER),
+	KILOMETER(UnitValue.KILOMETER * UnitValue.KILOMETER),
+	MILE(UnitValue.MILE * UnitValue.MILE),
+	INCH(UnitValue.INCH * UnitValue.INCH),
+	FOOT(UnitValue.FOOT * UnitValue.FOOT),
+	YARD(UnitValue.YARD * UnitValue.YARD),
 	ACRE(404685642240L);
 	// @formatter:on
 
 	private long value = 0;
 
-	private AreaUnit(long value) {
+	AreaUnit(long value) {
 		this.value = value;
 	}
 
@@ -79,6 +79,33 @@ public enum AreaUnit {
 		} else if (this == AreaUnit.ACRE) {
 			result = CommonProperties.getString("String_AreaUnit_Acre");
 		}
+		return result;
+	}
+
+	public static AreaUnit getValueOf(String name) {
+		AreaUnit result = AreaUnit.METER;
+		if (name.equals(CommonProperties.getString("String_AreaUnit_Millimeter"))) {
+			result = AreaUnit.MILIMETER;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Centimeter"))) {
+			result = AreaUnit.CENTIMETER;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Decimeter"))) {
+			result = AreaUnit.DECIMETER;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Meter"))) {
+			result = AreaUnit.METER;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Kilometer"))) {
+			result = AreaUnit.KILOMETER;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Mile"))) {
+			result = AreaUnit.MILE;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Inch"))) {
+			result = AreaUnit.INCH;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Foot"))) {
+			result = AreaUnit.FOOT;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Yard"))) {
+			result = AreaUnit.YARD;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Acre"))) {
+			result = AreaUnit.ACRE;
+		}
+
 		return result;
 	}
 }
