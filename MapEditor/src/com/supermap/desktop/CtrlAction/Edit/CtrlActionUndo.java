@@ -7,7 +7,8 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
 
 public class CtrlActionUndo extends CtrlAction {
-
+	// 这个类没用到，目前用的是DataEditor中的CtrlActionUndo类
+	// xiajt 2016年2月17日
 	public CtrlActionUndo(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}

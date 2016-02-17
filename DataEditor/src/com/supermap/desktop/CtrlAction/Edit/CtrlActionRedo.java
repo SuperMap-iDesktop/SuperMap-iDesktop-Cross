@@ -21,6 +21,7 @@ public class CtrlActionRedo extends CtrlAction {
 			if (form != null) {
 				if (form instanceof IFormMap) {
 					((IFormMap) form).getMapControl().redo();
+					((IFormMap) form).setSelectedGeometryProperty();
 					((IFormMap) form).getMapControl().getMap().refresh();
 				} else if (form instanceof IFormScene) {
 					// TODO 目前场景并不支持编辑，后续版本根据组件支持情况再行实现
