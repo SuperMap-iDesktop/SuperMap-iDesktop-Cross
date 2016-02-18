@@ -5,8 +5,9 @@ import com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure.MeasureDistance;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.ui.MapControl;
 
 import java.util.HashMap;
@@ -32,15 +33,24 @@ public class CtrlActionMeasureDistance extends CtrlAction {
 
 	private MeasureDistance getMeasureDistance() {
 		MeasureDistance result = null;
-		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof IFormMap) {
-			MapControl mapControl = ((IFormMap) activeForm).getMapControl();
+		final IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm instanceof FormMap) {
+			MapControl mapControl = ((FormMap) activeForm).getMapControl();
 			if (hashMap == null) {
 				hashMap = new HashMap<>();
 			}
 			result = hashMap.get(mapControl);
 			if (result == null) {
 				result = new MeasureDistance();
+				((FormMap) activeForm).addListener(new DockingWindowAdapter() {
+					@Override
+					public void windowClosed(DockingWindow window) {
+						if (window instanceof FormMap) {
+							hashMap.remove(((FormMap) window).getMapControl());
+							((FormMap) activeForm).removeListener(this);
+						}
+					}
+				});
 				hashMap.put(mapControl, result);
 			}
 		}

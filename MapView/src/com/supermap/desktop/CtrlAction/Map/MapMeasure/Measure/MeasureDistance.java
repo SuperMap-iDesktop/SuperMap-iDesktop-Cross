@@ -22,8 +22,6 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
-import com.supermap.ui.ActionChangedEvent;
-import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
 import com.supermap.ui.TrackingEvent;
@@ -80,12 +78,6 @@ public class MeasureDistance extends Measure {
 		super.addListeners();
 		this.mapControl.addTrackedListener(this.trackedListener);
 		this.mapControl.addTrackingListener(this.trackingListener);
-		this.mapControl.addActionChangedListener(new ActionChangedListener() {
-			@Override
-			public void actionChanged(ActionChangedEvent actionChangedEvent) {
-
-			}
-		});
 	}
 
 	@Override
