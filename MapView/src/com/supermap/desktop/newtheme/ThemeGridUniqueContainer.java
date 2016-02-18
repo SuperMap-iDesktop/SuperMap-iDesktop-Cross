@@ -72,7 +72,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-	private PropertyChangeListener layersTreePropertyChangeListener;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -150,20 +150,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 * 控件注册事件
 	 */
 	void registActionListener() {
-		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				int[] selectRows = tableUniqueInfo.getSelectedRows();
-				map = ThemeGuideFactory.getMapControl().getMap();
-				themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
-				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
-				getTable();
-				for (int i = 0; i < selectRows.length; i++) {
-					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-				}
-			}
-		};
 		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
@@ -327,6 +313,29 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.setValueAt(MapViewProperties.getString("String_defualt_style"), uniqueCount, TABLE_COLUMN_CAPTION);
 	}
 
+	class LayerChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableUniqueInfo.getSelectedRows();
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeGridUnique) {
+				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		}
+	}
+
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
+
 	class LocalTableMouseListener extends MouseAdapter {
 
 		@Override
@@ -348,10 +357,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				int selectRow = tableUniqueInfo.getSelectedRow();
 				setItemColor(e.getX(), e.getY());
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 			// 包含最后一行不能做删除操作
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
@@ -361,6 +367,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				buttonDelete.setEnabled(true);
 			}
 		}
+
 	}
 
 	/**
@@ -390,10 +397,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 	}
 
@@ -441,11 +445,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-				tableUniqueInfo.setRowSelectionInterval(0, 0);
-			}
+			refreshAtOnce();
+			tableUniqueInfo.setRowSelectionInterval(0, 0);
 		}
 
 		@Override
@@ -486,10 +487,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 						tableUniqueInfo.setRowSelectionInterval(0, 0);
 					}
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 		}
 	}
@@ -512,10 +510,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
@@ -545,10 +540,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				setGeoStyleAntitone();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 		/**

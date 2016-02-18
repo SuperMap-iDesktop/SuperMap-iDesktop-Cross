@@ -91,7 +91,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-	private PropertyChangeListener layersTreePropertyChangeListener;
+	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -175,25 +175,27 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.comboBoxOffsetY.setEditable(true);
 	}
 
-	/**
-	 * 控件注册事件
-	 */
-	void registActionListener() {
-		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				int[] selectRows = tableUniqueInfo.getSelectedRows();
-				// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
-				map = ThemeGuideFactory.getMapControl().getMap();
-				themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+	class LayersTreeChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableUniqueInfo.getSelectedRows();
+			// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeUnique) {
 				themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 				getTable();
 				for (int i = 0; i < selectRows.length; i++) {
 					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
 			}
-		};
+		}
+	}
+
+	/**
+	 * 控件注册事件
+	 */
+	void registActionListener() {
 		unregistActionListener();
 		this.comboBoxExpression.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.addItemListener(this.comboBoxItemListener);
@@ -521,10 +523,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				int selectRow = tableUniqueInfo.getSelectedRow();
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 			// 包含最后一行不能做删除操作
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
@@ -563,10 +562,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			// 修改单值项的单值
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 	}
 
@@ -629,11 +625,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			getTable();
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-				tableUniqueInfo.setRowSelectionInterval(0, 0);
-			}
+			refreshAtOnce();
+			tableUniqueInfo.setRowSelectionInterval(0, 0);
 			if (tableUniqueInfo.getRowCount() > 1) {
 				buttonDelete.setEnabled(true);
 			} else {
@@ -699,10 +692,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					// 修改偏移量单位
 					setOffsetUnity();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 		}
 
@@ -846,10 +836,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
@@ -857,8 +844,14 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	}
 
-	class LocalActionListener implements ActionListener {
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
 
+	class LocalActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int[] selectRows = null;
@@ -881,10 +874,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				// 颜色方案反序
 				setGeoStyleAntitone();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 			if (null != selectRows && e.getSource() != buttonDelete) {
 				for (int i = 0; i < selectRows.length; i++) {
 					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
@@ -1193,16 +1183,18 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
-		((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
-		for (int i = 0; i < this.themeUnique.getCount(); i++) {
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
+		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
+			for (int i = 0; i < this.themeUnique.getCount(); i++) {
+				((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
+			}
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).setUniqueExpression(this.themeUnique.getUniqueExpression());
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetFixed(this.themeUnique.isOffsetFixed());
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetX(this.themeUnique.getOffsetX());
+			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetY(this.themeUnique.getOffsetY());
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+			this.map.refresh();
 		}
-		((ThemeUnique) this.themeUniqueLayer.getTheme()).setUniqueExpression(this.themeUnique.getUniqueExpression());
-		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetFixed(this.themeUnique.isOffsetFixed());
-		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetX(this.themeUnique.getOffsetX());
-		((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetY(this.themeUnique.getOffsetY());
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
-		this.map.refresh();
 	}
 
 	// 获取当前的专题图

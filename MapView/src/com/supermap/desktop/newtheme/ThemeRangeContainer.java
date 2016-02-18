@@ -20,7 +20,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -96,7 +95,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-	private PropertyChangeListener layersTreePropertyChangeListener;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();;
 
 	/**
 	 * @wbp.parser.constructor
@@ -525,22 +524,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
-		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				int[] selectRows = tableRangeInfo.getSelectedRows();
-				map = ThemeGuideFactory.getMapControl().getMap();
-				themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-				if (null != themeRangeLayer.getTheme()) {
-					themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
-					getTable();
-					for (int i = 0; i < selectRows.length; i++) {
-						tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-					}
-				}
-			}
-		};
 		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
@@ -656,6 +639,29 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 	}
 
+	class LayerChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableRangeInfo.getSelectedRows();
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeRange) {
+				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		}
+	}
+
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -678,10 +684,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 批量修改单值段的符号方案
 				setItemGeoSytle();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 		/**
@@ -849,18 +852,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					tableRangeInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				int selectRow = tableRangeInfo.getSelectedRow();
 				setItemGeoSytle();
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
@@ -909,11 +906,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 修改垂直偏移量
 					setOffsetY();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-					tableRangeInfo.setRowSelectionInterval(0, 0);
-				}
+				refreshAtOnce();
+				tableRangeInfo.setRowSelectionInterval(0, 0);
 			}
 		}
 
@@ -1240,10 +1234,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					themeRange.getItem(selectRow).setCaption(caption);
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 				getTable();
 				tableRangeInfo.addRowSelectionInterval(selectRow, selectRow);
 			} catch (Exception e) {
@@ -1325,10 +1316,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			makeDefaultAsCustom();
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 	}
@@ -1407,14 +1395,16 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	@Override
 	void refreshMapAndLayer() {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-		((ThemeRange) this.themeRangeLayer.getTheme()).clear();
-		if (0 < this.themeRange.getCount()) {
-			for (int i = 0; i < this.themeRange.getCount(); i++) {
-				((ThemeRange) this.themeRangeLayer.getTheme()).addToTail(this.themeRange.getItem(i), true);
+		if (null != themeRangeLayer && null != themeRangeLayer.getTheme()) {
+			((ThemeRange) this.themeRangeLayer.getTheme()).clear();
+			if (0 < this.themeRange.getCount()) {
+				for (int i = 0; i < this.themeRange.getCount(); i++) {
+					((ThemeRange) this.themeRangeLayer.getTheme()).addToTail(this.themeRange.getItem(i), true);
+				}
 			}
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
+			this.map.refresh();
 		}
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
-		this.map.refresh();
 	}
 
 }

@@ -193,7 +193,6 @@ public class DataImportFrame extends SmDialog {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initComboBoxColumns() {
-		this.steppedComboBox.removeItemListener(this.aListener);
 		TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
 		for (int i = 0; i < this.fileInfos.size(); i++) {
 			final ImportFileInfo tempFileInfo = this.fileInfos.get(i);

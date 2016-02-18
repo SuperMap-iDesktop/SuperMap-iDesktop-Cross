@@ -83,7 +83,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
-	private PropertyChangeListener layersTreePropertyChangeListener;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();;
 
 	/**
 	 * @wbp.parser.constructor
@@ -329,20 +329,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
-		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				int[] selectRows = tableRangeInfo.getSelectedRows();
-				map = ThemeGuideFactory.getMapControl().getMap();
-				themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-				themeGridRange = new ThemeGridRange((ThemeGridRange) themeRangeLayer.getTheme());
-				getTable();
-				for (int i = 0; i < selectRows.length; i++) {
-					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-				}
-			}
-		};
 		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonForeGroundColor.addActionListener(this.actionListener);
@@ -423,6 +409,29 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 	}
 
+	final class LayerChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableRangeInfo.getSelectedRows();
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeGridRange) {
+				themeGridRange = new ThemeGridRange((ThemeGridRange) themeRangeLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		}
+	}
+
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -445,10 +454,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				// 批量修改单值段的符号方案
 				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight() - 60);
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 		/**
@@ -613,16 +619,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					item.setVisible(true);
 					tableRangeInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} else if (e.getSource() == tableRangeInfo && 2 == e.getClickCount() && tableRangeInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				setItemColor(e.getX(), e.getY());
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
@@ -653,11 +653,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					// 设置标题格式
 					setRangeFormat();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-					tableRangeInfo.setRowSelectionInterval(0, 0);
-				}
+				refreshAtOnce();
+				tableRangeInfo.setRowSelectionInterval(0, 0);
 			}
 		}
 
@@ -822,10 +819,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				}
 				getTable();
 				tableRangeInfo.addRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
@@ -898,10 +892,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			makeDefaultAsCustom();
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 	}

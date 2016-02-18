@@ -493,7 +493,12 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			}
 		}
 	}
-
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
 	class LocalComboBoxItemListener implements ItemListener {
 
 		@Override
@@ -525,10 +530,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					// 设置数值文本精度
 					setTextPrecision();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 		}
 
@@ -684,11 +686,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				// 设置是否显示上下标
 				setShowTextExpression();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
-
+			refreshAtOnce();
 		}
 
 		private void setShowTextExpression() {

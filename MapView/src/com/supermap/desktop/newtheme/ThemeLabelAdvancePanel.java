@@ -419,6 +419,13 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		//@formatter:on
 	}
 
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
+
 	class LocalItemChangedListener implements ItemListener {
 
 		@Override
@@ -431,10 +438,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 					// 设置超长处理方式
 					setOverLength();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 
 			}
 		}
@@ -502,11 +506,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置沿线标注项可设置
 				setRotateLabel();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
-
+			refreshAtOnce();
 		}
 
 		/**
@@ -575,10 +575,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置最小文本宽度
 				setMinFontWidth();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 		/**
@@ -729,10 +726,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				// 设置沿线字间距
 				setFontSpace();
 			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce) {
-				refreshMapAndLayer();
-			}
+			refreshAtOnce();
 		}
 
 		/**

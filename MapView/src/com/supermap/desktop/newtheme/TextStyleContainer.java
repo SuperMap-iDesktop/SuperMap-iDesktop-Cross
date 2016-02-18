@@ -14,13 +14,11 @@ import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
-
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -29,9 +27,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class TextStyleContainer extends ThemeChangePanel {
 
@@ -74,7 +70,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	private transient Map map;
 	private transient TextStyle textStyle;
-	private List<TextStyle> list = new ArrayList<TextStyle>();
+	// private List<TextStyle> list = new ArrayList<TextStyle>();
 	private transient Layer themeLabelLayer;
 
 	// 对齐方式名称和对齐方式值构成的HashMap
@@ -86,25 +82,18 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JTextField textFieldFontRotationAngl;
 	// 对齐方式名称
 	private static final String[] TEXTALIGNMENT_NAMES = { ControlsProperties.getString("String_TextAlignment_LeftTop"),
-			ControlsProperties.getString("String_TextAlignment_MidTop"),
-			ControlsProperties.getString("String_TextAlignment_RightTop"),
-			ControlsProperties.getString("String_TextAlignment_LeftBaseline"),
-			ControlsProperties.getString("String_TextAlignment_MidBaseline"),
-			ControlsProperties.getString("String_TextAlignment_RightBaseline"),
-			ControlsProperties.getString("String_TextAlignment_LeftBottom"),
-			ControlsProperties.getString("String_TextAlignment_MidBottom"),
-			ControlsProperties.getString("String_TextAlignment_RightBottom"),
-			ControlsProperties.getString("String_TextAlignment_LeftMid"),
-			ControlsProperties.getString("String_TextAlignment_Mid"),
-			ControlsProperties.getString("String_TextAlignment_RightMid"),
-	};
+			ControlsProperties.getString("String_TextAlignment_MidTop"), ControlsProperties.getString("String_TextAlignment_RightTop"),
+			ControlsProperties.getString("String_TextAlignment_LeftBaseline"), ControlsProperties.getString("String_TextAlignment_MidBaseline"),
+			ControlsProperties.getString("String_TextAlignment_RightBaseline"), ControlsProperties.getString("String_TextAlignment_LeftBottom"),
+			ControlsProperties.getString("String_TextAlignment_MidBottom"), ControlsProperties.getString("String_TextAlignment_RightBottom"),
+			ControlsProperties.getString("String_TextAlignment_LeftMid"), ControlsProperties.getString("String_TextAlignment_Mid"),
+			ControlsProperties.getString("String_TextAlignment_RightMid"), };
 	// 字号与字高之间的转换精度
 	// 显示精度
 	private String numeric = "0.00";
 	private boolean isRefreshAtOnce = true;
 	private boolean isUniformStyle = false;
 	private int[] selectRow;
-	private ThemeLabel themeLabel;
 
 	private transient LocalItemListener itemListener = new LocalItemListener();
 	private transient LocalChangedListener changedListener = new LocalChangedListener();
@@ -126,25 +115,13 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * @wbp.parser.constructor
 	 */
 	public TextStyleContainer(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
-		this.themeLabel = themeLabel;
 		this.selectRow = selectRow;
 		this.map = map;
 		this.themeLabelLayer = themeLabelLayer;
-		initList();
+		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle();
 		initComponent();
 		initResources();
 		registActionListener();
-	}
-
-	private void initList() {
-		for (int i = 0; i < selectRow.length; i++) {
-			this.list.add(themeLabel.getItem(selectRow[i]).getStyle());
-		}
-		if (this.list.size()==1) {
-			this.textStyle = list.get(0);
-		}else {
-			this.textStyle = new TextStyle();
-		}
 	}
 
 	/**
@@ -179,50 +156,47 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 * 初始化风格界面布局
 	 */
 	private void initComponent() {
+		this.setLayout(new GridBagLayout());
+		JPanel panelSytleContent = new JPanel();
+		this.add(
+				panelSytleContent,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL)
+						.setInsets(5, 10, 5, 10));
+		panelSytleContent.setLayout(new GridBagLayout());
+		this.buttonFontColorSelect = new ColorSelectButton(this.textStyle.getForeColor());
+		this.buttonBGColorSelect = new ColorSelectButton(this.textStyle.getBackColor());
+		this.comboBoxFontName.setSelectedItem(this.textStyle.getFontName());
+		initComboBoxAlign();
+		initComboBoxFontSize();
+		initTextFieldFontWidth();
+		initTextFieldFontItalicAngl();
+		initTextFieldFontRotation();
 		//@formatter:off
-			this.setLayout(new GridBagLayout());
-			JPanel panelSytleContent = new JPanel();
-			this.add(panelSytleContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
-			panelSytleContent.setLayout(new GridBagLayout());
-			if (null!=textStyle) {
-				this.buttonFontColorSelect = new ColorSelectButton(this.textStyle.getForeColor());
-				this.buttonBGColorSelect = new ColorSelectButton(this.textStyle.getBackColor());
-				this.comboBoxFontName.setSelectedItem(this.textStyle.getFontName());
-			}else {
-				this.buttonFontColorSelect = new ColorSelectButton(list.get(0).getForeColor());
-				this.buttonBGColorSelect =new ColorSelectButton(list.get(0).getBackColor());
-				this.comboBoxFontName.setSelectedItem(list.get(0).getFontName());
-			}
-			initComboBoxAlign();
-			initComboBoxFontSize();
-			initTextFieldFontWidth();
-			initTextFieldFontItalicAngl();
-			initTextFieldFontRotation();
-			panelSytleContent.add(this.labelFontName,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(10,10,5,0));
-			panelSytleContent.add(this.comboBoxFontName,       new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(10,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelAlign,             new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.comboBoxAlign,          new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelFontSize,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.comboBoxFontSize,       new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelFontHeight,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelFontHeightUnity,   new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0, 0,5,10));
-			panelSytleContent.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(2, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelFontWidthUnity,    new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,0,5,10));
-			panelSytleContent.add(this.labelRotationAngl,      new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.spinnerRotationAngl,    new GridBagConstraintsHelper(2, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelInclinationAngl,   new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.spinnerInclinationAngl, new GridBagConstraintsHelper(2, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(2, 7, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelSytleContent.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelSytleContent.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(2, 8, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			JPanel panelFontEffect = new JPanel();
-			panelFontEffect.setBorder(new TitledBorder(null, ControlsProperties.getString("String_GeometryPropertyTextControl_GroupBoxFontEffect"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			initPanelFontEffect(panelFontEffect);
-			panelSytleContent.add(panelFontEffect,             new GridBagConstraintsHelper(0, 9, 4, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(5).setFill(GridBagConstraints.HORIZONTAL));
-			//@formatter:on
+		panelSytleContent.add(this.labelFontName,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(10,10,5,0));
+		panelSytleContent.add(this.comboBoxFontName,       new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(10,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelAlign,             new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.comboBoxAlign,          new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelFontSize,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.comboBoxFontSize,       new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelFontHeight,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelFontHeightUnity,   new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0, 0,5,10));
+		panelSytleContent.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(2, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelFontWidthUnity,    new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,0,5,10));
+		panelSytleContent.add(this.labelRotationAngl,      new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.spinnerRotationAngl,    new GridBagConstraintsHelper(2, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelInclinationAngl,   new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.spinnerInclinationAngl, new GridBagConstraintsHelper(2, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(2, 7, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelSytleContent.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
+		panelSytleContent.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(2, 8, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		JPanel panelFontEffect = new JPanel();
+		panelFontEffect.setBorder(new TitledBorder(null, ControlsProperties.getString("String_GeometryPropertyTextControl_GroupBoxFontEffect"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		initPanelFontEffect(panelFontEffect);
+		panelSytleContent.add(panelFontEffect,             new GridBagConstraintsHelper(0, 9, 4, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(5).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on
 	}
 
 	/**
@@ -267,8 +241,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxFontSize() {
 		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[] { "1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
-				"12", "14",
-				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
+				"12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
 		this.comboBoxFontSize.setEditable(true);
 		this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
 		this.spinnerFontHeight.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
@@ -318,17 +291,17 @@ public class TextStyleContainer extends ThemeChangePanel {
 	 */
 	private void initPanelFontEffect(JPanel panelFontEffect) {
 		//@formatter:off
-			initCheckBoxState();
-			panelFontEffect.setLayout(new GridBagLayout());
-			panelFontEffect.add(this.checkBoxBorder,         new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxStrickout,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxItalic,         new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxUnderline,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxShadow,         new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxFixedSize,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxOutlook,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			panelFontEffect.add(this.checkBoxBGTransparent,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-			//@formatter:on
+		initCheckBoxState();
+		panelFontEffect.setLayout(new GridBagLayout());
+		panelFontEffect.add(this.checkBoxBorder,         new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxStrickout,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxItalic,         new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxUnderline,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxShadow,         new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxFixedSize,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxOutlook,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxBGTransparent,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		//@formatter:on
 	}
 
 	private void initCheckBoxState() {
@@ -418,8 +391,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private void initHashMapTextAlignment() {
 		int[] textAlignmentValues = Enum.getValues(TextAlignment.class);
 		for (int i = 0; i < textAlignmentValues.length; i++) {
-			hashMapTextAlignment.put(TEXTALIGNMENT_NAMES[i],
-					textAlignmentValues[i]);
+			hashMapTextAlignment.put(TEXTALIGNMENT_NAMES[i], textAlignmentValues[i]);
 		}
 	}
 
@@ -450,13 +422,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			String textAlignmentName = comboBoxAlign.getSelectedItem().toString();
 			int value = hashMapTextAlignment.get(textAlignmentName);
 			TextAlignment textAlignment = (TextAlignment) Enum.parse(TextAlignment.class, value);
-			if (null != textStyle) {
-				textStyle.setAlignment(textAlignment);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setAlignment(textAlignment);
-				}
-			}
+			textStyle.setAlignment(textAlignment);
 		}
 
 		/**
@@ -464,13 +430,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setFontName() {
 			String fontName = comboBoxFontName.getSelectedItem().toString();
-			if (null != textStyle) {
-				textStyle.setFontName(fontName);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setFontName(fontName);
-				}
-			}
+			textStyle.setFontName(fontName);
 		}
 
 	}
@@ -564,13 +524,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setBGOpare() {
 			boolean isOpare = checkBoxBGTransparent.isSelected();
-			if (null != textStyle) {
-				textStyle.setBackOpaque(!isOpare);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setBackOpaque(!isOpare);
-				}
-			}
+			textStyle.setBackOpaque(!isOpare);
 			checkBoxOutlook.setEnabled(isOpare);
 			boolean isOutlook = checkBoxOutlook.isSelected();
 			if (!isOpare || isOutlook) {
@@ -585,13 +539,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setOutLook() {
 			boolean isOutlook = checkBoxOutlook.isSelected();
-			if (null != textStyle) {
-				textStyle.setOutline(isOutlook);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setOutline(isOutlook);
-				}
-			}
+			textStyle.setOutline(isOutlook);
 			boolean isOpare = checkBoxBGTransparent.isSelected();
 			if (!isOpare || isOutlook) {
 				buttonBGColorSelect.setEnabled(true);
@@ -606,13 +554,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		private void setFixedSize() {
 
 			boolean isFixedSize = checkBoxFixedSize.isSelected();
-			if (null != textStyle) {
-				textStyle.setSizeFixed(isFixedSize);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setSizeFixed(isFixedSize);
-				}
-			}
+			textStyle.setSizeFixed(isFixedSize);
 			Double height = 0.0;
 			if (isFixedSize) {
 				height = Double.parseDouble(textFieldFontHeight.getText());
@@ -632,13 +574,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setShadow() {
 			boolean isShadow = checkBoxShadow.isSelected();
-			if (null != textStyle) {
-				textStyle.setShadow(isShadow);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setShadow(isShadow);
-				}
-			}
+			textStyle.setShadow(isShadow);
 		}
 
 		/**
@@ -646,13 +582,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setUnderline() {
 			boolean isUnderline = checkBoxUnderline.isSelected();
-			if (null != textStyle) {
-				textStyle.setUnderline(isUnderline);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setUnderline(isUnderline);
-				}
-			}
+			textStyle.setUnderline(isUnderline);
 		}
 
 		/**
@@ -661,13 +591,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		private void setItalic() {
 			boolean isItalic = checkBoxItalic.isSelected();
 			spinnerInclinationAngl.setEnabled(isItalic);
-			if (null != textStyle) {
-				textStyle.setItalic(isItalic);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setItalic(isItalic);
-				}
-			}
+			textStyle.setItalic(isItalic);
 		}
 
 		/**
@@ -675,13 +599,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setFontStrickout() {
 			boolean isStrickout = checkBoxStrickout.isSelected();
-			if (null != textStyle) {
-				textStyle.setStrikeout(isStrickout);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setStrikeout(isStrickout);
-				}
-			}
+			textStyle.setStrikeout(isStrickout);
 		}
 
 		/**
@@ -689,13 +607,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setFontBorder() {
 			boolean isBorder = checkBoxBorder.isSelected();
-			if (null != textStyle) {
-				textStyle.setBold(isBorder);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setBold(isBorder);
-				}
-			}
+			textStyle.setBold(isBorder);
 		}
 
 	}
@@ -723,13 +635,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		private void setBackgroundColor() {
 			Color color = buttonBGColorSelect.getColor();
 			if (color != null) {
-				if (null != textStyle) {
-					textStyle.setBackColor(color);
-				} else {
-					for (int i = 0; i < list.size(); i++) {
-						list.get(i).setBackColor(color);
-					}
-				}
+				textStyle.setBackColor(color);
 			}
 		}
 
@@ -739,13 +645,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		private void setFontColor() {
 			Color color = buttonFontColorSelect.getColor();
 			if (color != null) {
-				if (null != textStyle) {
-					textStyle.setForeColor(color);
-				} else {
-					for (int i = 0; i < list.size(); i++) {
-						list.get(i).setForeColor(color);
-					}
-				}
+				textStyle.setForeColor(color);
 			}
 		}
 
@@ -765,13 +665,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private void setRotationAngl() {
 		if (null != spinnerRotationAngl.getValue()) {
 			double rotationAngl = (double) spinnerRotationAngl.getValue();
-			if (null != textStyle) {
-				textStyle.setRotation(rotationAngl);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setRotation(rotationAngl);
-				}
-			}
+			textStyle.setRotation(rotationAngl);
 		}
 	}
 
@@ -781,13 +675,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private void setFontInclinationAngl() {
 		if (null != spinnerInclinationAngl.getValue()) {
 			double italicAngl = (double) spinnerInclinationAngl.getValue();
-			if (null != textStyle) {
-				textStyle.setItalicAngle(italicAngl);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setItalicAngle(italicAngl);
-				}
-			}
+			textStyle.setItalicAngle(italicAngl);
 		}
 	}
 
@@ -799,13 +687,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			boolean isFixSize = checkBoxFixedSize.isSelected();
 			double logicalWidth = Double.parseDouble(spinnerFontWidth.getValue().toString());
 			double fontWidth = FontUtilties.fontWidthToMapWidth(logicalWidth, map, isFixSize);
-			if (null != textStyle) {
-				textStyle.setFontWidth(fontWidth / UNIT_CONVERSION);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setFontWidth(fontWidth / UNIT_CONVERSION);
-				}
-			}
+			textStyle.setFontWidth(fontWidth / UNIT_CONVERSION);
 		}
 	}
 
@@ -826,13 +708,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		double fontHeight = logicalHeight;
 		fontHeight = FontUtilties.fontSizeToMapHeight(size, map, textStyle.isSizeFixed());
 		if (fontHeight > 0) {
-			if (null != textStyle) {
-				textStyle.setFontHeight(fontHeight);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setFontHeight(fontHeight);
-				}
-			}
+			textStyle.setFontHeight(fontHeight);
 		}
 
 	}
@@ -847,13 +723,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		fontHeight = FontUtilties.fontSizeToMapHeight(size, map, textStyle.isSizeFixed());
 		if (fontHeight > 0) {
 			textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
-			if (null != textStyle) {
-				textStyle.setFontHeight(fontHeight);
-			} else {
-				for (int i = 0; i < list.size(); i++) {
-					list.get(i).setFontHeight(fontHeight);
-				}
-			}
+			textStyle.setFontHeight(fontHeight);
 		}
 	}
 
@@ -907,11 +777,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		if (null != this.textStyle && this.isUniformStyle) {
+		if (this.isUniformStyle) {
 			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformStyle(this.textStyle);
 		} else {
 			for (int i = 0; i < this.selectRow.length; i++) {
-				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.themeLabel.getItem(this.selectRow[i]).getStyle());
+				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
 		}
 		this.map.refresh();

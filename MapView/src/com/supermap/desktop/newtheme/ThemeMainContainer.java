@@ -165,12 +165,11 @@ public class ThemeMainContainer extends JPanel {
 					Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
 					refreshThemeMainContainer(layer);
 				}
-			} else {
+			} else if(e.getStateChange() == ItemEvent.SELECTED){
 				boolean selected = checkBoxRefreshAtOnce.isSelected();
-				if (null != panel) {
+				if (null != panel && selected) {
 					panel.setRefreshAtOnce(selected);
-				}
-				if (selected) {
+					panel.refreshMapAndLayer();
 					buttonApply.setEnabled(false);
 				}
 			}
@@ -236,7 +235,7 @@ public class ThemeMainContainer extends JPanel {
 			Iterator<?> iterator = themeContainers.entrySet().iterator();
 			while (iterator.hasNext()) {
 				java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
-				((ThemeChangePanel)entry.getValue()).unregistActionListener();
+				((ThemeChangePanel) entry.getValue()).unregistActionListener();
 			}
 			ThemeGuideFactory.themeTypeContainer.clear();
 			updateThemeMainContainer();
@@ -266,8 +265,10 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-			if (null != ThemeGuideFactory.getDockbarThemeContainer() &&null!=newLayer) {
-				ThemeGuideFactory.modifyTheme(newLayer);
+			if (null != ThemeGuideFactory.getDockbarThemeContainer()) {
+				if (null != newLayer) {
+					ThemeGuideFactory.modifyTheme(newLayer);
+				}
 				resetThemeMainContainer(newLayer);
 			}
 		}

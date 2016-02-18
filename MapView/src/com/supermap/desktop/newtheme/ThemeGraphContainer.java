@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +28,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -162,6 +166,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private ItemListener graphModeChangeListener = new GraphModeChangeListener();
 	private ItemListener graphColorChangeListener = new GraphItemColorChangeListener();
 	private TableModelListener graphCaptionChangeListener = new CaptionChangeListener();
+	private ItemListener OptionsChangeListener = new OptionsChangeListener();
+	private ActionListener showLeaderLineAction = new ShowLeaderLineAction();
+	private DocumentListener graphSizeChangeListener= new GraphSizeChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -425,6 +432,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void initpanelSizeLimite(JPanel panelSizeLimite) {
+		this.textFieldMaxValue.setText(String.valueOf(this.themeGraph.getMaxGraphSize()));
+		this.textFieldMinValue.setText(String.valueOf(this.themeGraph.getMinGraphSize()));
 		//@formatter:off
 		panelSizeLimite.setLayout(new GridBagLayout());
 		panelSizeLimite.add(this.labelMaxValue,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(20, 1).setIpad(20, 0));
@@ -435,6 +444,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void initPanelOptions(JPanel panelOptions) {
+		this.buttonDraftLine.setEnabled(false);
+		initCheckBoxStation();
 		//@formatter:off
 		panelOptions.setLayout(new GridBagLayout());
 		panelOptions.add(this.checkBoxShowFlow,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(20, 1).setIpad(20, 0));
@@ -444,6 +455,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelOptions.add(this.checkboxDraftLine,    new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(20, 1).setIpad(20, 0));
 		panelOptions.add(this.buttonDraftLine,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
+	}
+
+	private void initCheckBoxStation() {
+		this.checkBoxShowFlow.setSelected(this.themeGraph.isFlowEnabled());
+		this.checkBoxShowNegative.setSelected(this.themeGraph.isNegativeDisplayed());
+		this.checkBoxAutoAvoid.setSelected(this.themeGraph.isOverlapAvoided());
+		this.checkBoxAutoScale.setSelected(this.themeGraph.isGraphSizeFixed());
+		this.checkboxDraftLine.setSelected(this.themeGraph.isLeaderLineDisplayed());
 	}
 
 	private void initPanelProperty() {
@@ -525,12 +544,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int selectRow = e.getFirstRow();
 			int selectColumn = e.getColumn();
 			String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-			if (StringUtilties.isNullOrEmpty(caption)) {
+			if (!StringUtilties.isNullOrEmpty(caption)) {
 				// 如果输入为数值且段值合法时修改段值
 				setGraphItemCaption(selectRow, caption);
 			}
 		}
-
 	}
 
 	class LocalDefualTableModel extends DefaultTableModel {
@@ -564,7 +582,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void setGraphItemCaption(int selectRow, String caption) {
-
+		ThemeGraphItem item = themeGraph.getItem(selectRow);
+		item.setCaption(caption);
+		refreshMapAtOnce();
 	}
 
 	private void initComboBoxGraphType() {
@@ -604,8 +624,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		unregistActionListener();
 		this.tableGraphInfo.addMouseListener(this.localMouseListener);
 		this.comboBoxGraphType.addItemListener(this.graphTypeChangeListener);
-		this.comboBoxMethod.addItemListener(graphModeChangeListener);
-		this.comboBoxColor.addItemListener(graphColorChangeListener);
+		this.comboBoxMethod.addItemListener(this.graphModeChangeListener);
+		this.comboBoxColor.addItemListener(this.graphColorChangeListener);
+		this.checkBoxShowFlow.addItemListener(this.OptionsChangeListener);
+		this.checkBoxShowNegative.addItemListener(this.OptionsChangeListener);
+		this.checkBoxAutoAvoid.addItemListener(this.OptionsChangeListener);
+		this.checkBoxAutoScale.addItemListener(this.OptionsChangeListener);
+		this.checkboxDraftLine.addItemListener(this.OptionsChangeListener);
+		this.buttonDraftLine.addActionListener(this.showLeaderLineAction);
+		this.textFieldMaxValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
+		this.textFieldMinValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
 	}
 
 	private void refreshColor() {
@@ -628,23 +656,132 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void refreshMapAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
 		}
 	}
 
-	public class GraphItemColorChangeListener implements ItemListener {
+	class GraphSizeChangeListener implements DocumentListener{
+		private void setGraphMaxValue() {
+			String maxValue = textFieldMaxValue.getText();
+			if (StringUtilties.isNumber(maxValue) && Double.compare(Double.parseDouble(maxValue), 0.0) > 0) {
+				themeGraph.setMaxGraphSize(Double.parseDouble(maxValue));
+				refreshMapAtOnce();
+			}
+		}
+
+		private void setGraphMinValue() {
+			String minValue = textFieldMinValue.getText();
+			if (StringUtilties.isNumber(minValue) && Double.compare(Double.parseDouble(minValue), 0.0) > 0) {
+				themeGraph.setMinGraphSize(Double.parseDouble(minValue));
+				refreshMapAtOnce();
+			}
+		}
+
+		private void documentChange(DocumentEvent e) {
+			if (e.getDocument() == textFieldMaxValue.getDocument()) {
+				setGraphMaxValue();
+				return;
+			}
+			if (e.getDocument() == textFieldMinValue.getDocument()) {
+				setGraphMinValue();
+				return;
+			}
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			documentChange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			documentChange(e);
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			documentChange(e);
+		}
+	}
+	
+	class ShowLeaderLineAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SymbolDialog textStyleDialog = new SymbolDialog();
+			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+			SymbolType symbolType = SymbolType.LINE;
+			GeoStyle geoStyle = themeGraph.getLeaderLineStyle();
+			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			if (dialogResult.equals(DialogResult.OK)) {
+				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				themeGraph.setLeaderLineStyle(nowGeoStyle);
+				refreshMapAtOnce();
+			}
+		}
+	}
+
+	class OptionsChangeListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getSource() == checkBoxShowFlow) {
+				boolean isShowFlow = checkBoxShowFlow.isSelected();
+				boolean isShowLeaderLine = checkboxDraftLine.isSelected();
+				if (isShowLeaderLine) {
+					if (isShowFlow) {
+						buttonDraftLine.setEnabled(true);
+					} else {
+						buttonDraftLine.setEnabled(false);
+					}
+				}
+				themeGraph.setFlowEnabled(isShowFlow);
+				refreshMapAtOnce();
+				return;
+			}
+			if (e.getSource() == checkBoxShowNegative) {
+				boolean isShowNegative = checkBoxShowNegative.isSelected();
+				themeGraph.setNegativeDisplayed(isShowNegative);
+				refreshMapAtOnce();
+				return;
+			}
+			if (e.getSource() == checkBoxAutoAvoid) {
+				boolean isAutoAvoid = checkBoxAutoAvoid.isSelected();
+				themeGraph.setOverlapAvoided(isAutoAvoid);
+				refreshMapAtOnce();
+				return;
+			}
+			if (e.getSource() == checkBoxAutoScale) {
+				boolean isAutoScale = checkBoxAutoScale.isSelected();
+				themeGraph.setGraphSizeFixed(isAutoScale);
+				refreshMapAtOnce();
+				return;
+			}
+			if (e.getSource() == checkboxDraftLine) {
+				boolean isShowLeaderLine = checkboxDraftLine.isSelected();
+				if (isShowLeaderLine) {
+					buttonDraftLine.setEnabled(true);
+				} else {
+					buttonDraftLine.setEnabled(false);
+				}
+				themeGraph.setLeaderLineDisplayed(isShowLeaderLine);
+				refreshMapAtOnce();
+				return;
+			}
+		}
+	}
+
+	class GraphItemColorChangeListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			// 修改颜色方案
 			refreshColor();
 			getTable();
-			firePropertyChange("ThemeChange", null, null);
 			refreshMapAtOnce();
 		}
 	}
 
-	public class GraphModeChangeListener implements ItemListener {
+	class GraphModeChangeListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -652,17 +789,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				switch (selectIndex) {
 				case 0:
 					themeGraph.setGraduatedMode(GraduatedMode.CONSTANT);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 1:
 					themeGraph.setGraduatedMode(GraduatedMode.LOGARITHM);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 2:
 					themeGraph.setGraduatedMode(GraduatedMode.SQUAREROOT);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 				default:
 					break;
@@ -671,7 +805,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
-	public class GraphTypeChangeListener implements ItemListener {
+	class GraphTypeChangeListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -679,67 +813,54 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				switch (selectIndex) {
 				case 0:
 					themeGraph.setGraphType(ThemeGraphType.AREA);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 1:
 					themeGraph.setGraphType(ThemeGraphType.STEP);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 2:
 					themeGraph.setGraphType(ThemeGraphType.LINE);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 3:
 					themeGraph.setGraphType(ThemeGraphType.POINT);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 4:
 					themeGraph.setGraphType(ThemeGraphType.BAR);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 5:
 					themeGraph.setGraphType(ThemeGraphType.BAR3D);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 6:
 					themeGraph.setGraphType(ThemeGraphType.PIE);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 7:
 					themeGraph.setGraphType(ThemeGraphType.PIE3D);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 8:
 					themeGraph.setGraphType(ThemeGraphType.ROSE);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 9:
 					themeGraph.setGraphType(ThemeGraphType.ROSE3D);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 10:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 11:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR3D);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 12:
 					themeGraph.setGraphType(ThemeGraphType.RING);
-					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				default:
@@ -749,14 +870,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
-	public class LocalMouseListener extends MouseAdapter {
+	class LocalMouseListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (2 == e.getClickCount() && tableGraphInfo.getSelectedColumn() == TABLE_COLUMN_STYLE) {
 				int selectRow = tableGraphInfo.getSelectedRow();
 				setItemGeoSytle();
 				tableGraphInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
 				refreshMapAtOnce();
 			}
 		}
@@ -768,6 +888,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.comboBoxGraphType.removeItemListener(this.graphTypeChangeListener);
 		this.comboBoxMethod.removeItemListener(this.graphModeChangeListener);
 		this.comboBoxColor.removeItemListener(this.graphColorChangeListener);
+		this.checkBoxShowFlow.removeItemListener(this.OptionsChangeListener);
+		this.checkBoxShowNegative.removeItemListener(this.OptionsChangeListener);
+		this.checkBoxAutoAvoid.removeItemListener(this.OptionsChangeListener);
+		this.checkBoxAutoScale.removeItemListener(this.OptionsChangeListener);
+		this.checkboxDraftLine.removeItemListener(this.OptionsChangeListener);
+		this.buttonDraftLine.removeActionListener(this.showLeaderLineAction);
+		this.textFieldMaxValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
+		this.textFieldMinValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
+		
 	}
 
 	public void setItemGeoSytle() {
@@ -846,6 +975,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 		nowGraph.setGraphType(this.themeGraph.getGraphType());
 		nowGraph.setGraduatedMode(this.themeGraph.getGraduatedMode());
+		nowGraph.setFlowEnabled(this.themeGraph.isFlowEnabled());
+		nowGraph.setNegativeDisplayed(this.themeGraph.isNegativeDisplayed());
+		nowGraph.setOverlapAvoided(this.themeGraph.isOverlapAvoided());
+		nowGraph.setGraphSizeFixed(this.themeGraph.isGraphSizeFixed());
+		nowGraph.setLeaderLineDisplayed(this.themeGraph.isLeaderLineDisplayed());
+		nowGraph.setLeaderLineStyle(this.themeGraph.getLeaderLineStyle());
+		if (Double.compare(this.themeGraph.getMaxGraphSize(), 0.0) > 0) {
+			nowGraph.setMaxGraphSize(this.themeGraph.getMaxGraphSize());
+		}
+		if (Double.compare(this.themeGraph.getMinGraphSize(), 0.0) > 0) {
+			nowGraph.setMinGraphSize(this.themeGraph.getMinGraphSize());
+		}
 		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
 		this.map.refresh();
 	}

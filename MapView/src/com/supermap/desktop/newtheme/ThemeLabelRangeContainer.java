@@ -86,7 +86,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
-	private PropertyChangeListener layersTreePropertyChangeListener;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -408,20 +408,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 注册事件
 	 */
 	void registActionListener() {
-		this.layersTreePropertyChangeListener = new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				int[] selectRows = tableLabelInfo.getSelectedRows();
-				map = ThemeGuideFactory.getMapControl().getMap();
-				themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
-				themeLabel = new ThemeLabel((ThemeLabel) themeLabelLayer.getTheme());
-				getTable();
-				for (int i = 0; i < selectRows.length; i++) {
-					tableLabelInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
-				}
-			}
-		};
 		unregistActionListener();
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
@@ -465,6 +451,27 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 	}
 
+	class LayerChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableLabelInfo.getSelectedRows();
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme() instanceof ThemeLabel) {
+				themeLabel = new ThemeLabel((ThemeLabel) themeLabelLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableLabelInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
+		}
+	}
+	private void refreshAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce) {
+			refreshMapAndLayer();
+		}
+	}
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -477,24 +484,15 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 合并选中项
 					mergeItem();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} else if (e.getSource() == buttonSplit) {
 				// 拆分选中项
 				splitItem();
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} else if (e.getSource() == buttonVisible) {
 				// 批量修改分段的可见状态
 				setItemVisble();
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			} else if (e.getSource() == buttonStyle) {
 				// 批量修文本风格
 				setItemTextSytle();
@@ -685,10 +683,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					tableLabelInfo.setValueAt(InternalImageIconFactory.VISIBLE, selectRow, TABLE_COLUMN_VISIBLE);
 				}
 				tableLabelInfo.setRowSelectionInterval(selectRow, selectRow);
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
@@ -723,10 +718,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 设置标题格式
 					setRangeFormat();
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 			}
 		}
 
@@ -1047,10 +1039,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
 					themeLabel.getItem(selectRow).setCaption(caption);
 				}
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshAtOnce();
 				getTable();
 				tableLabelInfo.addRowSelectionInterval(selectRow, selectRow);
 			} catch (Exception e) {

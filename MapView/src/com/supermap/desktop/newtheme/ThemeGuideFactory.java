@@ -243,6 +243,7 @@ public class ThemeGuideFactory {
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
 			themeGraphItem.setGraphExpression("SmID");
 			themeGraphItem.setCaption("SmID");
+			themeGraph.setMaxGraphSize(1);
 			themeGraph.insert(0, themeGraphItem);
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
 			ThemeGraphContainer themeLabelRangeContainer = new ThemeGraphContainer(datasetVector,themeGraph);
