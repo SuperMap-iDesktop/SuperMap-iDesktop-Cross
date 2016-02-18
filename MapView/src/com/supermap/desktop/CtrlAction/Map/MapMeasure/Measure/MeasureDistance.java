@@ -7,7 +7,6 @@ import com.supermap.data.GeoSpheroid;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSys;
@@ -21,7 +20,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
 import com.supermap.ui.TrackingEvent;
@@ -39,15 +41,10 @@ public class MeasureDistance extends Measure {
 
 	private double totleLength;
 
-	private Geometry currentGeometry;
-	private double lastPointX;
-	private double lastPointY;
-	private double currentX;
-	private double currentY;
-
 
 	private static final String measureLineTag = "measureLineTag";
 	private String beforeUnit;
+
 
 	public MeasureDistance() {
 		super();
@@ -62,27 +59,42 @@ public class MeasureDistance extends Measure {
 	@Override
 	public void startMeasure() {
 		super.startMeasure();
+		isEditing = true;
+		setMapAction();
+	}
+
+	@Override
+	protected void setMapAction() {
 		mapControl.setAction(Action.CREATEPOLYLINE);
+
 	}
 
 	@Override
 	protected void outputMeasure() {
-		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), df.format(totleLength), getLengthUnit().toString()));
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totleLength), getLengthUnit().toString()));
 	}
 
 	@Override
 	protected void addListeners() {
 		removeListeners();
 		super.addListeners();
-		this.mapControl.addTrackedListener(trackedListener);
-		this.mapControl.addTrackingListener(trackingListener);
+		this.mapControl.addTrackedListener(this.trackedListener);
+		this.mapControl.addTrackingListener(this.trackingListener);
+		this.mapControl.addActionChangedListener(new ActionChangedListener() {
+			@Override
+			public void actionChanged(ActionChangedEvent actionChangedEvent) {
+
+			}
+		});
 	}
 
 	@Override
 	protected void removeListeners() {
 		super.removeListeners();
-		this.mapControl.removeTrackedListener(trackedListener);
-		this.mapControl.removeTrackingListener(trackingListener);
+		if (mapControl != null) {
+			this.mapControl.removeTrackedListener(trackedListener);
+			this.mapControl.removeTrackingListener(trackingListener);
+		}
 	}
 
 	private final TrackingListener trackingListener = new TrackingListener() {
@@ -95,12 +107,12 @@ public class MeasureDistance extends Measure {
 				GeoLine geoLine = ((GeoLine) trackingEvent.getGeometry());
 				Point2Ds points = geoLine.getPart(0);
 				drawDistanceText(points, unitString, 1, true);
-				Point2Ds pnts = new Point2Ds();
-				pnts.add(points.getItem(points.getCount() - 2));
-				pnts.add(points.getItem(points.getCount() - 1));
+				Point2Ds point2Ds = new Point2Ds();
+				point2Ds.add(points.getItem(points.getCount() - 2));
+				point2Ds.add(points.getItem(points.getCount() - 1));
 
 				// 构建折线的最后一个线段
-				GeoLine geoLastSegment = new GeoLine(pnts);
+				GeoLine geoLastSegment = new GeoLine(point2Ds);
 
 				Point2D pntTemp = mapControl.getMap().pixelToMap(new Point(0, 0));
 				Point2D pntTemp2 = mapControl.getMap().pixelToMap(new Point(0, assistantLineInterval));
@@ -118,19 +130,19 @@ public class MeasureDistance extends Measure {
 				geoLineAssistant.setStyle(geoStyle);
 
 				// 构造辅助线左端线段
-				pnts.clear();
-				pnts.add(geoLineAssistant.getPart(0).getItem(0));
-				pnts.add(geoLastSegment.getPart(0).getItem(0));
+				point2Ds.clear();
+				point2Ds.add(geoLineAssistant.getPart(0).getItem(0));
+				point2Ds.add(geoLastSegment.getPart(0).getItem(0));
 
-				GeoLine geoLineLeft = new GeoLine(pnts);
+				GeoLine geoLineLeft = new GeoLine(point2Ds);
 				geoLineLeft.setStyle(geoStyle);
 
 				// 构造辅助线右端线段
-				pnts.clear();
-				pnts.add(geoLineAssistant.getPart(0).getItem(1));
-				pnts.add(geoLastSegment.getPart(0).getItem(1));
+				point2Ds.clear();
+				point2Ds.add(geoLineAssistant.getPart(0).getItem(1));
+				point2Ds.add(geoLastSegment.getPart(0).getItem(1));
 
-				GeoLine geoLineRight = new GeoLine(pnts);
+				GeoLine geoLineRight = new GeoLine(point2Ds);
 				geoLineRight.setStyle(geoStyle);
 
 				// 构造复合对象
@@ -153,14 +165,14 @@ public class MeasureDistance extends Measure {
 				mapControl.getMap().refreshTrackingLayer();
 
 				// 根据地图显示范围对辅助线进行裁剪
-				pnts.clear();
+				point2Ds.clear();
 				Rectangle2D viewBounds = mapControl.getMap().getViewBounds();
-				pnts.add(new Point2D(viewBounds.getLeft(), viewBounds.getBottom()));
-				pnts.add(new Point2D(viewBounds.getLeft(), viewBounds.getTop()));
-				pnts.add(new Point2D(viewBounds.getRight(), viewBounds.getTop()));
-				pnts.add(new Point2D(viewBounds.getRight(), viewBounds.getBottom()));
+				point2Ds.add(new Point2D(viewBounds.getLeft(), viewBounds.getBottom()));
+				point2Ds.add(new Point2D(viewBounds.getLeft(), viewBounds.getTop()));
+				point2Ds.add(new Point2D(viewBounds.getRight(), viewBounds.getTop()));
+				point2Ds.add(new Point2D(viewBounds.getRight(), viewBounds.getBottom()));
 
-				GeoRegion geoViewBounds = new GeoRegion(pnts);
+				GeoRegion geoViewBounds = new GeoRegion(point2Ds);
 
 				// 得到裁剪后的辅助线
 				GeoLine geoClip = ((GeoLine) Geometrist.clip(geoLineAssistant, geoViewBounds));
@@ -186,7 +198,7 @@ public class MeasureDistance extends Measure {
 			Double curLength = LengthUnit.ConvertDistance(prjCoordSys, LengthUnit.getValueOf(unitName).getUnit(), trackingEvent.getLength());
 
 
-			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), df.format(curLength), unitName));
+			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
 			labelTextBoxCurrent.setSize(labelTextBoxCurrent.getText().length() * 10 + 18, 23);
 			if (!labelTextBoxCurrent.isVisible()) {
 				labelTextBoxCurrent.setVisible(true);
@@ -207,7 +219,7 @@ public class MeasureDistance extends Measure {
 			}
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
-			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), df.format(totalLength), unitName));
+			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
 			labelTextBoxTotle.setSize(labelTextBoxTotle.getText().length() * 10 + 16, 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			labelTextBoxTotle.setVisible(true);
@@ -220,6 +232,12 @@ public class MeasureDistance extends Measure {
 		if (addedTags == null) {
 			addedTags = new ArrayList<>();
 		}
+		Unit curDistanceUnit = LengthUnit.getValueOf(unitString).getUnit();
+		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+		if (totleLength != 0 && !unitString.equals(beforeUnit)) {
+			totleLength = LengthUnit.ConvertDistance(LengthUnit.getValueOf(beforeUnit).getUnit(), curDistanceUnit, totleLength);
+			clearAddedTags();
+		}
 		for (int i = 1; i < points.getCount() - param; i++) {
 			String tag = textTagTitle + i;
 			if (!addedTags.contains(tag)) {
@@ -228,7 +246,7 @@ public class MeasureDistance extends Measure {
 				Point2D pntA = points.getItem(i - 1);
 				Point2D pntB = points.getItem(i);
 				Point2D pntMid = new Point2D((pntA.getX() + pntB.getX()) / 2, (pntA.getY() + pntB.getY()) / 2);
-				Unit curDistanceUnit = LengthUnit.getValueOf(unitString).getUnit();
+				// 单位改变时要先转换当前统计的总长度
 				if (mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
 					GeoSpheroid geoSpheroid = mapControl.getMap().getPrjCoordSys().getGeoCoordSys().getGeoDatum().getGeoSpheroid();
 					distance = Geometrist.computeGeodesicDistance(new Point2Ds(new Point2D[]{pntA, pntB}), geoSpheroid.getAxis(),
@@ -244,7 +262,7 @@ public class MeasureDistance extends Measure {
 				}
 				totleLength += distance;
 
-				String info = df.format(distance) + unitString;
+				String info = decimalFormat.format(distance) + unitString;
 
 				TextPart part = new TextPart(info, pntMid);
 				GeoText geotext = new GeoText(part);
@@ -257,15 +275,15 @@ public class MeasureDistance extends Measure {
 				textStyle.setForeColor(Color.WHITE);
 				textStyle.setOutline(true);
 				if (isDrawing) {
-					mapControl.getMap().getTrackingLayer().add(geotext, tag);
+					trackingLayer.add(geotext, tag);
 				} else {
-					mapControl.getMap().getTrackingLayer().add(geotext, tag + "FinishedMeasure");
+					trackingLayer.add(geotext, tag + "FinishedMeasure");
 				}
 			} else {
 				if (!isDrawing) {
-					int index = mapControl.getMap().getTrackingLayer().indexOf(tag);
+					int index = trackingLayer.indexOf(tag);
 					if (index > -1) {
-						mapControl.getMap().getTrackingLayer().setTag(index, tag + "FinishedMeasure");
+						trackingLayer.setTag(index, tag + "FinishedMeasure");
 					}
 				}
 			}

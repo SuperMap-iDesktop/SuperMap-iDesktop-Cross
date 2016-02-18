@@ -87,13 +87,20 @@ public enum LengthUnit {
 		return RADIAN;
 	}
 
-	public static double ConvertDistance(Unit srcUnit, Unit desUnit,
+	/**
+	 * 距离转换
+	 *
+	 * @param currentUnit 转换后单位
+	 * @param beforeUnit  转换前单位
+	 * @param distance    当前距离
+	 * @return 转换后距离
+	 */
+	public static double ConvertDistance(Unit beforeUnit, Unit currentUnit,
 	                                     double distance) {
 		double resultDistance = distance;
 		try {
-			if (srcUnit != desUnit) // 两种单位不相同时才进行转换
-			{
-				resultDistance = distance * (srcUnit.value() / desUnit.value());
+			if (currentUnit != beforeUnit) {
+				resultDistance = distance * ((double) beforeUnit.value() / (double)currentUnit.value());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

@@ -11,7 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
  * 距离量算
  */
 public class CtrlActionMeasureDistance extends CtrlAction {
-
+	private static MeasureDistance measureDistance = new MeasureDistance();
 
 	public CtrlActionMeasureDistance(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -19,7 +19,7 @@ public class CtrlActionMeasureDistance extends CtrlAction {
 
 	@Override
 	public void run() {
-		MeasureDistance measureDistance = new MeasureDistance();
+
 		measureDistance.startMeasure();
 	}
 
