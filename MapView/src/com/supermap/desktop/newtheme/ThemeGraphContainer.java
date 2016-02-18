@@ -26,8 +26,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.supermap.data.Colors;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
@@ -71,7 +74,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private JLabel labelColorStyle = new JLabel();
 	private JLabel labelGraphType = new JLabel();
 	private JLabel labelMethod = new JLabel();
-	private ColorsComboBox comboboxColor = new ColorsComboBox();
+	private ColorsComboBox comboBoxColor = new ColorsComboBox();
 	private JComboBox<String> comboBoxGraphType = new JComboBox<String>();
 	private JComboBox<String> comboBoxMethod = new JComboBox<String>();
 	private JScrollPane scollPane = new JScrollPane();
@@ -155,8 +158,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private transient SteppedComboBox fieldComboBox;
 
 	private MouseListener localMouseListener = new LocalMouseListener();
-	private ItemListener comboBoxGraphTypeListener = new GraphTypeChangeListener();;
+	private ItemListener graphTypeChangeListener = new GraphTypeChangeListener();
 	private ItemListener graphModeChangeListener = new GraphModeChangeListener();
+	private ItemListener graphColorChangeListener = new GraphItemColorChangeListener();
+	private TableModelListener graphCaptionChangeListener = new CaptionChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -448,7 +453,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComboBoxMethod();
 		//@formatter:off
 		this.panelProperty.add(this.labelColorStyle,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
-		this.panelProperty.add(this.comboboxColor,     new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.comboBoxColor,     new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelGraphType,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
 		this.panelProperty.add(this.comboBoxGraphType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelMethod,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
@@ -469,6 +474,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setMaxWidth(200);
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_Title_Sytle")).setMaxWidth(100);
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")).setMaxWidth(200);
+		this.tableGraphInfo.getModel().removeTableModelListener(this.graphCaptionChangeListener);
+		this.tableGraphInfo.getModel().addTableModelListener(this.graphCaptionChangeListener);
 		return this.tableGraphInfo;
 	}
 
@@ -511,6 +518,21 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
+	class CaptionChangeListener implements TableModelListener {
+
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			int selectRow = e.getFirstRow();
+			int selectColumn = e.getColumn();
+			String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
+			if (StringUtilties.isNullOrEmpty(caption)) {
+				// 如果输入为数值且段值合法时修改段值
+				setGraphItemCaption(selectRow, caption);
+			}
+		}
+
+	}
+
 	class LocalDefualTableModel extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
 
@@ -539,6 +561,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void initComboBoxMethod() {
 		this.comboBoxMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_GraduatedMode_Constant"),
 				MapViewProperties.getString("String_GraduatedMode_Logarithm"), MapViewProperties.getString("String_GraduatedMode_SquareRoot") }));
+	}
+
+	private void setGraphItemCaption(int selectRow, String caption) {
+
 	}
 
 	private void initComboBoxGraphType() {
@@ -577,13 +603,44 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	void registActionListener() {
 		unregistActionListener();
 		this.tableGraphInfo.addMouseListener(this.localMouseListener);
-		this.comboBoxGraphType.addItemListener(this.comboBoxGraphTypeListener);
+		this.comboBoxGraphType.addItemListener(this.graphTypeChangeListener);
 		this.comboBoxMethod.addItemListener(graphModeChangeListener);
+		this.comboBoxColor.addItemListener(graphColorChangeListener);
 	}
 
-	protected void refreshMapAtOnce() {
+	private void refreshColor() {
+		int colorCount = ((Colors) this.comboBoxColor.getSelectedItem()).getCount();
+		Colors colors = (Colors) this.comboBoxColor.getSelectedItem();
+		int themeGraphCount = this.themeGraph.getCount();
+		if (themeGraphCount > 0) {
+			float ratio = (1f * colorCount) / (1f * themeGraphCount);
+			this.themeGraph.getItem(0).getUniformStyle().setFillForeColor(colors.get(0));
+			this.themeGraph.getItem(themeGraphCount - 1).getUniformStyle().setFillForeColor(colors.get(colorCount - 1));
+			for (int i = 1; i < themeGraphCount - 1; i++) {
+				int colorIndex = Math.round(i * ratio);
+				if (colorIndex == colorCount) {
+					colorIndex--;
+				}
+				this.themeGraph.getItem(i).getUniformStyle().setFillForeColor(colors.get(colorIndex));
+			}
+		}
+
+	}
+
+	private void refreshMapAtOnce() {
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
+		}
+	}
+
+	public class GraphItemColorChangeListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			// 修改颜色方案
+			refreshColor();
+			getTable();
+			firePropertyChange("ThemeChange", null, null);
+			refreshMapAtOnce();
 		}
 	}
 
@@ -595,12 +652,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				switch (selectIndex) {
 				case 0:
 					themeGraph.setGraduatedMode(GraduatedMode.CONSTANT);
+					firePropertyChange("ThemeChange", null, null);
+					refreshMapAtOnce();
 					break;
 				case 1:
 					themeGraph.setGraduatedMode(GraduatedMode.LOGARITHM);
+					firePropertyChange("ThemeChange", null, null);
+					refreshMapAtOnce();
 					break;
 				case 2:
 					themeGraph.setGraduatedMode(GraduatedMode.SQUAREROOT);
+					firePropertyChange("ThemeChange", null, null);
+					refreshMapAtOnce();
 				default:
 					break;
 				}
@@ -616,54 +679,67 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				switch (selectIndex) {
 				case 0:
 					themeGraph.setGraphType(ThemeGraphType.AREA);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 1:
 					themeGraph.setGraphType(ThemeGraphType.STEP);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 2:
 					themeGraph.setGraphType(ThemeGraphType.LINE);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 3:
 					themeGraph.setGraphType(ThemeGraphType.POINT);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 4:
 					themeGraph.setGraphType(ThemeGraphType.BAR);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 5:
 					themeGraph.setGraphType(ThemeGraphType.BAR3D);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 6:
 					themeGraph.setGraphType(ThemeGraphType.PIE);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 7:
 					themeGraph.setGraphType(ThemeGraphType.PIE3D);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 8:
 					themeGraph.setGraphType(ThemeGraphType.ROSE);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 9:
 					themeGraph.setGraphType(ThemeGraphType.ROSE3D);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 10:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 11:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR3D);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				case 12:
 					themeGraph.setGraphType(ThemeGraphType.RING);
+					firePropertyChange("ThemeChange", null, null);
 					refreshMapAtOnce();
 					break;
 				default:
@@ -681,9 +757,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableGraphInfo.setRowSelectionInterval(selectRow, selectRow);
 				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce) {
-					refreshMapAndLayer();
-				}
+				refreshMapAtOnce();
 			}
 		}
 	}
@@ -691,8 +765,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	@Override
 	public void unregistActionListener() {
 		this.tableGraphInfo.removeMouseListener(this.localMouseListener);
-		this.comboBoxGraphType.removeItemListener(this.comboBoxGraphTypeListener);
+		this.comboBoxGraphType.removeItemListener(this.graphTypeChangeListener);
 		this.comboBoxMethod.removeItemListener(this.graphModeChangeListener);
+		this.comboBoxColor.removeItemListener(this.graphColorChangeListener);
 	}
 
 	public void setItemGeoSytle() {
@@ -729,7 +804,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
 			jDialogSymbolsChange.showDialog();
 		}
-
 		getTable();
 		if (selectedRow.length > 0) {
 			for (int i = 0; i < selectedRow.length; i++) {
@@ -763,13 +837,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	@Override
 	void refreshMapAndLayer() {
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
+		ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
 		((ThemeGraph) this.themeGraphLayer.getTheme()).clear();
 		if (0 < this.themeGraph.getCount()) {
 			for (int i = 0; i < this.themeGraph.getCount(); i++) {
-				((ThemeGraph) this.themeGraphLayer.getTheme()).insert(i, this.themeGraph.getItem(i));
+				nowGraph.insert(i, this.themeGraph.getItem(i));
 			}
 		}
-		((ThemeGraph) this.themeGraphLayer.getTheme()).setGraphType(this.themeGraph.getGraphType());
+		nowGraph.setGraphType(this.themeGraph.getGraphType());
+		nowGraph.setGraduatedMode(this.themeGraph.getGraduatedMode());
 		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
 		this.map.refresh();
 	}
