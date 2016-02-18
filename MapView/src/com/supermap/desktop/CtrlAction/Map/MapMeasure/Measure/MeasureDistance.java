@@ -83,7 +83,7 @@ public class MeasureDistance extends Measure {
 	@Override
 	protected void removeListeners() {
 		super.removeListeners();
-		if (mapControl != null) {
+		if (this.mapControl != null) {
 			this.mapControl.removeTrackedListener(trackedListener);
 			this.mapControl.removeTrackingListener(trackingListener);
 		}
@@ -152,7 +152,6 @@ public class MeasureDistance extends Measure {
 				} else {
 					mapControl.getMap().getTrackingLayer().add(geoCompound, TRAKCING_OBJECT_NAME);
 				}
-
 				// 刷新跟踪图层
 				mapControl.getMap().refreshTrackingLayer();
 

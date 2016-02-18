@@ -76,6 +76,27 @@ public abstract class Measure {
 	private boolean inSetMeasure;
 	protected String textTagTitle;
 	protected static boolean isEditing = false;
+	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
+		@Override
+		public void actionChanged(ActionChangedEvent e) {
+			if (e.getOldAction() != Action.PAN) {
+				Action newAction = e.getNewAction();
+				if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
+					inPan = true;
+					labelTextBoxTotle.setVisible(false);
+					labelTextBoxCurrent.setVisible(false);
+					removeLineAssistant();
+					actionTempGeometry(true);
+				}
+				if (inPan && e.getNewAction() == Action.SELECT2) {
+					inPan = false;
+				}
+			}
+		}
+
+
+	};
+	;
 
 
 	protected void clearAddedTags() {
@@ -216,26 +237,7 @@ public abstract class Measure {
 		this.mapControl.removeKeyListener(this.escClearKeyAdapt);
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 		this.mapControl.addKeyListener(this.keyAdapter);
-		this.mapControl.addActionChangedListener(new ActionChangedListener() {
-			@Override
-			public void actionChanged(ActionChangedEvent e) {
-				if (e.getOldAction() != Action.PAN) {
-					Action newAction = e.getNewAction();
-					if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
-						inPan = true;
-						labelTextBoxTotle.setVisible(false);
-						labelTextBoxCurrent.setVisible(false);
-						removeLineAssistant();
-						actionTempGeometry(true);
-					}
-					if (inPan && e.getNewAction() == Action.SELECT2) {
-						inPan = false;
-					}
-				}
-			}
-
-
-		});
+		this.mapControl.addActionChangedListener(actionChangedListener);
 	}
 
 	private void actionTempGeometry(boolean isAdd) {
@@ -266,6 +268,7 @@ public abstract class Measure {
 		if (mapControl != null) {
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeKeyListener(this.keyAdapter);
+			this.mapControl.removeActionChangedListener(actionChangedListener);
 		}
 	}
 
