@@ -12,11 +12,6 @@ import java.text.MessageFormat;
 public class MeasureArea extends Measure {
 	private double totleArea;
 
-	@Override
-	protected void setMapAction() {
-		this.mapControl.setAction(Action.CREATEPOLYGON);
-
-	}
 
 	@Override
 	protected void outputMeasure() {
@@ -29,5 +24,10 @@ public class MeasureArea extends Measure {
 	protected void resetValue() {
 		totleArea = 0;
 
+	}
+
+	@Override
+	protected Action getMeasureAction() {
+		return Action.CREATEPOLYGON;
 	}
 }

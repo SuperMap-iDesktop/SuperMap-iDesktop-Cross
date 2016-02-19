@@ -45,7 +45,6 @@ public class MeasureDistance extends Measure {
 
 
 	public MeasureDistance() {
-		super();
 		textTagTitle = "DistanceText";
 	}
 
@@ -55,17 +54,11 @@ public class MeasureDistance extends Measure {
 	}
 
 	@Override
-	public void startMeasure() {
-		super.startMeasure();
-		isEditing = true;
-		setMapAction();
+	protected Action getMeasureAction() {
+		return Action.CREATEPOLYLINE;
 	}
 
-	@Override
-	protected void setMapAction() {
-		mapControl.setAction(Action.CREATEPOLYLINE);
 
-	}
 
 	@Override
 	protected void outputMeasure() {

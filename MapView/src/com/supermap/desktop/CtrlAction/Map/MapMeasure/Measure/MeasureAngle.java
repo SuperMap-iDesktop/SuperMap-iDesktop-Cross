@@ -7,11 +7,6 @@ import com.supermap.ui.Action;
  */
 public class MeasureAngle extends Measure {
 
-	@Override
-	protected void setMapAction() {
-		mapControl.setAction(Action.CREATEPOLYLINE);
-
-	}
 
 	@Override
 	protected void outputMeasure() {
@@ -21,5 +16,10 @@ public class MeasureAngle extends Measure {
 
 	@Override
 	protected void resetValue() {
+	}
+
+	@Override
+	protected Action getMeasureAction() {
+		return Action.CREATEPOLYLINE;
 	}
 }

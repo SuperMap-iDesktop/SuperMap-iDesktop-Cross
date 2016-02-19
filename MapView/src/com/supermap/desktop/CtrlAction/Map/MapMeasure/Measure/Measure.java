@@ -28,7 +28,6 @@ import java.util.ArrayList;
 public abstract class Measure {
 
 
-	private double currentLength;
 
 	protected static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
 	// 距离量算相关参数
@@ -79,24 +78,33 @@ public abstract class Measure {
 	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
 		@Override
 		public void actionChanged(ActionChangedEvent e) {
-			if (e.getOldAction() != Action.PAN) {
-				Action newAction = e.getNewAction();
+			Action oldAction = e.getOldAction();
+			Action newAction = e.getNewAction();
+
+			if (oldAction == getMeasureAction()) {
 				if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
+					// 画->漫游
 					inPan = true;
 					labelTextBoxTotle.setVisible(false);
 					labelTextBoxCurrent.setVisible(false);
 					removeLineAssistant();
 					actionTempGeometry(true);
+				} else {
+					// 画->其他
+					labelTextBoxTotle.setVisible(false);
+					labelTextBoxCurrent.setVisible(false);
+					endMeasure(true);
 				}
-				if (inPan && e.getNewAction() == Action.SELECT2) {
+			} else if (oldAction == Action.PAN || oldAction == Action.ZOOMIN || oldAction == Action.ZOOMOUT || oldAction == Action.ZOOMFREE || oldAction == Action.ZOOMFREE2) {
+				if (inPan && newAction != getMeasureAction()) {
+					labelTextBoxTotle.setVisible(false);
+					labelTextBoxCurrent.setVisible(false);
+					endMeasure(true);
 					inPan = false;
 				}
 			}
 		}
-
-
 	};
-	;
 
 
 	protected void clearAddedTags() {
@@ -139,6 +147,8 @@ public abstract class Measure {
 		// 添加编辑框到地图空间中
 		addTextBoxsToMapControl();
 		addListeners();
+		isEditing = true;
+		setMapAction();
 	}
 
 	private void getMapControl() {
@@ -173,7 +183,11 @@ public abstract class Measure {
 		this.labelTextBoxTotle.setOpaque(false);
 	}
 
-	protected abstract void setMapAction();
+	private void setMapAction() {
+		this.mapControl.setAction(getMeasureAction());
+	}
+
+	;
 
 	/**
 	 * 输出量算结果
@@ -183,17 +197,17 @@ public abstract class Measure {
 	private void endMeasure(boolean isChangeAction) {
 		try {
 			isEditing = false;
+			actionTempGeometry(false);
 			removeTextBoxsFromMapCtrl();
 			removeTrackingObject();
 			removeLineAssistant();
-
 			removeListeners();
+			this.mapControl.setTrackMode(TrackMode.EDIT);
+			removeTempMeasureText();
 
 			if (!isChangeAction) {
 				resetValue();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
-				this.mapControl.setTrackMode(TrackMode.EDIT);
-				removeTempMeasureText();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -230,6 +244,7 @@ public abstract class Measure {
 	protected abstract void resetValue();
 
 
+	protected abstract Action getMeasureAction();
 	protected void addListeners() {
 		removeListeners();
 		this.mapControl.addMouseListener(this.mouseAdapter);
