@@ -93,8 +93,23 @@ public class MeasureDistance extends Measure {
 		@Override
 		public void tracking(TrackingEvent trackingEvent) {
 //			removeTrackingObject();
+			if (currentGeometry != null) {
+				currentGeometry.dispose();
+			}
 			currentGeometry = trackingEvent.getGeometry().clone();
 			if (trackingEvent.getLength() > 0.0) {
+				// 长度大于0，删除最后一段
+				Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
+				if (part.getCount() < 3) {
+					// 2个点删完为0，直接置空
+					currentGeometry.dispose();
+					currentGeometry = null;
+				} else {
+					part.remove(part.getCount() - 1);
+					currentGeometry.dispose();
+					currentGeometry = new GeoLine(part);
+				}
+
 				String unitString = getLengthUnit().toString();
 				GeoLine geoLine = ((GeoLine) trackingEvent.getGeometry());
 				Point2Ds points = geoLine.getPart(0);
