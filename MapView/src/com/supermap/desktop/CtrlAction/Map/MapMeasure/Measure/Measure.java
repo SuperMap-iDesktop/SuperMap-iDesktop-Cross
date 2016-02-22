@@ -12,6 +12,7 @@ import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +22,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.EventObject;
 
 /**
  * 量算基类
@@ -38,17 +40,18 @@ public abstract class Measure {
 	/**
 	 * 显示总长度的编辑框相对鼠标向右偏移的像素值
 	 */
-	protected static int textBoxOffsetX = 20;
+	protected static int textBoxOffsetX = 1;
 	/**
 	 * 显示总长度的编辑框相对鼠标向下偏移的像素值
 	 */
-	protected static int textBoxOffsetY = 20;
+	protected static int textBoxOffsetY = 1;
 	protected static double textFontHeight = 45;
 
 	// 辅助线相关参数
 	protected static int lineSymbolID = 2;
 	protected static double lineWidth = 0.4;
 	protected static Color lineColor = Color.BLUE;
+
 
 	// 两个编辑框
 	protected JLabel labelTextBoxCurrent;
@@ -139,7 +142,6 @@ public abstract class Measure {
 	 * 开始量算入口
 	 */
 	public void startMeasure() {
-		resetValue();
 		removeListeners();
 		getMapControl();
 		mapControl.setTrackMode(TrackMode.TRACK);
@@ -177,22 +179,19 @@ public abstract class Measure {
 
 	private void initTextBoxs() {
 		this.labelTextBoxCurrent = new JLabel();
-		this.labelTextBoxCurrent.setOpaque(false);
+		this.labelTextBoxCurrent.setBackground(Color.cyan);
+		this.labelTextBoxCurrent.setOpaque(true);
 
 		this.labelTextBoxTotle = new JLabel();
-		this.labelTextBoxTotle.setOpaque(false);
+		this.labelTextBoxTotle.setBackground(Color.WHITE);
+
+		this.labelTextBoxTotle.setOpaque(true);
 	}
 
 	private void setMapAction() {
 		this.mapControl.setAction(getMeasureAction());
 	}
 
-	;
-
-	/**
-	 * 输出量算结果
-	 */
-	protected abstract void outputMeasure();
 
 	private void endMeasure(boolean isChangeAction) {
 		try {
@@ -206,7 +205,6 @@ public abstract class Measure {
 			removeTempMeasureText();
 
 			if (!isChangeAction) {
-				resetValue();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
 			}
 		} catch (Exception ex) {
@@ -238,10 +236,7 @@ public abstract class Measure {
 		}
 	}
 
-	/**
-	 * 重置数值为初始状态
-	 */
-	protected abstract void resetValue();
+
 
 
 	protected abstract Action getMeasureAction();
@@ -249,11 +244,28 @@ public abstract class Measure {
 		removeListeners();
 		this.mapControl.addMouseListener(this.mouseAdapter);
 
-		this.mapControl.removeKeyListener(this.escClearKeyAdapt);
+		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.addActionChangedListener(actionChangedListener);
+		this.mapControl.addUndoneListener(undoneListener);
+
 	}
+
+	private void removeLastAdded() {
+		if (addedTags.size() > 0) {
+			String tag = addedTags.get(addedTags.size() - 1);
+			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+			for (int i = 0; i < trackingLayer.getCount(); i++) {
+				if (trackingLayer.getTag(i).equals(tag)) {
+					trackingLayer.remove(i);
+				}
+			}
+			addedTags.remove(tag);
+		}
+	}
+
+
 
 	private void actionTempGeometry(boolean isAdd) {
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
@@ -261,7 +273,6 @@ public abstract class Measure {
 		if (isAdd) {
 			if (currentGeometry != null) {
 				if (index > -1) {
-
 					trackingLayer.set(index, currentGeometry);
 				} else {
 					trackingLayer.add(currentGeometry, tempTag);
@@ -284,6 +295,7 @@ public abstract class Measure {
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeKeyListener(this.keyAdapter);
 			this.mapControl.removeActionChangedListener(actionChangedListener);
+			this.mapControl.removeUndoneListener(undoneListener);
 		}
 	}
 
@@ -387,6 +399,13 @@ public abstract class Measure {
 				mapControl.getMap().getTrackingLayer().clear();
 				mapControl.removeKeyListener(this);
 			}
+		}
+	};
+
+	private final UndoneListener undoneListener = new UndoneListener() {
+		@Override
+		public void undone(EventObject eventObject) {
+			removeLastAdded();
 		}
 	};
 	//endregion

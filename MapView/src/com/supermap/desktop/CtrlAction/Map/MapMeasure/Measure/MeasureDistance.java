@@ -20,6 +20,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
@@ -37,8 +38,6 @@ import java.util.ArrayList;
 public class MeasureDistance extends Measure {
 
 
-	private double totleLength;
-
 
 	private static final String measureLineTag = "measureLineTag";
 	private String beforeUnit;
@@ -48,10 +47,6 @@ public class MeasureDistance extends Measure {
 		textTagTitle = "DistanceText";
 	}
 
-	@Override
-	protected void resetValue() {
-		totleLength = 0;
-	}
 
 	@Override
 	protected Action getMeasureAction() {
@@ -59,10 +54,8 @@ public class MeasureDistance extends Measure {
 	}
 
 
-
-	@Override
-	protected void outputMeasure() {
-		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totleLength), getLengthUnit().toString()));
+	private void outputMeasure() {
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(getTotleLength()), getLengthUnit().toString()));
 	}
 
 	@Override
@@ -188,6 +181,18 @@ public class MeasureDistance extends Measure {
 		}
 	};
 
+	private double getTotleLength() {
+		double totleLength = 0;
+		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+		for (int i = 0; i < trackingLayer.getCount(); i++) {
+			if (addedTags.contains(trackingLayer.getTag(i))) {
+				if (trackingLayer.get(i) instanceof GeoText) {
+					totleLength += StringUtilties.getNumber(((GeoText) trackingLayer.get(i)).getText());
+				}
+			}
+		}
+		return totleLength;
+	}
 
 	private void setDistantTextBox(TrackingEvent trackingEvent, String unitName) {
 		try {
@@ -198,28 +203,26 @@ public class MeasureDistance extends Measure {
 
 
 			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
-			labelTextBoxCurrent.setSize(labelTextBoxCurrent.getText().length() * 10 + 18, 23);
-			if (!labelTextBoxCurrent.isVisible()) {
-				labelTextBoxCurrent.setVisible(true);
-			}
-			Point point = mapControl.getMap().mapToPixel(new Point2D(((int) trackingEvent.getX()), ((int) trackingEvent.getY())));
+			labelTextBoxCurrent.setSize(labelTextBoxCurrent.getText().length() * 10 + 2, 23);
+			labelTextBoxCurrent.setVisible(true);
+			Point point = mapControl.getMap().mapToPixel(new Point2D(trackingEvent.getX(), trackingEvent.getY()));
 
 			double x = point.getX() + textBoxOffsetX;
 			double y = point.getY() + textBoxOffsetY;
 
-			if (x + labelTextBoxCurrent.getWidth() > mapControl.getWidth()) {
-				x = x - labelTextBoxCurrent.getWidth();
+			if (x + labelTextBoxTotle.getWidth() > mapControl.getWidth()) {
+				x = x - labelTextBoxTotle.getWidth();
 			}
-			if (y + labelTextBoxCurrent.getHeight() > mapControl.getHeight()) {
-				y = y - labelTextBoxCurrent.getHeight() - textBoxOffsetY;
+			if (y + labelTextBoxTotle.getHeight() > mapControl.getHeight()) {
+				y = y - labelTextBoxTotle.getHeight() - textBoxOffsetY;
 			}
-			if (Math.abs(y - labelTextBoxCurrent.getBounds().getY()) < labelTextBoxCurrent.getHeight()) {
-				y = y - labelTextBoxCurrent.getHeight() * 2;
+			if (Math.abs(y - labelTextBoxCurrent.getBounds().getY()) < labelTextBoxTotle.getHeight()) {
+				y = y - labelTextBoxTotle.getHeight() * 2;
 			}
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
 			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
-			labelTextBoxTotle.setSize(labelTextBoxTotle.getText().length() * 10 + 16, 23);
+			labelTextBoxTotle.setSize(labelTextBoxTotle.getText().length() * 10 + 5, 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			labelTextBoxTotle.setVisible(true);
 		} catch (Exception ex) {
@@ -233,8 +236,7 @@ public class MeasureDistance extends Measure {
 		}
 		Unit curDistanceUnit = LengthUnit.getValueOf(unitString).getUnit();
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		if (totleLength != 0 && !unitString.equals(beforeUnit)) {
-			totleLength = LengthUnit.ConvertDistance(LengthUnit.getValueOf(beforeUnit).getUnit(), curDistanceUnit, totleLength);
+		if (!unitString.equals(beforeUnit)) {
 			clearAddedTags();
 		}
 		for (int i = 1; i < points.getCount() - param; i++) {
@@ -259,7 +261,6 @@ public class MeasureDistance extends Measure {
 
 					distance = LengthUnit.ConvertDistance(mapControl.getMap().getPrjCoordSys(), curDistanceUnit, distance);
 				}
-				totleLength += distance;
 
 				String info = decimalFormat.format(distance) + unitString;
 
@@ -270,9 +271,9 @@ public class MeasureDistance extends Measure {
 				textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
 						mapControl.getMap(), textStyle.isSizeFixed()));
 				textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
-				textStyle.setBackColor(Color.BLACK);
-				textStyle.setForeColor(Color.WHITE);
-				textStyle.setOutline(true);
+//				textStyle.setBackColor(Color.BLACK);
+//				textStyle.setForeColor(Color.WHITE);
+//				textStyle.setOutline(true);
 				if (isDrawing) {
 					trackingLayer.add(geotext, tag);
 				} else {
@@ -298,6 +299,7 @@ public class MeasureDistance extends Measure {
 		public void tracked(TrackedEvent e) {
 			try {
 				if (e.getGeometry() != null) {
+					outputMeasure();
 					GeoStyle geoStyle = e.getGeometry().getStyle();
 					if (geoStyle == null) {
 						geoStyle = new GeoStyle();
@@ -314,8 +316,6 @@ public class MeasureDistance extends Measure {
 					Point2Ds points = geoLine.getPart(0);
 
 					drawDistanceText(points, unitString, 0, false);
-					outputMeasure();
-					resetValue();
 				}
 				cancleEdit();
 				mapControl.getMap().refresh();

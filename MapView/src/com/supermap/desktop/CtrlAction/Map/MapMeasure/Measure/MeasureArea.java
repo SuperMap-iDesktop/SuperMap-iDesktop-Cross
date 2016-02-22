@@ -13,21 +13,14 @@ public class MeasureArea extends Measure {
 	private double totleArea;
 
 
-	@Override
-	protected void outputMeasure() {
+	private void outputMeasure() {
 		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totleArea), getLengthUnit().toString()));
-
-
 	}
 
-	@Override
-	protected void resetValue() {
-		totleArea = 0;
-
-	}
 
 	@Override
 	protected Action getMeasureAction() {
 		return Action.CREATEPOLYGON;
 	}
+
 }
