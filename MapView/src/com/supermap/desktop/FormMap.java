@@ -303,7 +303,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				clearSelection();
 			} else if (KeyEvent.VK_A == e.getKeyCode() && e.isControlDown()) {
 				selectAll();
-			} else if (KeyEvent.VK_Z == e.getKeyCode() && e.isControlDown() && Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+			} else if ((KeyEvent.VK_Y == e.getKeyCode() || KeyEvent.VK_Z == e.getKeyCode()) && e.isControlDown() && Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
 		}
