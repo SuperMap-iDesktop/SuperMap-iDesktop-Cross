@@ -262,6 +262,10 @@ public abstract class Measure {
 				}
 			}
 			addedTags.remove(tag);
+		} else {
+			labelTextBoxCurrent.setVisible(false);
+			labelTextBoxTotle.setVisible(false);
+			removeLineAssistant();
 		}
 	}
 

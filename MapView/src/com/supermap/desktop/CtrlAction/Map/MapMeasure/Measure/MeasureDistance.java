@@ -20,7 +20,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
@@ -54,8 +53,10 @@ public class MeasureDistance extends Measure {
 	}
 
 
-	private void outputMeasure() {
-		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(getTotleLength()), getLengthUnit().toString()));
+	private void outputMeasure(double length) {
+		PrjCoordSys prjCoordSys = mapControl.getMap().getPrjCoordSys();
+		double totalLength = LengthUnit.ConvertDistance(prjCoordSys, getLengthUnit().getUnit(), length);
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), getLengthUnit().toString()));
 	}
 
 	@Override
@@ -181,19 +182,6 @@ public class MeasureDistance extends Measure {
 		}
 	};
 
-	private double getTotleLength() {
-		double totleLength = 0;
-		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		for (int i = 0; i < trackingLayer.getCount(); i++) {
-			if (addedTags.contains(trackingLayer.getTag(i))) {
-				if (trackingLayer.get(i) instanceof GeoText) {
-					totleLength += StringUtilties.getNumber(((GeoText) trackingLayer.get(i)).getText());
-				}
-			}
-		}
-		return totleLength;
-	}
-
 	private void setDistantTextBox(TrackingEvent trackingEvent, String unitName) {
 		try {
 
@@ -299,7 +287,7 @@ public class MeasureDistance extends Measure {
 		public void tracked(TrackedEvent e) {
 			try {
 				if (e.getGeometry() != null) {
-					outputMeasure();
+					outputMeasure(e.getLength());
 					GeoStyle geoStyle = e.getGeometry().getStyle();
 					if (geoStyle == null) {
 						geoStyle = new GeoStyle();
