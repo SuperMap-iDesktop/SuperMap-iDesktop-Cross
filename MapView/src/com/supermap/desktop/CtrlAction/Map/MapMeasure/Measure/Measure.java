@@ -179,7 +179,7 @@ public abstract class Measure {
 
 	private void initTextBoxs() {
 		this.labelTextBoxCurrent = new JLabel();
-		this.labelTextBoxCurrent.setBackground(Color.cyan);
+		this.labelTextBoxCurrent.setBackground(Color.WHITE);
 		this.labelTextBoxCurrent.setOpaque(true);
 
 		this.labelTextBoxTotle = new JLabel();
