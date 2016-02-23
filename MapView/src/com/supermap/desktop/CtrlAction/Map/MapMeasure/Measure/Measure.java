@@ -12,6 +12,8 @@ import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingListener;
 import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
@@ -81,26 +83,31 @@ public abstract class Measure {
 				if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
 					// 画->漫游
 					inPan = true;
-					labelTextBoxTotle.setVisible(false);
-					labelTextBoxCurrent.setVisible(false);
+					setTextBoxVisiable(false);
 					removeLineAssistant();
 					actionTempGeometry(true);
 				} else {
 					// 画->其他
-					labelTextBoxTotle.setVisible(false);
-					labelTextBoxCurrent.setVisible(false);
+					setTextBoxVisiable(false);
 					endMeasure(true);
 				}
 			} else if (oldAction == Action.PAN || oldAction == Action.ZOOMIN || oldAction == Action.ZOOMOUT || oldAction == Action.ZOOMFREE || oldAction == Action.ZOOMFREE2) {
 				if (inPan && newAction != getMeasureAction()) {
-					labelTextBoxTotle.setVisible(false);
-					labelTextBoxCurrent.setVisible(false);
+					setTextBoxVisiable(false);
 					endMeasure(true);
 					inPan = false;
 				}
 			}
 		}
 	};
+
+	protected void setTextBoxVisiable(boolean isVisible) {
+		labelTextBoxTotle.setVisible(isVisible);
+		labelTextBoxCurrent.setVisible(isVisible);
+	}
+
+	protected TrackedListener trackedListener;
+	protected TrackingListener trackingListener;
 
 
 	protected void clearAddedTags() {
@@ -157,11 +164,10 @@ public abstract class Measure {
 
 	private void addTextBoxsToMapControl() {
 		try {
-			labelTextBoxTotle.setVisible(false);
+			setTextBoxVisiable(false);
+
 			this.mapControl.remove(labelTextBoxTotle);
 			this.mapControl.add(labelTextBoxTotle);
-
-			labelTextBoxCurrent.setVisible(false);
 			this.mapControl.remove(labelTextBoxCurrent);
 			this.mapControl.add(labelTextBoxCurrent);
 
@@ -233,16 +239,19 @@ public abstract class Measure {
 	protected void addListeners() {
 		removeListeners();
 		this.mapControl.addMouseListener(this.mouseAdapter);
-
 		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.addActionChangedListener(actionChangedListener);
 		this.mapControl.addUndoneListener(undoneListener);
-
+		this.mapControl.addTrackedListener(this.trackedListener);
+		this.mapControl.addTrackingListener(this.trackingListener);
 	}
 
-	private void removeLastAdded() {
+	/**
+	 * 撤销时需要移除最后一次添加的标签
+	 */
+	protected void removeLastAdded() {
 		if (addedTags.size() > 0) {
 			String tag = addedTags.get(addedTags.size() - 1);
 			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
@@ -253,8 +262,7 @@ public abstract class Measure {
 			}
 			addedTags.remove(tag);
 		} else {
-			labelTextBoxCurrent.setVisible(false);
-			labelTextBoxTotle.setVisible(false);
+			setTextBoxVisiable(false);
 			removeLineAssistant();
 		}
 	}
@@ -290,13 +298,15 @@ public abstract class Measure {
 			this.mapControl.removeKeyListener(this.keyAdapter);
 			this.mapControl.removeActionChangedListener(actionChangedListener);
 			this.mapControl.removeUndoneListener(undoneListener);
+			this.mapControl.removeTrackedListener(trackedListener);
+			this.mapControl.removeTrackingListener(trackingListener);
 		}
 	}
 
 	/**
 	 * 移除正在编辑的对象
 	 */
-	private void removeLineAssistant() {
+	protected void removeLineAssistant() {
 		try {
 			int index = indexOfTrackingObject();
 
@@ -341,8 +351,7 @@ public abstract class Measure {
 
 
 	protected void cancleEdit() {
-		labelTextBoxCurrent.setVisible(false);
-		labelTextBoxTotle.setVisible(false);
+		setTextBoxVisiable(false);
 		endMeasure(false);
 	}
 

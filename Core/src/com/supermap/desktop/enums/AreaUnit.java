@@ -1,6 +1,9 @@
 package com.supermap.desktop.enums;
 
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 
 public enum AreaUnit {
@@ -50,6 +53,32 @@ public enum AreaUnit {
 		return areaUnit;
 	}
 
+	public Unit getUnit() {
+		Unit unit = Unit.METER;
+
+		if (this == CENTIMETER) {
+			unit = Unit.CENTIMETER;
+		} else if (this == DECIMETER) {
+			unit = Unit.DECIMETER;
+		} else if (this == FOOT) {
+			unit = Unit.FOOT;
+		} else if (this == INCH) {
+			unit = Unit.INCH;
+		} else if (this == KILOMETER) {
+			unit = Unit.KILOMETER;
+		} else if (this == METER) {
+			unit = Unit.METER;
+		} else if (this == MILE) {
+			unit = Unit.MILE;
+		} else if (this == MILIMETER) {
+			unit = Unit.MILIMETER;
+		} else if (this == YARD) {
+			unit = Unit.YARD;
+		} else {
+			unit = Unit.METER;
+		}
+		return unit;
+	}
 	public long getValue() {
 		return this.value;
 	}
@@ -107,5 +136,33 @@ public enum AreaUnit {
 		}
 
 		return result;
+	}
+
+	public static double convertArea(PrjCoordSys prjCoordSys, Unit curUnit, Double area) {
+		double resultArea = area;
+		try {
+			Unit unit = Unit.METER;
+			if (prjCoordSys.getType() == PrjCoordSysType.PCS_NON_EARTH) {
+				unit = prjCoordSys.getCoordUnit();
+			}
+			resultArea = ConvertArea(unit, curUnit, area);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return resultArea;
+	}
+
+
+	public static Double ConvertArea(Unit befUnit, Unit curUnit, Double area) {
+		Double resultArea = area;
+		try {
+			if (befUnit != curUnit) // 两种单位不相同时才进行转换
+			{
+				resultArea = area * Math.pow(befUnit.value() / curUnit.value(), 2);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return resultArea;
 	}
 }
