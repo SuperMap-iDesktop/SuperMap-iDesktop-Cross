@@ -48,7 +48,7 @@ public class MeasureArea extends Measure {
 
 					GeoRegion geoRegion = ((GeoRegion) geometry);
 					double totleArea = getTotleArea(trackedEvent.getArea());
-					String info = decimalFormat.format(totleArea) + getAreaUnit().toString();
+					String info = MessageFormat.format(CoreProperties.getString("String_Map_MeasureArea"), decimalFormat.format(totleArea), getAreaUnit().toString());
 
 					TextPart part = new TextPart(info, geoRegion.getInnerPoint());
 					GeoText geotext = new GeoText(part);
@@ -64,7 +64,7 @@ public class MeasureArea extends Measure {
 	}
 
 	private void outputMeasure(double area) {
-		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(area), getAreaUnit().toString()));
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotleArea"), decimalFormat.format(area), getAreaUnit().toString()));
 	}
 
 	private double getTotleArea(double area) {
