@@ -243,15 +243,15 @@ public class JDialogOperationSetting extends SmDialog {
 	private void initComponentStates() {
 		if (formMap != null) {
 			MapControl mapControl = formMap.getMapControl();
-			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());
-			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());
+			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());//鼠标延迟滚动
+			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());//自动滚屏
 			// todo 导航条
 			this.checkBoxShowNavigationBar.setSelected(false);
 			this.checkBoxShowNavigationBar.setVisible(false);
-			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());
-			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());
-			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));
-			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));
+			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());//局部刷新
+			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());//编辑实时更新
+			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));//选择模式
+			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));//点选容限
 
 		}
 	}

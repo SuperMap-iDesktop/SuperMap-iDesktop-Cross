@@ -20,6 +20,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
@@ -39,6 +40,14 @@ public class MeasureDistance extends Measure {
 
 
 	private static final String measureLineTag = "measureLineTag";
+	/**
+	 * 显示总长度的编辑框相对鼠标向右偏移的像素值
+	 */
+	private static final int textBoxOffsetX = 20;
+	/**
+	 * 显示总长度的编辑框相对鼠标向下偏移的像素值
+	 */
+	private static final int textBoxOffsetY = 20;
 	private String beforeUnit;
 
 
@@ -191,7 +200,7 @@ public class MeasureDistance extends Measure {
 
 
 			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
-			labelTextBoxCurrent.setSize(labelTextBoxCurrent.getText().length() * 8 + 2, 23);
+			labelTextBoxCurrent.setSize(((int) (labelTextBoxCurrent.getText().length() * 8 * SystemPropertyUtilties.getSystemSizeRate())) + 2, 23);
 			labelTextBoxCurrent.setVisible(true);
 			Point point = mapControl.getMap().mapToPixel(new Point2D(trackingEvent.getX(), trackingEvent.getY()));
 
@@ -210,7 +219,7 @@ public class MeasureDistance extends Measure {
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
 			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
-			labelTextBoxTotle.setSize(labelTextBoxTotle.getText().length() * 8 + 5, 23);
+			labelTextBoxTotle.setSize((int) (labelTextBoxTotle.getText().length() * 8 * SystemPropertyUtilties.getSystemSizeRate() + 5), 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			labelTextBoxTotle.setVisible(true);
 		} catch (Exception ex) {

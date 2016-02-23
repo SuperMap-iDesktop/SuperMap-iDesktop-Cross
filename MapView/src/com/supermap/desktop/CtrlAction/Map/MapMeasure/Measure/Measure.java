@@ -37,14 +37,7 @@ public abstract class Measure {
 	 * 辅助线距离量算线的距离，以像素为单位
 	 */
 	protected static int assistantLineInterval = 50;
-	/**
-	 * 显示总长度的编辑框相对鼠标向右偏移的像素值
-	 */
-	protected static int textBoxOffsetX = 1;
-	/**
-	 * 显示总长度的编辑框相对鼠标向下偏移的像素值
-	 */
-	protected static int textBoxOffsetY = 1;
+
 	protected static double textFontHeight = 45;
 
 	// 辅助线相关参数
@@ -54,8 +47,8 @@ public abstract class Measure {
 
 
 	// 两个编辑框
-	protected JLabel labelTextBoxCurrent;
-	protected JLabel labelTextBoxTotle;
+	protected static JLabel labelTextBoxCurrent = new JLabel();
+	protected static JLabel labelTextBoxTotle = new JLabel();
 	// 地图控件
 	protected MapControl mapControl = null;
 
@@ -164,13 +157,13 @@ public abstract class Measure {
 
 	private void addTextBoxsToMapControl() {
 		try {
-			this.labelTextBoxTotle.setVisible(false);
-			this.mapControl.remove(this.labelTextBoxTotle);
-			this.mapControl.add(this.labelTextBoxTotle);
+			labelTextBoxTotle.setVisible(false);
+			this.mapControl.remove(labelTextBoxTotle);
+			this.mapControl.add(labelTextBoxTotle);
 
-			this.labelTextBoxCurrent.setVisible(false);
-			this.mapControl.remove(this.labelTextBoxCurrent);
-			this.mapControl.add(this.labelTextBoxCurrent);
+			labelTextBoxCurrent.setVisible(false);
+			this.mapControl.remove(labelTextBoxCurrent);
+			this.mapControl.add(labelTextBoxCurrent);
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -178,14 +171,11 @@ public abstract class Measure {
 	}
 
 	private void initTextBoxs() {
-		this.labelTextBoxCurrent = new JLabel();
-		this.labelTextBoxCurrent.setBackground(Color.WHITE);
-		this.labelTextBoxCurrent.setOpaque(true);
+		labelTextBoxCurrent.setBackground(Color.WHITE);
+		labelTextBoxCurrent.setOpaque(true);
 
-		this.labelTextBoxTotle = new JLabel();
-		this.labelTextBoxTotle.setBackground(Color.WHITE);
-
-		this.labelTextBoxTotle.setOpaque(true);
+		labelTextBoxTotle.setBackground(Color.WHITE);
+		labelTextBoxTotle.setOpaque(true);
 	}
 
 	private void setMapAction() {
@@ -337,11 +327,11 @@ public abstract class Measure {
 	// 从地图控件中移除掉编辑框
 	protected void removeTextBoxsFromMapCtrl() {
 		try {
-			this.labelTextBoxCurrent.setText("");
-			this.labelTextBoxTotle.setText("");
+			labelTextBoxCurrent.setText("");
+			labelTextBoxTotle.setText("");
 			if (this.mapControl != null) {
-				this.mapControl.remove(this.labelTextBoxCurrent);
-				this.mapControl.remove(this.labelTextBoxTotle);
+				this.mapControl.remove(labelTextBoxCurrent);
+				this.mapControl.remove(labelTextBoxTotle);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
