@@ -64,7 +64,7 @@ public class JDialogMeasureSetting extends SmDialog {
 
 	public JDialogMeasureSetting() {
 		super();
-		this.setSize(300, 200);
+		this.setSize(250, 200);
 		this.setLocationRelativeTo(null);
 		this.setTitle(MapViewProperties.getString("String_MeasureSetting"));
 
