@@ -813,4 +813,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.map.refresh();
 	}
 
+	@Override
+	public Layer getCurrentLayer() {
+		return themelabelLayer;
+	}
+
 }

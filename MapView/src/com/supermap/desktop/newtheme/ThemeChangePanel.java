@@ -1,5 +1,7 @@
 package com.supermap.desktop.newtheme;
 
+
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Theme;
 
 import javax.swing.*;
@@ -15,11 +17,16 @@ public abstract class ThemeChangePanel extends JPanel {
 
 	/**
 	 * 获取当前专题图
-	 *
 	 * @return
 	 */
 	public abstract Theme getCurrentTheme();
 
+	/**
+	 * 获取当前图层
+	 * @return
+	 */
+	public abstract Layer getCurrentLayer();
+	
 	/**
 	 * 注册事件
 	 */

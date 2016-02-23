@@ -148,4 +148,9 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 			ThemeLabelUniformContainer.this.firePropertyChange("ThemeChange", null, null);
 		}
 	}
+
+	@Override
+	public Layer getCurrentLayer() {
+		return themeLabelLayer;
+	}
 }

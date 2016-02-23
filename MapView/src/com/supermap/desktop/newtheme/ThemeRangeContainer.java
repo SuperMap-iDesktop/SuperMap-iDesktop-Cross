@@ -1396,15 +1396,22 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	void refreshMapAndLayer() {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme()) {
-			((ThemeRange) this.themeRangeLayer.getTheme()).clear();
+			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();
+					nowThemeRange.clear();
 			if (0 < this.themeRange.getCount()) {
 				for (int i = 0; i < this.themeRange.getCount(); i++) {
-					((ThemeRange) this.themeRangeLayer.getTheme()).addToTail(this.themeRange.getItem(i), true);
+					nowThemeRange.addToTail(this.themeRange.getItem(i), true);
 				}
 			}
+			nowThemeRange.setRangeExpression(this.themeRange.getRangeExpression());
+			nowThemeRange.setPrecision(this.themeRange.getPrecision());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
 			this.map.refresh();
 		}
 	}
 
+	@Override
+	public Layer getCurrentLayer() {
+		return themeRangeLayer;
+	}
 }

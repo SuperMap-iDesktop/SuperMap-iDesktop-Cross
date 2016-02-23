@@ -824,10 +824,13 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
-		for (int i = 0; i < this.themeUnique.getCount(); i++) {
-			((ThemeGridUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
-		}
+		this.themeUniqueLayer.getTheme().fromXML(this.themeUnique.toXML());
 		this.map.refresh();
 		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+	}
+
+	@Override
+	public Layer getCurrentLayer() {
+		return themeUniqueLayer;
 	}
 }

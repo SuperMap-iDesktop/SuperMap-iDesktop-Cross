@@ -1102,16 +1102,20 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.panelAdvance.refreshMapAndLayer();
 		this.panelProperty.refreshMapAndLayer();
 		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
-		((ThemeLabel) this.themeLabelLayer.getTheme()).clear();
-		if (0 < this.themeLabel.getCount()) {
-			for (int i = 0; i < this.themeLabel.getCount(); i++) {
-				if (null != this.themeLabel.getItem(i)) {
-					((ThemeLabel) themeLabelLayer.getTheme()).addToTail(this.themeLabel.getItem(i), true);
+		if (null != themeLabelLayer && null != themeLabelLayer.getTheme()) {
+			ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());
+			nowThemeLabel.clear();
+			if (0 < this.themeLabel.getCount()) {
+				for (int i = 0; i < this.themeLabel.getCount(); i++) {
+					if (null != this.themeLabel.getItem(i)) {
+						nowThemeLabel.addToTail(this.themeLabel.getItem(i), true);
+					}
 				}
 			}
+			nowThemeLabel.setRangeExpression(this.themeLabel.getRangeExpression());
+			this.map.refresh();
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(themeLabelLayer);
 		}
-		this.map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(themeLabelLayer);
 	}
 
 	class LocalPropertyChangeListener implements PropertyChangeListener {
@@ -1120,5 +1124,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		public void propertyChange(PropertyChangeEvent evt) {
 			ThemeLabelRangeContainer.this.firePropertyChange("ThemeChange", null, null);
 		}
+	}
+	@Override
+	public Layer getCurrentLayer() {
+		return themeLabelLayer;
 	}
 }

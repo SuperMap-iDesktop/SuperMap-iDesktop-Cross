@@ -787,4 +787,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.map.refresh();
 	}
 
+	@Override
+	public Layer getCurrentLayer() {
+		return themeLabelLayer;
+	}
+
 }
