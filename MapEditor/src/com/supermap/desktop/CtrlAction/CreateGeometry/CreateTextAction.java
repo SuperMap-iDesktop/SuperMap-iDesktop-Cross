@@ -1,31 +1,9 @@
 package com.supermap.desktop.CtrlAction.CreateGeometry;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
@@ -33,7 +11,6 @@ import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
@@ -42,11 +19,16 @@ import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
-import com.supermap.ui.GeometryAddedListener;
-import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // @formatter:off
 /**
@@ -244,7 +226,6 @@ public class CreateTextAction {
 						if (!StringUtilties.isNullOrEmpty(text)) {
 							TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
 							this.editingGeoText.setPart(0, textPart);
-
 							recordset.addNew(this.editingGeoText);
 							recordset.update();
 

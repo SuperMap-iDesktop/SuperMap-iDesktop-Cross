@@ -83,7 +83,7 @@ public class JDialogOperationSetting extends SmDialog {
 	 */
 	private void initComponents() {
 		this.setTitle(MapViewProperties.getString("String_MapBrowseSetting"));
-		this.setSize(300, 250);
+		this.setMinimumSize(new Dimension(300, 200));
 		this.setLocationRelativeTo(null);
 		this.checkBoxRollingWheelWithoutDelay = new JCheckBox();
 		this.checkBoxAutoScroll = new JCheckBox();
@@ -142,11 +142,10 @@ public class JDialogOperationSetting extends SmDialog {
 		panelCheckBox.add(checkBoxRollingWheelWithoutDelay, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 		panelCheckBox.add(checkBoxAutoScroll, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
-		panelCheckBox.add(checkBoxShowNavigationBar, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCheckBox.add(checkBoxRefreshInInvalidArea, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+//		panelCheckBox.add(checkBoxShowNavigationBar, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
-		panelCheckBox.add(checkBoxRefreshAtTracked, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCheckBox.add(new JPanel(), new GridBagConstraintsHelper(1, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxRefreshInInvalidArea, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxRefreshAtTracked, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
 		JPanel panelLabel = new JPanel();
 		panelLabel.setLayout(new GridBagLayout());
@@ -159,7 +158,7 @@ public class JDialogOperationSetting extends SmDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.add(panelCheckBox, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panel.add(panelLabel, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panel.add(panelLabel, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 10, 0, 0));
 		panel.add(this.panelButton, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
 
 		this.getContentPane().setLayout(new GridBagLayout());
@@ -244,14 +243,15 @@ public class JDialogOperationSetting extends SmDialog {
 	private void initComponentStates() {
 		if (formMap != null) {
 			MapControl mapControl = formMap.getMapControl();
-			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());
-			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());
+			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());//鼠标延迟滚动
+			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());//自动滚屏
 			// todo 导航条
 			this.checkBoxShowNavigationBar.setSelected(false);
-			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());
-			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());
-			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));
-			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));
+			this.checkBoxShowNavigationBar.setVisible(false);
+			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());//局部刷新
+			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());//编辑实时更新
+			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));//选择模式
+			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));//点选容限
 
 		}
 	}

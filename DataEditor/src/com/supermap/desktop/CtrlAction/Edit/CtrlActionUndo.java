@@ -41,7 +41,7 @@ public class CtrlActionUndo extends CtrlAction {
 		try {
 			IForm form = Application.getActiveApplication().getActiveForm();
 			if (form != null) {
-				if (form instanceof IFormMap) {
+				if (form != null && form instanceof IFormMap ) {
 					enable = ((IFormMap) form).getMapControl().canUndo();
 				} else if (form instanceof IFormScene) {
 					// TODO 目前场景并不支持编辑，后续版本根据组件支持情况再行实现

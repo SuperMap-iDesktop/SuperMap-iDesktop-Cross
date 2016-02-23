@@ -12,6 +12,9 @@ import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingListener;
+import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.EventObject;
 
 /**
  * 量算基类
@@ -28,7 +32,6 @@ import java.util.ArrayList;
 public abstract class Measure {
 
 
-	private double currentLength;
 
 	protected static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
 	// 距离量算相关参数
@@ -36,14 +39,7 @@ public abstract class Measure {
 	 * 辅助线距离量算线的距离，以像素为单位
 	 */
 	protected static int assistantLineInterval = 50;
-	/**
-	 * 显示总长度的编辑框相对鼠标向右偏移的像素值
-	 */
-	protected static int textBoxOffsetX = 20;
-	/**
-	 * 显示总长度的编辑框相对鼠标向下偏移的像素值
-	 */
-	protected static int textBoxOffsetY = 20;
+
 	protected static double textFontHeight = 45;
 
 	// 辅助线相关参数
@@ -51,9 +47,10 @@ public abstract class Measure {
 	protected static double lineWidth = 0.4;
 	protected static Color lineColor = Color.BLUE;
 
+
 	// 两个编辑框
-	protected JLabel labelTextBoxCurrent;
-	protected JLabel labelTextBoxTotle;
+	protected static JLabel labelTextBoxCurrent = new JLabel();
+	protected static JLabel labelTextBoxTotle = new JLabel();
 	// 地图控件
 	protected MapControl mapControl = null;
 
@@ -79,24 +76,38 @@ public abstract class Measure {
 	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
 		@Override
 		public void actionChanged(ActionChangedEvent e) {
-			if (e.getOldAction() != Action.PAN) {
-				Action newAction = e.getNewAction();
+			Action oldAction = e.getOldAction();
+			Action newAction = e.getNewAction();
+
+			if (oldAction == getMeasureAction()) {
 				if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
+					// 画->漫游
 					inPan = true;
-					labelTextBoxTotle.setVisible(false);
-					labelTextBoxCurrent.setVisible(false);
+					setTextBoxVisiable(false);
 					removeLineAssistant();
 					actionTempGeometry(true);
+				} else {
+					// 画->其他
+					setTextBoxVisiable(false);
+					endMeasure(true);
 				}
-				if (inPan && e.getNewAction() == Action.SELECT2) {
+			} else if (oldAction == Action.PAN || oldAction == Action.ZOOMIN || oldAction == Action.ZOOMOUT || oldAction == Action.ZOOMFREE || oldAction == Action.ZOOMFREE2) {
+				if (inPan && newAction != getMeasureAction()) {
+					setTextBoxVisiable(false);
+					endMeasure(true);
 					inPan = false;
 				}
 			}
 		}
-
-
 	};
-	;
+
+	protected void setTextBoxVisiable(boolean isVisible) {
+		labelTextBoxTotle.setVisible(isVisible);
+		labelTextBoxCurrent.setVisible(isVisible);
+	}
+
+	protected TrackedListener trackedListener;
+	protected TrackingListener trackingListener;
 
 
 	protected void clearAddedTags() {
@@ -131,7 +142,6 @@ public abstract class Measure {
 	 * 开始量算入口
 	 */
 	public void startMeasure() {
-		resetValue();
 		removeListeners();
 		getMapControl();
 		mapControl.setTrackMode(TrackMode.TRACK);
@@ -139,6 +149,8 @@ public abstract class Measure {
 		// 添加编辑框到地图空间中
 		addTextBoxsToMapControl();
 		addListeners();
+		isEditing = true;
+		setMapAction();
 	}
 
 	private void getMapControl() {
@@ -152,13 +164,12 @@ public abstract class Measure {
 
 	private void addTextBoxsToMapControl() {
 		try {
-			this.labelTextBoxTotle.setVisible(false);
-			this.mapControl.remove(this.labelTextBoxTotle);
-			this.mapControl.add(this.labelTextBoxTotle);
+			setTextBoxVisiable(false);
 
-			this.labelTextBoxCurrent.setVisible(false);
-			this.mapControl.remove(this.labelTextBoxCurrent);
-			this.mapControl.add(this.labelTextBoxCurrent);
+			this.mapControl.remove(labelTextBoxTotle);
+			this.mapControl.add(labelTextBoxTotle);
+			this.mapControl.remove(labelTextBoxCurrent);
+			this.mapControl.add(labelTextBoxCurrent);
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -166,34 +177,31 @@ public abstract class Measure {
 	}
 
 	private void initTextBoxs() {
-		this.labelTextBoxCurrent = new JLabel();
-		this.labelTextBoxCurrent.setOpaque(false);
+		labelTextBoxCurrent.setBackground(Color.WHITE);
+		labelTextBoxCurrent.setOpaque(true);
 
-		this.labelTextBoxTotle = new JLabel();
-		this.labelTextBoxTotle.setOpaque(false);
+		labelTextBoxTotle.setBackground(Color.WHITE);
+		labelTextBoxTotle.setOpaque(true);
 	}
 
-	protected abstract void setMapAction();
+	private void setMapAction() {
+		this.mapControl.setAction(getMeasureAction());
+	}
 
-	/**
-	 * 输出量算结果
-	 */
-	protected abstract void outputMeasure();
 
 	private void endMeasure(boolean isChangeAction) {
 		try {
 			isEditing = false;
+			actionTempGeometry(false);
 			removeTextBoxsFromMapCtrl();
 			removeTrackingObject();
 			removeLineAssistant();
-
 			removeListeners();
+			this.mapControl.setTrackMode(TrackMode.EDIT);
+			removeTempMeasureText();
 
 			if (!isChangeAction) {
-				resetValue();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
-				this.mapControl.setTrackMode(TrackMode.EDIT);
-				removeTempMeasureText();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -224,21 +232,42 @@ public abstract class Measure {
 		}
 	}
 
-	/**
-	 * 重置数值为初始状态
-	 */
-	protected abstract void resetValue();
 
 
+
+	protected abstract Action getMeasureAction();
 	protected void addListeners() {
 		removeListeners();
 		this.mapControl.addMouseListener(this.mouseAdapter);
-
-		this.mapControl.removeKeyListener(this.escClearKeyAdapt);
+		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.addActionChangedListener(actionChangedListener);
+		this.mapControl.addUndoneListener(undoneListener);
+		this.mapControl.addTrackedListener(this.trackedListener);
+		this.mapControl.addTrackingListener(this.trackingListener);
 	}
+
+	/**
+	 * 撤销时需要移除最后一次添加的标签
+	 */
+	protected void removeLastAdded() {
+		if (addedTags.size() > 0) {
+			String tag = addedTags.get(addedTags.size() - 1);
+			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+			for (int i = 0; i < trackingLayer.getCount(); i++) {
+				if (trackingLayer.getTag(i).equals(tag)) {
+					trackingLayer.remove(i);
+				}
+			}
+			addedTags.remove(tag);
+		} else {
+			setTextBoxVisiable(false);
+			removeLineAssistant();
+		}
+	}
+
+
 
 	private void actionTempGeometry(boolean isAdd) {
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
@@ -246,7 +275,6 @@ public abstract class Measure {
 		if (isAdd) {
 			if (currentGeometry != null) {
 				if (index > -1) {
-
 					trackingLayer.set(index, currentGeometry);
 				} else {
 					trackingLayer.add(currentGeometry, tempTag);
@@ -269,13 +297,16 @@ public abstract class Measure {
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeKeyListener(this.keyAdapter);
 			this.mapControl.removeActionChangedListener(actionChangedListener);
+			this.mapControl.removeUndoneListener(undoneListener);
+			this.mapControl.removeTrackedListener(trackedListener);
+			this.mapControl.removeTrackingListener(trackingListener);
 		}
 	}
 
 	/**
 	 * 移除正在编辑的对象
 	 */
-	private void removeLineAssistant() {
+	protected void removeLineAssistant() {
 		try {
 			int index = indexOfTrackingObject();
 
@@ -306,11 +337,11 @@ public abstract class Measure {
 	// 从地图控件中移除掉编辑框
 	protected void removeTextBoxsFromMapCtrl() {
 		try {
-			this.labelTextBoxCurrent.setText("");
-			this.labelTextBoxTotle.setText("");
+			labelTextBoxCurrent.setText("");
+			labelTextBoxTotle.setText("");
 			if (this.mapControl != null) {
-				this.mapControl.remove(this.labelTextBoxCurrent);
-				this.mapControl.remove(this.labelTextBoxTotle);
+				this.mapControl.remove(labelTextBoxCurrent);
+				this.mapControl.remove(labelTextBoxTotle);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -320,8 +351,7 @@ public abstract class Measure {
 
 
 	protected void cancleEdit() {
-		labelTextBoxCurrent.setVisible(false);
-		labelTextBoxTotle.setVisible(false);
+		setTextBoxVisiable(false);
 		endMeasure(false);
 	}
 
@@ -372,6 +402,13 @@ public abstract class Measure {
 				mapControl.getMap().getTrackingLayer().clear();
 				mapControl.removeKeyListener(this);
 			}
+		}
+	};
+
+	private final UndoneListener undoneListener = new UndoneListener() {
+		@Override
+		public void undone(EventObject eventObject) {
+			removeLastAdded();
 		}
 	};
 	//endregion

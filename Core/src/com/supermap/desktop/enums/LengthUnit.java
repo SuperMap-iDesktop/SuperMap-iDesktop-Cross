@@ -55,6 +55,31 @@ public enum LengthUnit {
 
 	@Override
 	public String toString() {
+		if (this == METER) {
+			return CommonProperties.getString("String_DistanceUnit_Meter");
+		} else if (this == KILOMETER) {
+			return CommonProperties.getString("String_DistanceUnit_Kilometer");
+		} else if (this == CENTIMETER) {
+			return CommonProperties.getString("String_DistanceUnit_Centimeter");
+		} else if (this == DECIMETER) {
+			return CommonProperties.getString("String_DistanceUnit_Decimeter");
+		} else if (this == MILE) {
+			return CommonProperties.getString("String_DistanceUnit_Mile");
+		} else if (this == INCH) {
+			return CommonProperties.getString("String_DistanceUnit_Inch");
+		} else if (this == YARD) {
+			return CommonProperties.getString("String_DistanceUnit_Yard");
+		} else if (this == SECOND) {
+			return CommonProperties.getString("String_AngleUnit_Second");
+		} else if (this == MINUTE) {
+			return CommonProperties.getString("String_AngleUnit_Minute");
+		} else if (this == DEGREE) {
+			return CommonProperties.getString("String_AngleUnit_Degree");
+		} else if (this == FOOT) {
+			return CommonProperties.getString("String_DistanceUnit_Foot");
+		} else if (this == MILLIMETER) {
+			return CommonProperties.getString("String_DistanceUnit_Millimeter");
+		}
 		return this.unit.toString();
 	}
 
@@ -100,7 +125,7 @@ public enum LengthUnit {
 		double resultDistance = distance;
 		try {
 			if (currentUnit != beforeUnit) {
-				resultDistance = distance * ((double) beforeUnit.value() / (double)currentUnit.value());
+				resultDistance = distance * ((double) beforeUnit.value() / (double) currentUnit.value());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

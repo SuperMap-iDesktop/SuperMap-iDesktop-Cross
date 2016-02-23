@@ -1,6 +1,10 @@
 package com.supermap.desktop.utilties;
 
+import java.awt.*;
+
 public class SystemPropertyUtilties {
+
+	private static final double DEFAULT_SCREEN_RESOLUTION = 96;// 默认为96
 	private SystemPropertyUtilties() {
 		super();
 	}
@@ -17,5 +21,9 @@ public class SystemPropertyUtilties {
 			isWindows = true;
 		}
 		return isWindows;
+	}
+
+	public static double getSystemSizeRate() {
+		return Toolkit.getDefaultToolkit().getScreenResolution() / DEFAULT_SCREEN_RESOLUTION;
 	}
 }
