@@ -32,7 +32,6 @@ import java.util.EventObject;
 public abstract class Measure {
 
 
-
 	protected static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
 	// 距离量算相关参数
 	/**
@@ -80,7 +79,7 @@ public abstract class Measure {
 			Action newAction = e.getNewAction();
 
 			if (oldAction == getMeasureAction()) {
-				if (newAction == Action.PAN || newAction == Action.ZOOMIN || newAction == Action.ZOOMOUT || newAction == Action.ZOOMFREE || newAction == Action.ZOOMFREE2) {
+				if (isPanAction(newAction)) {
 					// 画->漫游
 					inPan = true;
 					setTextBoxVisiable(false);
@@ -91,15 +90,25 @@ public abstract class Measure {
 					setTextBoxVisiable(false);
 					endMeasure(true);
 				}
-			} else if (oldAction == Action.PAN || oldAction == Action.ZOOMIN || oldAction == Action.ZOOMOUT || oldAction == Action.ZOOMFREE || oldAction == Action.ZOOMFREE2) {
-				if (inPan && newAction != getMeasureAction()) {
-					setTextBoxVisiable(false);
-					endMeasure(true);
+			} else if (isPanAction(oldAction)) {
+				if (isPanAction(newAction)) {
+					// 画->画 不动
+					inPan = true;
+				} else {
 					inPan = false;
+					if (newAction != getMeasureAction()) {
+						// 漫游->其他
+						setTextBoxVisiable(false);
+						endMeasure(true);
+					}
 				}
 			}
 		}
 	};
+
+	private boolean isPanAction(Action action) {
+		return action == Action.PAN || action == Action.ZOOMIN || action == Action.ZOOMOUT || action == Action.ZOOMFREE || action == Action.ZOOMFREE2;
+	}
 
 	protected void setTextBoxVisiable(boolean isVisible) {
 		labelTextBoxTotle.setVisible(isVisible);
@@ -143,6 +152,7 @@ public abstract class Measure {
 	 */
 	public void startMeasure() {
 		removeListeners();
+		cancleEdit();
 		getMapControl();
 		mapControl.setTrackMode(TrackMode.TRACK);
 		mapControl.setLayout(null);
@@ -197,10 +207,12 @@ public abstract class Measure {
 			removeTrackingObject();
 			removeLineAssistant();
 			removeListeners();
-			this.mapControl.setTrackMode(TrackMode.EDIT);
+			if (mapControl != null) {
+				this.mapControl.setTrackMode(TrackMode.EDIT);
+			}
 			removeTempMeasureText();
 
-			if (!isChangeAction) {
+			if (!isChangeAction && this.mapControl != null) {
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
 			}
 		} catch (Exception ex) {
@@ -217,7 +229,7 @@ public abstract class Measure {
 				for (int i = mapControl.getMap().getTrackingLayer().getCount() - 1; i >= 0; i--) {
 					String tag = mapControl.getMap().getTrackingLayer().getTag(i);
 					//不删除已经绘制好的标签
-					if (tag != null && tag.contains(textTagTitle) && !tag.contains("FinishedMeasure")) {
+					if (tag != null && textTagTitle != null && tag.contains(textTagTitle) && !tag.contains("FinishedMeasure")) {
 						mapControl.getMap().getTrackingLayer().remove(i);
 					}
 				}
@@ -233,9 +245,8 @@ public abstract class Measure {
 	}
 
 
-
-
 	protected abstract Action getMeasureAction();
+
 	protected void addListeners() {
 		removeListeners();
 		this.mapControl.addMouseListener(this.mouseAdapter);
@@ -268,24 +279,25 @@ public abstract class Measure {
 	}
 
 
-
 	private void actionTempGeometry(boolean isAdd) {
-		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		int index = trackingLayer.indexOf(tempTag);
-		if (isAdd) {
-			if (currentGeometry != null) {
+		if (mapControl != null) {
+			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+			int index = trackingLayer.indexOf(tempTag);
+			if (isAdd) {
+				if (currentGeometry != null) {
+					if (index > -1) {
+						trackingLayer.set(index, currentGeometry);
+					} else {
+						trackingLayer.add(currentGeometry, tempTag);
+					}
+				}
+			} else {
 				if (index > -1) {
-					trackingLayer.set(index, currentGeometry);
-				} else {
-					trackingLayer.add(currentGeometry, tempTag);
+					trackingLayer.remove(index);
 				}
 			}
-		} else {
-			if (index > -1) {
-				trackingLayer.remove(index);
-			}
+			mapControl.getMap().refresh();
 		}
-		mapControl.getMap().refresh();
 	}
 
 	private boolean isEditing() {
@@ -322,15 +334,13 @@ public abstract class Measure {
 
 	protected int indexOfTrackingObject() {
 		int indexOfTrackingObject = -1;
-
-		try {
-//			if (!this.measureNewMap) {
-			indexOfTrackingObject = this.mapControl.getMap().getTrackingLayer().indexOf(TRAKCING_OBJECT_NAME);
-//			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+		if (mapControl != null) {
+			try {
+				indexOfTrackingObject = this.mapControl.getMap().getTrackingLayer().indexOf(TRAKCING_OBJECT_NAME);
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
 		}
-
 		return indexOfTrackingObject;
 	}
 
@@ -359,10 +369,12 @@ public abstract class Measure {
 	 * 移除辅助线
 	 */
 	protected void removeTrackingObject() {
-		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		for (int i = trackingLayer.getCount() - 1; i >= 0; i--) {
-			if (trackingLayer.getTag(i).equals(TRAKCING_OBJECT_NAME)) {
-				trackingLayer.remove(i);
+		if (mapControl != null) {
+			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+			for (int i = trackingLayer.getCount() - 1; i >= 0; i--) {
+				if (trackingLayer.getTag(i).equals(TRAKCING_OBJECT_NAME)) {
+					trackingLayer.remove(i);
+				}
 			}
 		}
 	}

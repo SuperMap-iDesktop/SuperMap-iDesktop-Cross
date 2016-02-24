@@ -4,12 +4,14 @@ import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
+import com.supermap.data.Point2Ds;
 import com.supermap.data.TextPart;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
@@ -29,8 +31,33 @@ public class MeasureArea extends Measure {
 		textTagTitle = "AreaText";
 		trackingListener = new TrackingListener() {
 			@Override
-			public void tracking(TrackingEvent trackingEvent) {
+			public void tracking(TrackingEvent e) {
+				try {
+					currentGeometry = null;
+					if (e.getGeometry() != null) {
+						GeoRegion geoRegion = ((GeoRegion) e.getGeometry());
+						Point2Ds pnts = new Point2Ds(geoRegion.getPart(0));
+						if (pnts.getCount() > 2) {
+							pnts.add(pnts.getItem(0));
+							GeoRegion region = new GeoRegion(pnts);
+							Point pointInnerPixel = mapControl.getMap().mapToPixel(region.getInnerPoint());
 
+							String text = decimalFormat.format(e.getArea()) + getAreaUnit().toString();
+							labelTextBoxCurrent.setText(text);
+							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+							labelTextBoxCurrent.setLocation(pointInnerPixel);
+							mapControl.add(labelTextBoxCurrent);
+							labelTextBoxCurrent.setVisible(true);
+						} else {
+							labelTextBoxCurrent.setVisible(false);
+						}
+					} else {
+						labelTextBoxCurrent.setVisible(false);
+					}
+
+				} catch (Exception ex) {
+					Application.getActiveApplication().getOutput().output(ex);
+				}
 			}
 		};
 		trackedListener = new TrackedListener() {
@@ -59,6 +86,8 @@ public class MeasureArea extends Measure {
 					mapControl.getMap().getTrackingLayer().add(geotext, textTagTitle + "FinishedMeasure");
 					outputMeasure(totleArea);
 				}
+				cancleEdit();
+				mapControl.getMap().refresh();
 			}
 		};
 	}
