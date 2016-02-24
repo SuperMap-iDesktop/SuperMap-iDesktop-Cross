@@ -64,6 +64,7 @@ public class ThemeGuideFactory {
 				public void propertyChange(PropertyChangeEvent evt) {
 					if (!container.getCheckBoxRefreshAtOnce().isSelected()) {
 						container.getButtonApply().setEnabled(true);
+						container.setLayerPropertyChanged(true);
 					}
 				}
 			});

@@ -13,6 +13,8 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeUnique;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -43,8 +45,13 @@ public class ThemeMainContainer extends JPanel {
 	private LocalActiveFormChangedListener activeFormChangedListener = new LocalActiveFormChangedListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private LocalActionListener actionListener = new LocalActionListener();
-
+	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
 	private Layer newLayer;
+	// 标记位，用于标记当前
+	private boolean layerPropertyChanged = false;
+	public Layer oldLayer;
+	public ThemeChangePanel lastChangePanel;
+	public Theme lastTheme;
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -102,7 +109,7 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(this.activeFormChangedListener);
 		this.buttonApply.addActionListener(this.actionListener);
-		this.checkBoxRefreshAtOnce.addItemListener(this.itemListener);
+		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
 	}
 
 	/**
@@ -114,7 +121,7 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		Application.getActiveApplication().getMainFrame().getFormManager().removeActiveFormChangedListener(this.activeFormChangedListener);
 		this.buttonApply.removeActionListener(this.actionListener);
-		this.checkBoxRefreshAtOnce.removeItemListener(this.itemListener);
+		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -124,6 +131,7 @@ public class ThemeMainContainer extends JPanel {
 			if (null != panel) {
 				panel.refreshMapAndLayer();
 				buttonApply.setEnabled(false);
+				setLayerPropertyChanged(false);
 			}
 		}
 	}
@@ -148,10 +156,6 @@ public class ThemeMainContainer extends JPanel {
 			} else {
 				updateThemeMainContainer();
 			}
-			ThemeMainContainer.this.updateUI();
-			if (null != ThemeGuideFactory.getMapControl()) {
-				ThemeGuideFactory.getMapControl().getMap().refresh();
-			}
 		}
 	}
 
@@ -165,13 +169,20 @@ public class ThemeMainContainer extends JPanel {
 					Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
 					refreshThemeMainContainer(layer);
 				}
-			} else if(e.getStateChange() == ItemEvent.SELECTED){
-				boolean selected = checkBoxRefreshAtOnce.isSelected();
-				if (null != panel && selected) {
-					panel.setRefreshAtOnce(selected);
-					panel.refreshMapAndLayer();
-					buttonApply.setEnabled(false);
-				}
+			}
+		}
+	}
+
+	class RefreshAtOnceListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			boolean selected = checkBoxRefreshAtOnce.isSelected();
+			if (null != panel && selected) {
+				panel.setRefreshAtOnce(selected);
+				panel.refreshMapAndLayer();
+				buttonApply.setEnabled(false);
+			} else if (null != panel && false == selected) {
+				panel.setRefreshAtOnce(selected);
 			}
 		}
 	}
@@ -264,13 +275,26 @@ public class ThemeMainContainer extends JPanel {
 	class LocalTreeSelectListener implements TreeSelectionListener {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
-			newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-			if (null != ThemeGuideFactory.getDockbarThemeContainer()) {
-				if (null != newLayer) {
-					ThemeGuideFactory.modifyTheme(newLayer);
+			try {
+				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
+				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				if (null != ThemeGuideFactory.getDockbarThemeContainer()) {
+
+//					if (null != oldLayer && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()
+//							&& JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_LayerProperty_Message"))) {
+//						// 不保存修改
+//						ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
+//					}
+//					setLayerPropertyChanged(false);
+					if (null != newLayer && null != newLayer.getTheme()) {
+						ThemeGuideFactory.modifyTheme(newLayer);
+					}
+					resetThemeMainContainer(newLayer);
 				}
-				resetThemeMainContainer(newLayer);
+			} catch (Exception ex) {
+				
 			}
+			
 		}
 	}
 
@@ -324,6 +348,14 @@ public class ThemeMainContainer extends JPanel {
 			this.panel.setRefreshAtOnce(this.checkBoxRefreshAtOnce.isSelected());
 			this.buttonApply.setEnabled(false);
 		}
+	}
+
+	public boolean isLayerPropertyChanged() {
+		return layerPropertyChanged;
+	}
+
+	public void setLayerPropertyChanged(boolean layerPropertyChanged) {
+		this.layerPropertyChanged = layerPropertyChanged;
 	}
 
 	public JCheckBox getCheckBoxRefreshAtOnce() {

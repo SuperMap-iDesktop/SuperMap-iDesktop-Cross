@@ -778,4 +778,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
 		this.map.refresh();
 	}
+
+	@Override
+	public Layer getCurrentLayer() {
+		return themeLabelLayer;
+	}
 }

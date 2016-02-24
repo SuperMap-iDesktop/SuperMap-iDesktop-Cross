@@ -384,7 +384,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private void initComboBoxExpression() {
 		this.comboBoxExpression.setEditable(true);
 		String expression = themeUnique.getUniqueExpression();
-		expression = datasetVector.getName() + "." + expression;
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
@@ -1184,14 +1183,15 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
+			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
 			((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
 			for (int i = 0; i < this.themeUnique.getCount(); i++) {
-				((ThemeUnique) this.themeUniqueLayer.getTheme()).add(this.themeUnique.getItem(i));
+				nowThemeUnique.add(this.themeUnique.getItem(i));
 			}
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).setUniqueExpression(this.themeUnique.getUniqueExpression());
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetFixed(this.themeUnique.isOffsetFixed());
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetX(this.themeUnique.getOffsetX());
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).setOffsetY(this.themeUnique.getOffsetY());
+			nowThemeUnique.setUniqueExpression(this.themeUnique.getUniqueExpression());
+			nowThemeUnique.setOffsetFixed(this.themeUnique.isOffsetFixed());
+			nowThemeUnique.setOffsetX(this.themeUnique.getOffsetX());
+			nowThemeUnique.setOffsetY(this.themeUnique.getOffsetY());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
 			this.map.refresh();
 		}
@@ -1206,5 +1206,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	@Override
 	void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
+	}
+
+	@Override
+	public Layer getCurrentLayer() {
+		return themeUniqueLayer;
 	}
 }

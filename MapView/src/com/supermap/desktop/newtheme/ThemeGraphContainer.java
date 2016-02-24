@@ -168,7 +168,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private TableModelListener graphCaptionChangeListener = new CaptionChangeListener();
 	private ItemListener OptionsChangeListener = new OptionsChangeListener();
 	private ActionListener showLeaderLineAction = new ShowLeaderLineAction();
-	private DocumentListener graphSizeChangeListener= new GraphSizeChangeListener();
+	private DocumentListener graphSizeChangeListener = new GraphSizeChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -634,6 +634,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonDraftLine.addActionListener(this.showLeaderLineAction);
 		this.textFieldMaxValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
 		this.textFieldMinValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
+		this.comboBoxOffsetUnity.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					// 修改偏移量单位
+
+				}
+			}
+		});
 	}
 
 	private void refreshColor() {
@@ -662,7 +672,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
-	class GraphSizeChangeListener implements DocumentListener{
+	class GraphSizeChangeListener implements DocumentListener {
 		private void setGraphMaxValue() {
 			String maxValue = textFieldMaxValue.getText();
 			if (StringUtilties.isNumber(maxValue) && Double.compare(Double.parseDouble(maxValue), 0.0) > 0) {
@@ -705,7 +715,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			documentChange(e);
 		}
 	}
-	
+
 	class ShowLeaderLineAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -896,7 +906,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonDraftLine.removeActionListener(this.showLeaderLineAction);
 		this.textFieldMaxValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
 		this.textFieldMinValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
-		
+
 	}
 
 	public void setItemGeoSytle() {
@@ -966,29 +976,36 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	@Override
 	void refreshMapAndLayer() {
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
-		ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
-		((ThemeGraph) this.themeGraphLayer.getTheme()).clear();
-		if (0 < this.themeGraph.getCount()) {
-			for (int i = 0; i < this.themeGraph.getCount(); i++) {
-				nowGraph.insert(i, this.themeGraph.getItem(i));
+		if (null != themeGraphLayer && null != themeGraphLayer.getTheme()) {
+			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
+			nowGraph.clear();
+			if (0 < this.themeGraph.getCount()) {
+				for (int i = 0; i < this.themeGraph.getCount(); i++) {
+					nowGraph.insert(i, this.themeGraph.getItem(i));
+				}
 			}
+			nowGraph.setGraphType(this.themeGraph.getGraphType());
+			nowGraph.setGraduatedMode(this.themeGraph.getGraduatedMode());
+			nowGraph.setFlowEnabled(this.themeGraph.isFlowEnabled());
+			nowGraph.setNegativeDisplayed(this.themeGraph.isNegativeDisplayed());
+			nowGraph.setOverlapAvoided(this.themeGraph.isOverlapAvoided());
+			nowGraph.setGraphSizeFixed(this.themeGraph.isGraphSizeFixed());
+			nowGraph.setLeaderLineDisplayed(this.themeGraph.isLeaderLineDisplayed());
+			nowGraph.setLeaderLineStyle(this.themeGraph.getLeaderLineStyle());
+			if (Double.compare(this.themeGraph.getMaxGraphSize(), 0.0) > 0) {
+				nowGraph.setMaxGraphSize(this.themeGraph.getMaxGraphSize());
+			}
+			if (Double.compare(this.themeGraph.getMinGraphSize(), 0.0) > 0) {
+				nowGraph.setMinGraphSize(this.themeGraph.getMinGraphSize());
+			}
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
+			this.map.refresh();
 		}
-		nowGraph.setGraphType(this.themeGraph.getGraphType());
-		nowGraph.setGraduatedMode(this.themeGraph.getGraduatedMode());
-		nowGraph.setFlowEnabled(this.themeGraph.isFlowEnabled());
-		nowGraph.setNegativeDisplayed(this.themeGraph.isNegativeDisplayed());
-		nowGraph.setOverlapAvoided(this.themeGraph.isOverlapAvoided());
-		nowGraph.setGraphSizeFixed(this.themeGraph.isGraphSizeFixed());
-		nowGraph.setLeaderLineDisplayed(this.themeGraph.isLeaderLineDisplayed());
-		nowGraph.setLeaderLineStyle(this.themeGraph.getLeaderLineStyle());
-		if (Double.compare(this.themeGraph.getMaxGraphSize(), 0.0) > 0) {
-			nowGraph.setMaxGraphSize(this.themeGraph.getMaxGraphSize());
-		}
-		if (Double.compare(this.themeGraph.getMinGraphSize(), 0.0) > 0) {
-			nowGraph.setMinGraphSize(this.themeGraph.getMinGraphSize());
-		}
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
-		this.map.refresh();
+	}
+
+	@Override
+	public Layer getCurrentLayer() {
+		return themeGraphLayer;
 	}
 
 }
