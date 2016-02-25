@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.Map.MapMeasure;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
+import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -133,7 +134,7 @@ public class JDialogMeasureSetting extends SmDialog {
 				FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
 				formMap.setLengthUnit(LengthUnit.getValueOf(comboBoxDistance.getSelectedItem().toString()));
 				formMap.setAreaUnit(AreaUnit.getValueOf(comboBoxArea.getSelectedItem().toString()));
-				formMap.setAngleMode(comboBoxAngle.getSelectedIndex());
+				formMap.setAngleUnit(AngleUnit.getvalueOf(comboBoxAngle.getSelectedItem().toString()));
 				dispose();
 			}
 		});
@@ -148,9 +149,9 @@ public class JDialogMeasureSetting extends SmDialog {
 
 	private void initComponentState() {
 		FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
-		comboBoxDistance.setSelectedItem(formMap.getLengthUnit().toString());
-		comboBoxArea.setSelectedItem(formMap.getAreaUnit().toString());
-		comboBoxAngle.setSelectedIndex(formMap.getAngleMode());
+		this.comboBoxDistance.setSelectedItem(formMap.getLengthUnit().toString());
+		this.comboBoxArea.setSelectedItem(formMap.getAreaUnit().toString());
+		this.comboBoxAngle.setSelectedItem(formMap.getAngleUnit().toString());
 	}
 
 	@Override

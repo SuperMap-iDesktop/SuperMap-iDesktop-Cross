@@ -158,7 +158,7 @@ public enum AreaUnit {
 		try {
 			if (befUnit != curUnit) // 两种单位不相同时才进行转换
 			{
-				resultArea = area * Math.pow(befUnit.value() / curUnit.value(), 2);
+				resultArea = area * Math.pow(((double) befUnit.value() / (double) curUnit.value()), 2);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
