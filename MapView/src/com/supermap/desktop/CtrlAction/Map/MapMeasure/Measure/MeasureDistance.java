@@ -62,16 +62,16 @@ public class MeasureDistance extends Measure {
 				currentGeometry = trackingEvent.getGeometry().clone();
 				if (trackingEvent.getLength() > 0.0) {
 					// 长度大于0，删除最后一段
-					Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
-					if (part.getCount() < 3) {
-						// 2个点删完为0，直接置空
-						currentGeometry.dispose();
-						currentGeometry = null;
-					} else {
-						part.remove(part.getCount() - 1);
-						currentGeometry.dispose();
-						currentGeometry = new GeoLine(part);
-					}
+//					Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
+//					if (part.getCount() < 3) {
+//						// 2个点删完为0，直接置空
+//						currentGeometry.dispose();
+//						currentGeometry = null;
+//					} else {
+//						part.remove(part.getCount() - 1);
+//						currentGeometry.dispose();
+//						currentGeometry = new GeoLine(part);
+//					}
 
 					String unitString = getLengthUnit().toString();
 					GeoLine geoLine = ((GeoLine) trackingEvent.getGeometry());
@@ -90,14 +90,9 @@ public class MeasureDistance extends Measure {
 					// 构造辅助线
 					GeoLine geoLineAssistant = Geometrist.computeParallel(geoLastSegment, pntTemp2.getY() - pntTemp.getY());
 
-					//辅助线风格
-					GeoStyle geoStyle = new GeoStyle();
-					geoStyle.setLineSymbolID(lineSymbolID);
-					geoStyle.setLineWidth(lineWidth);
-					geoStyle.setLineColor(lineColor);
 
 					// 设置辅助线风格
-					geoLineAssistant.setStyle(geoStyle);
+					geoLineAssistant.setStyle(getDefaultLineStyle());
 
 					// 构造辅助线左端线段
 					point2Ds.clear();
@@ -105,7 +100,7 @@ public class MeasureDistance extends Measure {
 					point2Ds.add(geoLastSegment.getPart(0).getItem(0));
 
 					GeoLine geoLineLeft = new GeoLine(point2Ds);
-					geoLineLeft.setStyle(geoStyle);
+					geoLineLeft.setStyle(getDefaultLineStyle());
 
 					// 构造辅助线右端线段
 					point2Ds.clear();
@@ -113,7 +108,7 @@ public class MeasureDistance extends Measure {
 					point2Ds.add(geoLastSegment.getPart(0).getItem(1));
 
 					GeoLine geoLineRight = new GeoLine(point2Ds);
-					geoLineRight.setStyle(geoStyle);
+					geoLineRight.setStyle(getDefaultLineStyle());
 
 					// 构造复合对象
 					GeoCompound geoCompound = new GeoCompound();

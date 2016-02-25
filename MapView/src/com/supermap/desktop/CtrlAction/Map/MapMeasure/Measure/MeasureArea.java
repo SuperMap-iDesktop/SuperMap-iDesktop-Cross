@@ -33,8 +33,12 @@ public class MeasureArea extends Measure {
 			@Override
 			public void tracking(TrackingEvent e) {
 				try {
-					currentGeometry = null;
+					if (currentGeometry != null) {
+						currentGeometry.dispose();
+						currentGeometry = null;
+					}
 					if (e.getGeometry() != null) {
+						currentGeometry = e.getGeometry().clone();
 						GeoRegion geoRegion = ((GeoRegion) e.getGeometry());
 						Point2Ds pnts = new Point2Ds(geoRegion.getPart(0));
 						if (pnts.getCount() > 2) {

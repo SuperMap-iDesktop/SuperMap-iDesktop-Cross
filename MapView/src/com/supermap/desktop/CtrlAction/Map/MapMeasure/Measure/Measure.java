@@ -1,9 +1,11 @@
 package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.mapping.TrackingLayer;
@@ -22,6 +24,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -60,17 +63,33 @@ public abstract class Measure {
 
 	private static String tempTag = "tempGeometryTag";
 
-	public static final int ANGLE_MODE_DEGREE = 0;
-	public static final int ANGLE_MODE_DEGREE_MINUTE_SECOND = 1;
-	public static final int ANGLE_MODE_RADIAN = 2;
 	protected DecimalFormat decimalFormat = new DecimalFormat("0.0000");
 
+	/**
+	 * 在量算的时候点了鼠标左键不会马上就添加标签，而是在鼠标移动之后才会添加
+	 * 所以这里加一个变量用在撤销时判断，如果点完直接撤销则跳过一次删除标签的操作
+	 */
+	private boolean isMouseDown = false;
+	private final MouseMotionListener mouseMotionListener = new MouseMotionListener() {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			isMouseDown = false;
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			isMouseDown = false;
+		}
+	};
 	/**
 	 * 存放已添加的tags
 	 */
 	protected java.util.List<String> addedTags = new ArrayList<>();
 	private boolean inSetMeasure;
 	protected String textTagTitle;
+	/**
+	 * 防止在编辑时把整个屏幕清除了
+	 */
 	protected static boolean isEditing = false;
 	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
 		@Override
@@ -82,24 +101,26 @@ public abstract class Measure {
 				if (isPanAction(newAction)) {
 					// 画->漫游
 					inPan = true;
-					setTextBoxVisiable(false);
-					removeLineAssistant();
+//					setTextBoxVisiable(false);
+//					removeLineAssistant();
 					actionTempGeometry(true);
 				} else {
 					// 画->其他
 					setTextBoxVisiable(false);
-					endMeasure(true);
+					endMeasure(false);
 				}
 			} else if (isPanAction(oldAction)) {
 				if (isPanAction(newAction)) {
-					// 画->画 不动
+					// 漫游->漫游 不动
 					inPan = true;
 				} else {
 					inPan = false;
 					if (newAction != getMeasureAction()) {
 						// 漫游->其他
 						setTextBoxVisiable(false);
-						endMeasure(true);
+						endMeasure(false);
+					} else {
+						actionTempGeometry(false);
 					}
 				}
 			}
@@ -142,8 +163,8 @@ public abstract class Measure {
 
 	}
 
-	protected int getAngleMode() {
-		return ((FormMap) Application.getActiveApplication().getActiveForm()).getAngleMode();
+	protected AngleUnit getAngleUnit() {
+		return ((FormMap) Application.getActiveApplication().getActiveForm()).getAngleUnit();
 
 	}
 
@@ -161,6 +182,8 @@ public abstract class Measure {
 		addListeners();
 		isEditing = true;
 		setMapAction();
+		// 获取焦点响应按键
+		mapControl.requestFocusInWindow();
 	}
 
 	private void getMapControl() {
@@ -210,9 +233,9 @@ public abstract class Measure {
 			if (mapControl != null) {
 				this.mapControl.setTrackMode(TrackMode.EDIT);
 			}
-			removeTempMeasureText();
 
 			if (!isChangeAction && this.mapControl != null) {
+				removeTempMeasureText();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
 			}
 		} catch (Exception ex) {
@@ -247,23 +270,15 @@ public abstract class Measure {
 
 	protected abstract Action getMeasureAction();
 
-	protected void addListeners() {
-		removeListeners();
-		this.mapControl.addMouseListener(this.mouseAdapter);
-		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除
-		this.mapControl.addKeyListener(this.escClearKeyAdapt);
-		this.mapControl.addKeyListener(this.keyAdapter);
-		this.mapControl.addActionChangedListener(actionChangedListener);
-		this.mapControl.addUndoneListener(undoneListener);
-		this.mapControl.addTrackedListener(this.trackedListener);
-		this.mapControl.addTrackingListener(this.trackingListener);
-	}
+
 
 	/**
 	 * 撤销时需要移除最后一次添加的标签
 	 */
 	protected void removeLastAdded() {
-		if (addedTags.size() > 0) {
+		if (isMouseDown) {
+			isMouseDown = false;
+		} else if (addedTags.size() > 0) {
 			String tag = addedTags.get(addedTags.size() - 1);
 			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
 			for (int i = 0; i < trackingLayer.getCount(); i++) {
@@ -304,6 +319,20 @@ public abstract class Measure {
 		return isEditing;
 	}
 
+	protected void addListeners() {
+		removeListeners();
+		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除而在添加时删除
+		this.mapControl.addKeyListener(this.escClearKeyAdapt);
+
+		this.mapControl.addMouseListener(this.mouseAdapter);
+		this.mapControl.addKeyListener(this.keyAdapter);
+		this.mapControl.addActionChangedListener(actionChangedListener);
+		this.mapControl.addUndoneListener(undoneListener);
+		this.mapControl.addTrackedListener(this.trackedListener);
+		this.mapControl.addTrackingListener(this.trackingListener);
+		this.mapControl.addMouseMotionListener(mouseMotionListener);
+	}
+
 	protected void removeListeners() {
 		if (mapControl != null) {
 			this.mapControl.removeMouseListener(this.mouseAdapter);
@@ -312,6 +341,7 @@ public abstract class Measure {
 			this.mapControl.removeUndoneListener(undoneListener);
 			this.mapControl.removeTrackedListener(trackedListener);
 			this.mapControl.removeTrackingListener(trackingListener);
+			this.mapControl.removeMouseMotionListener(mouseMotionListener);
 		}
 	}
 
@@ -379,6 +409,18 @@ public abstract class Measure {
 		}
 	}
 
+	protected GeoStyle getDefaultLineStyle() {
+		GeoStyle geoStyle = null;
+		try {
+			geoStyle = new GeoStyle();
+			geoStyle.setLineColor(lineColor);
+			geoStyle.setLineSymbolID(lineSymbolID);
+			geoStyle.setLineWidth(lineWidth);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return geoStyle;
+	}
 	//region 监听事件
 
 
@@ -393,8 +435,9 @@ public abstract class Measure {
 				} else {
 					cancleEdit();
 				}
+			} else if (e.getButton() == MouseEvent.BUTTON1) {
+				isMouseDown = true;
 			}
-
 		}
 	};
 

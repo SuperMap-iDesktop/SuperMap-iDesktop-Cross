@@ -22,6 +22,7 @@ import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
+import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.WindowType;
@@ -120,7 +121,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private LengthUnit lengthUnit = LengthUnit.METER;
 	private AreaUnit areaUnit = AreaUnit.METER;
-	private int angleMode = 0;
+	private AngleUnit angleUnit = AngleUnit.DEGREE;
 
 
 	private Layer[] rememberActiveLayers = null;
@@ -1294,12 +1295,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 
-	public int getAngleMode() {
-		return angleMode;
+	public AngleUnit getAngleUnit() {
+		return angleUnit;
 	}
 
-	public void setAngleMode(int angleMode) {
-		this.angleMode = angleMode;
+	public void setAngleUnit(AngleUnit angleUnit) {
+		this.angleUnit = angleUnit;
 	}
 
 	public AreaUnit getAreaUnit() {
