@@ -280,21 +280,27 @@ public class ThemeMainContainer extends JPanel {
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
 				if (null != ThemeGuideFactory.getDockbarThemeContainer()) {
 
-//					if (null != oldLayer && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()
-//							&& JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_LayerProperty_Message"))) {
-//						// 不保存修改
-//						ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
-//					}
-//					setLayerPropertyChanged(false);
+					if (null != oldLayer && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+
+						if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_LayerProperty_Message"))) {
+							// 不保存修改
+							ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
+						}
+//						else if(panel!=null){
+//							panel.refreshMapAndLayer();
+//							layersTree.refreshNode(newLayer);
+//						}
+					}
+					setLayerPropertyChanged(false);
 					if (null != newLayer && null != newLayer.getTheme()) {
 						ThemeGuideFactory.modifyTheme(newLayer);
 					}
 					resetThemeMainContainer(newLayer);
 				}
 			} catch (Exception ex) {
-				
+
 			}
-			
+
 		}
 	}
 

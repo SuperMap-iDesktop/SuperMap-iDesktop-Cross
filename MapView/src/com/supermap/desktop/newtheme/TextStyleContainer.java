@@ -13,12 +13,15 @@ import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGraph;
 import com.supermap.mapping.ThemeLabel;
+
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -71,7 +74,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient Map map;
 	private transient TextStyle textStyle;
 	// private List<TextStyle> list = new ArrayList<TextStyle>();
-	private transient Layer themeLabelLayer;
+	private transient Layer themeLayer;
 
 	// 对齐方式名称和对齐方式值构成的HashMap
 	private static HashMap<String, Integer> hashMapTextAlignment = new HashMap<String, Integer>();
@@ -94,6 +97,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private boolean isUniformStyle = false;
 	private int[] selectRow;
+	private int textStyleType = -1;
+	public final int graphTextFormat = 0;
+	public final int graphAxisText = 1;
 
 	private transient LocalItemListener itemListener = new LocalItemListener();
 	private transient LocalChangedListener changedListener = new LocalChangedListener();
@@ -105,7 +111,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle;
 		this.map = map;
-		this.themeLabelLayer = themeLabelLayer;
+		this.themeLayer = themeLabelLayer;
 		initComponent();
 		initResources();
 		registActionListener();
@@ -117,7 +123,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	public TextStyleContainer(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
 		this.selectRow = selectRow;
 		this.map = map;
-		this.themeLabelLayer = themeLabelLayer;
+		this.themeLayer = themeLabelLayer;
 		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle();
 		initComponent();
 		initResources();
@@ -777,19 +783,30 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	void refreshMapAndLayer() {
-		if (this.isUniformStyle) {
-			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformStyle(this.textStyle);
-		} else {
+
+		if (this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(this.textStyle);
+		} else if (!this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			for (int i = 0; i < this.selectRow.length; i++) {
-				((ThemeLabel) this.themeLabelLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.textStyle);
+				((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
+		}
+		if (textStyleType == graphTextFormat) {
+			((ThemeGraph) this.themeLayer.getTheme()).setGraphTextStyle(this.textStyle);
+		}
+		if (textStyleType == graphAxisText) {
+			((ThemeGraph) this.themeLayer.getTheme()).setAxesTextStyle(this.textStyle);
 		}
 		this.map.refresh();
 	}
 
+	public void setTextStyleType(int textStyleType) {
+		this.textStyleType = textStyleType;
+	}
+
 	@Override
 	public Layer getCurrentLayer() {
-		return themeLabelLayer;
+		return themeLayer;
 	}
 
 }

@@ -1017,22 +1017,7 @@ public class LayersTree extends JTree {
 			// notify by xie
 			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
 			if (selections.length > 1) {
-				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
-				for (TreePath selection : selections) {
-					TreeNodeData treeNodeData = (TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject();
-					if (treeNodeData.getData() instanceof ThemeUniqueItem) {
-						ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
-						geoStyleList.add(item.getStyle());
-					} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
-						ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
-						geoStyleList.add(item.getStyle());
-					}
-				}
-				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
-				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
-					this.currentMap.refresh();
-				}
-				this.updateUI();
+				upateItemStyles(symbolType, selections);
 			} else {
 				DefaultMutableTreeNode selecTreeNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
 				TreeNodeData treeNodeData = (TreeNodeData) (selecTreeNode).getUserObject();
@@ -1040,62 +1025,125 @@ public class LayersTree extends JTree {
 				int x = this.getRowBounds(row).x;
 				int y = this.getRowBounds(row).y;
 				if (treeNodeData.getData() instanceof ThemeUniqueItem) {
-					ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
-					GeoStyle itemStyle = item.getStyle();
-					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
-					if (geostyle != null) {
-						item.setStyle(geostyle);
-						this.currentMap.refresh();
-						firePropertyChangeWithLayerSelect();
-					}
-				} else if (treeNodeData.getData() instanceof ThemeRangeItem) {
-					ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
-					GeoStyle itemStyle = item.getStyle();
-					GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
-					if (geostyle != null) {
-						item.setStyle(geostyle);
-						this.currentMap.refresh();
-						firePropertyChangeWithLayerSelect();
-					}
-				} else if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
-					final ThemeGridUniqueItem item = (ThemeGridUniqueItem) treeNodeData.getData();
-					final JPopupMenu popupMenu = new JPopupMenu();
-					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-					popupMenu.show(this, x, y);
-					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							Color color = (Color) evt.getNewValue();
-							item.setColor(color);
-							popupMenu.setVisible(false);
-							currentMap.refresh();
-							firePropertyChangeWithLayerSelect();
-						}
-					});
-				} else if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
-					final ThemeGridRangeItem item = (ThemeGridRangeItem) treeNodeData.getData();
-					final JPopupMenu popupMenu = new JPopupMenu();
-					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-					popupMenu.show(this, x, y);
-					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							Color color = (Color) evt.getNewValue();
-							item.setColor(color);
-							popupMenu.setVisible(false);
-							currentMap.refresh();
-							firePropertyChangeWithLayerSelect();
-						}
-					});
+					updateThemeUniqueItemStyle(symbolType, treeNodeData);
+					return;
+				} 
+				if (treeNodeData.getData() instanceof ThemeRangeItem) {
+					updateRangeItemStyle(symbolType, treeNodeData);
+					return;
+				} 
+				if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
+					updateGridUniqueItemStyle(treeNodeData, x, y);
+					return;
+				} 
+				if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
+					updateGridRangeItemStyle(treeNodeData, x, y);
+					return;
+				}
+				if (treeNodeData.getData() instanceof ThemeGraphItem) {
+					updateGraphItemStyle(treeNodeData);
 				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	private void updateGraphItemStyle(TreeNodeData treeNodeData) {
+		ThemeGraphItem item = (ThemeGraphItem) treeNodeData.getData();
+		GeoStyle itemStyle = item.getUniformStyle();
+		GeoStyle geostyle = changeGeoStyle(itemStyle, SymbolType.FILL);
+		if (geostyle != null) {
+			item.setUniformStyle(geostyle);
+			this.currentMap.refresh();
+			firePropertyChangeWithLayerSelect();
+		}
+	}
+
+	private void updateGridRangeItemStyle(TreeNodeData treeNodeData, int x, int y) {
+		final ThemeGridRangeItem item = (ThemeGridRangeItem) treeNodeData.getData();
+		final JPopupMenu popupMenu = new JPopupMenu();
+		ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+		colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+		popupMenu.show(this, x, y);
+		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				Color color = (Color) evt.getNewValue();
+				item.setColor(color);
+				popupMenu.setVisible(false);
+				currentMap.refresh();
+				firePropertyChangeWithLayerSelect();
+			}
+		});
+	}
+
+	private void updateGridUniqueItemStyle(TreeNodeData treeNodeData, int x, int y) {
+		final ThemeGridUniqueItem item = (ThemeGridUniqueItem) treeNodeData.getData();
+		final JPopupMenu popupMenu = new JPopupMenu();
+		ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+		colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+		popupMenu.show(this, x, y);
+		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				Color color = (Color) evt.getNewValue();
+				item.setColor(color);
+				popupMenu.setVisible(false);
+				currentMap.refresh();
+				firePropertyChangeWithLayerSelect();
+			}
+		});
+	}
+
+	private void updateRangeItemStyle(SymbolType symbolType, TreeNodeData treeNodeData) {
+		ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+		GeoStyle itemStyle = item.getStyle();
+		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+		if (geostyle != null) {
+			item.setStyle(geostyle);
+			this.currentMap.refresh();
+			firePropertyChangeWithLayerSelect();
+		}
+	}
+
+	private void updateThemeUniqueItemStyle(SymbolType symbolType, TreeNodeData treeNodeData) {
+		ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+		GeoStyle itemStyle = item.getStyle();
+		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+		if (geostyle != null) {
+			item.setStyle(geostyle);
+			this.currentMap.refresh();
+			firePropertyChangeWithLayerSelect();
+		}
+	}
+
+	private void upateItemStyles(SymbolType symbolType, TreePath[] selections) {
+		java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+		for (TreePath selection : selections) {
+			TreeNodeData treeNodeData = (TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject();
+			if (treeNodeData.getData() instanceof ThemeUniqueItem) {
+				ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+				geoStyleList.add(item.getStyle());
+			} 
+			if (treeNodeData.getData() instanceof ThemeRangeItem) {
+				ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+				geoStyleList.add(item.getStyle());
+			}
+			if(treeNodeData.getData() instanceof ThemeGraphItem){
+				ThemeGraphItem item = (ThemeGraphItem) treeNodeData.getData();
+				geoStyleList.add(item.getUniformStyle());
+				symbolType = SymbolType.FILL;
+			}
+		}
+		JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
+		if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
+			firePropertyChangeWithLayerSelect();
+			this.currentMap.refresh();
+		}
+		this.updateUI();
 	}
 
 	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType) {
