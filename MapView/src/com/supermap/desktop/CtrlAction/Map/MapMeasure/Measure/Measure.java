@@ -8,6 +8,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -319,6 +320,13 @@ public abstract class Measure {
 		return isEditing;
 	}
 
+	protected int getSystemLength() {
+		if (SystemPropertyUtilties.isWindows()) {
+			return 0;
+		} else {
+			return 10;
+		}
+	}
 	protected void addListeners() {
 		removeListeners();
 		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除而在添加时删除

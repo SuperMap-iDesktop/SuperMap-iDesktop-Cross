@@ -208,7 +208,7 @@ public class MeasureDistance extends Measure {
 
 
 			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
-			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 			mapControl.add(labelTextBoxCurrent);
 			labelTextBoxCurrent.setVisible(true);
 			Point point = mapControl.getMap().mapToPixel(new Point2D(trackingEvent.getX(), trackingEvent.getY()));
@@ -228,7 +228,7 @@ public class MeasureDistance extends Measure {
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
 			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
-			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			mapControl.add(labelTextBoxTotle);
 			labelTextBoxTotle.setVisible(true);
@@ -236,6 +236,7 @@ public class MeasureDistance extends Measure {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 
 	private void drawDistanceText(Point2Ds points, String unitString, int param, boolean isDrawing) {
 		if (addedTags == null) {
