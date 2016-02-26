@@ -61,16 +61,6 @@ public class MeasureAngle extends Measure {
 			public void tracking(TrackingEvent e) {
 				try {
 					currentGeometry = e.getGeometry().clone();
-//					Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
-//					if (part.getCount() < 3) {
-//						// 2个点删完为0，直接置空
-//						currentGeometry.dispose();
-//						currentGeometry = null;
-//					} else {
-//						part.remove(part.getCount() - 1);
-//						currentGeometry.dispose();
-//						currentGeometry = new GeoLine(part);
-//					}
 
 					// 根据当前绘制的对象，构造辅助线
 					GeoLine geoLine = ((GeoLine) e.getGeometry());
@@ -254,14 +244,19 @@ public class MeasureAngle extends Measure {
 
 	private void moveTextBox(JLabel textBox, String text, Point location) {
 		try {
+			int defaultLength = 10;
+			if (!SystemPropertyUtilties.isWindows()) {
+				defaultLength += 16;
+			}
 			if (textBox == labelTextBoxTotle) {
+				defaultLength -= 5;
 				if (Math.abs(location.getY() - labelTextBoxCurrent.getBounds().getY()) < labelTextBoxCurrent.getHeight()) {
 					location.setLocation(location.getX(), location.getY() - labelTextBoxCurrent.getHeight() * 2);
 				}
 			}
 			textBox.setLocation(location);
 			textBox.setText(text);
-			textBox.setSize((int) (((textBox.getText().length() << 3) + 16) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			textBox.setSize((int) (((textBox.getText().length() << 3) + defaultLength) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 			textBox.setVisible(true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
