@@ -324,7 +324,7 @@ public abstract class Measure {
 		if (SystemPropertyUtilties.isWindows()) {
 			return 0;
 		} else {
-			return 10;
+			return 20;
 		}
 	}
 	protected void addListeners() {
