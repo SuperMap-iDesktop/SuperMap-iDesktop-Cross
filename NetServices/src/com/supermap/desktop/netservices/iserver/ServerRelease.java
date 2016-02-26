@@ -2,6 +2,7 @@ package com.supermap.desktop.netservices.iserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -659,6 +660,8 @@ public class ServerRelease {
 			}
 		} catch (HttpHostConnectException e) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_ConnectException"));
+		} catch (UnknownHostException e) {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_UnknownHostException"));
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -690,7 +693,6 @@ public class ServerRelease {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
-	
 
 	private void outputHttpStatus(int httpStatus) {
 		if (httpStatus == HttpStatus.SC_UNAUTHORIZED) {
