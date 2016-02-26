@@ -1002,7 +1002,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 						if (jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE)
 								&& jsonObject.containsKey(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS)) {
-							result.add(jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE) + ":"
+							result.add(ServiceType.serviceTypeLocalized(jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_TYPE).toString()) + ":"
 									+ jsonObject.get(JsonKey.ReleaseWorkspaceResponse.SERVICE_ADDRESS) + ";");
 						}
 					}
