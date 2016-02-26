@@ -55,24 +55,11 @@ public class MeasureDistance extends Measure {
 		trackingListener = new TrackingListener() {
 			@Override
 			public void tracking(TrackingEvent trackingEvent) {
-//			removeTrackingObject();
 				if (currentGeometry != null) {
 					currentGeometry.dispose();
 				}
 				currentGeometry = trackingEvent.getGeometry().clone();
 				if (trackingEvent.getLength() > 0.0) {
-					// 长度大于0，删除最后一段
-//					Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
-//					if (part.getCount() < 3) {
-//						// 2个点删完为0，直接置空
-//						currentGeometry.dispose();
-//						currentGeometry = null;
-//					} else {
-//						part.remove(part.getCount() - 1);
-//						currentGeometry.dispose();
-//						currentGeometry = new GeoLine(part);
-//					}
-
 					String unitString = getLengthUnit().toString();
 					GeoLine geoLine = ((GeoLine) trackingEvent.getGeometry());
 					Point2Ds points = geoLine.getPart(0);
@@ -166,7 +153,7 @@ public class MeasureDistance extends Measure {
 						geoStyle.setLineWidth(0.1);
 						geoStyle.setFillSymbolID(1);
 						geoStyle.setLineColor(Color.BLUE);
-
+						e.getGeometry().setStyle(geoStyle);
 						mapControl.getMap().getTrackingLayer().add(e.getGeometry(), measureLineTag);
 
 						String unitString = getLengthUnit().toString();
@@ -177,7 +164,7 @@ public class MeasureDistance extends Measure {
 						drawDistanceText(points, unitString, 0, false);
 					}
 					cancleEdit();
-					mapControl.getMap().refresh();
+//					mapControl.getMap().refresh();
 				} catch (Exception ex) {
 					Application.getActiveApplication().getOutput().output(ex);
 				}

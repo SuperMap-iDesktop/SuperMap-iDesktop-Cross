@@ -18,6 +18,7 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IMeasureAble;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
@@ -122,7 +123,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private LengthUnit lengthUnit = LengthUnit.METER;
 	private AreaUnit areaUnit = AreaUnit.METER;
 	private AngleUnit angleUnit = AngleUnit.DEGREE;
-
+	/**
+	 * 量算接口
+	 */
+	private IMeasureAble iMeasureAble = null;
 
 	private Layer[] rememberActiveLayers = null;
 
@@ -1006,7 +1010,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					layersComponentManager.setMap(null);
 				}
 			}
-
+			if (this.mapControl != null) {
+				this.mapControl.requestFocus();
+			}
 			setSelectedGeometryProperty();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -1238,6 +1244,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		} else {
 			Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 		}
+	}
+
+	public IMeasureAble getiMeasureAble() {
+		return iMeasureAble;
+	}
+
+	public void setiMeasureAble(IMeasureAble iMeasureAble) {
+		this.iMeasureAble = iMeasureAble;
 	}
 
 	private class LayersTreeSelectionListener implements TreeSelectionListener {

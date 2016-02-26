@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -41,16 +42,27 @@ public class MeasureAngle extends Measure {
 	private double beforeAzimuth;
 	private double beforeAngle;
 	private Stack<Double> stackAzimuth;
-	private boolean isMouseDown = false;
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getButton() == MouseEvent.BUTTON1 && currentGeometry != null && beforePointsCount != 0) {
+				Point2Ds points = ((GeoLine) currentGeometry).getPart(0);
+
+				int pointsCount = points.getCount();
+				if (pointsCount >= 3) {
+					if (angleList == null) {
+						angleList = new ArrayList<Double>();
+					}
+					while (angleList.size() <= pointsCount - 3) {
+						angleList.add(0.0);
+					}
+					angleList.set(pointsCount - 3, beforeAngle);
+				}
+				drawAngleText(points, true);
 				outPutAngle(beforePointsCount);
 			}
 		}
 	};
-	;
 
 	public MeasureAngle() {
 		textTagTitle = "AngleText";
@@ -60,106 +72,94 @@ public class MeasureAngle extends Measure {
 			@Override
 			public void tracking(TrackingEvent e) {
 				try {
-					currentGeometry = e.getGeometry().clone();
-
-					// 根据当前绘制的对象，构造辅助线
-					GeoLine geoLine = ((GeoLine) e.getGeometry());
-					Point2Ds points = geoLine.getPart(0);
-
-					// 绘制正北方向的线段
-					int pointsCount = points.getCount();
-					if (isMouseDown && pointsCount == 3) {
-						System.out.println(1);
-						isMouseDown = false;
-					}
-					Point2D startPoint = points.getItem(pointsCount - 2);
-					Point startPointPixel = mapControl.getMap().mapToPixel(startPoint);
-					Point endPointPixel = new Point(((int) startPointPixel.getX()), (int) (startPointPixel.getY() - 200));
-
-					Point2D endPoint = mapControl.getMap().pixelToMap(endPointPixel);
-					Point2Ds pnts = new Point2Ds();
-					pnts.add(startPoint);
-					pnts.add(endPoint);
-
-					GeoLine geoLineAzimuth = new GeoLine(pnts);
-					geoLineAzimuth.setStyle(getDefaultLineStyle());
-
-					// 构造方位角弧线
-					Point startArcPointPixel = new Point(((int) startPointPixel.getX()), (int) (startPointPixel.getY() - 50));
-
-					Point2D startArcPoint = mapControl.getMap().pixelToMap(startArcPointPixel);
-
-					Double radius = Math.abs(startArcPoint.getY() - startPoint.getY());
-					if (radius > e.getLength()) {
-						radius = e.getLength();
-					}
-					// 构造复合对象
-					GeoCompound geoCompound = new GeoCompound();
-					geoCompound.addPart(geoLineAzimuth);
-
-					GeoArc geoArcAzimuth = null;
-					Double angle = 90 - e.getCurrentAzimuth();
-					if (e.getCurrentAzimuth() > 90 && radius != 0) {
-						angle = 450 - e.getCurrentAzimuth();
-						geoArcAzimuth = new GeoArc(startPoint, radius, angle, 450 - angle);
-						geoArcAzimuth.setStyle(getDefaultLineStyle());
-						geoCompound.addPart(geoArcAzimuth);
-					} else if (e.getCurrentAzimuth() != 0 && radius > 0) {
-						geoArcAzimuth = new GeoArc(startPoint, radius, angle, 90 - angle);
-						geoArcAzimuth.setStyle(getDefaultLineStyle());
-						geoCompound.addPart(geoArcAzimuth);
-					}
-
-					GeoArc geoArcAngle = null;
-
-					// 输出夹角，方位角
-					beforePointsCount = pointsCount;
-					if (e.getLength() == 0.0) {
-						beforePointsCount = 0;
-					}
-//					if (pointsCount >= beforePointsCount ) {
-////						outPutAngle(pointsCount);
-//						beforePointsCount++;
-//					}
-					beforeAzimuth = e.getCurrentAzimuth();
-
-					if (pointsCount >= 3) {
-						// 绘制夹角
-						if (angleList == null) {
-							angleList = new ArrayList<Double>();
+					if (e.getGeometry() != null) {
+						if (currentGeometry != null) {
+							currentGeometry.dispose();
 						}
-						while (angleList.size() <= pointsCount - 3) {
-							angleList.add(0.0);
+						currentGeometry = e.getGeometry().clone();
+
+						// 根据当前绘制的对象，构造辅助线
+						GeoLine geoLine = ((GeoLine) e.getGeometry());
+						Point2Ds points = geoLine.getPart(0);
+
+						// 绘制正北方向的线段
+						int pointsCount = points.getCount();
+						Point2D startPoint = points.getItem(pointsCount - 2);
+						Point startPointPixel = mapControl.getMap().mapToPixel(startPoint);
+						Point endPointPixel = new Point(((int) startPointPixel.getX()), (int) (startPointPixel.getY() - 200));
+
+						Point2D endPoint = mapControl.getMap().pixelToMap(endPointPixel);
+						Point2Ds pnts = new Point2Ds();
+						pnts.add(startPoint);
+						pnts.add(endPoint);
+
+						GeoLine geoLineAzimuth = new GeoLine(pnts);
+						geoLineAzimuth.setStyle(getDefaultLineStyle());
+
+						// 构造方位角弧线
+						Point startArcPointPixel = new Point(((int) startPointPixel.getX()), (int) (startPointPixel.getY() - 50));
+
+						Point2D startArcPoint = mapControl.getMap().pixelToMap(startArcPointPixel);
+
+						Double radius = Math.abs(startArcPoint.getY() - startPoint.getY());
+						if (radius > e.getLength()) {
+							radius = e.getLength();
+						}
+						// 构造复合对象
+						GeoCompound geoCompound = new GeoCompound();
+						geoCompound.addPart(geoLineAzimuth);
+
+						GeoArc geoArcAzimuth = null;
+						Double angle = 90 - e.getCurrentAzimuth();
+						if (e.getCurrentAzimuth() > 90 && radius != 0) {
+							angle = 450 - e.getCurrentAzimuth();
+							geoArcAzimuth = new GeoArc(startPoint, radius, angle, 450 - angle);
+							geoArcAzimuth.setStyle(getDefaultLineStyle());
+							geoCompound.addPart(geoArcAzimuth);
+						} else if (e.getCurrentAzimuth() != 0 && radius > 0) {
+							geoArcAzimuth = new GeoArc(startPoint, radius, angle, 90 - angle);
+							geoArcAzimuth.setStyle(getDefaultLineStyle());
+							geoCompound.addPart(geoArcAzimuth);
 						}
 
-						angleList.set(pointsCount - 3, beforeAngle);
-						beforeAngle = e.getAngle();
-						//正在绘制
-						drawAngleText(points, true);
+						GeoArc geoArcAngle = null;
 
-						Double secondLineAngle = calculateAngle(points.getItem(pointsCount - 2), points.getItem(pointsCount - 1));
-						if (e.getAngle() != 0 && radius > 0) {
-							geoArcAngle = new GeoArc(points.getItem(pointsCount - 2), radius * 2, secondLineAngle, e.getAngle());
-							geoArcAngle.setStyle(getDefaultLineStyle());
-							geoCompound.addPart(geoArcAngle);
+						// 输出夹角，方位角
+						beforePointsCount = pointsCount;
+						if (e.getLength() == 0.0) {
+							beforePointsCount = 0;
+						} else {
+							beforeAzimuth = e.getCurrentAzimuth();
+							beforeAngle = e.getAngle();
 						}
-					}
 
-					// 更新跟踪图层上的跟踪线信息
-					geoCompound.rotate(mapControl.getMap().getCenter(), -mapControl.getMap().getAngle());
-					updateTrackingObject(geoCompound, true);
-					Point geoArcAzimuthInnerPixel = mapControl.getMap().mapToPixel(geoLineAzimuth.getInnerPoint());
-					if (geoArcAzimuth != null) {
-						geoArcAzimuthInnerPixel = mapControl.getMap().mapToPixel(geoArcAzimuth.getInnerPoint());
-					}
+						if (pointsCount >= 3) {
 
-					//设置角度文本框位置
-					setAngleTextBox(e, points, geoArcAngle, geoArcAzimuthInnerPixel);
-					mapControl.getMap().refreshTrackingLayer();
-					mapControl.getMap().refresh();
+							Double secondLineAngle = calculateAngle(points.getItem(pointsCount - 2), points.getItem(pointsCount - 1));
+							if (e.getAngle() != 0 && radius > 0) {
+								geoArcAngle = new GeoArc(points.getItem(pointsCount - 2), radius * 2, secondLineAngle, e.getAngle());
+								geoArcAngle.setStyle(getDefaultLineStyle());
+								geoCompound.addPart(geoArcAngle);
+							}
+						}
+
+						// 更新跟踪图层上的跟踪线信息
+						geoCompound.rotate(mapControl.getMap().getCenter(), -mapControl.getMap().getAngle());
+						updateTrackingObject(geoCompound, true);
+						Point geoArcAzimuthInnerPixel = mapControl.getMap().mapToPixel(geoLineAzimuth.getInnerPoint());
+						if (geoArcAzimuth != null) {
+							geoArcAzimuthInnerPixel = mapControl.getMap().mapToPixel(geoArcAzimuth.getInnerPoint());
+						}
+
+						//设置角度文本框位置
+						setAngleTextBox(e, points, geoArcAngle, geoArcAzimuthInnerPixel);
+						mapControl.getMap().refreshTrackingLayer();
+//					mapControl.getMap().refresh();
+					}
 				} catch (Exception ex) {
 					Application.getActiveApplication().getOutput().output(ex);
 				}
+
 			}
 		};
 
@@ -170,8 +170,8 @@ public class MeasureAngle extends Measure {
 				if (geometry != null) {
 					if (geometry.getStyle() == null) {
 						geometry.setStyle(new GeoStyle());
-						geometry.getStyle().setLineWidth(0.1);
 					}
+					geometry.getStyle().setLineWidth(0.1);
 					geometry.getStyle().setFillSymbolID(1);
 					geometry.getStyle().setLineColor(Color.BLUE);
 
@@ -244,10 +244,8 @@ public class MeasureAngle extends Measure {
 
 	private void moveTextBox(JLabel textBox, String text, Point location) {
 		try {
-			int defaultLength = 10;
-			if (!SystemPropertyUtilties.isWindows()) {
-				defaultLength += 16;
-			}
+			int defaultLength = 16;
+			defaultLength += getSystemLength();
 			if (textBox == labelTextBoxTotle) {
 				defaultLength -= 5;
 				if (Math.abs(location.getY() - labelTextBoxCurrent.getBounds().getY()) < labelTextBoxCurrent.getHeight()) {
@@ -336,7 +334,7 @@ public class MeasureAngle extends Measure {
 				if (beforeUnit != null && beforeUnit != getAngleUnit()) {
 					clearAddedTags();
 				}
-				for (int i = 0; i < angleList.size() - 1; i++) {
+				for (int i = 0; i < angleList.size(); i++) {
 					String tag = textTagTitle + i;
 					if (!addedTags.contains(tag)) {
 						addedTags.add(tag);
@@ -379,7 +377,12 @@ public class MeasureAngle extends Measure {
 	@Override
 	protected void addListeners() {
 		super.addListeners();
+		MouseListener[] mouseListeners = mapControl.getMouseListeners();
 		mapControl.addMouseListener(mouseAdapter);
+		for (MouseListener mouseListener : mouseListeners) {
+			mapControl.removeMouseListener(mouseListener);
+			mapControl.addMouseListener(mouseListener);
+		}
 	}
 
 	@Override
