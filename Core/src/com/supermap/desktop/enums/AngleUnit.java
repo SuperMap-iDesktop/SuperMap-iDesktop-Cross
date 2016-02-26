@@ -2,6 +2,7 @@ package com.supermap.desktop.enums;
 
 import com.supermap.desktop.properties.CoreProperties;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 /**
@@ -15,9 +16,10 @@ public enum AngleUnit {
 	// formatter:on
 	public static String getAngleInfo(AngleUnit angleUnit,double value) {
 		String result = "";
+		DecimalFormat decimalFormat = new DecimalFormat("0.######");
 		switch (angleUnit) {
 			case DEGREE:
-				result = MessageFormat.format(CoreProperties.getString("String_Degree_Degree"), value);
+				result = MessageFormat.format(CoreProperties.getString("String_Degree_Degree"), decimalFormat.format(value));
 				break;
 			case DEGREE_MINUTE_SECOND:
 				double copyValue = value;
@@ -29,7 +31,7 @@ public enum AngleUnit {
 				result = MessageFormat.format(CoreProperties.getString("String_Degree_DDMMSS"),dd,mm,ss);
 				break;
 			case RADIAN:
-				result = MessageFormat.format(CoreProperties.getString("String_Degree_Radian"), Math.toRadians(value));
+				result = MessageFormat.format(CoreProperties.getString("String_Degree_Radian"), decimalFormat.format(Math.toRadians(value)));
 				break;
 		}
 		return result;

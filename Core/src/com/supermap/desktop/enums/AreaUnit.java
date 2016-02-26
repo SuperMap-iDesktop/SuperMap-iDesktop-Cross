@@ -156,8 +156,8 @@ public enum AreaUnit {
 	public static Double ConvertArea(Unit befUnit, Unit curUnit, Double area) {
 		Double resultArea = area;
 		try {
-			if (befUnit != curUnit) // 两种单位不相同时才进行转换
-			{
+			if (befUnit != curUnit) {
+				// 两种单位不相同时才进行转换
 				resultArea = area * Math.pow(((double) befUnit.value() / (double) curUnit.value()), 2);
 			}
 		} catch (Exception ex) {

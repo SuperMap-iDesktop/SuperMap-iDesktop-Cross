@@ -46,7 +46,7 @@ public class MeasureArea extends Measure {
 							GeoRegion region = new GeoRegion(pnts);
 							Point pointInnerPixel = mapControl.getMap().mapToPixel(region.getInnerPoint());
 
-							String text = decimalFormat.format(e.getArea()) + getAreaUnit().toString();
+							String text = decimalFormat.format(getTotleArea(e.getArea())) + getAreaUnit().toString();
 							labelTextBoxCurrent.setText(text);
 							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 10 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 							labelTextBoxCurrent.setLocation(pointInnerPixel);
@@ -71,8 +71,8 @@ public class MeasureArea extends Measure {
 				if (geometry != null) {
 					if (geometry.getStyle() == null) {
 						geometry.setStyle(new GeoStyle());
-						geometry.getStyle().setLineWidth(0.1);
 					}
+					geometry.getStyle().setLineWidth(0.1);
 					geometry.getStyle().setFillSymbolID(1);
 					geometry.getStyle().setLineColor(Color.BLUE);
 					mapControl.getMap().getTrackingLayer().add(geometry, measureAreaTag);
@@ -91,7 +91,7 @@ public class MeasureArea extends Measure {
 					outputMeasure(totleArea);
 				}
 				cancleEdit();
-				mapControl.getMap().refresh();
+//				mapControl.getMap().refresh();
 			}
 		};
 	}
