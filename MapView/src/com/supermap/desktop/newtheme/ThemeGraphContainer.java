@@ -11,59 +11,26 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
-import com.supermap.data.Colors;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
-import com.supermap.desktop.ui.controls.SteppedComboBox;
-import com.supermap.desktop.ui.controls.SymbolDialog;
-import com.supermap.desktop.ui.controls.TableRowCellEditor;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.GraduatedMode;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGraphType;
+import com.supermap.desktop.utilties.*;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
+
+import javax.swing.SpinnerNumberModel;
 
 /**
  * @author Administrator 统计专题图实现类
@@ -160,6 +127,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private final int TABLE_COLUMN_CAPTION = 2;
 	private int graphCount;
 	private transient SteppedComboBox fieldComboBox;
+	private transient LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 
 	private MouseListener localMouseListener = new LocalMouseListener();
 	private ItemListener graphTypeChangeListener = new GraphTypeChangeListener();
@@ -169,6 +137,25 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private ItemListener OptionsChangeListener = new OptionsChangeListener();
 	private ActionListener showLeaderLineAction = new ShowLeaderLineAction();
 	private DocumentListener graphSizeChangeListener = new GraphSizeChangeListener();
+	private ItemListener offsetFixedListener = new OffsetFixedListener();
+	private ItemListener offsetxListener = new OffsetXListener();
+	private ItemListener offsetYListener = new OffsetYListener();
+	private ItemListener graphTextDisplayedListener = new GraphTextDisplayedListener();
+	private ItemListener graphTextFormatListener = new GraphTextFormatListener();
+	private ActionListener remarkStyleListener = new RemarkStyleListener();
+	private ItemListener showAxisTextListener = new ShowAxisTextListener();
+	private PropertyChangeListener axisColorListener = new AxisColorListener();
+	private ItemListener axisModelListener = new AxisModelListener();
+	private ActionListener axisStyleListener = new AxisStyleListener();
+	private ItemListener showAxisGridListener = new ShowAxisGridListener();
+	private ChangeListener barWidthListener = new BarWidthListener();
+	private ChangeListener startAngleListener = new StartAngleListener();
+	private ChangeListener roseAngleListener = new RoseAngleListener();
+	private ActionListener toolbarAction = new ToolBarAction();
+	private PropertyChangeListener layerPropertyChangeListener = new LayersTreeChangeListener();
+	private MouseListener tableMouseListener = new TableMouseListener();
+
+	protected TextStyleDialog textStyleDialog;
 
 	/**
 	 * @wbp.parser.constructor
@@ -289,20 +276,29 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void initPanelStyleOfRoseAndPIE(JPanel panelStyleOfRoseAndPIE) {
+		spinnerStartAngle.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		//@formatter:off
+		this.spinnerStartAngle.setEnabled(false);
+		spinnerRoseAngle.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		this.spinnerRoseAngle.setEnabled(false);
 		panelStyleOfRoseAndPIE.setLayout(new GridBagLayout());
 		panelStyleOfRoseAndPIE.add(this.labelStartAngle,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(30, 1));
 		panelStyleOfRoseAndPIE.add(this.spinnerStartAngle, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
 		panelStyleOfRoseAndPIE.add(this.labelRoseRAngle,   new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(30, 1));
 		panelStyleOfRoseAndPIE.add(this.spinnerRoseAngle,  new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.spinnerStartAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
+		this.spinnerRoseAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
 		//@formatter:on
 	}
 
 	private void initPanelStyleOfBAR(JPanel panelStyleOfBAR) {
 		//@formatter:off
+		this.spinnerBarWidth.setEnabled(false);
 		panelStyleOfBAR.setLayout(new GridBagLayout());
 		panelStyleOfBAR.add(this.labelBarWidth,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(30, 1).setIpad(20, 0));
+		this.spinnerBarWidth.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(0.01)));
 		panelStyleOfBAR.add(this.spinnerBarWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,  0, 5,10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.spinnerBarWidth.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
 		//@formatter:on
 	}
 
@@ -318,7 +314,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelAxis.add(this.labelAxisStyle,      new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2,10).setWeight(30, 1));
 		panelAxis.add(this.buttonAxisStyle,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
 		panelAxis.add(this.checkBoxShowAxisGrid,new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(30, 1));
+		this.checkBoxAxis.setEnabled(false);
+		setPanelAxisEnabled(false);
+		this.buttonAxisStyle.setEnabled(false);
 		//@formatter:on
+	}
+
+	private void setPanelAxisEnabled(boolean b) {
+		this.buttonAxisColor.setEnabled(b);
+		this.comboBoxAxisModel.setEnabled(b);
+		this.checkBoxShowAxisGrid.setEnabled(b);
 	}
 
 	private void initComboxAxisModel() {
@@ -342,6 +347,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				MapViewProperties.getString("String_ThemeGraphTextFormat_Value"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption"),
 				MapViewProperties.getString("String_ThemeGraphTextFormat_CaptionPercent"),
 				MapViewProperties.getString("String_ThemeGraphTextFormat_CaptionValue"), }));
+		this.comboBoxRemarkFormat.setEnabled(false);
+		this.buttonRemarkStyle.setEnabled(false);
 	}
 
 	private void initpanelParameterSetting(JPanel panelParameterSetting) {
@@ -381,7 +388,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxOffsetX() {
 		getFieldComboBox(this.comboBoxOffsetX);
-		this.comboBoxOffsetX.insertItemAt("0", this.comboBoxOffsetX.getItemCount() - 2);
+		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeGraph.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
 			offsetX = "0";
@@ -440,6 +447,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelSizeLimite.add(this.textFieldMaxValue, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		panelSizeLimite.add(this.labelMinValue,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(20, 1).setIpad(20, 0));
 		panelSizeLimite.add(this.textFieldMinValue, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.textFieldMaxValue.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
+		this.textFieldMinValue.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
 		//@formatter:on
 	}
 
@@ -480,7 +489,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.toolbar,           new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(100, 0));
 		this.panelProperty.add(this.scollPane,         new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5,10).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
 		getTable();
-		this.tableGraphInfo.setRowSelectionInterval(0, 0);
 		this.scollPane.setViewportView(this.tableGraphInfo);		
 		//@formatter:on
 	}
@@ -500,35 +508,40 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	@SuppressWarnings("unchecked")
 	private void initTableColumns() {
+		// 设置每行中列的值
 		TableRowCellEditor rowEditor = new TableRowCellEditor(this.tableGraphInfo);
 		for (int i = 0; i < this.graphCount; i++) {
 			ThemeGraphItem item = themeGraph.getItem(i);
 			this.fieldComboBox = new SteppedComboBox(new String[] {});
 			this.fieldComboBox.removeAllItems();
 			getFieldComboBox(this.fieldComboBox);
+			this.fieldComboBox.removeItem(MapViewProperties.getString("String_Combobox_Expression"));
 			Dimension d = this.fieldComboBox.getPreferredSize();
 			this.fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
 			this.fieldComboBox.setPopupWidth(d.width);
 			rowEditor.setEditorAt(i, new DefaultCellEditor(this.fieldComboBox));
 			this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
-			this.tableGraphInfo.setValueAt(this.datasetVector.getName() + "." + item.getGraphExpression(), i, TABLE_COLUMN_EXPRESSION);
+			final String expression = item.getGraphExpression();
+			this.fieldComboBox.setSelectedItem(expression);
+			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
 			this.tableGraphInfo.setValueAt(item.getCaption(), i, TABLE_COLUMN_CAPTION);
-			fieldComboBox.addItemListener(new ItemListener() {
+			this.fieldComboBox.addItemListener(new ItemListener() {
 
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						String expression = fieldComboBox.getSelectedItem().toString();
-						String caption = expression.substring(expression.lastIndexOf(".") + 1, expression.length());
+						getSqlExpression(fieldComboBox, expression);
+						String tempExpression = fieldComboBox.getSelectedItem().toString();
+						String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
 						int i = tableGraphInfo.getSelectedRow();
 						ThemeGraphItem item = themeGraph.getItem(i);
-						item.setGraphExpression(expression);
+						item.setGraphExpression(tempExpression);
 						item.setCaption(caption);
 						if (isRefreshAtOnce) {
 							refreshMapAndLayer();
-							tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
+							tableGraphInfo.setValueAt(tempExpression, i, TABLE_COLUMN_EXPRESSION);
 							tableGraphInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
 						}
 					}
@@ -561,8 +574,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public Class getColumnClass(int column) {
 			// 要这样定义table，要重写这个方法(0,0)的意思就是别的格子的类型都跟(0,0)的一样。
-			if (TABLE_COLUMN_STYLE == column && null != getValueAt(0, 1)) {
-				return getValueAt(0, 1).getClass();
+			if (TABLE_COLUMN_STYLE == column) {
+				return ImageIcon.class;
 			}
 			return String.class;
 		}
@@ -617,6 +630,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonMoveToLast.setIcon(InternalImageIconFactory.MOVE_TO_LAST);
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
 		this.buttonStyle.setIcon(InternalImageIconFactory.REGION_STYLE);
+		setToolBarButtonEnable(false);
+	}
+
+	private void setToolBarButtonEnable(boolean enable) {
+		this.buttonDelete.setEnabled(enable);
+		this.buttonAdd.setEnabled(enable);
+		this.buttonStyle.setEnabled(enable);
+		this.buttonMoveToFrist.setEnabled(enable);
+		this.buttonMoveToForward.setEnabled(enable);
+		this.buttonMoveToLast.setEnabled(enable);
+		this.buttonMoveToNext.setEnabled(enable);
 	}
 
 	@Override
@@ -634,16 +658,45 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonDraftLine.addActionListener(this.showLeaderLineAction);
 		this.textFieldMaxValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
 		this.textFieldMinValue.getDocument().addDocumentListener(this.graphSizeChangeListener);
-		this.comboBoxOffsetUnity.addItemListener(new ItemListener() {
+		this.comboBoxOffsetUnity.addItemListener(this.offsetFixedListener);
+		this.comboBoxOffsetX.addItemListener(this.offsetxListener);
+		this.comboBoxOffsetY.addItemListener(this.offsetYListener);
+		this.checkBoxRemark.addItemListener(this.graphTextDisplayedListener);
+		this.comboBoxRemarkFormat.addItemListener(this.graphTextFormatListener);
+		this.buttonRemarkStyle.addActionListener(this.remarkStyleListener);
+		this.checkBoxAxis.addItemListener(this.showAxisTextListener);
+		this.buttonAxisColor.addPropertyChangeListener("m_selectionColors", this.axisColorListener);
+		this.comboBoxAxisModel.addItemListener(this.axisModelListener);
+		this.buttonAxisStyle.addActionListener(this.axisStyleListener);
+		this.checkBoxShowAxisGrid.addItemListener(this.showAxisGridListener);
+		this.spinnerBarWidth.addChangeListener(this.barWidthListener);
+		this.spinnerStartAngle.addChangeListener(this.startAngleListener);
+		this.spinnerRoseAngle.addChangeListener(this.roseAngleListener);
+		this.buttonDelete.addActionListener(this.toolbarAction);
+		this.buttonAdd.addActionListener(this.toolbarAction);
+		this.buttonStyle.addActionListener(this.toolbarAction);
+		this.buttonMoveToFrist.addActionListener(this.toolbarAction);
+		this.buttonMoveToForward.addActionListener(this.toolbarAction);
+		this.buttonMoveToNext.addActionListener(this.toolbarAction);
+		this.buttonMoveToLast.addActionListener(this.toolbarAction);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layerPropertyChangeListener);
+		this.tableGraphInfo.addMouseListener(this.tableMouseListener);
+	}
+
+	protected void setTextStyle(int x, int y, int styleType) {
+		textStyleDialog = new TextStyleDialog(themeGraph.getGraphTextStyle(), map, themeGraphLayer);
+		textStyleDialog.getTextStyleContainer().setTextStyleType(styleType);
+		textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
 
 			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					// 修改偏移量单位
-
-				}
+			public void propertyChange(PropertyChangeEvent evt) {
+				firePropertyChange("ThemeChange", null, null);
 			}
 		});
+		textStyleDialog.setRefreshAtOnce(isRefreshAtOnce);
+		textStyleDialog.setLocation(x, y);
+		textStyleDialog.setPreferredSize(new Dimension(200, 350));
+		textStyleDialog.setVisible(true);
 	}
 
 	private void refreshColor() {
@@ -669,6 +722,322 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
+		}
+	}
+
+	class ToolBarAction implements ActionListener {
+		private int selectRow;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == buttonDelete) {
+				int[] selectRows = tableGraphInfo.getSelectedRows();
+				for (int i = selectRows.length - 1; i >= 0; i--) {
+					themeGraph.remove(selectRows[i]);
+				}
+				getTable();
+				refreshMapAtOnce();
+				if (tableGraphInfo.getRowCount()==0) {
+					setToolBarButtonEnable(false);
+					buttonAdd.setEnabled(true);
+				}
+				return;
+			}
+			if (e.getSource() == buttonAdd) {
+				addGraphItem();
+			}
+			if (e.getSource() == buttonStyle) {
+				setItemGeoSytle();
+				refreshMapAtOnce();
+				return;
+			}
+			if (e.getSource() == buttonMoveToFrist) {
+				this.selectRow = tableGraphInfo.getSelectedRow();
+				if (this.selectRow >= 0) {
+					themeGraph.exchangeItem(selectRow, 0);
+					afterExchangeItem(selectRow);
+					return;
+				}
+			}
+			if (e.getSource() == buttonMoveToForward) {
+				this.selectRow = tableGraphInfo.getSelectedRow();
+				if (selectRow >= 0 && selectRow != 0) {
+					themeGraph.exchangeItem(selectRow, selectRow - 1);
+					afterExchangeItem(selectRow);
+					return;
+				}
+			}
+			if (e.getSource() == buttonMoveToNext) {
+				this.selectRow = tableGraphInfo.getSelectedRow();
+				if (selectRow >= 0 && selectRow != themeGraph.getCount() - 1) {
+					themeGraph.exchangeItem(selectRow, selectRow + 1);
+					afterExchangeItem(selectRow);
+				}
+			}
+			if (e.getSource() == buttonMoveToLast) {
+				this.selectRow = tableGraphInfo.getSelectedRow();
+				if (selectRow >= 0) {
+					themeGraph.exchangeItem(selectRow, themeGraph.getCount() - 1);
+					afterExchangeItem(selectRow);
+				}
+			}
+		}
+
+		private void addGraphItem() {
+			this.selectRow = tableGraphInfo.getSelectedRow();
+			int x = (int) (buttonAdd.getLocationOnScreen().getX());
+			int y = (int) (buttonAdd.getLocationOnScreen().getY() + buttonAdd.getHeight());
+			ArrayList<String> existItems = new ArrayList<String>();
+			for (int i = 0; i < themeGraph.getCount(); i++) {
+				existItems.add(themeGraph.getItem(i).getGraphExpression());
+			}
+			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector, existItems);
+			addItemDialog.setLocation(x, y);
+			addItemDialog.setVisible(true);
+			if (addItemDialog.getDialogResult() == DialogResult.OK) {
+				ArrayList<String> tempList = addItemDialog.getResultList();
+				for (int i = 0; i < tempList.size(); i++) {
+					ThemeGraphItem item = new ThemeGraphItem();
+					String graphExpression = tempList.get(i);
+					String caption = getCaption(graphExpression);
+					item.setGraphExpression(graphExpression);
+					item.setCaption(caption);
+					themeGraph.add(item);
+				}
+				getTable();
+				refreshMapAtOnce();
+				if (selectRow >= 0) {
+					tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
+				} else {
+					tableGraphInfo.addRowSelectionInterval(0, 0);
+				}
+
+			}
+		}
+
+		private void afterExchangeItem(int selectRow) {
+			getTable();
+			refreshMapAtOnce();
+			tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
+			return;
+		}
+
+		private String getCaption(String graphExpression) {
+			String caption = graphExpression;
+			String[] info = graphExpression.split("\\.");
+			if (info.length == 2) {
+				caption = graphExpression.substring(graphExpression.indexOf(".") + 1, graphExpression.length());
+			}
+			return caption;
+		}
+	}
+
+	class TableMouseListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 1 && tableGraphInfo.getSelectedRow() >= 0) {
+				setToolBarButtonEnable(true);
+			}
+		}
+	}
+
+	class RoseAngleListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			double roseAngle = (double) spinnerRoseAngle.getValue();
+			themeGraph.setRoseAngle(roseAngle);
+			refreshMapAtOnce();
+		}
+	}
+
+	class StartAngleListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			double startAngle = (double) spinnerStartAngle.getValue();
+			themeGraph.setStartAngle(startAngle);
+			refreshMapAtOnce();
+		}
+	}
+
+	class BarWidthListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			double barWidth = (double) spinnerBarWidth.getValue();
+			themeGraph.setBarWidth(barWidth);
+			refreshMapAtOnce();
+		}
+	}
+
+	class ShowAxisGridListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			boolean showAxisGrid = checkBoxShowAxisGrid.isSelected();
+			themeGraph.setAxesGridDisplayed(showAxisGrid);
+			refreshMapAtOnce();
+		}
+	}
+
+	class AxisStyleListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int width = buttonAxisStyle.getWidth();
+			int height = buttonAxisStyle.getHeight();
+			int x = (int) (buttonAxisStyle.getLocationOnScreen().x - 0.8 * width);
+			int y = buttonAxisStyle.getLocationOnScreen().y - 2 * height;
+			setTextStyle(x, y, 1);
+		}
+	}
+
+	class AxisModelListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			int axisModel = comboBoxAxisModel.getSelectedIndex();
+			switch (axisModel) {
+			case 0:
+				themeGraph.setAxesTextDisplayMode(GraphAxesTextDisplayMode.NONE);
+				buttonAxisStyle.setEnabled(false);
+				refreshMapAtOnce();
+				break;
+			case 1:
+				themeGraph.setAxesTextDisplayMode(GraphAxesTextDisplayMode.YAXES);
+				buttonAxisStyle.setEnabled(true);
+				refreshMapAtOnce();
+				break;
+			case 2:
+				themeGraph.setAxesTextDisplayMode(GraphAxesTextDisplayMode.ALL);
+				buttonAxisStyle.setEnabled(true);
+				refreshMapAtOnce();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	class AxisColorListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			Color axisColor = buttonAxisColor.getColor();
+			themeGraph.setAxesColor(axisColor);
+			refreshMapAtOnce();
+		}
+	}
+
+	class ShowAxisTextListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			try {
+				boolean showAxis = checkBoxAxis.isSelected();
+				themeGraph.setAxesTextDisplayed(showAxis);
+				setPanelAxisEnabled(showAxis);
+				refreshMapAtOnce();
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+		}
+	}
+
+	class RemarkStyleListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int width = buttonRemarkStyle.getWidth();
+			int height = buttonRemarkStyle.getHeight();
+			int x = (int) (buttonRemarkStyle.getLocationOnScreen().x - 0.8 * width);
+			int y = buttonRemarkStyle.getLocationOnScreen().y + height;
+			setTextStyle(x, y, 0);
+		}
+	}
+
+	class GraphTextFormatListener implements ItemListener {
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			setRemarkFormat();
+			refreshMapAtOnce();
+		}
+
+		private void setRemarkFormat() {
+			int remarkFormat = comboBoxRemarkFormat.getSelectedIndex();
+			switch (remarkFormat) {
+			case 0:
+				themeGraph.setGraphTextFormat(ThemeGraphTextFormat.PERCENT);
+				break;
+			case 1:
+				themeGraph.setGraphTextFormat(ThemeGraphTextFormat.VALUE);
+				break;
+			case 2:
+				themeGraph.setGraphTextFormat(ThemeGraphTextFormat.CAPTION);
+				break;
+			case 3:
+				themeGraph.setGraphTextFormat(ThemeGraphTextFormat.CAPTION_PERCENT);
+				break;
+			case 4:
+				themeGraph.setGraphTextFormat(ThemeGraphTextFormat.CAPTION_VALUE);
+				break;
+			default:
+				break;
+			}
+		}
+
+	}
+
+	class GraphTextDisplayedListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			boolean selected = checkBoxRemark.isSelected();
+			themeGraph.setGraphTextDisplayed(selected);
+			comboBoxRemarkFormat.setEnabled(selected);
+			buttonRemarkStyle.setEnabled(selected);
+			refreshMapAtOnce();
+		}
+	}
+
+	class OffsetYListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			getSqlExpression(comboBoxOffsetY, themeGraph.getOffsetY());
+			String offsetY = comboBoxOffsetY.getSelectedItem().toString();
+			themeGraph.setOffsetY(offsetY);
+			refreshMapAtOnce();
+		}
+	}
+
+	class OffsetXListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			getSqlExpression(comboBoxOffsetX, themeGraph.getOffsetX());
+			String offsetX = comboBoxOffsetX.getSelectedItem().toString();
+			themeGraph.setOffsetX(offsetX);
+			refreshMapAtOnce();
+		}
+	}
+
+	class OffsetFixedListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				// 修改偏移量单位
+				setOffsetUnity();
+				refreshMapAtOnce();
+			}
+		}
+
+		private void setOffsetUnity() {
+			int offsetUnity = comboBoxOffsetUnity.getSelectedIndex();
+			switch (offsetUnity) {
+			case 0:
+				themeGraph.setOffsetFixed(true);
+				labelOffsetXUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+				labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+				break;
+			case 1:
+				themeGraph.setOffsetFixed(false);
+				labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
+				labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -785,8 +1154,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			// 修改颜色方案
+			int[] selectRows = tableGraphInfo.getSelectedRows();
 			refreshColor();
 			getTable();
+			if (selectRows.length>0) {
+				for (int i = 0; i < selectRows.length; i++) {
+					tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
+			}
 			refreshMapAtOnce();
 		}
 	}
@@ -823,60 +1198,112 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				switch (selectIndex) {
 				case 0:
 					themeGraph.setGraphType(ThemeGraphType.AREA);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					setPanelEnableAndRefresh(true);
 					break;
 				case 1:
 					themeGraph.setGraphType(ThemeGraphType.STEP);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					setPanelEnableAndRefresh(true);
 					break;
 				case 2:
 					themeGraph.setGraphType(ThemeGraphType.LINE);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					setPanelEnableAndRefresh(true);
 					break;
 				case 3:
 					themeGraph.setGraphType(ThemeGraphType.POINT);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					setPanelEnableAndRefresh(true);
 					break;
 				case 4:
 					themeGraph.setGraphType(ThemeGraphType.BAR);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerBarWidth.setValue(themeGraph.getBarWidth());
+					setPanelEnableAndRefresh(true);
 					break;
 				case 5:
 					themeGraph.setGraphType(ThemeGraphType.BAR3D);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerBarWidth.setValue(themeGraph.getBarWidth());
+					setPanelEnableAndRefresh(true);
 					break;
 				case 6:
 					themeGraph.setGraphType(ThemeGraphType.PIE);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerStartAngle.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setValue(themeGraph.getStartAngle());
+					setPanelEnableAndRefresh(false);
 					break;
 				case 7:
 					themeGraph.setGraphType(ThemeGraphType.PIE3D);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerStartAngle.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setValue(themeGraph.getStartAngle());
+					setPanelEnableAndRefresh(false);
 					break;
 				case 8:
 					themeGraph.setGraphType(ThemeGraphType.ROSE);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerRoseAngle.setEnabled(true);
+					spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
+					setPanelEnableAndRefresh(false);
 					break;
 				case 9:
 					themeGraph.setGraphType(ThemeGraphType.ROSE3D);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerRoseAngle.setEnabled(true);
+					spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
+					setPanelEnableAndRefresh(false);
 					break;
 				case 10:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerBarWidth.setValue(themeGraph.getBarWidth());
+					setPanelEnableAndRefresh(true);
 					break;
 				case 11:
 					themeGraph.setGraphType(ThemeGraphType.STACK_BAR3D);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(true);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					spinnerBarWidth.setValue(themeGraph.getBarWidth());
+					setPanelEnableAndRefresh(true);
 					break;
 				case 12:
 					themeGraph.setGraphType(ThemeGraphType.RING);
-					refreshMapAtOnce();
+					spinnerBarWidth.setEnabled(false);
+					spinnerRoseAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(false);
+					setPanelEnableAndRefresh(false);
 					break;
 				default:
 					break;
 				}
 			}
+		}
+
+		private void setPanelEnableAndRefresh(boolean enable) {
+			checkBoxAxis.setEnabled(enable);
+			refreshMapAtOnce();
 		}
 	}
 
@@ -888,6 +1315,23 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableGraphInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshMapAtOnce();
+			}
+		}
+	}
+
+	class LayersTreeChangeListener implements PropertyChangeListener {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int[] selectRows = tableGraphInfo.getSelectedRows();
+			// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
+			map = ThemeGuideFactory.getMapControl().getMap();
+			themeGraphLayer = MapUtilties.findLayerByName(map, layerName);
+			if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme() instanceof ThemeGraph) {
+				themeGraph = new ThemeGraph((ThemeGraph) themeGraphLayer.getTheme());
+				getTable();
+				for (int i = 0; i < selectRows.length; i++) {
+					tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+				}
 			}
 		}
 	}
@@ -906,7 +1350,64 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonDraftLine.removeActionListener(this.showLeaderLineAction);
 		this.textFieldMaxValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
 		this.textFieldMinValue.getDocument().removeDocumentListener(this.graphSizeChangeListener);
+		this.comboBoxOffsetUnity.removeItemListener(this.offsetFixedListener);
+		this.comboBoxOffsetX.removeItemListener(this.offsetxListener);
+		this.comboBoxOffsetY.removeItemListener(this.offsetYListener);
+		this.checkBoxRemark.removeItemListener(this.graphTextDisplayedListener);
+		this.comboBoxRemarkFormat.removeItemListener(this.graphTextFormatListener);
+		this.buttonRemarkStyle.removeActionListener(this.remarkStyleListener);
+		this.checkBoxAxis.removeItemListener(this.showAxisTextListener);
+		this.buttonAxisColor.removePropertyChangeListener("m_selectionColors", this.axisColorListener);
+		this.comboBoxAxisModel.removeItemListener(this.axisModelListener);
+		this.buttonAxisStyle.removeActionListener(this.axisStyleListener);
+		this.checkBoxShowAxisGrid.removeItemListener(this.showAxisGridListener);
+		this.spinnerBarWidth.removeChangeListener(this.barWidthListener);
+		this.spinnerStartAngle.removeChangeListener(this.startAngleListener);
+		this.spinnerRoseAngle.removeChangeListener(this.roseAngleListener);
+		this.buttonDelete.removeActionListener(this.toolbarAction);
+		this.buttonAdd.removeActionListener(this.toolbarAction);
+		this.buttonStyle.removeActionListener(this.toolbarAction);
+		this.buttonMoveToFrist.removeActionListener(this.toolbarAction);
+		this.buttonMoveToForward.removeActionListener(this.toolbarAction);
+		this.buttonMoveToNext.removeActionListener(this.toolbarAction);
+		this.buttonMoveToLast.removeActionListener(this.toolbarAction);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layerPropertyChangeListener);
+		this.tableGraphInfo.removeMouseListener(this.tableMouseListener);
+	}
 
+	/**
+	 * 获取表达式项
+	 *
+	 * @param jComboBoxField
+	 */
+	private void getSqlExpression(JComboBox<String> jComboBoxField, String expression) {
+		// 判断是否为“表达式”项
+		if (MapViewProperties.getString("String_Combobox_Expression").equals(jComboBoxField.getSelectedItem())) {
+			SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
+			int allItems = jComboBoxField.getItemCount();
+			Dataset[] datasets = new Dataset[1];
+			datasets[0] = datasetVector;
+			ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
+			fieldTypes.add(FieldType.INT16);
+			fieldTypes.add(FieldType.INT32);
+			fieldTypes.add(FieldType.INT64);
+			fieldTypes.add(FieldType.DOUBLE);
+			fieldTypes.add(FieldType.SINGLE);
+
+			DialogResult dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
+			if (dialogResult == DialogResult.OK) {
+				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
+				if (null != filter && !filter.isEmpty()) {
+					jComboBoxField.insertItemAt(filter, allItems - 1);
+					jComboBoxField.setSelectedIndex(allItems - 1);
+				} else {
+					jComboBoxField.setSelectedItem(expression);
+				}
+			} else {
+				jComboBoxField.setSelectedItem(expression);
+			}
+
+		}
 	}
 
 	public void setItemGeoSytle() {
@@ -923,17 +1424,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeGraph.getItem(selectedRow[0]).getUniformStyle();
-
 			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
 			if (dialogResult.equals(DialogResult.OK)) {
 				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
-				if (selectedRow.length == 1) {
-					resetGeoSytle(selectedRow[0], nowGeoStyle);
-				} else {
-					for (int i = 0; i < selectedRow.length; i++) {
-						resetGeoSytle(selectedRow[i], nowGeoStyle);
-					}
-				}
+				resetGeoSytle(selectedRow[0], nowGeoStyle);
+
 			}
 		} else if (selectedRow.length > 1) {
 			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
@@ -960,8 +1455,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeGraphItem item = themeGraph.getItem(selectRow);
 		item.setUniformStyle(nowGeoStyle);
-		ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildGeoStyleIcon(this.datasetVector, nowGeoStyle);
-		this.tableGraphInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_STYLE);
 	}
 
 	public Layer getThemeGraphLayer() {
@@ -984,20 +1477,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					nowGraph.insert(i, this.themeGraph.getItem(i));
 				}
 			}
-			nowGraph.setGraphType(this.themeGraph.getGraphType());
-			nowGraph.setGraduatedMode(this.themeGraph.getGraduatedMode());
-			nowGraph.setFlowEnabled(this.themeGraph.isFlowEnabled());
-			nowGraph.setNegativeDisplayed(this.themeGraph.isNegativeDisplayed());
-			nowGraph.setOverlapAvoided(this.themeGraph.isOverlapAvoided());
-			nowGraph.setGraphSizeFixed(this.themeGraph.isGraphSizeFixed());
-			nowGraph.setLeaderLineDisplayed(this.themeGraph.isLeaderLineDisplayed());
-			nowGraph.setLeaderLineStyle(this.themeGraph.getLeaderLineStyle());
-			if (Double.compare(this.themeGraph.getMaxGraphSize(), 0.0) > 0) {
-				nowGraph.setMaxGraphSize(this.themeGraph.getMaxGraphSize());
-			}
-			if (Double.compare(this.themeGraph.getMinGraphSize(), 0.0) > 0) {
-				nowGraph.setMinGraphSize(this.themeGraph.getMinGraphSize());
-			}
+			nowGraph.fromXML(this.themeGraph.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
 			this.map.refresh();
 		}

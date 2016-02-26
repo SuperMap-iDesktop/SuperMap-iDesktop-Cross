@@ -242,7 +242,7 @@ public class ThemeGuideFactory {
 			DatasetVector datasetVector = (DatasetVector) getDataset();
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
-			themeGraphItem.setGraphExpression("SmID");
+			themeGraphItem.setGraphExpression(datasetVector.getName()+"."+"SmID");
 			themeGraphItem.setCaption("SmID");
 			themeGraph.setMaxGraphSize(1);
 			themeGraph.insert(0, themeGraphItem);
