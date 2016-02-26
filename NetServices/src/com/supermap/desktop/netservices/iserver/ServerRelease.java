@@ -690,6 +690,7 @@ public class ServerRelease {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+	
 
 	private void outputHttpStatus(int httpStatus) {
 		if (httpStatus == HttpStatus.SC_UNAUTHORIZED) {
