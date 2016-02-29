@@ -2,7 +2,6 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
@@ -42,10 +41,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -816,7 +812,7 @@ public class LayersTree extends JTree {
 					firePropertyChangeWithLayerSelect();
 				}
 				updateUI();
-				currentMap.refresh();
+//				currentMap.refresh();
 			}
 		}
 
