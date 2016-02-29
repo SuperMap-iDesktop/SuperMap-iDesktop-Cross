@@ -153,8 +153,6 @@ public class MeasureAngle extends Measure {
 
 						//设置角度文本框位置
 						setAngleTextBox(e, points, geoArcAngle, geoArcAzimuthInnerPixel);
-//						mapControl.getMap().refreshTrackingLayer();
-//					mapControl.getMap().refresh();
 					}
 				} catch (Exception ex) {
 					Application.getActiveApplication().getOutput().output(ex);
@@ -189,7 +187,7 @@ public class MeasureAngle extends Measure {
 					}
 				}
 				cancleEdit();
-//				mapControl.getMap().refresh();
+				refreshTrackingLayer();
 			}
 		};
 	}

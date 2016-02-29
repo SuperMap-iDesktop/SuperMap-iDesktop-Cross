@@ -164,7 +164,7 @@ public class MeasureDistance extends Measure {
 						drawDistanceText(points, unitString, 0, false);
 					}
 					cancleEdit();
-//					mapControl.getMap().refresh();
+					refreshTrackingLayer();
 				} catch (Exception ex) {
 					Application.getActiveApplication().getOutput().output(ex);
 				}

@@ -91,7 +91,7 @@ public class MeasureArea extends Measure {
 					outputMeasure(totleArea);
 				}
 				cancleEdit();
-//				mapControl.getMap().refresh();
+				refreshTrackingLayer();
 			}
 		};
 	}
