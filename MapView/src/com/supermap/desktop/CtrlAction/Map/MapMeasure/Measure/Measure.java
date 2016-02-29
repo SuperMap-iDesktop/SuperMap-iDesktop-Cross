@@ -498,9 +498,11 @@ public abstract class Measure implements IMeasureAble {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
+				if (mapControl.getMap().getTrackingLayer().getCount() > 0) {
+					e.consume();
+				}
 				mapControl.getMap().getTrackingLayer().clear();
 				refreshTrackingLayer();
-				e.consume();
 				mapControl.removeKeyListener(this);
 			}
 		}
