@@ -22,10 +22,16 @@ public class CtrlActionMeasureClear extends CtrlAction {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormMap) {
 			FormMap formMap = (FormMap) activeForm;
+			if (formMap.getiMeasureAble() != null) {
+				formMap.getiMeasureAble().stopMeasure();
+				formMap.setiMeasureAble(null);
+			}
+			formMap.getMapControl().setTrackMode(TrackMode.TRACK);
 			formMap.getMapControl().getMap().getTrackingLayer().clear();
 			formMap.getMapControl().setAction(Action.SELECT2);
-			formMap.getMapControl().setTrackMode(TrackMode.EDIT);
 			formMap.getMapControl().getMap().refreshTrackingLayer();
+			formMap.getMapControl().setTrackMode(TrackMode.EDIT);
+
 			ToolbarUtilties.updataToolbarsState();
 		}
 	}

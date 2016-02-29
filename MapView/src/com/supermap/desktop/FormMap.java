@@ -304,6 +304,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			if (e.isConsumed()) {
+				return;
+			}
 			if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
 				clearSelection();
 			} else if (KeyEvent.VK_A == e.getKeyCode() && e.isControlDown()) {

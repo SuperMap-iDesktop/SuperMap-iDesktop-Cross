@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -242,13 +243,12 @@ public abstract class Measure implements IMeasureAble {
 			if (currentGeometry != null) {
 				currentGeometry.dispose();
 			}
-			if (mapControl != null) {
-				this.mapControl.setTrackMode(TrackMode.EDIT);
-			}
-
 			if (!isChangeAction && this.mapControl != null) {
 				removeTempMeasureText();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
+			}
+			if (mapControl != null) {
+				this.mapControl.setTrackMode(TrackMode.EDIT);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -272,10 +272,22 @@ public abstract class Measure implements IMeasureAble {
 				if (addedTags != null) {
 					addedTags.clear();
 				}
-				mapControl.getMap().refreshTrackingLayer();
+				refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	protected void refreshTrackingLayer() {
+		TrackMode trackMode = mapControl.getTrackMode();
+		if (trackMode == TrackMode.TRACK) {
+			mapControl.getMap().refreshTrackingLayer();
+		} else {
+			mapControl.setTrackMode(TrackMode.TRACK);
+			mapControl.getMap().refreshTrackingLayer();
+			mapControl.setTrackMode(trackMode);
+
 		}
 	}
 
@@ -305,6 +317,11 @@ public abstract class Measure implements IMeasureAble {
 	}
 
 
+	/**
+	 * action改变时添加当前对象到跟踪层
+	 *
+	 * @param isAdd
+	 */
 	private void actionTempGeometry(boolean isAdd) {
 		if (mapControl != null) {
 			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
@@ -322,7 +339,7 @@ public abstract class Measure implements IMeasureAble {
 					trackingLayer.remove(index);
 				}
 			}
-			mapControl.getMap().refreshTrackingLayer();
+//			mapControl.getMap().refreshTrackingLayer();
 		}
 	}
 
@@ -340,11 +357,18 @@ public abstract class Measure implements IMeasureAble {
 
 	protected void addListeners() {
 		removeListeners();
+		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除而在添加时删除
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 
+		KeyListener[] keyListeners = mapControl.getKeyListeners();
+		for (KeyListener keyListener : keyListeners) {
+			if (keyListener != keyAdapter && keyListener != escClearKeyAdapt) {
+				mapControl.removeKeyListener(keyListener);
+				mapControl.addKeyListener(keyListener);
+			}
+		}
 		this.mapControl.addMouseListener(this.mouseAdapter);
-		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.addActionChangedListener(this.actionChangedListener);
 		this.mapControl.addUndoneListener(this.undoneListener);
 		this.mapControl.addTrackedListener(this.trackedListener);
@@ -373,7 +397,7 @@ public abstract class Measure implements IMeasureAble {
 
 			if (index >= 0) {
 				this.mapControl.getMap().getTrackingLayer().remove(index);
-				this.mapControl.getMap().refreshTrackingLayer();
+//				this.mapControl.getMap().refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -463,8 +487,9 @@ public abstract class Measure implements IMeasureAble {
 	private KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				cancleEdit();
+				e.consume();
 			}
 		}
 	};
@@ -472,10 +497,10 @@ public abstract class Measure implements IMeasureAble {
 	private final KeyAdapter escClearKeyAdapt = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
+			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
 				mapControl.getMap().getTrackingLayer().clear();
-				mapControl.getMap().refreshTrackingLayer();
-//				mapControl.getMap().refresh();
+				refreshTrackingLayer();
+				e.consume();
 				mapControl.removeKeyListener(this);
 			}
 		}

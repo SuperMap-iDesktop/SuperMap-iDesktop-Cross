@@ -153,7 +153,7 @@ public class MeasureAngle extends Measure {
 
 						//设置角度文本框位置
 						setAngleTextBox(e, points, geoArcAngle, geoArcAzimuthInnerPixel);
-						mapControl.getMap().refreshTrackingLayer();
+//						mapControl.getMap().refreshTrackingLayer();
 //					mapControl.getMap().refresh();
 					}
 				} catch (Exception ex) {
@@ -189,7 +189,7 @@ public class MeasureAngle extends Measure {
 					}
 				}
 				cancleEdit();
-				mapControl.getMap().refresh();
+//				mapControl.getMap().refresh();
 			}
 		};
 	}
@@ -289,7 +289,7 @@ public class MeasureAngle extends Measure {
 			}
 
 			if (refreshTrackingLayer) {
-				mapControl.getMap().refreshTrackingLayer();
+				refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -360,7 +360,7 @@ public class MeasureAngle extends Measure {
 					}
 				}
 				beforeUnit = getAngleUnit();
-				mapControl.getMap().refreshTrackingLayer();
+//				mapControl.getMap().refreshTrackingLayer();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}

@@ -113,7 +113,7 @@ public class MeasureDistance extends Measure {
 						mapControl.getMap().getTrackingLayer().add(geoCompound, TRAKCING_OBJECT_NAME);
 					}
 					// 刷新跟踪图层
-					mapControl.getMap().refreshTrackingLayer();
+					refreshTrackingLayer();
 
 					// 根据地图显示范围对辅助线进行裁剪
 					point2Ds.clear();
@@ -282,7 +282,7 @@ public class MeasureDistance extends Measure {
 		}
 
 		beforeUnit = unitString;
-		mapControl.getMap().refreshTrackingLayer();
+//		mapControl.getMap().refreshTrackingLayer();
 	}
 
 
