@@ -475,7 +475,7 @@ public abstract class Measure implements IMeasureAble {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
 				mapControl.getMap().getTrackingLayer().clear();
 				mapControl.getMap().refreshTrackingLayer();
-				mapControl.getMap().refresh();
+//				mapControl.getMap().refresh();
 				mapControl.removeKeyListener(this);
 			}
 		}

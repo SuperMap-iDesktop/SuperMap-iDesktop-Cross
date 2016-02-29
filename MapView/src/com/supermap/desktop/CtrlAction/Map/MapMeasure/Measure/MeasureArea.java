@@ -46,7 +46,7 @@ public class MeasureArea extends Measure {
 							GeoRegion region = new GeoRegion(pnts);
 							Point pointInnerPixel = mapControl.getMap().mapToPixel(region.getInnerPoint());
 
-							String text = decimalFormat.format(getTotleArea(e.getArea())) + getAreaUnit().toString();
+							String text = MessageFormat.format(CoreProperties.getString("String_Map_MeasureArea"), decimalFormat.format(getTotleArea(e.getArea())), getAreaUnit().toString());
 							labelTextBoxCurrent.setText(text);
 							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 10 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 							labelTextBoxCurrent.setLocation(pointInnerPixel);
