@@ -88,7 +88,10 @@ public class ColorSelectButton extends JButton {
 			});
 		}
 	}
-	
+	public void setColor(Color color){
+		panelColorDisplay.setBackground(color);
+		panelColorDisplay.updateUI();
+	}
 	/**
 	 * 获取选中的颜色
 	 * @return

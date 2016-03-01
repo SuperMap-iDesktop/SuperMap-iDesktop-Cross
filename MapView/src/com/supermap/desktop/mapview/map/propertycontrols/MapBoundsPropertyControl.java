@@ -261,8 +261,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsVisibleScalesEnabled = new JCheckBox("IsVisibleScaleEnabled");
 		this.buttonSetVisibleScales = new JButton("SetVisibleScales");
 		// TODO 固定比例尺先不支持 暂时屏蔽
-		this.checkBoxIsVisibleScalesEnabled.setVisible(false);
-		this.buttonSetVisibleScales.setVisible(false);
+//		this.checkBoxIsVisibleScalesEnabled.setVisible(false);
+//		this.buttonSetVisibleScales.setVisible(false);
 
 		this.checkBoxIsClipRegionEnabled = new JCheckBox("IsClipRegionEnabled");
 		this.buttonClipRegion = new JButton("SetClipRegion");
