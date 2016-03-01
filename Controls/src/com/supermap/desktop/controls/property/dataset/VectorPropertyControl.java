@@ -12,6 +12,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 
@@ -34,6 +35,9 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_LABEL_WIDTH = 100;
 	private static final int DEFAULT_COMPONENT_WIDTH = 150;
+
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
+
 
 	private JLabel labelRecordCount;
 	private JTextField textFieldRecordCount;
@@ -330,6 +334,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
+		caretPositionListener.registerComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.addItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.addItemListener(this.itemListener);
 		this.checkBoxIsFileCache.addItemListener(this.itemListener);
@@ -346,6 +351,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.removeItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.removeItemListener(this.itemListener);
 		this.checkBoxIsFileCache.removeItemListener(this.itemListener);

@@ -1,22 +1,5 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.math.BigDecimal;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.plaf.metal.MetalBorders;
-
 import com.supermap.data.Dataset;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -26,10 +9,19 @@ import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.EncodeTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.plaf.metal.MetalBorders;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+
 public class DatasetPropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_LABEL_WIDTH = 100;

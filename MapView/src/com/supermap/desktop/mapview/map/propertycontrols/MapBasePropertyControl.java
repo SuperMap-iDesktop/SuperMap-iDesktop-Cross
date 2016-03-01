@@ -1,8 +1,19 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+import com.supermap.data.Enum;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.ButtonColorSelector;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.utilties.MapColorModeUtilties;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapColorMode;
+import com.supermap.mapping.MapOverlapDisplayedOptions;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -11,27 +22,6 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
-
-import com.supermap.data.Enum;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.ButtonColorSelector;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
-import com.supermap.desktop.utilties.MapColorModeUtilties;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapColorMode;
-import com.supermap.mapping.MapOverlapDisplayedOptions;
 
 public class MapBasePropertyControl extends AbstractPropertyControl {
 
@@ -48,12 +38,12 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private JLabel labelMaxVisibleVertex;
 
 	private JTextField textFieldMapName; // 地图名称
-	private JFormattedTextField textFieldAngle; // 地图旋转角度
+	private SMFormattedTextField textFieldAngle; // 地图旋转角度
 	private JComboBox<String> comboBoxColorMode; // 颜色模式
 	private ButtonColorSelector buttonBackgroundColor; // 背景颜色
-	private JFormattedTextField textFieldMinVisibleTextSize; // 文本最小尺寸
-	private JFormattedTextField textFieldMaxVisibleTextSize; // 文本最大尺寸
-	private JFormattedTextField textFieldMaxVisibleVertex; // 最大可见节点数
+	private SMFormattedTextField textFieldMinVisibleTextSize; // 文本最小尺寸
+	private SMFormattedTextField textFieldMaxVisibleTextSize; // 文本最大尺寸
+	private SMFormattedTextField textFieldMaxVisibleVertex; // 最大可见节点数
 	private JCheckBox checkBoxIsOverlapDisplayed; // 显示压盖对象
 	private JButton buttonOverlapDisplayedOptions; // 压盖设置
 	private JCheckBox checkBoxIsMarkerAngleFixed; // 固定符号角度
@@ -175,12 +165,12 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 		this.textFieldMapName = new JTextField();
 		this.textFieldMapName.setEditable(false);
-		this.textFieldAngle = new JFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldAngle = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.comboBoxColorMode = new JComboBox<String>();
 		this.buttonBackgroundColor = new ButtonColorSelector();
-		this.textFieldMinVisibleTextSize = new JFormattedTextField(NumberFormat.getNumberInstance());
-		this.textFieldMaxVisibleTextSize = new JFormattedTextField(NumberFormat.getNumberInstance());
-		this.textFieldMaxVisibleVertex = new JFormattedTextField(NumberFormat.getIntegerInstance());
+		this.textFieldMinVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldMaxVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldMaxVisibleVertex = new SMFormattedTextField(NumberFormat.getIntegerInstance());
 		this.buttonOverlapDisplayedOptions = new JButton("OverlapDisplayedOptions");
 		this.checkBoxIsOverlapDisplayed = new JCheckBox("IsOverlapDisplayed");
 		this.checkBoxIsMarkerAngleFixed = new JCheckBox("IsMarkerAngleFixed");
