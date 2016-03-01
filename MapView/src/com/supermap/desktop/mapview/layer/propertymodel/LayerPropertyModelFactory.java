@@ -26,7 +26,7 @@ public class LayerPropertyModelFactory {
 		ArrayList<LayerPropertyModel> models = new ArrayList<LayerPropertyModel>();
 
 		for (Layer layer : layers) {
-			if (layer == null) {
+			if (layer == null || layer.isDisposed()) {
 				continue;
 			}
 			if (layer instanceof LayerGroup) {

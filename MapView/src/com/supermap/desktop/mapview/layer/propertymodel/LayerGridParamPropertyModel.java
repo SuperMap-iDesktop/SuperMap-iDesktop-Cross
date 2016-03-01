@@ -1,12 +1,11 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import java.awt.Color;
-
 import com.supermap.data.Colors;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingGrid;
-import com.supermap.mapping.Map;
+
+import java.awt.*;
 
 public class LayerGridParamPropertyModel extends LayerPropertyModel {
 
@@ -143,7 +142,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 		initializeEnabledMap();
 
 		for (Layer layer : layers) {
-			if (layer == null) {
+			if (layer == null || layer.isDisposed()) {
 				break;
 			}
 

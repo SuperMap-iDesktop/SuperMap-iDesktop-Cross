@@ -1,10 +1,11 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.enums.PropertyType;
+
 /**
  * 工作空间、数据源、数据集、对象等的属性管理器
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public interface IPropertyManager {
 
@@ -32,4 +33,6 @@ public interface IPropertyManager {
 	
 	// @formatter:on
 	boolean isUsable();
+
+	PropertyType getPropertyType();
 }

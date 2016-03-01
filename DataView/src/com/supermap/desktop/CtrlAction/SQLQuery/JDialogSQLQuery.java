@@ -1062,13 +1062,13 @@ public class JDialogSQLQuery extends SmDialog {
 
 		if (formMap != null) {
 			Layer layer = MapUtilties.findLayerByDatasetWithoutLabelTheme(formMap.getMapControl().getMap(), currentDatasetVector);
-			if (layer == null) {
+			if (layer == null || layer.isDisposed()) {
 				layer = MapUtilties.addDatasetToMap(formMap.getMapControl().getMap(), currentDatasetVector, true);
 			}
-			if (layer != null) {
+			if (layer != null && !layer.isDisposed()) {
 				layer.getSelection().clear();
 				layer.getSelection().setDefaultStyleEnabled(false);
-				java.util.List<Integer> smIdList = new ArrayList();
+				java.util.List<Integer> smIdList = new ArrayList<>();
 				resultRecord.moveFirst();
 				while (!resultRecord.isEOF()) {
 					smIdList.add(resultRecord.getID());

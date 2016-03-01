@@ -239,7 +239,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 
 		if (layers != null && formMap != null && layers.length > 0) {
 			for (Layer layer : layers) {
-				if (layer == null) {
+				if (layer == null || layer.isDisposed()) {
 					break;
 				}
 
@@ -336,14 +336,13 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 				}
 
 				for (Layer layer : getLayers()) {
-					if (layer == null) {
+					if (layer == null || layer.isDisposed()) {
 						break;
 					}
 
 					Dataset dataset = layer.getDataset();
-					Boolean enabled = true;
 					// 显示完整线性，数据集非线面数据集则不可用
-					enabled = hashMapTmp.get(IS_COMPLETE_LINE_SYMBOL_DISPLAYED)
+					Boolean enabled = hashMapTmp.get(IS_COMPLETE_LINE_SYMBOL_DISPLAYED)
 							&& (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.REGION) && !(layer.getTheme() instanceof ThemeLabel);
 					hashMapTmp.put(IS_COMPLETE_LINE_SYMBOL_DISPLAYED, enabled);
 					// 十字路口优化，数据集非线数据集则不可用

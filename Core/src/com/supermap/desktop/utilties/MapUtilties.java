@@ -303,7 +303,7 @@ public class MapUtilties {
 		try {
 			if (dataset != null) {
 				layer = map.getLayers().add(dataset, addToHead);
-				if (layer == null) {
+				if (layer == null || layer.isDisposed()) {
 					Application.getActiveApplication().getOutput()
 							.output(String.format(CoreProperties.getString("String_DatasetOpenFaild"), dataset.getName()));
 				} else {
