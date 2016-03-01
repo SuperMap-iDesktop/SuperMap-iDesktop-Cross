@@ -8,6 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.RecordsetFinalizer;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
@@ -836,6 +837,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 					this.recordset.setFieldValue(this.getName(), resultValue);
 					this.recordset.update();
 				}
+				MapViewUtilties.refreshCurrentMap();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

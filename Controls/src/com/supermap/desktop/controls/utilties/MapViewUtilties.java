@@ -8,6 +8,7 @@ import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
@@ -242,5 +243,24 @@ public class MapViewUtilties {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 刷新当前地图
+	 *
+	 * @return 是否成功
+	 */
+	public static boolean refreshCurrentMap() {
+		boolean issuccss = false;
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm instanceof IFormMap) {
+			try {
+				((IFormMap) activeForm).getMapControl().getMap().refresh();
+				issuccss = true;
+			} catch (Exception e) {
+				issuccss = false;
+			}
+		}
+		return issuccss;
 	}
 }
