@@ -882,6 +882,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					getSqlExpression(comboBoxExpression);
 					// 修改表达式
 					setFieldInfo();
+					refreshColor();
 				} else if (e.getSource() == comboBoxRangeCount && !isCustom && !isMergeOrSplit) {
 					// 修改段数
 					setRangeCount();
