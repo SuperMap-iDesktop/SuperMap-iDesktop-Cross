@@ -2,6 +2,9 @@ package com.supermap.desktop.newtheme;
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.Size2D;
+import com.supermap.data.StringAlignment;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -37,6 +40,8 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JComboBox<String> comboBoxOverLength = new JComboBox<String>();
 	private JLabel labelFontCount = new JLabel();
 	private JSpinner spinnerFontCount = new JSpinner();
+	private JLabel labelAlignmentStyle = new JLabel();
+	private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();
 	// panelFontHeight
 	private JLabel labelMaxFontHeight = new JLabel();
 	private JTextField textFieldMaxFontHeight = new JTextField();
@@ -178,6 +183,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.spinnerFontCount.addChangeListener(this.changedListener);
 		this.spinnerFontSpace.addChangeListener(this.changedListener);
 		this.spinnerFontSpace.getEditor().addKeyListener(this.localKeyListener);
+		this.comboBoxAlignmentStyle.addItemListener(this.itemListener);
 	}
 
 	/**
@@ -231,6 +237,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.labelHorizontalUnity.setText(String.valueOf(map.getCoordUnit()));
 		this.labelVertical.setText(MapViewProperties.getString("String_TextExtentHeight"));
 		this.labelVerticalUnity.setText(String.valueOf(map.getCoordUnit()));
+		this.labelAlignmentStyle.setText(MapViewProperties.getString("String_TextAlignment"));
 	}
 
 	private void resetCheckBoxState(boolean isRotate) {
@@ -392,12 +399,15 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NONE) {
 			this.comboBoxOverLength.setSelectedIndex(0);
 			this.spinnerFontCount.setEnabled(false);
+			this.comboBoxAlignmentStyle.setEnabled(false);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NEWLINE) {
 			this.comboBoxOverLength.setSelectedIndex(1);
 			this.spinnerFontCount.setEnabled(true);
+			this.comboBoxAlignmentStyle.setEnabled(true);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.OMIT) {
 			this.comboBoxOverLength.setSelectedIndex(2);
 			this.spinnerFontCount.setEnabled(true);
+			this.comboBoxAlignmentStyle.setEnabled(true);
 		}
 	}
 
@@ -409,14 +419,25 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private void initPanelTextFontSet(JPanel panelTextFontSet) {
 		//@formatter:off
 		initComboBoxOverLength();
+		initComboBoxAlignmentStyle();
 		panelTextFontSet.setLayout(new GridBagLayout());
-		this.comboBoxOverLength.setPreferredSize(textFieldDimension);
-		this.spinnerFontCount.setPreferredSize(textFieldDimension);
+		this.comboBoxOverLength.setPreferredSize(this.textFieldDimension);
+		this.spinnerFontCount.setPreferredSize(this.textFieldDimension);
+		this.comboBoxAlignmentStyle.setPreferredSize(this.textFieldDimension);
 		panelTextFontSet.add(this.labelOverLength,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelTextFontSet.add(this.comboBoxOverLength,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelTextFontSet.add(this.labelFontCount,           new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelTextFontSet.add(this.spinnerFontCount,         new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.labelAlignmentStyle,      new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.comboBoxAlignmentStyle,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
+	}
+
+	private void initComboBoxAlignmentStyle() {
+		this.comboBoxAlignmentStyle.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_AlignLeft"),
+				MapViewProperties.getString("String_AlignCenter"), MapViewProperties.getString("String_AlignRight"),
+				MapViewProperties.getString("String_AlignDistributed") }));
+		this.comboBoxAlignmentStyle.setEnabled(false);
 	}
 
 	private void refreshAtOnce() {
@@ -434,12 +455,41 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				if (e.getSource() == comboBoxLineDirection) {
 					// 设置沿线显示方向
 					setLineDirection();
-				} else if (e.getSource() == comboBoxOverLength) {
+					refreshAtOnce();
+					return;
+				}
+				if (e.getSource() == comboBoxOverLength) {
 					// 设置超长处理方式
 					setOverLength();
+					refreshAtOnce();
+					return;
 				}
-				refreshAtOnce();
+				if (e.getSource() == comboBoxAlignmentStyle) {
+					setTextAlignment();
+					refreshAtOnce();
+					return;
+				}
+			}
+		}
 
+		private void setTextAlignment() {
+			int alignmentStyle = comboBoxAlignmentStyle.getSelectedIndex();
+			TextStyle textStyle = themeLabel.getUniformStyle();
+			switch (alignmentStyle) {
+			case 0:
+				textStyle.setStringAlignment(StringAlignment.LEFT);
+				break;
+			case 1:
+				textStyle.setStringAlignment(StringAlignment.CENTER);
+				break;
+			case 2:
+				textStyle.setStringAlignment(StringAlignment.RIGHT);
+				break;
+			case 3:
+				textStyle.setStringAlignment(StringAlignment.DISTRIBUTED);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -454,9 +504,11 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			} else if (1 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
 				spinnerFontCount.setEnabled(true);
+				comboBoxAlignmentStyle.setEnabled(true);
 			} else {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
 				spinnerFontCount.setEnabled(true);
+				comboBoxAlignmentStyle.setEnabled(true);
 			}
 		}
 

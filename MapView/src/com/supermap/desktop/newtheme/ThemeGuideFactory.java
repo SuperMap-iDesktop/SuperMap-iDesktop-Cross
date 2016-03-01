@@ -14,10 +14,12 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -51,7 +53,7 @@ public class ThemeGuideFactory {
 		return dockbarThemeContainer;
 	}
 
-	private static ThemeMainContainer addPanelToThemeMainContainer(ThemeChangePanel panel) {
+	private static ThemeMainContainer addPanelToThemeMainContainer(final ThemeChangePanel panel) {
 		try {
 			dockbarThemeContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(THEME_MAIN_CONTAINER_CLASS));
 			if (dockbarThemeContainer != null) {
@@ -70,11 +72,6 @@ public class ThemeGuideFactory {
 			});
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			if (null == getDockbarThemeContainer()) {
-				container.unregistActionListener();
-				themeTypeContainer.clear();
-			}
 		}
 		if (null != container) {
 			return container;
@@ -242,12 +239,12 @@ public class ThemeGuideFactory {
 			DatasetVector datasetVector = (DatasetVector) getDataset();
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
-			themeGraphItem.setGraphExpression(datasetVector.getName()+"."+"SmID");
+			themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
 			themeGraphItem.setCaption("SmID");
 			themeGraph.setMaxGraphSize(1);
 			themeGraph.insert(0, themeGraphItem);
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
-			ThemeGraphContainer themeLabelRangeContainer = new ThemeGraphContainer(datasetVector,themeGraph);
+			ThemeGraphContainer themeLabelRangeContainer = new ThemeGraphContainer(datasetVector, themeGraph);
 			themeTypeContainer.put(themeLabelRangeContainer.getThemeGraphLayer().getCaption(), themeLabelRangeContainer);
 			addPanelToThemeMainContainer(themeLabelRangeContainer);
 			getDockbarThemeContainer().setVisible(true);
@@ -359,14 +356,14 @@ public class ThemeGuideFactory {
 	}
 
 	public static void resetGraph(Layer layer) {
-		if (null!=layer.getDataset()&&null!=themeTypeContainer.get(layer.getCaption())) {
+		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		}else if (null!=layer.getDataset()) {
+		} else if (null != layer.getDataset()) {
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
 		}
 	}
-	
+
 	private static Dataset getDataset() {
 		Dataset dataset = null;
 		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
@@ -399,7 +396,7 @@ public class ThemeGuideFactory {
 				resetGridUnique(layer);
 			} else if (layer.getTheme() instanceof ThemeGridRange) {
 				resetGridRange(layer);
-			}else if (layer.getTheme() instanceof ThemeGraph) {
+			} else if (layer.getTheme() instanceof ThemeGraph) {
 				resetGraph(layer);
 			}
 		}

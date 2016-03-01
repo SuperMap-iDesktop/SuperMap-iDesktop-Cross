@@ -466,12 +466,14 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			}
 		}
 	}
+
 	private void refreshAtOnce() {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
 		}
 	}
+
 	class LocalActionListener implements ActionListener {
 
 		@Override
@@ -1125,8 +1127,18 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			ThemeLabelRangeContainer.this.firePropertyChange("ThemeChange", null, null);
 		}
 	}
+
 	@Override
 	public Layer getCurrentLayer() {
 		return themeLabelLayer;
 	}
+
+	public ThemeLabelPropertyPanel getPanelProperty() {
+		return panelProperty;
+	}
+
+	public ThemeLabelAdvancePanel getPanelAdvance() {
+		return panelAdvance;
+	}
+
 }

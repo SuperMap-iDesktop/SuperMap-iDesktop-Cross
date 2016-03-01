@@ -4,6 +4,7 @@ import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -30,7 +31,9 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 public class TextStyleContainer extends ThemeChangePanel {
 
@@ -70,10 +73,10 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JCheckBox checkBoxFixedSize = new JCheckBox();
 	private JCheckBox checkBoxOutlook = new JCheckBox();
 	private JCheckBox checkBoxBGTransparent = new JCheckBox();
+	private JSlider sliderOutLineWidth;
 
 	private transient Map map;
 	private transient TextStyle textStyle;
-	// private List<TextStyle> list = new ArrayList<TextStyle>();
 	private transient Layer themeLayer;
 
 	// 对齐方式名称和对齐方式值构成的HashMap
@@ -83,6 +86,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private JTextField textFieldFontWidth;
 	private JTextField textFieldFontItalicAngl;
 	private JTextField textFieldFontRotationAngl;
+
 	// 对齐方式名称
 	private static final String[] TEXTALIGNMENT_NAMES = { ControlsProperties.getString("String_TextAlignment_LeftTop"),
 			ControlsProperties.getString("String_TextAlignment_MidTop"), ControlsProperties.getString("String_TextAlignment_RightTop"),
@@ -107,6 +111,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalCheckBoxActionListener checkBoxActionListener = new LocalCheckBoxActionListener();
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
 	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
+	private ChangeListener outLineWidthChangeListener = new OutLineChangeListener();
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle;
@@ -298,6 +303,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private void initPanelFontEffect(JPanel panelFontEffect) {
 		//@formatter:off
 		initCheckBoxState();
+		JPanel panelSlider = new JPanel();
+		initSliderOutLineWidth(panelSlider);
 		panelFontEffect.setLayout(new GridBagLayout());
 		panelFontEffect.add(this.checkBoxBorder,         new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelFontEffect.add(this.checkBoxStrickout,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
@@ -305,9 +312,29 @@ public class TextStyleContainer extends ThemeChangePanel {
 		panelFontEffect.add(this.checkBoxUnderline,      new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelFontEffect.add(this.checkBoxShadow,         new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelFontEffect.add(this.checkBoxFixedSize,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelFontEffect.add(this.checkBoxOutlook,        new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelFontEffect.add(this.checkBoxBGTransparent,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxBGTransparent,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
+		panelFontEffect.add(this.checkBoxOutlook,        new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,0,10));
+		panelFontEffect.add(panelSlider,                 new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(0,10,2,10));
 		//@formatter:on
+	}
+
+	private void initSliderOutLineWidth(JPanel panelSlider) {
+		this.sliderOutLineWidth = new JSlider(0, 4, this.textStyle.getOutlineWidth() - 1);
+		this.sliderOutLineWidth.setPaintTicks(true);// 显示标尺
+		this.sliderOutLineWidth.setPaintLabels(true);
+		this.sliderOutLineWidth.setMajorTickSpacing(1);// 1一大格
+		this.sliderOutLineWidth.setMinorTickSpacing(1);// 1一小格
+
+		Dictionary<Integer, Component> labelTable = new Hashtable<Integer, Component>();
+		labelTable.put(0, new JLabel("1"));
+		labelTable.put(1, new JLabel("2"));
+		labelTable.put(2, new JLabel("3"));
+		labelTable.put(3, new JLabel("4"));
+		labelTable.put(4, new JLabel("5"));
+		panelSlider.add(this.sliderOutLineWidth);
+		panelSlider.add(new JLabel(CommonProperties.getString("String_Label_Pixel")));
+		this.sliderOutLineWidth.setLabelTable(labelTable);
+		this.sliderOutLineWidth.setEnabled(false);
 	}
 
 	private void initCheckBoxState() {
@@ -361,7 +388,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
 		this.map.addDrawnListener(this.mapDrawnListener);
-
+		this.sliderOutLineWidth.addChangeListener(this.outLineWidthChangeListener);
 	}
 
 	/**
@@ -392,6 +419,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.buttonBGColorSelect.removePropertyChangeListener("m_selectionColors", this.propertyListener);
 		this.comboBoxFontSize.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
 		this.map.removeDrawnListener(this.mapDrawnListener);
+		this.sliderOutLineWidth.removeChangeListener(this.outLineWidthChangeListener);
 	}
 
 	private void initHashMapTextAlignment() {
@@ -408,16 +436,15 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (e.getSource() == comboBoxFontName) {
 				// 设置字体名称
 				setFontName();
+				refreshMapAtOnce();
 			} else if (e.getSource() == comboBoxAlign) {
 				// 设置文本对齐方式
 				setFontAlign();
+				refreshMapAtOnce();
 			} else if (e.getSource() == comboBoxFontSize) {
 				// 设置字号
 				setFontSize();
-			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce && null != map) {
-				refreshMapAndLayer();
+				refreshMapAtOnce();
 			}
 		}
 
@@ -441,6 +468,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	}
 
+	class OutLineChangeListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			textStyle.setOutlineWidth(sliderOutLineWidth.getValue() + 1);
+			refreshMapAtOnce();
+		}
+	}
+
 	class LocalChangedListener implements ChangeListener {
 
 		@Override
@@ -448,22 +483,29 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (e.getSource() == spinnerFontHeight) {
 				// 设置字高
 				setFontHeight();
+				refreshMapAtOnce();
 			} else if (e.getSource() == spinnerFontWidth) {
 				// 设置字宽
 				setFontWidth();
+				refreshMapAtOnce();
 			} else if (e.getSource() == spinnerInclinationAngl) {
 				// 设置文本倾斜角度
 				setFontInclinationAngl();
+				refreshMapAtOnce();
 			} else if (e.getSource() == spinnerRotationAngl) {
 				// 设置旋转角度
 				setRotationAngl();
-			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce && null != map) {
-				refreshMapAndLayer();
+				refreshMapAtOnce();
 			}
 		}
+	}
 
+	private void refreshMapAtOnce() {
+		firePropertyChange("ThemeChange", null, null);
+		if (isRefreshAtOnce && null != map) {
+			refreshMapAndLayer();
+		}
+		return;
 	}
 
 	class LocalKeyListener extends KeyAdapter {
@@ -472,10 +514,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		public void keyReleased(KeyEvent e) {
 			if (e.getSource() == textFieldFontSize) {
 				setFontSize();
-				firePropertyChange("ThemeChange", null, null);
-				if (isRefreshAtOnce && null != map) {
-					refreshMapAndLayer();
-				}
+				refreshMapAtOnce();
 			}
 		}
 
@@ -497,31 +536,34 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (e.getSource() == checkBoxBorder) {
 				// 设置字体加粗
 				setFontBorder();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxStrickout) {
 				// 设置添加删除线
 				setFontStrickout();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxItalic) {
 				// 设置字体样式为斜体
 				setItalic();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxUnderline) {
 				// 设置添加下划线
 				setUnderline();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxShadow) {
 				// 设置添加阴影
 				setShadow();
 			} else if (e.getSource() == checkBoxFixedSize) {
 				// 设置字体固定大小
 				setFixedSize();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxOutlook) {
 				// 设置字体轮廓
 				setOutLook();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxBGTransparent) {
 				// 设置背景透明
 				setBGOpare();
-			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce && null != map) {
-				refreshMapAndLayer();
+				refreshMapAtOnce();
 			}
 		}
 
@@ -545,12 +587,15 @@ public class TextStyleContainer extends ThemeChangePanel {
 		 */
 		private void setOutLook() {
 			boolean isOutlook = checkBoxOutlook.isSelected();
+			sliderOutLineWidth.setEnabled(isOutlook);
 			textStyle.setOutline(isOutlook);
 			boolean isOpare = checkBoxBGTransparent.isSelected();
 			if (!isOpare || isOutlook) {
 				buttonBGColorSelect.setEnabled(true);
+				buttonBGColorSelect.setColor(textStyle.getBackColor());
 			} else {
 				buttonBGColorSelect.setEnabled(false);
+				buttonBGColorSelect.setColor(Color.black);
 			}
 		}
 
@@ -625,13 +670,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (e.getSource() == buttonFontColorSelect) {
 				// 设置文本颜色
 				setFontColor();
+				refreshMapAtOnce();
 			} else if (e.getSource() == buttonBGColorSelect) {
 				// 设置背景颜色
 				setBackgroundColor();
-			}
-			firePropertyChange("ThemeChange", null, null);
-			if (isRefreshAtOnce && null != map) {
-				refreshMapAndLayer();
+				refreshMapAtOnce();
 			}
 		}
 
