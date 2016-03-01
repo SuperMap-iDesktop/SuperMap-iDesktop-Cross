@@ -1,13 +1,13 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.event.*;
-
-import javax.swing.*;
-
 import com.supermap.desktop.Application;
 
+import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 /**
- * This class will retain the caret positioning at the character where the mouse was clicked.
+ * JFormattedTextField注册后可以定位到鼠标位置
  */
 public class CaretPositionListener implements MouseListener {
 	private boolean dynamicFormatting;
@@ -46,7 +46,7 @@ public class CaretPositionListener implements MouseListener {
 	/**
 	 * Remove listeners from the specified component
 	 *
-	 * @param component the component the listeners are removed from
+	 * @param components the component the listeners are removed from
 	 */
 	public void deregisterComponent(JFormattedTextField... components) {
 		for (JFormattedTextField component : components)
@@ -55,8 +55,8 @@ public class CaretPositionListener implements MouseListener {
 
 	/**
 	 * Add the required listeners to the specified component
-	 *
-	 * @param component the component the listeners are added to
+	 *s
+	 * @param components the component the listeners are added to
 	 */
 	public void registerComponent(JFormattedTextField... components) {
 		for (JFormattedTextField component : components)

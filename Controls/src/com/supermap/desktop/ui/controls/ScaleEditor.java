@@ -1,6 +1,14 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.exception.InvalidScaleException;
+
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalBorders;
+import javax.swing.text.NumberFormatter;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -8,23 +16,15 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import javax.swing.JFormattedTextField;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.text.NumberFormatter;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.ScaleModel;
-import com.supermap.desktop.controls.ControlDefaultValues;
-import com.supermap.desktop.exception.InvalidScaleException;
-
 public class ScaleEditor extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
+
 	private static final long serialVersionUID = 1L;
+
+
 	private JTextField textFieldFirstPart;
 	private JFormattedTextField textFieldSecondPart;
 	private transient ScaleModel scaleModel;
@@ -117,6 +117,7 @@ public class ScaleEditor extends JPanel {
 	}
 
 	private void registerEvents() {
+
 		this.textFieldSecondPart.addMouseListener(new CaretPositionListener());
 		this.textFieldSecondPart.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldSecondPart.addKeyListener(this.keyPressedListener);

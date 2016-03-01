@@ -1,44 +1,39 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
+import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.mapview.layer.propertymodel.LayerStretchOptionPropertyModel;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.StateChangeEvent;
+import com.supermap.desktop.ui.StateChangeListener;
+import com.supermap.desktop.ui.TristateCheckBox;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.utilties.ImageStretchTypeUtilties;
+import com.supermap.mapping.ImageStretchType;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.security.KeyStore.PrivateKeyEntry;
 import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.GroupLayout.Alignment;
-
-import com.supermap.desktop.DefaultValues;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.mapview.layer.propertymodel.LayerStretchOptionPropertyModel;
-import com.supermap.desktop.ui.StateChangeEvent;
-import com.supermap.desktop.ui.StateChangeListener;
-import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.utilties.ImageStretchTypeUtilties;
-import com.supermap.mapping.ImageStretchType;
 
 public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelStretchType; // 拉伸方式
 	private JComboBox<String> comboBoxStretchType; // 拉伸方式
 	private JLabel labelSdDeviationStretchFactor; // 标准差拉伸系数
-	private JFormattedTextField textFieldSdDeviationStretchFactor; // 标准差拉伸系数
+	private SMFormattedTextField textFieldSdDeviationStretchFactor; // 标准差拉伸系数
 	private JLabel labelGaussianStretchRatioFactor; // 高斯拉伸系数
-	private JFormattedTextField textFieldGaussionStretchRatioFactor; // 高斯拉伸系数
+	private SMFormattedTextField textFieldGaussionStretchRatioFactor; // 高斯拉伸系数
 	private TristateCheckBox checkBoxIsGaussionStMiddleFactor; // 高斯拉伸时使用中间值
 
 	private KeyAdapter keyAdapter = new KeyAdapter() {
@@ -98,9 +93,9 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 		this.labelStretchType = new JLabel("StretchType:");
 		this.comboBoxStretchType = new JComboBox<String>();
 		this.labelSdDeviationStretchFactor = new JLabel("StandardDeviationStretchFactor:");
-		this.textFieldSdDeviationStretchFactor = new JFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldSdDeviationStretchFactor = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.labelGaussianStretchRatioFactor = new JLabel("GaussianStretchRatioFactor:");
-		this.textFieldGaussionStretchRatioFactor = new JFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldGaussionStretchRatioFactor = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.checkBoxIsGaussionStMiddleFactor = new TristateCheckBox("IsGaussianStretchMiddleFctor");
 
 		GroupLayout groupLayout = new GroupLayout(this);
@@ -156,6 +151,8 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	@Override
 	protected void registerEvents() {
+		caretPositionListener.registerComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
+
 		this.comboBoxStretchType.addItemListener(this.comboBoxItemListener);
 
 		this.textFieldSdDeviationStretchFactor.addKeyListener(keyAdapter);
@@ -165,6 +162,8 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	@Override
 	protected void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
+
 		this.comboBoxStretchType.removeItemListener(this.comboBoxItemListener);
 		this.textFieldSdDeviationStretchFactor.removeKeyListener(keyAdapter);
 		this.textFieldGaussionStretchRatioFactor.removeKeyListener(keyAdapter);

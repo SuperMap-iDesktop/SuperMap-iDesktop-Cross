@@ -12,6 +12,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
@@ -41,6 +42,8 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private TristateCheckBox checkBoxIsCompleteLineSymbolDisplayed; // 显示完整线型
 	private TristateCheckBox checkBoxIsCrossroadOptimized; // 十字路口优化
@@ -278,6 +281,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void registerEvents() {
+		caretPositionListener.registerComponent(textFieldMinVisibleGeometrySize);
 		this.checkBoxIsCompleteLineSymbolDisplayed.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsCrossroadOptimized.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsSymbolScalable.addStateChangeListener(this.checkBoxStateChangeListener);
@@ -299,6 +303,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldMinVisibleGeometrySize);
 		this.checkBoxIsCompleteLineSymbolDisplayed.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsCrossroadOptimized.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsSymbolScalable.removeStateChangeListener(this.checkBoxStateChangeListener);

@@ -1,30 +1,23 @@
 package com.supermap.desktop.ui.controls.prjcoordsys;
 
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import com.supermap.data.CoordSysTransMethod;
-import com.supermap.data.CoordSysTransParameter;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
 
 public class JDialogPrjCoordSysTranslator extends SmDialog {
 
@@ -32,24 +25,25 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelMethod;
 	private JComboBox<String> comboBoxMethod;
 	private JButton buttonSetPrj;
 	private JLabel labelScaleDifference;
-	private JFormattedTextField textFieldScaleDifference;
+	private SMFormattedTextField textFieldScaleDifference;
 	private JLabel labelRotationX;
-	private JFormattedTextField textFieldRotationX;
+	private SMFormattedTextField textFieldRotationX;
 	private JLabel labelRotationY;
-	private JFormattedTextField textFieldRotationY;
+	private SMFormattedTextField textFieldRotationY;
 	private JLabel labelRotationZ;
-	private JFormattedTextField textFieldRotationZ;
+	private SMFormattedTextField textFieldRotationZ;
 	private JLabel labelTranslateX;
-	private JFormattedTextField textFieldTranslateX;
+	private SMFormattedTextField textFieldTranslateX;
 	private JLabel labelTranslateY;
-	private JFormattedTextField textFieldTranslateY;
+	private SMFormattedTextField textFieldTranslateY;
 	private JLabel labelTranslateZ;
-	private JFormattedTextField textFieldTranslateZ;
+	private SMFormattedTextField textFieldTranslateZ;
 	private JButton buttonOK;
 	private JButton buttonCancel;
 
@@ -84,8 +78,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	/**
 	 * 新建投影转换窗口
 	 *
-	 * @param beforePrj
-	 *            转换之前的投影信息
+	 * @param beforePrj 转换之前的投影信息
 	 */
 	public JDialogPrjCoordSysTranslator(PrjCoordSys beforePrj) {
 		this.beforePrj = beforePrj;
@@ -113,9 +106,9 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	private void initializeComponents() {
 		// 基本参数
 		this.labelMethod = new JLabel("Method:");
-		this.comboBoxMethod = new JComboBox<String>();
+		this.comboBoxMethod = new JComboBox<>();
 		this.labelScaleDifference = new JLabel("ScaleDiff");
-		this.textFieldScaleDifference = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldScaleDifference = new SMFormattedTextField(NumberFormat.getInstance());
 		this.buttonSetPrj = new JButton(ControlsProperties.getString("String_SetDesPrjCoordSys"));
 
 		JPanel panelBase = new JPanel();
@@ -148,11 +141,11 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 		// 旋转角度
 		this.labelRotationX = new JLabel("X:");
-		this.textFieldRotationX = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldRotationX = new SMFormattedTextField(NumberFormat.getInstance());
 		this.labelRotationY = new JLabel("Y:");
-		this.textFieldRotationY = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldRotationY = new SMFormattedTextField(NumberFormat.getInstance());
 		this.labelRotationZ = new JLabel("Z:");
-		this.textFieldRotationZ = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldRotationZ = new SMFormattedTextField(NumberFormat.getInstance());
 
 		JPanel panelRotation = new JPanel();
 		panelRotation.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_Rotation")));
@@ -186,11 +179,11 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 		// 偏移量
 		this.labelTranslateX = new JLabel("X:");
-		this.textFieldTranslateX = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldTranslateX = new SMFormattedTextField(NumberFormat.getInstance());
 		this.labelTranslateY = new JLabel("Y:");
-		this.textFieldTranslateY = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldTranslateY = new SMFormattedTextField(NumberFormat.getInstance());
 		this.labelTranslateZ = new JLabel("Z:");
-		this.textFieldTranslateZ = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldTranslateZ = new SMFormattedTextField(NumberFormat.getInstance());
 
 		JPanel panelOffset = new JPanel();
 		panelOffset.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_Offset")));
@@ -263,6 +256,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void registerEvents() {
+		caretPositionListener.registerComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX, textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.addItemListener(this.itemListener);
 		this.buttonSetPrj.addActionListener(this.actionListener);
 		this.buttonOK.addActionListener(this.actionListener);
@@ -270,6 +264,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX, textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.removeItemListener(this.itemListener);
 		this.buttonSetPrj.removeActionListener(this.actionListener);
 		this.buttonOK.removeActionListener(this.actionListener);
