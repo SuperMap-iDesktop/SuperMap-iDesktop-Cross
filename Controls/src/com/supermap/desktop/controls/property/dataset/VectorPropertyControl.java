@@ -1,25 +1,5 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.text.NumberFormatter;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EngineType;
@@ -34,6 +14,17 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 
 public class VectorPropertyControl extends AbstractPropertyControl {
 
@@ -443,13 +434,15 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonDefaultToleranceClicked() {
-		Tolerance tolerance = new Tolerance(this.datasetVector.getTolerance());
-		tolerance.setDefault();
-		this.nodeSnap = tolerance.getNodeSnap();
-		this.grain = tolerance.getGrain();
-		this.smallPolygon = tolerance.getSmallPolygon();
-		this.dangle = tolerance.getDangle();
-		this.extend = tolerance.getExtend();
+		Tolerance datasetTolerance = this.datasetVector.getTolerance();
+		Tolerance tolerance = new Tolerance(datasetTolerance);
+		datasetTolerance.setDefault();
+		this.nodeSnap = datasetTolerance.getNodeSnap();
+		this.grain = datasetTolerance.getGrain();
+		this.smallPolygon = datasetTolerance.getSmallPolygon();
+		this.dangle = datasetTolerance.getDangle();
+		this.extend = datasetTolerance.getExtend();
+		this.datasetVector.setTolerance(tolerance);
 		fillComponents();
 		setComponentsEnabled();
 	}
