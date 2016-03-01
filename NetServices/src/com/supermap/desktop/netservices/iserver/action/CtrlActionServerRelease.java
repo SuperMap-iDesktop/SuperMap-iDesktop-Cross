@@ -109,7 +109,7 @@ public class CtrlActionServerRelease extends CtrlAction {
 		Boolean prepare = true;
 		JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
 		JDialogWorkspaceSaveAs dialog = new JDialogWorkspaceSaveAs(parent, true, JDialogWorkspaceSaveAs.saveAsFile);
-		prepare = (dialog.showDialog() == DialogResult.OK);
+		prepare = (dialog.showDialog() == DialogResult.APPLY);
 		return prepare;
 	}
 }
