@@ -37,6 +37,23 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private JLabel jLabelServerAddress;
+	private JLabel jLabelServerType;
+	private JLabel jLabelUserName;
+	private JLabel jLabelPassword;
+	private JLabel jLabelDatasourceAlias;
+	private JLabel jLabelOpenType;
+	private JTextField jTextFieldServerAddress;
+	private JComboBox<String> jComboBoxServerType;
+	private JTextField jTextFieldUserName;
+	private JPasswordField jTextFieldPassword;
+	private JTextField jTextFieldDatasourceAlias;
+	private JCheckBox jCheckBoxReadonly;
+	private transient EngineType engineType;
+	private final static int LOAD_DATASOURCE_FAILED = 0;
+	public final static int LOAD_DATASOURCE_SUCCESSFUL = 1;
+	public final static int LOAD_DATASOURCE_EXCEPTION = 2;
+
 	public JPanelDatasourceInfoWeb() {
 		initComponents();
 		initResources();
@@ -125,23 +142,6 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 		String item = (String) this.jComboBoxServerType.getSelectedItem();
 		this.jTextFieldDatasourceAlias.setText(item);
 	}
-
-	private JLabel jLabelServerAddress;
-	private JLabel jLabelServerType;
-	private JLabel jLabelUserName;
-	private JLabel jLabelPassword;
-	private JLabel jLabelDatasourceAlias;
-	private JLabel jLabelOpenType;
-	private JTextField jTextFieldServerAddress;
-	private JComboBox<String> jComboBoxServerType;
-	private JTextField jTextFieldUserName;
-	private JPasswordField jTextFieldPassword;
-	private JTextField jTextFieldDatasourceAlias;
-	private JCheckBox jCheckBoxReadonly;
-	private transient EngineType engineType;
-	private final static int LOAD_DATASOURCE_FAILED = 0;
-	public final static int LOAD_DATASOURCE_SUCCESSFUL = 1;
-	public final static int LOAD_DATASOURCE_EXCEPTION = 2;
 
 	public void setDatasourceType(EngineType engineType) {
 		try {

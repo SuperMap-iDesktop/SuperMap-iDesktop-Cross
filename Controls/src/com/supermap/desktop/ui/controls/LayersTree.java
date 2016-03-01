@@ -226,39 +226,73 @@ public class LayersTree extends JTree {
 	}
 
 	/**
-	 * 针对专题图的刷新
+	 * 刷新指定图层，需要知道当前图层对应的treePath(路径)
+	 * 
+	 * @param layer
+	 * @param treePath
+	 */
+	public void refreshNode(Layer layer, TreePath treePath) {
+		DefaultMutableTreeNode lastselectDefaultMutableTreeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+		TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
+		DefaultMutableTreeNode layerNode = null;
+		if (treeNodeData.getData() instanceof Layer) {
+			layerNode = lastselectDefaultMutableTreeNode;
+		} else {
+			layerNode = (DefaultMutableTreeNode) lastselectDefaultMutableTreeNode.getParent();
+		}
+		// 记住刷新之前树的状态
+		Enumeration<TreePath> tempTreePath = null;
+		if (null != layerNode) {
+			tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
+			// 收起节点
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+				this.setExpandedState(tempTreePath.nextElement(), false);
+			}
+			// 删除指定节点
+			layerNode.removeAllChildren();
+			// 添加子树
+			addLayerItem(layer, layerNode);
+		}
+	}
+
+
+	/**
+	 * 针对专题图的刷新,通过传入当前图层来刷新 当前图层需在被选中状态下
 	 * 
 	 * @param layer
 	 */
 	public void refreshNode(Layer layer) {
 		try {
 			DefaultMutableTreeNode lastselectDefaultMutableTreeNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-			TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
-			DefaultMutableTreeNode layerNode = null;
-			if (treeNodeData.getData() instanceof Layer) {
-				layerNode = lastselectDefaultMutableTreeNode;
-			} else {
-				layerNode = (DefaultMutableTreeNode) lastselectDefaultMutableTreeNode.getParent();
-			}
-			// 记住刷新之前树的状态
-			Enumeration<TreePath> tempTreePath = null;
-			if (null != layerNode) {
-				tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
-				// 删除指定节点
-				layerNode.removeAllChildren();
-				// // 第三步：添加子树，
-				addLayerItem(layer, layerNode);
-				// 恢复到刷新之前的状态
-				for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
-					this.setExpandedState(tempTreePath.nextElement(), true);
-				}
-				this.setSelectionPath(new TreePath(layerNode.getPath()));
-			}
-
-			updateUI();
+			refreshNodeByTreeNode(layer, lastselectDefaultMutableTreeNode);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	private void refreshNodeByTreeNode(Layer layer, DefaultMutableTreeNode lastselectDefaultMutableTreeNode) {
+		TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
+		DefaultMutableTreeNode layerNode = null;
+		if (treeNodeData.getData() instanceof Layer) {
+			layerNode = lastselectDefaultMutableTreeNode;
+		} else {
+			layerNode = (DefaultMutableTreeNode) lastselectDefaultMutableTreeNode.getParent();
+		}
+		// 记住刷新之前树的状态
+		Enumeration<TreePath> tempTreePath = null;
+		if (null != layerNode) {
+			tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
+			// 删除指定节点
+			layerNode.removeAllChildren();
+			// // 第三步：添加子树，
+			addLayerItem(layer, layerNode);
+			// 恢复到刷新之前的状态
+			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+				this.setExpandedState(tempTreePath.nextElement(), true);
+			}
+			this.setSelectionPath(new TreePath(layerNode.getPath()));
+		}
+		updateUI();
 	}
 
 	private void addLayerItem(Layer layer, DefaultMutableTreeNode layerNode) {
@@ -317,14 +351,15 @@ public class LayersTree extends JTree {
 			}
 			return;
 		}
-		//统计专题图
-		if (layer.getTheme() instanceof ThemeGraph && ((ThemeGraph)layer.getTheme()).getCount()>0) {
+		// 统计专题图
+		if (layer.getTheme() instanceof ThemeGraph && ((ThemeGraph) layer.getTheme()).getCount() > 0) {
 			ThemeGraph themeGraph = (ThemeGraph) layer.getTheme();
 			for (int i = 0; i < themeGraph.getCount(); i++) {
 				ThemeGraphItem themeGraphItem = themeGraph.getItem(i);
 				TreeNodeData itemData = new TreeNodeData(themeGraphItem, NodeDataType.THEME_GRAPH_ITEM, layer);
 				insertNode(itemData, layerNode, i);
 			}
+			return;
 		}
 	}
 
@@ -334,6 +369,7 @@ public class LayersTree extends JTree {
 	}
 
 	private DefaultTreeModel getTreeModel() {
+		
 		TreeNodeData mapData = new TreeNodeData(currentMap.getName(), NodeDataType.UNKNOWN);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(mapData);
 		if (currentMap.getWorkspace() != null) {
@@ -1023,15 +1059,15 @@ public class LayersTree extends JTree {
 				if (treeNodeData.getData() instanceof ThemeUniqueItem) {
 					updateThemeUniqueItemStyle(symbolType, treeNodeData);
 					return;
-				} 
+				}
 				if (treeNodeData.getData() instanceof ThemeRangeItem) {
 					updateRangeItemStyle(symbolType, treeNodeData);
 					return;
-				} 
+				}
 				if (treeNodeData.getData() instanceof ThemeGridUniqueItem) {
 					updateGridUniqueItemStyle(treeNodeData, x, y);
 					return;
-				} 
+				}
 				if (treeNodeData.getData() instanceof ThemeGridRangeItem) {
 					updateGridRangeItemStyle(treeNodeData, x, y);
 					return;
@@ -1123,12 +1159,12 @@ public class LayersTree extends JTree {
 			if (treeNodeData.getData() instanceof ThemeUniqueItem) {
 				ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
 				geoStyleList.add(item.getStyle());
-			} 
+			}
 			if (treeNodeData.getData() instanceof ThemeRangeItem) {
 				ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
 				geoStyleList.add(item.getStyle());
 			}
-			if(treeNodeData.getData() instanceof ThemeGraphItem){
+			if (treeNodeData.getData() instanceof ThemeGraphItem) {
 				ThemeGraphItem item = (ThemeGraphItem) treeNodeData.getData();
 				geoStyleList.add(item.getUniformStyle());
 				symbolType = SymbolType.FILL;
@@ -1346,4 +1382,5 @@ public class LayersTree extends JTree {
 			LayersTree.this.repaint();
 		}
 	}
+
 }
