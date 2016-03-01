@@ -866,7 +866,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	@Override
 	public PropertyType getPropertyType() {
 		// TODO Auto-generated method stub
-		return null;
+		return PropertyType.GEOMETRY_REOCRD;
 	}
 
 	@Override

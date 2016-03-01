@@ -26,6 +26,7 @@ import com.supermap.desktop.dialog.DialogSaveAsMap;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
+import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
@@ -95,6 +96,7 @@ import java.awt.event.MouseWheelListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+
 
 public class FormMap extends FormBaseChild implements IFormMap {
 
@@ -526,16 +528,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private void initUneditableStatus() {
 		((SmTextField) getStatusbar().getComponent(PRJCOORSYS)).setEditable(false);
 		((SmTextField) getStatusbar().getComponent(LOCATION)).setEditable(false);
-		// TODO 投影，坐标显示不完全，缩小字体,
-		// 写法有问题，Linux系统上文本变方块
-		// Font font = ((SmTextField)
-		// getStatusbar().getComponent(PRJCOORSYS)).getFont();
-		// Font minFont = new Font(font.getName(), font.getStyle(),
-		// font.getSize() - 1);
-		// ((SmTextField)
-		// getStatusbar().getComponent(PRJCOORSYS)).setFont(minFont);
-		// ((SmTextField)
-		// getStatusbar().getComponent(LOCATION)).setFont(minFont);
 	}
 
 	protected void resetCenter(KeyEvent e, SmTextField pointXField, SmTextField pointYField) {
@@ -1016,11 +1008,16 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (this.mapControl != null) {
 				this.mapControl.requestFocus();
 			}
-			setSelectedGeometryProperty();
+			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+				if (PropertyType.isGeometryPropertyType(Application.getActiveApplication().getMainFrame().getPropertyManager().getPropertyType())) {
+					setSelectedGeometryProperty();
+				}
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 
 	@Override
 	public void deactived() {
@@ -1032,7 +1029,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (this.layersTree != null) {
 				this.layersTree.setMap(null);
 			}
-			setSelectedGeometryProperty();
+			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+				if (PropertyType.isGeometryPropertyType(Application.getActiveApplication().getMainFrame().getPropertyManager().getPropertyType())) {
+					setSelectedGeometryProperty();
+				}
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -1181,6 +1182,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			// 设置状态栏选中对象数
 			((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(selectGeometryCount));
+			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+				setSelectedGeometryProperty();
+			}
 			updataLayersTreeSelection();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

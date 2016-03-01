@@ -6,6 +6,7 @@ import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
@@ -208,6 +209,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.getTableHeader().addMouseMotionListener(columnHeaderMouseMotionListener);
 
 		this.jTableTabular.getTableHeader().addMouseListener(columnHeaderMouseListener);
+	}
+
+	@Override
+	public void actived() {
+		if (PropertyType.isGeometryPropertyType(Application.getActiveApplication().getMainFrame().getPropertyManager().getPropertyType())) {
+			Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
+		}
 	}
 
 	private void unRegisterEvents() {
