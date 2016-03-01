@@ -5,9 +5,11 @@ import com.supermap.data.Geometry;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IMeasureAble;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -22,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -32,7 +35,7 @@ import java.util.EventObject;
 /**
  * 量算基类
  */
-public abstract class Measure {
+public abstract class Measure implements IMeasureAble {
 
 
 	protected static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
@@ -85,7 +88,6 @@ public abstract class Measure {
 	 * 存放已添加的tags
 	 */
 	protected java.util.List<String> addedTags = new ArrayList<>();
-	private boolean inSetMeasure;
 	protected String textTagTitle;
 	/**
 	 * 防止在编辑时把整个屏幕清除了
@@ -101,8 +103,6 @@ public abstract class Measure {
 				if (isPanAction(newAction)) {
 					// 画->漫游
 					inPan = true;
-//					setTextBoxVisiable(false);
-//					removeLineAssistant();
 					actionTempGeometry(true);
 				} else {
 					// 画->其他
@@ -126,9 +126,15 @@ public abstract class Measure {
 			}
 		}
 	};
+	private FormMap formMap;
 
 	private boolean isPanAction(Action action) {
 		return action == Action.PAN || action == Action.ZOOMIN || action == Action.ZOOMOUT || action == Action.ZOOMFREE || action == Action.ZOOMFREE2;
+	}
+
+	@Override
+	public void stopMeasure() {
+		endMeasure(false);
 	}
 
 	protected void setTextBoxVisiable(boolean isVisible) {
@@ -172,16 +178,20 @@ public abstract class Measure {
 	 * 开始量算入口
 	 */
 	public void startMeasure() {
-		removeListeners();
-		cancleEdit();
 		getMapControl();
+		if (formMap.getiMeasureAble() != this && formMap.getiMeasureAble() != null) {
+			formMap.getiMeasureAble().stopMeasure();
+		}
+		formMap.setiMeasureAble(this);
+//		removeListeners();
+//		cancleEdit();
 		mapControl.setTrackMode(TrackMode.TRACK);
 		mapControl.setLayout(null);
 		// 添加编辑框到地图空间中
 		addTextBoxsToMapControl();
+		setMapAction();
 		addListeners();
 		isEditing = true;
-		setMapAction();
 		// 获取焦点响应按键
 		mapControl.requestFocusInWindow();
 	}
@@ -189,7 +199,7 @@ public abstract class Measure {
 	private void getMapControl() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormMap) {
-			FormMap formMap = (FormMap) activeForm;
+			formMap = (FormMap) activeForm;
 			this.mapControl = formMap.getMapControl();
 			initTextBoxs();
 		}
@@ -230,13 +240,15 @@ public abstract class Measure {
 			removeTrackingObject();
 			removeLineAssistant();
 			removeListeners();
-			if (mapControl != null) {
-				this.mapControl.setTrackMode(TrackMode.EDIT);
+			if (currentGeometry != null) {
+				currentGeometry.dispose();
 			}
-
 			if (!isChangeAction && this.mapControl != null) {
 				removeTempMeasureText();
 				this.mapControl.setAction(com.supermap.ui.Action.SELECT2);
+			}
+			if (mapControl != null) {
+				this.mapControl.setTrackMode(TrackMode.EDIT);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -260,16 +272,27 @@ public abstract class Measure {
 				if (addedTags != null) {
 					addedTags.clear();
 				}
-				mapControl.getMap().refreshTrackingLayer();
+				refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
+	protected void refreshTrackingLayer() {
+		TrackMode trackMode = mapControl.getTrackMode();
+		if (trackMode == TrackMode.TRACK) {
+			mapControl.getMap().refreshTrackingLayer();
+		} else {
+			mapControl.setTrackMode(TrackMode.TRACK);
+			mapControl.getMap().refreshTrackingLayer();
+			mapControl.setTrackMode(trackMode);
+
+		}
+	}
+
 
 	protected abstract Action getMeasureAction();
-
 
 
 	/**
@@ -294,6 +317,11 @@ public abstract class Measure {
 	}
 
 
+	/**
+	 * action改变时添加当前对象到跟踪层
+	 *
+	 * @param isAdd
+	 */
 	private void actionTempGeometry(boolean isAdd) {
 		if (mapControl != null) {
 			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
@@ -311,7 +339,7 @@ public abstract class Measure {
 					trackingLayer.remove(index);
 				}
 			}
-			mapControl.getMap().refresh();
+//			mapControl.getMap().refreshTrackingLayer();
 		}
 	}
 
@@ -319,15 +347,30 @@ public abstract class Measure {
 		return isEditing;
 	}
 
+	protected int getSystemLength() {
+		if (SystemPropertyUtilties.isWindows()) {
+			return 0;
+		} else {
+			return 20;
+		}
+	}
+
 	protected void addListeners() {
 		removeListeners();
+		this.mapControl.addKeyListener(this.keyAdapter);
 		this.mapControl.removeKeyListener(this.escClearKeyAdapt);// 只防止添加2次，不在退出时清除而在添加时删除
 		this.mapControl.addKeyListener(this.escClearKeyAdapt);
 
+		KeyListener[] keyListeners = mapControl.getKeyListeners();
+		for (KeyListener keyListener : keyListeners) {
+			if (keyListener != keyAdapter && keyListener != escClearKeyAdapt) {
+				mapControl.removeKeyListener(keyListener);
+				mapControl.addKeyListener(keyListener);
+			}
+		}
 		this.mapControl.addMouseListener(this.mouseAdapter);
-		this.mapControl.addKeyListener(this.keyAdapter);
-		this.mapControl.addActionChangedListener(actionChangedListener);
-		this.mapControl.addUndoneListener(undoneListener);
+		this.mapControl.addActionChangedListener(this.actionChangedListener);
+		this.mapControl.addUndoneListener(this.undoneListener);
 		this.mapControl.addTrackedListener(this.trackedListener);
 		this.mapControl.addTrackingListener(this.trackingListener);
 		this.mapControl.addMouseMotionListener(mouseMotionListener);
@@ -354,7 +397,7 @@ public abstract class Measure {
 
 			if (index >= 0) {
 				this.mapControl.getMap().getTrackingLayer().remove(index);
-				this.mapControl.getMap().refreshTrackingLayer();
+//				this.mapControl.getMap().refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -444,8 +487,9 @@ public abstract class Measure {
 	private KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				cancleEdit();
+				e.consume();
 			}
 		}
 	};
@@ -453,8 +497,12 @@ public abstract class Measure {
 	private final KeyAdapter escClearKeyAdapt = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
+			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
+				if (mapControl.getMap().getTrackingLayer().getCount() > 0) {
+					e.consume();
+				}
 				mapControl.getMap().getTrackingLayer().clear();
+				refreshTrackingLayer();
 				mapControl.removeKeyListener(this);
 			}
 		}

@@ -1,5 +1,7 @@
 package com.supermap.desktop.netservices.iserver;
 
+import com.supermap.desktop.netservices.NetServicesProperties;
+
 public class ServiceType {
 	public static final int NONE = 0x0000; // 无服务
 	public static final int RESTDATA = 0x0001; // REST-数据服务
@@ -16,4 +18,39 @@ public class ServiceType {
 	public static final int WMTS100 = 0x0800; // OGC-地图瓦片服务1.0.0
 	public static final int WMTSCHINA = 0x1000; // OGC-中国地图瓦片服务
 	public static final int WPS100 = 0x2000; // OGC-网络处理服务
+
+	public static String serviceTypeLocalized(String serviceType) {
+		String result = "";
+
+		if (serviceType.equalsIgnoreCase("RESTDATA")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_RestData");
+		} else if (serviceType.equalsIgnoreCase("RESTMAP")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_RestMap");
+		} else if (serviceType.equalsIgnoreCase("RESTREALSPACE")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_RestRealspace");
+		} else if (serviceType.equalsIgnoreCase("RESTSPATIALANALYST")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_RestSpatialAnalyst");
+		} else if (serviceType.equalsIgnoreCase("RESTTRANSPORTATIONANALYST")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_RestTransprotationAnalyst");
+		} else if (serviceType.equalsIgnoreCase("WCS111")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WCS111");
+		} else if (serviceType.equalsIgnoreCase("WCS112")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WCS112");
+		} else if (serviceType.equalsIgnoreCase("WFS100")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WFS100");
+		} else if (serviceType.equalsIgnoreCase("WMS111")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WMS111");
+		} else if (serviceType.equalsIgnoreCase("WMS130")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WMS130");
+		} else if (serviceType.equalsIgnoreCase("WMTS100")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WMTS100");
+		} else if (serviceType.equalsIgnoreCase("WMTSCHINA")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WMTSCHINA");
+		} else if (serviceType.equalsIgnoreCase("WPS100")) {
+			result = NetServicesProperties.getString("String_iServer_ServicesType_WPS100");
+		} else {
+			result = serviceType;
+		}
+		return result;
+	}
 }

@@ -42,7 +42,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -849,7 +848,7 @@ public class LayersTree extends JTree {
 					firePropertyChangeWithLayerSelect();
 				}
 				updateUI();
-				currentMap.refresh();
+//				currentMap.refresh();
 			}
 		}
 

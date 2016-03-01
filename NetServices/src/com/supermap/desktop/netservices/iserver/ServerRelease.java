@@ -2,6 +2,7 @@ package com.supermap.desktop.netservices.iserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -656,6 +658,10 @@ public class ServerRelease {
 			} finally {
 				response.close();
 			}
+		} catch (HttpHostConnectException e) {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_ConnectException"));
+		} catch (UnknownHostException e) {
+			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_UnknownHostException"));
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

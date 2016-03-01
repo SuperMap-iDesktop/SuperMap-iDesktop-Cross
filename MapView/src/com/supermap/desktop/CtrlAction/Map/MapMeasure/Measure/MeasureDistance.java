@@ -55,24 +55,11 @@ public class MeasureDistance extends Measure {
 		trackingListener = new TrackingListener() {
 			@Override
 			public void tracking(TrackingEvent trackingEvent) {
-//			removeTrackingObject();
 				if (currentGeometry != null) {
 					currentGeometry.dispose();
 				}
 				currentGeometry = trackingEvent.getGeometry().clone();
 				if (trackingEvent.getLength() > 0.0) {
-					// 长度大于0，删除最后一段
-//					Point2Ds part = ((GeoLine) currentGeometry).getPart(0);
-//					if (part.getCount() < 3) {
-//						// 2个点删完为0，直接置空
-//						currentGeometry.dispose();
-//						currentGeometry = null;
-//					} else {
-//						part.remove(part.getCount() - 1);
-//						currentGeometry.dispose();
-//						currentGeometry = new GeoLine(part);
-//					}
-
 					String unitString = getLengthUnit().toString();
 					GeoLine geoLine = ((GeoLine) trackingEvent.getGeometry());
 					Point2Ds points = geoLine.getPart(0);
@@ -126,7 +113,7 @@ public class MeasureDistance extends Measure {
 						mapControl.getMap().getTrackingLayer().add(geoCompound, TRAKCING_OBJECT_NAME);
 					}
 					// 刷新跟踪图层
-					mapControl.getMap().refreshTrackingLayer();
+					refreshTrackingLayer();
 
 					// 根据地图显示范围对辅助线进行裁剪
 					point2Ds.clear();
@@ -166,7 +153,7 @@ public class MeasureDistance extends Measure {
 						geoStyle.setLineWidth(0.1);
 						geoStyle.setFillSymbolID(1);
 						geoStyle.setLineColor(Color.BLUE);
-
+						e.getGeometry().setStyle(geoStyle);
 						mapControl.getMap().getTrackingLayer().add(e.getGeometry(), measureLineTag);
 
 						String unitString = getLengthUnit().toString();
@@ -177,7 +164,7 @@ public class MeasureDistance extends Measure {
 						drawDistanceText(points, unitString, 0, false);
 					}
 					cancleEdit();
-					mapControl.getMap().refresh();
+					refreshTrackingLayer();
 				} catch (Exception ex) {
 					Application.getActiveApplication().getOutput().output(ex);
 				}
@@ -208,7 +195,7 @@ public class MeasureDistance extends Measure {
 
 
 			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
-			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 			mapControl.add(labelTextBoxCurrent);
 			labelTextBoxCurrent.setVisible(true);
 			Point point = mapControl.getMap().mapToPixel(new Point2D(trackingEvent.getX(), trackingEvent.getY()));
@@ -228,7 +215,7 @@ public class MeasureDistance extends Measure {
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
 			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
-			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			mapControl.add(labelTextBoxTotle);
 			labelTextBoxTotle.setVisible(true);
@@ -236,6 +223,7 @@ public class MeasureDistance extends Measure {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 
 	private void drawDistanceText(Point2Ds points, String unitString, int param, boolean isDrawing) {
 		if (addedTags == null) {
@@ -294,7 +282,7 @@ public class MeasureDistance extends Measure {
 		}
 
 		beforeUnit = unitString;
-		mapControl.getMap().refreshTrackingLayer();
+//		mapControl.getMap().refreshTrackingLayer();
 	}
 
 
