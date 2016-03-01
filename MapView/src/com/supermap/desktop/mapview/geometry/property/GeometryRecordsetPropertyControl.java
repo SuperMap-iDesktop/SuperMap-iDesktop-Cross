@@ -224,7 +224,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	 * 对属性表信息进行设置
 	 */
 	private void setPropertyTable() {
-		this.propertyTable.getColumnModel().getColumn(((PropertyTableModel) this.propertyTable.getModel()).getColumnCount() - 1)
+		this.propertyTable.getColumnModel().getColumn(this.propertyTable.getModel().getColumnCount() - 1)
 				.setCellEditor(new PropertyTableCellEditor(new JTextField()));
 		setColumnSize();
 		setComponentsEnabled();
@@ -549,7 +549,13 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				} else if (fieldType == FieldType.SINGLE) {
 					this.fieldDataInfos.get(rowIndex).setFieldValue(Float.parseFloat(aValue.toString()));
 				} else if (fieldType == FieldType.BYTE) {
+					/* UGDJ-306 组件底层也用的Byte，设不进去  xiajt
+					int value = Integer.parseInt(aValue.toString());
+					if (value >= 0 && value <= 255) {
+						this.fieldDataInfos.get(rowIndex).setFieldValue(value);
+					}*/
 					this.fieldDataInfos.get(rowIndex).setFieldValue(Byte.parseByte(aValue.toString()));
+
 				} else if (fieldType == FieldType.DATETIME) {
 					SimpleDateFormat dateformat = new SimpleDateFormat(DATE_STYLE);
 					if (null != dateformat.parse(aValue.toString())) {

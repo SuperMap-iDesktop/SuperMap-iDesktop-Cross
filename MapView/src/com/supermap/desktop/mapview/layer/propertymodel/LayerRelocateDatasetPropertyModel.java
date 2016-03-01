@@ -3,10 +3,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Map;
 
 public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 
@@ -32,13 +29,16 @@ public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 	}
 
 	private void initializeProperties(Layer[] layers, IFormMap formMap) {
+		if (layers == null || layers.length <= 0 || layers[0] == null || layers[0].isDisposed()) {
+			return;
+		}
 		this.layerRelocateDataset = layers[0].getDataset();
 		this.propertyEnabled.put(DATASET, true);
 		checkPropertyEnabled();
 
-		if (layers != null && formMap != null && layers.length > 0) {
+		if (formMap != null && layers.length > 0) {
 			for (Layer layer : layers) {
-				if (layer == null) {
+				if (layer == null || layer.isDisposed()) {
 					break;
 				}
 

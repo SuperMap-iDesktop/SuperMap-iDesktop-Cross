@@ -1,15 +1,13 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import java.util.HashMap;
-
-import com.supermap.data.DatasetImage;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.ImageStretchOption;
 import com.supermap.mapping.ImageStretchType;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingImage;
-import com.supermap.mapping.Map;
+
+import java.util.HashMap;
 
 public class LayerStretchOptionPropertyModel extends LayerPropertyModel {
 
@@ -137,7 +135,7 @@ public class LayerStretchOptionPropertyModel extends LayerPropertyModel {
 
 		if (layers != null && formMap != null && formMap.getMapControl() != null && formMap.getMapControl().getMap() != null && layers.length > 0) {
 			for (Layer layer : layers) {
-				if (layer == null) {
+				if (layer == null || layer.isDisposed()) {
 					break;
 				}
 

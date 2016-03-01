@@ -9,6 +9,7 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
@@ -200,7 +201,7 @@ public class MapViewUtilties {
 		return count;
 	}
 
-	public static int clearAllSelection(IFormMap formMap){
+	public static int clearAllSelection(IFormMap formMap) {
 		try {
 			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
@@ -215,11 +216,11 @@ public class MapViewUtilties {
 		return 0;
 	}
 
-	public static int calculateSelectNumber(IFormMap formMap){
+	public static int calculateSelectNumber(IFormMap formMap) {
 		ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
 		int count = 0;
 		for (Layer layer : layers) {
-			if(layer.getSelection()!=null && layer.getSelection().getCount()>0){
+			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 				count += layer.getSelection().getCount();
 			}
 		}
@@ -233,14 +234,27 @@ public class MapViewUtilties {
 	 * @return 是否打开
 	 */
 	public static boolean openMap(String mapName) {
-		IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
-		if (formMap != null) {
-			Map map = formMap.getMapControl().getMap();
-			map.open(mapName);
-			Application.getActiveApplication().resetActiveForm();
-			map.refresh();
-			UICommonToolkit.getLayersManager().setMap(map);
+		int index = -1;
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			if (formManager.get(i).getText().equals(mapName) && formManager.get(i).getWindowType() == WindowType.MAP) {
+				index = i;
+				break;
+			}
+		}
+		if (index != -1) {
+			formManager.setActiveForm(formManager.get(index));
 			return true;
+		} else {
+			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
+			if (formMap != null) {
+				Map map = formMap.getMapControl().getMap();
+				map.open(mapName);
+				Application.getActiveApplication().resetActiveForm();
+				map.refresh();
+				UICommonToolkit.getLayersManager().setMap(map);
+				return true;
+			}
 		}
 		return false;
 	}

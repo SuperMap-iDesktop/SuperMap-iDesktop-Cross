@@ -5,20 +5,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerCaptionChangedEvent;
-import com.supermap.mapping.LayerCaptionChangedListener;
 import com.supermap.mapping.LayerChart;
-import com.supermap.mapping.LayerEditableChangedEvent;
-import com.supermap.mapping.LayerEditableChangedListener;
 import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerSelectableChangedEvent;
-import com.supermap.mapping.LayerSelectableChangedListener;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.LayerSnapableChangedEvent;
-import com.supermap.mapping.LayerSnapableChangedListener;
-import com.supermap.mapping.LayerVisibleChangedEvent;
-import com.supermap.mapping.LayerVisibleChangedListener;
-import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeType;
 
 public class LayerBasePropertyModel extends LayerPropertyModel {
@@ -209,7 +197,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 	 * 根据指定的图层初始化数据
 	 * 
 	 * @param layers
-	 * @param map
+	 * @param formMap
 	 */
 	private void initializeProperties(Layer[] layers, IFormMap formMap) {
 		resetProperties();
@@ -217,7 +205,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 
 		if (layers != null && formMap != null && formMap.getMapControl() != null && formMap.getMapControl().getMap() != null && layers.length > 0) {
 			for (Layer layer : layers) {
-				if (layer == null) {
+				if (layer == null || layer.isDisposed()) {
 					break;
 				}
 
@@ -250,7 +238,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 		this.minVisibleScale = 0.0;
 		this.maxVisibleScale = 0.0;
 
-		if (getLayers() != null && getLayers().length > 0) {
+		if (getLayers() != null && getLayers().length > 0 && getLayers()[0]!=null && !getLayers()[0].isDisposed()) {
 			this.isVisible = getLayers()[0].isVisible();
 			this.isEditable = getLayers()[0].isEditable();
 			this.isSelectable = getLayers()[0].isSelectable();
@@ -310,7 +298,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 				boolean isVisibleSettingsValue = this.isVisible != null && this.isVisible;
 
 				for (Layer layer : getLayers()) {
-					if (layer == null) {
+					if (layer == null || layer.isDisposed()) {
 						break;
 					}
 
