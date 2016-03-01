@@ -2,6 +2,11 @@ package com.supermap.desktop.netservices.iserver;
 
 import java.io.File;
 
+import javax.swing.event.EventListenerList;
+
+import com.supermap.desktop.event.SelectedChangeEvent;
+import com.supermap.desktop.event.SelectedChangeListener;
+
 /**
  * 带选择状态的文件封装
  * 
@@ -9,8 +14,12 @@ import java.io.File;
  *
  */
 public class SelectableFile extends File {
-	private File file;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private boolean isSelected = false;
+	private EventListenerList listenerList = new EventListenerList();
 
 	public SelectableFile(String pathname, boolean isSelected) {
 		super(pathname);
@@ -27,5 +36,23 @@ public class SelectableFile extends File {
 
 	public void setIsSelected(boolean isSelected) {
 		this.isSelected = isSelected;
+	}
+
+	public void addSelectedChangeListener(SelectedChangeListener listener) {
+		this.listenerList.add(SelectedChangeListener.class, listener);
+	}
+
+	public void removeSelectedChangeListener(SelectedChangeListener listener) {
+		this.listenerList.remove(SelectedChangeListener.class, listener);
+	}
+
+	private void fireSelectedChange(SelectedChangeEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == SelectedChangeListener.class) {
+				((SelectedChangeListener) listeners[i + 1]).selectedChange(e);
+			}
+		}
 	}
 }
