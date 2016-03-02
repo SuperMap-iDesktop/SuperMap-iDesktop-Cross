@@ -30,7 +30,7 @@ public class TextStyleDialog extends SmDialog {
 	 */
 	private void initComponents() {
 		setTitle(ControlsProperties.getString("String_Form_SetTextStyle"));
-		setSize(400, 450);
+		setSize(420, 500);
 		//  @formatter:off
 		getContentPane().setLayout(new GridBagLayout());
 		getContentPane().add(textStyleContainer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(2, 1));

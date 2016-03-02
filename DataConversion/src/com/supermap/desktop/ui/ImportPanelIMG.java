@@ -58,12 +58,9 @@ public class ImportPanelIMG extends AbstractImportPanel {
 	private transient CommonActionLitener actionLitener = new CommonActionLitener();
 	private ActionListener buttonPropertyAction;
 
-	public ImportPanelIMG() {
-		initComponents();
-		initResource();
-		registActionListener();
-	}
-
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public ImportPanelIMG(DataImportFrame dataImportFrame, ImportFileInfo fileInfo) {
 		this.dataImportFrame = dataImportFrame;
 		this.fileInfo = fileInfo;
@@ -76,6 +73,8 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	private void setImportsave(int save, ImportSettingIMG tempsetting) {
@@ -197,7 +196,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
 		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
 		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-	//@formatter:on
+	   //@formatter:on
 	}
 
 	private void initPanelDatapath() {
@@ -208,7 +207,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.panelDatapath.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelDatapath.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
 		this.panelDatapath.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 5).setIpad(20, 0));
-	//@formatter:on
+	    //@formatter:on
 	}
 
 	private void initPanelTransform() {
@@ -218,7 +217,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.panelTransform.add(this.comboBoxImportModel,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelTransform.add(this.labelImportSave,   	new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 10, 5));
 		this.panelTransform.add(this.comboBoxImportSave,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
-	//@formatter:on
+	    //@formatter:on
 	}
 
 	private void initPanelResultSet() {
@@ -235,7 +234,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.panelResultSet.add(this.comboBoxCodingType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelResultSet.add(this.labelDatasetType,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 0, 10, 5));
 		this.panelResultSet.add(this.comboBoxDatatype,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
-	// @formatter:on
+	    // @formatter:on
 	}
 
 	class CommonActionLitener implements ActionListener {
