@@ -15,8 +15,7 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -29,7 +28,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +35,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class PanelPointOrRegionAnalyst extends JPanel {
@@ -46,6 +43,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
+
 	private JPanel panelBufferRadius;
 	private JLabel labelUnit;
 	private JRadioButton radioButtonNumeric;
@@ -377,6 +377,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void registerEvent() {
+		caretPositionListener.registerComponent(textFieldNumeric);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
 		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(new LocalItemListener());

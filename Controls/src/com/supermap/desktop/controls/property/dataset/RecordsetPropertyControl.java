@@ -16,7 +16,9 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -47,6 +49,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int COLUMN_INDEX_WIDTH = 80;
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JTable tableRecordset;
 	private JButton buttonAdd;
@@ -102,6 +105,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			setComponentsEnabled();
 		}
 	};
+	private SMFormattedTextField intEditorControl;
 
 	public RecordsetPropertyControl(DatasetVector datasetVector) {
 		super(ControlsProperties.getString("String_RecordsetStruct"));
@@ -190,7 +194,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		NumberFormatter formatter = new NumberFormatter(NumberFormat.getIntegerInstance());
 		formatter.setValueClass(Integer.class);
 		formatter.setMinimum(0);
-		JFormattedTextField intEditorControl = new JFormattedTextField(formatter);
+		intEditorControl = new SMFormattedTextField(formatter);
 		DefaultCellEditor integerEditor = new DefaultCellEditor(intEditorControl);
 		this.tableRecordset.setDefaultEditor(Integer.class, integerEditor);
 
@@ -203,8 +207,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		// ColumnClass FieldType Editor
 		JComboBox<String> fieldTypeEditorControl = new JComboBox<String>();
 		Enum[] values = FieldType.getEnums(FieldType.class);
-		for (int i = 0; i < values.length; i++) {
-			fieldTypeEditorControl.addItem(FieldTypeUtilties.getFieldTypeName((FieldType) values[i]));
+		for (Enum value : values) {
+			fieldTypeEditorControl.addItem(FieldTypeUtilties.getFieldTypeName((FieldType) value));
 		}
 		DefaultCellEditor fieldTypeEditor = new DefaultCellEditor(fieldTypeEditorControl);
 		this.tableRecordset.setDefaultEditor(FieldType.class, fieldTypeEditor);
@@ -219,6 +223,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
+		caretPositionListener.registerComponent(intEditorControl);
 		this.buttonAdd.addActionListener(this.actionListener);
 		this.buttonDelete.addActionListener(this.actionListener);
 		this.buttonReset.addActionListener(this.actionListener);
@@ -229,6 +234,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
+		caretPositionListener.deregisterComponent(intEditorControl);
 		this.buttonAdd.removeActionListener(this.actionListener);
 		this.buttonDelete.removeActionListener(this.actionListener);
 		this.buttonReset.removeActionListener(this.actionListener);

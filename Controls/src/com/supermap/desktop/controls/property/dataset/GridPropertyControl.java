@@ -1,30 +1,5 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.BorderLayout;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.Application;
@@ -36,12 +11,28 @@ import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.ButtonColorSelector;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.ColorsUtilties;
 import com.supermap.desktop.utilties.PixelFormatUtilties;
 import com.supermap.mapping.Layers;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class GridPropertyControl extends AbstractPropertyControl {
 
@@ -52,6 +43,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_LABEL_WIDTH = 80;
 	private static final int DEFUALT_COMPONENT_WIDTH = 150;
 
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
+
+
 	private JLabel labelPixelFormat;
 	private JTextField textFieldPixelFormat;
 	private JLabel labelX;
@@ -59,7 +53,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	private JLabel labelY;
 	private JTextField textFieldY;
 	private JLabel labelNoValue;
-	private JFormattedTextField textFieldNoValue;
+	private SMFormattedTextField textFieldNoValue;
 	private JLabel labelHeight;
 	private JTextField textFieldHeight;
 	private JLabel labelWidth;
@@ -173,7 +167,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.textFieldY = new JTextField();
 		this.textFieldY.setEditable(false);
 		this.labelNoValue = new JLabel("NoValue:");
-		this.textFieldNoValue = new JFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldNoValue = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.labelHeight = new JLabel("RowCount:");
 		this.textFieldHeight = new JTextField();
 		this.textFieldHeight.setEditable(false);
@@ -366,6 +360,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
+		caretPositionListener.registerComponent(textFieldNoValue);
 		this.textFieldNoValue.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldNoValue.getDocument().addDocumentListener(this.documentListener);
 		this.buttonSetClipRegion.addActionListener(this.actionListener);
@@ -376,6 +371,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldNoValue);
 		this.textFieldNoValue.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldNoValue.getDocument().removeDocumentListener(this.documentListener);
 		this.buttonSetClipRegion.removeActionListener(this.actionListener);

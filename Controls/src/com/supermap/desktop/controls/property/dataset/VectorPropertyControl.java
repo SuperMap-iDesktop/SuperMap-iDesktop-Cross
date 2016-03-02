@@ -1,25 +1,5 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.text.NumberFormatter;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EngineType;
@@ -32,8 +12,20 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 
 public class VectorPropertyControl extends AbstractPropertyControl {
 
@@ -43,6 +35,9 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_LABEL_WIDTH = 100;
 	private static final int DEFAULT_COMPONENT_WIDTH = 150;
+
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
+
 
 	private JLabel labelRecordCount;
 	private JTextField textFieldRecordCount;
@@ -339,6 +334,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
+		caretPositionListener.registerComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.addItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.addItemListener(this.itemListener);
 		this.checkBoxIsFileCache.addItemListener(this.itemListener);
@@ -355,6 +351,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.removeItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.removeItemListener(this.itemListener);
 		this.checkBoxIsFileCache.removeItemListener(this.itemListener);
@@ -443,13 +440,15 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonDefaultToleranceClicked() {
-		Tolerance tolerance = new Tolerance(this.datasetVector.getTolerance());
-		tolerance.setDefault();
-		this.nodeSnap = tolerance.getNodeSnap();
-		this.grain = tolerance.getGrain();
-		this.smallPolygon = tolerance.getSmallPolygon();
-		this.dangle = tolerance.getDangle();
-		this.extend = tolerance.getExtend();
+		Tolerance datasetTolerance = this.datasetVector.getTolerance();
+		Tolerance tolerance = new Tolerance(datasetTolerance);
+		datasetTolerance.setDefault();
+		this.nodeSnap = datasetTolerance.getNodeSnap();
+		this.grain = datasetTolerance.getGrain();
+		this.smallPolygon = datasetTolerance.getSmallPolygon();
+		this.dangle = datasetTolerance.getDangle();
+		this.extend = datasetTolerance.getExtend();
+		this.datasetVector.setTolerance(tolerance);
 		fillComponents();
 		setComponentsEnabled();
 	}

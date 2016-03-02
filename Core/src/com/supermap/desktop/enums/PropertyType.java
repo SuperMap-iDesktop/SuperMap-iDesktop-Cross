@@ -12,6 +12,10 @@ public enum PropertyType {
 	RECORDSET, // 属性表结构
 	GEOMETRY_REOCRD, // 对象属性信息
 	GEOMETRY_SPATIAL, // 对象空间信息
-	GEOMETRY_NODE, // 对象节点信息
+	GEOMETRY_NODE; // 对象节点信息
 	// @formatter:on
+
+	public static boolean isGeometryPropertyType(PropertyType propertyType) {
+		return propertyType == PropertyType.GEOMETRY_NODE || propertyType == PropertyType.GEOMETRY_REOCRD || propertyType == PropertyType.GEOMETRY_SPATIAL;
+	}
 }

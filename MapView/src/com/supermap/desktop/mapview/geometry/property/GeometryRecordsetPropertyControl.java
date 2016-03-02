@@ -8,6 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.RecordsetFinalizer;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
@@ -223,7 +224,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	 * 对属性表信息进行设置
 	 */
 	private void setPropertyTable() {
-		this.propertyTable.getColumnModel().getColumn(((PropertyTableModel) this.propertyTable.getModel()).getColumnCount() - 1)
+		this.propertyTable.getColumnModel().getColumn(this.propertyTable.getModel().getColumnCount() - 1)
 				.setCellEditor(new PropertyTableCellEditor(new JTextField()));
 		setColumnSize();
 		setComponentsEnabled();
@@ -548,7 +549,13 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				} else if (fieldType == FieldType.SINGLE) {
 					this.fieldDataInfos.get(rowIndex).setFieldValue(Float.parseFloat(aValue.toString()));
 				} else if (fieldType == FieldType.BYTE) {
+					/* UGDJ-306 组件底层也用的Byte，设不进去  xiajt
+					int value = Integer.parseInt(aValue.toString());
+					if (value >= 0 && value <= 255) {
+						this.fieldDataInfos.get(rowIndex).setFieldValue(value);
+					}*/
 					this.fieldDataInfos.get(rowIndex).setFieldValue(Byte.parseByte(aValue.toString()));
+
 				} else if (fieldType == FieldType.DATETIME) {
 					SimpleDateFormat dateformat = new SimpleDateFormat(DATE_STYLE);
 					if (null != dateformat.parse(aValue.toString())) {
@@ -836,6 +843,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 					this.recordset.setFieldValue(this.getName(), resultValue);
 					this.recordset.update();
 				}
+				MapViewUtilties.refreshCurrentMap();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
@@ -866,7 +874,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	@Override
 	public PropertyType getPropertyType() {
 		// TODO Auto-generated method stub
-		return null;
+		return PropertyType.GEOMETRY_REOCRD;
 	}
 
 	@Override

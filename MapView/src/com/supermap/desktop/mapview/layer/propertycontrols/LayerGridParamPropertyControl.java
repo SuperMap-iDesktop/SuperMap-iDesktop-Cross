@@ -1,31 +1,28 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import com.supermap.data.Colors;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
+import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 
 public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl {
 
@@ -34,6 +31,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String PROPERTY_VALUE = "value";
+	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelBrightness;
 	private SMSpinner spinnerBrightness;
@@ -42,7 +40,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 	private JLabel labelColorTable;
 	private ColorsComboBox colorsTable;
 	private JLabel labelSpecialValue;
-	private JFormattedTextField textFieldSpecialValue;
+	private SMFormattedTextField textFieldSpecialValue;
 	private JLabel labelSpecialValueColor;
 	private ButtonColorSelector buttonSpecialValueColor;
 	private TristateCheckBox checkBoxIsSpecialValueTransparent;
@@ -117,7 +115,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.colorsTable = new ColorsComboBox();
 		this.labelSpecialValue = new JLabel("SpecialValue:");
 		this.labelSpecialValue.setToolTipText(this.labelSpecialValue.getText());
-		this.textFieldSpecialValue = new JFormattedTextField(NumberFormat.getInstance());
+		this.textFieldSpecialValue = new SMFormattedTextField(NumberFormat.getInstance());
 		this.labelSpecialValueColor = new JLabel("SpecialValueColor:");
 		this.labelSpecialValueColor.setToolTipText(this.labelSpecialValueColor.getText());
 		this.buttonSpecialValueColor = new ButtonColorSelector();
@@ -190,6 +188,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	@Override
 	protected void registerEvents() {
+		caretPositionListener.registerComponent(textFieldSpecialValue);
 		this.spinnerBrightness.addChangeListener(this.spinnerValueChangeListener);
 		this.spinnerContrast.addChangeListener(this.spinnerValueChangeListener);
 		this.textFieldSpecialValue.addPropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);
@@ -200,6 +199,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	@Override
 	protected void unregisterEvents() {
+		caretPositionListener.deregisterComponent(textFieldSpecialValue);
 		this.spinnerBrightness.removeChangeListener(this.spinnerValueChangeListener);
 		this.spinnerContrast.removeChangeListener(this.spinnerValueChangeListener);
 		this.textFieldSpecialValue.removePropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);

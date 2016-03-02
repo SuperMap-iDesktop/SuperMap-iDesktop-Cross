@@ -48,7 +48,7 @@ public class MeasureArea extends Measure {
 
 							String text = MessageFormat.format(CoreProperties.getString("String_Map_MeasureArea"), decimalFormat.format(getTotleArea(e.getArea())), getAreaUnit().toString());
 							labelTextBoxCurrent.setText(text);
-							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 10 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 12 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
 							labelTextBoxCurrent.setLocation(pointInnerPixel);
 							mapControl.add(labelTextBoxCurrent);
 							labelTextBoxCurrent.setVisible(true);

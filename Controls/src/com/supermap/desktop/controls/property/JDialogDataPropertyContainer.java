@@ -1,23 +1,20 @@
 package com.supermap.desktop.controls.property;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Window;
-import java.util.ArrayList;
-
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.enums.PropertyType;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class JDialogDataPropertyContainer extends JDialog implements IPropertyManager {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<AbstractPropertyControl> controls = new ArrayList<AbstractPropertyControl>();
@@ -79,6 +76,8 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			Component component = this.tabbledPane.getComponentAt(selectedIndex);
 
 			if (component instanceof AbstractPropertyControl) {
+
+				currentProperty = (IProperty) component;
 				((AbstractPropertyControl) component).refreshData();
 			}
 		}
@@ -92,12 +91,13 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 				this.setTitle(this.currentProperty.getPropertyName());
 				this.getContentPane().add((AbstractPropertyControl) this.currentProperty, BorderLayout.CENTER);
 			} else if (properties.length > 1) {
+				this.tabbledPane.removeChangeListener(this.tabbledPaneChangeListener);
 				for (IProperty property : properties) {
 					this.controls.add((AbstractPropertyControl) property);
 					this.tabbledPane.addTab(property.getPropertyName(), (AbstractPropertyControl) property);
 					this.getContentPane().add(this.tabbledPane, BorderLayout.CENTER);
 				}
-
+				this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
 				setTabbledPaneSelectedPropertyControl(this.currentProperty);
 			}
 		}
@@ -105,7 +105,7 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 
 	/**
 	 * 选中 TabbledPane 指定的 Tab 页
-	 * 
+	 *
 	 * @param property
 	 */
 	private void setTabbledPaneSelectedPropertyControl(IProperty property) {
@@ -124,5 +124,14 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 	@Override
 	public boolean isUsable() {
 		return this.isVisible();
+	}
+
+	@Override
+	public PropertyType getPropertyType() {
+		if (currentProperty != null) {
+			return currentProperty.getPropertyType();
+		} else {
+			return null;
+		}
 	}
 }

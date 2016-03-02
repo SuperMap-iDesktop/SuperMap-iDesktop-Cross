@@ -15,12 +15,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.EventListenerList;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
+import com.supermap.desktop.event.SelectedChangeListener;
+import com.supermap.desktop.event.TableCellValueChangeEvent;
+import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -40,14 +44,12 @@ public class PanelFolderSelector extends JPanel {
 	private static final int CONTENT_FILE_AND_DIRECTORY = 3;
 
 	private int displayContent = CONTENT_FILE_AND_DIRECTORY;
-	private ArrayList<SelectableFile> selectedFiles;
-
 	/**
 	 * 显示隐藏文件。true，在列表中列出，并以 是/否 显示；false，过滤掉，并且不在列表中显示。
 	 */
 	private boolean isShowHidden = true;
-
 	private JTable table;
+	private EventListenerList listenerList = new EventListenerList();
 
 	private PanelFolderSelector() {
 		initializeComponent();
@@ -67,13 +69,34 @@ public class PanelFolderSelector extends JPanel {
 		((FolderSelectorTableModel) this.table.getModel()).setShowHidden(isShowHidden);
 	}
 
-	public ArrayList<SelectableFile> getSelectedFiles() {
-		return this.selectedFiles;
+	public void addFileSelectedChangeListener(FileSelectedChangeListener listener) {
+		this.listenerList.add(FileSelectedChangeListener.class, listener);
+	}
+
+	public void removeFileSelectedChangeListener(FileSelectedChangeListener listener) {
+		this.listenerList.remove(FileSelectedChangeListener.class, listener);
+	}
+
+	private void fireFileSelectedChange(FileSelectedChangeEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FileSelectedChangeListener.class) {
+				((FileSelectedChangeListener) listeners[i + 1]).FileSelectedChange(e);
+			}
+		}
 	}
 
 	private void initializeComponent() {
 		this.table = new JTable();
-		FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
+		final FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
+		tableModel.addTableCellValueChangeListener(new TableCellValueChangeListener() {
+
+			@Override
+			public void tableCellValueChange(TableCellValueChangeEvent e) {
+				PanelFolderSelector.this.tableCellValueChange(tableModel.getFile(e.getRow()));
+			}
+		});
 		this.table.setModel(tableModel);
 		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SELECTED).setPreferredWidth(20);
 		this.table.getColumnModel().getColumn(FolderSelectorTableModel.HIDEN).setPreferredWidth(20);
@@ -81,6 +104,10 @@ public class PanelFolderSelector extends JPanel {
 		JScrollPane scrollTable = new JScrollPane(this.table);
 		this.setLayout(new BorderLayout());
 		this.add(scrollTable, BorderLayout.CENTER);
+	}
+
+	private void tableCellValueChange(SelectableFile file) {
+		fireFileSelectedChange(new FileSelectedChangeEvent(this, file));
 	}
 
 	/**
@@ -144,8 +171,6 @@ public class PanelFolderSelector extends JPanel {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static final String ICON_DIRECTORY_PATH = "/com/supermap/desktop/netservicesresources/directory.png";
-		private static final String ICON_FILE_PATH = "/com/supermap/desktop/netservicesresources/file.png";
 
 		public static final int SELECTED = 0;
 		public static final int NAME = 1; // 名称列
@@ -217,6 +242,7 @@ public class PanelFolderSelector extends JPanel {
 					} else {
 						file.setIsSelected(Boolean.valueOf(aValue.toString()));
 					}
+					fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, columnIndex));
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
@@ -294,20 +320,31 @@ public class PanelFolderSelector extends JPanel {
 			fireTableDataChanged();
 		}
 
-		private Icon getIcon(boolean isDirectory) {
-			if (isDirectory) {
-				return getDirectoryIcon();
-			} else {
-				return getFileIcon();
+		public SelectableFile getFile(int rowIndex) {
+			SelectableFile file = null;
+
+			if (rowIndex < this.files.size()) {
+				file = this.files.get(rowIndex);
 			}
+			return file;
 		}
 
-		private Icon getFileIcon() {
-			return new ImageIcon(getClass().getResource(ICON_FILE_PATH));
+		public void addTableCellValueChangeListener(TableCellValueChangeListener listener) {
+			this.listenerList.add(TableCellValueChangeListener.class, listener);
 		}
 
-		private Icon getDirectoryIcon() {
-			return new ImageIcon(getClass().getResource(ICON_DIRECTORY_PATH));
+		public void removeTableCellValueChangeListener(TableCellValueChangeListener listener) {
+			this.listenerList.remove(TableCellValueChangeListener.class, listener);
+		}
+
+		private void fireTableCellValueChange(TableCellValueChangeEvent e) {
+			Object[] listeners = listenerList.getListenerList();
+
+			for (int i = listeners.length - 2; i >= 0; i -= 2) {
+				if (listeners[i] == TableCellValueChangeListener.class) {
+					((TableCellValueChangeListener) listeners[i + 1]).tableCellValueChange(e);
+				}
+			}
 		}
 	}
 }

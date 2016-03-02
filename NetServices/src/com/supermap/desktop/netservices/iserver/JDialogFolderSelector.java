@@ -15,6 +15,9 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 
+/**
+ * @author highsad iServer 服务发布的文件选择器，用在发布之前确认需要上传的文件和文件夹
+ */
 public class JDialogFolderSelector extends SmDialog implements ActionListener {
 
 	/**
@@ -26,27 +29,34 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private JButton buttonOK;
 	private JButton buttonCancel;
 	private PanelFolderSelector panelFolderSelector;
+	private String workspacePath;
 
-	public JDialogFolderSelector(ArrayList<SelectableFile> files) {
+	private FileSelectedChangeListener fileSelectedChangeListener = new FileSelectedChangeListener() {
+
+		@Override
+		public void FileSelectedChange(FileSelectedChangeEvent e) {
+			File workspaceFile = new File(workspacePath);
+			if (workspaceFile.equals(e.getFile())) {
+				buttonOK.setEnabled(e.getFile().isSelected());
+			}
+		}
+	};
+
+	public JDialogFolderSelector(ArrayList<SelectableFile> files, String workspacePath) {
 		this.panelFolderSelector = new PanelFolderSelector(files);
+		this.panelFolderSelector.addFileSelectedChangeListener(this.fileSelectedChangeListener);
+		this.workspacePath = workspacePath;
 		initializeComponents();
 		initializeResources();
 		setSize(new Dimension(600, 300));
 		setLocationRelativeTo(null);
 	}
 
-	public File[] selectedFiles() {
-		return null;
-	}
-
-	public File[] selectedDirectories() {
-		return null;
-	}
-
 	private void initializeComponents() {
 		setTitle("Confirm");
 		this.labelMessage = new JLabel("message");
 		this.buttonOK = new JButton("OK");
+		this.buttonOK.setEnabled(true);
 		this.buttonOK.addActionListener(this);
 		this.buttonCancel = new JButton("Cancel");
 		this.buttonCancel.addActionListener(this);

@@ -850,7 +850,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 				for (int i = 0; i < childFiles.length; i++) {
 					files.add(SelectableFile.fromFile(childFiles[i], !childFiles[i].isHidden()));
 				}
-				JDialogFolderSelector folderSelector = new JDialogFolderSelector(files);
+				JDialogFolderSelector folderSelector = new JDialogFolderSelector(files, serverRelease.getWorkspacePath());
 				if (folderSelector.showDialog() == DialogResult.OK) {
 					serverRelease.getFiles().clear();
 
