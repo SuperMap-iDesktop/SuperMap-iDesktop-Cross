@@ -268,20 +268,22 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	@Override
 	public void apply() {
-		getMap().setAngle(this.angle);
-		getMap().setColorMode(this.colorMode);
-		getMap().getBackgroundStyle().setFillForeColor(this.backgroundColor);
-		getMap().setMinVisibleTextSize(this.minVisibleTextSize);
-		getMap().setMaxVisibleTextSize(this.maxVisibleTextSize);
-		getMap().setMaxVisibleVertex(this.maxVisibleVertex);
-		getMap().setOverlapDisplayed(this.isOverlapDisplayed);
-		getMap().setMarkerAngleFixed(this.isMarkerAngleFixed);
-		getMap().setLineAntialias(this.isLineAntialias);
-		getMap().setTextAngleFixed(this.isTextAngleFixed);
-		getMap().setTextAntialias(this.isTextAntialias);
-		getMap().setTextOrientationFixed(this.isTextOrientationFixed);
-		getMap().setOverlapDisplayedOptions(this.mapOverlapDisplayedOptions);
-		getMap().refresh();
+		if (getMap() != null) {
+			getMap().setAngle(this.angle);
+			getMap().setColorMode(this.colorMode);
+			getMap().getBackgroundStyle().setFillForeColor(this.backgroundColor);
+			getMap().setMinVisibleTextSize(this.minVisibleTextSize);
+			getMap().setMaxVisibleTextSize(this.maxVisibleTextSize);
+			getMap().setMaxVisibleVertex(this.maxVisibleVertex);
+			getMap().setOverlapDisplayed(this.isOverlapDisplayed);
+			getMap().setMarkerAngleFixed(this.isMarkerAngleFixed);
+			getMap().setLineAntialias(this.isLineAntialias);
+			getMap().setTextAngleFixed(this.isTextAngleFixed);
+			getMap().setTextAntialias(this.isTextAntialias);
+			getMap().setTextOrientationFixed(this.isTextOrientationFixed);
+			getMap().setOverlapDisplayedOptions(this.mapOverlapDisplayedOptions);
+			getMap().refresh();
+		}
 	}
 
 	@Override
