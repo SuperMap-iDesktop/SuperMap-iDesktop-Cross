@@ -1,9 +1,12 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.TextStyleContainer;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.mapping.Layer;
@@ -115,7 +118,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void registActionListener() {
+	public void registActionListener() {
 		// do nothing
 		unregistActionListener();
 	}
@@ -128,14 +131,14 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.textStyleContainer.setRefreshAtOnce(isRefreshAtOnce);
 		this.panelProperty.setRefreshAtOnce(isRefreshAtOnce);
 		this.panelAdvance.setRefreshAtOnce(isRefreshAtOnce);
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.textStyleContainer.refreshMapAndLayer();
 		this.panelProperty.refreshMapAndLayer();
 		this.panelAdvance.refreshMapAndLayer();
@@ -146,6 +149,8 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			ThemeLabelUniformContainer.this.firePropertyChange("ThemeChange", null, null);
+			map = ThemeGuideFactory.getMapControl().getMap();
+			map.refresh();
 		}
 	}
 

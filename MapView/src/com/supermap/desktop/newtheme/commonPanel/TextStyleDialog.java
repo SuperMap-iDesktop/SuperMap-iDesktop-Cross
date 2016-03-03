@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.commonPanel;
 
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;

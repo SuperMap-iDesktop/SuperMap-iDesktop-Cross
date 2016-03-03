@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.commonPanel;
 
 import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
@@ -112,6 +112,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
 	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
 	private ChangeListener outLineWidthChangeListener = new OutLineChangeListener();
+	private transient ThemeLabel themeLabel;
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle;
@@ -129,6 +130,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.selectRow = selectRow;
 		this.map = map;
 		this.themeLayer = themeLabelLayer;
+		this.themeLabel = themeLabel;
 		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle();
 		initComponent();
 		initResources();
@@ -315,6 +317,10 @@ public class TextStyleContainer extends ThemeChangePanel {
 		panelFontEffect.add(this.checkBoxBGTransparent,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelFontEffect.add(this.checkBoxOutlook,        new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,0,10));
 		panelFontEffect.add(panelSlider,                 new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(0,10,2,10));
+		boolean isOutlook = this.checkBoxOutlook.isSelected();
+		if (isOutlook) {
+			this.sliderOutLineWidth.setEnabled(isOutlook);
+		}
 		//@formatter:on
 	}
 
@@ -362,7 +368,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	/**
 	 * 注册事件
 	 */
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.comboBoxFontName.addItemListener(this.itemListener);
 		this.comboBoxAlign.addItemListener(this.itemListener);
@@ -504,6 +510,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce && null != map) {
 			refreshMapAndLayer();
+		}
+		if (!isRefreshAtOnce && null != map && null != themeLabel) {
+			for (int i = 0; i < this.selectRow.length; i++) {
+				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
+			}
 		}
 		return;
 	}
@@ -816,7 +827,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 
@@ -825,7 +836,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 
 		if (this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(this.textStyle);

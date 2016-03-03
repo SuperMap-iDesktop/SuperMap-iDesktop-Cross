@@ -610,7 +610,8 @@ public class LayersTree extends JTree {
 				return;
 			}
 			String message = null;
-			if (paths.length == 1) {
+			if (paths.length == 1 && (((TreeNodeData)((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData() instanceof Layer)) {
+			
 				message = MessageFormat.format(ControlsProperties.getString("String_RemoveLayerInfo"),
 						((Layer) ((TreeNodeData) ((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData()).getName());
 			} else {

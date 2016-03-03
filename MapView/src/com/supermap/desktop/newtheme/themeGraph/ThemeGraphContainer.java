@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeGraph;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,6 +23,10 @@ import javax.swing.table.DefaultTableModel;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -154,7 +158,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private ActionListener toolbarAction = new ToolBarAction();
 	private PropertyChangeListener layerPropertyChangeListener = new LayersTreeChangeListener();
 	private MouseListener tableMouseListener = new TableMouseListener();
-
 	protected TextStyleDialog textStyleDialog;
 
 	/**
@@ -790,7 +793,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.tableGraphInfo.addMouseListener(this.localMouseListener);
 		this.comboBoxGraphType.addItemListener(this.graphTypeChangeListener);
@@ -974,7 +977,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					item.setCaption(caption);
 					GeoStyle newGeoStyle = new GeoStyle();
 					Colors colors = (Colors) comboBoxColor.getSelectedItem();
-					newGeoStyle.setFillForeColor(colors.get(0));
+					int colorCount = colors.getCount();
+					newGeoStyle.setFillForeColor(colors.get((colorCount/tempList.size())*i));
 					newGeoStyle.setLineWidth(0.1);
 					item.setUniformStyle(newGeoStyle);
 					if (!itemExist(item, existItems)) {
@@ -1296,7 +1300,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 			SymbolType symbolType = SymbolType.LINE;
 			GeoStyle geoStyle = themeGraph.getLeaderLineStyle();
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			DialogResult dialogResult = null;
+			if (null!=geoStyle) {
+				dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			}else {
+				dialogResult = textStyleDialog.showDialog(resources, new GeoStyle(), symbolType);
+			}
 			if (dialogResult.equals(DialogResult.OK)) {
 				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
 				themeGraph.setLeaderLineStyle(nowGeoStyle);
@@ -1337,6 +1346,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			if (e.getSource() == checkBoxAutoScale) {
 				boolean isAutoScale = checkBoxAutoScale.isSelected();
 				themeGraph.setGraphSizeFixed(!isAutoScale);
+				textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
+				textFieldMinValue.setText(String.valueOf(themeGraph.getMinGraphSize()));
 				refreshMapAtOnce();
 				return;
 			}
@@ -1667,21 +1678,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
 		if (null != themeGraphLayer && null != themeGraphLayer.getTheme()) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
-			nowGraph.clear();
-			if (0 < this.themeGraph.getCount()) {
-				for (int i = 0; i < this.themeGraph.getCount(); i++) {
-					nowGraph.insert(i, this.themeGraph.getItem(i));
-				}
-			}
 			nowGraph.fromXML(this.themeGraph.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
 			this.map.refresh();

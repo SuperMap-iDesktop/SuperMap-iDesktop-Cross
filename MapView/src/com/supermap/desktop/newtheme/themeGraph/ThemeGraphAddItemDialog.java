@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeGraph;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;

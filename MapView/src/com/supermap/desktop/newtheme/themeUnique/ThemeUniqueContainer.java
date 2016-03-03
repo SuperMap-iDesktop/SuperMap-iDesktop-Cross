@@ -1,9 +1,13 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeUnique;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.commonUtils.UniqueValueCountUtil;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -185,6 +189,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeUnique) {
 				themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 				getTable();
+				map.refresh();
 				for (int i = 0; i < selectRows.length; i++) {
 					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
@@ -195,7 +200,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 控件注册事件
 	 */
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.comboBoxExpression.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.addItemListener(this.comboBoxItemListener);
@@ -1180,7 +1185,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.themeUniqueLayer = themeUniqueLayer;
 	}
 
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
@@ -1204,7 +1209,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 

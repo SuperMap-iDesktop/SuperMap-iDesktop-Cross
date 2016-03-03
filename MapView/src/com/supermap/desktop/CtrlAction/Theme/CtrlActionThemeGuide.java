@@ -11,7 +11,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.newtheme.ThemeGuidDialog;
+import com.supermap.desktop.newtheme.guidPanel.ThemeGuidDialog;
 import com.supermap.mapping.Layer;
 
 public class CtrlActionThemeGuide extends CtrlAction {

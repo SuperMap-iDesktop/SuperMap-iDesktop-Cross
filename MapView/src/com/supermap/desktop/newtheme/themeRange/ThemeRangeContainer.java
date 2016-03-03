@@ -1,9 +1,13 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeRange;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.commonUtils.UniqueValueCountUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -523,7 +527,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * 注册事件
 	 */
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.buttonVisible.addActionListener(this.actionListener);
 		this.buttonStyle.addActionListener(this.actionListener);
@@ -648,6 +652,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeRange) {
 				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
 				getTable();
+				map.refresh();
 				for (int i = 0; i < selectRows.length; i++) {
 					tableRangeInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
@@ -1389,12 +1394,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme()) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();

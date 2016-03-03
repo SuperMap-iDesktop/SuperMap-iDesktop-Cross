@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.commonPanel;
 
 
 import com.supermap.mapping.Layer;
@@ -30,7 +30,7 @@ public abstract class ThemeChangePanel extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	abstract void registActionListener();
+	public abstract void registActionListener();
 
 	/**
 	 * 注销事件
@@ -40,10 +40,10 @@ public abstract class ThemeChangePanel extends JPanel {
 	 * 设置是否及时刷新
 	 * @param isRefreshAtOnce
 	 */
-	abstract void setRefreshAtOnce(boolean isRefreshAtOnce);
+	public abstract void setRefreshAtOnce(boolean isRefreshAtOnce);
 	
 	/**
 	 * 刷新专题图图层和地图
 	 */
-	abstract void refreshMapAndLayer();
+	public abstract void refreshMapAndLayer();
 }

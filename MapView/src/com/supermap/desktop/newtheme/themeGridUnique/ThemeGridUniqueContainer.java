@@ -1,10 +1,14 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeGridUnique;
 
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.themeUnique.AddItemPanel;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
@@ -149,7 +153,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 控件注册事件
 	 */
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
@@ -213,7 +217,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.buttonVisble.setIcon(InternalImageIconFactory.VISIBLE);
 		this.buttonForeGroundColor.setIcon(InternalImageIconFactory.FOREGROUND_COLOR);
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
-		this.buttonDelete.setIcon(new ImageIcon(ThemeUniqueContainer.class
+		this.buttonDelete.setIcon(new ImageIcon(ThemeGridUniqueContainer.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonAntitone.setIcon(InternalImageIconFactory.Rever);
 	}
@@ -322,6 +326,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeGridUnique) {
 				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
 				getTable();
+				map.refresh();
 				for (int i = 0; i < selectRows.length; i++) {
 					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
@@ -816,12 +821,12 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
 		this.themeUniqueLayer.getTheme().fromXML(this.themeUnique.toXML());

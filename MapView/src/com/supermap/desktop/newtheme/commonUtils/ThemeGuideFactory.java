@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.commonUtils;
 
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Dataset;
@@ -8,6 +8,15 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer;
+import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
+import com.supermap.desktop.newtheme.themeGridRange.ThemeGridRangeContainer;
+import com.supermap.desktop.newtheme.themeGridUnique.ThemeGridUniqueContainer;
+import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
+import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
+import com.supermap.desktop.newtheme.themeRange.ThemeRangeContainer;
+import com.supermap.desktop.newtheme.themeUnique.ThemeUniqueContainer;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
@@ -27,7 +36,7 @@ import java.util.HashMap;
 
 public class ThemeGuideFactory {
 
-	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.ThemeMainContainer";
+	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
 	public static HashMap<String, ThemeChangePanel> themeTypeContainer = new HashMap<String, ThemeChangePanel>();
@@ -84,7 +93,7 @@ public class ThemeGuideFactory {
 	 *
 	 * @return
 	 */
-	static MapControl getMapControl() {
+	public static MapControl getMapControl() {
 		MapControl mapControl = null;
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();

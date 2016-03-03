@@ -1,8 +1,11 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.UniqueValueCountUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -27,6 +30,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
@@ -407,7 +411,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	/**
 	 * 注册事件
 	 */
-	void registActionListener() {
+	public void registActionListener() {
 		unregistActionListener();
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
@@ -1093,14 +1097,14 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	}
 
 	@Override
-	void setRefreshAtOnce(boolean isRefreshAtOnce) {
+	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		this.isRefreshAtOnce = isRefreshAtOnce;
 		this.panelProperty.setRefreshAtOnce(isRefreshAtOnce);
 		this.panelAdvance.setRefreshAtOnce(isRefreshAtOnce);
 	}
 
 	@Override
-	void refreshMapAndLayer() {
+	public void refreshMapAndLayer() {
 		this.panelAdvance.refreshMapAndLayer();
 		this.panelProperty.refreshMapAndLayer();
 		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
@@ -1125,6 +1129,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			ThemeLabelRangeContainer.this.firePropertyChange("ThemeChange", null, null);
+			map = ThemeGuideFactory.getMapControl().getMap();
+			map.refresh();
 		}
 	}
 

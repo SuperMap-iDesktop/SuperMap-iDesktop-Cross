@@ -1,37 +1,35 @@
-package com.supermap.desktop.newtheme;
+package com.supermap.desktop.newtheme.guidPanel;
+
+import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
-import javax.swing.JLabel;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.newtheme.RangeThemePanel.LocalMouseListener;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
-public class GraphThemePanel extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private JLabel labelGraphTheme = new JLabel("");
-	private transient ThemeGuidDialog themeGuidDialog;
-	private transient LocalMouseListener mouseListener = new LocalMouseListener();
+public class RangeThemePanel extends JPanel {
 
-	public GraphThemePanel(ThemeGuidDialog themeGuidDialog) {
+	private static final long serialVersionUID = 1L;
+	private JLabel labelRangeTheme = new JLabel("");
+	private transient LocalMouseListener mouseListener = new LocalMouseListener();
+	private transient ThemeGuidDialog themeGuidDialog;
+
+	public RangeThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
 		initResources();
 		registListener();
 	}
 
-	/**
-	 * 界面布局入口
-	 */
 	private void initComponents() {
-		// @formatter:off
 		setBorder(new LineBorder(Color.LIGHT_GRAY));
 		setBackground(Color.WHITE);
 
@@ -40,46 +38,34 @@ public class GraphThemePanel extends JPanel {
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 								.addGap(20)
-								.addComponent(labelGraphTheme)
+								.addComponent(labelRangeTheme)
 								.addContainerGap(368, Short.MAX_VALUE))
 				);
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 								.addGap(24)
-								.addComponent(labelGraphTheme)
+								.addComponent(labelRangeTheme)
 								.addContainerGap(223, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-		// @formatter:on
 	}
 
-	/**
-	 * 资源化
-	 */
 	private void initResources() {
-		this.labelGraphTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_GRAPH);
-		this.labelGraphTheme.setText(MapViewProperties.getString("String_ThemeDefaultItem"));
-		this.labelGraphTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelGraphTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelGraphTheme.setOpaque(true);
-		this.labelGraphTheme.setBackground(Color.gray);
+		this.labelRangeTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_RANGE);
+		this.labelRangeTheme.setText(MapViewProperties.getString("String_Default"));
+		this.labelRangeTheme.setVerticalTextPosition(JLabel.BOTTOM);
+		this.labelRangeTheme.setHorizontalTextPosition(JLabel.CENTER);
+		this.labelRangeTheme.setOpaque(true);
+		this.labelRangeTheme.setBackground(Color.gray);
 	}
 
-	/**
-	 * 注册事件
-	 */
 	private void registListener() {
-		this.labelGraphTheme.addMouseListener(this.mouseListener);
+		this.labelRangeTheme.addMouseListener(this.mouseListener);
 	}
 
-	/**
-	 * 注销事件
-	 */
 	public void unregistListener() {
-		this.labelGraphTheme.removeMouseListener(this.mouseListener);
+		this.labelRangeTheme.removeMouseListener(this.mouseListener);
 	}
 
 	class LocalMouseListener extends MouseAdapter {
@@ -88,11 +74,12 @@ public class GraphThemePanel extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 分段专题图
-				ThemeGuideFactory.buildGraphTheme();
+				ThemeGuideFactory.buildRangeTheme();
 				themeGuidDialog.dispose();
 				unregistListener();
 			}
 		}
 
 	}
+
 }
