@@ -150,17 +150,6 @@ public class MapUtilties {
 		return result;
 	}
 
-	public static boolean findLayer(Map map, Layer layer) {
-		boolean result = false;
-		try {
-			result = map.getLayers().remove(layer);
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-
-		return result;
-	}
-
 	/**
 	 * 获取地图的所有子图层
 	 * 
