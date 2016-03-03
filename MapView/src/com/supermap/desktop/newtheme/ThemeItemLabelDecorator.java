@@ -39,16 +39,18 @@ public class ThemeItemLabelDecorator {
 		geoStyleIcon.setImage(bufferedImage);
 		return geoStyleIcon;
 	}
+
 	/**
 	 * 根据给定的统计专题图子项geoStyle绘制图片
+	 * 
 	 * @param geoStyle
 	 * @return
 	 */
-	public static ImageIcon buildGraphIcon(GeoStyle geoStyle){
+	public static ImageIcon buildGraphIcon(GeoStyle geoStyle) {
 		ImageIcon geoStyleIcon = new ImageIcon();
-		BufferedImage bufferedImage = new BufferedImage(100, 20, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bufferedImage = new BufferedImage(100, 25, BufferedImage.TYPE_INT_ARGB);
 		Graphics graphics = bufferedImage.getGraphics();
-		Point2D[] points = { new Point2D(0, 0), new Point2D(0, 20), new Point2D(100, 20), new Point2D(100, 0) };
+		Point2D[] points = { new Point2D(0, 0), new Point2D(0, 25), new Point2D(100, 25), new Point2D(100, 0) };
 		Point2Ds ds = new Point2Ds(points);
 		GeoRegion geoRegion = new GeoRegion(ds);
 		geoRegion.setStyle(geoStyle);
@@ -57,6 +59,7 @@ public class ThemeItemLabelDecorator {
 		geoStyleIcon.setImage(bufferedImage);
 		return geoStyleIcon;
 	}
+
 	/**
 	 * 通过给定的数据集和专题图项样式绘制图片
 	 *
@@ -79,6 +82,7 @@ public class ThemeItemLabelDecorator {
 		colorIcon.setImage(bufferedImage);
 		return colorIcon;
 	}
+
 	/**
 	 * 根据给定的数据集类型构建指定类型的GeoMetry用于绘制图片
 	 * 

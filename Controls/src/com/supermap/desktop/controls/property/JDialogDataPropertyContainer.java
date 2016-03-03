@@ -91,12 +91,13 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 				this.setTitle(this.currentProperty.getPropertyName());
 				this.getContentPane().add((AbstractPropertyControl) this.currentProperty, BorderLayout.CENTER);
 			} else if (properties.length > 1) {
+				this.tabbledPane.removeChangeListener(this.tabbledPaneChangeListener);
 				for (IProperty property : properties) {
 					this.controls.add((AbstractPropertyControl) property);
 					this.tabbledPane.addTab(property.getPropertyName(), (AbstractPropertyControl) property);
 					this.getContentPane().add(this.tabbledPane, BorderLayout.CENTER);
 				}
-
+				this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
 				setTabbledPaneSelectedPropertyControl(this.currentProperty);
 			}
 		}
@@ -129,7 +130,8 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 	public PropertyType getPropertyType() {
 		if (currentProperty != null) {
 			return currentProperty.getPropertyType();
+		} else {
+			return null;
 		}
-		return null;
 	}
 }

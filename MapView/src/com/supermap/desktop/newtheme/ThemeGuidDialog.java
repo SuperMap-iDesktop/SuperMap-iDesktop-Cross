@@ -242,17 +242,22 @@ public class ThemeGuidDialog extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			if ("OK".equals(e.getActionCommand())) {
 				int selectRow = listContent.getSelectedIndex();
+				boolean success = false;
 				if (!isCadType && !isGridType) {
 					// 创建专题图dockBar
 					createThemeContainer();
 				} else if (isGridType && 0 == selectRow) {
 					// 栅格单值专题图
-					ThemeGuideFactory.buildGridUniqueTheme();
-					ThemeGuidDialog.this.dispose();
+					success = ThemeGuideFactory.buildGridUniqueTheme();
+					if (success) {
+						ThemeGuidDialog.this.dispose();
+					}
 				} else if (isGridType && 1 == selectRow) {
 					// 栅格分段专题图
-					ThemeGuideFactory.buildGridRangeTheme();
-					ThemeGuidDialog.this.dispose();
+					success = ThemeGuideFactory.buildGridRangeTheme();
+					if (success) {
+						ThemeGuidDialog.this.dispose();
+					}
 				} else {
 					// 标签统一风格专题图
 					if (isUniform) {
@@ -260,7 +265,9 @@ public class ThemeGuidDialog extends SmDialog {
 						ThemeGuidDialog.this.dispose();
 					} else if (isRange) {
 						ThemeGuideFactory.buildLabelRangeTheme();
-						ThemeGuidDialog.this.dispose();
+						if (success) {
+							ThemeGuidDialog.this.dispose();
+						}
 					}
 				}
 			} else if ("Cancel".equals(e.getActionCommand())) {
@@ -272,16 +279,21 @@ public class ThemeGuidDialog extends SmDialog {
 
 		private void createThemeContainer() {
 			int clickCount = listContent.getSelectedIndex();
+			boolean buildSuccessed = false;
 			switch (clickCount) {
 			case 0:
 				// 单值专题图
-				ThemeGuideFactory.buildUniqueTheme();
-				ThemeGuidDialog.this.dispose();
+				buildSuccessed = ThemeGuideFactory.buildUniqueTheme();
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
 				break;
 			case 1:
 				// 分段专题图
-				ThemeGuideFactory.buildRangeTheme();
-				ThemeGuidDialog.this.dispose();
+				buildSuccessed = ThemeGuideFactory.buildRangeTheme();
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
 				break;
 			case 2:
 				// 标签统一风格专题图
@@ -289,14 +301,18 @@ public class ThemeGuidDialog extends SmDialog {
 					ThemeGuideFactory.buildLabelUnformTheme();
 					ThemeGuidDialog.this.dispose();
 				} else if (isRange) {
-					ThemeGuideFactory.buildLabelRangeTheme();
-					ThemeGuidDialog.this.dispose();
+					buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme();
+					if (buildSuccessed) {
+						ThemeGuidDialog.this.dispose();
+					}
 				}
 				break;
 			case 3:
 				//统计专题图
-				ThemeGuideFactory.buildGraphTheme();
-				ThemeGuidDialog.this.dispose();
+				buildSuccessed =ThemeGuideFactory.buildGraphTheme();
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
 				break;
 			default:
 				break;

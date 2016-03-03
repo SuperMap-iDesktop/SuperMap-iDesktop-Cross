@@ -58,7 +58,12 @@ public class WorkspaceTreeDataPropertyFactory {
 					} else if (data.getType() == NodeDataType.DATASET_GRID) {
 						properties.add(getGridPropertyControl((DatasetGrid) data.getData()));
 					} else if (data.getType() == NodeDataType.DATASET_IMAGE) {
-						properties.add(getImagePropertyControl((DatasetImage) data.getData()));
+						Dataset dataset = (Dataset) data.getData();
+
+						// 过滤掉 WMS 以及 WCS的影像数据集属性
+						if (dataset.getType() != DatasetType.WMS && dataset.getType() != DatasetType.WCS) {
+							properties.add(getImagePropertyControl((DatasetImage) data.getData()));
+						}
 					}
 					boolean covert = !((Dataset) data.getData()).isReadOnly();
 					if (!DatasetType.TABULAR.equals(((Dataset) data.getData()).getType())) {

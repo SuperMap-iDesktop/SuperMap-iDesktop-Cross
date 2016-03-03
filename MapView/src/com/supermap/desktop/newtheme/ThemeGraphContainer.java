@@ -288,7 +288,22 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelStyleOfRoseAndPIE.add(this.spinnerRoseAngle,  new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.spinnerStartAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
 		this.spinnerRoseAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
+		initSpinnerStartAngleState();
+		initSpinnerRoseAngleState();
 		//@formatter:on
+	}
+
+	private void initSpinnerRoseAngleState() {
+		if (themeGraph.getGraphType() == ThemeGraphType.ROSE || themeGraph.getGraphType() == ThemeGraphType.ROSE3D) {
+			this.spinnerRoseAngle.setEnabled(true);
+		}
+	}
+
+	private void initSpinnerStartAngleState() {
+		if (themeGraph.getGraphType() == ThemeGraphType.PIE || themeGraph.getGraphType() == ThemeGraphType.PIE3D
+				|| themeGraph.getGraphType() == ThemeGraphType.ROSE || themeGraph.getGraphType() == ThemeGraphType.ROSE3D) {
+			this.spinnerStartAngle.setEnabled(true);
+		}
 	}
 
 	private void initPanelStyleOfBAR(JPanel panelStyleOfBAR) {
@@ -299,7 +314,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.spinnerBarWidth.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(0.01)));
 		panelStyleOfBAR.add(this.spinnerBarWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,  0, 5,10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.spinnerBarWidth.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(),23));
+		initSpinnerBarWidthState();
 		//@formatter:on
+	}
+
+	private void initSpinnerBarWidthState() {
+		if (themeGraph.getGraphType() == ThemeGraphType.BAR || themeGraph.getGraphType() == ThemeGraphType.BAR3D
+				|| themeGraph.getGraphType() == ThemeGraphType.STACK_BAR || themeGraph.getGraphType() == ThemeGraphType.STACK_BAR3D) {
+			this.spinnerBarWidth.setEnabled(true);
+		}
 	}
 
 	private void initpanelAxis(JPanel panelAxis) {
@@ -314,10 +337,29 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelAxis.add(this.labelAxisStyle,      new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2,10).setWeight(30, 1));
 		panelAxis.add(this.buttonAxisStyle,     new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
 		panelAxis.add(this.checkBoxShowAxisGrid,new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(30, 1));
-		this.checkBoxAxis.setEnabled(false);
+		this.checkBoxShowAxisGrid.setSelected(themeGraph.isAxesGridDisplayed());
+		initCheckBoxAxisState();
 		setPanelAxisEnabled(false);
 		this.buttonAxisStyle.setEnabled(false);
+		if(themeGraph.isAxesDisplayed()){
+			this.checkBoxAxis.setSelected(true);
+			this.checkBoxAxis.setEnabled(true);
+			setPanelAxisEnabled(true);
+			if (themeGraph.getAxesTextDisplayMode()!=GraphAxesTextDisplayMode.NONE) {
+				this.buttonAxisStyle.setEnabled(true);
+			}
+		}
 		//@formatter:on
+	}
+
+	private void initCheckBoxAxisState() {
+		if (themeGraph.getGraphType() != ThemeGraphType.PIE || themeGraph.getGraphType() != ThemeGraphType.PIE3D
+				|| themeGraph.getGraphType() != ThemeGraphType.ROSE || themeGraph.getGraphType() != ThemeGraphType.ROSE3D
+				|| themeGraph.getGraphType() != ThemeGraphType.RING) {
+			this.checkBoxAxis.setEnabled(false);
+		} else {
+			this.checkBoxAxis.setEnabled(true);
+		}
 	}
 
 	private void setPanelAxisEnabled(boolean b) {
@@ -329,6 +371,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void initComboxAxisModel() {
 		this.comboBoxAxisModel.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_AxesUnDisplay"),
 				MapViewProperties.getString("String_YAxesDisplay"), MapViewProperties.getString("String_XYAcesDisplay") }));
+		if (themeGraph.getAxesTextDisplayMode() == GraphAxesTextDisplayMode.NONE) {
+			this.comboBoxAxisModel.setSelectedIndex(0);
+			return;
+		}
+		if (themeGraph.getAxesTextDisplayMode() == GraphAxesTextDisplayMode.YAXES) {
+			this.comboBoxAxisModel.setSelectedIndex(1);
+			return;
+		}
+		if (themeGraph.getAxesTextDisplayMode() == GraphAxesTextDisplayMode.ALL) {
+			this.comboBoxAxisModel.setSelectedIndex(2);
+			return;
+		}
 	}
 
 	private void initpanelRemark(JPanel panelRemark) {
@@ -339,6 +393,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		panelRemark.add(this.comboBoxRemarkFormat,new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		panelRemark.add(this.labelRemarkStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(40, 1).setIpad(20, 0));
 		panelRemark.add(this.buttonRemarkStyle,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		if (themeGraph.isGraphTextDisplayed()) {
+			this.checkBoxRemark.setSelected(true);
+			this.checkBoxRemark.setEnabled(true);
+			this.comboBoxRemarkFormat.setEnabled(true);
+			this.buttonRemarkStyle.setEnabled(true);
+		}
 		//@formatter:on
 	}
 
@@ -349,6 +409,26 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				MapViewProperties.getString("String_ThemeGraphTextFormat_CaptionValue"), }));
 		this.comboBoxRemarkFormat.setEnabled(false);
 		this.buttonRemarkStyle.setEnabled(false);
+		if (themeGraph.getGraphTextFormat() == ThemeGraphTextFormat.PERCENT) {
+			this.comboBoxRemarkFormat.setSelectedIndex(0);
+			return;
+		}
+		if (themeGraph.getGraphTextFormat() == ThemeGraphTextFormat.VALUE) {
+			this.comboBoxRemarkFormat.setSelectedIndex(1);
+			return;
+		}
+		if (themeGraph.getGraphTextFormat() == ThemeGraphTextFormat.CAPTION) {
+			this.comboBoxRemarkFormat.setSelectedIndex(2);
+			return;
+		}
+		if (themeGraph.getGraphTextFormat() == ThemeGraphTextFormat.CAPTION_PERCENT) {
+			this.comboBoxRemarkFormat.setSelectedIndex(3);
+			return;
+		}
+		if (themeGraph.getGraphTextFormat() == ThemeGraphTextFormat.CAPTION_VALUE) {
+			this.comboBoxRemarkFormat.setSelectedIndex(4);
+			return;
+		}
 	}
 
 	private void initpanelParameterSetting(JPanel panelParameterSetting) {
@@ -387,6 +467,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
+		this.comboBoxOffsetX.setEditable(true);
 		getFieldComboBox(this.comboBoxOffsetX);
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeGraph.getOffsetX();
@@ -405,6 +486,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
+		this.comboBoxOffsetY.setEditable(true);
 		getFieldComboBox(this.comboBoxOffsetY);
 		this.comboBoxOffsetY.addItem("0");
 		String offsetY = themeGraph.getOffsetY();
@@ -470,8 +552,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.checkBoxShowFlow.setSelected(this.themeGraph.isFlowEnabled());
 		this.checkBoxShowNegative.setSelected(this.themeGraph.isNegativeDisplayed());
 		this.checkBoxAutoAvoid.setSelected(this.themeGraph.isOverlapAvoided());
-		this.checkBoxAutoScale.setSelected(this.themeGraph.isGraphSizeFixed());
+		this.checkBoxAutoScale.setSelected(!this.themeGraph.isGraphSizeFixed());
 		this.checkboxDraftLine.setSelected(this.themeGraph.isLeaderLineDisplayed());
+		this.buttonDraftLine.setEnabled(this.themeGraph.isLeaderLineDisplayed());
 	}
 
 	private void initPanelProperty() {
@@ -497,7 +580,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.graphCount = this.themeGraph.getCount();
 		this.tableGraphInfo.setModel(new LocalDefualTableModel(new Object[this.graphCount][3], this.nameStrings));
 		initTableColumns();
-		this.tableGraphInfo.setRowHeight(20);
+		this.tableGraphInfo.setRowHeight(25);
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setMaxWidth(200);
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_Title_Sytle")).setMaxWidth(100);
 		this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")).setMaxWidth(200);
@@ -515,18 +598,19 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			this.fieldComboBox = new SteppedComboBox(new String[] {});
 			this.fieldComboBox.removeAllItems();
 			getFieldComboBox(this.fieldComboBox);
-			this.fieldComboBox.removeItem(MapViewProperties.getString("String_Combobox_Expression"));
 			Dimension d = this.fieldComboBox.getPreferredSize();
 			this.fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
 			this.fieldComboBox.setPopupWidth(d.width);
 			rowEditor.setEditorAt(i, new DefaultCellEditor(this.fieldComboBox));
 			this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
 			final String expression = item.getGraphExpression();
+			removeRepeatItem(this.fieldComboBox, expression);
 			this.fieldComboBox.setSelectedItem(expression);
 			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
 			this.tableGraphInfo.setValueAt(item.getCaption(), i, TABLE_COLUMN_CAPTION);
+
 			this.fieldComboBox.addItemListener(new ItemListener() {
 
 				@Override
@@ -550,6 +634,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
+	private void removeRepeatItem(SteppedComboBox comboBox, String expression) {
+		for (int i = 0; i < themeGraph.getCount(); i++) {
+			comboBox.removeItem(themeGraph.getItem(i).getGraphExpression());
+		}
+		comboBox.addItem(expression);
+		comboBox.removeItem(MapViewProperties.getString("String_Combobox_Expression"));
+	}
+
 	class CaptionChangeListener implements TableModelListener {
 
 		@Override
@@ -557,9 +649,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int selectRow = e.getFirstRow();
 			int selectColumn = e.getColumn();
 			String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-			if (!StringUtilties.isNullOrEmpty(caption)) {
+			if (!StringUtilties.isNullOrEmptyString(caption)) {
 				// 如果输入为数值且段值合法时修改段值
 				setGraphItemCaption(selectRow, caption);
+			} else {
+				caption = themeGraph.getItem(selectRow).getCaption();
+				tableGraphInfo.setValueAt(caption, selectRow, TABLE_COLUMN_CAPTION);
 			}
 		}
 	}
@@ -592,6 +687,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void initComboBoxMethod() {
 		this.comboBoxMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_GraduatedMode_Constant"),
 				MapViewProperties.getString("String_GraduatedMode_Logarithm"), MapViewProperties.getString("String_GraduatedMode_SquareRoot") }));
+		if (this.themeGraph.getGraduatedMode() == GraduatedMode.CONSTANT) {
+			this.comboBoxMethod.setSelectedIndex(0);
+			return;
+		}
+		if (this.themeGraph.getGraduatedMode() == GraduatedMode.LOGARITHM) {
+			this.comboBoxMethod.setSelectedIndex(1);
+			return;
+		}
+		if (this.themeGraph.getGraduatedMode() == GraduatedMode.SQUAREROOT) {
+			this.comboBoxMethod.setSelectedIndex(2);
+			return;
+		}
 	}
 
 	private void setGraphItemCaption(int selectRow, String caption) {
@@ -608,7 +715,45 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				MapViewProperties.getString("String_GraphType_Pie3D"), MapViewProperties.getString("String_GraphType_Rose"),
 				MapViewProperties.getString("String_GraphType_Rose3D"), MapViewProperties.getString("String_GraphType_StackedBar"),
 				MapViewProperties.getString("String_GraphType_StackedBar3D"), MapViewProperties.getString("String_GraphType_Ring") }));
-		this.comboBoxGraphType.setSelectedIndex(7);
+		if (this.themeGraph.getGraphType() == ThemeGraphType.AREA) {
+			this.comboBoxGraphType.setSelectedIndex(0);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.STEP) {
+			this.comboBoxGraphType.setSelectedIndex(1);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.LINE) {
+			this.comboBoxGraphType.setSelectedIndex(2);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.POINT) {
+			this.comboBoxGraphType.setSelectedIndex(3);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.BAR) {
+			this.comboBoxGraphType.setSelectedIndex(4);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.BAR3D) {
+			this.comboBoxGraphType.setSelectedIndex(5);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.PIE) {
+			this.comboBoxGraphType.setSelectedIndex(6);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.PIE3D) {
+			this.comboBoxGraphType.setSelectedIndex(7);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.ROSE) {
+			this.comboBoxGraphType.setSelectedIndex(8);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.ROSE3D) {
+			this.comboBoxGraphType.setSelectedIndex(9);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.STACK_BAR) {
+			this.comboBoxGraphType.setSelectedIndex(10);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.STACK_BAR3D) {
+			this.comboBoxGraphType.setSelectedIndex(11);
+		}
+		if (this.themeGraph.getGraphType() == ThemeGraphType.RING) {
+			this.comboBoxGraphType.setSelectedIndex(12);
+		}
 	}
 
 	private void initToolbar() {
@@ -631,6 +776,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
 		this.buttonStyle.setIcon(InternalImageIconFactory.REGION_STYLE);
 		setToolBarButtonEnable(false);
+		this.buttonAdd.setEnabled(true);
 	}
 
 	private void setToolBarButtonEnable(boolean enable) {
@@ -737,9 +883,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				}
 				getTable();
 				refreshMapAtOnce();
-				if (tableGraphInfo.getRowCount()==0) {
+				if (tableGraphInfo.getRowCount() == 0) {
 					setToolBarButtonEnable(false);
 					buttonAdd.setEnabled(true);
+				}
+				if (tableGraphInfo.getRowCount() > 0) {
+					tableGraphInfo.addRowSelectionInterval(0, 0);
 				}
 				return;
 			}
@@ -755,30 +904,51 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				this.selectRow = tableGraphInfo.getSelectedRow();
 				if (this.selectRow >= 0) {
 					themeGraph.exchangeItem(selectRow, 0);
-					afterExchangeItem(selectRow);
+					afterExchangeItem(0);
 					return;
 				}
 			}
 			if (e.getSource() == buttonMoveToForward) {
-				this.selectRow = tableGraphInfo.getSelectedRow();
-				if (selectRow >= 0 && selectRow != 0) {
-					themeGraph.exchangeItem(selectRow, selectRow - 1);
-					afterExchangeItem(selectRow);
-					return;
+				int[] selectRows = tableGraphInfo.getSelectedRows();
+				for (int i = 0; i < selectRows.length; i++) {
+					if (selectRows[i] != 0) {
+						themeGraph.exchangeItem(selectRows[i], selectRows[i] - 1);
+					}
 				}
+				getTable();
+				refreshMapAtOnce();
+				for (int i = 0; i < selectRows.length; i++) {
+					if (selectRows[i] != 0) {
+						tableGraphInfo.addRowSelectionInterval(selectRows[i] - 1, selectRows[i] - 1);
+					} else {
+						tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+					}
+				}
+				return;
 			}
 			if (e.getSource() == buttonMoveToNext) {
-				this.selectRow = tableGraphInfo.getSelectedRow();
-				if (selectRow >= 0 && selectRow != themeGraph.getCount() - 1) {
-					themeGraph.exchangeItem(selectRow, selectRow + 1);
-					afterExchangeItem(selectRow);
+				int[] selectRows = tableGraphInfo.getSelectedRows();
+				for (int i = selectRows.length - 1; i >= 0; i--) {
+					if (selectRows[i] != tableGraphInfo.getRowCount() - 1) {
+						themeGraph.exchangeItem(selectRows[i], selectRows[i] + 1);
+					}
 				}
+				getTable();
+				refreshMapAtOnce();
+				for (int i = 0; i < selectRows.length; i++) {
+					if (selectRows[i] != tableGraphInfo.getRowCount() - 1) {
+						tableGraphInfo.addRowSelectionInterval(selectRows[i] + 1, selectRows[i] + 1);
+					} else {
+						tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
+					}
+				}
+				return;
 			}
 			if (e.getSource() == buttonMoveToLast) {
 				this.selectRow = tableGraphInfo.getSelectedRow();
 				if (selectRow >= 0) {
 					themeGraph.exchangeItem(selectRow, themeGraph.getCount() - 1);
-					afterExchangeItem(selectRow);
+					afterExchangeItem(themeGraph.getCount() - 1);
 				}
 			}
 		}
@@ -802,7 +972,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					String caption = getCaption(graphExpression);
 					item.setGraphExpression(graphExpression);
 					item.setCaption(caption);
-					themeGraph.add(item);
+					GeoStyle newGeoStyle = new GeoStyle();
+					Colors colors = (Colors) comboBoxColor.getSelectedItem();
+					newGeoStyle.setFillForeColor(colors.get(0));
+					newGeoStyle.setLineWidth(0.1);
+					item.setUniformStyle(newGeoStyle);
+					if (!itemExist(item, existItems)) {
+						themeGraph.add(item);
+						setToolBarButtonEnable(true);
+					}
 				}
 				getTable();
 				refreshMapAtOnce();
@@ -813,6 +991,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				}
 
 			}
+		}
+
+		private boolean itemExist(ThemeGraphItem item, ArrayList<String> existItems) {
+			for (int i = 0; i < existItems.size(); i++) {
+				if (existItems.get(i).equals(item.getGraphExpression())) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private void afterExchangeItem(int selectRow) {
@@ -883,7 +1070,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int width = buttonAxisStyle.getWidth();
 			int height = buttonAxisStyle.getHeight();
 			int x = (int) (buttonAxisStyle.getLocationOnScreen().x - 0.8 * width);
-			int y = buttonAxisStyle.getLocationOnScreen().y - 2 * height;
+			int y = buttonAxisStyle.getLocationOnScreen().y - 5 * height;
 			setTextStyle(x, y, 1);
 		}
 	}
@@ -928,8 +1115,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void itemStateChanged(ItemEvent e) {
 			try {
 				boolean showAxis = checkBoxAxis.isSelected();
-				themeGraph.setAxesTextDisplayed(showAxis);
+				themeGraph.setAxesDisplayed(showAxis);
 				setPanelAxisEnabled(showAxis);
+				if (!showAxis) {
+					buttonAxisStyle.setEnabled(false);
+				} else if (0 != comboBoxAxisModel.getSelectedIndex()) {
+					buttonAxisStyle.setEnabled(true);
+				}
 				refreshMapAtOnce();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
@@ -942,8 +1134,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void actionPerformed(ActionEvent e) {
 			int width = buttonRemarkStyle.getWidth();
 			int height = buttonRemarkStyle.getHeight();
-			int x = (int) (buttonRemarkStyle.getLocationOnScreen().x - 0.8 * width);
-			int y = buttonRemarkStyle.getLocationOnScreen().y + height;
+			int x = (int) (buttonRemarkStyle.getLocationOnScreen().x - width);
+			int y = buttonRemarkStyle.getLocationOnScreen().y - 2 * height;
 			setTextStyle(x, y, 0);
 		}
 	}
@@ -995,20 +1187,32 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	class OffsetYListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			getSqlExpression(comboBoxOffsetY, themeGraph.getOffsetY());
-			String offsetY = comboBoxOffsetY.getSelectedItem().toString();
-			themeGraph.setOffsetY(offsetY);
-			refreshMapAtOnce();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				if (StringUtilties.isNullOrEmptyString(themeGraph.getOffsetY())) {
+					getSqlExpression(comboBoxOffsetY, "0");
+				} else {
+					getSqlExpression(comboBoxOffsetY, themeGraph.getOffsetY());
+				}
+				String offsetY = comboBoxOffsetY.getSelectedItem().toString();
+				themeGraph.setOffsetY(offsetY);
+				refreshMapAtOnce();
+			}
 		}
 	}
 
 	class OffsetXListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			getSqlExpression(comboBoxOffsetX, themeGraph.getOffsetX());
-			String offsetX = comboBoxOffsetX.getSelectedItem().toString();
-			themeGraph.setOffsetX(offsetX);
-			refreshMapAtOnce();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				if (StringUtilties.isNullOrEmptyString(themeGraph.getOffsetX())) {
+					getSqlExpression(comboBoxOffsetX, "0");
+				} else {
+					getSqlExpression(comboBoxOffsetX, themeGraph.getOffsetX());
+				}
+				String offsetX = comboBoxOffsetX.getSelectedItem().toString();
+				themeGraph.setOffsetX(offsetX);
+				refreshMapAtOnce();
+			}
 		}
 	}
 
@@ -1132,7 +1336,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == checkBoxAutoScale) {
 				boolean isAutoScale = checkBoxAutoScale.isSelected();
-				themeGraph.setGraphSizeFixed(isAutoScale);
+				themeGraph.setGraphSizeFixed(!isAutoScale);
 				refreshMapAtOnce();
 				return;
 			}
@@ -1157,7 +1361,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int[] selectRows = tableGraphInfo.getSelectedRows();
 			refreshColor();
 			getTable();
-			if (selectRows.length>0) {
+			if (selectRows.length > 0) {
 				for (int i = 0; i < selectRows.length; i++) {
 					tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
@@ -1259,7 +1463,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				case 8:
 					themeGraph.setGraphType(ThemeGraphType.ROSE);
 					spinnerBarWidth.setEnabled(false);
-					spinnerStartAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(true);
 					spinnerRoseAngle.setEnabled(true);
 					spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
 					setPanelEnableAndRefresh(false);
@@ -1267,7 +1471,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				case 9:
 					themeGraph.setGraphType(ThemeGraphType.ROSE3D);
 					spinnerBarWidth.setEnabled(false);
-					spinnerStartAngle.setEnabled(false);
+					spinnerStartAngle.setEnabled(true);
 					spinnerRoseAngle.setEnabled(true);
 					spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
 					setPanelEnableAndRefresh(false);
@@ -1329,6 +1533,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme() instanceof ThemeGraph) {
 				themeGraph = new ThemeGraph((ThemeGraph) themeGraphLayer.getTheme());
 				getTable();
+				map.refresh();
 				for (int i = 0; i < selectRows.length; i++) {
 					tableGraphInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
@@ -1387,17 +1592,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int allItems = jComboBoxField.getItemCount();
 			Dataset[] datasets = new Dataset[1];
 			datasets[0] = datasetVector;
+			DialogResult dialogResult = null;
 			ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
 			fieldTypes.add(FieldType.INT16);
 			fieldTypes.add(FieldType.INT32);
 			fieldTypes.add(FieldType.INT64);
 			fieldTypes.add(FieldType.DOUBLE);
 			fieldTypes.add(FieldType.SINGLE);
-
-			DialogResult dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
-			if (dialogResult == DialogResult.OK) {
+			dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
+			if (null != dialogResult && dialogResult == DialogResult.OK) {
 				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-				if (null != filter && !filter.isEmpty()) {
+				if (filter != null && !filter.isEmpty()) {
 					jComboBoxField.insertItemAt(filter, allItems - 1);
 					jComboBoxField.setSelectedIndex(allItems - 1);
 				} else {

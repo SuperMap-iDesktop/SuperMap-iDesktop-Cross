@@ -39,7 +39,7 @@ public class FileTypeLocale {
 			"shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",
 			"csv", "bmp", "jpg", "jpeg", "png", "gif", "img", "raw", "sit",
 			"tif", "tiff", "b", "wor", "osgb", "bip", "bil", "bsq", "sid", "dem",
-			"flt", "e00", "3ds", "x", "vct", "dbf" };
+			"flt", "e00", "3ds", "x", "vct", "dbf","gjb"};
 	// linux系统匹配的文件类型
 	private static final String[] extensionsNewForLinux = { "scv", "grd", "txt",
 			"shp", "tab", "mif", "kml", "kmz", "csv", "bmp", "jpg", "jpeg",
@@ -54,7 +54,7 @@ public class FileTypeLocale {
 	// 矢量文件
 	private static final String[] vectorValue = { ".wor", ".scv", ".dxf", ".shp",
 			".e00", ".mif", ".tab", ".wal", ".wan", ".wat", ".wap", ".xlsx",
-			".osgb", ".3ds", ".flt", ".x", ".kml", ".kmz", ".dwg", ".vct", ".dbf" };
+			".osgb", ".3ds", ".flt", ".x", ".kml", ".kmz", ".dwg", ".vct", ".dbf",".gjb" };
 	// MapGIS类型文件
 	private static final String[] mapGisValue = { ".wal", ".wan", ".wat", ".wap" };
 	// grd类型文件
@@ -135,4 +135,5 @@ public class FileTypeLocale {
 	public static final String BIP_STRING = ".bip";
 	public static final String DBF_STRING = ".dbf";
 	public static final String VCT_STRING = ".VCT";
+	public static final String GJB_STRING = ".gjb";
 }

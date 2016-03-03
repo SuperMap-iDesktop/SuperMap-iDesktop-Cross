@@ -3,25 +3,12 @@ package com.supermap.desktop.newtheme;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeUnique;
-
+import com.supermap.mapping.*;
 import javax.swing.*;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +20,7 @@ public class ThemeMainContainer extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel labelThemeLayer = new JLabel();
 	private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
+	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel panelThemeInfo = new JPanel();
 	private JCheckBox checkBoxRefreshAtOnce = new JCheckBox();
 	private JButton buttonApply = new JButton();
@@ -77,13 +65,15 @@ public class ThemeMainContainer extends JPanel {
 		this.comboBoxThemeLayer.setEditable(true);
 		this.buttonApply.setEnabled(false);
 		this.setLayout(new GridBagLayout());
+		this.scrollPane.setBorder(null);
 		// @formatter:off
 		this.checkBoxRefreshAtOnce.setSelected(true);
-		this.add(labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
-		this.add(comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
-		this.add(panelThemeInfo,        new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
-		this.add(checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
-		this.add(buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
+		this.add(this.labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
+		this.add(this.comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(this.scrollPane,            new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(this.checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
+		this.add(this.buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
+		this.scrollPane.setViewportView(this.panelThemeInfo);
 		// @formatter:on
 	}
 
@@ -192,8 +182,7 @@ public class ThemeMainContainer extends JPanel {
 		if (null != this.panel) {
 			ThemeMainContainer.this.remove(this.panel);
 		}
-		ThemeMainContainer.this.add(panelThemeInfo, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER)
-				.setIpad(0, 0).setFill(GridBagConstraints.BOTH));
+		scrollPane.setViewportView(panelThemeInfo);
 		ThemeMainContainer.this.repaint();
 		ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
 	}
@@ -268,7 +257,6 @@ public class ThemeMainContainer extends JPanel {
 			try {
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				final TreePath oldPath = e.getOldLeadSelectionPath();
 				final TreePath newPath = e.getNewLeadSelectionPath();
 				final int row = layersTree.getRowForPath(newPath);
 				if (null != ThemeGuideFactory.getDockbarThemeContainer()) {
@@ -367,9 +355,8 @@ public class ThemeMainContainer extends JPanel {
 				remove(getComponent(i));
 			}
 		}
-		add(panel,
-				new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(3, 3).setInsets(5).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0)
-						.setFill(GridBagConstraints.BOTH));
+		panel.setPreferredSize(new Dimension(400,800));
+		this.scrollPane.setViewportView(panel);
 		repaint();
 		this.panel = panel;
 		if (null != panel) {
@@ -392,6 +379,14 @@ public class ThemeMainContainer extends JPanel {
 
 	public JButton getButtonApply() {
 		return buttonApply;
+	}
+
+	public JScrollPane getScrollPane() {
+		return scrollPane;
+	}
+
+	public void setScrollPane(JScrollPane scrollPane) {
+		this.scrollPane = scrollPane;
 	}
 
 }
