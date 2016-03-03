@@ -135,6 +135,7 @@ public abstract class Measure implements IMeasureAble {
 	@Override
 	public void stopMeasure() {
 		endMeasure(false);
+		formMap.getMapControl().setWaitCursorEnabled(true);
 	}
 
 	protected void setTextBoxVisiable(boolean isVisible) {
@@ -183,6 +184,7 @@ public abstract class Measure implements IMeasureAble {
 			formMap.getiMeasureAble().stopMeasure();
 		}
 		formMap.setiMeasureAble(this);
+		formMap.getMapControl().setWaitCursorEnabled(false);
 //		removeListeners();
 //		cancleEdit();
 		mapControl.setTrackMode(TrackMode.TRACK);
