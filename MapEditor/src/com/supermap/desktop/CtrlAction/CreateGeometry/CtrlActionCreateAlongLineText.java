@@ -31,6 +31,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
@@ -43,7 +45,6 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 
 			GeoCompound geoCompound = (GeoCompound) arg0.getGeometry();
-//			String text = JOptionPane.showInputDialog(MapEditorProperties.getString("String_AlongLineText"));
 			GeoText geoText = (GeoText) geoCompound.getPart(0);
 
 			// 输入同时在地图上显示
@@ -127,7 +128,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			super();
 			this.formMap = formMap;
 			GeoCompound clone = geoCompound.clone();
-			geoLine = ((GeoCardinal) clone.getPart(1)).convertToLine(50);
+			geoLine = ((GeoCardinal) clone.getPart(1)).convertToLine(10);
 
 			initComponents();
 			initListeners();
@@ -144,9 +145,20 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			this.setSize((int) (360 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			buttonOK.setEnabled(false);
 		}
 
 		private void initListeners() {
+			this.textFieldText.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyChar() == KeyEvent.VK_ENTER && buttonOK.isEnabled()) {
+						buttonOkClicked();
+					} else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+						dispose();
+					}
+				}
+			});
 			this.textFieldText.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void insertUpdate(DocumentEvent e) {
@@ -166,8 +178,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			this.buttonOK.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					dialogResult = DialogResult.OK;
-					dispose();
+					buttonOkClicked();
 				}
 			});
 
@@ -180,17 +191,23 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			});
 		}
 
+		private void buttonOkClicked() {
+			dialogResult = DialogResult.OK;
+			dispose();
+		}
+
 		private void updateText() {
 			if (StringUtilties.isNullOrEmpty(getText().trim())) {
+				buttonOK.setEnabled(false);
 				removeTrackingObject();
 			} else {
+				buttonOK.setEnabled(true);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
-				TextPart textPart = geoText.getPart(0);
+				geoText.getTextStyle().setFontName("");
 				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
 				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.PixelLength(formMap.getMapControl()));
 
-				geoText.addPart(textPart);
 				for (int i = 0; i < formMap.getMapControl().getMap().getTrackingLayer().getCount(); i++) {
 					if (CreateAlongLineTextTracing.equals(formMap.getMapControl().getMap().getTrackingLayer().getTag(i))) {
 						formMap.getMapControl().getMap().getTrackingLayer().get(i).dispose();
