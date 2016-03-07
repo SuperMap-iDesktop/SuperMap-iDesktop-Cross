@@ -660,7 +660,7 @@ public class ServerRelease {
 			}
 		} catch (HttpHostConnectException e) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_ConnectException"));
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException | IllegalArgumentException e) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_UnknownHostException"));
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);

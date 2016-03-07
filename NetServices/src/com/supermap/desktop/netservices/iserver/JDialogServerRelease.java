@@ -598,7 +598,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 	private void textFieldHostChange() {
 		try {
 			if (this.hostType == HostType.REMOTE) {
-				this.remoteHost = this.textFieldHost.getText();
+				this.remoteHost = this.textFieldHost.getText().trim();
 				setButtonReleaseEnabled();
 			}
 		} catch (Exception e) {
