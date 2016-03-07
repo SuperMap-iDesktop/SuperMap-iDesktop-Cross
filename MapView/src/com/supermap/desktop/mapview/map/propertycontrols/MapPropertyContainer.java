@@ -95,7 +95,7 @@ public class MapPropertyContainer extends JPanel {
 
 	public void setFormMap(IFormMap formMap) {
 		if (propertyControls == null) {
-			propertyControls = new ArrayList<AbstractPropertyControl>();
+			propertyControls = new ArrayList<>();
 			propertyControls.add(new MapBasePropertyControl());
 			propertyControls.add(new MapBoundsPropertyControl());
 			propertyControls.add(new MapPrjCoordSysControl());

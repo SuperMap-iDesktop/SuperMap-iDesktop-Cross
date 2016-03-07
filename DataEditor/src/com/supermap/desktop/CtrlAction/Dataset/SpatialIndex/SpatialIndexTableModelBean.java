@@ -152,7 +152,7 @@ public class SpatialIndexTableModelBean {
 		Application.getActiveApplication().getOutput().output(message);
 	}
 
-	public void updateVaule(String propetName, Object value) {
+	public void updateValue(String propetName, Object value) {
 		if (StringUtilties.isNullOrEmpty(String.valueOf(value))) {
 			value = "0";
 		}

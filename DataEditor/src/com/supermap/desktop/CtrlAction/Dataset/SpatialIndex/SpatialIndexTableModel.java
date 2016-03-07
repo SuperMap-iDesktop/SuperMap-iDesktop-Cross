@@ -181,6 +181,6 @@ public class SpatialIndexTableModel extends SortableTableModel {
 
 	public void setSpatialIndexInfoValue(int selectedRow, String propetName, Object value) {
 		selectedRow = getIndexRow(selectedRow)[0];
-		datas.get(selectedRow).updateVaule(propetName, value);
+		datas.get(selectedRow).updateValue(propetName, value);
 	}
 }
