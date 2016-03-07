@@ -408,7 +408,7 @@ public class ServerRelease {
 
 			response = httpClient.execute(httpPost);
 			StatusLine responseStatus = response.getStatusLine();
-			String responseText = EntityUtils.toString(response.getEntity());
+			String responseText = EntityUtils.toString(response.getEntity(), "utf-8");
 
 			if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
 					|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
