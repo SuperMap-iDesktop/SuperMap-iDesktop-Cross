@@ -164,7 +164,7 @@ public class HttpPostFile {
 
 			int responseCode = connection.getResponseCode();
 			if (responseCode == HttpStatus.SC_OK || responseCode == HttpStatus.SC_CREATED || responseCode == HttpStatus.SC_ACCEPTED) {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
 				String line;
 				while ((line = reader.readLine()) != null) {
 					result += line;
