@@ -98,8 +98,10 @@ public class PanelFolderSelector extends JPanel {
 			}
 		});
 		this.table.setModel(tableModel);
-		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SELECTED).setPreferredWidth(20);
-		this.table.getColumnModel().getColumn(FolderSelectorTableModel.HIDEN).setPreferredWidth(20);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SELECTED).setPreferredWidth(15);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.TYPE).setPreferredWidth(15);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SIZE).setPreferredWidth(30);
+		this.table.getColumnModel().getColumn(FolderSelectorTableModel.HIDEN).setPreferredWidth(15);
 
 		JScrollPane scrollTable = new JScrollPane(this.table);
 		this.setLayout(new BorderLayout());
