@@ -595,7 +595,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	@SuppressWarnings("unchecked")
 	private void initTableColumns() {
-
+		TableRowCellEditor rowEditor = new TableRowCellEditor(tableGraphInfo);
 		for (int i = 0; i < this.graphCount; i++) {
 			ThemeGraphItem item = themeGraph.getItem(i);
 			final String expression = item.getGraphExpression();
@@ -603,6 +603,31 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
 			this.tableGraphInfo.setValueAt(item.getCaption(), i, TABLE_COLUMN_CAPTION);
+			fieldComboBox = new SteppedComboBox(new String[] {});
+			fieldComboBox.removeAllItems();
+			getFieldComboBox(fieldComboBox);
+			removeRepeatItem(fieldComboBox, expression);
+			Dimension d = fieldComboBox.getPreferredSize();
+			fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
+			fieldComboBox.setPopupWidth(d.width);
+			rowEditor.setEditorAt(i, new DefaultCellEditor(fieldComboBox));
+			tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
+			fieldComboBox.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						String tempExpression = fieldComboBox.getSelectedItem().toString();
+						String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
+						int i = tableGraphInfo.getSelectedRow();
+						ThemeGraphItem item = themeGraph.getItem(i);
+						item.setGraphExpression(tempExpression);
+						item.setCaption(caption);
+						getTable();
+						refreshMapAtOnce();
+					}
+				}
+			});
 		}
 	}
 
@@ -629,38 +654,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					caption = themeGraph.getItem(selectRow).getCaption();
 					tableGraphInfo.setValueAt(caption, selectRow, TABLE_COLUMN_CAPTION);
 				}
-			}
-			if (selectColumn == TABLE_COLUMN_EXPRESSION) {
-				// 设置每行中列的值
-				ThemeGraphItem item = themeGraph.getItem(selectRow);
-				TableRowCellEditor rowEditor = new TableRowCellEditor(tableGraphInfo);
-				fieldComboBox = new SteppedComboBox(new String[] {});
-				fieldComboBox.removeAllItems();
-				getFieldComboBox(fieldComboBox);
-				final String expression = item.getGraphExpression();
-				removeRepeatItem(fieldComboBox, expression);
-				Dimension d = fieldComboBox.getPreferredSize();
-				fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
-				fieldComboBox.setPopupWidth(d.width);
-				rowEditor.setEditorAt(selectRow, new DefaultCellEditor(fieldComboBox));
-				tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
-				fieldComboBox.addItemListener(new ItemListener() {
-
-					@Override
-					public void itemStateChanged(ItemEvent e) {
-						if (e.getStateChange() == ItemEvent.SELECTED) {
-							String tempExpression = fieldComboBox.getSelectedItem().toString();
-							String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
-							int i = tableGraphInfo.getSelectedRow();
-							ThemeGraphItem item = themeGraph.getItem(i);
-							item.setGraphExpression(tempExpression);
-							item.setCaption(caption);
-							tableGraphInfo.setValueAt(tempExpression, i, TABLE_COLUMN_EXPRESSION);
-							tableGraphInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
-							refreshMapAtOnce();
-						}
-					}
-				});
 			}
 		}
 	}
@@ -878,8 +871,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	class ToolBarAction implements ActionListener {
-		private int selectRow;
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == buttonDelete) {
@@ -910,12 +901,20 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				return;
 			}
 			if (e.getSource() == buttonMoveToFrist) {
-				this.selectRow = tableGraphInfo.getSelectedRow();
-				if (this.selectRow >= 0) {
-					themeGraph.exchangeItem(selectRow, 0);
-					afterExchangeItem(0);
-					return;
+				int[] selectRow = tableGraphInfo.getSelectedRows();
+				for (int i = 0; i < selectRow.length; i++) {
+					themeGraph.exchangeItem(selectRow[i], 0);
 				}
+				getTable();
+				refreshMapAtOnce();
+				for (int i = 0; i < selectRow.length; i++) {
+					if (selectRow[i] != 0) {
+						tableGraphInfo.addRowSelectionInterval(selectRow[i] - 1, selectRow[i] - 1);
+					} else {
+						tableGraphInfo.addRowSelectionInterval(selectRow[i], selectRow[i]);
+					}
+				}
+				return;
 			}
 			if (e.getSource() == buttonMoveToForward) {
 				int[] selectRows = tableGraphInfo.getSelectedRows();
@@ -954,16 +953,25 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				return;
 			}
 			if (e.getSource() == buttonMoveToLast) {
-				this.selectRow = tableGraphInfo.getSelectedRow();
-				if (selectRow >= 0) {
-					themeGraph.exchangeItem(selectRow, themeGraph.getCount() - 1);
-					afterExchangeItem(themeGraph.getCount() - 1);
+				int[] selectRow = tableGraphInfo.getSelectedRows();
+				for (int i = selectRow.length - 1; i >= 0; i--) {
+					themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - 1);
 				}
+				getTable();
+				refreshMapAtOnce();
+				for (int i = 0; i < selectRow.length; i++) {
+					if (selectRow[i] != tableGraphInfo.getRowCount() - 1) {
+						tableGraphInfo.addRowSelectionInterval(selectRow[i] + 1, selectRow[i] + 1);
+					} else {
+						tableGraphInfo.addRowSelectionInterval(selectRow[i], selectRow[i]);
+					}
+				}
+				return;
 			}
 		}
 
 		private void addGraphItem() {
-			this.selectRow = tableGraphInfo.getSelectedRow();
+			int selectRow = tableGraphInfo.getSelectedRow();
 			int x = (int) (buttonAdd.getLocationOnScreen().getX());
 			int y = (int) (buttonAdd.getLocationOnScreen().getY() + buttonAdd.getHeight());
 			ArrayList<String> existItems = new ArrayList<String>();
@@ -1012,13 +1020,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				}
 			}
 			return false;
-		}
-
-		private void afterExchangeItem(int selectRow) {
-			getTable();
-			refreshMapAtOnce();
-			tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
-			return;
 		}
 
 		private String getCaption(String graphExpression) {

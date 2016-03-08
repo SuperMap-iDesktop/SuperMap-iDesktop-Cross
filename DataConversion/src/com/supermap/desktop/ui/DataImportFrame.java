@@ -456,11 +456,11 @@ public class DataImportFrame extends SmDialog {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					dispose();
-					if (!SmFileChoose.isModuleExist("DataExportFrame_ImportDirectories")) {
+					if (!SmFileChoose.isModuleExist("DataImportFrame_ImportDirectories")) {
 						SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Import"),
-								"DataExportFrame_ImportDirectories", "GetDirectories");
+								"DataImportFrame_ImportDirectories", "GetDirectories");
 					}
-					SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
+					SmFileChoose tempfileChooser = new SmFileChoose("DataImportFrame_ImportDirectories");
 					int state = tempfileChooser.showDefaultDialog();
 					if (state == JFileChooser.APPROVE_OPTION) {
 						String directories = tempfileChooser.getFilePath();
