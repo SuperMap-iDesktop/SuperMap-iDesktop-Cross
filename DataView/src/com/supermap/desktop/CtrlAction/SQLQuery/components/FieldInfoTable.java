@@ -99,8 +99,8 @@ public class FieldInfoTable extends JTable {
 		public int getRowCount() {
 			int count = 0;
 			if (this.recordset != null) {
-				// TODO 设置管理字段需要再加1
-				count = this.recordset.getFieldCount() + 1;
+				// 全部字段和关联字段 所以+2
+				count = this.recordset.getFieldCount() + 2;
 			}
 			return count;
 		}
@@ -133,13 +133,13 @@ public class FieldInfoTable extends JTable {
 			}
 			//region 设置关联字段
 			// TODO 设置关联字段未实现
-			/*else if (row == getRowCount() - 1) {
+			else if (row == getRowCount() - 1) {
 				if (column == 0) {
 					return DataViewProperties.getString("String_SQLQueryRelated");
 				} else {
 					return "";
 				}
-			} */
+			}
 			//endregion
 			else {
 				if(column == 0) {
@@ -186,7 +186,7 @@ public class FieldInfoTable extends JTable {
 			}
 			if (fieldType == FieldType.DATETIME) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				return fieldValue == null ? null : dateFormat.format(fieldValue);
+				return dateFormat.format(fieldValue);
 			} else if (fieldType == FieldType.BOOLEAN) {
 				if (fieldValue.equals(true)) {
 					return "True";

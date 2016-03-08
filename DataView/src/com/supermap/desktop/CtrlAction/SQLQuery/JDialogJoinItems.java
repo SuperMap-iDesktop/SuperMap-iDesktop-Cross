@@ -8,7 +8,6 @@ import com.supermap.data.JoinItem;
 import com.supermap.data.JoinItems;
 import com.supermap.data.JoinType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -18,6 +17,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -30,7 +30,7 @@ import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 
 public class JDialogJoinItems extends SmDialog {
-	private int[] tableWeight = new int[]{60,110,125,125,125,350,75};
+	private int[] tableWeight = new int[]{60, 110, 125, 125, 125, 350, 75};
 
 	private JoinItems joinItems = null;
 	private Dataset correntDataset = null;
@@ -57,7 +57,7 @@ public class JDialogJoinItems extends SmDialog {
 		setTableStates();
 	}
 
-	private void rememberTableWeight(){
+	private void rememberTableWeight() {
 		tableWeight[0] = joinItemsTable.getColumnModel().getColumn(0).getWidth();
 		tableWeight[1] = joinItemsTable.getColumnModel().getColumn(1).getWidth();
 		tableWeight[2] = joinItemsTable.getColumnModel().getColumn(2).getWidth();
@@ -83,9 +83,9 @@ public class JDialogJoinItems extends SmDialog {
 				Dataset dataset = joinItemsTable.getCurrentDataset().getDatasource().getDatasets().get(value.toString());
 				DataCell dataCell = new DataCell();
 				dataCell.initDatasetType(dataset);
-				if(isSelected){
+				if (isSelected) {
 					dataCell.setBackground(table.getSelectionBackground());
-				}else{
+				} else {
 					dataCell.setBackground(table.getBackground());
 				}
 				return dataCell;
@@ -118,7 +118,6 @@ public class JDialogJoinItems extends SmDialog {
 		});
 
 
-
 	}
 
 	private void initComponentStates() {
@@ -134,7 +133,7 @@ public class JDialogJoinItems extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogJoinItems.this.setDialogResult(DialogResult.OK);
-				JDialogJoinItems.this.clean();
+				JDialogJoinItems.this.dispose();
 			}
 		});
 
@@ -142,7 +141,7 @@ public class JDialogJoinItems extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
-				JDialogJoinItems.this.clean();
+				JDialogJoinItems.this.dispose();
 			}
 		});
 
@@ -191,23 +190,18 @@ public class JDialogJoinItems extends SmDialog {
 	}
 
 	private void reverse() {
-		int[] selectedRows = this.joinItemsTable.getSelectedRows();
-		this.joinItemsTable.setRowSelectionInterval(0, joinItemsTable.getRowCount() - 1);
-		for (int i = 0; i < selectedRows.length; i++) {
-			this.joinItemsTable.removeRowSelectionInterval(selectedRows[i], selectedRows[i]);
-		}
-
+		TableUtilties.invertSelection(joinItemsTable);
 	}
 
 	private void delete() {
 		int[] selectRows = this.joinItemsTable.getSelectedRows();
 		if (selectRows != null && selectRows.length > 0) {
 			((JoinItemsTableModel) this.joinItemsTable.getModel()).deleteRows(selectRows);
-		}
-		if (this.joinItemsTable.getRowCount() > 0 && selectRows[0] < this.joinItemsTable.getRowCount()) {
-			this.joinItemsTable.setRowSelectionInterval(selectRows[0], selectRows[0]);
-		} else if (this.joinItemsTable.getRowCount() > 0) {
-			this.joinItemsTable.setRowSelectionInterval(this.joinItemsTable.getRowCount() - 1, this.joinItemsTable.getRowCount() - 1);
+			if (this.joinItemsTable.getRowCount() > 0 && selectRows[0] < this.joinItemsTable.getRowCount()) {
+				this.joinItemsTable.setRowSelectionInterval(selectRows[0], selectRows[0]);
+			} else if (this.joinItemsTable.getRowCount() > 0) {
+				this.joinItemsTable.setRowSelectionInterval(this.joinItemsTable.getRowCount() - 1, this.joinItemsTable.getRowCount() - 1);
+			}
 		}
 	}
 
@@ -215,10 +209,6 @@ public class JDialogJoinItems extends SmDialog {
 		((JoinItemsTableModel) this.joinItemsTable.getModel()).addNewJoinItem();
 		this.joinItemsTable.addRowSelectionInterval(this.joinItemsTable.getRowCount() - 1, this.joinItemsTable.getRowCount() - 1);
 		this.joinItemsTable.scrollRectToVisible(this.joinItemsTable.getCellRect(this.joinItemsTable.getRowCount() - 1, 0, true));
-	}
-
-	private void clean() {
-		this.dispose();
 	}
 
 	private void initComponents() {
@@ -438,9 +428,9 @@ public class JDialogJoinItems extends SmDialog {
 		public Class<?> getColumnClass(int columnIndex) {
 			if (columnIndex == 6) {
 				return JoinType.class;
-			} else if(columnIndex==2){
+			} else if (columnIndex == 2) {
 				return DataCell.class;
-			}else{
+			} else {
 				return String.class;
 			}
 		}

@@ -408,7 +408,7 @@ public class ServerRelease {
 
 			response = httpClient.execute(httpPost);
 			StatusLine responseStatus = response.getStatusLine();
-			String responseText = EntityUtils.toString(response.getEntity());
+			String responseText = EntityUtils.toString(response.getEntity(), "utf-8");
 
 			if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
 					|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
@@ -660,7 +660,7 @@ public class ServerRelease {
 			}
 		} catch (HttpHostConnectException e) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_ConnectException"));
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException | IllegalArgumentException e) {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_iServer_UnknownHostException"));
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);

@@ -210,12 +210,10 @@ public abstract class Measure implements IMeasureAble {
 	private void addTextBoxsToMapControl() {
 		try {
 			setTextBoxVisiable(false);
-
 			this.mapControl.remove(labelTextBoxTotle);
 			this.mapControl.add(labelTextBoxTotle);
 			this.mapControl.remove(labelTextBoxCurrent);
 			this.mapControl.add(labelTextBoxCurrent);
-
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

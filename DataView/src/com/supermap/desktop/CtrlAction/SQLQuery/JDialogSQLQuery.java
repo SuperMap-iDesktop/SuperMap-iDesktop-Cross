@@ -23,6 +23,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -726,15 +727,14 @@ public class JDialogSQLQuery extends SmDialog {
 					} else {
 						// donothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
 					}
-				}
-				/*else if (row == tableFieldInfo.getRowCount() - 1) {
+				} else if (row == tableFieldInfo.getRowCount() - 1) {
 					// TODO 打开连接设置面板 未实现，暂不开放
 					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
 					jDialogJoinItem.setCorrentDataset(currentDataset);
 					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
 						joinItems = jDialogJoinItem.getJoinItems();
 					}
-				}*/
+				}
 				else if (row != -1) {
 					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
 				}

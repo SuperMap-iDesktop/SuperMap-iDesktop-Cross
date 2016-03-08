@@ -26,7 +26,7 @@ import java.text.NumberFormat;
 public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelMapName;
