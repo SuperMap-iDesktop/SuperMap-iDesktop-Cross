@@ -239,7 +239,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 			DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
 			connectionInfo.setEngineType(engineType);
 			String datasourceName = jTextFieldDatasourceAlias.getText();
-			String service = jTextFieldServerAddress.getText();
+			String service = jTextFieldServerAddress.getText().trim();
 			connectionInfo.setServer(service);
 			if (engineType == EngineType.OGC) {
 				connectionInfo.setDriver((String) jComboBoxServerType.getSelectedItem());

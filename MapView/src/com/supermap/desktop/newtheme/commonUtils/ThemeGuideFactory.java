@@ -200,22 +200,22 @@ public class ThemeGuideFactory {
 		boolean success = false;
 		if (null != getDataset()) {
 			DatasetGrid datasetGrid = (DatasetGrid) getDataset();
-			int rowCount = datasetGrid.getRowBlockCount();
-			int columCount = datasetGrid.getColumnBlockCount();
 			datasetGrid.buildStatistics();
 			try {
-				if (rowCount * columCount > 3000) {
-					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeUniqueMaxCount"));
-					return success;
-				}
 				ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
+				if (themeUnique.getCount() > 3000) {
+					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeUniqueMaxCount"));
+					return false;
+				}
 				if (null != themeUnique) {
 					success = true;
 					ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
 					themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
 					addPanelToThemeMainContainer(themeUniqueContainer);
 					getDockbarThemeContainer().setVisible(true);
-				} else {
+				}
+
+				if (null == themeUnique) {
 					success = false;
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 				}
@@ -240,6 +240,7 @@ public class ThemeGuideFactory {
 			DatasetGrid datasetGrid = (DatasetGrid) getDataset();
 			try {
 				ThemeGridRange themeUnique = ThemeGridRange.makeDefault(datasetGrid, RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENORANGEVIOLET);
+
 				if (null != themeUnique) {
 					success = true;
 					ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer((DatasetGrid) getDataset(), themeUnique);
@@ -268,27 +269,20 @@ public class ThemeGuideFactory {
 	public static boolean buildGraphTheme() {
 		boolean success = false;
 		if (null != getDataset()) {
-			if (UniqueValueCountUtil.isCountBeyond((DatasetVector) getDataset(), "SmID")) {
-				// 字段记录数大于3000条时建议不做专题图
-				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
-						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
-				return success;
-			} else {
-				success = true;
-				DatasetVector datasetVector = (DatasetVector) getDataset();
-				ThemeGraph themeGraph = new ThemeGraph();
-				ThemeGraphItem themeGraphItem = new ThemeGraphItem();
-				themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
-				themeGraphItem.setCaption("SmID");
-				themeGraph.insert(0, themeGraphItem);
-				themeGraph.setGraphType(ThemeGraphType.PIE3D);
-				themeGraph.setMaxGraphSize(1);
-				themeGraph.setAxesDisplayed(false);
-				ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
-				themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
-				addPanelToThemeMainContainer(themeGraphContainer);
-				getDockbarThemeContainer().setVisible(true);
-			}
+			success = true;
+			DatasetVector datasetVector = (DatasetVector) getDataset();
+			ThemeGraph themeGraph = new ThemeGraph();
+			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
+			themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
+			themeGraphItem.setCaption("SmID");
+			themeGraph.insert(0, themeGraphItem);
+			themeGraph.setGraphType(ThemeGraphType.PIE3D);
+			themeGraph.setMaxGraphSize(1);
+			themeGraph.setAxesDisplayed(false);
+			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
+			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
+			addPanelToThemeMainContainer(themeGraphContainer);
+			getDockbarThemeContainer().setVisible(true);
 		}
 		return success;
 	}

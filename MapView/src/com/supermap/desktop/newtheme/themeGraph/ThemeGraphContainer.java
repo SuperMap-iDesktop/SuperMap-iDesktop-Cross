@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -594,46 +595,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	@SuppressWarnings("unchecked")
 	private void initTableColumns() {
-		// 设置每行中列的值
-		TableRowCellEditor rowEditor = new TableRowCellEditor(this.tableGraphInfo);
+
 		for (int i = 0; i < this.graphCount; i++) {
 			ThemeGraphItem item = themeGraph.getItem(i);
-			this.fieldComboBox = new SteppedComboBox(new String[] {});
-			this.fieldComboBox.removeAllItems();
-			getFieldComboBox(this.fieldComboBox);
-			Dimension d = this.fieldComboBox.getPreferredSize();
-			this.fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
-			this.fieldComboBox.setPopupWidth(d.width);
-			rowEditor.setEditorAt(i, new DefaultCellEditor(this.fieldComboBox));
-			this.tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
 			final String expression = item.getGraphExpression();
-			removeRepeatItem(this.fieldComboBox, expression);
-			this.fieldComboBox.setSelectedItem(expression);
 			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
 			this.tableGraphInfo.setValueAt(item.getCaption(), i, TABLE_COLUMN_CAPTION);
-
-			this.fieldComboBox.addItemListener(new ItemListener() {
-
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						getSqlExpression(fieldComboBox, expression);
-						String tempExpression = fieldComboBox.getSelectedItem().toString();
-						String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
-						int i = tableGraphInfo.getSelectedRow();
-						ThemeGraphItem item = themeGraph.getItem(i);
-						item.setGraphExpression(tempExpression);
-						item.setCaption(caption);
-						if (isRefreshAtOnce) {
-							refreshMapAndLayer();
-							tableGraphInfo.setValueAt(tempExpression, i, TABLE_COLUMN_EXPRESSION);
-							tableGraphInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
-						}
-					}
-				}
-			});
 		}
 	}
 
@@ -651,13 +620,47 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void tableChanged(TableModelEvent e) {
 			int selectRow = e.getFirstRow();
 			int selectColumn = e.getColumn();
-			String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-			if (!StringUtilties.isNullOrEmptyString(caption)) {
-				// 如果输入为数值且段值合法时修改段值
-				setGraphItemCaption(selectRow, caption);
-			} else {
-				caption = themeGraph.getItem(selectRow).getCaption();
-				tableGraphInfo.setValueAt(caption, selectRow, TABLE_COLUMN_CAPTION);
+			if (selectColumn == TABLE_COLUMN_CAPTION) {
+				String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
+				if (!StringUtilties.isNullOrEmptyString(caption)) {
+					// 如果输入为数值且段值合法时修改段值
+					setGraphItemCaption(selectRow, caption);
+				} else {
+					caption = themeGraph.getItem(selectRow).getCaption();
+					tableGraphInfo.setValueAt(caption, selectRow, TABLE_COLUMN_CAPTION);
+				}
+			}
+			if (selectColumn == TABLE_COLUMN_EXPRESSION) {
+				// 设置每行中列的值
+				ThemeGraphItem item = themeGraph.getItem(selectRow);
+				TableRowCellEditor rowEditor = new TableRowCellEditor(tableGraphInfo);
+				fieldComboBox = new SteppedComboBox(new String[] {});
+				fieldComboBox.removeAllItems();
+				getFieldComboBox(fieldComboBox);
+				final String expression = item.getGraphExpression();
+				removeRepeatItem(fieldComboBox, expression);
+				Dimension d = fieldComboBox.getPreferredSize();
+				fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
+				fieldComboBox.setPopupWidth(d.width);
+				rowEditor.setEditorAt(selectRow, new DefaultCellEditor(fieldComboBox));
+				tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
+				fieldComboBox.addItemListener(new ItemListener() {
+
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							String tempExpression = fieldComboBox.getSelectedItem().toString();
+							String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
+							int i = tableGraphInfo.getSelectedRow();
+							ThemeGraphItem item = themeGraph.getItem(i);
+							item.setGraphExpression(tempExpression);
+							item.setCaption(caption);
+							tableGraphInfo.setValueAt(tempExpression, i, TABLE_COLUMN_EXPRESSION);
+							tableGraphInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
+							refreshMapAtOnce();
+						}
+					}
+				});
 			}
 		}
 	}
@@ -881,6 +884,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == buttonDelete) {
 				int[] selectRows = tableGraphInfo.getSelectedRows();
+				int selectRow = tableGraphInfo.getSelectedRow();
 				for (int i = selectRows.length - 1; i >= 0; i--) {
 					themeGraph.remove(selectRows[i]);
 				}
@@ -890,8 +894,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					setToolBarButtonEnable(false);
 					buttonAdd.setEnabled(true);
 				}
-				if (tableGraphInfo.getRowCount() > 0) {
-					tableGraphInfo.addRowSelectionInterval(0, 0);
+				if (selectRow != tableGraphInfo.getRowCount() && tableGraphInfo.getRowCount() > 0) {
+					tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
+				} else if (tableGraphInfo.getRowCount() > 0) {
+					tableGraphInfo.addRowSelectionInterval(tableGraphInfo.getRowCount() - 1, tableGraphInfo.getRowCount() - 1);
 				}
 				return;
 			}
@@ -978,7 +984,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					GeoStyle newGeoStyle = new GeoStyle();
 					Colors colors = (Colors) comboBoxColor.getSelectedItem();
 					int colorCount = colors.getCount();
-					newGeoStyle.setFillForeColor(colors.get((colorCount/tempList.size())*i));
+					Random random = new Random();
+					int randomCount = random.nextInt(colorCount);
+					newGeoStyle.setFillForeColor(colors.get((randomCount)));
 					newGeoStyle.setLineWidth(0.1);
 					item.setUniformStyle(newGeoStyle);
 					if (!itemExist(item, existItems)) {
@@ -1301,9 +1309,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			SymbolType symbolType = SymbolType.LINE;
 			GeoStyle geoStyle = themeGraph.getLeaderLineStyle();
 			DialogResult dialogResult = null;
-			if (null!=geoStyle) {
+			if (null != geoStyle) {
 				dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
-			}else {
+			} else {
 				dialogResult = textStyleDialog.showDialog(resources, new GeoStyle(), symbolType);
 			}
 			if (dialogResult.equals(DialogResult.OK)) {

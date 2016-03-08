@@ -88,6 +88,7 @@ public class DataImportFrame extends SmDialog {
 	private ArrayList<JPanel> panels;
 	private FileInfoModel model;
 	private JButton buttonAddFile = new JButton();
+	private JButton buttonAddDir = new JButton();
 	private JButton buttonDelete = new JButton();
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
@@ -285,6 +286,7 @@ public class DataImportFrame extends SmDialog {
 	
 	private void initToolBar() {
 		this.toolBar.add(this.buttonAddFile);
+		this.toolBar.add(this.buttonAddDir);
 		this.buttonDelete.setEnabled(false);
 		this.toolBar.add(this.buttonDelete);
 		this.buttonSelectAll.setEnabled(false);
@@ -316,6 +318,7 @@ public class DataImportFrame extends SmDialog {
 
 	public void initResources() {
 		this.setTitle(DataConversionProperties.getString("String_FormImport_FormText"));
+		this.buttonAddDir.setIcon(new ImageIcon(DataImportFrame.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Add.png")));
 		this.buttonAddFile.setIcon(new ImageIcon(DataImportFrame.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
 		this.buttonSelectAll.setIcon(new ImageIcon(DataImportFrame.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
@@ -327,7 +330,8 @@ public class DataImportFrame extends SmDialog {
 		this.checkBoxAutoClose.setText(DataConversionProperties.getString("string_chcekbox_autoCloseIn"));
 		this.labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
 		this.labelRemind.setText(DataConversionProperties.getString("string_label_addFileRemind"));
-		this.buttonAddFile.setToolTipText(DataConversionProperties.getString("string_button_add"));
+		this.buttonAddDir.setToolTipText(DataConversionProperties.getString("String_button_addDir"));
+		this.buttonAddFile.setToolTipText(DataConversionProperties.getString("String_button_addFile"));
 		this.buttonDelete.setToolTipText(DataConversionProperties.getString("string_button_delete"));
 		this.buttonSelectAll.setToolTipText(DataConversionProperties.getString("string_button_selectAll"));
 		this.buttonInvertSelect.setToolTipText(DataConversionProperties.getString("string_button_invertSelect"));

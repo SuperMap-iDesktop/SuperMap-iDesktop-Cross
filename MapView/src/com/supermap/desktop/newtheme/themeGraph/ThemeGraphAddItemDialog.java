@@ -15,6 +15,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -82,15 +83,22 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		this.buttonAddExpression = new JButton();
 		this.buttonSure = new JButton();
 		this.buttonCancel = new JButton();
+		JPanel panelButton = new JPanel();
+		initPanelButton(panelButton);
 		this.panelList.setViewportView(this.listExpressions);
 		//@formatter:off
 		this.setSize(260,300);
 		this.setLayout(new GridBagLayout());
 		this.add(this.panelList,           new GridBagConstraintsHelper(0, 0, 3, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(3).setWeight(3, 3));
-		this.add(this.buttonAddExpression, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,3,0,5).setWeight(1, 0));
-		this.add(this.buttonSure,          new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(1, 0));
-		this.add(this.buttonCancel,        new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(1, 0));
+		this.add(panelButton,              new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,3,0,5).setWeight(1, 0));
 		//@formatter:on
+	}
+
+	private void initPanelButton(JPanel panelButton) {
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(this.buttonAddExpression, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,3,0,5).setWeight(60, 0));
+		panelButton.add(this.buttonSure,          new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(20, 0));
+		panelButton.add(this.buttonCancel,        new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(20, 0));
 	}
 
 	public void setList(ArrayList<String> list) {

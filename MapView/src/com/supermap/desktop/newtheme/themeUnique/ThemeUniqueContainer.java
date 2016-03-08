@@ -658,7 +658,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * @author Administrator
 	 */
 	class LocalComboBoxItemListener implements ItemListener {
-
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -723,6 +722,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				} else {
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"),
 							CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
+					comboBoxExpression.setSelectedItem(themeUnique.getUniqueExpression());
 				}
 			}
 		}

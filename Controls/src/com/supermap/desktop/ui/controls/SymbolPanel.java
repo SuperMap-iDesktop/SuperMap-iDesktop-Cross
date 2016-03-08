@@ -191,7 +191,7 @@ public class SymbolPanel extends JPanel {
 			symbolRootGroup = symbolLineLibrary.getRootGroup();
 			// 编码格式不同，重新赋值
 			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
-			if (activeStyle.getMarkerSymbolID() > 5) {
+			if (activeStyle.getLineSymbolID() > 5) {
 				getTreePath();
 			}
 		} else if (currentSymbolType.equals(SymbolType.FILL)) {
@@ -199,7 +199,7 @@ public class SymbolPanel extends JPanel {
 			symbolRootGroup = symbolFillLibrary.getRootGroup();
 			// 编码格式不同，重新赋值
 			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
-			if (activeStyle.getMarkerSymbolID() > 6) {
+			if (activeStyle.getFillSymbolID() > 6) {
 				getTreePath();
 			}
 		}
@@ -1195,7 +1195,7 @@ public class SymbolPanel extends JPanel {
 	 * @return
 	 */
 	protected LabelInfo getLabelInfoBySymbolID(int symbolID) {
-		LabelInfo result = null;
+		LabelInfo result = labelInfoArray.get(0);
 		for (int i = 0; i < labelInfoArray.size(); i++) {
 			LabelInfo labelInfo = labelInfoArray.get(i);
 			int id = labelInfo.getSymbolID();
@@ -1338,22 +1338,34 @@ public class SymbolPanel extends JPanel {
 	 * @author zhaosy
 	 */
 	private void getTreePath() {
+		// modify by xie getTreePath()没有根据SymbolType匹配导致异常
 		int i = 1;
 		int n = 0;
 		SymbolLibrary symbolMarkerLibrary = currentResources.getMarkerLibrary();
-		SymbolGroup symbolGroup = symbolMarkerLibrary.findGroup(activeStyle.getMarkerSymbolID());
-		// 遍历父目录，压入栈，后进先出就是path
-		Stack<String> stack = new Stack<String>();
-		stack.push(symbolGroup.getName());
-		while (symbolGroup.getParent() != null) {
-			symbolGroup = symbolGroup.getParent();
-			stack.push(symbolGroup.getName());
-			i++;
+		SymbolGroup symbolGroup = null;
+		if (currentSymbolType.equals(SymbolType.MARKER)) {
+			symbolGroup = symbolMarkerLibrary.findGroup(activeStyle.getMarkerSymbolID());
 		}
-		symbolTreePath = new Object[i];
-		while (stack.empty() != true) {
-			symbolTreePath[n] = new DefaultMutableTreeNode(stack.pop());
-			n++;
+		if (currentSymbolType.equals(SymbolType.LINE)) {
+			symbolGroup = symbolMarkerLibrary.findGroup(activeStyle.getLineSymbolID());
+		}
+		if (currentSymbolType.equals(SymbolType.FILL)) {
+			symbolGroup = symbolMarkerLibrary.findGroup(activeStyle.getFillSymbolID());
+		}
+		// 遍历父目录，压入栈，后进先出就是path
+		if (null != symbolGroup) {
+			Stack<String> stack = new Stack<String>();
+			stack.push(symbolGroup.getName());
+			while (symbolGroup.getParent() != null) {
+				symbolGroup = symbolGroup.getParent();
+				stack.push(symbolGroup.getName());
+				i++;
+			}
+			symbolTreePath = new Object[i];
+			while (stack.empty() != true) {
+				symbolTreePath[n] = new DefaultMutableTreeNode(stack.pop());
+				n++;
+			}
 		}
 	}
 
@@ -1389,7 +1401,7 @@ public class SymbolPanel extends JPanel {
 			symbolBasicInfoPanel.refreshBasicInfo(symbolID, labelInfo.getSymbolName());
 
 			// TODO 系统字段隐藏透明设置中的透明设置百分比
-//			symbolSettingPanel.refreshS
+			// symbolSettingPanel.refreshS
 		}
 	}
 

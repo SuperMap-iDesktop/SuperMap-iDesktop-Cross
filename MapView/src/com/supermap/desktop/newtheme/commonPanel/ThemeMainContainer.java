@@ -257,6 +257,9 @@ public class ThemeMainContainer extends JPanel {
 
 				if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 					// 不保存修改
+					ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+					panel.unregistActionListener();
+					panel = null;
 					ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
 				} else {
 					// 保存修改并刷新

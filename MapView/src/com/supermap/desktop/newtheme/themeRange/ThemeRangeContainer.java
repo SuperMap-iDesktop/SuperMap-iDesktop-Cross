@@ -1116,6 +1116,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 							JOptionPane.ERROR_MESSAGE);
+					comboBoxExpression.setSelectedItem(themeRange.getRangeExpression());
+					isResetComboBox = true;
 				} else {
 					refreshThemeRange(theme);
 				}
@@ -1311,6 +1313,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
 						JOptionPane.ERROR_MESSAGE);
+				comboBoxExpression.setSelectedItem(themeRange.getRangeExpression());
+				isResetComboBox = true;
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);

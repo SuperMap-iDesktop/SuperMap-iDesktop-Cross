@@ -563,6 +563,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			} else if (e.getSource() == checkBoxShadow) {
 				// 设置添加阴影
 				setShadow();
+				refreshMapAtOnce();
 			} else if (e.getSource() == checkBoxFixedSize) {
 				// 设置字体固定大小
 				setFixedSize();
