@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -20,7 +21,6 @@ import javax.swing.border.TitledBorder;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSettingGJB;
-import com.supermap.data.conversion.ImportSettingIMG;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
@@ -52,7 +52,6 @@ public class ImportPanelGJB extends JPanel {
 	private CharsetComboBox comboBoxCharset;
 	private JPanel panelResultSet;
 	private JPanel panelDatapath;
-	private JPanel panelTransform;
 
 	private DataImportFrame dataImportFrame;
 	private ImportFileInfo fileInfo;
@@ -97,7 +96,6 @@ public class ImportPanelGJB extends JPanel {
 		this.comboBoxDatasource.setSelectedDatasource(datasource);
 		this.panelDatapath = new JPanel();
 		this.panelResultSet = new JPanel();
-		this.panelTransform = new JPanel();
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 
@@ -113,8 +111,6 @@ public class ImportPanelGJB extends JPanel {
 		// formmater:off
 		initPanelResultSet();
 
-		initPanelTransform();
-
 		initPanelDatapath();
 
 		initPanelGJB();
@@ -125,8 +121,7 @@ public class ImportPanelGJB extends JPanel {
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
 		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
 		//@formatter:on
 	}
 
@@ -141,27 +136,19 @@ public class ImportPanelGJB extends JPanel {
 		//@formatter:on
 	}
 
-	private void initPanelTransform() {
-		//@formatter:off
-		this.panelTransform.setLayout(new GridBagLayout());
-		this.panelTransform.add(this.labelImportModel,             new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.panelTransform.add(this.comboBoxImportModel,          new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelTransform.add(this.checkBoxIsImportEmptyDataset, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 10, 5));
-		//@formatter:on
-	}
-
 	private void initPanelResultSet() {
-		// formatter:off
+		//@formatter:off
 		this.panelResultSet.setLayout(new GridBagLayout());
-		this.panelResultSet.add(this.labelTargetDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1)
-				.setInsets(10, 10, 5, 5));
-		this.panelResultSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1)
-				.setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelResultSet.add(this.labelResultDataset, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1)
-				.setInsets(10, 0, 5, 5));
-		this.panelResultSet.add(this.textFieldResultDataset, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1)
-				.setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
-		// formatter:on
+		this.textFieldResultDataset.setPreferredSize(new Dimension(150,23));
+		this.textFieldResultDataset.setEnabled(false);
+		this.panelResultSet.add(this.labelTargetDatasource,        new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelResultSet.add(this.comboBoxDatasource,           new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelResultDataset,           new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelResultSet.add(this.textFieldResultDataset,       new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelImportModel,             new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelResultSet.add(this.comboBoxImportModel,          new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.checkBoxIsImportEmptyDataset, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(10, 0, 10, 5));
+		//@formatter:on
 	}
 
 	private void registActionListener() {
@@ -197,7 +184,6 @@ public class ImportPanelGJB extends JPanel {
 		this.labelDatapath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
 		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblDataset"));
 		this.panelResultSet.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel")));
-		this.panelTransform.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform")));
 		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath")));
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover") }));

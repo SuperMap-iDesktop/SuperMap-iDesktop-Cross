@@ -1,74 +1,37 @@
 package com.supermap.desktop.ui;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.CellEditorListener;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JToolBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.JButton;
+import javax.swing.*;
 
 import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.dnd.*;
+import java.awt.event.*;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingConstants;
 
-import com.supermap.data.conversion.ImportSettingBIL;
-import com.supermap.data.conversion.ImportSettingDXF;
-import com.supermap.data.conversion.ImportSettingGBDEM;
-import com.supermap.data.conversion.ImportSettingGRD;
-import com.supermap.data.conversion.ImportSettingLIDAR;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingTEMSClutter;
-import com.supermap.data.conversion.ImportSettingUSGSDEM;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.FileTypeLocale;
-import com.supermap.desktop.ImportFileInfo;
+import com.supermap.data.conversion.*;
+import com.supermap.desktop.*;
 import com.supermap.desktop.action.CommonMouseListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SteppedComboBox;
-import com.supermap.desktop.ui.controls.TableRowCellEditor;
-import com.supermap.desktop.util.CommonFunction;
-import com.supermap.desktop.util.FileInfoModel;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.util.*;
 
 import javax.swing.JCheckBox;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * @author Administrator 数据导入主体界面
  */
 public class DataImportFrame extends SmDialog {
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public DataImportFrame(JFrame owner, boolean modal) {
 		super(owner, modal);
 		initResources();
@@ -128,6 +91,7 @@ public class DataImportFrame extends SmDialog {
 		this.buttonInvertSelect.addActionListener(this.buttonAction);
 		this.buttonImport.addActionListener(this.buttonAction);
 		this.buttonClose.addActionListener(this.buttonAction);
+		this.buttonAddDir.addActionListener(this.buttonAction);
 		this.addWindowListener(this.windowListener);
 		this.table.addKeyListener(this.commonKeyListener);
 		this.scrollPane.addMouseListener(this.commonMouseListener);
@@ -200,7 +164,12 @@ public class DataImportFrame extends SmDialog {
 			this.steppedComboBox = new SteppedComboBox(new String[] {});
 			this.steppedComboBox.removeAllItems();
 			String fileName = tempFileInfo.getFileName();
-			this.fileTypeInfo = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+			if (fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")) > 0) {
+				this.fileTypeInfo = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+			}
+			if (null == fileTypeInfo) {
+				return;
+			}
 			if (this.fileTypeInfo.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
 				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_CAD"));
 				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterModel"));
@@ -224,7 +193,7 @@ public class DataImportFrame extends SmDialog {
 			Dimension d = this.steppedComboBox.getPreferredSize();
 			this.steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));
 			this.steppedComboBox.setPopupWidth(d.width);
-			
+
 			rowEditor.setEditorAt(i, new DefaultCellEditor(steppedComboBox));
 			this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellEditor(rowEditor);
 			this.aListener = new ItemListener() {
@@ -253,7 +222,7 @@ public class DataImportFrame extends SmDialog {
 						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterModel"))) {
 							// DXF 导入为三维模型文件
 							tempFileInfo.setImportSetting(new ImportSettingModelDXF());
-							CommonFunction.replace(panelImportInfo, new ImportPanelModel(DataImportFrame.this,tempFileInfo));
+							CommonFunction.replace(panelImportInfo, new ImportPanelModel(DataImportFrame.this, tempFileInfo));
 							labelTitle.setText(DataConversionProperties.getString("String_FormImportDXFMODEL_Text"));
 						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_ArcGIS"))) {
 							// txt,dem 导入为ArcGIS类型文件
@@ -265,12 +234,12 @@ public class DataImportFrame extends SmDialog {
 							tempFileInfo.setImportSetting(new ImportSettingLIDAR());
 							CommonFunction.replace(panelImportInfo, new ImportPanelLIDAR(DataImportFrame.this, tempFileInfo));
 							labelTitle.setText(DataConversionProperties.getString("String_FormImportLIDAR_Text"));
-						}else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))) {
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))) {
 							// dem 导入为美国标准DEM文件
 							tempFileInfo.setImportSetting(new ImportSettingUSGSDEM());
 							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
 							labelTitle.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
-						}else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GBDEM"))) {
+						} else if (nowType.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GBDEM"))) {
 							// dem 导入为中国标准DEM文件
 							tempFileInfo.setImportSetting(new ImportSettingGBDEM());
 							CommonFunction.replace(panelImportInfo, new ImportPanelArcGIS(DataImportFrame.this, tempFileInfo));
@@ -283,7 +252,6 @@ public class DataImportFrame extends SmDialog {
 		}
 	}
 
-	
 	private void initToolBar() {
 		this.toolBar.add(this.buttonAddFile);
 		this.toolBar.add(this.buttonAddDir);
@@ -411,15 +379,33 @@ public class DataImportFrame extends SmDialog {
 				CommonFunction.addData(dataImportFrame, fileInfos, panels, table, model, panelImportInfo, labelTitle);
 				initComboBoxColumns();
 				setButtonState();
-			} else if (c == buttonDelete) {
+				return;
+			}
+			if (c == buttonAddDir) {
+				//添加文件夹
+				int height = buttonAddDir.getHeight();
+				int x = (int) buttonAddDir.getLocationOnScreen().getX();
+				int y = (int) buttonAddDir.getLocationOnScreen().getY() + height;
+				AddDirDialog addDirDialog = new AddDirDialog();
+				addDirDialog.setLocation(x, y);
+				addDirDialog.setVisible(true);
+				initComboBoxColumns();
+				setButtonState();
+				return;
+			}
+			if (c == buttonDelete) {
 				// 删除
 				CommonFunction.deleteData(table, fileInfos, panels, model, panelImportInfo, labelTitle, panelParams);
 				initComboBoxColumns();
 				setButtonState();
-			} else if (c == buttonSelectAll) {
+				return;
+			}
+			if (c == buttonSelectAll) {
 				// 全选
 				CommonFunction.selectedAll(fileInfos, panels, table, panelImportInfo, labelTitle);
-			} else if (c == buttonInvertSelect) {
+				return;
+			}
+			if (c == buttonInvertSelect) {
 				// 反选
 				CommonFunction.selectInvert(table);
 				int[] temp = table.getSelectedRows();
@@ -429,18 +415,77 @@ public class DataImportFrame extends SmDialog {
 				} else {
 					CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels, labelTitle);
 				}
-			} else if (c == buttonClose) {
+				return;
+			}
+			if (c == buttonClose) {
 				// 关闭
 				dispose();
-			} else if (c == buttonImport) {
+				return;
+			}
+			if (c == buttonImport) {
 				// 导入
 				CommonFunction.importData(table, fileInfos);
 				if (checkBoxAutoClose.isSelected()) {
 					dispose();
 				}
+				return;
 			}
 		}
 
+	}
+
+	class AddDirDialog extends SmDialog {
+
+		private static final long serialVersionUID = 1L;
+		JList<String> list = new JList<String>();
+
+		public AddDirDialog() {
+			setModal(true);
+			initComponent();
+		}
+
+		private void initComponent() {
+			this.setSize(200, 300);
+			setTitle(DataConversionProperties.getString("String_Import"));
+			getContentPane().add(list, BorderLayout.NORTH);
+			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			listModel.addElement(DataConversionProperties.getString("String_FormImportGJB_Text"));
+			list.setModel(listModel);
+			list.addListSelectionListener(new ListSelectionListener() {
+
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					dispose();
+					if (!SmFileChoose.isModuleExist("DataExportFrame_ImportDirectories")) {
+						SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Import"),
+								"DataExportFrame_ImportDirectories", "GetDirectories");
+					}
+					SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
+					int state = tempfileChooser.showDefaultDialog();
+					if (state == JFileChooser.APPROVE_OPTION) {
+						String directories = tempfileChooser.getFilePath();
+						String filePathTemp = directories + File.separator;
+						ImportFileInfo fileInfo = new ImportFileInfo();
+						fileInfo.setImportSetting(new ImportSettingGJB());
+						fileInfo.setFilePath(filePathTemp);
+						fileInfo.setFileType("GJB5068");
+						fileInfo.setFileName(filePathTemp);
+						fileInfo.setState(DataConversionProperties.getString("string_change"));
+						JPanel gjbPanel = new ImportPanelGJB(DataImportFrame.this, fileInfo);
+						panels.add(gjbPanel);
+						model.addRow(fileInfo);
+						table.updateUI();
+						if (table.getSelectedRows().length==0) {
+							table.setRowSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+						}
+						// 刷新右边界面
+						CommonFunction.replacePanel(panelImportInfo, fileInfos, panels, labelTitle);
+						setButtonState();
+					}
+
+				}
+			});
+		}
 	}
 
 	public JCheckBox getCheckBoxAutoClose() {

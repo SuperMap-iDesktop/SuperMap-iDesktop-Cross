@@ -1,19 +1,16 @@
 package com.supermap.desktop.action;
 
-import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.ui.DataImportFrame;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.FileInfoModel;
 

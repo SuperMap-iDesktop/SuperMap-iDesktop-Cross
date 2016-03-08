@@ -46,6 +46,10 @@ public class FileInfoModel extends AbstractTableModel {
 		fireTableRowsInserted(0, getRowCount());
 	}
 
+	public void removeRow(int i){
+		fileInfos.remove(i);
+		fireTableRowsDeleted(0, getRowCount());
+	}
 	public void removeRows(int[] rows) {
 		ArrayList<ImportFileInfo> removeInfo = new ArrayList<ImportFileInfo>();
 		if (rows.length > 0) {

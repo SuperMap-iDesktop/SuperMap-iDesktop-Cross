@@ -56,6 +56,7 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.DataImportFrame;
 import com.supermap.desktop.ui.ImportPanelEXCEL;
+import com.supermap.desktop.ui.ImportPanelGJB;
 import com.supermap.desktop.ui.ImportPanelLIDAR;
 import com.supermap.desktop.ui.ImportPanelModel;
 import com.supermap.desktop.ui.ImportPanelCSV;
@@ -329,6 +330,7 @@ public class CommonFunction {
 		ArrayList<String> tempL = new ArrayList<String>();
 		for (int i = 0; i < FileTypeLocale.getVectorvalue().length; i++) {
 			tempL.add(FileTypeLocale.getVectorvalue()[i]);
+			tempL.add("GJB5068");
 		}
 		boolean result = false;
 		if (tempL.containsAll(getDataType(fileInfos))) {
@@ -551,15 +553,19 @@ public class CommonFunction {
 	 * @param lblDataimportType
 	 * @return
 	 */
-	private static JPanel replacePanel(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
+	public static JPanel replacePanel(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {
 		JPanel dataPane = new JPanel();
 
 		// 类型全部相同
 		if (isSame(fileInfos)) {
-			ImportFileInfo tempFileInfo =  fileInfos.get(0);
+			ImportFileInfo tempFileInfo = fileInfos.get(0);
 			String fileTypeInfo = fileInfos.get(0).getFileType();
 			String fileName = fileInfos.get(0).getFileName();
-			String fileType = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+			String fileType = fileTypeInfo;
+			if (fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")) > 0) {
+				fileType = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+			}
+
 			if (fileType.equalsIgnoreCase(FileTypeLocale.BMP_STRING)) {
 				if (1 != fileInfos.size()) {
 					dataPane = new ImportPanelPI(fileInfos, panels);
@@ -609,11 +615,13 @@ public class CommonFunction {
 					if (fileInfos.get(0).getImportSetting() instanceof ImportSettingModelDXF) {
 						dataPane = new ImportPanelModel(fileInfos, panels);
 					}
-				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_CAD"))){
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
+				} else if (fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_CAD"))) {
 					dataPane = getRightPanel(panels);
-				}else {
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDXF_Text"));
+				} else {
 					tempFileInfo.setImportSetting(new ImportSettingModelDXF());
-					dataPane = new ImportPanelModel(null,tempFileInfo);
+					dataPane = new ImportPanelModel(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDXFMODEL_Text"));
 				}
 			}
@@ -627,17 +635,19 @@ public class CommonFunction {
 					if (fileInfos.get(0).getImportSetting() instanceof ImportSettingLIDAR) {
 						dataPane = new ImportPanelLIDAR(fileInfos, panels);
 					}
-				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_ArcGIS"))){
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+				} else if (fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_ArcGIS"))) {
 					dataPane = getRightPanel(panels);
-				}else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterLIDAR"))){
+					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportGRD_Text"));
+				} else if (fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_FilterLIDAR"))) {
 					tempFileInfo.setImportSetting(new ImportSettingLIDAR());
 					dataPane = new ImportPanelLIDAR(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportLIDAR_Text"));
-				}else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))){
+				} else if (fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_DEM"))) {
 					tempFileInfo.setImportSetting(new ImportSettingUSGSDEM());
 					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
-				}else {
+				} else {
 					tempFileInfo.setImportSetting(new ImportSettingGBDEM());
 					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportDEM_Text"));
@@ -819,9 +829,9 @@ public class CommonFunction {
 				// 将右边替换为放置电信栅格文件类型的容器
 				if (1 != fileInfos.size()) {
 					dataPane = new ImportPanelArcGIS(fileInfos, panels);
-				} else if(fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GRID"))){
+				} else if (fileTypeInfo.equalsIgnoreCase(DataConversionProperties.getString("String_FormImport_GRID"))) {
 					dataPane = getRightPanel(panels);
-				}else{
+				} else {
 					tempFileInfo.setImportSetting(new ImportSettingBIL());
 					dataPane = new ImportPanelArcGIS(null, tempFileInfo);
 					lblDataimportType.setText(DataConversionProperties.getString("String_FormImportBIL_Text"));
@@ -879,6 +889,15 @@ public class CommonFunction {
 				}
 				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportMrSID_Text"));
 			}
+			if (fileType.equalsIgnoreCase("GJB5068")) {
+				// // 将右边替换为放置GJB文件夹类型的容器
+				if (1 != fileInfos.size()) {
+					dataPane = new ImportPanelGJB(fileInfos, panels);
+				} else {
+					dataPane = getRightPanel(panels);
+				}
+				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportGJB_Text"));
+			}
 			if (null != dataPane) {
 				replace(panelImportInfo, dataPane);
 			}
@@ -913,7 +932,6 @@ public class CommonFunction {
 				replace(panelImportInfo, dataPane);
 			}
 		}
-
 		return dataPane;
 	}
 
@@ -938,8 +956,12 @@ public class CommonFunction {
 		HashSet<String> result = new HashSet<String>();
 		for (ImportFileInfo fileInfo : fileInfos) {
 			String fileName = fileInfo.getFileName();
-			String filePath = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
-			result.add(filePath.toLowerCase());
+			if (fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")) > 0) {
+				String filePath = fileName.substring(fileName.lastIndexOf(DataConversionProperties.getString("string_index_pause")), fileName.length());
+				result.add(filePath.toLowerCase());
+			} else {
+				result.add(fileInfo.getFileType());
+			}
 		}
 		return result;
 	}
@@ -1035,7 +1057,7 @@ public class CommonFunction {
 		table.updateUI();
 		if (!fileInfos.isEmpty()) {
 			// 刷新右边界面
-			CommonFunction.refreshPanelSelectedAll(panelImportInfo, fileInfos, panels, lblDataimportType);
+			refreshPanelSelectedAll(panelImportInfo, fileInfos, panels, lblDataimportType);
 		}
 	}
 
@@ -1054,13 +1076,22 @@ public class CommonFunction {
 			JLabel lblDataimportType, JPanel newPanel) {
 		// 执行删除
 		int[] selectedRow = table.getSelectedRows();
-		ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
 		if (!panels.isEmpty()) {
-			for (int i = 0; i < selectedRow.length; i++) {
-				removePanel.add(panels.get(selectedRow[i]));
+			ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
+			if (selectedRow.length < table.getRowCount()) {
+				for (int i = 0; i < selectedRow.length; i++) {
+					removePanel.add(panels.get(selectedRow[i]));
+				}
+				model.removeRows(selectedRow);
+				panels.removeAll(removePanel);
+			} else {
+				int[] tempRow = new int[table.getRowCount()];
+				for (int i = 0; i < table.getRowCount(); i++) {
+					tempRow[i] = i;
+				}
+				model.removeRows(tempRow);
+				panels.removeAll(panels);
 			}
-			model.removeRows(selectedRow);
-			panels.removeAll(removePanel);
 		}
 		// 如果表中没有数据，右边部分显示为默认界面。
 		if (fileInfos.isEmpty()) {

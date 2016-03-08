@@ -55,9 +55,13 @@ public class FileProperty extends JDialog {
 	private void setFileInfo(ImportFileInfo tempFileInfo) {
 		if (null != tempFileInfo) {
 			String fileName = tempFileInfo.getFileName();
-			String fileType = fileName.substring(fileName.lastIndexOf("."),
-					fileName.length());
-			this.lblType.setText("(" + fileType + ")");
+			if (fileName.lastIndexOf(".")>0) {
+				String fileType = fileName.substring(fileName.lastIndexOf("."),
+						fileName.length());
+				this.lblType.setText("(" + fileType + ")");
+			}else {
+				this.lblType.setText(DataConversionProperties.getString("String_Dir"));
+			}
 			this.lblLocation.setText(tempFileInfo.getFilePath());
 			File file = new File(tempFileInfo.getFilePath());
 			this.lblSize.setText(parseFileSize(file.length()));

@@ -167,9 +167,11 @@ public class ImportInfoUtil {
 			}
 			resultSetting = fileInfo.getImportSetting();
 			String fileName = fileInfo.getFileName();
-			String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
-			if (null != textFieldResultSet) {
-				textFieldResultSet.setText(resultSetName);
+			if (fileName.lastIndexOf(".")>0) {
+				String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
+				if (null != textFieldResultSet) {
+					textFieldResultSet.setText(resultSetName);
+				}
 			}
 			resultSetting.setTargetDatasource(datasource);
 		} else {
@@ -178,8 +180,10 @@ public class ImportInfoUtil {
 					textField.setText(fileInfos.get(0).getFilePath());
 				}
 				String fileName = fileInfos.get(0).getFileName();
-				String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
-				textFieldResultSet.setText(resultSetName);
+				if (fileName.lastIndexOf(".")>0) {
+					String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
+					textFieldResultSet.setText(resultSetName);
+				}
 			} else {
 				for (int i = 0; i < fileInfos.size(); i++) {
 					ImportFileInfo tempFileInfo = fileInfos.get(i);
