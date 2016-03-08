@@ -28,6 +28,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
@@ -694,6 +695,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
+			joinItems.removeRange(0, joinItems.getCount() - 1);
 			Object data = ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
 			if (data instanceof Dataset) {
 				currentDataset = (Dataset) data;
@@ -705,7 +707,6 @@ public class JDialogSQLQuery extends SmDialog {
 					radioButtonQuerySpaceAndProperty.setEnabled(true);
 					radioButtonQuerySpaceAndProperty.setSelected(true);
 				}
-
 			} else {
 				currentDataset = null;
 				tableFieldInfo.setDataset(null);
@@ -730,8 +731,9 @@ public class JDialogSQLQuery extends SmDialog {
 				} else if (row == tableFieldInfo.getRowCount() - 1) {
 					// TODO 打开连接设置面板 未实现，暂不开放
 					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
-					jDialogJoinItem.setCorrentDataset(currentDataset);
+					jDialogJoinItem.setCurrentDataset(currentDataset);
 					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
+						joinItems.dispose();
 						joinItems = jDialogJoinItem.getJoinItems();
 					}
 				}

@@ -11,8 +11,8 @@ import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -217,7 +217,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.scrollPaneTable.setViewportView(this.tableDatasets);
 		this.tableDatasets.setModel(this.spatialIndexTableModel);
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASET).setCellRenderer(new TableDatasetCellRender());
-		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASOURCE).setCellRenderer(new TabelDatasourceCellRender());
+		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE).setCellEditor(new SpatialIndexTypeCellEditor(new JComboBox()));
 	}
 

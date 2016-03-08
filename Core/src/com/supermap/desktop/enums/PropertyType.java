@@ -16,6 +16,6 @@ public enum PropertyType {
 	// @formatter:on
 
 	public static boolean isGeometryPropertyType(PropertyType propertyType) {
-		return propertyType == PropertyType.GEOMETRY_NODE || propertyType == PropertyType.GEOMETRY_REOCRD || propertyType == PropertyType.GEOMETRY_SPATIAL;
+		return propertyType == null || propertyType == PropertyType.GEOMETRY_NODE || propertyType == PropertyType.GEOMETRY_REOCRD || propertyType == PropertyType.GEOMETRY_SPATIAL;
 	}
 }

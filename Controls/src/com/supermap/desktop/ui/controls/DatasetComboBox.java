@@ -146,6 +146,9 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 * @return
 	 */
 	public String getSelectItem() {
+		if (getSelectedIndex() == -1) {
+			return null;
+		}
 		DataCell temp = (DataCell) getSelectedItem();
 		return temp.getDataName();
 	}
@@ -251,11 +254,11 @@ public class DatasetComboBox extends JComboBox<Object> {
 	private boolean isSupportDatasetType(DatasetType type) {
 		boolean isSupport = false;
 		try {
-			if (this.datasetTypes == null || (this.datasetTypes != null && this.datasetTypes.length == 0)) {
+			if (this.datasetTypes == null || this.datasetTypes.length == 0) {
 				isSupport = true;
 			} else {
-				for (int i = 0; i < this.datasetTypes.length; i++) {
-					if (this.datasetTypes[i] == type) {
+				for (DatasetType datasetType : this.datasetTypes) {
+					if (datasetType == type) {
 						isSupport = true;
 						break;
 					}
@@ -276,10 +279,24 @@ public class DatasetComboBox extends JComboBox<Object> {
 		return dataset;
 	}
 
-	public void setSelectedDataset(String datasetname) {
+	public void setSelectedDataset(String datasetName) {
 		for (int i = 0; i < this.getItemCount(); i++) {
-			if (this.getDatasetAt(i).getName().equals(datasetname)) {
+			if (this.getDatasetAt(i).getName().equals(datasetName)) {
 				this.setSelectedIndex(i);
+				return;
+			}
+		}
+	}
+
+	public void removeDataset(Dataset currentDataset) {
+		removeDataset(currentDataset.getName());
+	}
+
+	public void removeDataset(String datasetName) {
+		for (int i = 0; i < this.getItemCount(); i++) {
+			if (this.getDatasetAt(i).getName().equals(datasetName)) {
+				this.removeItem(this.getItemAt(i));
+
 			}
 		}
 	}

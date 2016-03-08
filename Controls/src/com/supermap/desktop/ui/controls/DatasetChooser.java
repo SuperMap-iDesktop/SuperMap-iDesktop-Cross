@@ -9,8 +9,8 @@ import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
@@ -236,7 +236,7 @@ public class DatasetChooser extends SmDialog {
 		table.setShowVerticalLines(false);
 //		CommonListCellRenderer render = new CommonListCellRenderer();
 		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASET_NAME).setCellRenderer(new TableDatasetCellRender());
-		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TabelDatasourceCellRender());
+		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
 //		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setCellRenderer(render);
 //		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setResizable(true);
 		scrollPaneTable.setViewportView(table);

@@ -13,20 +13,23 @@ import java.awt.*;
  *
  * @author XiaJT
  */
-public class TabelDatasourceCellRender extends DefaultTableCellRenderer {
+public class TableDatasourceCellRender extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		if (!(value instanceof Datasource)) {
-			return new JLabel(String.valueOf(value));
-		}
-		Datasource datasource = (Datasource) value;
-		DataCell dataCell = new DataCell(datasource);
-		if (isSelected) {
-			dataCell.setBackground(table.getSelectionBackground());
+		Component result;
+		if (value == null) {
+			result = new JLabel();
+		} else if (!(value instanceof Datasource)) {
+			result = new JLabel(String.valueOf(value));
 		} else {
-			dataCell.setBackground(table.getBackground());
+			result = new DataCell(((Datasource) value));
 		}
-		dataCell.setForeground(Color.red);
-		return dataCell;
+		if (isSelected) {
+			result.setBackground(table.getSelectionBackground());
+		} else {
+			result.setBackground(table.getBackground());
+		}
+//		result.setForeground(Color.red);
+		return result;
 	}
 }

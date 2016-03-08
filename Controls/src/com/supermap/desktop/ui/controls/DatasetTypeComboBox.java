@@ -76,7 +76,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	}
 
 	public DatasetType[] getSelectedDatasetTypes() {
-		String selectedItem = (String) ((DataCell) this.getSelectedItem()).getDataName();
+		String selectedItem = ((DataCell) this.getSelectedItem()).getDataName();
 		if (selectedItem == null) {
 			return null;
 		} else if (selectedItem.equals(CommonProperties.getString("String_DatasetType_All"))) {

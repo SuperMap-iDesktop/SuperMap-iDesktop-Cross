@@ -56,11 +56,13 @@ public class DataCell extends JPanel {
 	 * @param dataset
 	 */
 	public void initDatasetType(Dataset dataset) {
-		setData(dataset);
-		String datasetImagepath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
-		URL url = DataCell.class.getResource(datasetImagepath);
-		this.dataName = dataset.getName();
-		init(url, this.dataName);
+		if (dataset != null) {
+			setData(dataset);
+			String datasetImagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
+			URL url = DataCell.class.getResource(datasetImagePath);
+			this.dataName = dataset.getName();
+			init(url, this.dataName);
+		}
 	}
 
 	/**
@@ -162,7 +164,7 @@ public class DataCell extends JPanel {
 
 	/**
 	 * 不支持传入图片路径方式构建
-	 * <p>
+	 * <p/>
 	 * 根据图片路径和数据文字请使用initDataType()
 	 *
 	 * @param objects 传入的参数

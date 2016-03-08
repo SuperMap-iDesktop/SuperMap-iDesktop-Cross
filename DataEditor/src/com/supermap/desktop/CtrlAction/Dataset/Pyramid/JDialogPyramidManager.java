@@ -7,8 +7,8 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TabelDatasourceCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -173,7 +173,7 @@ public class JDialogPyramidManager extends SmDialog {
 		this.tableDatasets.setModel(pyramidManagerTableModel);
 		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasetIndex).setCellRenderer(new TableDatasetCellRender());
 
-		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasourceIndex).setCellRenderer(new TabelDatasourceCellRender());
+		this.tableDatasets.getColumnModel().getColumn(ColumnSourceDatasourceIndex).setCellRenderer(new TableDatasourceCellRender());
 	}
 
 	private void initPanelButtons() {

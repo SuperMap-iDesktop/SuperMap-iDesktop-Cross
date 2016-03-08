@@ -76,8 +76,6 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			Component component = this.tabbledPane.getComponentAt(selectedIndex);
 
 			if (component instanceof AbstractPropertyControl) {
-
-				currentProperty = (IProperty) component;
 				((AbstractPropertyControl) component).refreshData();
 			}
 		}
@@ -128,8 +126,8 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 
 	@Override
 	public PropertyType getPropertyType() {
-		if (currentProperty != null) {
-			return currentProperty.getPropertyType();
+		if (this.tabbledPane != null && this.tabbledPane.getTabCount() > 0) {
+			return ((IProperty) this.tabbledPane.getSelectedComponent()).getPropertyType();
 		} else {
 			return null;
 		}
