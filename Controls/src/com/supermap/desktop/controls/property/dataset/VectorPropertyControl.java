@@ -205,7 +205,9 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 						.addComponent(this.buttonClearCache)));
 		// @formatter:on
 
-		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getNumberInstance());
+		NumberFormat numberInstance = NumberFormat.getNumberInstance();
+		numberInstance.setMaximumFractionDigits(20);
+		NumberFormatter numberFormatter = new NumberFormatter(numberInstance);
 		numberFormatter.setValueClass(Double.class);
 		numberFormatter.setMinimum(0.0);
 		this.labelNodeSnap = new JLabel("NodeSnap:");

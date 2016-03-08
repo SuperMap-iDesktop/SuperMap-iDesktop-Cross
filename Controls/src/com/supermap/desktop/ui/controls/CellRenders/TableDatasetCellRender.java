@@ -9,7 +9,7 @@ import java.awt.*;
 
 /**
  * Table对应的getValueAt()得到的对象为数据集时可使用
- * <P>
+ * <p/>
  * 得到带图片的数据集
  *
  * @author XiaJT
@@ -18,16 +18,19 @@ public class TableDatasetCellRender extends DefaultTableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		if (!(value instanceof Dataset)) {
-			return new JLabel(String.valueOf(value));
-		}
-		Dataset dataset = (Dataset) value;
-		DataCell dataCell = new DataCell(dataset);
-		if (isSelected) {
-			dataCell.setBackground(table.getSelectionBackground());
+		Component result;
+		if (value == null) {
+			result = new JLabel();
+		} else if (!(value instanceof Dataset)) {
+			result = new JLabel(String.valueOf(value));
 		} else {
-			dataCell.setBackground(table.getBackground());
+			result = new DataCell(((Dataset) value));
 		}
-		return dataCell;
+		if (isSelected) {
+			result.setBackground(table.getSelectionBackground());
+		} else {
+			result.setBackground(table.getBackground());
+		}
+		return result;
 	}
 }
