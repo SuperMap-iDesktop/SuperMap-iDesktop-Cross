@@ -93,14 +93,14 @@ public class WorkspaceInfo {
 		}
 	}
 
+	// Linux 操作系统对路径大小写敏感，因此路径不要随意 toLower
 	private void FillDatasourcesPathList(Workspace workspace) {
 		this.datasourcesPath.clear();
 		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
 			Datasource datasource = workspace.getDatasources().get(i);
 			if (datasource.getEngineType() == EngineType.UDB) {
-				String datasourceServer = datasource.getConnectionInfo().getServer().toLowerCase();
+				String datasourceServer = datasource.getConnectionInfo().getServer();
 				this.datasourcesPath.add(datasourceServer);
-				this.datasourcesPath.add(datasourceServer.replace("udb", "udd"));
 			}
 		}
 	}
