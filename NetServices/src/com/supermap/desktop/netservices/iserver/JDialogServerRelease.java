@@ -599,6 +599,9 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		try {
 			if (this.hostType == HostType.REMOTE) {
 				this.remoteHost = this.textFieldHost.getText().trim();
+				if (this.remoteHost.toLowerCase().startsWith("http://")) {
+					this.remoteHost = this.remoteHost.toLowerCase().substring(7);
+				}
 				setButtonReleaseEnabled();
 			}
 		} catch (Exception e) {
