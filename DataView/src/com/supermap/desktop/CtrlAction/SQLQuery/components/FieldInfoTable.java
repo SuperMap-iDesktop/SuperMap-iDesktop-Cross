@@ -3,8 +3,11 @@ package com.supermap.desktop.CtrlAction.SQLQuery.components;
 import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
+import com.supermap.data.JoinItems;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
@@ -69,13 +72,18 @@ public class FieldInfoTable extends JTable {
 		}
 	}
 
+	public void setJoinItem(JoinItems joinItems) {
+		fieldInfoTableModel.setJoinItems(joinItems);
+	}
+
 	/**
-	 * tablemodel类
+	 * tableModel类
 	 */
 	private class FieldInfoTableModel extends DefaultTableModel {
-		private Dataset dataset = null;
+		private DatasetVector dataset = null;
 		private String[] columnNames;
-		private Recordset recordset = null;
+		private JoinItems joinItems;
+		private int rowCount;
 
 		public FieldInfoTableModel() {
 			super();
@@ -83,26 +91,33 @@ public class FieldInfoTable extends JTable {
 		}
 
 		public void setDataset(Dataset dataset) {
-			this.dataset = dataset;
-			// TODO 初始化表格数据
-			if (this.recordset != null) {
-				this.recordset.dispose();
-				this.recordset = null;
-			}
 			if (dataset instanceof DatasetVector) {
-				this.recordset = ((DatasetVector) dataset).getRecordset(false, CursorType.DYNAMIC);
+				this.dataset = (DatasetVector) dataset;
+			} else {
+				this.dataset = null;
 			}
+			initRowCount();
 			fireTableStructureChanged();
+		}
+
+		private void initRowCount() {
+			int count = 0;
+			if (this.dataset != null) {
+				// 全部字段和关联字段 所以+2
+				count = this.dataset.getFieldCount() + 2;
+				if (joinItems != null && joinItems.getCount() > 0) {
+					for (int i = 0; i < joinItems.getCount(); i++) {
+						FieldInfos fieldInfos = ((DatasetVector) dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable())).getFieldInfos();
+						count += fieldInfos.getCount();
+					}
+				}
+			}
+			this.rowCount = count;
 		}
 
 		@Override
 		public int getRowCount() {
-			int count = 0;
-			if (this.recordset != null) {
-				// 全部字段和关联字段 所以+2
-				count = this.recordset.getFieldCount() + 2;
-			}
-			return count;
+			return rowCount;
 		}
 
 		@Override
@@ -123,7 +138,7 @@ public class FieldInfoTable extends JTable {
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row == 0) {
-				if(column == 0){
+				if (column == 0) {
 					return "*";
 				} else if (column == 1) {
 					return formatString(dataset.getName(), "*");
@@ -132,7 +147,6 @@ public class FieldInfoTable extends JTable {
 				}
 			}
 			//region 设置关联字段
-			// TODO 设置关联字段未实现
 			else if (row == getRowCount() - 1) {
 				if (column == 0) {
 					return DataViewProperties.getString("String_SQLQueryRelated");
@@ -142,13 +156,36 @@ public class FieldInfoTable extends JTable {
 			}
 			//endregion
 			else {
-				if(column == 0) {
-					return recordset.getFieldInfos().get(row - 1).getCaption();
-				}else if (column == 1) {
-					return formatString(dataset.getName(), recordset.getFieldInfos().get(row - 1).getName());
+				Object result = null;
+
+				FieldInfos datasetFieldInfos = dataset.getFieldInfos();
+				if (row <= datasetFieldInfos.getCount()) {
+					if (column == 0) {
+						result = datasetFieldInfos.get(row - 1).getCaption();
+					} else if (column == 1) {
+						result = formatString(this.dataset.getName(), datasetFieldInfos.get(row - 1).getName());
+					} else {
+						result = FieldTypeUtilties.getFieldTypeName(datasetFieldInfos.get(row - 1).getType());
+					}
 				} else {
-					return FieldTypeUtilties.getFieldTypeName(recordset.getFieldInfos().get(row - 1).getType());
+					row -= datasetFieldInfos.getCount();
+					for (int i = 0; i < joinItems.getCount(); i++) {
+						DatasetVector datasetVector = (DatasetVector) dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+						FieldInfos fieldInfos = datasetVector.getFieldInfos();
+						if (row <= fieldInfos.getCount()) {
+							if (column == 0) {
+								result = fieldInfos.get(row - 1).getCaption();
+							} else if (column == 1) {
+								result = formatString(datasetVector.getName(), fieldInfos.get(row - 1).getName());
+							} else {
+								result = FieldTypeUtilties.getFieldTypeName(fieldInfos.get(row - 1).getType());
+							}
+							break;
+						}
+						row -= fieldInfos.getCount();
+					}
 				}
+				return result;
 			}
 		}
 
@@ -157,23 +194,39 @@ public class FieldInfoTable extends JTable {
 		}
 
 		public String[] getAllValue(int row) {
-			if (row == -1 || row == 0 || row == getRowCount() - 1) {
+			if (row == -1 || row == 0 || row == getRowCount() - 1 || dataset == null) {
 				return null;
 			} else {
-				// TODO 外接表需处理
-				LinkedHashMap map = new LinkedHashMap();
-				FieldType fieldType = this.recordset.getFieldInfos().get(row - 1).getType();
-				this.recordset.moveFirst();
-				for (; !recordset.isEOF(); recordset.moveNext()) {
-					String result = formatData(recordset.getFieldValue(row - 1), fieldType);
-					if (result != null) {
-						map.put(result, 0);
+				String[] strings = ((String) getValueAt(row, 1)).split(".");
+				String datasetName = strings[0];
+				String fieldName = strings[1];
+
+				LinkedHashMap<String, String> map = new LinkedHashMap<>();
+				DatasetVector tempDataset = dataset;
+				if (!dataset.getName().equals(datasetName)) {
+					tempDataset = ((DatasetVector) dataset.getDatasource().getDatasets().get(datasetName));
+				}
+				// 得到字段类型
+				FieldType fieldType = tempDataset.getFieldInfos().get(fieldName).getType();
+
+				Recordset recordset = tempDataset.getRecordset(false, CursorType.STATIC);
+				try {
+					recordset.moveFirst();
+					for (; !recordset.isEOF(); recordset.moveNext()) {
+						String result = formatData(recordset.getFieldValue(row - 1), fieldType);
+						if (result != null) {
+							map.put(result, "");
+						}
 					}
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} finally {
+					recordset.dispose();
 				}
 				String[] result = new String[map.size()];
-				Iterator iterator = map.keySet().iterator();
+				Iterator<String> iterator = map.keySet().iterator();
 				for (int i = 0; iterator.hasNext(); i++) {
-					result[i] = (String) iterator.next();
+					result[i] = iterator.next();
 				}
 				return result;
 			}
@@ -200,6 +253,12 @@ public class FieldInfoTable extends JTable {
 			} else {
 				return String.valueOf(fieldValue);
 			}
+		}
+
+		public void setJoinItems(JoinItems joinItems) {
+			this.joinItems = joinItems;
+			initRowCount();
+			fireTableDataChanged();
 		}
 	}
 }

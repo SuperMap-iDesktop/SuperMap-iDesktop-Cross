@@ -553,8 +553,23 @@ public class JDialogJoinItems extends SmDialog {
 					joinItem.setForeignTable(value);
 					int startIndex0 = joinItem.getJoinFilter().indexOf("=");
 					int endIndex0 = joinItem.getJoinFilter().lastIndexOf(".");
+					int filterLength = joinItem.getJoinFilter().length();
 					StringBuilder builder0 = new StringBuilder(joinItem.getJoinFilter());
-					builder0.replace(startIndex0 + 1, endIndex0, value);
+
+					String joinField = joinItem.getJoinFilter().substring(endIndex0 + 1, filterLength);
+					FieldInfos fieldInfos = ((DatasetVector) currentDataset.getDatasource().getDatasets().get(value)).getFieldInfos();
+					boolean isExists = false;
+					for (int i = 0; i < fieldInfos.getCount(); i++) {
+						if (fieldInfos.get(i).getName().equals(joinField)) {
+							isExists = true;
+							break;
+						}
+					}
+					if (isExists) {
+						builder0.replace(startIndex0 + 1, endIndex0, value);
+					} else {
+						builder0.replace(startIndex0 + 1, filterLength, value + "." + fieldInfos.get(0).getName());
+					}
 					joinItem.setJoinFilter(builder0.toString());
 					fireTableDataChanged();
 					break;
