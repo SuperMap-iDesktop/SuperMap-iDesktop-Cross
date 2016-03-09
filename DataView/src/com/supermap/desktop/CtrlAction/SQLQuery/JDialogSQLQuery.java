@@ -85,6 +85,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 */
 	public static final int ADD_OPERATOR = 3;
 
+
 	private Dataset currentDataset = null;
 
 	private JPanel panelContent = new JPanel();
@@ -121,11 +122,11 @@ public class JDialogSQLQuery extends SmDialog {
 	private JCheckBox checkBoxHighLigthMap = new JCheckBox("highLigthMap");
 	private JCheckBox checkBoxHighLigthScene = new JCheckBox("highLightScene");
 
-	private JComboBox jComboBoxOperator = new JComboBox();
-	private JComboBox jComboBoxAggregationFunction = new JComboBox();
-	private JComboBox jComboBoxMathsOperation = new JComboBox();
-	private JComboBox jComboBoxStringFunction = new JComboBox();
-	private JComboBox jComboBoxTimeFunction = new JComboBox();
+	private JComboBox<String> jComboBoxOperator = new JComboBox<String>();
+	private JComboBox<String> jComboBoxAggregationFunction = new JComboBox<String>();
+	private JComboBox<String> jComboBoxMathsOperation = new JComboBox<String>();
+	private JComboBox<String> jComboBoxStringFunction = new JComboBox<String>();
+	private JComboBox<String> jComboBoxTimeFunction = new JComboBox<String>();
 
 	// 参与查询的数据
 	private JScrollPane scrollPaneWorkspaceTree = new JScrollPane();
@@ -339,6 +340,10 @@ public class JDialogSQLQuery extends SmDialog {
 		this.listAllValue.addMouseListener(this.listAllValueMouseAdapter);
 		// 查询字段内容改变判断查询按钮状态
 		this.textareaQueryField.getDocument().addDocumentListener(this.documentListenerCheckQueryState);
+		// 导入
+		this.buttonImport.addActionListener(this.buttonImportActionListener);
+		// 导出
+		this.buttonExport.addActionListener(this.buttonExportActionListener);
 		// 查询
 		this.buttonQuery.addActionListener(this.queryActionListener);
 		// 清除
@@ -388,6 +393,10 @@ public class JDialogSQLQuery extends SmDialog {
 		this.listAllValue.removeMouseListener(this.listAllValueMouseAdapter);
 		// 查询字段内容改变判断查询按钮状态
 		this.textareaQueryField.getDocument().removeDocumentListener(this.documentListenerCheckQueryState);
+		// 导入
+		this.buttonImport.removeActionListener(this.buttonImportActionListener);
+		// 导出
+		this.buttonExport.removeActionListener(this.buttonExportActionListener);
 		// 查询
 		this.buttonQuery.removeActionListener(this.queryActionListener);
 		// 清除
@@ -475,7 +484,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化运算符号下拉框
 	 */
 	private void initJComboBoxOperator() {
-		jComboBoxOperator.setModel(new DefaultComboBoxModel(new String[]{" + ", " - ", " * ", " / ", " \\ ", " > ", " = ", " < ", " >= ", " <= ", " <> ",
+		jComboBoxOperator.setModel(new DefaultComboBoxModel<String>(new String[]{" + ", " - ", " * ", " / ", " \\ ", " > ", " = ", " < ", " >= ", " <= ", " <> ",
 				" ! ", " () ", " [] ", " '' ", " % ", " # ", " ^ ", " . ", " Mod ", " AND ", " OR ", " NOT ", " In ", " Between ", " Like ", " Is Null ",
 				" Is TRUE ", " Is FALSE "}));
 		jComboBoxOperator.setSelectedIndex(5);
@@ -485,7 +494,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化聚合函数下拉框
 	 */
 	private void initJComboBoxAggregationFunction() {
-		jComboBoxAggregationFunction.setModel(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncAggregation"),
+		jComboBoxAggregationFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncAggregation"),
 				"Avg()", "Count()", "Max()", "Min()", "Sum()", "Stdev()", "Stdevp()", "Var()", "Varp()"}));
 	}
 
@@ -493,7 +502,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化数学函数下拉框
 	 */
 	private void initJComboBoxMathsOperation() {
-		jComboBoxMathsOperation.setModel(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncMath"), "Abs()",
+		jComboBoxMathsOperation.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncMath"), "Abs()",
 				"Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()",
 				"Radians()", "Rand()", "Round()", "Sign()", "Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()",
 				"CInt()", "CLng()", "CSng()", "CStr()", "Int()", "Fix()"}));
@@ -503,7 +512,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化字符函数下拉框
 	 */
 	private void initJComboBoxStringFunction() {
-		jComboBoxStringFunction.setModel(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncString"), "Ascii()",
+		jComboBoxStringFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncString"), "Ascii()",
 				"Char()", "Charindex()", "Difference()", "Left()", "Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()",
 				"Quotename()", "Reverse()", "Right()", "Rtrim()", "Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()"}));
 	}
@@ -512,7 +521,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化日期函数下拉框
 	 */
 	private void initJComboBoxTimeFunction() {
-		jComboBoxTimeFunction.setModel(new DefaultComboBoxModel(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncTime"), "DateAdd()",
+		jComboBoxTimeFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncTime"), "DateAdd()",
 				"Datediff()", "Datename()", "Datepart()", "Day()", "Getdate()", "Getutcdate()", "Month()", "Year()"}));
 	}
 
@@ -695,7 +704,9 @@ public class JDialogSQLQuery extends SmDialog {
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
-			joinItems.removeRange(0, joinItems.getCount() - 1);
+			if (joinItems.getCount() > 0) {
+				joinItems.removeRange(0, joinItems.getCount());
+			}
 			Object data = ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
 			if (data instanceof Dataset) {
 				currentDataset = (Dataset) data;
@@ -729,15 +740,16 @@ public class JDialogSQLQuery extends SmDialog {
 						// donothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
 					}
 				} else if (row == tableFieldInfo.getRowCount() - 1) {
-					// TODO 打开连接设置面板 未实现，暂不开放
 					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
 					jDialogJoinItem.setCurrentDataset(currentDataset);
 					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
+						// 先设值再释放资源
+						JoinItems joinItems = JDialogSQLQuery.this.joinItems;
+						JDialogSQLQuery.this.joinItems = jDialogJoinItem.getJoinItems();
+						tableFieldInfo.setJoinItem(JDialogSQLQuery.this.joinItems);
 						joinItems.dispose();
-						joinItems = jDialogJoinItem.getJoinItems();
 					}
-				}
-				else if (row != -1) {
+				} else if (row != -1) {
 					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
 				}
 			}
@@ -787,7 +799,6 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO 考虑关联表
 			String[] allValue = tableFieldInfo.getAllValue();
 			listAllValue.removeAllElements();
 			if (allValue != null && allValue.length > 0) {
@@ -876,6 +887,31 @@ public class JDialogSQLQuery extends SmDialog {
 		}
 	};
 
+	private final ActionListener buttonImportActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+//			try {
+//				String modelName = "SqlQueryImport";
+//				if (!SmFileChoose.isModuleExist(modelName)) {
+//					String fileFilters = SmFileChoose.createFileFilter(DataViewProperties.getString("String_SQLFilter"), "xml");
+//					SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataViewProperties.getString("String_openDialogTitle"), modelName, "OpenOne");
+//				}
+//				SmFileChoose smFileChoose = new SmFileChoose(modelName);
+//				//openFileDialog.Title = Properties.DataViewResources.String_openDialogTitle;
+//				if (smFileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
+//					String filePath = smFileChoose.getFilePath();
+//					Document document = XmlUtilties.getDocument(filePath);
+//
+		}
+	};
+	private final ActionListener buttonExportActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	};
+
+
 	/**
 	 * 关闭按钮事件
 	 */
@@ -957,6 +993,7 @@ public class JDialogSQLQuery extends SmDialog {
 							ShowResultInTabular(currentDatasetVector, resultRecord);
 						}
 						// TODO 关联浏览
+
 						// 保存查询结果
 						if (panelSaveSearchResult.isSaveResult()) {
 							SaveQueryResult(resultRecord);
@@ -1120,7 +1157,7 @@ public class JDialogSQLQuery extends SmDialog {
 		}
 	};
 
-	// endregion
+// endregion
 
 	class GetAllValueList extends JList {
 		public GetAllValueList() {

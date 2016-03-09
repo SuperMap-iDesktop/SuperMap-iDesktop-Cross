@@ -203,6 +203,7 @@ public class DatasetComboBox extends JComboBox<Object> {
 
 	public void setDatasetTypes(DatasetType[] datasetTypes) {
 		this.datasetTypes = datasetTypes;
+		updateItems();
 	}
 
 	public Datasets getDatasets() {

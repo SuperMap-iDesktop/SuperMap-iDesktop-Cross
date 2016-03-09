@@ -1,26 +1,23 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Component;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.text.MessageFormat;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.text.MessageFormat;
 
 /**
  * 文件选择器
@@ -83,19 +80,19 @@ public class SmFileChoose extends JFileChooser {
 	/**
 	 * 根据配置文件生成文件选择器
 	 *
-	 * @param moduleName 模块名称
 	 */
 
-	public static Document getDocunmentFileChoose() {
+	public static Document getDocumentFileChoose() {
 		File file = new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
 		if (!file.exists()) {
 			try {
-				file.createNewFile();
-				FileOutputStream fOutputStream = new FileOutputStream(file.getPath());
-				OutputStreamWriter OutputStreamWriter = new OutputStreamWriter(fOutputStream, "UTF-8");
-				OutputStreamWriter.write(ControlsProperties.getString("String_InitRecntFileString"));
-				OutputStreamWriter.flush();
-				OutputStreamWriter.close();
+				if (file.createNewFile()) {
+					FileOutputStream fOutputStream = new FileOutputStream(file.getPath());
+					OutputStreamWriter OutputStreamWriter = new OutputStreamWriter(fOutputStream, "UTF-8");
+					OutputStreamWriter.write(ControlsProperties.getString("String_InitRecntFileString"));
+					OutputStreamWriter.flush();
+					OutputStreamWriter.close();
+				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
@@ -110,7 +107,7 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	public static Node getLastPathsNode() {
-		getDocunmentFileChoose();
+		getDocumentFileChoose();
 		NodeList docunmentStartUp = documentFileChoose.getChildNodes().item(0).getChildNodes();
 		for (int i = 0; i < docunmentStartUp.getLength(); i++) {
 			Node node = docunmentStartUp.item(i);
@@ -123,7 +120,7 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	public static String getEncodingType() {
-		getDocunmentFileChoose();
+		getDocumentFileChoose();
 		if (encodingType == null || encodingType.length() <= 0) {
 			encodingType = documentFileChoose.getXmlEncoding();
 		}
@@ -146,7 +143,7 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	public static String createFileFilter(String filterName, String... filters) {
-		StringBuffer fileFilter = new StringBuffer();
+		StringBuilder fileFilter = new StringBuilder();
 		fileFilter.append(filterName).append('|');
 		for (int i = 0; i < filters.length; i++) {
 			fileFilter.append(filters[i]);
@@ -158,12 +155,12 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	public static String bulidFileFilters(String... fileFilters) {
-		StringBuffer bufferFileFilter = new StringBuffer();
-		for (int i = 0; i < fileFilters.length; i++) {
-			if (fileFilters[i] == null || fileFilters[i].length() <= 0) {
+		StringBuilder bufferFileFilter = new StringBuilder();
+		for (String fileFilter : fileFilters) {
+			if (fileFilter == null || fileFilter.length() <= 0) {
 				continue;
 			}
-			bufferFileFilter.append(fileFilters[i]);
+			bufferFileFilter.append(fileFilter);
 			bufferFileFilter.append("#");
 		}
 		if (bufferFileFilter.length() > 0) {
@@ -173,7 +170,7 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	public static void addNewNode(String fileFilters, String lastPath, String title, String moduleName, String type) {
-		getDocunmentFileChoose();
+		getDocumentFileChoose();
 		Element element = documentFileChoose.createElement("LastFilePath");
 		Attr attrFileFilter = documentFileChoose.createAttribute("FileFilters");
 		attrFileFilter.setValue(fileFilters);
@@ -193,7 +190,7 @@ public class SmFileChoose extends JFileChooser {
 		getLastPathsNode();
 		lastPathsNode.appendChild(element);
 		try {
-			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), (Node) documentFileChoose,
+			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
 					getEncodingType());
 			SmFileChoose.setFileLastModifiedTime(new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
 					.lastModified());
@@ -213,7 +210,7 @@ public class SmFileChoose extends JFileChooser {
 			boolean findFlag = false;
 
 			// 获取LastFilePaths节点
-			getDocunmentFileChoose();
+			getDocumentFileChoose();
 
 			getLastPathsNode();
 			NodeList LastFilePaths = null;
@@ -273,9 +270,9 @@ public class SmFileChoose extends JFileChooser {
 			String[] fileFilters = moduleFileFilters.split("\\#");
 			String fileFilterName = "";
 			String[] fileFilterTypes = null;
-			for (int i = 0; i < fileFilters.length; i++) {
-				fileFilterName = fileFilters[i].split("\\|")[0];
-				fileFilterTypes = fileFilters[i].split("\\|")[1].split("\\+");
+			for (String fileFilter : fileFilters) {
+				fileFilterName = fileFilter.split("\\|")[0];
+				fileFilterTypes = fileFilter.split("\\|")[1].split("\\+");
 				this.addChoosableFileFilter(new FileNameExtensionFilter(fileFilterName, fileFilterTypes));
 			}
 		}
@@ -285,6 +282,7 @@ public class SmFileChoose extends JFileChooser {
 	 * 显示面板并处理得到的路径与文件名
 	 */
 	public int showDefaultDialog() {
+		// 	 TODO modelType更换为枚举类型
 		int result = -1;
 		if (moduleType == null) {
 			moduleType = "OpenOne";
@@ -362,7 +360,7 @@ public class SmFileChoose extends JFileChooser {
 			File file = getSelectedFile();
 
 			// 打开时文件名不能为空
-			if ("OpenOne".equals(moduleType) && (file.getName() == null || file.getName().length() <= 0)) {
+			if ("OpenOne".equals(moduleType) && (file.getName().length() <= 0)) {
 				UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_Error_FileNameNull"));
 				return;
 			}
@@ -377,9 +375,9 @@ public class SmFileChoose extends JFileChooser {
 			// 后缀存在
 			if (fileFilterIndex > 0 && fileFilterIndex < fileName.length() - 1) {
 				String fileExtension = fileName.substring(fileFilterIndex + 1).toLowerCase();
-				for (int j = 0; j < fileFilters.length; j++) {
+				for (String fileFilter : fileFilters) {
 					// 后缀匹配
-					if (fileExtension.equalsIgnoreCase(fileFilters[j])) {
+					if (fileExtension.equalsIgnoreCase(fileFilter)) {
 						findFlag = true;
 						if (file.exists()) {
 							fileExistFlag = true;
@@ -389,17 +387,17 @@ public class SmFileChoose extends JFileChooser {
 				}
 			}
 			// 没输入后缀名或点号后的后缀名不符合当前过滤器，自行拼接后缀查看文件是否存在
-			else if (findFlag == false) {
-				for (int j = 0; j < fileFilters.length; j++) {
-					if (new File(filePath + "." + fileFilters[j]).exists()) {
-						filePath = filePath + "." + fileFilters[j];
-						fileName = fileName + "." + fileFilters[j];
+			else if (!findFlag) {
+				for (String fileFilter : fileFilters) {
+					if (new File(filePath + "." + fileFilter).exists()) {
+						filePath = filePath + "." + fileFilter;
+						fileName = fileName + "." + fileFilter;
 						fileExistFlag = true;
 						break;
 					}
 				}
 				// 文件不存在且模式为 保存 时，拼接文件过滤器后缀
-				if (false == fileExistFlag && "SaveOne".equals(moduleType)) {
+				if (!fileExistFlag && "SaveOne".equals(moduleType)) {
 					filePath = filePath + "." + fileFilters[0];
 					fileName = fileName + "." + fileFilters[0];
 				}
@@ -425,19 +423,19 @@ public class SmFileChoose extends JFileChooser {
 			selectFilesTemp = dealSelectFiles(selectFilesTemp, fileFilters);
 			this.setSelectFiles(selectFilesTemp);
 			this.filePath = selectFilesTemp[0].getAbsolutePath();
-			StringBuffer fileNames = new StringBuffer();
+			StringBuilder fileNames = new StringBuilder();
 			StringBuffer wrongNames = new StringBuffer("\"");
-			for (int i = 0; i < selectFilesTemp.length; i++) {
-				if (selectFilesTemp[i].exists()) {
-					if (fileNames != null && fileNames.length() > 0) {
+			for (File aSelectFilesTemp : selectFilesTemp) {
+				if (aSelectFilesTemp.exists()) {
+					if (fileNames.length() > 0) {
 						fileNames.append("&");
 					}
-					fileNames.append(selectFilesTemp[i].getName());
+					fileNames.append(aSelectFilesTemp.getName());
 				} else {
 					if (wrongNames.length() > 1) {
 						wrongNames.append("\",\"");
 					}
-					wrongNames.append(selectFilesTemp[i].getName());
+					wrongNames.append(aSelectFilesTemp.getName());
 					wrongNames.append("\"");
 				}
 			}
@@ -453,7 +451,6 @@ public class SmFileChoose extends JFileChooser {
 		}
 		saveFilePath();
 		super.approveSelection();
-		return;
 	}
 
 	private File[] dealSelectFiles(File[] selectFiles, String[] fileFilters) {
@@ -488,7 +485,7 @@ public class SmFileChoose extends JFileChooser {
 		nowNode.getAttributes().getNamedItem("LastPath").setNodeValue(menuPath);
 		getEncodingType();
 		try {
-			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), (Node) documentFileChoose,
+			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
 					encodingType);
 			setFileLastModifiedTime(new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true)).lastModified());
 		} catch (Exception e) {
@@ -497,13 +494,9 @@ public class SmFileChoose extends JFileChooser {
 	}
 
 	private boolean validateFileName(String fileName) {
-		if (fileName.indexOf('/') != -1 || fileName.indexOf('\\') != -1 || fileName.indexOf(':') != -1 || fileName.indexOf('*') != -1
+		return !(fileName.indexOf('/') != -1 || fileName.indexOf('\\') != -1 || fileName.indexOf(':') != -1 || fileName.indexOf('*') != -1
 				|| fileName.indexOf('?') != -1 || fileName.indexOf('"') != -1 || fileName.indexOf('<') != -1 || fileName.indexOf('>') != -1
-				|| fileName.indexOf('|') != -1) {
-			return false;
-		} else {
-			return true;
-		}
+				|| fileName.indexOf('|') != -1);
 	}
 
 	public File[] getSelectFiles() {
