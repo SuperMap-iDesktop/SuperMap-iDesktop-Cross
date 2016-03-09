@@ -1186,6 +1186,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	public void refreshMapAndLayer() {
+		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());

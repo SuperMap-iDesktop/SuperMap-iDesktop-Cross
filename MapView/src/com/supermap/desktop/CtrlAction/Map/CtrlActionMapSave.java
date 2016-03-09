@@ -5,6 +5,8 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 
 public class CtrlActionMapSave extends CtrlAction {
 

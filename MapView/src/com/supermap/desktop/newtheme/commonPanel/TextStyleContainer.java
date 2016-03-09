@@ -4,11 +4,13 @@ import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
@@ -104,6 +106,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private int textStyleType = -1;
 	public final int graphTextFormat = 0;
 	public final int graphAxisText = 1;
+	private String layerName;
 
 	private transient LocalItemListener itemListener = new LocalItemListener();
 	private transient LocalChangedListener changedListener = new LocalChangedListener();
@@ -118,6 +121,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.textStyle = textStyle;
 		this.map = map;
 		this.themeLayer = themeLabelLayer;
+		this.layerName = themeLabelLayer.getName();
 		initComponent();
 		initResources();
 		registActionListener();
@@ -130,6 +134,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.selectRow = selectRow;
 		this.map = map;
 		this.themeLayer = themeLabelLayer;
+		this.layerName = themeLabelLayer.getName();
 		this.themeLabel = themeLabel;
 		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle();
 		initComponent();
@@ -838,7 +843,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		this.themeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(this.textStyle);
 		} else if (!this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {

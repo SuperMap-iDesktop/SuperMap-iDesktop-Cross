@@ -9,6 +9,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 
@@ -75,9 +76,11 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private transient LocalChangedListener changedListener = new LocalChangedListener();
 	private boolean isRefreshAtOnce = true;
 	private Layer themeLabelLayer;
+	private String layerName;
 
 	public ThemeLabelAdvancePanel(Layer themelabelLayer) {
 		this.themeLabelLayer = themelabelLayer;
+		this.layerName = themelabelLayer.getName();
 		this.themeLabel = new ThemeLabel((ThemeLabel) themelabelLayer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
@@ -816,6 +819,8 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		this.themeLabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
 		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
 		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());

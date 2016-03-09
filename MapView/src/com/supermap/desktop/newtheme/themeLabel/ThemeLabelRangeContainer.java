@@ -1111,6 +1111,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	public void refreshMapAndLayer() {
 		this.panelAdvance.refreshMapAndLayer();
 		this.panelProperty.refreshMapAndLayer();
+		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeLabelLayer && null != themeLabelLayer.getTheme()) {
 			ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());

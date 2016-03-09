@@ -612,22 +612,27 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			fieldComboBox.setPopupWidth(d.width);
 			rowEditor.setEditorAt(i, new DefaultCellEditor(fieldComboBox));
 			tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
-			fieldComboBox.addItemListener(new ItemListener() {
-
+			new Thread() {
 				@Override
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						String tempExpression = fieldComboBox.getSelectedItem().toString();
-						String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
-						int i = tableGraphInfo.getSelectedRow();
-						ThemeGraphItem item = themeGraph.getItem(i);
-						item.setGraphExpression(tempExpression);
-						item.setCaption(caption);
-						getTable();
-						refreshMapAtOnce();
-					}
+				public void run() {
+					fieldComboBox.addItemListener(new ItemListener() {
+						@Override
+						public void itemStateChanged(ItemEvent e) {
+							if (e.getStateChange() == ItemEvent.SELECTED) {
+								String tempExpression = fieldComboBox.getSelectedItem().toString();
+								String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
+								int i = tableGraphInfo.getSelectedRow();
+								ThemeGraphItem item = themeGraph.getItem(i);
+								item.setGraphExpression(tempExpression);
+								item.setCaption(caption);
+								getTable();
+								refreshMapAtOnce();
+							}
+						}
+					});
 				}
-			});
+			};
+
 		}
 	}
 
@@ -902,17 +907,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == buttonMoveToFrist) {
 				int[] selectRow = tableGraphInfo.getSelectedRows();
-				for (int i = 0; i < selectRow.length; i++) {
-					themeGraph.exchangeItem(selectRow[i], 0);
+				if (selectRow.length == 1) {
+					themeGraph.exchangeItem(selectRow[0], 0);
+				} else {
+					for (int i = selectRow[0] - 1; i >= 0; i--) {
+						themeGraph.exchangeItem(i, i + selectRow.length);
+					}
 				}
 				getTable();
 				refreshMapAtOnce();
 				for (int i = 0; i < selectRow.length; i++) {
-					if (selectRow[i] != 0) {
-						tableGraphInfo.addRowSelectionInterval(selectRow[i] - 1, selectRow[i] - 1);
-					} else {
-						tableGraphInfo.addRowSelectionInterval(selectRow[i], selectRow[i]);
-					}
+					tableGraphInfo.setRowSelectionInterval(selectRow.length - 1, selectRow.length - 1);
 				}
 				return;
 			}
@@ -954,17 +959,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == buttonMoveToLast) {
 				int[] selectRow = tableGraphInfo.getSelectedRows();
-				for (int i = selectRow.length - 1; i >= 0; i--) {
-					themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - 1);
+				if (selectRow.length == 1) {
+					themeGraph.exchangeItem(selectRow[0], tableGraphInfo.getRowCount() - 1);
+				} else {
+					for (int i = selectRow[selectRow.length - 1] + 1; i < tableGraphInfo.getRowCount(); i++) {
+						themeGraph.exchangeItem(i, i - selectRow.length);
+					}
 				}
 				getTable();
 				refreshMapAtOnce();
 				for (int i = 0; i < selectRow.length; i++) {
-					if (selectRow[i] != tableGraphInfo.getRowCount() - 1) {
-						tableGraphInfo.addRowSelectionInterval(selectRow[i] + 1, selectRow[i] + 1);
-					} else {
-						tableGraphInfo.addRowSelectionInterval(selectRow[i], selectRow[i]);
-					}
+					tableGraphInfo.setRowSelectionInterval(tableGraphInfo.getRowCount() - selectRow.length, tableGraphInfo.getRowCount() - selectRow.length);
 				}
 				return;
 			}
@@ -1693,6 +1698,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
+		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
 		if (null != themeGraphLayer && null != themeGraphLayer.getTheme()) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());

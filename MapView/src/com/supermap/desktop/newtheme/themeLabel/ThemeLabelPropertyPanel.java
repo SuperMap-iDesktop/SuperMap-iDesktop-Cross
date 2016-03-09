@@ -10,6 +10,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SymbolDialog;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 
@@ -70,6 +71,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private ArrayList<String> comboBoxArray;
 	private Layer themelabelLayer;
+	private String layerName;
 
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
@@ -77,6 +79,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	public ThemeLabelPropertyPanel(Layer themelabelLayer) {
 		this.themelabelLayer = themelabelLayer;
+		this.layerName = themelabelLayer.getName();
 		this.datasetVector = (DatasetVector) themelabelLayer.getDataset();
 		this.themeLabel = new ThemeLabel((ThemeLabel) themelabelLayer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
@@ -796,6 +799,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		this.themelabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themelabelLayer.getTheme();
 		themeLabelTemp.setLabelExpression(this.themeLabel.getLabelExpression());
 		themeLabelTemp.setBackShape(this.themeLabel.getBackShape());

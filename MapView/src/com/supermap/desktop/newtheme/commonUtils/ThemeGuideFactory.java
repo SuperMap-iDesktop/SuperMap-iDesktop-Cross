@@ -21,6 +21,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
@@ -33,6 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class ThemeGuideFactory {
 
@@ -76,6 +78,23 @@ public class ThemeGuideFactory {
 					if (!container.getCheckBoxRefreshAtOnce().isSelected()) {
 						container.getButtonApply().setEnabled(true);
 						container.setLayerPropertyChanged(true);
+					}
+				}
+			});
+			getMapControl().getMap().addMapClosedListener(new MapClosedListener() {
+
+				@Override
+				public void mapClosed(MapClosedEvent arg0) {
+					if (null != arg0.getMap()) {
+						container.setLayerPropertyChanged(false);
+						themeTypeContainer.clear();
+						// 移除事件
+						HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
+						Iterator<?> iterator = themeContainers.entrySet().iterator();
+						while (iterator.hasNext()) {
+							java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
+							((ThemeChangePanel) entry.getValue()).unregistActionListener();
+						}
 					}
 				}
 			});
@@ -213,9 +232,7 @@ public class ThemeGuideFactory {
 					themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
 					addPanelToThemeMainContainer(themeUniqueContainer);
 					getDockbarThemeContainer().setVisible(true);
-				}
-
-				if (null == themeUnique) {
+				} else {
 					success = false;
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 				}

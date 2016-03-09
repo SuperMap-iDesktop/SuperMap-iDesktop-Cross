@@ -31,6 +31,7 @@ public class ThemeMainContainer extends JPanel {
 	private ThemeChangePanel panel;
 
 	private Map map;
+	private boolean isSetCombobox = false;
 
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private LocalItemListener itemListener = new LocalItemListener();
@@ -38,6 +39,17 @@ public class ThemeMainContainer extends JPanel {
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private LocalActionListener actionListener = new LocalActionListener();
 	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
+	private MouseListener comboboxMouseListener = new MouseAdapter() {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 1) {
+				isSetCombobox = true;
+				oldLayer = MapUtilties.findLayerByName(map, comboBoxThemeLayer.getSelectedItem().toString());
+			}
+		}
+	};
+
 	private Layer newLayer;
 	// 标记位，用于标记当前
 	private boolean layerPropertyChanged = false;
@@ -103,6 +115,7 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
+		this.comboBoxThemeLayer.getComponent(0).addMouseListener(comboboxMouseListener);
 	}
 
 	/**
@@ -114,6 +127,8 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
+		this.comboBoxThemeLayer.getComponent(0).removeMouseListener(comboboxMouseListener);
+
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -155,6 +170,9 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED && e.getSource() == comboBoxThemeLayer) {
+				if (isSetCombobox) {
+					updateLayerProperty(oldLayer);
+				}
 				String layerCaption = (String) comboBoxThemeLayer.getSelectedItem();
 				if (null != ThemeGuideFactory.getMapControl()) {
 					map = ThemeGuideFactory.getMapControl().getMap();
@@ -233,13 +251,6 @@ public class ThemeMainContainer extends JPanel {
 				ThemeMainContainer.this.updateUI();
 			}
 		} else {
-			HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
-			Iterator<?> iterator = themeContainers.entrySet().iterator();
-			while (iterator.hasNext()) {
-				java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
-				((ThemeChangePanel) entry.getValue()).unregistActionListener();
-			}
-			ThemeGuideFactory.themeTypeContainer.clear();
 			updateThemeMainContainer();
 		}
 	}
@@ -252,46 +263,11 @@ public class ThemeMainContainer extends JPanel {
 				resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
-			if (1 == e.getClickCount() && null != panel && null != oldLayer  && !checkBoxRefreshAtOnce.isSelected()
-					&& isLayerPropertyChanged()) {
-
-				if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
-					// 不保存修改
-					ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
-					panel.unregistActionListener();
-					panel = null;
-					ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
-				} else {
-					// 保存修改并刷新
-					panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
-					if (panel instanceof ThemeLabelUniformContainer) {
-						panel.refreshMapAndLayer();
-					} else if (panel instanceof ThemeLabelRangeContainer) {
-						((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
-						((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
-						ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
-						ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
-						nowThemeLabel.clear();
-						if (0 < themeLabel.getCount()) {
-							for (int i = 0; i < themeLabel.getCount(); i++) {
-								if (null != themeLabel.getItem(i)) {
-									nowThemeLabel.addToTail(themeLabel.getItem(i), true);
-								}
-							}
-						}
-						nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
-					} else {
-						oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
-					}
-					map.refresh();
-					TreePath treePath = layersTree.getSelectionPath();
-					int row = layersTree.getRowForPath(treePath);
-					layersTree.reload();
-					layersTree.setSelectionRow(row);
-				}
-				setLayerPropertyChanged(false);
+			if (1 == e.getClickCount()) {
+				updateLayerProperty(oldLayer);
 			}
 		}
+
 	}
 
 	class LocalTreeSelectListener implements TreeSelectionListener {
@@ -304,10 +280,53 @@ public class ThemeMainContainer extends JPanel {
 					ThemeGuideFactory.modifyTheme(newLayer);
 				}
 				resetThemeMainContainer(newLayer);
+				isSetCombobox = false;
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
 
+		}
+	}
+
+	public void updateLayerProperty(Layer oldLayer) {
+		if (null != panel && null != oldLayer && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
+				// 不保存修改
+				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+				if (null != panel) {
+					panel.unregistActionListener();
+					panel = null;
+				}
+				ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
+			} else {
+				// 保存修改并刷新
+				panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+				if (panel instanceof ThemeLabelUniformContainer) {
+					panel.refreshMapAndLayer();
+				} else if (panel instanceof ThemeLabelRangeContainer) {
+					((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
+					((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
+					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
+					ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
+					nowThemeLabel.clear();
+					if (0 < themeLabel.getCount()) {
+						for (int i = 0; i < themeLabel.getCount(); i++) {
+							if (null != themeLabel.getItem(i)) {
+								nowThemeLabel.addToTail(themeLabel.getItem(i), true);
+							}
+						}
+					}
+					nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
+				} else {
+					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
+				}
+				map.refresh();
+				TreePath treePath = layersTree.getSelectionPath();
+				int row = layersTree.getRowForPath(treePath);
+				layersTree.reload();
+				layersTree.setSelectionRow(row);
+			}
+			setLayerPropertyChanged(false);
 		}
 	}
 
@@ -360,6 +379,10 @@ public class ThemeMainContainer extends JPanel {
 			this.panel.setRefreshAtOnce(this.checkBoxRefreshAtOnce.isSelected());
 			this.buttonApply.setEnabled(false);
 		}
+	}
+
+	public Map getMap() {
+		return map;
 	}
 
 	public boolean isLayerPropertyChanged() {

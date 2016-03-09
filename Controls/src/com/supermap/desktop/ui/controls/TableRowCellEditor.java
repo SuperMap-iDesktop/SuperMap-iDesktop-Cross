@@ -79,4 +79,9 @@ public class TableRowCellEditor implements TableCellEditor {
 			editor = defaultEditor;
 		}
 	}
+
+	public Hashtable getEditors() {
+		return editors;
+	}
+	
 }
