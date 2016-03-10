@@ -75,17 +75,15 @@ class ThemeItemGeneralNodeDecorator implements TreeNodeDecorator {
 				graphics.drawImage(InternalImageIconFactory.DT_CAD.getImage(), 0, 0, label);
 				icon.setImage(bufferedImage);
 			} else {
-				GeoText geoText = new GeoText(part);
-				geoText.setTextStyle(labelItem.getStyle());
+				Color color = labelItem.getStyle().getForeColor();
 				GeoStyle geoStyle = new GeoStyle();
-				if (null != geoText.getStyle()) {
-					geoStyle = geoText.getStyle();
-				}
+				geoStyle.setFillBackColor(color);
+				geoStyle.setFillForeColor(color);
+				geoStyle.setLineColor(color);
+				geoStyle.setLineWidth(0.2);
 				Geometry geometry = getGeometryByDatasetType(parentLayer
 						.getDataset().getType());
-				GeoStyle geoStyleClone = geoStyle.clone();
-				geoStyleClone.setLineWidth(0.2);
-				geometry.setStyle(geoStyleClone);
+				geometry.setStyle(geoStyle);
 				Toolkit.draw(geometry, resources, graphics);
 				icon.setImage(bufferedImage);
 			}

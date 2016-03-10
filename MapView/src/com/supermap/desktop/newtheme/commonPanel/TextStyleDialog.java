@@ -29,7 +29,7 @@ public class TextStyleDialog extends SmDialog {
 	 * 构建界面
 	 */
 	private void initComponents() {
-		setSize(420, 570);
+		setSize(420, 560);
 		//  @formatter:off
 		getContentPane().setLayout(new GridBagLayout());
 		getContentPane().add(textStyleContainer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(2, 1));

@@ -1157,6 +1157,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int x = (int) (buttonAxisStyle.getLocationOnScreen().x - 0.8 * width);
 			int y = buttonAxisStyle.getLocationOnScreen().y - 8 * height;
 			textStyleDialog = new TextStyleDialog(themeGraph.getAxesTextStyle(), map, themeGraphLayer);
+			textStyleDialog.setTitle(MapViewProperties.getString("String_SetAxisStyle"));
 			setTextStyle(x, y, 1);
 		}
 	}
@@ -1223,7 +1224,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int x = (int) (buttonRemarkStyle.getLocationOnScreen().x - width);
 			int y = buttonRemarkStyle.getLocationOnScreen().y - 3 * height;
 			textStyleDialog = new TextStyleDialog(themeGraph.getGraphTextStyle(), map, themeGraphLayer);
-			textStyleDialog.setTitle(MapViewProperties.getString(""));
+			textStyleDialog.setTitle(MapViewProperties.getString("String_SetRemarkStyle"));
 			setTextStyle(x, y, 0);
 		}
 	}

@@ -273,9 +273,6 @@ public class ThemeMainContainer extends JPanel {
 				resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
-			if (1 == e.getClickCount()) {
-				updateLayerProperty(oldLayer);
-			}
 		}
 
 	}
@@ -286,11 +283,12 @@ public class ThemeMainContainer extends JPanel {
 			try {
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				isSetCombobox = false;
+				updateLayerProperty(oldLayer);
 				if (null != newLayer && null != newLayer.getTheme()) {
 					ThemeGuideFactory.modifyTheme(newLayer);
 				}
 				resetThemeMainContainer(newLayer);
-				isSetCombobox = false;
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
@@ -308,6 +306,7 @@ public class ThemeMainContainer extends JPanel {
 					panel = null;
 				}
 				ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
+				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
 				panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
@@ -333,10 +332,10 @@ public class ThemeMainContainer extends JPanel {
 				map.refresh();
 				TreePath treePath = layersTree.getSelectionPath();
 				int row = layersTree.getRowForPath(treePath);
+				setLayerPropertyChanged(false);
 				layersTree.reload();
 				layersTree.setSelectionRow(row);
 			}
-			setLayerPropertyChanged(false);
 		}
 	}
 
@@ -381,7 +380,7 @@ public class ThemeMainContainer extends JPanel {
 				remove(getComponent(i));
 			}
 		}
-		panel.setPreferredSize(new Dimension(400, 800));
+		panel.setPreferredSize(new Dimension(400, 840));
 		this.scrollPane.setViewportView(panel);
 		repaint();
 		this.panel = panel;
