@@ -55,7 +55,7 @@ public class ThemeGuidDialog extends SmDialog {
 	 * 界面布局入口
 	 */
 	private void initComponents() {
-		setSize(477, 385);
+		setSize(470, 370);
 		setLocationRelativeTo(null);
 		this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
