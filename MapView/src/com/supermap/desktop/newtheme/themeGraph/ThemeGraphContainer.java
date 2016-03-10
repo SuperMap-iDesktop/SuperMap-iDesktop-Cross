@@ -612,27 +612,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			fieldComboBox.setPopupWidth(d.width);
 			rowEditor.setEditorAt(i, new DefaultCellEditor(fieldComboBox));
 			tableGraphInfo.getColumn(MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression")).setCellEditor(rowEditor);
-			new Thread() {
-				@Override
-				public void run() {
-					fieldComboBox.addItemListener(new ItemListener() {
-						@Override
-						public void itemStateChanged(ItemEvent e) {
-							if (e.getStateChange() == ItemEvent.SELECTED) {
-								String tempExpression = fieldComboBox.getSelectedItem().toString();
-								String caption = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
-								int i = tableGraphInfo.getSelectedRow();
-								ThemeGraphItem item = themeGraph.getItem(i);
-								item.setGraphExpression(tempExpression);
-								item.setCaption(caption);
-								getTable();
-								refreshMapAtOnce();
-							}
-						}
-					});
-				}
-			};
-
 		}
 	}
 
@@ -658,6 +637,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				} else {
 					caption = themeGraph.getItem(selectRow).getCaption();
 					tableGraphInfo.setValueAt(caption, selectRow, TABLE_COLUMN_CAPTION);
+				}
+			}
+			if (selectColumn == TABLE_COLUMN_EXPRESSION) {
+				String expression = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
+				if (!StringUtilties.isNullOrEmptyString(expression)) {
+					ThemeGraphItem item = themeGraph.getItem(selectRow);
+					String caption = expression.substring(expression.lastIndexOf(".") + 1, expression.length());
+					item.setGraphExpression(expression);
+					item.setCaption(caption);
+					getTable();
+					refreshMapAtOnce();
+					tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
 				}
 			}
 		}
@@ -1042,6 +1033,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 1 && tableGraphInfo.getSelectedRow() >= 0) {
 				setToolBarButtonEnable(true);
+				
 			}
 		}
 	}

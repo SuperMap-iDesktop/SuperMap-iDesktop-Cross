@@ -804,7 +804,7 @@ public class LayersTree extends JTree {
 			case KeyEvent.VK_DELETE:
 				removeLayersControlNode();
 				setSelectionRow(0);
-				firePropertyChangeWithLayerSelect();
+				layerRemoved();
 				break;
 			default:
 				break;
@@ -814,6 +814,10 @@ public class LayersTree extends JTree {
 
 	public void firePropertyChangeWithLayerSelect() {
 		firePropertyChange("LayerChange", null, null);
+	}
+
+	public void layerRemoved() {
+		firePropertyChange("LayerRemoved", null, null);
 	}
 
 	MouseAdapter getMouseListener() {

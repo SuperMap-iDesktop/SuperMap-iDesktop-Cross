@@ -16,6 +16,8 @@ import javax.swing.tree.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -39,6 +41,7 @@ public class ThemeMainContainer extends JPanel {
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private LocalActionListener actionListener = new LocalActionListener();
 	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
+	private PropertyChangeListener layerRemoveListener;
 	private MouseListener comboboxMouseListener = new MouseAdapter() {
 
 		@Override
@@ -116,6 +119,13 @@ public class ThemeMainContainer extends JPanel {
 		this.buttonApply.addActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
 		this.comboBoxThemeLayer.getComponent(0).addMouseListener(comboboxMouseListener);
+		this.layerRemoveListener = new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				setLayerPropertyChanged(false);
+			}
+		};
+		this.layersTree.addPropertyChangeListener("LayerRemoved",layerRemoveListener);
 	}
 
 	/**
@@ -128,7 +138,7 @@ public class ThemeMainContainer extends JPanel {
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
 		this.comboBoxThemeLayer.getComponent(0).removeMouseListener(comboboxMouseListener);
-
+		this.layersTree.removePropertyChangeListener("LayerRemoved",layerRemoveListener);
 	}
 
 	class LocalActionListener implements ActionListener {
