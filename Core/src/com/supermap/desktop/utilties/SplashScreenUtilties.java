@@ -59,11 +59,13 @@ public class SplashScreenUtilties {
 		} else {
 			width = (int) (((float) (currentCount + 1) / (float) (modelCount + 1)) * screenWidth);
 		}
-		int height = (int) (screenHeight * 0.025);
-		graphics2D.fillRect(0, (int) (screenHeight - height), width, height);
+		int height = (int) (screenHeight * 0.045);
+		graphics2D.fillRect(0, (int) (screenHeight - height), width, height - 5);
 
 		graphics2D.setColor(Color.WHITE);
-		graphics2D.fillRect(width, (int) (screenHeight - height), (int) (screenWidth - width), height);
+		graphics2D.fillRect(width, (int) (screenHeight - height), (int) (screenWidth - width), height - 5);
+		graphics2D.setColor(Color.BLACK);
+		graphics2D.drawRect(0,(int) (screenHeight - height), (int) screenWidth -1, height -5);
 		splashScreen.update();
 	}
 
@@ -86,6 +88,6 @@ public class SplashScreenUtilties {
 	}
 
 	public static void resetCurrentCount() {
-		SplashScreenUtilties.currentCount = 0;
+		SplashScreenUtilties.currentCount = 1;
 	}
 }

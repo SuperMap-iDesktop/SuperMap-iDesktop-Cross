@@ -1,26 +1,34 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import javax.swing.JPanel;
-import javax.swing.event.EventListenerList;
-
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedEvent;
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedListener;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+
+import javax.swing.*;
 
 /**
  * @author highsad
- *
  */
 public abstract class AbstractPropertyControl extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean isAutoApply = true;
 	private String propertyTitle = "";
 	private transient Map map;
 
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+		@Override
+		public void mapClosed(MapClosedEvent mapClosedEvent) {
+			//地图关闭时清空，不然会存在地图对象句柄为空，但地图对象存在的情况
+			mapClosedEvent.getMap().removeMapClosedListener(this);
+			setMap(null);
+		}
+	};
 	/**
 	 * Create the panel.
 	 */
@@ -39,12 +47,14 @@ public abstract class AbstractPropertyControl extends JPanel {
 	}
 
 	public void setMap(Map map) {
-		this.map = map;
 		unregisterEvents();
-		initializePropertyValues(map);
-		fillComponents();
-		setComponentsEnabled();
-		registerEvents();
+		this.map = map;
+		if (map != null) {
+			initializePropertyValues(map);
+			fillComponents();
+			setComponentsEnabled();
+			registerEvents();
+		}
 	}
 
 	public final boolean isAutoApply() {
@@ -86,14 +96,26 @@ public abstract class AbstractPropertyControl extends JPanel {
 
 	/**
 	 * 使用 Map 初始化用来做过程记录的属性值。
-	 * 
+	 *
 	 * @param map
 	 */
 	protected abstract void initializePropertyValues(Map map);
 
-	protected abstract void registerEvents();
+	protected void registerEvents() {
+		if (getMap() != null) {
+			this.getMap().addMapClosedListener(mapClosedListener);
+		}
+	}
 
-	protected abstract void unregisterEvents();
+	;
+
+	protected void unregisterEvents() {
+		if (getMap() != null) {
+			this.getMap().removeMapClosedListener(mapClosedListener);
+		}
+	}
+
+	;
 
 	protected abstract void fillComponents();
 
