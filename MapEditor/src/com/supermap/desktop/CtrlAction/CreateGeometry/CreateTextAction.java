@@ -51,7 +51,7 @@ public class CreateTextAction {
 
 	private static final double DEFAULT_FONT_HEIGHT = 10;
 	private static final int DEFAULT_INPUT_HEIGHT = 45;
-	private static final float DEFAULT_INPUT_FONTSIZE = (float) 25.0;
+	private static final float DEFAULT_INPUT_FONT_SIZE = 25.0f;
 
 	private JTextField textFieldInput = new JTextField();
 	private MapControl mapControl;
@@ -114,7 +114,7 @@ public class CreateTextAction {
 	public CreateTextAction() {
 		this.textFieldInput.setBorder(null);
 		this.textFieldInput.setSize(new Dimension(25, DEFAULT_INPUT_HEIGHT));
-		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.BOLD, (float) DEFAULT_INPUT_FONTSIZE));
+		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.BOLD, (float) DEFAULT_INPUT_FONT_SIZE));
 		this.textFieldInput.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override

@@ -1,15 +1,12 @@
 package com.supermap.desktop.CtrlAction;
 
-import javax.swing.JFrame;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.MainFrame;
 import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import javax.swing.*;
 
 public class CtrlActionApplicationExit extends CtrlAction {
 
