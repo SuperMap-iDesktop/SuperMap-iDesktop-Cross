@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventObject;
@@ -175,6 +177,8 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 		} else if (this.currentData instanceof ThemeGridRangeItem) {
 			((ThemeGridRangeItem) this.currentData).setCaption(caption);
 		}
+		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
+		tree.firePropertyChangeWithLayerSelect();
 		updateUI();
 	}
 

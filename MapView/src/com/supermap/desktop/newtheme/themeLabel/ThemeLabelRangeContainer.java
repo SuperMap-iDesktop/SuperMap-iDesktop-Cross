@@ -154,7 +154,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
 				.setWeight(1, 1));
 		initPanelStyle();
-		this.comboBoxColorStyle.setSelectedIndex(3);
+		this.comboBoxColorStyle.setSelectedIndex(21);
 		if (this.isNewTheme) {
 			refreshColor();
 		}
@@ -645,6 +645,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			int y = buttonStyle.getLocationOnScreen().y + height;
 			if (selectedRow.length > 0) {
 				textStyleDialog = new TextStyleDialog(themeLabel, selectedRow, map, themeLabelLayer);
+				textStyleDialog.setTitle(MapViewProperties.getString("String_SetTextStyle"));
 				textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", ThemeLabelRangeContainer.this.propertyChangeListener);
 				textStyleDialog.setRefreshAtOnce(isRefreshAtOnce);
 				textStyleDialog.setLocation(x, y);

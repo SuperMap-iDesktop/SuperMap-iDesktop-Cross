@@ -291,9 +291,13 @@ public class ThemeGuideFactory {
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
 			themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
+			//默认设置为SmID避免显示异常
 			themeGraphItem.setCaption("SmID");
 			themeGraph.insert(0, themeGraphItem);
+			//默认设置为三维环状图，避免显示异常
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
+			//默认设置一个坐标轴风格，避免显示异常
+			themeGraph.getAxesTextStyle().setBold(true);
 			themeGraph.setMaxGraphSize(1);
 			themeGraph.setAxesDisplayed(false);
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
