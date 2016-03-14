@@ -1,16 +1,19 @@
 package com.supermap.desktop.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.utilties.SplashScreenUtilties;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.ServiceRegistration;
-
-import java.awt.*;
+import org.osgi.framework.SynchronousBundleListener;
 
 public class CoreActivator implements BundleActivator {
 
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
+
 
 	/*
 	 * (non-Javadoc)
@@ -18,40 +21,74 @@ public class CoreActivator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
+		SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
+		if (splashScreenUtiltiesInstance != null) {
+			SplashScreenUtilties.setBundleCount(context.getBundles().length);
+			SplashScreenUtilties.resetCurrentCount();
+			Bundle bundle = context.getBundle();
+			String name = bundle.getSymbolicName();
+			if (name == null) {
+				name = "unname";
+			}
+			String info = "Loading " + name + ".jar";
+			splashScreenUtiltiesInstance.update(info);
+		}
+
+		context.addBundleListener(new SynchronousBundleListener() {
+			@Override
+			public void bundleChanged(BundleEvent bundleEvent) {
+				if (bundleEvent.getType() != BundleEvent.STARTING) {
+					return;
+				}
+				SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
+				if (splashScreenUtiltiesInstance != null) {
+					Bundle bundle = bundleEvent.getBundle();
+					String name = bundle.getSymbolicName();
+					if (name == null) {
+						name = "unname";
+					}
+					String info = "Loading " + name + ".jar";
+					splashScreenUtiltiesInstance.update(info);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						System.err.println(e);
+					}
+				}
+				if (bundleEvent.getBundle() == context.getBundles()[context.getBundles().length - 1]) {
+					context.removeBundleListener(this);
+				}
+			}
+		});
 		System.out.println("Hello SuperMap === Core!!");
 
 
 //		SplashScreen splash = SplashScreen.getSplashScreen();
 //		Rectangle bounds = splash.getBounds();
-//		double x = bounds.getX();
-//		double y = bounds.getY();
 //		double height = bounds.getHeight();
 //		double width = bounds.getWidth();
 //
-//		int startRow = (int) (x + height / 3);
-//		int startColumn = (int) (y + width / 3);
+//		int startRow = (int) (height / 3);
+//		int startColumn = (int) (width / 3);
 //
 //
 //		Graphics2D g = splash.createGraphics();
 //		g.setComposite(AlphaComposite.Clear);
-//		g.fillRect(startRow, startColumn, 280, 40);
+//
 //		g.setPaintMode();
 //		g.setColor(Color.RED);
-//		g.drawString("Core Starting", startRow+10, startColumn+10);
-//		g.fillRect(startRow,startColumn,50,20);
+//		g.getFont().deriveFont(g.getFont().getSize()+3);
+//		g.drawString("Core Starting", startRow + 10, startColumn + 10);
 //		splash.update();
-//		Thread.sleep(1000);
 //
 //		g.setComposite(AlphaComposite.Clear);
-//		g.fillRect(startRow, startColumn, 280, 40);
+//		g.fillRect(0, 0, ((int) height), ((int) width));
 //		g.setPaintMode();
 //		g.setColor(Color.RED);
-//		g.drawString("Core stoped", startRow+10, startColumn+10);
-//      g.fillRect(startRow,startColumn+20,50,20);
+//
+//		g.drawString("Core Stopped", startRow + 10, startColumn + 10);
 //		splash.update();
-//		Thread.sleep(1000);
-//		g.dispose();
 
 
 		// 不知道为什么，core会被加载两次，暂时先这么处理

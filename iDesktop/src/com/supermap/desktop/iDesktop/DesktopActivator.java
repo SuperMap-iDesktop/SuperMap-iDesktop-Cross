@@ -2,6 +2,7 @@ package com.supermap.desktop.iDesktop;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -23,6 +24,8 @@ public class DesktopActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === iDesktop!!");
 
 		DesktopActivator.setContext(bundleContext);
+		MainFrame mainFrame = new MainFrame();
+		Application.getActiveApplication().setMainFrame(mainFrame);
 
 		IFormMain formMain = Application.getActiveApplication().getMainFrame();
 		if (formMain == null) {

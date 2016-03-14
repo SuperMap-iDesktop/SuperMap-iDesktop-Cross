@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -35,6 +38,7 @@ public class HttpPostFile {
 	private String fileName = "";
 	private String boundary = "";
 	private boolean isCancel = false;
+	private Proxy proxy = null;
 
 	private EventListenerList listenerList = new EventListenerList();
 
@@ -57,9 +61,28 @@ public class HttpPostFile {
 	 *            分隔符
 	 */
 	public HttpPostFile(String url, String fileName, String boundary) {
+		this(url, fileName, boundary, "", -1);
+	}
+
+	/**
+	 * @param url
+	 *            上传
+	 * @param fileName
+	 *            文件名（不带后缀）
+	 * @param boundary
+	 *            分隔符
+	 * @param hostName
+	 *            代理主机
+	 * @param port
+	 *            代理端口
+	 */
+	public HttpPostFile(String url, String fileName, String boundary, String hostName, int port) {
 		this.url = url;
 		this.fileName = fileName;
 		this.boundary = boundary;
+		if (!StringUtilties.isNullOrEmpty(hostName) && port >= 0) {
+			this.proxy = new Proxy(Type.HTTP, new InetSocketAddress(hostName, port));
+		}
 	}
 
 	/**
@@ -77,22 +100,24 @@ public class HttpPostFile {
 				this.fileName = FileUtilties.getFileNameWithoutExtension(file);
 			}
 
+			// 这会用到请求体里，作为换行符使用，协议规定的请求体应该是平台无关的，因此换行符也是指定的，否则 Linux 上的换行符会导致请求正文解析失败
+			String lineSeparator = "\r\n";
 			StringBuilder prePostData = new StringBuilder();
 			prePostData.append("--" + boundary); // 起始边界符
-			prePostData.append(System.lineSeparator()); // 另起一行
+			prePostData.append(lineSeparator); // 另起一行
 			prePostData.append("Content-Disposition:form-data;name=\"file\";filename=\"");
 			prePostData.append(this.fileName + ".zip\"");
-			prePostData.append(System.lineSeparator()); // 另起一行
+			prePostData.append(lineSeparator); // 另起一行
 			prePostData.append("Content-Type:application/octet-stream");
-			prePostData.append(System.lineSeparator());// 另起一行
-			prePostData.append(System.lineSeparator());// 空一行
+			prePostData.append(lineSeparator);// 另起一行
+			prePostData.append(lineSeparator);// 空一行
 			// ----这里就填写二进制数据----
 			// 然后是结束边界符
-			String endBoundary = System.lineSeparator() + "--" + boundary + "--" + System.lineSeparator();
+			String endBoundary = lineSeparator + "--" + boundary + "--" + lineSeparator;
 
 			// 初始化Http请求
 			URL url = new URL(this.url);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			HttpURLConnection connection = this.proxy == null ? (HttpURLConnection) url.openConnection() : (HttpURLConnection) url.openConnection(this.proxy);
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
 
@@ -102,6 +127,7 @@ public class HttpPostFile {
 			connection.setConnectTimeout(DEFAULT_TIMEOUT);
 			connection.setRequestProperty(HEADER_CONTENT_TYPE, "multipart/form-data;boundary=" + boundary);
 			connection.setRequestProperty(HEADER_CONTENT_LENGTH, String.valueOf(totalSize + prePostData.length() + endBoundary.length()));
+			connection.connect();
 			DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 
 			long uploadOffset = 0;

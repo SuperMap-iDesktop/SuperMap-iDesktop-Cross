@@ -1,25 +1,5 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Point2D;
 import com.supermap.data.Rectangle2D;
@@ -32,6 +12,18 @@ import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 
 public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
@@ -217,15 +209,13 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		}
 		activeMap.setClipRegionEnabled(this.isClipRegionEnabled);
 		if (activeMap.getClipRegion() != this.clipRegion) {
-//			long startTime = System.currentTimeMillis();
 			activeMap.setClipRegion(this.clipRegion);
-//			System.out.println("Time:"+(System.currentTimeMillis() - startTime));
 		}
 
 		activeMap.setViewBoundsLocked(this.isViewBoundsLocked);
 		// 从地图中读取的 lockedViewBounds 默认为 (0,0,0,0)，然而将这个值设置到地图中会抛异常，理论上应该是 (0,0,0,0) 表示无限制
 		if (!activeMap.getLockedViewBounds().equals(this.lockedViewBounds) && this.lockedViewBounds.getHeight() > 0 && this.lockedViewBounds.getWidth() > 0) {
-            // 设为地图范围时才需要全幅显示
+			// 设为地图范围时才需要全幅显示
 			if(activeMap.getBounds().equals(this.lockedViewBounds)){
 				activeMap.viewEntire();
 			}
@@ -494,6 +484,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void registerEvents() {
+		super.registerEvents();
 		this.caretPositionListener.registerComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
 				textFieldCurrentViewRight, textFieldCurrentViewBottom);
 		this.scaleEditor.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
@@ -518,6 +509,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void unregisterEvents() {
+		super.unregisterEvents();
 		this.caretPositionListener.deregisterComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
 				textFieldCurrentViewRight, textFieldCurrentViewBottom);
 		this.scaleEditor.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
@@ -531,7 +523,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.textFieldCurrentViewTop.removePropertyChangeListener(this.textFieldPropertyChangeListener);
 		this.textFieldCurrentViewRight.removePropertyChangeListener(this.textFieldPropertyChangeListener);
 		this.textFieldCurrentViewBottom.removePropertyChangeListener(this.textFieldPropertyChangeListener);
-		getMap().removeDrawnListener(this.mapDrawnListener);
+		if (getMap() != null) {
+			getMap().removeDrawnListener(this.mapDrawnListener);
+		}
 		this.buttonClipRegion.removeMouseListener(setMouseListener);
 		this.buttonSetLockedViewBounds.removeMouseListener(setMouseListener);
 		this.buttonSetCustomBounds.removeMouseListener(setMouseListener);
@@ -591,7 +585,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	/**
 	 * 无论属性是否可用，有更改都会发送属性改变的事件
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isVisibleScalesChanged() {
@@ -613,8 +607,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			return true;
 		}
 
-		for (int i = 0; i < this.visibleScales.length; i++) {
-			double visibleScale = this.visibleScales[i];
+		for (double visibleScale : this.visibleScales) {
 			boolean exist = false;
 
 			for (int j = 0; j < getMap().getVisibleScales().length; j++) {
@@ -753,7 +746,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	 *  5.编辑控件的值导致地图刷新，由于比例尺、中心点、当前视图范围相互之间会有影响，改一个其他也可能会改变，需要在刷新地图之后取地图值设置，这里
 	 *  也通过刷新地图触发 mapDrawn 来刷新其他控件值。
 	 * 
-	 * @param e
+	 * @param
 	 */
 	// @formatter:on
 	private void mapDrawn() {

@@ -118,7 +118,6 @@ public class JDialogJoinItems extends SmDialog {
 			return comboBoxField.getSelectedItem();
 		}
 
-
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			currentRow = row;

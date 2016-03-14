@@ -1,19 +1,5 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.plaf.metal.MetalBorders;
-
 import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
@@ -24,6 +10,14 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilties.PrjCoordSysUtilties;
 import com.supermap.mapping.Map;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.plaf.metal.MetalBorders;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class MapPrjCoordSysControl extends AbstractPropertyControl {
 
@@ -140,12 +134,14 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 
 	@Override
 	protected void registerEvents() {
+		super.registerEvents();
 		this.checkBoxIsDynamicProjection.addItemListener(this.checkboxItemListener);
 		this.buttonProjectionSetting.addActionListener(this.ButtonProjectionSettingListener);
 	}
 
 	@Override
 	protected void unregisterEvents() {
+		super.unregisterEvents();
 		this.checkBoxIsDynamicProjection.removeItemListener(this.checkboxItemListener);
 		this.buttonProjectionSetting.removeActionListener(this.ButtonProjectionSettingListener);
 	}

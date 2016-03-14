@@ -1,16 +1,12 @@
 package com.supermap.desktop.frame;
 
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
+import com.supermap.desktop.Application;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.MainFrame;
+import javax.swing.*;
 
 public class FrameActivator implements BundleActivator {
 
@@ -27,8 +23,7 @@ public class FrameActivator implements BundleActivator {
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());	
 		
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				MainFrame mainFrame = new MainFrame();
-				Application.getActiveApplication().setMainFrame(mainFrame);
+
 	}
 	
 	/*
