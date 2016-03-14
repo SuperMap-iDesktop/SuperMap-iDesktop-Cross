@@ -7,7 +7,7 @@ import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.MapUtilties;
+//import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -18,14 +18,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
 
+/**
+ * 屏蔽掉专题图下拉显示项
+ * 
+ * @author Administrator
+ *
+ */
 public class ThemeMainContainer extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel labelThemeLayer = new JLabel();
-	private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
+	// private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
+	private JTextField textFieldThemeLayer = new JTextField();
 	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel panelThemeInfo = new JPanel();
 	private JCheckBox checkBoxRefreshAtOnce = new JCheckBox();
@@ -36,22 +41,22 @@ public class ThemeMainContainer extends JPanel {
 	private boolean isSetCombobox = false;
 
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-	private LocalItemListener itemListener = new LocalItemListener();
+	// private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private LocalActionListener actionListener = new LocalActionListener();
 	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
 	private PropertyChangeListener layerRemoveListener;
-	private MouseListener comboboxMouseListener = new MouseAdapter() {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getClickCount() == 1) {
-				isSetCombobox = true;
-				oldLayer = MapUtilties.findLayerByName(map, comboBoxThemeLayer.getSelectedItem().toString());
-			}
-		}
-	};
+	// private MouseListener comboboxMouseListener = new MouseAdapter() {
+	//
+	// @Override
+	// public void mouseClicked(MouseEvent e) {
+	// if (e.getClickCount() == 1) {
+	// isSetCombobox = true;
+	// oldLayer = MapUtilties.findLayerByName(map, comboBoxThemeLayer.getSelectedItem().toString());
+	// }
+	// }
+	// };
 
 	private Layer newLayer;
 	// 标记位，用于标记当前
@@ -81,14 +86,16 @@ public class ThemeMainContainer extends JPanel {
 	private void initComponents() {
 		GridBagLayout layout = new GridBagLayout();
 		this.setLayout(layout);
-		this.comboBoxThemeLayer.setEditable(true);
+		this.textFieldThemeLayer.setEnabled(false);
+		// this.comboBoxThemeLayer.setEditable(true);
 		this.buttonApply.setEnabled(false);
 		this.setLayout(new GridBagLayout());
 		this.scrollPane.setBorder(null);
 		// @formatter:off
 		this.checkBoxRefreshAtOnce.setSelected(true);
 		this.add(this.labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
-		this.add(this.comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+//		this.add(this.comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(this.textFieldThemeLayer,   new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 		this.add(this.scrollPane,            new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		this.add(this.checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
 		this.add(this.buttonApply,           new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.EAST));
@@ -113,32 +120,32 @@ public class ThemeMainContainer extends JPanel {
 	 * 注册事件
 	 */
 	private void registActionListener() {
-		this.comboBoxThemeLayer.addItemListener(this.itemListener);
+		// this.comboBoxThemeLayer.addItemListener(this.itemListener);
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
-		this.comboBoxThemeLayer.getComponent(0).addMouseListener(comboboxMouseListener);
+		// this.comboBoxThemeLayer.getComponent(0).addMouseListener(comboboxMouseListener);
 		this.layerRemoveListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				setLayerPropertyChanged(false);
 			}
 		};
-		this.layersTree.addPropertyChangeListener("LayerRemoved",layerRemoveListener);
+		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);
 	}
 
 	/**
 	 * 注销事件
 	 */
 	public void unregistActionListener() {
-		this.comboBoxThemeLayer.removeItemListener(this.itemListener);
+		// this.comboBoxThemeLayer.removeItemListener(this.itemListener);
 		this.layersTree.removeMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
-		this.comboBoxThemeLayer.getComponent(0).removeMouseListener(comboboxMouseListener);
-		this.layersTree.removePropertyChangeListener("LayerRemoved",layerRemoveListener);
+		// this.comboBoxThemeLayer.getComponent(0).removeMouseListener(comboboxMouseListener);
+		this.layersTree.removePropertyChangeListener("LayerRemoved", layerRemoveListener);
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -153,45 +160,45 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
-	public JComboBox<String> getComboBoxThemeLayer() {
-		return comboBoxThemeLayer;
-	}
+	// public JComboBox<String> getComboBoxThemeLayer() {
+	// return comboBoxThemeLayer;
+	// }
+	//
+	// public void setComboBoxThemeLayer(JComboBox<String> comboBoxThemeLayer) {
+	// this.comboBoxThemeLayer = comboBoxThemeLayer;
+	// }
 
-	public void setComboBoxThemeLayer(JComboBox<String> comboBoxThemeLayer) {
-		this.comboBoxThemeLayer = comboBoxThemeLayer;
-	}
+	// /**
+	// * 刷新专题图主界面
+	// *
+	// * @param layer
+	// */
+	// private void refreshThemeMainContainer(Layer layer) {
+	// if (null != layer) {
+	// if (null != layer.getTheme()) {
+	// ThemeGuideFactory.modifyTheme(layer);
+	// } else {
+	// updateThemeMainContainer();
+	// }
+	// }
+	// }
 
-	/**
-	 * 刷新专题图主界面
-	 *
-	 * @param layer
-	 */
-	private void refreshThemeMainContainer(Layer layer) {
-		if (null != layer) {
-			if (null != layer.getTheme()) {
-				ThemeGuideFactory.modifyTheme(layer);
-			} else {
-				updateThemeMainContainer();
-			}
-		}
-	}
-
-	class LocalItemListener implements ItemListener {
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED && e.getSource() == comboBoxThemeLayer) {
-				if (isSetCombobox) {
-					updateLayerProperty(oldLayer);
-				}
-				String layerCaption = (String) comboBoxThemeLayer.getSelectedItem();
-				if (null != ThemeGuideFactory.getMapControl()) {
-					map = ThemeGuideFactory.getMapControl().getMap();
-					Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
-					refreshThemeMainContainer(layer);
-				}
-			}
-		}
-	}
+	// class LocalItemListener implements ItemListener {
+	// @Override
+	// public void itemStateChanged(ItemEvent e) {
+	// if (e.getStateChange() == ItemEvent.SELECTED && e.getSource() == comboBoxThemeLayer) {
+	// if (isSetCombobox) {
+	// updateLayerProperty(oldLayer);
+	// }
+	// String layerCaption = (String) comboBoxThemeLayer.getSelectedItem();
+	// if (null != ThemeGuideFactory.getMapControl()) {
+	// map = ThemeGuideFactory.getMapControl().getMap();
+	// Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
+	// refreshThemeMainContainer(layer);
+	// }
+	// }
+	// }
+	// }
 
 	class RefreshAtOnceListener implements ActionListener {
 		@Override
@@ -216,61 +223,61 @@ public class ThemeMainContainer extends JPanel {
 		}
 		scrollPane.setViewportView(panelThemeInfo);
 		ThemeMainContainer.this.repaint();
-		ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
+		// ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
 	}
 
-	/**
-	 * 刷新标签项下拉框中显示的子项
-	 */
-	private void refreshComboBoxThemeLayer() {
-		comboBoxThemeLayer.removeAllItems();
-		map = ThemeGuideFactory.getMapControl().getMap();
-		Layers layers = map.getLayers();
-		for (int i = 0; i < layers.getCount(); i++) {
-			addItemToComboBox(layers.get(i));
-		}
-	}
+	// /**
+	// * 刷新标签项下拉框中显示的子项
+	// */
+	// private void refreshComboBoxThemeLayer() {
+	// comboBoxThemeLayer.removeAllItems();
+	// map = ThemeGuideFactory.getMapControl().getMap();
+	// Layers layers = map.getLayers();
+	// for (int i = 0; i < layers.getCount(); i++) {
+	// addItemToComboBox(layers.get(i));
+	// }
+	// }
 
-	/**
-	 * 利用递归将当前地图的专题图图层标题添加到combobox中
-	 *
-	 * @param layer
-	 */
-	public void addItemToComboBox(Layer layer) {
-		if (layer instanceof LayerGroup) {
-			LayerGroup tempLayer = (LayerGroup) layer;
-			for (int i = 0; i < tempLayer.getCount(); i++) {
-				addItemToComboBox(tempLayer.get(i));
-			}
-		} else if (null != layer.getTheme()) {
-			comboBoxThemeLayer.addItem(layer.getCaption());
-		}
-	}
+	// /**
+	// * 利用递归将当前地图的专题图图层标题添加到combobox中
+	// *
+	// * @param layer
+	// */
+	// public void addItemToComboBox(Layer layer) {
+	// if (layer instanceof LayerGroup) {
+	// LayerGroup tempLayer = (LayerGroup) layer;
+	// for (int i = 0; i < tempLayer.getCount(); i++) {
+	// addItemToComboBox(tempLayer.get(i));
+	// }
+	// } else if (null != layer.getTheme()) {
+	// comboBoxThemeLayer.addItem(layer.getCaption());
+	// }
+	// }
 
-	private void resetThemeMainContainer(Layer layer) {
-		if (null != layer) {
-			refreshComboBoxThemeLayer();
-			if (comboBoxThemeLayer.getItemCount() > 0 && null != layer.getTheme()) {
-				// 有专题图图层，comboBoxThemeLayer中有对应的专题图图层，刷新ThemeMainContainer
-				comboBoxThemeLayer.setSelectedItem(layer.getCaption());
-			} else {
-				// 没有专题图图层，重置ThemeMainContainer
-				comboBoxThemeLayer.removeAllItems();
-				comboBoxThemeLayer.setSelectedItem("");
-				updateThemeMainContainer();
-				ThemeMainContainer.this.updateUI();
-			}
-		} else {
-			updateThemeMainContainer();
-		}
-	}
+	// private void resetThemeMainContainer(Layer layer) {
+	// if (null != layer) {
+	// refreshComboBoxThemeLayer();
+	// if (comboBoxThemeLayer.getItemCount() > 0 && null != layer.getTheme()) {
+	// // 有专题图图层，comboBoxThemeLayer中有对应的专题图图层，刷新ThemeMainContainer
+	// comboBoxThemeLayer.setSelectedItem(layer.getCaption());
+	// } else {
+	// // 没有专题图图层，重置ThemeMainContainer
+	// comboBoxThemeLayer.removeAllItems();
+	// comboBoxThemeLayer.setSelectedItem("");
+	// updateThemeMainContainer();
+	// ThemeMainContainer.this.updateUI();
+	// }
+	// } else {
+	// updateThemeMainContainer();
+	// }
+	// }
 
 	class LocalTreeMouseListener extends MouseAdapter {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
-				resetThemeMainContainer(newLayer);
+				// resetThemeMainContainer(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
 		}
@@ -283,12 +290,16 @@ public class ThemeMainContainer extends JPanel {
 			try {
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				isSetCombobox = false;
+				// isSetCombobox = false;
 				updateLayerProperty(oldLayer);
 				if (null != newLayer && null != newLayer.getTheme()) {
+					textFieldThemeLayer.setText(newLayer.getName());
 					ThemeGuideFactory.modifyTheme(newLayer);
+				} else {
+					textFieldThemeLayer.setText("");
+					updateThemeMainContainer();
 				}
-				resetThemeMainContainer(newLayer);
+				// resetThemeMainContainer(newLayer);
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
@@ -297,15 +308,16 @@ public class ThemeMainContainer extends JPanel {
 	}
 
 	public void updateLayerProperty(Layer oldLayer) {
-		if (null != panel && null != oldLayer && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+		
+		if (null != panel && null != oldLayer && !oldLayer.isDiposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
 				if (null != panel) {
 					panel.unregistActionListener();
 					panel = null;
+					ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
 				}
-				ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
@@ -329,7 +341,7 @@ public class ThemeMainContainer extends JPanel {
 				} else {
 					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
 				}
-				map.refresh();
+				ThemeGuideFactory.getMapControl().getMap().refresh();
 				TreePath treePath = layersTree.getSelectionPath();
 				int row = layersTree.getRowForPath(treePath);
 				setLayerPropertyChanged(false);
