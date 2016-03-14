@@ -247,8 +247,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.panelProperty.setLayout(new GridBagLayout());
-		this.add(tabbedPaneInfo,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
 	}
@@ -265,8 +264,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initPanelStyleOfBAR(this.panelStyleOfBAR);
 		initPanelStyleOfRoseAndPIE(this.panelStyleOfRoseAndPIE);
 		JPanel panelAdvanceContent = new JPanel();
-		this.panelAdvance.add(panelAdvanceContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH)
-				.setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+		this.panelAdvance.add(
+				panelAdvanceContent,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL)
+						.setInsets(5, 10, 5, 10));
 		panelAdvanceContent.setLayout(new GridBagLayout());
 		// @formatter:off
 		panelAdvanceContent.add(this.panelOptions,
@@ -717,8 +718,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				}
 			}
 			if (selectColumn == TABLE_COLUMN_EXPRESSION) {
+				String graphExpression = themeGraph.getItem(selectRow).getGraphExpression();
 				String expression = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-				if (!StringUtilties.isNullOrEmptyString(expression)) {
+				if (!StringUtilties.isNullOrEmptyString(expression) && !expression.equalsIgnoreCase(graphExpression)) {
 					ThemeGraphItem item = themeGraph.getItem(selectRow);
 					String caption = expression.substring(expression.lastIndexOf(".") + 1, expression.length());
 					item.setGraphExpression(expression);
@@ -839,8 +841,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.toolbar.add(this.buttonMoveToForward);
 		this.toolbar.add(this.buttonMoveToNext);
 		this.toolbar.add(this.buttonMoveToLast);
-		this.buttonDelete
-				.setIcon(new ImageIcon(ThemeGraphContainer.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+		this.buttonDelete.setIcon(new ImageIcon(ThemeGraphContainer.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonMoveToFrist.setIcon(InternalImageIconFactory.MOVE_TO_FRIST);
 		this.buttonMoveToForward.setIcon(InternalImageIconFactory.MOVE_TO_FORWARD);
 		this.buttonMoveToNext.setIcon(InternalImageIconFactory.MOVE_TO_NEXT);
@@ -976,8 +978,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				if (selectRow.length == 1) {
 					themeGraph.exchangeItem(selectRow[0], 0);
 				} else {
-					for (int i = selectRow[0] - 1; i >= 0; i--) {
-						themeGraph.exchangeItem(i, i + selectRow.length);
+					for (int i = 0; i < selectRow.length; i++) {
+						themeGraph.exchangeItem(selectRow[selectRow.length - i - 1], i);
 					}
 				}
 				getTable();
@@ -1028,8 +1030,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				if (selectRow.length == 1) {
 					themeGraph.exchangeItem(selectRow[0], tableGraphInfo.getRowCount() - 1);
 				} else {
-					for (int i = selectRow[selectRow.length - 1] + 1; i < tableGraphInfo.getRowCount(); i++) {
-						themeGraph.exchangeItem(i, i - selectRow.length);
+					for (int i = 0; i < selectRow.length; i++) {
+						themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - i - 1);
 					}
 				}
 				getTable();
@@ -1039,6 +1041,20 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				}
 				return;
 			}
+		}
+
+		private int[] unContinue(int[] selectRow) {
+			int[] unSelectRow = new int[selectRow[selectRow.length - 1] - selectRow.length];
+			for (int i = 0; i < selectRow[selectRow.length - 1]; i++) {
+				for (int j = 0; j < selectRow.length; j++) {
+					if (i != selectRow[j]) {
+						int k = 0;
+						unSelectRow[k] = i;
+						k++;
+					}
+				}
+			}
+			return unSelectRow;
 		}
 
 		private void addGraphItem() {
