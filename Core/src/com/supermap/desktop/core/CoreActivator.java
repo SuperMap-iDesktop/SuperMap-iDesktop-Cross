@@ -50,11 +50,11 @@ public class CoreActivator implements BundleActivator {
 					}
 					String info = "Loading " + name + ".jar";
 					splashScreenUtiltiesInstance.update(info);
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						System.err.println(e);
-					}
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						System.err.println(e);
+//					}
 				}
 				if (bundleEvent.getBundle() == context.getBundles()[context.getBundles().length - 1]) {
 					context.removeBundleListener(this);
