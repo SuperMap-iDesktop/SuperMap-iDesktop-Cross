@@ -1,5 +1,6 @@
 package com.supermap.desktop.util;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.io.File;
 import java.util.ArrayList;
@@ -937,12 +938,13 @@ public class CommonFunction {
 
 	public static void replace(JPanel parentPanel, JPanel newPanel) {
 		for (int i = 0; i < parentPanel.getComponentCount(); i++) {
-			if (parentPanel.getComponent(i) instanceof JPanel) {
-				parentPanel.remove(i);
+			if (parentPanel.getComponent(i) instanceof JScrollPane) {
+				((JScrollPane)parentPanel.getComponent(i)).setViewportView(newPanel);
 			}
 		}
-		parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
-				.setWeight(1, 3));
+//		parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
+//				.setWeight(1, 3));
+//		newPanel.setPreferredSize(new Dimension(483,300));
 		parentPanel.updateUI();
 	}
 

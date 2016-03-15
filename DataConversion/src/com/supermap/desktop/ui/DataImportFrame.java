@@ -38,6 +38,7 @@ public class DataImportFrame extends SmDialog {
 		initComponents();
 		registActionListener();
 		initDrag();
+		this.buttonAddFile.setSelected(false);
 	}
 
 	public DataImportFrame(JDialog owner, boolean modal) {
@@ -121,7 +122,7 @@ public class DataImportFrame extends SmDialog {
 		this.labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		this.labelTitle.setOpaque(true);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setBounds(400, 280, 800, 475);
+		this.setBounds(400, 280, 850, 475);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
@@ -265,12 +266,14 @@ public class DataImportFrame extends SmDialog {
 	private void initPanelImportInfo() {
 		//@formatter:off
 		this.panelImportInfo.setLayout(new GridBagLayout());
-		this.panelImportInfo.add(this.labelTitle,  new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5).setWeight(1, 0));
-		this.panelImportInfo.add(this.panelParams, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setWeight(1, 3));
+		JScrollPane pane = new JScrollPane();
+		this.panelImportInfo.add(this.labelTitle,   new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5).setWeight(1, 0));
+		this.panelImportInfo.add(pane,              new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setWeight(1, 1));
 		this.panelImportInfo.add(this.buttonImport, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setWeight(100, 0));
 		this.panelImportInfo.add(this.buttonClose,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5,0,5,5).setWeight(0, 0));
-		this.labelTitle.setPreferredSize(new Dimension(200,23));
-		this.panelParams.setPreferredSize(new Dimension(483,300));
+		this.labelTitle.setPreferredSize(new Dimension(200,33));
+		pane.setBorder(null);
+		pane.setViewportView(panelParams);
 		this.panelParams.setLayout(new GridBagLayout());
 		this.panelParams.add(this.labelRemind, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER));
 		//@formatter:on
@@ -279,8 +282,8 @@ public class DataImportFrame extends SmDialog {
 	private void initContentPane() {
 		//@formatter:off
 		this.contentPane.setLayout(new GridBagLayout());
-		this.contentPane.add(this.panelFiles, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(8, 1));
-		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(92, 1));
+		this.contentPane.add(this.panelFiles, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(25, 1));
+		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(75, 1));
 		//@formatter:on
 	}
 

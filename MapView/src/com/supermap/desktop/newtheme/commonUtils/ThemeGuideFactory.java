@@ -21,7 +21,6 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
@@ -339,6 +338,9 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeUniqueContainer);
+			if (null!=container) {
+				container.setPanel(themeUniqueContainer);
+			}
 		}
 	}
 
@@ -353,6 +355,9 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeRangeContainer);
+			if (null!=container) {
+				container.setPanel(themeRangeContainer);
+			}
 		}
 	}
 
@@ -367,6 +372,9 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeLabelUniformContainer);
+			if (null!=container) {
+				container.setPanel(themeLabelUniformContainer);
+			}
 		}
 	}
 
@@ -381,6 +389,9 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeLabelRangeContainer);
+			if (null!=container) {
+				container.setPanel(themeLabelRangeContainer);
+			}
 		}
 	}
 
@@ -395,6 +406,9 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGridUniqueContainer);
+			if (null!=container) {
+				container.setPanel(themeGridUniqueContainer);
+			}
 		}
 	}
 
@@ -409,15 +423,24 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGridRangeContainer);
+			if (null!=container) {
+				container.setPanel(themeGridRangeContainer);
+			}
 		}
 	}
-
+	/**
+	 * 修改统计专题图
+	 * @param layer
+	 */
 	public static void resetGraph(Layer layer) {
 		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
 		} else if (null != layer.getDataset()) {
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
+			if (null!=container) {
+				container.setPanel(themeGraphContainer);
+			}
 		}
 	}
 

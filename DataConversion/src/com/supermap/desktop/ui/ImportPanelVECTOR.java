@@ -174,9 +174,9 @@ public class ImportPanelVECTOR extends AbstractImportPanel {
 	private void initPanelVECTOR() {
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
-		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelTransform,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
 		//@formatter:on
 	}
 

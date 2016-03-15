@@ -77,6 +77,8 @@ public class ImportPanelGJB extends JPanel {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
 		this.panels = (ArrayList<JPanel>) panels;
 		initComponents();
+		initResource();
+		registActionListener();
 	}
 
 	private void initComponents() {
@@ -120,8 +122,8 @@ public class ImportPanelGJB extends JPanel {
 	private void initPanelGJB() {
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
-		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
+		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5).setWeight(1, 0));
+		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5).setWeight(1, 0));
 		//@formatter:on
 	}
 
