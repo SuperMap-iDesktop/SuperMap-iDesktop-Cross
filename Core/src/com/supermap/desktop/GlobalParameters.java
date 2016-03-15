@@ -518,6 +518,7 @@ public class GlobalParameters {
 	private static void initLogInfo() {
 		Properties properties = System.getProperties();
 		properties.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
+		System.out.println(getLogFolder());
 		System.setProperties(properties);
 	}
 }

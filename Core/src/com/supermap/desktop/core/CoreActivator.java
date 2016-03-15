@@ -16,7 +16,7 @@ public class CoreActivator implements BundleActivator {
 
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
-	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
+//	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
 
 	/*
 	 * (non-Javadoc)
@@ -38,7 +38,7 @@ public class CoreActivator implements BundleActivator {
 			splashScreenUtiltiesInstance.update(info);
 		}
 		GlobalParameters.initResource();
-		log.info("CoreActivator Started!");
+//		log.info("CoreActivator Started!");
 
 		context.addBundleListener(new SynchronousBundleListener() {
 			@Override
