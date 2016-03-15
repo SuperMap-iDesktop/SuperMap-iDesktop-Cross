@@ -14,9 +14,13 @@ import org.osgi.framework.SynchronousBundleListener;
 
 public class CoreActivator implements BundleActivator {
 
+	static {
+		GlobalParameters.initResource();
+
+	}
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
-//	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
+	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
 
 	/*
 	 * (non-Javadoc)
@@ -37,8 +41,7 @@ public class CoreActivator implements BundleActivator {
 			String info = "Loading " + name + ".jar";
 			splashScreenUtiltiesInstance.update(info);
 		}
-		GlobalParameters.initResource();
-//		log.info("CoreActivator Started!");
+		log.info("CoreActivator Started!");
 
 		context.addBundleListener(new SynchronousBundleListener() {
 			@Override
