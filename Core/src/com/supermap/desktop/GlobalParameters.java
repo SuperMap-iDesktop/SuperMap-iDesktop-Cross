@@ -3,16 +3,11 @@ package com.supermap.desktop;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -518,7 +513,6 @@ public class GlobalParameters {
 	private static void initLogInfo() {
 		Properties properties = System.getProperties();
 		properties.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
-		System.out.println(getLogFolder());
 		System.setProperties(properties);
 	}
 }
