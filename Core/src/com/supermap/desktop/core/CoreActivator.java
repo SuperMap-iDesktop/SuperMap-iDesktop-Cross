@@ -1,7 +1,10 @@
 package com.supermap.desktop.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.utilties.SplashScreenUtilties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -13,7 +16,7 @@ public class CoreActivator implements BundleActivator {
 
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
-
+	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
 
 	/*
 	 * (non-Javadoc)
@@ -34,6 +37,8 @@ public class CoreActivator implements BundleActivator {
 			String info = "Loading " + name + ".jar";
 			splashScreenUtiltiesInstance.update(info);
 		}
+		GlobalParameters.initResource();
+		log.info("CoreActivator Started!");
 
 		context.addBundleListener(new SynchronousBundleListener() {
 			@Override
@@ -63,34 +68,6 @@ public class CoreActivator implements BundleActivator {
 		});
 		System.out.println("Hello SuperMap === Core!!");
 
-
-//		SplashScreen splash = SplashScreen.getSplashScreen();
-//		Rectangle bounds = splash.getBounds();
-//		double height = bounds.getHeight();
-//		double width = bounds.getWidth();
-//
-//		int startRow = (int) (height / 3);
-//		int startColumn = (int) (width / 3);
-//
-//
-//		Graphics2D g = splash.createGraphics();
-//		g.setComposite(AlphaComposite.Clear);
-//
-//		g.setPaintMode();
-//		g.setColor(Color.RED);
-//		g.getFont().deriveFont(g.getFont().getSize()+3);
-//		g.drawString("Core Starting", startRow + 10, startColumn + 10);
-//		splash.update();
-//
-//		g.setComposite(AlphaComposite.Clear);
-//		g.fillRect(0, 0, ((int) height), ((int) width));
-//		g.setPaintMode();
-//		g.setColor(Color.RED);
-//
-//		g.drawString("Core Stopped", startRow + 10, startColumn + 10);
-//		splash.update();
-
-
 		// 不知道为什么，core会被加载两次，暂时先这么处理
 		if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Core") == null) {
 			this.serviceTracker = new CoreServiceTracker(context);
@@ -112,5 +89,4 @@ public class CoreActivator implements BundleActivator {
 		this.serviceTracker.close();
 		this.registration.unregister();
 	}
-
 }

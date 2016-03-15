@@ -1,17 +1,22 @@
 package com.supermap.desktop;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import javax.swing.event.EventListenerList;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.ICtrlAction;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IOutput;
+import com.supermap.desktop.Interface.ISplashForm;
 import com.supermap.desktop.event.ActiveDatasetsChangeEvent;
 import com.supermap.desktop.event.ActiveDatasetsChangeListener;
 import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
 import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
 import com.supermap.desktop.implement.Output;
+
+import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 应用程序类，实现启动主窗口、插件管理和代码段编译执行等功能。
@@ -29,8 +34,10 @@ public class Application {
 
 	private EventListenerList eventListenerList = new EventListenerList();
 
-	/** classVar1 documentation comment */
-	private static Application activeApplication ;
+	/**
+	 * classVar1 documentation comment
+	 */
+	private static Application activeApplication;
 
 	public Application() {
 
@@ -145,7 +152,7 @@ public class Application {
 	 * Get the Application
 	 */
 	public static Application getActiveApplication() {
-		if(Application.activeApplication==null){
+		if (Application.activeApplication == null) {
 			Application.activeApplication = new Application();
 		}
 		return Application.activeApplication;
@@ -166,12 +173,13 @@ public class Application {
 		this.getMainFrame().getFormManager().setActiveForm(form);
 	}
 
-    /**
-     * 重新发送一次
-     */
-    public void resetActiveForm(){
-        this.getMainFrame().getFormManager().resetActiveForm();
-    }
+	/**
+	 * 重新发送一次
+	 */
+	public void resetActiveForm() {
+		this.getMainFrame().getFormManager().resetActiveForm();
+	}
+
 	// 临时做的CtrlAction的管理
 	private HashMap<String, HashMap<String, ICtrlAction>> ctrlActions = new HashMap<String, HashMap<String, ICtrlAction>>();
 
@@ -216,7 +224,7 @@ public class Application {
 			this.pluginManager = new PluginManager();
 			this.workEnvironmentManager = new WorkEnvironmentManager();
 		} catch (Exception e) {
-			// do nothing
+			System.err.println(e.getMessage());
 		}
 	}
 

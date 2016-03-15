@@ -1,25 +1,25 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Component;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IContextMenuManager;
+import com.supermap.desktop.Interface.IOutput;
+import com.supermap.desktop.enums.InfoType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IOutput;
-import com.supermap.desktop.enums.InfoType;
-
 public class OutputFrame extends JScrollPane implements IOutput {
-	/**
-	 * 
-	 */
+	private static final Log logInfo = LogFactory.getLog("info");
+	private static final Log logException = LogFactory.getLog("exception");
+
 	private static final long serialVersionUID = 1L;
 	private transient boolean isShowTime = true;
 	private JTextArea textArea = new JTextArea();
@@ -32,7 +32,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	/**
 	 * 获取输出窗口的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getOutputPopupMenu() {
@@ -152,6 +152,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(String message) {
+		logInfo.info(message);
 		String messageTemp = message;
 		try {
 			if (isShowTime) {
@@ -193,6 +194,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			if (type == InfoType.Information) {
 				output(message);
 			} else {
+				logException.info(message);
 				output(message);
 			}
 		} catch (Exception ex) {
@@ -212,7 +214,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	/**
 	 * 是否显示时间
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isShowTime() {
