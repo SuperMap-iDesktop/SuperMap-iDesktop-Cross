@@ -66,3 +66,4 @@ org.sonar.ide.eclipse.core.prefs
 /Configuration/UserConfig.config
 /Configuration/Products.xml
 /Configuration/URL.config
+/log
