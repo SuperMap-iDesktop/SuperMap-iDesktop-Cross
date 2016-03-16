@@ -18,6 +18,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -277,13 +278,20 @@ public class ImportPanelD extends AbstractImportPanel {
 	}
 
 	private void initPanelD() {
-		// @formatter:off
-		this.setLayout(new GridBagLayout());
-		this.add(this.panelResultSetting,  new GridBagConstraintsHelper(0, 0, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.panelTransform,      new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setInsets(5).setWeight(1, 1));
-		this.add(this.labelFilePath,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,10,10,5).setWeight(10, 1));
-		this.add(this.textFieldFilePath,   new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(70, 1));
-		this.add(this.buttonProperty,      new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(20, 1));
+		//@formatter:off
+		JPanel panelFileInfo = new JPanel();
+		panelFileInfo.setLayout(new GridBagLayout());
+		panelFileInfo.add(this.labelFilePath,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,10,10,5).setWeight(10, 1));
+		panelFileInfo.add(this.textFieldFilePath,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(70, 1));
+		panelFileInfo.add(this.buttonProperty,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(20, 1));
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+				   .addComponent(this.panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+				   .addComponent(panelFileInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
+		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+				   .addContainerGap().addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+				   .addContainerGap().addComponent(panelFileInfo, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		this.setLayout(groupLayout);
 		//@formatter:on
 	}
 

@@ -587,6 +587,7 @@ public class DataExportFrame extends SmDialog {
 				}
 
 				SmFileChoose fileChooserc = new SmFileChoose("DataExportFrame");
+				fileChooserc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int state = fileChooserc.showDefaultDialog();
 				String tempfilePath = fileChooserc.getFilePath();
 				File file = null;

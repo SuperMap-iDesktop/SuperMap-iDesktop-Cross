@@ -65,7 +65,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient TextStyleDialog textStyleDialog;
 
 	private static String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_RangeValue"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_ClmExpression") };
+			MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient DatasetVector datasetVector;
 	private transient Map map;
 	private String rangeExpression;

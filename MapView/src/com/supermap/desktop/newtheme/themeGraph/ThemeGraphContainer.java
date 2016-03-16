@@ -979,13 +979,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					themeGraph.exchangeItem(selectRow[0], 0);
 				} else {
 					for (int i = 0; i < selectRow.length; i++) {
-						themeGraph.exchangeItem(selectRow[selectRow.length - i - 1], i);
+						themeGraph.exchangeItem(selectRow[i], i);
 					}
 				}
 				getTable();
 				refreshMapAtOnce();
 				for (int i = 0; i < selectRow.length; i++) {
-					tableGraphInfo.setRowSelectionInterval(selectRow.length - 1, selectRow.length - 1);
+					tableGraphInfo.addRowSelectionInterval(i, i);
 				}
 				return;
 			}
@@ -1030,31 +1030,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				if (selectRow.length == 1) {
 					themeGraph.exchangeItem(selectRow[0], tableGraphInfo.getRowCount() - 1);
 				} else {
-					for (int i = 0; i < selectRow.length; i++) {
+					for (int i = selectRow.length - 1; i >= 0; i--) {
 						themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - i - 1);
 					}
 				}
 				getTable();
 				refreshMapAtOnce();
 				for (int i = 0; i < selectRow.length; i++) {
-					tableGraphInfo.setRowSelectionInterval(tableGraphInfo.getRowCount() - selectRow.length, tableGraphInfo.getRowCount() - selectRow.length);
+					tableGraphInfo.addRowSelectionInterval(tableGraphInfo.getRowCount() - i-1, tableGraphInfo.getRowCount() - i-1);
 				}
 				return;
 			}
-		}
-
-		private int[] unContinue(int[] selectRow) {
-			int[] unSelectRow = new int[selectRow[selectRow.length - 1] - selectRow.length];
-			for (int i = 0; i < selectRow[selectRow.length - 1]; i++) {
-				for (int j = 0; j < selectRow.length; j++) {
-					if (i != selectRow[j]) {
-						int k = 0;
-						unSelectRow[k] = i;
-						k++;
-					}
-				}
-			}
-			return unSelectRow;
 		}
 
 		private void addGraphItem() {

@@ -31,10 +31,8 @@ public class CommonMouseListener extends MouseAdapter {
 	private DataImportFrame dataImportFrame;
 	private boolean hasImportInfo;
 
-	public CommonMouseListener(DataImportFrame dataImportFrame, JPanel newPanel, JTable table,
-			JPanel panelImportInfo, List<ImportFileInfo> fileInfos,
-			List<JPanel> panels, JLabel lblDataimportType,
-			FileInfoModel model) {
+	public CommonMouseListener(DataImportFrame dataImportFrame, JPanel newPanel, JTable table, JPanel panelImportInfo, List<ImportFileInfo> fileInfos,
+			List<JPanel> panels, JLabel lblDataimportType, FileInfoModel model) {
 		this.dataImportFrame = dataImportFrame;
 		this.newPanel = newPanel;
 		this.table = table;
@@ -47,19 +45,6 @@ public class CommonMouseListener extends MouseAdapter {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (1 == e.getClickCount()) {
-			// 设置表格的所有行可选
-			table.setRowSelectionAllowed(true);
-			if (!fileInfos.isEmpty()) {
-				// 刷新右边界面
-				CommonFunction.refreshPanel(table, panelImportInfo, fileInfos,
-						panels, lblDataimportType);
-			}
-			// 如果没有选择行数据时，将右边界面替换为默认界面
-			if (0 == table.getSelectedRowCount()) {
-				CommonFunction.replace(panelImportInfo, newPanel);
-			}
-		}
 		if (2 == e.getClickCount()) {
 			refreshTable();
 			// 刷新右边界面
@@ -74,6 +59,7 @@ public class CommonMouseListener extends MouseAdapter {
 				dataImportFrame.getButtonSelectAll().setEnabled(true);
 			}
 		}
+	
 	}
 
 	// 刷新table
@@ -99,8 +85,7 @@ public class CommonMouseListener extends MouseAdapter {
 	public void mouseReleased(MouseEvent e) {
 		// 刷新右边界面
 		if (0 < table.getRowCount()) {
-			CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels,
-					lblDataimportType);
+			CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels, lblDataimportType);
 		}
 	}
 

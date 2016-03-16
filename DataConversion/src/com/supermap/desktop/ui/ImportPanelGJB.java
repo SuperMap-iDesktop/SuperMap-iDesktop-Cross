@@ -1,5 +1,7 @@
 package com.supermap.desktop.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,7 +12,9 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -121,9 +125,12 @@ public class ImportPanelGJB extends JPanel {
 
 	private void initPanelGJB() {
 		//@formatter:off
-		this.setLayout(new GridBagLayout());
-		this.add(this.panelResultSet,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5).setWeight(1, 0));
-		this.add(this.panelDatapath,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5).setWeight(1, 0));
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+				.addComponent(this.panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
+		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+				.addComponent(this.panelDatapath, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		this.setLayout(groupLayout);
 		//@formatter:on
 	}
 
@@ -141,7 +148,8 @@ public class ImportPanelGJB extends JPanel {
 	private void initPanelResultSet() {
 		//@formatter:off
 		this.panelResultSet.setLayout(new GridBagLayout());
-		this.textFieldResultDataset.setPreferredSize(new Dimension(150,23));
+		this.comboBoxDatasource.setPreferredSize(packageInfo.dimension);
+		this.textFieldResultDataset.setPreferredSize(packageInfo.dimension);
 		this.textFieldResultDataset.setEnabled(false);
 		this.panelResultSet.add(this.labelTargetDatasource,        new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
 		this.panelResultSet.add(this.comboBoxDatasource,           new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));

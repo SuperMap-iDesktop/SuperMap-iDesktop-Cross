@@ -4,6 +4,8 @@
  */
 package com.supermap.desktop.ui;
 
+import java.awt.Dimension;
+
 class packageInfo {
 	private packageInfo() {
 		super();
@@ -18,4 +20,5 @@ class packageInfo {
 	static final int DEFAULT_ZERO = 0;
 	static final int CLICK_ONCE = 1;
 	static final int CLICK_TWICE = 2;
+	static final Dimension dimension = new Dimension(150,23);
 }

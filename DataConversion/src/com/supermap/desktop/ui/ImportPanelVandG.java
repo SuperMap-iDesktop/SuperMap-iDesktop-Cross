@@ -71,10 +71,10 @@ public class ImportPanelVandG extends AbstractImportPanel {
 	private void initPanelVandG() {
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
-		this.add(this.labelDataSource,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.add(this.comboBoxDatasource,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.add(this.labelImportModel,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 10, 5));
-		this.add(this.comboBoxImportModel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(this.labelDataSource,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.add(this.comboBoxDatasource,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(this.labelImportModel,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 1).setInsets(10, 0, 10, 5));
+		this.add(this.comboBoxImportModel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(40, 1).setInsets(10, 0, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 

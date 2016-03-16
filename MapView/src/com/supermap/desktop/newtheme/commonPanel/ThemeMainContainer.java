@@ -38,7 +38,7 @@ public class ThemeMainContainer extends JPanel {
 	private ThemeChangePanel panel;
 
 	private Map map;
-	private boolean isSetCombobox = false;
+	// private boolean isSetCombobox = false;
 
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	// private LocalItemListener itemListener = new LocalItemListener();
@@ -289,11 +289,12 @@ public class ThemeMainContainer extends JPanel {
 		public void valueChanged(TreeSelectionEvent e) {
 			try {
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
 				// isSetCombobox = false;
-				updateLayerProperty(oldLayer);
+				if (null != e.getOldLeadSelectionPath()) {
+					updateLayerProperty(e.getOldLeadSelectionPath());
+				}
 				if (null != newLayer && null != newLayer.getTheme()) {
-					textFieldThemeLayer.setText(newLayer.getName());
+					textFieldThemeLayer.setText(newLayer.getCaption());
 					ThemeGuideFactory.modifyTheme(newLayer);
 				} else {
 					textFieldThemeLayer.setText("");
@@ -307,48 +308,66 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
-	public void updateLayerProperty(Layer oldLayer) {
-		
-		if (null != panel && null != oldLayer && !oldLayer.isDiposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
-			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
-				// 不保存修改
-				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
-				if (null != panel) {
-					panel.unregistActionListener();
-					panel = null;
-					ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
+	public void updateLayerProperty(final TreePath path) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					oldLayer.getCaption();
+				} catch (Exception e) {
+					if (null!=e) {
+						setLayerPropertyChanged(false);
+						return;
+					}
 				}
-				setLayerPropertyChanged(false);
-			} else {
-				// 保存修改并刷新
-				panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
-				if (panel instanceof ThemeLabelUniformContainer) {
-					panel.refreshMapAndLayer();
-				} else if (panel instanceof ThemeLabelRangeContainer) {
-					((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
-					((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
-					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
-					ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
-					nowThemeLabel.clear();
-					if (0 < themeLabel.getCount()) {
-						for (int i = 0; i < themeLabel.getCount(); i++) {
-							if (null != themeLabel.getItem(i)) {
-								nowThemeLabel.addToTail(themeLabel.getItem(i), true);
+					oldLayer = getLayerByPath(path);
+					// 新线程解决关闭数据集是lay对象释放问题
+					if (null==oldLayer || oldLayer.isDiposed()) {
+						setLayerPropertyChanged(false);
+					}
+					if (null != panel && null != oldLayer && !oldLayer.isDiposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+						if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
+							// 不保存修改
+							ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+							if (null != panel) {	
+								panel.unregistActionListener();
+								panel = null;
+								ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
 							}
+							setLayerPropertyChanged(false);
+						} else {
+							// 保存修改并刷新
+							panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+							if (panel instanceof ThemeLabelUniformContainer) {
+								panel.refreshMapAndLayer();
+							} else if (panel instanceof ThemeLabelRangeContainer) {
+								((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
+								((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
+								ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
+								ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
+								nowThemeLabel.clear();
+								if (0 < themeLabel.getCount()) {
+									for (int i = 0; i < themeLabel.getCount(); i++) {
+										if (null != themeLabel.getItem(i)) {
+											nowThemeLabel.addToTail(themeLabel.getItem(i), true);
+										}
+									}
+								}
+								nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
+							} else {
+								oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
+							}
+							ThemeGuideFactory.getMapControl().getMap().refresh();
+							TreePath treePath = layersTree.getSelectionPath();
+							int row = layersTree.getRowForPath(treePath);
+							setLayerPropertyChanged(false);
+							layersTree.reload();
+							layersTree.setSelectionRow(row);
 						}
 					}
-					nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
-				} else {
-					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
-				}
-				ThemeGuideFactory.getMapControl().getMap().refresh();
-				TreePath treePath = layersTree.getSelectionPath();
-				int row = layersTree.getRowForPath(treePath);
-				setLayerPropertyChanged(false);
-				layersTree.reload();
-				layersTree.setSelectionRow(row);
-			}
-		}
+			};
+		}.start();
+
 	}
 
 	/**

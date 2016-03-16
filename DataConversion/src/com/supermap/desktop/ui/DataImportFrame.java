@@ -78,6 +78,7 @@ public class DataImportFrame extends SmDialog {
 	private transient CommonKeyAction commonKeyListener;
 	private ItemListener aListener;
 	private transient SteppedComboBox steppedComboBox;
+	private MouseListener tableMouseListener = new TableMouseListener();
 
 	/**
 	 * 注册事件
@@ -96,7 +97,7 @@ public class DataImportFrame extends SmDialog {
 		this.addWindowListener(this.windowListener);
 		this.table.addKeyListener(this.commonKeyListener);
 		this.scrollPane.addMouseListener(this.commonMouseListener);
-		this.table.addMouseListener(this.commonMouseListener);
+		this.table.addMouseListener(this.tableMouseListener);
 	}
 
 	/**
@@ -112,6 +113,7 @@ public class DataImportFrame extends SmDialog {
 		this.table.removeKeyListener(this.commonKeyListener);
 		this.scrollPane.removeMouseListener(this.commonMouseListener);
 		this.table.removeMouseListener(this.commonMouseListener);
+		this.table.removeMouseListener(this.tableMouseListener);
 	}
 
 	public void initComponents() {
@@ -271,7 +273,7 @@ public class DataImportFrame extends SmDialog {
 		this.panelImportInfo.add(pane,              new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setWeight(1, 1));
 		this.panelImportInfo.add(this.buttonImport, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setWeight(100, 0));
 		this.panelImportInfo.add(this.buttonClose,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5,0,5,5).setWeight(0, 0));
-		this.labelTitle.setPreferredSize(new Dimension(200,33));
+		this.labelTitle.setPreferredSize(new Dimension(200,30));
 		pane.setBorder(null);
 		pane.setViewportView(panelParams);
 		this.panelParams.setLayout(new GridBagLayout());
@@ -385,7 +387,7 @@ public class DataImportFrame extends SmDialog {
 				return;
 			}
 			if (c == buttonAddDir) {
-				//添加文件夹
+				// 添加文件夹
 				int height = buttonAddDir.getHeight();
 				int x = (int) buttonAddDir.getLocationOnScreen().getX();
 				int y = (int) buttonAddDir.getLocationOnScreen().getY() + height;
@@ -437,6 +439,34 @@ public class DataImportFrame extends SmDialog {
 
 	}
 
+	class TableMouseListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (1 == e.getClickCount()) {
+				// 设置表格的所有行可选
+				table.setRowSelectionAllowed(true);
+				if (!fileInfos.isEmpty()) {
+					// 刷新右边界面
+					CommonFunction.refreshPanel(table, panelImportInfo, fileInfos, panels, labelTitle);
+				}
+				// 如果没有选择行数据时，将右边界面替换为默认界面
+				if (0 == table.getSelectedRowCount()) {
+					CommonFunction.replace(panelImportInfo, panelParams);
+				}
+			}
+			if (2 == e.getClickCount()) {
+				ImportFileInfo fileInfo = fileInfos.get(table.getSelectedRow());
+				JFileChooser fileChooser = new JFileChooser(fileInfo.getFilePath());
+				if (fileInfo.getImportSetting() instanceof ImportSettingGJB) {
+					fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fileChooser.showOpenDialog(panelImportInfo);
+				} else {
+					fileChooser.showOpenDialog(panelImportInfo);
+				}
+			}
+		}
+	}
+
 	class AddDirDialog extends SmDialog {
 
 		private static final long serialVersionUID = 1L;
@@ -464,22 +494,22 @@ public class DataImportFrame extends SmDialog {
 								"DataImportFrame_ImportDirectories", "GetDirectories");
 					}
 					SmFileChoose tempfileChooser = new SmFileChoose("DataImportFrame_ImportDirectories");
+					tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int state = tempfileChooser.showDefaultDialog();
 					if (state == JFileChooser.APPROVE_OPTION) {
 						String directories = tempfileChooser.getFilePath();
-						String filePathTemp = directories + File.separator;
 						ImportFileInfo fileInfo = new ImportFileInfo();
 						fileInfo.setImportSetting(new ImportSettingGJB());
-						fileInfo.setFilePath(filePathTemp);
+						fileInfo.setFilePath(directories);
 						fileInfo.setFileType("GJB5068");
-						fileInfo.setFileName(filePathTemp);
+						fileInfo.setFileName(directories);
 						fileInfo.setState(DataConversionProperties.getString("string_change"));
 						JPanel gjbPanel = new ImportPanelGJB(DataImportFrame.this, fileInfo);
 						panels.add(gjbPanel);
 						model.addRow(fileInfo);
 						table.updateUI();
-						if (table.getSelectedRows().length==0) {
-							table.setRowSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+						if (table.getSelectedRows().length == 0) {
+							table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
 						}
 						// 刷新右边界面
 						CommonFunction.replacePanel(panelImportInfo, fileInfos, panels, labelTitle);

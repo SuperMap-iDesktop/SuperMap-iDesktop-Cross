@@ -1,6 +1,7 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.FieldInfo;
+import com.supermap.data.JoinItems;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
@@ -15,6 +16,7 @@ import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -23,10 +25,14 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -121,6 +127,8 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			}
 		}
 	};
+
+	private MouseJoinItemsListener joinItemsListener = new MouseJoinItemsListener();
 
 	public LayerVectorParamPropertyControl() {
 		// TODO
@@ -292,7 +300,8 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		this.comboBoxOrder.addItemListener(comboBoxItemListener);
 		this.checkBoxDesc.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.buttonDisplayFilter.addActionListener(this.actionListener);
-		this.textFieldDisplayFilter.getDocument().addDocumentListener(documentListener);
+		this.textFieldDisplayFilter.getDocument().addDocumentListener(this.documentListener);
+		this.buttonJoinItem.addMouseListener(this.joinItemsListener);
 	}
 
 	private void setDisplayAttributeFilterValue() {
@@ -315,6 +324,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		this.checkBoxDesc.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.buttonDisplayFilter.removeActionListener(actionListener);
 		this.textFieldDisplayFilter.getDocument().removeDocumentListener(documentListener);
+		this.buttonJoinItem.removeMouseListener(this.joinItemsListener);
 	}
 
 	private void checkBoxIsCompleteLineSymbolDisplayedCheckedChanged() {
@@ -432,6 +442,15 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		}
 	}
 
+	private class MouseJoinItemsListener extends MouseAdapter{
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 1) {
+				setJoinItems();
+			}
+		}
+	}
+
 	private class TextFieldMinVisibleGeometrySizePropertyChangeListener implements PropertyChangeListener {
 
 		@Override
@@ -442,7 +461,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void setControlEnabled(String propertyName, boolean enabled) {
-		this.buttonJoinItem.setVisible(false);
+		// this.buttonJoinItem.setVisible(false);
 		if (propertyName.equals(LayerVectorParamPropertyModel.IS_COMPLETE_LINE_SYMBOL_DISPLAYED)) {
 			this.checkBoxIsCompleteLineSymbolDisplayed.setEnabled(enabled);
 		} else if (propertyName.equals(LayerVectorParamPropertyModel.IS_CROSSROAD_OPTIMIZED)) {
@@ -464,6 +483,19 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		} else if (propertyName.equals(LayerVectorParamPropertyModel.DISPLAY_ATTRIBUTE_FILTER)) {
 			this.textFieldDisplayFilter.setEnabled(enabled);
 			this.buttonDisplayFilter.setEnabled(enabled);
+		}
+	}
+
+	protected void setJoinItems() {
+		JoinItems joinItems = getLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
+		JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
+		jDialogJoinItem.setCurrentDataset(getLayerPropertyModel().getLayers()[0].getDataset());
+		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
+			// 修改属性并销毁
+			joinItems = jDialogJoinItem.getJoinItems();
+			getLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
+			jDialogJoinItem.dispose();
+			joinItems.dispose();
 		}
 	}
 }
