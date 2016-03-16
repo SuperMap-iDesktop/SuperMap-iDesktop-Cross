@@ -29,6 +29,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/httpcore-4.4.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/fastjson-1.1.34.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/httpmime-4.5.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="F:/ideaWorkspcae/SuperMap-iDesktop-Cross/Core/lib/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
