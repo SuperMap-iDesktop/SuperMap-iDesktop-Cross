@@ -3,6 +3,13 @@ package com.supermap.desktop;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.ui.GeometrySelectedListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.spi.Filter;
+import org.apache.log4j.spi.LoggingEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -410,7 +417,6 @@ public class GlobalParameters {
 	}
 
 
-
 	private static void addResources(String info, Node node) {
 		NodeList childNodes = node.getChildNodes();
 		info = info + "_" + node.getNodeName();
@@ -471,8 +477,15 @@ public class GlobalParameters {
 		return result;
 	}
 
+	public static String getLogFolder() {
+		String defaultPath = "./log/Desktop";
+		String value = getValue("_startup_log", "logFolder");
+		value = value == null ? defaultPath : value;
+		return PathUtilties.getFullPathName(value, false);
+	}
+
 	/**
-	 * 是否输出到log文件
+	 * 是否输出操作到log文件
 	 *
 	 * @return
 	 */
@@ -485,16 +498,28 @@ public class GlobalParameters {
 		return result;
 	}
 
-	public static String getLogFolder() {
-		String defaultPath = "./log/Desktop";
-		String value = getValue("_startup_log", "logFolder");
-		value = value == null ? defaultPath : value;
-		return PathUtilties.getFullPathName(value,false);
-	}
 
 	public static boolean isLogException() {
 		boolean result = false;
 		String value = getValue("_startup_InfoType", "Exception");
+		if (value != null) {
+			result = Boolean.valueOf(value);
+		}
+		return result;
+	}
+
+	public static boolean isLogInformation() {
+		boolean result = false;
+		String value = getValue("_startup_InfoType", "Information");
+		if (value != null) {
+			result = Boolean.valueOf(value);
+		}
+		return result;
+	}
+
+	private static boolean isLogAction() {
+		boolean result = false;
+		String value = getValue("_startup_InfoType", "Action");
 		if (value != null) {
 			result = Boolean.valueOf(value);
 		}
@@ -514,5 +539,22 @@ public class GlobalParameters {
 		Properties properties = System.getProperties();
 		properties.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
 		System.setProperties(properties);
+		if (!isOutPutToLog() || !isLogException()) {
+			LogManager.getLogger("exception").getLoggerRepository().setThreshold(Level.OFF);
+		}
+		if (!isOutPutToLog() || !isLogInformation()) {
+			LogManager.getLogger("info").setLevel(Level.OFF);
+
+		}
+		if (!isOutPutToLog() || !isLogAction()) {
+			LogManager.getRootLogger().getAppender("myFile").addFilter(new Filter() {
+				@Override
+				public int decide(LoggingEvent event) {
+					return Filter.DENY;
+				}
+			});
+		}
 	}
+
+
 }

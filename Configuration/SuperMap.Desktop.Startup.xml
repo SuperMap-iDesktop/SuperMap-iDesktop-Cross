@@ -54,10 +54,10 @@
   <projection default="">
   </projection>
   <!--是否自动生成日志，及日志的默认输出路径-->
-  <log logFolder="./log/Desktop/" outputToLog="false">
+  <log logFolder="./log/Desktop/" outputToLog="true">
   </log>
   <!--输出信息的级别-->
-  <InfoType Exception="False" Information="True">
+  <InfoType Exception="true" Information="true" Action = "true">
   </InfoType>
   <!--帮助文档的加载设置-->
   <help onlineAddress="http://support.supermap.com.cn/onlinedoc/deskpronet/" type="1">

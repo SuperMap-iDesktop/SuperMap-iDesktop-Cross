@@ -28,6 +28,7 @@ public class DesktopActivator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Hello SuperMap === iDesktop!!");
 		log.info("desktopActivator start!");
+//		log.debug("asd");
 		DesktopActivator.setContext(bundleContext);
 		MainFrame mainFrame = new MainFrame();
 		Application.getActiveApplication().setMainFrame(mainFrame);
