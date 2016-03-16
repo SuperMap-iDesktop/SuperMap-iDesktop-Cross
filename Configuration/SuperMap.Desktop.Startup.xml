@@ -9,8 +9,8 @@
     </splashItems>
   </splash>
   <!--工作空间关闭时，是否提示保存-->
-  <worksapce closenotify="true" visoncheck="true">
-  </worksapce>
+  <workspace closenotify="true" visoncheck="true">
+  </workspace>
   <!--是否显示工具提示-->
   <ribbon panelShow="true" screenTipShow="true"/>
   <!--窗口的全局选项控制-->
@@ -54,7 +54,7 @@
   <projection default="">
   </projection>
   <!--是否自动生成日志，及日志的默认输出路径-->
-  <log logFolder="./log/Desktop/" outputToLog="true">
+  <log logFolder="./log/Desktop/" outputToLog="false">
   </log>
   <!--输出信息的级别-->
   <InfoType Exception="False" Information="True">

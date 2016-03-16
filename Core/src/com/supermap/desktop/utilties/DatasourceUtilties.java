@@ -24,7 +24,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
-import com.supermap.desktop.CommonToolkit.DatasourceWrap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.implement.SmMenu;
 import com.supermap.desktop.implement.SmMenuItem;
@@ -244,7 +243,7 @@ public class DatasourceUtilties {
 
 	public static void initRecentFileMenu() {
 		try {
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Element element = XmlUtilties.getRootNode(recentFilePath);
@@ -285,7 +284,7 @@ public class DatasourceUtilties {
 
 	public static void saveRecentFile(String filePath) {
 		try {
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Document document = XmlUtilties.getDocument(recentFilePath);
@@ -343,7 +342,7 @@ public class DatasourceUtilties {
 				}
 			}
 
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Document document = XmlUtilties.getDocument(recentFilePath);

@@ -145,8 +145,8 @@ public class _XMLTag {
 	public static final String g_AttributionGreed = "g";
 	public static final String g_AttributionBlue = "b";
 
-	public static final String g_FileStartupXML = "../Configuration/SuperMap.Desktop.Startup.xml";
-	public static final String g_RecentFileXML = "../Configuration/SuperMap.Desktop.RecentFile.xml";
+	public static final String FILE_STARTUP_XML = "../Configuration/SuperMap.Desktop.Startup.xml";
+	public static final String RECENT_FILE_XML = "../Configuration/SuperMap.Desktop.RecentFile.xml";
 	public static final String g_WorkEnvironmentsXML = "../Configuration/SuperMap.Desktop.WorkEnvironments.xml";
 	public static final String g_FileLogoBMP = "Logo_Desktop.gif";
 	public static final String g_FileScriptConfig = "Default/SuperMap.Desktop.Script.config";

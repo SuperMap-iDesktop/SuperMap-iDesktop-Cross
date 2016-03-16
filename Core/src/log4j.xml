@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration >
+    <appender name="myConsole" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%d{dd HH:mm:ss,SSS\} %-5p] [%t] %c{2\} - %m%n" />
+        </layout>
+        <!--过滤器设置输出的级别-->
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="levelMax" value="debug" />
+            <param name="levelMin" value="debug" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>
+
+    <appender name="myFile" class="com.supermap.desktop.core.SmRollingFileAppender">
+        <!-- 设置日志输出文件名 -->
+        <param name="File" value="${com.supermap.desktop.log4j.home}./logDesktop/logDesktop_[DATA].log" />
+        <param name="MaxFileSize" value="1024KB"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <!--输出格式-->
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] %l - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="logInfo" class="com.supermap.desktop.core.SmRollingFileAppender">
+        <param name="File" value="${com.supermap.desktop.log4j.home}./logInfo/logInfo_[DATA].log" />
+        <param name="MaxFileSize" value="1024KB"/>
+        <param name="append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="logException" class="com.supermap.desktop.core.SmRollingFileAppender">
+        <param name="File" value="${com.supermap.desktop.log4j.home}./logException/LogException_[DATA].log" />
+        <param name="MaxFileSize" value="1024KB"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%d{yyyy-MM-dd HH:mm:ss SSS\} %-5p] - %m%n" />
+        </layout>
+    </appender>
+    <!-- 指定logger的设置，additivity指示是否遵循缺省的继承机制-->
+    <logger name="info" additivity="false">
+        <appender-ref ref="logInfo" />
+    </logger>
+
+    <logger name="exception" additivity="false">
+        <appender-ref ref="logException" />
+    </logger>
+    <!-- 根logger的设置-->
+    <root>
+        <priority value ="debug"/>
+        <appender-ref ref="myConsole"/>
+        <appender-ref ref="myFile"/>
+    </root>
+</log4j:configuration>

@@ -180,8 +180,8 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 				&& this.isOverlapDisplayed == vectorParamPropertyModel.isOverlapDisplayed()
 				&& Double.compare(this.symbolScale, vectorParamPropertyModel.getSymbolScale()) == 0
 				&& Double.compare(this.minVisibleGeometrySize, vectorParamPropertyModel.getMinVisibleGeometrySize()) == 0
-				&& this.displayOrderField == vectorParamPropertyModel.getDisplayOrderField() && this.isDesc == vectorParamPropertyModel.isDesc()
-				&& this.displayAttributeFilter == vectorParamPropertyModel.getDisplayAttributeFilter();
+				&& this.displayOrderField.equals(vectorParamPropertyModel.getDisplayOrderField()) && this.isDesc == vectorParamPropertyModel.isDesc()
+				&& this.displayAttributeFilter.equals(vectorParamPropertyModel.getDisplayAttributeFilter());
 	}
 
 	@Override
@@ -321,7 +321,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 	// @formatter:on
 	private void checkPropertyEnabled() {
 		try {
-			HashMap<String, Boolean> hashMapTmp = new HashMap<String, Boolean>();
+			HashMap<String, Boolean> hashMapTmp = new HashMap<>();
 			initializeEnabledMap(hashMapTmp);
 
 			if (getLayers() != null && getFormMap() != null && getFormMap().getMapControl() != null && getFormMap().getMapControl().getMap() != null
@@ -410,11 +410,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 				parts[ISDESC_TAG] = false;
 			} else if (strParts.length > 1) {
 				parts[ORDERFIELD_TAG] = strParts[0];
-				if (strParts[1].toLowerCase().trim().contains(DESC)) {
-					parts[ISDESC_TAG] = true;
-				} else {
-					parts[ISDESC_TAG] = false;
-				}
+				parts[ISDESC_TAG] = strParts[1].toLowerCase().trim().contains(DESC);
 			}
 		}
 		return parts;

@@ -64,8 +64,8 @@ public class SplashScreenUtilties {
 
 		graphics2D.setColor(Color.WHITE);
 		graphics2D.fillRect(width, (int) (screenHeight - height), (int) (screenWidth - width), height - 5);
-		graphics2D.setColor(Color.BLACK);
-		graphics2D.drawRect(0,(int) (screenHeight - height), (int) screenWidth -1, height -5);
+//		graphics2D.setColor(Color.BLACK);
+//		graphics2D.drawRect(0,(int) (screenHeight - height), (int) screenWidth -1, height -5);
 		splashScreen.update();
 	}
 

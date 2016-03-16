@@ -297,7 +297,7 @@ public class WorkspaceUtilties {
 
 	public static void initRecentFileMenu() {
 		try {
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Element element = XmlUtilties.getRootNode(recentFilePath);
@@ -338,7 +338,7 @@ public class WorkspaceUtilties {
 
 	public static void saveRecentFile(String filePath) {
 		try {
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Document document = XmlUtilties.getDocument(recentFilePath);
@@ -397,7 +397,7 @@ public class WorkspaceUtilties {
 				}
 			}
 
-			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.g_RecentFileXML, false);
+			String recentFilePath = PathUtilties.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
 			File file = new File(recentFilePath);
 			if (file.exists()) {
 				Document document = XmlUtilties.getDocument(recentFilePath);

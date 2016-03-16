@@ -225,10 +225,10 @@ public class FormManager implements IFormManager {
 		}
 	}
 
-    @Override
-    public void resetActiveForm(){
-        fireActiveFormChanged(new ActiveFormChangedEvent(this, null, this.activeForm));
-    }
+	@Override
+	public void resetActiveForm() {
+		fireActiveFormChanged(new ActiveFormChangedEvent(this, null, this.activeForm));
+	}
 
 	@Override
 	public void showChildForm(IForm childForm) {
@@ -440,6 +440,8 @@ public class FormManager implements IFormManager {
 				} else {
 					result = true;
 				}
+			} else {
+				result = true;
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -492,7 +494,7 @@ public class FormManager implements IFormManager {
 		}
 
 		// 如果窗口类型不一致，刷新子选项卡和工具条
-		if (beforeType!=this.activatedChildFormType) {
+		if (beforeType != this.activatedChildFormType) {
 			final FrameMenuManager frameMenuManager = (FrameMenuManager) Application.getActiveApplication().getMainFrame().getFrameMenuManager();
 			final ToolbarManager toolbarManager = (ToolbarManager) Application.getActiveApplication().getMainFrame().getToolbarManager();
 
@@ -524,7 +526,9 @@ public class FormManager implements IFormManager {
 		}
 	}
 
-	/** 当没有新的窗口激活，移出 Menus 和 Toolbars */
+	/**
+	 * 当没有新的窗口激活，移出 Menus 和 Toolbars
+	 */
 	private void childWindowHidden() {
 		// 默认实现，后续进行初始化操作
 	}
