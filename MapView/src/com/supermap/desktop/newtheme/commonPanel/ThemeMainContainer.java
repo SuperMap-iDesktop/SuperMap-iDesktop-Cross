@@ -312,14 +312,11 @@ public class ThemeMainContainer extends JPanel {
 		new Thread() {
 			@Override
 			public void run() {
-				try {
-					oldLayer.getCaption();
-				} catch (Exception e) {
-					if (null!=e) {
+					LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
+					if (tree.getRowForPath(path)<0) {
+						//树的当前节点已经被删除，修改layerPropertyChanged
 						setLayerPropertyChanged(false);
-						return;
 					}
-				}
 					oldLayer = getLayerByPath(path);
 					// 新线程解决关闭数据集是lay对象释放问题
 					if (null==oldLayer || oldLayer.isDiposed()) {
@@ -328,6 +325,7 @@ public class ThemeMainContainer extends JPanel {
 					if (null != panel && null != oldLayer && !oldLayer.isDiposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 						if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 							// 不保存修改
+							System.out.println(oldLayer.isDiposed());
 							ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
 							if (null != panel) {	
 								panel.unregistActionListener();

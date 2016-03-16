@@ -480,25 +480,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComboBoxOffsetY();
 		// @formatter:off
 		panelParameterSetting.setLayout(new GridBagLayout());
-		panelParameterSetting.add(this.labelOffsetUnity, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
-		panelParameterSetting.add(this.comboBoxOffsetUnity,
-				new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10)
-						.setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetX, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
-		panelParameterSetting.add(this.comboBoxOffsetX,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetXUnity, new GridBagConstraintsHelper(2, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
-		panelParameterSetting.add(this.labelOffsetY, new GridBagConstraintsHelper(0, 2, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
-		panelParameterSetting.add(this.comboBoxOffsetY,
-				new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetYUnity, new GridBagConstraintsHelper(2, 2, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
+		panelParameterSetting.add(this.labelOffsetUnity,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
+		panelParameterSetting.add(this.comboBoxOffsetUnity,new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetX,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
+		panelParameterSetting.add(this.comboBoxOffsetX,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetXUnity,  new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
+		panelParameterSetting.add(this.labelOffsetY,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
+		panelParameterSetting.add(this.comboBoxOffsetY,    new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetYUnity,  new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
 		// @formatter:on
 	}
 
@@ -512,8 +501,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
-			this.labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
-			this.labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+			this.labelOffsetXUnity.setText(map.getCoordUnit().toString());
+			this.labelOffsetYUnity.setText(map.getCoordUnit().toString());
 		}
 	}
 
@@ -1030,14 +1019,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				if (selectRow.length == 1) {
 					themeGraph.exchangeItem(selectRow[0], tableGraphInfo.getRowCount() - 1);
 				} else {
-					for (int i = selectRow.length - 1; i >= 0; i--) {
-						themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - i - 1);
+					for (int i = 0; i < selectRow.length; i++) {
+						themeGraph.exchangeItem(selectRow[i], tableGraphInfo.getRowCount() - selectRow.length + i);
 					}
 				}
 				getTable();
 				refreshMapAtOnce();
 				for (int i = 0; i < selectRow.length; i++) {
-					tableGraphInfo.addRowSelectionInterval(tableGraphInfo.getRowCount() - i-1, tableGraphInfo.getRowCount() - i-1);
+					tableGraphInfo.addRowSelectionInterval(tableGraphInfo.getRowCount() - i - 1, tableGraphInfo.getRowCount() - i - 1);
 				}
 				return;
 			}
@@ -1327,8 +1316,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				break;
 			case 1:
 				themeGraph.setOffsetFixed(false);
-				labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
-				labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+				labelOffsetXUnity.setText(map.getCoordUnit().toString());
+				labelOffsetYUnity.setText(map.getCoordUnit().toString());
 				break;
 			default:
 				break;

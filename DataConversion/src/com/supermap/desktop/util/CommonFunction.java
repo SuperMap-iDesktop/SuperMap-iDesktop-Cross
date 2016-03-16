@@ -120,7 +120,7 @@ public class CommonFunction {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "vct"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "dbf"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Import"),
+				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_FileType"),
 						"CommonFunction", "OpenMany");
 			} else {
 				String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[0],
@@ -133,7 +133,7 @@ public class CommonFunction {
 						FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"), SmFileChoose.createFileFilter(
 						FileTypeLocale.getDescriptionnewforlinux()[8], "vct"), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[9],
 						"dbf"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Import"),
+				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_FileType"),
 						"CommonFunction", "OpenMany");
 			}
 

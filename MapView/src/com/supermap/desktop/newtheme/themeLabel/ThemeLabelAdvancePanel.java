@@ -147,7 +147,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.checkBoxRepeatIntervalFixed.setSelected(themeLabel.isRepeatIntervalFixed());
 		boolean isRepeatIntervalFixed = this.checkBoxRepeatIntervalFixed.isSelected();
 		if (!isRepeatIntervalFixed) {
-			labelUnity.setText(map.getCoordUnit().toString());
+			labelUnity.setText(map.getCoordUnit().name());
 		} else {
 			labelUnity.setText("0.1mm");
 		}
@@ -239,9 +239,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.labelMinFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 
 		this.labelHorizontal.setText(MapViewProperties.getString("String_TextExtentWidth"));
-		this.labelHorizontalUnity.setText(String.valueOf(map.getCoordUnit()));
+		this.labelHorizontalUnity.setText(map.getCoordUnit().name());
 		this.labelVertical.setText(MapViewProperties.getString("String_TextExtentHeight"));
-		this.labelVerticalUnity.setText(String.valueOf(map.getCoordUnit()));
+		this.labelVerticalUnity.setText(map.getCoordUnit().name());
 		this.labelAlignmentStyle.setText(MapViewProperties.getString("String_TextAlignment"));
 	}
 
@@ -380,7 +380,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldRepeatInterval.setPreferredSize(textFieldDimension);
 		initComboBoxLineDirection();
 		this.textFieldRepeatInterval.setText("0");
-		this.labelUnity.setText(map.getCoordUnit().toString());
+		this.labelUnity.setText(map.getCoordUnit().name());
 		this.labelUnity.setPreferredSize(labelDimension);
 		panelRotateLabel.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
 		panelRotateLabel.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10));
@@ -573,7 +573,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			boolean isRepeatIntervalFixed = checkBoxRepeatIntervalFixed.isSelected();
 			themeLabel.setRepeatIntervalFixed(isRepeatIntervalFixed);
 			if (!isRepeatIntervalFixed) {
-				labelUnity.setText(map.getCoordUnit().toString());
+				labelUnity.setText(map.getCoordUnit().name());
 			} else {
 				labelUnity.setText("0.1mm");
 			}

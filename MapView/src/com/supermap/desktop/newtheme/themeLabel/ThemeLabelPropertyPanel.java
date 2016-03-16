@@ -252,8 +252,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
-			this.labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
-			this.labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+			this.labelOffsetXUnity.setText(map.getCoordUnit().name());
+			this.labelOffsetYUnity.setText(map.getCoordUnit().name());
 		}
 	}
 

@@ -250,8 +250,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
-			this.labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
-			this.labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+			this.labelOffsetXUnity.setText(map.getCoordUnit().name());
+			this.labelOffsetYUnity.setText(map.getCoordUnit().name());
 		}
 	}
 
@@ -1196,8 +1196,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 			} else {
 				themeRange.setOffsetFixed(false);
-				labelOffsetXUnity.setText(String.valueOf(map.getCoordUnit()));
-				labelOffsetYUnity.setText(String.valueOf(map.getCoordUnit()));
+				labelOffsetXUnity.setText(map.getCoordUnit().name());
+				labelOffsetYUnity.setText(map.getCoordUnit().name());
 			}
 		}
 	}

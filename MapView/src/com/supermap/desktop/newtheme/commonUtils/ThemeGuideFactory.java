@@ -221,6 +221,7 @@ public class ThemeGuideFactory {
 			datasetGrid.buildStatistics();
 			try {
 				ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
+				System.out.println(themeUnique.getCount());
 				if (themeUnique.getCount() > 3000) {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeUniqueMaxCount"));
 					return false;
@@ -295,9 +296,9 @@ public class ThemeGuideFactory {
 			themeGraph.insert(0, themeGraphItem);
 			//默认设置为三维环状图，避免显示异常
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
-			//默认设置一个坐标轴风格，避免显示异常
-			themeGraph.getAxesTextStyle().setBold(true);
-			themeGraph.setMaxGraphSize(1);
+//			//默认设置一个坐标轴风格，避免显示异常
+//			themeGraph.getAxesTextStyle().setBold(true);
+//			themeGraph.setMaxGraphSize(1);
 			themeGraph.setAxesDisplayed(false);
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);

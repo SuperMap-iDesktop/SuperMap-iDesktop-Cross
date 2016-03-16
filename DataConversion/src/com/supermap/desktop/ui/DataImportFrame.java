@@ -24,6 +24,8 @@ import javax.swing.JCheckBox;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 /**
  * @author Administrator 数据导入主体界面
@@ -161,6 +163,10 @@ public class DataImportFrame extends SmDialog {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initComboBoxColumns() {
+		TableTooltipCellRenderer tooltipCellRenderer = TableTooltipCellRenderer.getInstance();
+		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellRenderer(tooltipCellRenderer);
+		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_data")).setCellRenderer(tooltipCellRenderer);
+		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_state")).setCellRenderer(tooltipCellRenderer);
 		TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
 		for (int i = 0; i < this.fileInfos.size(); i++) {
 			final ImportFileInfo tempFileInfo = this.fileInfos.get(i);
@@ -479,7 +485,7 @@ public class DataImportFrame extends SmDialog {
 
 		private void initComponent() {
 			this.setSize(200, 300);
-			setTitle(DataConversionProperties.getString("String_Import"));
+			setTitle(DataConversionProperties.getString("String_DirType"));
 			getContentPane().add(list, BorderLayout.NORTH);
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
 			listModel.addElement(DataConversionProperties.getString("String_FormImportGJB_Text"));
@@ -490,7 +496,7 @@ public class DataImportFrame extends SmDialog {
 				public void valueChanged(ListSelectionEvent e) {
 					dispose();
 					if (!SmFileChoose.isModuleExist("DataImportFrame_ImportDirectories")) {
-						SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Import"),
+						SmFileChoose.addNewNode("", "", DataConversionProperties.getString("String_ScanDir"),
 								"DataImportFrame_ImportDirectories", "GetDirectories");
 					}
 					SmFileChoose tempfileChooser = new SmFileChoose("DataImportFrame_ImportDirectories");
