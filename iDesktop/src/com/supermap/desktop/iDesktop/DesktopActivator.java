@@ -41,9 +41,6 @@ public class DesktopActivator implements BundleActivator {
 		} else {
 			formMain.loadUI();
 		}
-//		do {
-//			log.info("asd");
-//		} while (true);
 	}
 
 	/*

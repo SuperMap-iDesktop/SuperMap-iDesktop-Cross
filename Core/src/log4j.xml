@@ -18,6 +18,7 @@
         <param name="Encoding" value="utf-8"/>
         <!-- 设置日志输出文件名 -->
         <param name="File" value="${com.supermap.desktop.log4j.home}./logDesktop/logDesktop_[DATA].log" />
+        <param name="MaxBackupIndex" value="20"/>
         <param name="MaxFileSize" value="1024KB"/>
         <layout class="org.apache.log4j.PatternLayout">
             <!--输出格式-->
@@ -28,6 +29,7 @@
     <appender name="logInfo" class="com.supermap.desktop.core.SmRollingFileAppender">
         <param name="Encoding" value="utf-8"/>
         <param name="File" value="${com.supermap.desktop.log4j.home}./logInfo/logInfo_[DATA].log" />
+        <param name="MaxBackupIndex" value="20"/>
         <param name="MaxFileSize" value="1024KB"/>
         <param name="append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -39,6 +41,7 @@
     <appender name="logException" class="com.supermap.desktop.core.SmRollingFileAppender">
         <param name="Encoding" value="utf-8"/>
         <param name="File" value="${com.supermap.desktop.log4j.home}./logException/LogException_[DATA].log" />
+        <param name="MaxBackupIndex" value="20"/>
         <param name="MaxFileSize" value="1024KB"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
