@@ -2,6 +2,7 @@ package com.supermap.desktop.iDesktop;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
 import org.apache.commons.logging.Log;
@@ -27,7 +28,7 @@ public class DesktopActivator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Hello SuperMap === iDesktop!!");
-		log.info("desktopActivator start!");
+		log.info(CoreProperties.getString("String_DesktopStartFinished"));
 //		log.debug("asd");
 		DesktopActivator.setContext(bundleContext);
 		MainFrame mainFrame = new MainFrame();
@@ -40,6 +41,9 @@ public class DesktopActivator implements BundleActivator {
 		} else {
 			formMain.loadUI();
 		}
+		do {
+			log.info("asd");
+		} while (true);
 	}
 
 	/*

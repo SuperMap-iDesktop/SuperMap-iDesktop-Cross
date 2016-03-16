@@ -1,10 +1,8 @@
 package com.supermap.desktop.utilties;
 
-import java.io.File;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.core.FileSize;
-import com.supermap.desktop.core.FileSizeType;
+
+import java.io.File;
 
 public class FileUtilties {
 
@@ -14,7 +12,7 @@ public class FileUtilties {
 
 	/**
 	 * 获取指定文件的文件大小
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -37,24 +35,27 @@ public class FileUtilties {
 
 	/**
 	 * 获取不带扩展名的文件名
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
 	public static String getFileNameWithoutExtension(File file) {
+		if (file == null) {
+			return null;
+		}
 		String fileName = file.getName();
 		int lastDotIndex = fileName.lastIndexOf(".");
 
 		// 该字符串中存在 . 并且不在末尾
 		if (lastDotIndex != -1 && lastDotIndex != fileName.length() - 1) {
-			fileName = fileName.substring(0, lastDotIndex - 1);
+			fileName = fileName.substring(0, lastDotIndex);
 		}
 		return fileName;
 	}
 
 	/**
 	 * 删除指定路径的文件或者文件夹
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -73,9 +74,9 @@ public class FileUtilties {
 							break;
 						}
 					}
-				} else {
-					result = file.delete();
 				}
+				result = file.delete();
+
 			} else {
 				result = false;
 			}
@@ -87,7 +88,7 @@ public class FileUtilties {
 
 	/**
 	 * 删除指定文件
-	 * 
+	 *
 	 * @param filePath
 	 * @return
 	 */
@@ -97,7 +98,7 @@ public class FileUtilties {
 
 	/**
 	 * 判断指定文件是否存在
-	 * 
+	 *
 	 * @param filePath
 	 * @return
 	 */

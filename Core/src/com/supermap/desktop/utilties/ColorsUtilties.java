@@ -1,14 +1,17 @@
 package com.supermap.desktop.utilties;
 
-import java.awt.Color;
-
 import com.supermap.data.Colors;
+
+import java.awt.*;
 
 public class ColorsUtilties {
 	private ColorsUtilties(){
 		// 工具类不提供构造函数
 	}
 	public static boolean isColorsEqual(Colors colors1, Colors colors2) {
+		if (colors1 == colors2) {
+			return true;
+		}
 		if (colors1 == null && colors2 != null) {
 			return false;
 		}

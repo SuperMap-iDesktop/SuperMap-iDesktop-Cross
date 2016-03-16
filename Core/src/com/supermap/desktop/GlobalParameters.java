@@ -3,9 +3,6 @@ package com.supermap.desktop;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
-import com.supermap.ui.GeometrySelectedListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.spi.Filter;
@@ -478,7 +475,7 @@ public class GlobalParameters {
 	}
 
 	public static String getLogFolder() {
-		String defaultPath = "./log/Desktop";
+		String defaultPath = "../log/Desktop";
 		String value = getValue("_startup_log", "logFolder");
 		value = value == null ? defaultPath : value;
 		return PathUtilties.getFullPathName(value, false);

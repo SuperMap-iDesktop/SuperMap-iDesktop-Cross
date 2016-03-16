@@ -1,31 +1,6 @@
 package com.supermap.desktop.netservices.iserver;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.swing.event.EventListenerList;
-
-import net.infonode.properties.propertymap.ref.ThisPropertyMapRef;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
@@ -45,6 +20,26 @@ import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import javax.swing.event.EventListenerList;
+import java.io.File;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class ServerRelease {
 	private static final String RELEASE_SERVER = "http://{0}:{1}/iserver/manager/workspaces.rjson?token={2}";
@@ -57,7 +52,7 @@ public class ServerRelease {
 	// @formatter:off
     //文件型工作空间发布到本地服务器，需要关闭工作空间，不然由于数据源的独占导致服务错误
     //文件型工作空间发布到远程服务器，需要上传工作空间，不存在独占，不需要关闭
-    //数据库型的工作空间，它的数据源也必须是数据库型的数据源才能正确读取数据，并且，此数据源非独占
+    //数据库型的工作空间，它的数据源也必须是数据库型的数据源才能正确读取数据，并且，此数 据源非独占
 	// @formatter:on
 	private int hostType;
 	private String host;
