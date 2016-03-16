@@ -2,6 +2,7 @@ package com.supermap.desktop.core;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.SplashScreenUtilties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,8 +17,8 @@ public class CoreActivator implements BundleActivator {
 
 	static {
 		GlobalParameters.initResource();
-
 	}
+
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
 	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
@@ -29,6 +30,8 @@ public class CoreActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(final BundleContext context) throws Exception {
+		log.info("------------------------------");
+		log.info(CoreProperties.getString("String_DesktopStarting"));
 		SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
 		if (splashScreenUtiltiesInstance != null) {
 			SplashScreenUtilties.setBundleCount(context.getBundles().length);
@@ -41,7 +44,7 @@ public class CoreActivator implements BundleActivator {
 			String info = "Loading " + name + ".jar";
 			splashScreenUtiltiesInstance.update(info);
 		}
-		log.info("CoreActivator Started!");
+
 
 		context.addBundleListener(new SynchronousBundleListener() {
 			@Override

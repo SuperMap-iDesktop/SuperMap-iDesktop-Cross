@@ -1,22 +1,25 @@
 package com.supermap.desktop.framemenus;
 
-import javax.swing.JFileChooser;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
+import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.swing.*;
+import java.text.MessageFormat;
 
 public class CtrlActionWorkspaceOpenFile extends CtrlAction {
-
+	private static Log log = LogFactory.getLog(CtrlActionWorkspaceOpenFile.class);
 	private WorkspaceConnectionInfo info;
 	private OpenWorkspaceResult result;
 
@@ -27,6 +30,9 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 	@Override
 	public void run() {
 		try {
+			log.info("---------------------------------------");
+			log.info(DataViewProperties.getString("String_openWorkspaceing"));
+
 			if (!SmFileChoose.isModuleExist("WorkspaceOpenFile")) {
 				String fileFilters = SmFileChoose.createFileFilter(DataViewProperties.getString("String_FileFilters_Workspace"), "smwu", "sxwu");
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
@@ -35,13 +41,18 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 
 			SmFileChoose fileChooser = new SmFileChoose("WorkspaceOpenFile");
 			if (fileChooser.showDefaultDialog() == JFileChooser.APPROVE_OPTION && !"".equals(fileChooser.getSelectedFile().getAbsolutePath())) {
+
+				log.info(MessageFormat.format(DataViewProperties.getString("String_ChooseedFilePath"), fileChooser.getFilePath()));
+
 				info = new WorkspaceConnectionInfo(fileChooser.getFilePath());
 				result = WorkspaceUtilties.openWorkspace(info, true);
 				if (result == OpenWorkspaceResult.SUCCESSED) {
+					log.info(MessageFormat.format(DataViewProperties.getString("String_openWorksapceSuccess"), Application.getActiveApplication().getWorkspace().getCaption()));
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 						Application.getActiveApplication().getMainFrame().getFormManager().closeAll();
 					}
 				} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
+					log.info(DataViewProperties.getString("String_inputPassword"));
 					JDialogGetPassword dialogGetPassword = new JDialogGetPassword(CoreProperties.getString("String_WorkspacePasswordPrompt")) {
 
 						private static final long serialVersionUID = 1L;
@@ -60,10 +71,14 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 					String stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), fileChooser.getFilePath());
 					if (result != OpenWorkspaceResult.FAILED_CANCEL) {
 						Application.getActiveApplication().getWorkspace().close();
+						log.info(DataViewProperties.getString("String_inputPassword"));
 					} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
 						stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed_WrongPassword"), fileChooser.getFilePath());
+						log.info(stMsg);
 						Application.getActiveApplication().getOutput().output(stMsg);
 					}
+				} else {
+					log.info(MessageFormat.format(DataViewProperties.getString("String_openWorksapceSuccess"), Application.getActiveApplication().getWorkspace().getCaption()));
 				}
 			}
 		} catch (Exception ex) {
