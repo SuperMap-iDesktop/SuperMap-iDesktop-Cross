@@ -47,9 +47,10 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 				info = new WorkspaceConnectionInfo(fileChooser.getFilePath());
 				result = WorkspaceUtilties.openWorkspace(info, true);
 				if (result == OpenWorkspaceResult.SUCCESSED) {
-					log.info(MessageFormat.format(DataViewProperties.getString("String_openWorksapceSuccess"), Application.getActiveApplication().getWorkspace().getCaption()));
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
+						log.info(MessageFormat.format(DataViewProperties.getString("String_CloseForms"), Application.getActiveApplication().getMainFrame().getFormManager().getCount()));
 						Application.getActiveApplication().getMainFrame().getFormManager().closeAll();
+						log.info(DataViewProperties.getString("String_CloseFormsSuccess"));
 					}
 				} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
 					log.info(DataViewProperties.getString("String_inputPassword"));
@@ -68,15 +69,17 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 				}
 
 				if (result != OpenWorkspaceResult.SUCCESSED) {
-					String stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), fileChooser.getFilePath());
+					String stMsg;
 					if (result != OpenWorkspaceResult.FAILED_CANCEL) {
+						stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), fileChooser.getFilePath());
 						Application.getActiveApplication().getWorkspace().close();
-						log.info(DataViewProperties.getString("String_inputPassword"));
 					} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
 						stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed_WrongPassword"), fileChooser.getFilePath());
-						log.info(stMsg);
-						Application.getActiveApplication().getOutput().output(stMsg);
+					} else {
+						stMsg = DataViewProperties.getString("String_openWorkspaceCancle");
 					}
+					Application.getActiveApplication().getOutput().output(stMsg);
+					log.info(stMsg);
 				} else {
 					log.info(MessageFormat.format(DataViewProperties.getString("String_openWorksapceSuccess"), Application.getActiveApplication().getWorkspace().getCaption()));
 				}

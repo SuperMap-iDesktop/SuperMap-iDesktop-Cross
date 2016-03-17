@@ -173,6 +173,10 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		// 表不需要记住
 	}
 
+	public void add(String value, String order) {
+
+	}
+
 	class SQLTableModel extends DefaultTableModel {
 		private DoIt doIt = null;
 
@@ -214,10 +218,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex == 1 && !StringUtilties.isNullOrEmpty(this.getValueAt(rowIndex, columnIndex).toString())) {
-				return true;
-			}
-			return false;
+			return columnIndex == 1 && !StringUtilties.isNullOrEmpty(this.getValueAt(rowIndex, columnIndex).toString());
 		}
 
 		@Override
@@ -245,11 +246,15 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		}
 
 		public void addValue(String data) {
+			addValue(data, "asc");
+		}
+
+		public void addValue(String data, String sort) {
 			if (tableDatas.size() > 0 && StringUtilties.isNullOrEmpty(tableDatas.get(0).getName())) {
 				tableDatas.get(0).setName(data);
-				tableDatas.get(0).setSort("asc");
+				tableDatas.get(0).setSort(sort);
 			} else {
-				tableDatas.add(new SQLTableData(data));
+				tableDatas.add(new SQLTableData(data, sort));
 			}
 
 			fireTableChange();
@@ -298,8 +303,12 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		private String sort;
 
 		public SQLTableData(String name) {
+			this(name, "asc");
+		}
+
+		public SQLTableData(String name, String sort) {
 			this.name = name;
-			this.sort = "asc";
+			this.sort = sort;
 		}
 
 		public String getName() {

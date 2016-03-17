@@ -17,20 +17,20 @@
     <appender name="myFile" class="com.supermap.desktop.core.SmRollingFileAppender">
         <param name="Encoding" value="utf-8"/>
         <!-- 设置日志输出文件名 -->
-        <param name="File" value="${com.supermap.desktop.log4j.home}./logDesktop/logDesktop_[DATA].log" />
-        <param name="MaxBackupIndex" value="20"/>
-        <param name="MaxFileSize" value="1024KB"/>
+        <param name="File" value="${com.supermap.desktop.log4j.home}./action/logDesktop_[DATE].log"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="MaxFileSize" value="1023KB"/>
         <layout class="org.apache.log4j.PatternLayout">
             <!--输出格式-->
-            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] %C{1}:%L  - %m%n"/>
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] %20C{1}  - %m%n"/>
         </layout>
     </appender>
 
     <appender name="logInfo" class="com.supermap.desktop.core.SmRollingFileAppender">
         <param name="Encoding" value="utf-8"/>
-        <param name="File" value="${com.supermap.desktop.log4j.home}./logInfo/logInfo_[DATA].log" />
-        <param name="MaxBackupIndex" value="20"/>
-        <param name="MaxFileSize" value="1024KB"/>
+        <param name="File" value="${com.supermap.desktop.log4j.home}./output/logInfo_[DATE].log"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="MaxFileSize" value="1023KB"/>
         <param name="append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
@@ -40,9 +40,9 @@
 
     <appender name="logException" class="com.supermap.desktop.core.SmRollingFileAppender">
         <param name="Encoding" value="utf-8"/>
-        <param name="File" value="${com.supermap.desktop.log4j.home}./logException/LogException_[DATA].log" />
-        <param name="MaxBackupIndex" value="20"/>
-        <param name="MaxFileSize" value="1024KB"/>
+        <param name="File" value="${com.supermap.desktop.log4j.home}./exception/LogException_[DATE].log"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="MaxFileSize" value="1023KB"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
                    value="[%d{yyyy-MM-dd HH:mm:ss\}] %m%n"/>

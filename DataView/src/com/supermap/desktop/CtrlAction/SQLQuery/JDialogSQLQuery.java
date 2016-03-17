@@ -22,16 +22,23 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
 import com.supermap.mapping.Layer;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -709,8 +716,7 @@ public class JDialogSQLQuery extends SmDialog {
 			}
 			Object data = ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
 			if (data instanceof Dataset) {
-				currentDataset = (Dataset) data;
-				tableFieldInfo.setDataset(((Dataset) data));
+				setCurrentDataset((Dataset) data);
 				if (currentDataset.getType() == DatasetType.TABULAR) {
 					radioButtonQueryAttributeInfo.setSelected(true);
 					radioButtonQuerySpaceAndProperty.setEnabled(false);
@@ -719,11 +725,15 @@ public class JDialogSQLQuery extends SmDialog {
 					radioButtonQuerySpaceAndProperty.setSelected(true);
 				}
 			} else {
-				currentDataset = null;
-				tableFieldInfo.setDataset(null);
+				setCurrentDataset(null);
 			}
 		}
 	};
+
+	private void setCurrentDataset(Dataset data) {
+		currentDataset = data;
+		tableFieldInfo.setDataset(currentDataset);
+	}
 
 	/**
 	 * 字段信息表鼠标事件， 1.双击时添加到最后选择的控件中 2.打开连接信息页面
@@ -890,20 +900,154 @@ public class JDialogSQLQuery extends SmDialog {
 	private final ActionListener buttonImportActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			try {
-//				String modelName = "SqlQueryImport";
-//				if (!SmFileChoose.isModuleExist(modelName)) {
-//					String fileFilters = SmFileChoose.createFileFilter(DataViewProperties.getString("String_SQLFilter"), "xml");
-//					SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataViewProperties.getString("String_openDialogTitle"), modelName, "OpenOne");
-//				}
-//				SmFileChoose smFileChoose = new SmFileChoose(modelName);
-//				//openFileDialog.Title = Properties.DataViewResources.String_openDialogTitle;
-//				if (smFileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
-//					String filePath = smFileChoose.getFilePath();
-//					Document document = XmlUtilties.getDocument(filePath);
-//
+			try {
+				String modelName = "SqlQueryImport";
+				if (!SmFileChoose.isModuleExist(modelName)) {
+					String fileFilters = SmFileChoose.createFileFilter(DataViewProperties.getString("String_SQLFilter"), "xml");
+					SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataViewProperties.getString("String_openDialogTitle"), modelName, "OpenOne");
+				}
+				SmFileChoose smFileChoose = new SmFileChoose(modelName);
+
+				Datasource datasource = null;
+				Datasource datasourceJoin = null;
+				boolean hasJoin = false;
+				boolean isAllInfo = true;
+
+				if (smFileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
+					String filePath = smFileChoose.getFilePath();
+					Document document = XmlUtilties.getDocument(filePath);
+					NodeList childNodes = document.getChildNodes();
+					for (int i = 0; i < childNodes.getLength(); i++) {
+						Node node = childNodes.item(i);
+						if (node.getNodeType() == Node.ELEMENT_NODE) {
+							String nodeName = node.getNodeName();
+							if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlqueryMode"))) {
+								// TODO: 2016/3/17
+								Node value = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmlValue"));
+								if (value != null) {
+									String nodeValue = value.getNodeValue();
+									if (nodeValue != null) {
+										isAllInfo = (Integer.valueOf(nodeValue) == 0);
+									}
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqldataset"))) {
+								Node nodeDatasource = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmldatasource"));
+								if (nodeDatasource != null) {
+									String datasourceName = nodeDatasource.getNodeValue();
+									datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
+									if (datasource != null) {
+										setCurrentDataset(null);
+										Node nodeDataset = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmldataset"));
+										if (nodeDataset != null) {
+											String datasetName = nodeDataset.getNodeValue();
+											Dataset dataset = datasource.getDatasets().get(datasetName);
+											setCurrentDataset(dataset);
+										}
+									}
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqlField"))) {
+								Node nodeValue = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmlValue"));
+								if (nodeValue != null) {
+									textareaQueryField.setText(nodeValue.getNodeValue());
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqlCondition"))) {
+								Node nodeValue = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmlValue"));
+								if (nodeValue != null) {
+									textareaQueryCondition.setText(nodeValue.getNodeValue());
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqlGroupField"))) {
+								Node nodeValue = node.getAttributes().getNamedItem(DataViewProperties.getString("String_xmlValue"));
+								if (nodeValue != null) {
+									textFieldGroupField.setText(nodeValue.getNodeValue());
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqlOrderby"))) {
+								sqlTableOrderByField.clear();
+								NodeList nodeChildNodes = node.getChildNodes();
+								for (int j = 0; j < nodeChildNodes.getLength(); j++) {
+									Node nodeTemp = nodeChildNodes.item(j);
+									if (nodeTemp.getNodeType() == Node.ELEMENT_NODE) {
+										NamedNodeMap attributes = nodeTemp.getAttributes();
+										if (attributes != null) {
+											String value;
+											String order;
+											Node nodeValue = attributes.getNamedItem(DataViewProperties.getString("String_xmlValue"));
+											if (nodeValue == null) {
+												continue;
+											} else {
+												value = nodeValue.getNodeValue();
+											}
+											Node nodeOrder = attributes.getNamedItem(DataViewProperties.getString("String_xmlValue"));
+
+											if (nodeOrder == null) {
+												continue;
+											} else {
+												order = nodeOrder.getNodeValue();
+											}
+											sqlTableOrderByField.add(value, order);
+										}
+
+									}
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlstandardsql"))) {
+								//// TODO: 2016/3/17 sql语句 
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlshoweTabular"))) {
+								Node value = node.getAttributes().getNamedItem("String_xmlValue");
+								if (value != null) {
+									checkBoxShowTabular.setSelected(Boolean.valueOf(value.getNodeValue()));
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlshowOnMap"))) {
+								Node value = node.getAttributes().getNamedItem("String_xmlValue");
+								if (value != null) {
+									checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlshowOnScene"))) {
+								//// TODO: 2016/3/17 场景
+//								Node value = node.getAttributes().getNamedItem("String_xmlValue");
+//								if (value != null) {
+//									checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
+//								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsaveResult"))) {
+								Node value = node.getAttributes().getNamedItem("String_xmlValue");
+								if (value != null) {
+									panelSaveSearchResult.setSelected(Boolean.valueOf(value.getNodeValue()));
+								}
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsqlRelated"))) {
+								Node value = node.getAttributes().getNamedItem("String_xmlValue");
+								if (value != null) {
+									checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
+								}
+
+							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsaveResult"))) {
+								datasourceJoin = getJoinItem(node);
+								if (datasourceJoin != null) {
+									hasJoin = true;
+								} else {
+									hasJoin = false;
+									joinItems = new JoinItems();
+								}
+							}
+						}
+					}
+				}
+				// // TODO: 2016/3/17
+
+				if (isAllInfo) {
+					radioButtonQueryAttributeInfo.setSelected(true);
+				} else {
+					radioButtonQuerySpaceAndProperty.setSelected(true);
+				}
+
+			} catch (Exception e1) {
+				Application.getActiveApplication().getOutput().output(e1);
+			}
 		}
 	};
+
+	private Datasource getJoinItem(Node node) {
+		return null;
+	}
+
+
 	private final ActionListener buttonExportActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

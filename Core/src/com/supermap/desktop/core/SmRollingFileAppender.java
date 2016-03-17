@@ -25,7 +25,7 @@ public class SmRollingFileAppender extends RollingFileAppender {
 	private long nextRollover = 0;
 	private static Map<String, BeginFileData> fileMaps = new HashMap<>();
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");// 先只支持这一个格式
-	private static final String DATA = "[DATA]";
+	private static final String DATA = "[DATE]";
 
 	/**
 	 * 与父类方法大致相同，添加时间判断

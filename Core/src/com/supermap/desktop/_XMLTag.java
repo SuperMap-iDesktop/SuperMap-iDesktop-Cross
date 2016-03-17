@@ -232,7 +232,7 @@ public class _XMLTag {
 	public static final String g_AttributionShowNavigation = "showNavigationBar";
 
 	// <!--SQL查询语句-->
-	public static final String g_NodeSQLDatasetName = "SQLDatasetName";
+	public static final String nodeSQLDatasetName = "SQLDatasetName";
 	public static final String g_AttributionDatasetName = "datasetName";
 	public static final String g_NodeSQLQueryFields = "SQLQueryFields";
 	public static final String g_AttributionQueryFields = "queryFields";

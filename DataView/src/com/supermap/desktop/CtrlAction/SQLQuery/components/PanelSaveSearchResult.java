@@ -44,6 +44,10 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 
 	}
 
+	public void setSelected(boolean isSelected) {
+		this.checkBoxSaveResult.setSelected(isSelected);
+	}
+
 	public boolean isSaveResult() {
 		return checkBoxSaveResult.isSelected();
 	}

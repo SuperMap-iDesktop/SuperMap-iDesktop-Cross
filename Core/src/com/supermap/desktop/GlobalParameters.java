@@ -397,6 +397,9 @@ public class GlobalParameters {
 			return;
 		}
 		String startupXml = PathUtilties.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+		if (startupXml == null) {
+			return;
+		}
 		Document startupDoc = XmlUtilties.getDocument(startupXml);
 		if (resources != null) {
 			resources.clear();
