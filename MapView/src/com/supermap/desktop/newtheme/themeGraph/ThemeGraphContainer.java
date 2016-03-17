@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -26,6 +27,7 @@ import javax.swing.table.TableColumn;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -270,25 +272,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 						.setInsets(5, 10, 5, 10));
 		panelAdvanceContent.setLayout(new GridBagLayout());
 		// @formatter:off
-		panelAdvanceContent.add(this.panelOptions,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10)
-						.setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(this.panelSizeLimite,
-				new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10)
-						.setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(this.panelParameterSetting,
-				new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10)
-						.setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(paneRemark, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.NORTH)
-				.setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(paneAxis, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.NORTH)
-				.setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(this.panelStyleOfBAR,
-				new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10)
-						.setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(this.panelStyleOfRoseAndPIE,
-				new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10)
-						.setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelOptions,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelSizeLimite,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelParameterSetting,  new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(paneRemark,                  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(paneAxis,                    new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelStyleOfBAR,        new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelStyleOfRoseAndPIE, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(2, 10, 2, 10).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		// @formatter:on
 	}
 
@@ -299,20 +289,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		spinnerRoseAngle.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRoseAngle.setEnabled(false);
 		panelStyleOfRoseAndPIE.setLayout(new GridBagLayout());
-		panelStyleOfRoseAndPIE.add(this.labelStartAngle, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1));
-		panelStyleOfRoseAndPIE.add(this.spinnerStartAngle,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10)
-						.setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelStyleOfRoseAndPIE.add(this.labelRoseRAngle, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(30, 1));
-		panelStyleOfRoseAndPIE.add(this.spinnerRoseAngle,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.spinnerStartAngle
-				.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
-		this.spinnerRoseAngle
-				.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
+		panelStyleOfRoseAndPIE.add(this.labelStartAngle,  new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1));
+		panelStyleOfRoseAndPIE.add(this.spinnerStartAngle,new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelStyleOfRoseAndPIE.add(this.labelRoseRAngle,  new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(30, 1));
+		panelStyleOfRoseAndPIE.add(this.spinnerRoseAngle, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.spinnerStartAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
+		this.spinnerRoseAngle.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
 		initSpinnerStartAngleState();
 		initSpinnerRoseAngleState();
 		// @formatter:on
@@ -335,14 +317,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		// @formatter:off
 		this.spinnerBarWidth.setEnabled(false);
 		panelStyleOfBAR.setLayout(new GridBagLayout());
-		panelStyleOfBAR.add(this.labelBarWidth, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1).setIpad(20, 0));
+		panelStyleOfBAR.add(this.labelBarWidth,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1).setIpad(20, 0));
 		this.spinnerBarWidth.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(0.01)));
-		panelStyleOfBAR.add(this.spinnerBarWidth,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10)
-						.setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.spinnerBarWidth
-				.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
+		panelStyleOfBAR.add(this.spinnerBarWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.spinnerBarWidth.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
 		initSpinnerBarWidthState();
 		// @formatter:on
 	}
@@ -359,21 +337,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		// @formatter:off
 		panelAxis.setLayout(new GridBagLayout());
 		this.buttonAxisColor = new ColorSelectButton(Color.gray);
-		panelAxis.add(this.labelAxisColor, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(5, 10, 2, 10).setWeight(30, 1));
-		panelAxis.add(this.buttonAxisColor, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(5, 10, 2, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelAxis.add(this.labelAxisModel, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(0, 10, 2, 10).setWeight(30, 1));
-		panelAxis.add(this.comboBoxAxisModel,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2, 10)
-						.setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelAxis.add(this.labelAxisStyle, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(0, 10, 2, 10).setWeight(30, 1));
-		panelAxis.add(this.buttonAxisStyle, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(0, 10, 5, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelAxis.add(this.checkBoxShowAxisGrid, new GridBagConstraintsHelper(0, 3, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(30, 1));
+		panelAxis.add(this.labelAxisColor,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(30, 1));
+		panelAxis.add(this.buttonAxisColor,      new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelAxis.add(this.labelAxisModel,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2, 10).setWeight(30, 1));
+		panelAxis.add(this.comboBoxAxisModel,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelAxis.add(this.labelAxisStyle,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2, 10).setWeight(30, 1));
+		panelAxis.add(this.buttonAxisStyle,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelAxis.add(this.checkBoxShowAxisGrid, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(30, 1));
 		this.checkBoxShowAxisGrid.setSelected(themeGraph.isAxesGridDisplayed());
 		initCheckBoxAxisState();
 		setPanelAxisEnabled(false);
@@ -426,16 +396,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComboBoxRemarkFormat();
 		// @formatter:off
 		panelRemark.setLayout(new GridBagLayout());
-		panelRemark.add(this.labelRemarkFormat, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(40, 1).setIpad(20, 0));
-		panelRemark.add(this.comboBoxRemarkFormat,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10)
-						.setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelRemark.add(this.labelRemarkStyle, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(40, 1).setIpad(20, 0));
-		panelRemark.add(this.buttonRemarkStyle,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelRemark.add(this.labelRemarkFormat,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(40, 1).setIpad(20, 0));
+		panelRemark.add(this.comboBoxRemarkFormat,new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelRemark.add(this.labelRemarkStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(40, 1).setIpad(20, 0));
+		panelRemark.add(this.buttonRemarkStyle,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		if (themeGraph.isGraphTextDisplayed()) {
 			this.checkBoxRemark.setSelected(true);
 			this.checkBoxRemark.setEnabled(true);
@@ -479,15 +443,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComboBoxOffsetX();
 		initComboBoxOffsetY();
 		// @formatter:off
-		panelParameterSetting.setLayout(new GridBagLayout());
-		panelParameterSetting.add(this.labelOffsetUnity,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
+		GridBagLayout layout = new GridBagLayout();
+		panelParameterSetting.setLayout(layout);
+		panelParameterSetting.add(this.labelOffsetUnity,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
 		panelParameterSetting.add(this.comboBoxOffsetUnity,new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetX,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
-		panelParameterSetting.add(this.comboBoxOffsetX,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetXUnity,  new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
-		panelParameterSetting.add(this.labelOffsetY,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(60, 0));
-		panelParameterSetting.add(this.comboBoxOffsetY,    new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(45, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetYUnity,  new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(5, 1));
+		panelParameterSetting.add(this.labelOffsetX,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
+		panelParameterSetting.add(this.comboBoxOffsetX,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(35, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetXUnity,  new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(15, 1).setIpad(20, 0));
+		panelParameterSetting.add(this.labelOffsetY,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
+		panelParameterSetting.add(this.comboBoxOffsetY,    new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(35, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetYUnity,  new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(15, 1).setIpad(20, 0));
 		// @formatter:on
 	}
 
@@ -501,8 +466,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
-			this.labelOffsetXUnity.setText(map.getCoordUnit().toString());
-			this.labelOffsetYUnity.setText(map.getCoordUnit().toString());
+			this.labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+			this.labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		}
 	}
 
@@ -568,20 +533,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.textFieldMinValue.setText(String.valueOf(this.themeGraph.getMinGraphSize()));
 		// @formatter:off
 		panelSizeLimite.setLayout(new GridBagLayout());
-		panelSizeLimite.add(this.labelMaxValue, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
-		panelSizeLimite.add(this.textFieldMaxValue,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10)
-						.setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelSizeLimite.add(this.labelMinValue, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
-		panelSizeLimite.add(this.textFieldMinValue,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.textFieldMaxValue
-				.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
-		this.textFieldMinValue
-				.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
+		panelSizeLimite.add(this.labelMaxValue,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
+		panelSizeLimite.add(this.textFieldMaxValue,new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelSizeLimite.add(this.labelMinValue,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
+		panelSizeLimite.add(this.textFieldMinValue,new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.textFieldMaxValue.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
+		this.textFieldMinValue.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
 		// @formatter:on
 	}
 
@@ -590,19 +547,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initCheckBoxStation();
 		// @formatter:off
 		panelOptions.setLayout(new GridBagLayout());
-		panelOptions.add(this.checkBoxShowFlow, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
-		panelOptions.add(this.checkBoxShowNegative, new GridBagConstraintsHelper(1, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 1));
-		panelOptions.add(this.checkBoxAutoAvoid, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
-		panelOptions.add(this.checkBoxAutoScale, new GridBagConstraintsHelper(1, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 1));
-		panelOptions.add(this.checkboxDraftLine, new GridBagConstraintsHelper(0, 2, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
-		panelOptions.add(this.buttonDraftLine,
-				new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		panelOptions.add(this.checkBoxShowFlow,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
+		panelOptions.add(this.checkBoxShowNegative, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 1));
+		panelOptions.add(this.checkBoxAutoAvoid,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
+		panelOptions.add(this.checkBoxAutoScale,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 1));
+		panelOptions.add(this.checkboxDraftLine,    new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
+		panelOptions.add(this.buttonDraftLine,      new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		// @formatter:on
 	}
 
@@ -621,26 +571,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComboBoxGraphType();
 		initComboBoxMethod();
 		// @formatter:off
-		this.panelProperty.add(this.labelColorStyle, new GridBagConstraintsHelper(0, 0, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
-		this.panelProperty.add(this.comboBoxColor,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10)
-						.setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelGraphType, new GridBagConstraintsHelper(0, 1, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
-		this.panelProperty.add(this.comboBoxGraphType,
-				new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.labelMethod, new GridBagConstraintsHelper(0, 2, 1, 1)
-				.setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
-		this.panelProperty.add(this.comboBoxMethod,
-				new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10)
-						.setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelProperty.add(this.toolbar, new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST)
-				.setInsets(0, 10, 5, 10).setWeight(100, 0));
-		this.panelProperty.add(this.scollPane,
-				new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10)
-						.setFill(GridBagConstraints.BOTH).setWeight(100, 3));
+		this.panelProperty.add(this.labelColorStyle,  new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxColor,    new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelGraphType,   new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxGraphType,new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.labelMethod,      new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(20, 0).setIpad(40, 0));
+		this.panelProperty.add(this.comboBoxMethod,   new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelProperty.add(this.toolbar,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(100, 0));
+		this.panelProperty.add(this.scollPane,        new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
 		getTable();
 		this.scollPane.setViewportView(this.tableGraphInfo);
 		// @formatter:on
@@ -1316,8 +1254,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				break;
 			case 1:
 				themeGraph.setOffsetFixed(false);
-				labelOffsetXUnity.setText(map.getCoordUnit().toString());
-				labelOffsetYUnity.setText(map.getCoordUnit().toString());
+				labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+				labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 				break;
 			default:
 				break;
@@ -1420,10 +1358,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				return;
 			}
 			if (e.getSource() == checkBoxAutoScale) {
-				boolean isAutoScale = checkBoxAutoScale.isSelected();
-				themeGraph.setGraphSizeFixed(!isAutoScale);
-				textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
-				textFieldMinValue.setText(String.valueOf(themeGraph.getMinGraphSize()));
+				setMaxGraphSize();
 				refreshMapAtOnce();
 				return;
 			}
@@ -1438,6 +1373,48 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				refreshMapAtOnce();
 				return;
 			}
+		}
+
+		private void setMaxGraphSize() {
+			boolean isAutoScale = checkBoxAutoScale.isSelected();
+			if (!isAutoScale) {
+				Point2D pointStart = new Point2D(0, 0);
+				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
+				Point2D point2DStart = map.mapToLogical(pointStart);
+				Point2D point2DEnd = map.mapToLogical(pointEnd);
+				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
+				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
+				Point2D point2DMinEnd = map.mapToLogical(pointMinEnd);
+				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
+					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
+				}
+				Point2D pointStart1 = new Point2D(0, 0);
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D point2DStart1 = map.mapToLogical(pointStart1);
+				Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
+
+				themeGraph.setBarWidth(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+			} else {
+				Point2D pointStart = new Point2D(0, 0);
+				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
+				Point2D point2DStart = map.logicalToMap(pointStart);
+				Point2D point2DEnd = map.logicalToMap(pointEnd);
+				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
+				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
+				Point2D point2DMinEnd = map.logicalToMap(pointMinEnd);
+				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
+					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
+				}
+				Point2D pointStart1 = new Point2D(0, 0);
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D point2DStart1 = map.logicalToMap(pointStart1);
+				Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
+				themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
+			}
+			themeGraph.setGraphSizeFixed(!isAutoScale);
+			textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
+			textFieldMinValue.setText(String.valueOf(themeGraph.getMinGraphSize()));
+			spinnerBarWidth.setValue(themeGraph.getBarWidth());
 		}
 	}
 

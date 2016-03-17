@@ -80,6 +80,7 @@ public class UICommonToolkit {
 				if (datasource.getAlias().equals(datasourceName)) {
 					workspaceTree.refreshNode(childDatasourceTreeNode);
 					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().setSelectionPath(path);
+					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().expandPath(path);
 					// 设置选中的数据源在可见范围内
 					workspaceTree.scrollPathToVisible(path);
 				}

@@ -22,6 +22,7 @@ import com.supermap.desktop.util.*;
 
 import javax.swing.JCheckBox;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -290,7 +291,7 @@ public class DataImportFrame extends SmDialog {
 	private void initContentPane() {
 		//@formatter:off
 		this.contentPane.setLayout(new GridBagLayout());
-		this.contentPane.add(this.panelFiles, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(25, 1));
+		this.contentPane.add(this.panelFiles,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(25, 1));
 		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(75, 1));
 		//@formatter:on
 	}
@@ -479,14 +480,17 @@ public class DataImportFrame extends SmDialog {
 		JList<String> list = new JList<String>();
 
 		public AddDirDialog() {
-			setModal(true);
 			initComponent();
 		}
 
 		private void initComponent() {
-			this.setSize(200, 300);
-			setTitle(DataConversionProperties.getString("String_DirType"));
-			getContentPane().add(list, BorderLayout.NORTH);
+			this.setSize(150, 100);
+			JScrollPane pane = new JScrollPane();
+			this.setLayout(new GridBagLayout());
+			this.add(pane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+			pane.setViewportView(list);
+			list.setBorder(new LineBorder(Color.LIGHT_GRAY));
+			this.setUndecorated(true);
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
 			listModel.addElement(DataConversionProperties.getString("String_FormImportGJB_Text"));
 			list.setModel(listModel);

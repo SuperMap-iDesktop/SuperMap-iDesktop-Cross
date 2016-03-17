@@ -120,6 +120,7 @@ public class ImportPanelGJB extends JPanel {
 		initPanelDatapath();
 
 		initPanelGJB();
+		this.textFieldResultDatapath.setEnabled(false);
 		// formatter:on
 	}
 
@@ -192,7 +193,7 @@ public class ImportPanelGJB extends JPanel {
 		this.labelResultDataset.setText(DataConversionProperties.getString("string_label_lblDataset"));
 		this.labelImportModel.setText(DataConversionProperties.getString("string_label_lblImportType"));
 		this.labelDatapath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
-		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblDataset"));
+		this.labelCharset.setText(DataConversionProperties.getString("string_label_lblCharset"));
 		this.panelResultSet.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panel")));
 		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath")));
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[] { DataConversionProperties.getString("string_comboboxitem_null"),

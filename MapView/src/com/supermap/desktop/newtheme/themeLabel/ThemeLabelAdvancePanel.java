@@ -5,6 +5,7 @@ import com.supermap.data.Size2D;
 import com.supermap.data.StringAlignment;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
+import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
@@ -147,7 +148,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.checkBoxRepeatIntervalFixed.setSelected(themeLabel.isRepeatIntervalFixed());
 		boolean isRepeatIntervalFixed = this.checkBoxRepeatIntervalFixed.isSelected();
 		if (!isRepeatIntervalFixed) {
-			labelUnity.setText(map.getCoordUnit().name());
+			labelUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		} else {
 			labelUnity.setText("0.1mm");
 		}
@@ -239,9 +240,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.labelMinFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 
 		this.labelHorizontal.setText(MapViewProperties.getString("String_TextExtentWidth"));
-		this.labelHorizontalUnity.setText(map.getCoordUnit().name());
+		this.labelHorizontalUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		this.labelVertical.setText(MapViewProperties.getString("String_TextExtentHeight"));
-		this.labelVerticalUnity.setText(map.getCoordUnit().name());
+		this.labelVerticalUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		this.labelAlignmentStyle.setText(MapViewProperties.getString("String_TextAlignment"));
 	}
 
@@ -380,7 +381,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldRepeatInterval.setPreferredSize(textFieldDimension);
 		initComboBoxLineDirection();
 		this.textFieldRepeatInterval.setText("0");
-		this.labelUnity.setText(map.getCoordUnit().name());
+		this.labelUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		this.labelUnity.setPreferredSize(labelDimension);
 		panelRotateLabel.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
 		panelRotateLabel.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10));
@@ -573,7 +574,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			boolean isRepeatIntervalFixed = checkBoxRepeatIntervalFixed.isSelected();
 			themeLabel.setRepeatIntervalFixed(isRepeatIntervalFixed);
 			if (!isRepeatIntervalFixed) {
-				labelUnity.setText(map.getCoordUnit().name());
+				labelUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 			} else {
 				labelUnity.setText("0.1mm");
 			}

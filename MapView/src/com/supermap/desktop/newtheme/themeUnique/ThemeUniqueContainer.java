@@ -3,6 +3,7 @@ package com.supermap.desktop.newtheme.themeUnique;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
@@ -297,8 +298,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
 			this.comboBoxOffsetUnity.setSelectedIndex(1);
-			this.labelOffsetXUnity.setText(map.getCoordUnit().name());
-			this.labelOffsetYUnity.setText(map.getCoordUnit().name());
+			this.labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+			this.labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		}
 	}
 
@@ -751,8 +752,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 			} else {
 				themeUnique.setOffsetFixed(false);
-				labelOffsetXUnity.setText(map.getCoordUnit().name());
-				labelOffsetYUnity.setText(map.getCoordUnit().name());
+				labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+				labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 			}
 		}
 

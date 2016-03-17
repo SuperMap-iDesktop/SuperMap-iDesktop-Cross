@@ -4,6 +4,7 @@ import com.supermap.data.ColorGradientType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -29,6 +30,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -291,14 +293,20 @@ public class ThemeGuideFactory {
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
 			themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
-			//默认设置为SmID避免显示异常
+			// 默认设置为SmID避免显示异常
 			themeGraphItem.setCaption("SmID");
 			themeGraph.insert(0, themeGraphItem);
-			//默认设置为三维环状图，避免显示异常
+			// 默认设置为三维环状图，避免显示异常
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
-//			//默认设置一个坐标轴风格，避免显示异常
-//			themeGraph.getAxesTextStyle().setBold(true);
-//			themeGraph.setMaxGraphSize(1);
+			// //默认设置一个坐标轴风格，避免显示异常
+			// themeGraph.getAxesTextStyle().setBold(true);
+			// themeGraph.setMaxGraphSize(1);
+			Point pointStart = new Point(0, 0);
+			Point pointEnd = new Point(0, (int) (getMapControl().getSize().getWidth() / 5));
+			Point2D point2DStart = getMapControl().getMap().pixelToMap(pointStart);
+			Point2D point2DEnd = getMapControl().getMap().pixelToMap(pointEnd);
+			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
+			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
@@ -339,7 +347,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeUniqueContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeUniqueContainer);
 			}
 		}
@@ -356,7 +364,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeRangeContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeRangeContainer);
 			}
 		}
@@ -373,7 +381,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeLabelUniformContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeLabelUniformContainer);
 			}
 		}
@@ -390,7 +398,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeLabelRangeContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeLabelRangeContainer);
 			}
 		}
@@ -407,7 +415,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGridUniqueContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeGridUniqueContainer);
 			}
 		}
@@ -424,13 +432,15 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGridRangeContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeGridRangeContainer);
 			}
 		}
 	}
+
 	/**
 	 * 修改统计专题图
+	 * 
 	 * @param layer
 	 */
 	public static void resetGraph(Layer layer) {
@@ -439,7 +449,7 @@ public class ThemeGuideFactory {
 		} else if (null != layer.getDataset()) {
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(layer);
 			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
-			if (null!=container) {
+			if (null != container) {
 				container.setPanel(themeGraphContainer);
 			}
 		}
