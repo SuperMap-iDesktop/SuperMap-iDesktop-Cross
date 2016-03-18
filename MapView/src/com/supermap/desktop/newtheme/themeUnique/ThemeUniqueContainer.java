@@ -8,7 +8,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
-import com.supermap.desktop.newtheme.commonUtils.UniqueValueCountUtil;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -101,10 +101,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique) {
+	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique,Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeUnique = new ThemeUnique(themeUnique);
-		this.map = initCurrentTheme(datasetVector);
+		this.map = initCurrentTheme(datasetVector,layer);
 		this.isNewTheme = true;
 		initComponents();
 		initResources();
@@ -128,10 +128,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * @param dataset
 	 * @return
 	 */
-	private Map initCurrentTheme(DatasetVector dataset) {
+	private Map initCurrentTheme(DatasetVector dataset,Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
+			//复制关联表信息到新图层中
+			this.themeUniqueLayer.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
 			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -478,19 +480,44 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, int type) {
 		int count = datasetVector.getFieldCount();
+		JoinItems joinItems = themeUniqueLayer.getDisplayFilter().getJoinItems();
+		int itemsCount = joinItems.getCount();
 		if (type == EXPRESSION_TYPE) {
 			for (int j = 0; j < count; j++) {
-				FieldInfo tempFieldInfo = datasetVector.getFieldInfos().get(j);
-				String item = datasetVector.getName() + "." + tempFieldInfo.getName();
+				String item = datasetVector.getFieldInfos().get(j).getName();
 				comboBox.addItem(item);
+			}
+			for (int i = 0; i < itemsCount; i++) {
+				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+					DatasetVector dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+					int datasetFieldCount = dataset.getFieldCount();
+					for (int j = 0; j < datasetFieldCount; j++) {
+						String datasetItem = dataset.getFieldInfos().get(j).getName();
+						comboBox.addItem(dataset.getName() + "." + datasetItem);
+					}
+				}
 			}
 		} else {
 			for (int j = 0; j < count; j++) {
 				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 				if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 						|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-					String item = datasetVector.getName() + "." + fieldInfo.getName();
+					String item = fieldInfo.getName();
 					comboBox.addItem(item);
+				}
+			}
+			for (int i = 0; i < itemsCount; i++) {
+				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+					DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+					int tempDatasetFieldCount = tempDataset.getFieldCount();
+					for (int j = 0; j < tempDatasetFieldCount; j++) {
+						FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+						if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
+						|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+							String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+							comboBox.addItem(tempDatasetItem);
+						}
+					}
 				}
 			}
 		}
@@ -708,11 +735,11 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (expression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
 			}
-			if (UniqueValueCountUtil.isCountBeyond(datasetVector, expression)) {
+			if (ThemeUtil.isCountBeyond(datasetVector, expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
 						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
-				comboBoxExpression.setSelectedItem(datasetVector.getName() + ".SmUserID");
+				comboBoxExpression.setSelectedItem("SmUserID");
 			} else {
 				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET);
 				if (null != theme) {

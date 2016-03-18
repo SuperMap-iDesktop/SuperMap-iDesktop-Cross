@@ -127,21 +127,20 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建单值专题图
 	 */
-	public static boolean buildUniqueTheme() {
+	public static boolean buildUniqueTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
 			String expression = "SmUserID";
-			if (UniqueValueCountUtil.isCountBeyond((DatasetVector) getDataset(), expression)) {
+			if (ThemeUtil.isCountBeyond((DatasetVector) getDataset(), expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
 						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 				return success;
 			}
-			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + expression,
-					ColorGradientType.GREENORANGEVIOLET);
+			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				success = true;
-				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique);
+				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique,layer);
 				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
 				addPanelToThemeMainContainer(themeUniqueContainer);
 				getDockbarThemeContainer().setVisible(true);
@@ -159,8 +158,8 @@ public class ThemeGuideFactory {
 	public static boolean buildRangeTheme() {
 		boolean success = false;
 		if (null != getDataset()) {
-			ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5,
-					ColorGradientType.GREENRED, null, 0.1);
+			ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null,
+					0.1);
 			if (null != themeRange) {
 				success = true;
 				themeRange.setPrecision(0.1);
@@ -196,8 +195,7 @@ public class ThemeGuideFactory {
 	public static boolean buildLabelRangeTheme() {
 		boolean success = false;
 		if (null != getDataset()) {
-			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5,
-					ColorGradientType.GREENRED);
+			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
 			if (null != themeLabel && themeLabel.getCount() >= 2) {
 				themeLabel.setMaxLabelLength(8);
 				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel);
@@ -223,7 +221,6 @@ public class ThemeGuideFactory {
 			datasetGrid.buildStatistics();
 			try {
 				ThemeGridUnique themeUnique = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.GREENORANGEVIOLET);
-				System.out.println(themeUnique.getCount());
 				if (themeUnique.getCount() > 3000) {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeUniqueMaxCount"));
 					return false;
@@ -292,15 +289,14 @@ public class ThemeGuideFactory {
 			DatasetVector datasetVector = (DatasetVector) getDataset();
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
-			themeGraphItem.setGraphExpression(datasetVector.getName() + "." + "SmID");
+			themeGraphItem.setGraphExpression("SmID");
 			// 默认设置为SmID避免显示异常
 			themeGraphItem.setCaption("SmID");
 			themeGraph.insert(0, themeGraphItem);
 			// 默认设置为三维环状图，避免显示异常
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
 			// //默认设置一个坐标轴风格，避免显示异常
-			// themeGraph.getAxesTextStyle().setBold(true);
-			// themeGraph.setMaxGraphSize(1);
+			themeGraph.getAxesTextStyle().setFontHeight(17);
 			Point pointStart = new Point(0, 0);
 			Point pointEnd = new Point(0, (int) (getMapControl().getSize().getWidth() / 5));
 			Point2D point2DStart = getMapControl().getMap().pixelToMap(pointStart);

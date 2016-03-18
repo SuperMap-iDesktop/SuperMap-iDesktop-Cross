@@ -12,6 +12,7 @@ import javax.swing.border.LineBorder;
 
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class UniqueThemePanel extends JPanel {
@@ -65,7 +66,7 @@ public class UniqueThemePanel extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 单值专题图
-				ThemeGuideFactory.buildUniqueTheme();
+				ThemeGuideFactory.buildUniqueTheme(ThemeUtil.getActiveLayer());
 				themeGuidDialog.dispose();
 				unregistListener();
 			}

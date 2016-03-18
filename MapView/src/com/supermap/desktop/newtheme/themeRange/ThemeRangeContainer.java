@@ -8,7 +8,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
-import com.supermap.desktop.newtheme.commonUtils.UniqueValueCountUtil;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -989,7 +989,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				isCustom = false;
 				resetThemeInfo();
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
-				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为平方根分段
 					JOptionPane.showMessageDialog(
 							null,
@@ -1008,7 +1008,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					resetThemeInfo();
 				}
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
-				if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression)) {
+				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为对数分段
 					JOptionPane.showMessageDialog(
 							null,
@@ -1066,7 +1066,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 */
 		private void setFieldInfo() {
 			rangeExpression = (String) comboBoxExpression.getSelectedItem();
-			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
+			if (ThemeUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.LOGARITHM) {
 				// 有负数且为对数分段
 				JOptionPane.showMessageDialog(
 						null,
@@ -1078,7 +1078,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				resetComboBoxRangeExpression(themeRange.getRangeExpression());
 				return;
 			}
-			if (UniqueValueCountUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
+			if (ThemeUtil.hasNegative(datasetVector, rangeExpression) && rangeMode == RangeMode.SQUAREROOT) {
 				// 有负数且为平方根分段
 				JOptionPane.showMessageDialog(
 						null,

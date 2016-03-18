@@ -1,12 +1,17 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.mapping.Layer;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -157,7 +162,8 @@ public class ThemeGuidDialog extends SmDialog {
 	/**
 	 * 选中左边的专题图类型时修改右边的界面
 	 * 
-	 * @param selectRow 选中的专题图类型对应的行数
+	 * @param selectRow
+	 *            选中的专题图类型对应的行数
 	 */
 	protected void replaceCurrentPanelByListSelection(int selectRow) {
 		switch (selectRow) {
@@ -177,7 +183,7 @@ public class ThemeGuidDialog extends SmDialog {
 			}
 			break;
 		case 3:
-			if (null!=getRightPanel()) {
+			if (null != getRightPanel()) {
 				this.gl_panelContent.replace(getRightPanel(), new GraphThemePanel(this));
 			}
 		default:
@@ -285,7 +291,7 @@ public class ThemeGuidDialog extends SmDialog {
 			switch (clickCount) {
 			case 0:
 				// 单值专题图
-				buildSuccessed = ThemeGuideFactory.buildUniqueTheme();
+				buildSuccessed = ThemeGuideFactory.buildUniqueTheme(ThemeUtil.getActiveLayer());
 				if (buildSuccessed) {
 					ThemeGuidDialog.this.dispose();
 				}
@@ -310,8 +316,8 @@ public class ThemeGuidDialog extends SmDialog {
 				}
 				break;
 			case 3:
-				//统计专题图
-				buildSuccessed =ThemeGuideFactory.buildGraphTheme();
+				// 统计专题图
+				buildSuccessed = ThemeGuideFactory.buildGraphTheme();
 				if (buildSuccessed) {
 					ThemeGuidDialog.this.dispose();
 				}

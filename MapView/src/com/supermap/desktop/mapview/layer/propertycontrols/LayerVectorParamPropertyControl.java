@@ -487,13 +487,13 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	}
 
 	protected void setJoinItems() {
-		JoinItems joinItems = getLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
+		JoinItems joinItems = getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
 		JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
 		jDialogJoinItem.setCurrentDataset(getLayerPropertyModel().getLayers()[0].getDataset());
 		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
 			// 修改属性并销毁
 			joinItems = jDialogJoinItem.getJoinItems();
-			getLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
+			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
 			jDialogJoinItem.dispose();
 			joinItems.dispose();
 		}
