@@ -127,7 +127,7 @@ public class DataImportFrame extends SmDialog {
 		this.labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		this.labelTitle.setOpaque(true);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setBounds(400, 280, 850, 475);
+		this.setBounds(400, 280, 880, 475);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
@@ -395,14 +395,12 @@ public class DataImportFrame extends SmDialog {
 			}
 			if (c == buttonAddDir) {
 				// 添加文件夹
-				int height = buttonAddDir.getHeight();
-				int x = (int) buttonAddDir.getLocationOnScreen().getX();
-				int y = (int) buttonAddDir.getLocationOnScreen().getY() + height;
+				int x = (int) buttonAddDir.getLocation().getX()-buttonAddDir.getWidth();
+				int y = buttonAddDir.getHeight();
 				AddDirDialog addDirDialog = new AddDirDialog();
-				addDirDialog.setLocation(x, y);
+				addDirDialog.show(buttonAddDir, x, y);
 				addDirDialog.setVisible(true);
 				initComboBoxColumns();
-				setButtonState();
 				return;
 			}
 			if (c == buttonDelete) {
@@ -474,7 +472,7 @@ public class DataImportFrame extends SmDialog {
 		}
 	}
 
-	class AddDirDialog extends SmDialog {
+	class AddDirDialog extends JPopupMenu {
 
 		private static final long serialVersionUID = 1L;
 		JList<String> list = new JList<String>();
@@ -489,8 +487,7 @@ public class DataImportFrame extends SmDialog {
 			this.setLayout(new GridBagLayout());
 			this.add(pane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 			pane.setViewportView(list);
-			list.setBorder(new LineBorder(Color.LIGHT_GRAY));
-			this.setUndecorated(true);
+			pane.setBorder(null);
 			DefaultListModel<String> listModel = new DefaultListModel<String>();
 			listModel.addElement(DataConversionProperties.getString("String_FormImportGJB_Text"));
 			list.setModel(listModel);
@@ -498,7 +495,6 @@ public class DataImportFrame extends SmDialog {
 
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					dispose();
 					if (!SmFileChoose.isModuleExist("DataImportFrame_ImportDirectories")) {
 						SmFileChoose.addNewNode("", "", DataConversionProperties.getString("String_ScanDir"),
 								"DataImportFrame_ImportDirectories", "GetDirectories");
@@ -521,9 +517,9 @@ public class DataImportFrame extends SmDialog {
 						if (table.getSelectedRows().length == 0) {
 							table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
 						}
+						setButtonState();
 						// 刷新右边界面
 						CommonFunction.replacePanel(panelImportInfo, fileInfos, panels, labelTitle);
-						setButtonState();
 					}
 
 				}
