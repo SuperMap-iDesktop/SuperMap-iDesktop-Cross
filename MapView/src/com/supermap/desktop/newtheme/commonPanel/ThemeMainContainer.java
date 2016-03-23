@@ -325,7 +325,6 @@ public class ThemeMainContainer extends JPanel {
 					if (null != panel && null != oldLayer && !oldLayer.isDiposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 						if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 							// 不保存修改
-							System.out.println(oldLayer.isDiposed());
 							ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
 							if (null != panel) {	
 								panel.unregistActionListener();

@@ -30,6 +30,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+
 import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
@@ -79,6 +80,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
+	private JoinItems joinItems;
 
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_RANGEVALUE = 1;
@@ -95,10 +97,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeLabelRangeContainer(DatasetVector datasetVector, ThemeLabel themeLabel) {
+	public ThemeLabelRangeContainer(DatasetVector datasetVector, ThemeLabel themeLabel, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeLabel = new ThemeLabel(themeLabel);
-		this.map = initCurrentTheme(datasetVector);
+		this.map = initCurrentTheme(datasetVector, layer);
 		this.isNewTheme = true;
 		initComponents();
 		initResources();
@@ -122,15 +124,18 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * @param dataset
 	 * @return
 	 */
-	private Map initCurrentTheme(DatasetVector dataset) {
+	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
+			this.joinItems = layer.getDisplayFilter().getJoinItems();
+			this.themeLabelLayer.getDisplayFilter().setJoinItems(this.joinItems);
+			// 复制关联表信息到新图层中
 			this.layerName = this.themeLabelLayer.getName();
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = datasetVector.getName() + "." + fieldInfo.getName();
+				String item = fieldInfo.getName();
 				((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(item);
 				this.themeLabel.setNumericPrecision(1);
 			}
@@ -145,7 +150,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComponents() {
 		this.setLayout(new GridBagLayout());
-		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
+		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer, joinItems);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), this.panelSytle);
@@ -299,7 +304,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			}
 		};
 		this.tableLabelInfo.setModel(defaultTableModel);
-		this.tableLabelInfo.setRowSelectionInterval(0, 0);
+		// this.tableLabelInfo.setRowSelectionInterval(0, 0);
 		this.tableLabelInfo.setRowHeight(20);
 		TableColumn visibleColumn = this.tableLabelInfo.getColumn(MapViewProperties.getString("String_Title_Visible"));
 		visibleColumn.setMaxWidth(40);
@@ -347,12 +352,28 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
 		int count = datasetVector.getFieldCount();
+		JoinItems joinItems = this.themeLabelLayer.getDisplayFilter().getJoinItems();
+		int itemsCount = joinItems.getCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = datasetVector.getName() + "." + fieldInfo.getName();
+				String item = fieldInfo.getName();
 				comboBox.addItem(item);
+			}
+		}
+		for (int i = 0; i < itemsCount; i++) {
+			if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+				DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+				int tempDatasetFieldCount = tempDataset.getFieldCount();
+				for (int j = 0; j < tempDatasetFieldCount; j++) {
+					FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+					if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
+							|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+						String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+						comboBox.addItem(tempDatasetItem);
+					}
+				}
 			}
 		}
 		comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
@@ -385,8 +406,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	/**
 	 * 设置文本风格颜色
 	 *
-	 * @param textStyle 需要设置的风格
-	 * @param color 设置的颜色
+	 * @param textStyle
+	 *            需要设置的风格
+	 * @param color
+	 *            设置的颜色
 	 */
 	private void setTextStyleColor(TextStyle textStyle, Color color) {
 		textStyle.setForeColor(color);
@@ -620,7 +643,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			ThemeLabelItem tempThemeRangeItem = themeLabel.getItem(selectRow);
@@ -904,7 +928,13 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeLabel.getCount()));
 			} else {
-				ThemeLabel theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED);
+				ThemeLabel theme = null;
+				if (rangeExpression.contains(".")) {
+					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, joinItems);
+				} else {
+					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, null);
+				}
+
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
@@ -983,7 +1013,13 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		}
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		if (rangeLength > 0) {
-			ThemeLabel theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED);
+			ThemeLabel theme = null;
+			if (rangeExpression.contains(".")) {
+				// 外部关联表字段制作专题图
+				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, joinItems);
+			} else {
+				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null);
+			}
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),

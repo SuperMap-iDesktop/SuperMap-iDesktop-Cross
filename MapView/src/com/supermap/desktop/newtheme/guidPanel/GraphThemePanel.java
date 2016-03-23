@@ -12,6 +12,7 @@ import javax.swing.border.LineBorder;
 
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class GraphThemePanel extends JPanel {
@@ -88,7 +89,7 @@ public class GraphThemePanel extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 分段专题图
-				ThemeGuideFactory.buildGraphTheme();
+				ThemeGuideFactory.buildGraphTheme(ThemeUtil.getActiveLayer());
 				themeGuidDialog.dispose();
 				unregistListener();
 			}

@@ -13,6 +13,7 @@ import javax.swing.border.LineBorder;
 
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class RangeThemePanel extends JPanel {
@@ -74,7 +75,7 @@ public class RangeThemePanel extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 分段专题图
-				ThemeGuideFactory.buildRangeTheme();
+				ThemeGuideFactory.buildRangeTheme(ThemeUtil.getActiveLayer());
 				themeGuidDialog.dispose();
 				unregistListener();
 			}

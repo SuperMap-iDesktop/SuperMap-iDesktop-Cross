@@ -97,14 +97,15 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
+	private JoinItems joinItems;
 
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique,Layer layer) {
+	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeUnique = new ThemeUnique(themeUnique);
-		this.map = initCurrentTheme(datasetVector,layer);
+		this.map = initCurrentTheme(datasetVector, layer);
 		this.isNewTheme = true;
 		initComponents();
 		initResources();
@@ -128,12 +129,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * @param dataset
 	 * @return
 	 */
-	private Map initCurrentTheme(DatasetVector dataset,Layer layer) {
+	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
-			//复制关联表信息到新图层中
-			this.themeUniqueLayer.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
+			// 复制关联表信息到新图层中
+			this.joinItems = layer.getDisplayFilter().getJoinItems();
+			this.themeUniqueLayer.getDisplayFilter().setJoinItems(this.joinItems);
 			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -310,7 +312,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxOffsetX() {
 		getFieldComboBox(this.comboBoxOffsetX, OFFSETX_TYPE);
-		this.comboBoxOffsetX.insertItemAt("0", this.comboBoxOffsetX.getItemCount() - 2);
+		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeUnique.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
 			offsetX = "0";
@@ -512,8 +514,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					int tempDatasetFieldCount = tempDataset.getFieldCount();
 					for (int j = 0; j < tempDatasetFieldCount; j++) {
 						FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
-						if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
-						|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+						if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32
+								|| tempfieldInfo.getType() == FieldType.INT64 || tempfieldInfo.getType() == FieldType.DOUBLE
+								|| tempfieldInfo.getType() == FieldType.SINGLE) {
 							String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
 							comboBox.addItem(tempDatasetItem);
 						}
@@ -640,8 +643,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 根据当前数据集类型设置颜色方案
 	 *
-	 * @param geoStyle 需要设置的风格
-	 * @param color 设置的颜色
+	 * @param geoStyle
+	 *            需要设置的风格
+	 * @param color
+	 *            设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = datasetVector.getType();
@@ -741,9 +746,26 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 				comboBoxExpression.setSelectedItem("SmUserID");
 			} else {
-				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET);
-				if (null != theme) {
-					themeUnique = new ThemeUnique(theme);
+				DatasetVector dataset = datasetVector;
+				if (expression.contains(".")) {
+					String datasetName = expression.substring(0, expression.indexOf("."));
+					dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(datasetName);
+				}
+				if (ThemeUtil.isCountBeyond(dataset, expression)) {
+					// 字段记录数大于3000条时建议不做专题图
+					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
+							CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+
+				if (expression.contains(".")) {
+					//外部连接表字段创建专题图
+					themeUnique = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter().getJoinItems());
+				} else {
+					//非外部连接表字段创建专题图
+					themeUnique = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, null);
+				}
+				if (null != themeUnique) {
 					themeUnique.setUniqueExpression(expression);
 					refreshColor();
 					getTable();
@@ -1079,7 +1101,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
@@ -1167,8 +1190,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow 要重置文本风格的行
-	 * @param nowGeoStyle 新的文本风格
+	 * @param selectRow
+	 *            要重置文本风格的行
+	 * @param nowGeoStyle
+	 *            新的文本风格
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeUniqueItem item = this.themeUnique.getItem(selectRow);
@@ -1218,14 +1243,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
-			((ThemeUnique) this.themeUniqueLayer.getTheme()).clear();
-			for (int i = 0; i < this.themeUnique.getCount(); i++) {
-				nowThemeUnique.add(this.themeUnique.getItem(i));
-			}
-			nowThemeUnique.setUniqueExpression(this.themeUnique.getUniqueExpression());
-			nowThemeUnique.setOffsetFixed(this.themeUnique.isOffsetFixed());
-			nowThemeUnique.setOffsetX(this.themeUnique.getOffsetX());
-			nowThemeUnique.setOffsetY(this.themeUnique.getOffsetY());
+			nowThemeUnique.fromXML(themeUnique.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
 			this.map.refresh();
 		}

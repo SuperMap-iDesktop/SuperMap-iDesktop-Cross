@@ -10,6 +10,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
@@ -78,6 +79,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private Layer themeLabelLayer;
 	private String layerName;
+	private JPanel panelRotateLabel;
 
 	public ThemeLabelAdvancePanel(Layer themelabelLayer) {
 		this.themeLabelLayer = themelabelLayer;
@@ -90,8 +92,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	private void initComponents() {
-		JPanel panelRotateLabel = new JPanel();
-		panelRotateLabel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		JPanel panelTextFontSet = new JPanel();
 		panelTextFontSet
 				.setBorder(new TitledBorder(null, MapViewProperties.getString("String_CharLimited"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -103,7 +103,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		JPanel panelTextExtentInflation = new JPanel();
 		panelTextExtentInflation.setBorder(new TitledBorder(null, MapViewProperties.getString("String_TextExtentInflation"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		initPanelRotateLabel(panelRotateLabel);
+		initPanelRotateLabel();
 		initPanelTextFontSet(panelTextFontSet);
 		initPanelFontHeight(panelFontHeight);
 		initPanelFontWidth(panelFontWide);
@@ -118,12 +118,11 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		initCheckBoxState();
 		initTextFieldAndSpinnerValue();
 		initCheckBoxRotateLabel();
-		panelAdvanceContent.add(this.checkBoxRotateLabel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelAdvanceContent.add(panelRotateLabel,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelTextFontSet,         new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelFontHeight,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelTextExtentInflation, new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelRotateLabel,         new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(panelTextFontSet,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(panelFontHeight,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(panelTextExtentInflation, new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -374,25 +373,29 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	 * 
 	 * @param panelRotateLabel
 	 */
-	private void initPanelRotateLabel(JPanel panelRotateLabel) {
+	private void initPanelRotateLabel() {
 		//@formatter:off
-		panelRotateLabel.setLayout(new GridBagLayout());
+		JPanel panelTemp = new JPanel();
+		// @formatter:off
+		panelTemp.setLayout(new GridBagLayout());
+//		panelRotateLabel.setLayout(new GridBagLayout());
 		this.checkBoxFixedFontAngl.setSelected(true);
 		this.textFieldRepeatInterval.setPreferredSize(textFieldDimension);
 		initComboBoxLineDirection();
 		this.textFieldRepeatInterval.setText("0");
 		this.labelUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		this.labelUnity.setPreferredSize(labelDimension);
-		panelRotateLabel.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.labelLineDirection,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.comboBoxLineDirection,      new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelFontSpace,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelRepeatInterval,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
-		panelRotateLabel.add(this.textFieldRepeatInterval,    new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelRotateLabel.add(this.labelUnity,                 new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,0,2,0));
-		panelRotateLabel.add(this.checkBoxRepeatIntervalFixed,new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.labelLineDirection,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.comboBoxLineDirection,      new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTemp.add(this.labelFontSpace,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTemp.add(this.labelRepeatInterval,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		panelTemp.add(this.textFieldRepeatInterval,    new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTemp.add(this.labelUnity,                 new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,0,2,0));
+		panelTemp.add(this.checkBoxRepeatIntervalFixed,new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
+		this.panelRotateLabel= new CompTitledPane(this.checkBoxRotateLabel, panelTemp);
 		//@formatter:on
 	}
 

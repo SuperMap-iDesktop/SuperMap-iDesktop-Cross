@@ -853,7 +853,7 @@ public class LayersTree extends JTree {
 					firePropertyChangeWithLayerSelect();
 				}
 				updateUI();
-//				currentMap.refresh();
+				currentMap.refresh();
 			}
 		}
 

@@ -94,6 +94,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
+	private JoinItems joinItems;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -105,10 +106,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeRangeContainer(DatasetVector datasetVector, ThemeRange themeRange) {
+	public ThemeRangeContainer(DatasetVector datasetVector, ThemeRange themeRange, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeRange = new ThemeRange(themeRange);
-		this.map = initCurrentTheme(datasetVector);
+		this.map = initCurrentTheme(datasetVector, layer);
 		this.precision = themeRange.getPrecision();
 		this.isNewTheme = true;
 		initComponents();
@@ -134,10 +135,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @param dataset
 	 * @return
 	 */
-	private Map initCurrentTheme(DatasetVector dataset) {
+	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(dataset, themeRange, true);
+			this.joinItems = layer.getDisplayFilter().getJoinItems();
+			// 添加关联字段
+			this.themeRangeLayer.getDisplayFilter().setJoinItems(this.joinItems);
 			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -452,13 +456,29 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
+		JoinItems joinItems = themeRangeLayer.getDisplayFilter().getJoinItems();
+		int itemsCount = joinItems.getCount();
 		int count = this.datasetVector.getFieldCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = this.datasetVector.getFieldInfos().get(j);
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = datasetVector.getName() + "." + fieldInfo.getName();
+				String item = fieldInfo.getName();
 				comboBox.addItem(item);
+			}
+		}
+		for (int i = 0; i < itemsCount; i++) {
+			if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+				DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+				int tempDatasetFieldCount = tempDataset.getFieldCount();
+				for (int j = 0; j < tempDatasetFieldCount; j++) {
+					FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+					if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
+							|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+						String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+						comboBox.addItem(tempDatasetItem);
+					}
+				}
 			}
 		}
 		comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
@@ -491,8 +511,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * 根据当前数据集类型设置颜色方案
 	 *
-	 * @param geoStyle 需要设置的风格
-	 * @param color 设置的颜色
+	 * @param geoStyle
+	 *            需要设置的风格
+	 * @param color
+	 *            设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = this.datasetVector.getType();
@@ -633,9 +655,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow 要重置文本风格的行
-	 * @param nowGeoStyle 新的文本风格
-	 * @param symbolType 文本的风格类型
+	 * @param selectRow
+	 *            要重置文本风格的行
+	 * @param nowGeoStyle
+	 *            新的文本风格
+	 * @param symbolType
+	 *            文本的风格类型
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeRangeItem item = themeRange.getItem(selectRow);
@@ -808,7 +833,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			ThemeRangeItem tempThemeRangeItem = themeRange.getItem(selectRow);
@@ -1112,7 +1138,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 段数小于2，或者段数大于最大值
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeRange.getCount()));
 			} else {
-				ThemeRange theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
+				ThemeRange theme = null;
+				if (rangeExpression.contains(".")) {
+					// 外部连接表字段创建专题图
+					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, joinItems, precision);
+				} else {
+					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
+				}
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
@@ -1308,8 +1340,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			return;
 		}
 		double rangeLength = (double) spinnerRangeLength.getValue();
+		ThemeRange theme = null;
 		if (rangeLength > 0) {
-			ThemeRange theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
+			if (rangeExpression.contains(".")) {
+				// 外部连接表字段创建专题图
+				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, joinItems, precision);
+			} else {
+				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
+			}
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
@@ -1409,7 +1447,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme()) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();
-					nowThemeRange.clear();
+			nowThemeRange.clear();
 			if (0 < this.themeRange.getCount()) {
 				for (int i = 0; i < this.themeRange.getCount(); i++) {
 					nowThemeRange.addToTail(this.themeRange.getItem(i), true);

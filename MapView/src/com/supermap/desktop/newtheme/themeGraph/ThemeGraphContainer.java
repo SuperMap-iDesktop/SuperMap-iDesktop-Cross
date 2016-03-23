@@ -167,10 +167,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ThemeGraphContainer(DatasetVector datasetVector, ThemeGraph themeGraph) {
+	public ThemeGraphContainer(DatasetVector datasetVector, ThemeGraph themeGraph, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeGraph = new ThemeGraph(themeGraph);
-		this.map = initCurrentTheme(datasetVector);
+		this.map = initCurrentTheme(datasetVector, layer);
 		initComponents();
 		initResources();
 		registActionListener();
@@ -187,10 +187,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		registActionListener();
 	}
 
-	private Map initCurrentTheme(DatasetVector datasetVector) {
+	private Map initCurrentTheme(DatasetVector datasetVector, Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeGraphLayer = mapControl.getMap().getLayers().add(datasetVector, themeGraph, true);
+			this.themeGraphLayer.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
 			this.layerName = this.themeGraphLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -445,14 +446,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		// @formatter:off
 		GridBagLayout layout = new GridBagLayout();
 		panelParameterSetting.setLayout(layout);
-		panelParameterSetting.add(this.labelOffsetUnity,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
-		panelParameterSetting.add(this.comboBoxOffsetUnity,new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetX,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
-		panelParameterSetting.add(this.comboBoxOffsetX,    new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(35, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetXUnity,  new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(15, 1).setIpad(20, 0));
-		panelParameterSetting.add(this.labelOffsetY,       new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(50, 1).setIpad(100, 0));
-		panelParameterSetting.add(this.comboBoxOffsetY,    new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(35, 1).setFill(GridBagConstraints.HORIZONTAL));
-		panelParameterSetting.add(this.labelOffsetYUnity,  new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(15, 1).setIpad(20, 0));
+		this.comboBoxOffsetUnity.setPreferredSize(new Dimension(140,23));
+		Dimension textDimension = new Dimension(100,23);
+		this.comboBoxOffsetX.setPreferredSize(textDimension);
+		this.comboBoxOffsetY.setPreferredSize(textDimension);
+		panelParameterSetting.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,0));
+		panelParameterSetting.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
+		panelParameterSetting.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
+		panelParameterSetting.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
+		panelParameterSetting.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelParameterSetting.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
 		// @formatter:on
 	}
 
@@ -516,12 +521,28 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
 		int count = datasetVector.getFieldCount();
+		JoinItems joinItems = this.themeGraphLayer.getDisplayFilter().getJoinItems();
+		int itemsCount = joinItems.getCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
 				String item = datasetVector.getName() + "." + fieldInfo.getName();
 				comboBox.addItem(item);
+			}
+		}
+		for (int i = 0; i < itemsCount; i++) {
+			if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+				DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+				int tempDatasetFieldCount = tempDataset.getFieldCount();
+				for (int j = 0; j < tempDatasetFieldCount; j++) {
+					FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+					if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
+							|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+						String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+						comboBox.addItem(tempDatasetItem);
+					}
+				}
 			}
 		}
 		comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
@@ -652,12 +673,25 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					String caption = expression.substring(expression.lastIndexOf(".") + 1, expression.length());
 					item.setGraphExpression(expression);
 					item.setCaption(caption);
+					resetMapSize();
 					getTable();
 					refreshMapAtOnce();
 					tableGraphInfo.addRowSelectionInterval(selectRow, selectRow);
 				}
 			}
 		}
+	}
+
+	private void resetMapSize() {
+		// 重置最大最小值来适应地图
+		Point pointStart = new Point(0, 0);
+		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 5));
+		Point2D point2DStart = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointStart);
+		Point2D point2DEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointEnd);
+		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
+		this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
+		this.textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
+		this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
 	}
 
 	class LocalDefualTableModel extends DefaultTableModel {
@@ -883,6 +917,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				refreshMapAtOnce();
 				if (tableGraphInfo.getRowCount() == 0) {
 					setToolBarButtonEnable(false);
+					//重置最大，最小和柱宽度
+					textFieldMaxValue.setText("0");
+					textFieldMinValue.setText("0");
+					spinnerBarWidth.setValue(0);
 					buttonAdd.setEnabled(true);
 				}
 				if (selectRow != tableGraphInfo.getRowCount() && tableGraphInfo.getRowCount() > 0) {
@@ -1002,6 +1040,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 						setToolBarButtonEnable(true);
 					}
 				}
+				resetMapSize();
 				getTable();
 				refreshMapAtOnce();
 				if (selectRow >= 0) {
@@ -1497,7 +1536,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					spinnerBarWidth.setEnabled(true);
 					spinnerRoseAngle.setEnabled(false);
 					spinnerStartAngle.setEnabled(false);
-					spinnerBarWidth.setValue(themeGraph.getBarWidth());
 					setPanelEnableAndRefresh(true);
 					break;
 				case 5:
@@ -1505,7 +1543,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					spinnerBarWidth.setEnabled(true);
 					spinnerRoseAngle.setEnabled(false);
 					spinnerStartAngle.setEnabled(false);
-					spinnerBarWidth.setValue(themeGraph.getBarWidth());
 					setPanelEnableAndRefresh(true);
 					break;
 				case 6:
@@ -1545,7 +1582,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					spinnerBarWidth.setEnabled(true);
 					spinnerRoseAngle.setEnabled(false);
 					spinnerStartAngle.setEnabled(false);
-					spinnerBarWidth.setValue(themeGraph.getBarWidth());
 					setPanelEnableAndRefresh(true);
 					break;
 				case 11:
@@ -1571,6 +1607,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 		private void setPanelEnableAndRefresh(boolean enable) {
 			checkBoxAxis.setEnabled(enable);
+			resetMapSize();
 			refreshMapAtOnce();
 		}
 	}

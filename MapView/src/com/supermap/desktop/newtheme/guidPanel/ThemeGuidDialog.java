@@ -1,8 +1,5 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
@@ -11,7 +8,6 @@ import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.mapping.Layer;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -269,10 +265,10 @@ public class ThemeGuidDialog extends SmDialog {
 				} else {
 					// 标签统一风格专题图
 					if (isUniform) {
-						ThemeGuideFactory.buildLabelUnformTheme();
+						ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
 						ThemeGuidDialog.this.dispose();
 					} else if (isRange) {
-						ThemeGuideFactory.buildLabelRangeTheme();
+						ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
 						if (success) {
 							ThemeGuidDialog.this.dispose();
 						}
@@ -298,7 +294,7 @@ public class ThemeGuidDialog extends SmDialog {
 				break;
 			case 1:
 				// 分段专题图
-				buildSuccessed = ThemeGuideFactory.buildRangeTheme();
+				buildSuccessed = ThemeGuideFactory.buildRangeTheme(ThemeUtil.getActiveLayer());
 				if (buildSuccessed) {
 					ThemeGuidDialog.this.dispose();
 				}
@@ -306,10 +302,10 @@ public class ThemeGuidDialog extends SmDialog {
 			case 2:
 				// 标签统一风格专题图
 				if (isUniform) {
-					ThemeGuideFactory.buildLabelUnformTheme();
+					ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 				} else if (isRange) {
-					buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme();
+					buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
 					if (buildSuccessed) {
 						ThemeGuidDialog.this.dispose();
 					}
@@ -317,7 +313,7 @@ public class ThemeGuidDialog extends SmDialog {
 				break;
 			case 3:
 				// 统计专题图
-				buildSuccessed = ThemeGuideFactory.buildGraphTheme();
+				buildSuccessed = ThemeGuideFactory.buildGraphTheme(ThemeUtil.getActiveLayer());
 				if (buildSuccessed) {
 					ThemeGuidDialog.this.dispose();
 				}
@@ -344,7 +340,7 @@ public class ThemeGuidDialog extends SmDialog {
 					isRange = false;
 				} else if (2 == e.getClickCount()) {
 					// 新建标签统一风格专题图
-					ThemeGuideFactory.buildLabelUnformTheme();
+					ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}
@@ -358,7 +354,7 @@ public class ThemeGuidDialog extends SmDialog {
 					isRange = true;
 				} else if (2 == e.getClickCount()) {
 					// 新建分段风格标签专题图
-					ThemeGuideFactory.buildLabelRangeTheme();
+					ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}

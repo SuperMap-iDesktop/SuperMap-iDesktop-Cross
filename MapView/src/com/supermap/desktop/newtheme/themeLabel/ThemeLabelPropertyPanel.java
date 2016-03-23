@@ -73,12 +73,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArray;
 	private Layer themelabelLayer;
 	private String layerName;
-
+	private JoinItems joinItems;
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 
-	public ThemeLabelPropertyPanel(Layer themelabelLayer) {
+
+	public ThemeLabelPropertyPanel(Layer themelabelLayer,JoinItems joinItems) {
+		this.joinItems = joinItems;
 		this.themelabelLayer = themelabelLayer;
 		this.layerName = themelabelLayer.getName();
 		this.datasetVector = (DatasetVector) themelabelLayer.getDataset();
@@ -141,8 +143,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		panelPropertyContent.setLayout(new GridBagLayout());
-		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 0));
-		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(5, 10, 5, 0));
+		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 0).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelBGSet,                   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelOffset,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelEffectSet,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
@@ -328,17 +330,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			this.checkBoxFlowVisual.setSelected(themeLabel.isFlowEnabled());
 		}
 		this.checkBoxShowSubscription.setSelected(themeLabel.isTextExpression());
-
 		this.checkBoxAutoAvoidance.setSelected(themeLabel.isOverlapAvoided());
-
 		this.checkBoxShowSmallLabel.setSelected(themeLabel.isSmallGeometryLabeled());
-
 		this.checkBoxShowLabelVertical.setSelected(themeLabel.isVertical());
-
 		this.checkBoxDraftLine.setSelected(themeLabel.isLeaderLineDisplayed());
-
 		this.comboBoxAutoAvoidance.setEnabled(themeLabel.isOverlapAvoided());
-
 		this.buttonDraftLine.setEnabled(themeLabel.isLeaderLineDisplayed());
 	}
 
@@ -371,23 +367,52 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * @return m_fieldComboBox
 	 */
 	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, int type) {
+		JoinItems joinItems = this.themelabelLayer.getDisplayFilter().getJoinItems();
+		int itemsCount = joinItems.getCount();
 		int count = datasetVector.getFieldCount();
-		comboBoxArray = new ArrayList<String>();
+		this.comboBoxArray = new ArrayList<String>();
 		if (type == LABELEXPRESSION_TYPE) {
 			for (int j = 0; j < count; j++) {
 				FieldInfo tempFieldInfo = datasetVector.getFieldInfos().get(j);
-				String item = datasetVector.getName() + "." + tempFieldInfo.getName();
+				String item = tempFieldInfo.getName();
 				comboBox.addItem(item);
 				comboBoxArray.add(item);
+			}
+			for (int i = 0; i < itemsCount; i++) {
+				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+					DatasetVector dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+					int datasetFieldCount = dataset.getFieldCount();
+					for (int j = 0; j < datasetFieldCount; j++) {
+						String datasetItem = dataset.getFieldInfos().get(j).getName();
+						comboBox.addItem(dataset.getName() + "." + datasetItem);
+						comboBoxArray.add(dataset.getName() + "." + datasetItem);
+					}
+				}
 			}
 		} else {
 			for (int j = 0; j < count; j++) {
 				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 				if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 						|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-					String item = datasetVector.getName() + "." + fieldInfo.getName();
+					String item = fieldInfo.getName();
 					comboBox.addItem(item);
 					comboBoxArray.add(item);
+				}
+			}
+			for (int i = 0; i < itemsCount; i++) {
+				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+					DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+					int tempDatasetFieldCount = tempDataset.getFieldCount();
+					for (int j = 0; j < tempDatasetFieldCount; j++) {
+						FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+						if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32
+								|| tempfieldInfo.getType() == FieldType.INT64 || tempfieldInfo.getType() == FieldType.DOUBLE
+								|| tempfieldInfo.getType() == FieldType.SINGLE) {
+							String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+							comboBox.addItem(tempDatasetItem);
+							comboBoxArray.add(tempDatasetItem);
+						}
+					}
 				}
 			}
 		}
@@ -499,12 +524,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			}
 		}
 	}
+
 	private void refreshAtOnce() {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
 		}
 	}
+
 	class LocalComboBoxItemListener implements ItemListener {
 
 		@Override
@@ -635,9 +662,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		private void setFieldInfo() {
 			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
 			if (comboBoxArray.contains(labelExpression)) {
-				String tempLabelExpression = labelExpression.substring(labelExpression.lastIndexOf(".")+1, labelExpression.length());
-				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(tempLabelExpression);
-				// 控制文本进度下拉框的可使用性
+				DatasetVector dataset = datasetVector;
+				if (labelExpression.contains(".")) {
+					String datasetName = labelExpression.substring(0, labelExpression.indexOf("."));
+					dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(datasetName);
+					labelExpression = labelExpression.substring(labelExpression.indexOf(".") + 1, labelExpression.length());
+				}
+				FieldInfo fieldInfo = dataset.getFieldInfos().get(labelExpression);
+				// 控制数值文本精度下拉框的可使用性
 				if (fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32
 						|| fieldInfo.getType() == FieldType.INT64 || fieldInfo.getType() == FieldType.LONGBINARY) {
 					comboBoxTextPrecision.setEnabled(true);

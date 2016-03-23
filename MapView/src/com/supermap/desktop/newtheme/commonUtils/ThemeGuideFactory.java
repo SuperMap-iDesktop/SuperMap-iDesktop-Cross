@@ -140,7 +140,7 @@ public class ThemeGuideFactory {
 			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
 				success = true;
-				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique,layer);
+				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique, layer);
 				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
 				addPanelToThemeMainContainer(themeUniqueContainer);
 				getDockbarThemeContainer().setVisible(true);
@@ -155,7 +155,7 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建分段专题图
 	 */
-	public static boolean buildRangeTheme() {
+	public static boolean buildRangeTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
 			ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null,
@@ -163,7 +163,7 @@ public class ThemeGuideFactory {
 			if (null != themeRange) {
 				success = true;
 				themeRange.setPrecision(0.1);
-				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange);
+				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange, layer);
 				themeTypeContainer.put(themeRangeContainer.getThemeRangeLayer().getCaption(), themeRangeContainer);
 				addPanelToThemeMainContainer(themeRangeContainer);
 				getDockbarThemeContainer().setVisible(true);
@@ -178,11 +178,12 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建统一风格标签专题图
 	 */
-	public static void buildLabelUnformTheme() {
+	public static void buildLabelUnformTheme(Layer layer) {
 		if (null != getDataset()) {
 			ThemeLabel themeLabel = new ThemeLabel();
+			themeLabel.setLabelExpression("SmUserID");
 			themeLabel.setMaxLabelLength(8);
-			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel);
+			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel, layer);
 			themeTypeContainer.put(themeLabelUniformContainer.getThemeLabelLayer().getCaption(), themeLabelUniformContainer);
 			addPanelToThemeMainContainer(themeLabelUniformContainer);
 			getDockbarThemeContainer().setVisible(true);
@@ -192,13 +193,13 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建分段风格标签专题图
 	 */
-	public static boolean buildLabelRangeTheme() {
+	public static boolean buildLabelRangeTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
 			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
 			if (null != themeLabel && themeLabel.getCount() >= 2) {
 				themeLabel.setMaxLabelLength(8);
-				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel);
+				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel, layer);
 				themeTypeContainer.put(themeLabelRangeContainer.getThemeLabelLayer().getCaption(), themeLabelRangeContainer);
 				addPanelToThemeMainContainer(themeLabelRangeContainer);
 				getDockbarThemeContainer().setVisible(true);
@@ -282,7 +283,7 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建统计专题图
 	 */
-	public static boolean buildGraphTheme() {
+	public static boolean buildGraphTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
 			success = true;
@@ -304,7 +305,7 @@ public class ThemeGuideFactory {
 			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
 			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
-			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph);
+			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph,layer);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
 			addPanelToThemeMainContainer(themeGraphContainer);
 			getDockbarThemeContainer().setVisible(true);

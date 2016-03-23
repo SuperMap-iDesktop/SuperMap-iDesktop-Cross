@@ -1,7 +1,7 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
+import com.supermap.data.JoinItems;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleContainer;
@@ -29,7 +29,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	private transient ThemeLabelPropertyPanel panelProperty;
 	private transient ThemeLabelAdvancePanel panelAdvance;
 
-	private transient DatasetVector datasetVector;
 	private transient Map map;
 	private transient ThemeLabel themeLabel;
 	private transient Layer themeLabelLayer;
@@ -37,20 +36,20 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	private transient TextStyleContainer textStyleContainer;
 
 	private boolean isRefreshAtOnece = true;
-	
+
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
-	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel) {
-		this.datasetVector = datasetVector;
+	private JoinItems joinItems;
+
+	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel, Layer layer) {
 		this.themeLabel = new ThemeLabel(themeLabel);
-		this.map = initCurrentTheme(datasetVector);
+		this.map = initCurrentTheme(datasetVector, layer);
 		initComponents();
 	}
 
 	public ThemeLabelUniformContainer(Layer layer) {
 		this.themeLabelLayer = layer;
 		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
-		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();
 		initComponents();
@@ -61,7 +60,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	 */
 	private void initComponents() {
 		this.setLayout(new GridBagLayout());
-		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
+		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer,this.joinItems);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
 		this.textStyleContainer.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
@@ -71,7 +70,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), textStyleContainer);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
-		this.tabbedPane.setSelectedIndex(1);
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
 				.setWeight(1, 1));
 	}
@@ -82,13 +80,14 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	 * @param dataset
 	 * @return
 	 */
-	private Map initCurrentTheme(DatasetVector dataset) {
+	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
-			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
-			String item = datasetVector.getName() + "." + fieldInfo.getName();
-			((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(item);
+			// 复制关联表信息到新图层中
+			this.joinItems = layer.getDisplayFilter().getJoinItems();
+			this.themeLabelLayer.getDisplayFilter().setJoinItems(this.joinItems);
+			
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
