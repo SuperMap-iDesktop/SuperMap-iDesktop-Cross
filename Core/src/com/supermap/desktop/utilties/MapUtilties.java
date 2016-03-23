@@ -352,7 +352,7 @@ public class MapUtilties {
 		return layer;
 	}
 
-	public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
+/*	public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 		try {
 			if (parent == null) {
 				map.getLayers().add(layer);
@@ -362,7 +362,7 @@ public class MapUtilties {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-	}
+	}*/
 
 	public static void deleteMaps(String[] mapNames) {
 		try {
