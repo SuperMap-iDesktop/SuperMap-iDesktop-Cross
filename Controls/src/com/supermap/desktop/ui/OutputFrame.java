@@ -6,7 +6,6 @@ import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class OutputFrame extends JScrollPane implements IOutput {
-	private static final Log logInfo = LogFactory.getLog("info");
-	private static final Log logException = LogFactory.getLog("exception");
+	private static final Log log = LogFactory.getLog(OutputFrame.class);
 
 	private static final long serialVersionUID = 1L;
 	private transient boolean isShowTime = true;
@@ -152,7 +150,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(String message) {
-		logInfo.info(message);
+		log.info(message);
 		String messageTemp = message;
 		try {
 			if (isShowTime) {
@@ -194,7 +192,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			if (type == InfoType.Information) {
 				output(message);
 			} else {
-				logException.info(message);
+				log.error(message);
 				output(message);
 			}
 		} catch (Exception ex) {

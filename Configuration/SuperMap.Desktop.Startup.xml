@@ -54,7 +54,7 @@
   <projection default="">
   </projection>
   <!--是否自动生成日志，及日志的默认输出路径-->
-  <log logFolder="../log/Desktop/" outputToLog="true">
+  <log logFolder="./log/Desktop/" outputToLog="true">
   </log>
   <!--输出信息的级别-->
   <InfoType Exception="true" Information="true" Action = "true">
