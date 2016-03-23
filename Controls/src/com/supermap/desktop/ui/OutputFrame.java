@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
+import com.supermap.desktop.utilties.LogUtilties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -150,7 +151,34 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(String message) {
-		log.info(message);
+		output(message, true);
+
+	}
+
+	@Override
+	public void output(Exception exception) {
+		try {
+			LogUtilties.error(exception.getMessage(), exception);
+			output(exception.getMessage(), InfoType.Exception);
+			StackTraceElement[] elements = exception.getStackTrace();
+			for (int i = 0; i < elements.length; i++) {
+				output(elements[i].toString(), InfoType.Exception);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	/**
+	 * 输出信息，判断是否打印log日志
+	 *
+	 * @param message
+	 * @param isOutputLog
+	 */
+	private void output(String message, boolean isOutputLog) {
+		if (isOutputLog) {
+			LogUtilties.outPut(message);
+		}
 		String messageTemp = message;
 		try {
 			if (isShowTime) {
@@ -169,20 +197,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 		}
 	}
 
-	@Override
-	public void output(Exception exception) {
-		try {
-			output(exception.getMessage(), InfoType.Exception);
-			StackTraceElement[] elements = exception.getStackTrace();
-			for (int i = 0; i < elements.length; i++) {
-				output(elements[i].toString(), InfoType.Exception);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	public void TimeShowStateChange() {
+	public void timeShowStateChange() {
 		isShowTime = !isShowTime;
 	}
 
@@ -190,10 +205,9 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	public void output(String message, InfoType type) {
 		try {
 			if (type == InfoType.Information) {
-				output(message);
+				output(message, true);
 			} else {
-				log.error(message);
-				output(message);
+				output(message, false);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

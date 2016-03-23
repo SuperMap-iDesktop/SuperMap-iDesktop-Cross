@@ -1,23 +1,23 @@
 package com.supermap.desktop.ui;
 
-import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-
-import java.awt.Component;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
 
 /**
  * 通用UI工具类
@@ -205,9 +205,11 @@ public class UICommonToolkit {
 
 	public static void showMessageDialog(String message) {
 		try {
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			JOptionPane.showMessageDialog((java.awt.Component) parent, message, CoreProperties.getString("String_MessageBox_Title"),
-					JOptionPane.INFORMATION_MESSAGE);
+			SmOptionPane smOptionPane = new SmOptionPane();
+			smOptionPane.showMessageDialog(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//					JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -216,7 +218,7 @@ public class UICommonToolkit {
 	public static void showErrorMessageDialog(String message) {
 		try {
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			JOptionPane.showMessageDialog((java.awt.Component) parent, message, CommonProperties.getString("String_Error"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(parent, message, CommonProperties.getString("String_Error"), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -230,7 +232,7 @@ public class UICommonToolkit {
 		int result = 0;
 		try {
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog((java.awt.Component) parent, message, CoreProperties.getString("String_MessageBox_Title"),
+			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -247,7 +249,7 @@ public class UICommonToolkit {
 		int result = 0;
 		try {
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog((java.awt.Component) parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			result = JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -258,7 +260,7 @@ public class UICommonToolkit {
 		int result = 0;
 		try {
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog((java.awt.Component) parent, message, CoreProperties.getString("String_MessageBox_Title"),
+			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration>
-    <appender name="myConsole" class="org.apache.log4j.ConsoleAppender">
+    <appender name="myConsole" class="org.apache.log4j.ConsoleAppender"><!--没用到这个-->
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
                    value="[%d{yyyy/dd/HH:mm:ss,SSS\} %-5p] %l - %m%n"/>
@@ -22,7 +22,7 @@
         <param name="MaxFileSize" value="1023KB"/>
         <layout class="org.apache.log4j.PatternLayout">
             <!--输出格式-->
-            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] %30C{1}  - %m%n"/>
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss:SSS\} %-5p] %m%n"/>
         </layout>
     </appender>
 

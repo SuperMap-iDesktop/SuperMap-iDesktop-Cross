@@ -14,7 +14,7 @@ public class CtrlActionOutputTime extends CtrlAction {
 
 	@Override
 	public void run() {
-		((OutputFrame) Application.getActiveApplication().getOutput()).TimeShowStateChange();
+		((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
 	}
 
 	@Override
