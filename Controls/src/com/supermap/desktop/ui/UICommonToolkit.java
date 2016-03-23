@@ -5,7 +5,6 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMain;
-import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DockbarManager;
@@ -205,11 +204,11 @@ public class UICommonToolkit {
 
 	public static void showMessageDialog(String message) {
 		try {
-			SmOptionPane smOptionPane = new SmOptionPane();
-			smOptionPane.showMessageDialog(message);
-//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-//			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
-//					JOptionPane.INFORMATION_MESSAGE);
+//			SmOptionPane smOptionPane = new SmOptionPane();
+//			smOptionPane.showMessageDialog(message);
+			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+					JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
