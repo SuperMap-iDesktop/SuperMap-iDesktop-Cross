@@ -352,7 +352,8 @@ public class MapUtilties {
 		return layer;
 	}
 
-/*	public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
+/*没有使用
+public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 		try {
 			if (parent == null) {
 				map.getLayers().add(layer);
