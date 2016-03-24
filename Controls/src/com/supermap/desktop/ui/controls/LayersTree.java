@@ -1036,6 +1036,9 @@ public class LayersTree extends JTree {
 	}
 
 	private SymbolType getSymbolType(Dataset dataset) {
+		if (dataset == null) {
+			return SymbolType.MARKER;
+		}
 		SymbolType symbolType = SymbolType.MARKER;
 		if (CommonToolkit.DatasetTypeWrap.isPoint(dataset.getType())) {
 			symbolType = SymbolType.MARKER;

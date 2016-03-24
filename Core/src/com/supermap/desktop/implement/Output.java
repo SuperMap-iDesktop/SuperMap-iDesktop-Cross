@@ -110,4 +110,9 @@ public class Output implements IOutput {
 
 	}
 
+	@Override
+	public void output(Throwable e) {
+		// TODO Auto-generated method stub
+
+	}
 }

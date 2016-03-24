@@ -325,32 +325,33 @@ public class MapUtilties {
 		return layer;
 	}
 
-	/**
-	 * 添加指定数据集到地图中
-	 * 
-	 * @param map
-	 * @param dataset
-	 * @param parent
-	 * @param addToHead
-	 * @return
-	 */
-	public static Layer addDatasetToMap(Map map, Dataset dataset, LayerGroup parent, boolean addToHead) {
-		Layer layer = null;
-		try {
-			if (dataset != null) {
-				layer = addDatasetToMap(map, dataset, addToHead);
-
-				// 将图层移动到分组中
-				if (parent != null) {
-					parent.add(layer);
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-
-		return layer;
-	}
+// 直接添加到LayerGroup中在对网络数据集操作时子数据集图层没有移动
+// /**
+//	 * 添加指定数据集到地图中
+//	 *
+//	 * @param map
+//	 * @param dataset
+//	 * @param parent
+//	 * @param addToHead
+//	 * @return
+//	 */
+//	public static Layer addDatasetToMap(Map map, Dataset dataset, LayerGroup parent, boolean addToHead) {
+//		Layer layer = null;
+//		try {
+//			if (dataset != null) {
+//				layer = addDatasetToMap(map, dataset, addToHead);
+//
+//				// 将图层移动到分组中
+//				if (parent != null) {
+//					parent.add(layer);
+//				}
+//			}
+//		} catch (Exception ex) {
+//			Application.getActiveApplication().getOutput().output(ex);
+//		}
+//
+//		return layer;
+//	}
 
 /*没有使用
 public static void AddLayer(Map map, LayerGroup parent, Layer layer) {

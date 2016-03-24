@@ -38,7 +38,7 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
 			}
 
-			if (rectangle2D.getHeight() > 0) {
+			if (rectangle2D != null && rectangle2D.getHeight() > 0) {
 				formMap.getMapControl().getMap().setViewBounds(rectangle2D);
 			} else {
 				formMap.getMapControl().getMap().setCenter(new Point2D(0, 0));

@@ -86,4 +86,5 @@ public interface IOutput {
 	 */
 	void clearOutput();
 
+	void output(Throwable e);
 }

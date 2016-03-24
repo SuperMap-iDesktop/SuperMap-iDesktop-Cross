@@ -161,11 +161,21 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			LogUtilties.error(exception.getMessage(), exception);
 			output(exception.getMessage(), InfoType.Exception);
 			StackTraceElement[] elements = exception.getStackTrace();
-			for (int i = 0; i < elements.length; i++) {
-				output(elements[i].toString(), InfoType.Exception);
+			for (StackTraceElement element : elements) {
+				output(element.toString(), InfoType.Exception);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	@Override
+	public void output(Throwable e) {
+		LogUtilties.error(e.getMessage(), e);
+		output(e.getMessage(), InfoType.Exception);
+		StackTraceElement[] elements = e.getStackTrace();
+		for (StackTraceElement element : elements) {
+			output(element.toString(), InfoType.Exception);
 		}
 	}
 

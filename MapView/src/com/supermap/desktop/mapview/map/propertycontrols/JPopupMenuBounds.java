@@ -1,32 +1,10 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.border.LineBorder;
-import javax.xml.bind.Marshaller.Listener;
-
 import com.supermap.data.GeoCompound;
 import com.supermap.data.GeoEllipse;
 import com.supermap.data.GeoPie;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -43,6 +21,18 @@ import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class JPopupMenuBounds extends JPopupMenu {
 
@@ -260,6 +250,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	 * 清除全幅显示
 	 */
 	private void clearFullShowBoundsClicked() {
+		// TODO: 2016/3/23 清除全幅显示
 		this.rectangle2d = Rectangle2D.getEMPTY();
 		this.changeSupport.firePropertyChange(this.moduleName, null, this.rectangle2d);
 	}
