@@ -38,7 +38,7 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
 			}
 
-			if (rectangle2D.getHeight() > 0) {
+			if (rectangle2D != null && rectangle2D.getHeight() > 0) {
 				formMap.getMapControl().getMap().setViewBounds(rectangle2D);
 			} else {
 				formMap.getMapControl().getMap().setCenter(new Point2D(0, 0));
@@ -51,22 +51,25 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean enable = false;
 		LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+		Rectangle2D rectangle2D = null;
+		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+
 		if (layersTree != null && layersTree.getSelectionPaths() != null && layersTree.getSelectionPaths().length == 1) {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) layersTree.getSelectionPaths()[0].getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 			if (selectedNodeData != null && selectedNodeData.getData() != null && selectedNodeData.getData() instanceof Layer) {
 				Layer layer = (Layer) selectedNodeData.getData();
 				if (layer != null) {
-					if (layer.getDataset() != null) {
-						enable = true;
-					} else if (layer instanceof LayerGroup && ((LayerGroup) layer).getCount() > 0) {
-						enable = true;
+
+					if (layer instanceof LayerGroup) {
+						rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
+					} else {
+						rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
 					}
 				}
 			}
 		}
-		return enable;
+		return rectangle2D != null;
 	}
 }

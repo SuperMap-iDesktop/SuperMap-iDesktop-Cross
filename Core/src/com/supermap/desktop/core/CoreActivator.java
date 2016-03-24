@@ -2,10 +2,10 @@ package com.supermap.desktop.core;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.exception.SmUncaughtExceptionHandler;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.LogUtilties;
 import com.supermap.desktop.utilties.SplashScreenUtilties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -21,7 +21,6 @@ public class CoreActivator implements BundleActivator {
 
 	ServiceRegistration<?> registration;
 	CoreServiceTracker serviceTracker;
-	private static Log log = LogFactory.getLog(CoreActivator.class.getName());
 
 	/*
 	 * (non-Javadoc)
@@ -30,8 +29,11 @@ public class CoreActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		log.info("------------------------------");
-		log.info(CoreProperties.getString("String_DesktopStarting"));
+
+		// 设置没有被捕捉的异常的处理方法
+		Thread.setDefaultUncaughtExceptionHandler(new SmUncaughtExceptionHandler());
+		LogUtilties.outPut(LogUtilties.getSeparator());
+		LogUtilties.outPut(CoreProperties.getString("String_DesktopStarting"));
 		SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
 		if (splashScreenUtiltiesInstance != null) {
 			SplashScreenUtilties.setBundleCount(context.getBundles().length);

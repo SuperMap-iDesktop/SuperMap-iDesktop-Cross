@@ -5,6 +5,7 @@ import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.LogUtilties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
@@ -27,9 +28,9 @@ public class DesktopActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+
 		System.out.println("Hello SuperMap === iDesktop!!");
-		log.info(CoreProperties.getString("String_DesktopStartFinished"));
-//		log.debug("asd");
+		LogUtilties.outPut(CoreProperties.getString("String_DesktopStartFinished"));
 		DesktopActivator.setContext(bundleContext);
 		MainFrame mainFrame = new MainFrame();
 		Application.getActiveApplication().setMainFrame(mainFrame);
@@ -39,6 +40,7 @@ public class DesktopActivator implements BundleActivator {
 			UICommonToolkit.showMessageDialog(DesktopProperties.getString("PermissionCheckFailed"));
 			System.exit(0);
 		} else {
+//			UICommonToolkit.showMessageDialog(DesktopProperties.getString("PermissionCheckFailed"));
 			formMain.loadUI();
 		}
 	}

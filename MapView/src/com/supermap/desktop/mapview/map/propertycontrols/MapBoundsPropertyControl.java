@@ -650,6 +650,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		try {
 			this.isViewBoundsLocked = this.checkBoxIsViewBoundsLocked.isSelected();
 			this.buttonSetLockedViewBounds.setEnabled(this.isViewBoundsLocked);
+			if (this.lockedViewBounds.getHeight() == 0 && this.lockedViewBounds.getWidth() == 0 && getMap().getBounds().getWidth() > 0 && getMap().getBounds().getHeight() > 0) {
+				this.lockedViewBounds = getMap().getBounds();
+			}
 			verify();
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);

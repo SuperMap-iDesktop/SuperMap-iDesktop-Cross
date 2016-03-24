@@ -79,7 +79,6 @@ public class SmFileChoose extends JFileChooser {
 
 	/**
 	 * 根据配置文件生成文件选择器
-	 *
 	 */
 
 	public static Document getDocumentFileChoose() {
@@ -338,14 +337,14 @@ public class SmFileChoose extends JFileChooser {
 				}
 			}
 			fileFilters = allFileFilter.toString().split("\\+");
-		} else if(this.getFileFilter() instanceof FileNameExtensionFilter){
+		} else if (this.getFileFilter() instanceof FileNameExtensionFilter) {
 			fileFilters = ((FileNameExtensionFilter) this.getFileFilter()).getExtensions();
 		}
 		// 文件过滤器为空直接返回当前选择的
 		if (fileFilters == null || fileFilters.length <= 0) {
 			this.filePath = this.getSelectedFile().getAbsolutePath();
 			this.fileName = this.getSelectedFile().getName();
-			if(getSelectedFiles().length>0){
+			if (getSelectedFiles().length > 0) {
 				selectFileNames = new String[getSelectedFiles().length];
 				for (int i = 0; i < getSelectedFiles().length; i++) {
 					selectFileNames[i] = getSelectedFiles()[i].getName();
