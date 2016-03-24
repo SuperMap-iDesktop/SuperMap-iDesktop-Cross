@@ -60,7 +60,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	 */
 	private void initComponents() {
 		this.setLayout(new GridBagLayout());
-		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer,this.joinItems);
+		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
 		this.textStyleContainer.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);

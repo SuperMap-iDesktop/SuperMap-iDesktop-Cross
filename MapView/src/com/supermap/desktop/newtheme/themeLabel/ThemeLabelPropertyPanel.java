@@ -7,9 +7,9 @@ import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -30,10 +30,6 @@ import java.util.ArrayList;
 public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final int LABELEXPRESSION_TYPE = 1;
-	private static final int OFFSETX_TYPE = 2;
-	private static final int OFFSETY_TYPE = 3;
 
 	private JLabel labelLabelExpression = new JLabel();
 	private JComboBox<String> comboBoxLabelExpression = new JComboBox<String>();
@@ -70,17 +66,16 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private transient Map map;
 	private transient SymbolType symbolType;
 	private boolean isRefreshAtOnce = true;
-	private ArrayList<String> comboBoxArray;
+	private ArrayList<String> comboBoxArray = new ArrayList<String>();
+	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
+	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 	private Layer themelabelLayer;
 	private String layerName;
-	private JoinItems joinItems;
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 
-
-	public ThemeLabelPropertyPanel(Layer themelabelLayer,JoinItems joinItems) {
-		this.joinItems = joinItems;
+	public ThemeLabelPropertyPanel(Layer themelabelLayer) {
 		this.themelabelLayer = themelabelLayer;
 		this.layerName = themelabelLayer.getName();
 		this.datasetVector = (DatasetVector) themelabelLayer.getDataset();
@@ -138,7 +133,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initPanelLabelEffectSet(panelLabelEffectSet);
 		this.comboBoxLabelExpression.setEditable(true);
 		initComboBoxLabelExpression();
-		getFieldComboBox(comboBoxLabelExpression, LABELEXPRESSION_TYPE);
+		ThemeUtil.getFieldComboBox(comboBoxLabelExpression, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, false);
 		//@formatter:off
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
@@ -156,8 +151,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
 		}
+		expression = expression.substring(expression.indexOf(".") + 1, expression.length());
 		this.comboBoxLabelExpression.setSelectedItem(expression);
-		if (this.comboBoxLabelExpression.getSelectedItem() != expression) {
+		if (!expression.equals(this.comboBoxLabelExpression.getSelectedItem().toString())) {
 			this.comboBoxLabelExpression.addItem(expression);
 			this.comboBoxLabelExpression.setSelectedItem(expression);
 		}
@@ -264,7 +260,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		getFieldComboBox(this.comboBoxOffsetX, OFFSETX_TYPE);
+		ThemeUtil.getFieldComboBox(this.comboBoxOffsetX, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetX, true);
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeLabel.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
@@ -281,7 +277,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
-		getFieldComboBox(this.comboBoxOffsetY, OFFSETY_TYPE);
+		ThemeUtil.getFieldComboBox(this.comboBoxOffsetY, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetY, true);
 		this.comboBoxOffsetY.addItem("0");
 		String offsetY = themeLabel.getOffsetY();
 		if (StringUtilties.isNullOrEmpty(offsetY)) {
@@ -362,65 +358,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	}
 
 	/**
-	 * 表达式
-	 *
-	 * @return m_fieldComboBox
-	 */
-	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, int type) {
-		JoinItems joinItems = this.themelabelLayer.getDisplayFilter().getJoinItems();
-		int itemsCount = joinItems.getCount();
-		int count = datasetVector.getFieldCount();
-		this.comboBoxArray = new ArrayList<String>();
-		if (type == LABELEXPRESSION_TYPE) {
-			for (int j = 0; j < count; j++) {
-				FieldInfo tempFieldInfo = datasetVector.getFieldInfos().get(j);
-				String item = tempFieldInfo.getName();
-				comboBox.addItem(item);
-				comboBoxArray.add(item);
-			}
-			for (int i = 0; i < itemsCount; i++) {
-				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
-					DatasetVector dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
-					int datasetFieldCount = dataset.getFieldCount();
-					for (int j = 0; j < datasetFieldCount; j++) {
-						String datasetItem = dataset.getFieldInfos().get(j).getName();
-						comboBox.addItem(dataset.getName() + "." + datasetItem);
-						comboBoxArray.add(dataset.getName() + "." + datasetItem);
-					}
-				}
-			}
-		} else {
-			for (int j = 0; j < count; j++) {
-				FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
-				if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
-						|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-					String item = fieldInfo.getName();
-					comboBox.addItem(item);
-					comboBoxArray.add(item);
-				}
-			}
-			for (int i = 0; i < itemsCount; i++) {
-				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
-					DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
-					int tempDatasetFieldCount = tempDataset.getFieldCount();
-					for (int j = 0; j < tempDatasetFieldCount; j++) {
-						FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
-						if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32
-								|| tempfieldInfo.getType() == FieldType.INT64 || tempfieldInfo.getType() == FieldType.DOUBLE
-								|| tempfieldInfo.getType() == FieldType.SINGLE) {
-							String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
-							comboBox.addItem(tempDatasetItem);
-							comboBoxArray.add(tempDatasetItem);
-						}
-					}
-				}
-			}
-		}
-		comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
-		return comboBox;
-	}
-
-	/**
 	 * 注册事件
 	 */
 	public void registActionListener() {
@@ -465,66 +402,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.comboBoxTextPrecision.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
 	}
 
-	/**
-	 * 获取表达式项
-	 *
-	 * @param jComboBoxField
-	 */
-	private void getSqlExpression(JComboBox<String> jComboBoxField, int type) {
-		// 判断是否为“表达式”项
-		if (MapViewProperties.getString("String_Combobox_Expression").equals(jComboBoxField.getSelectedItem())) {
-			SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
-			int allItems = jComboBoxField.getItemCount();
-			Dataset[] datasets = new Dataset[1];
-			datasets[0] = datasetVector;
-			DialogResult dialogResult = null;
-			ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
-			fieldTypes.add(FieldType.INT16);
-			fieldTypes.add(FieldType.INT32);
-			fieldTypes.add(FieldType.INT64);
-			fieldTypes.add(FieldType.DOUBLE);
-			fieldTypes.add(FieldType.SINGLE);
-			if (type == LABELEXPRESSION_TYPE) {
-				dialogResult = sqlDialog.showDialog(themeLabel.getLabelExpression(), datasets);
-			} else if (type == OFFSETX_TYPE) {
-				dialogResult = sqlDialog.showDialog(datasets, fieldTypes, themeLabel.getOffsetX());
-			} else {
-				dialogResult = sqlDialog.showDialog(datasets, fieldTypes, themeLabel.getOffsetY());
-			}
-			if (null != dialogResult && dialogResult == DialogResult.OK) {
-				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-				if (filter != null && !filter.isEmpty()) {
-					jComboBoxField.insertItemAt(filter, allItems - 1);
-					jComboBoxField.setSelectedIndex(allItems - 1);
-				} else {
-					resetComboBoxSelectItem(type, jComboBoxField);
-				}
-			} else {
-				resetComboBoxSelectItem(type, jComboBoxField);
-			}
-
-		}
-
-	}
-
-	private void resetComboBoxSelectItem(int type, JComboBox<String> jComboBoxField) {
-		if (type == LABELEXPRESSION_TYPE) {
-			jComboBoxField.setSelectedItem(themeLabel.getLabelExpression());
-		} else if (type == OFFSETX_TYPE) {
-			if (!StringUtilties.isNullOrEmpty(themeLabel.getOffsetX())) {
-				jComboBoxField.setSelectedItem(themeLabel.getOffsetX());
-			} else {
-				jComboBoxField.setSelectedItem(0);
-			}
-		} else {
-			if (!StringUtilties.isNullOrEmpty(themeLabel.getOffsetY())) {
-				jComboBoxField.setSelectedItem(themeLabel.getOffsetY());
-			} else {
-				jComboBoxField.setSelectedItem(0);
-			}
-		}
-	}
-
 	private void refreshAtOnce() {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce) {
@@ -537,11 +414,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
+				Dataset[] datasets = ThemeUtil.getDatasets(themelabelLayer, datasetVector);
 				if (e.getSource() == comboBoxLabelExpression) {
 					// sql表达式
-					getSqlExpression(comboBoxLabelExpression, LABELEXPRESSION_TYPE);
-					// 设置标签表达式
-					setFieldInfo();
+					boolean isLabelExpressionChanged = ThemeUtil.getSqlExpression(comboBoxLabelExpression, datasets, comboBoxArray,themeLabel.getLabelExpression(), false);
+					if (isLabelExpressionChanged) {
+						// 设置标签表达式
+						setFieldInfo();
+					}
 				} else if (e.getSource() == comboBoxBGShape) {
 					// 设置背景形状
 					setBackgroundShap();
@@ -549,13 +429,25 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					// 设置偏移量单位
 					setOffsetUnity();
 				} else if (e.getSource() == comboBoxOffsetX) {
-					// 设置水平偏移量
-					getSqlExpression(comboBoxOffsetX, OFFSETX_TYPE);
-					setOffsetX();
+					String offsetXExpression = themeLabel.getOffsetX();
+					if (StringUtilties.isNullOrEmpty(offsetXExpression)) {
+						offsetXExpression = "0";
+					}
+					boolean isOffsetXExpressionChanged = ThemeUtil.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, offsetXExpression, true);
+					if (isOffsetXExpressionChanged) {
+						// 设置水平偏移量
+						setOffsetX();
+					}
 				} else if (e.getSource() == comboBoxOffsetY) {
-					// 设置垂直偏移量
-					getSqlExpression(comboBoxOffsetY, OFFSETY_TYPE);
-					setOffsetY();
+					String offsetYExpression = themeLabel.getOffsetY();
+					if (StringUtilties.isNullOrEmpty(offsetYExpression)) {
+						offsetYExpression = "0";
+					}
+					boolean isOffsetYExpressionChanged = ThemeUtil.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, offsetYExpression, true);
+					if (isOffsetYExpressionChanged) {
+						// 设置垂直偏移量
+						setOffsetY();
+					}
 				} else if (e.getSource() == comboBoxAutoAvoidance) {
 					// 设置文本自动避让方式
 					setAutoAvoidanceStyle();
@@ -593,7 +485,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setOffsetY() {
 			String expression = comboBoxOffsetY.getSelectedItem().toString();
-			themeLabel.setOffsetY(expression);
+			if (expression.contains(".")) {
+				themeLabel.setOffsetY(expression);
+			} else {
+				themeLabel.setOffsetY(datasetVector.getName() + "." + expression);
+			}
 		}
 
 		/**
@@ -601,7 +497,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setOffsetX() {
 			String expression = comboBoxOffsetX.getSelectedItem().toString();
-			themeLabel.setOffsetX(expression);
+			if (expression.contains(".")) {
+				themeLabel.setOffsetX(expression);
+			} else {
+				themeLabel.setOffsetX(datasetVector.getName() + "." + expression);
+			}
 		}
 
 		/**
@@ -663,12 +563,13 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
 			if (comboBoxArray.contains(labelExpression)) {
 				DatasetVector dataset = datasetVector;
+				String fieldName = labelExpression;
 				if (labelExpression.contains(".")) {
 					String datasetName = labelExpression.substring(0, labelExpression.indexOf("."));
 					dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(datasetName);
-					labelExpression = labelExpression.substring(labelExpression.indexOf(".") + 1, labelExpression.length());
+					fieldName = labelExpression.substring(labelExpression.indexOf(".")+1, labelExpression.length());
 				}
-				FieldInfo fieldInfo = dataset.getFieldInfos().get(labelExpression);
+				FieldInfo fieldInfo = dataset.getFieldInfos().get(fieldName);
 				// 控制数值文本精度下拉框的可使用性
 				if (fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32
 						|| fieldInfo.getType() == FieldType.INT64 || fieldInfo.getType() == FieldType.LONGBINARY) {
@@ -676,6 +577,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				} else {
 					comboBoxTextPrecision.setEnabled(false);
 				}
+			}
+			if (!labelExpression.contains(".")) {
+				labelExpression = datasetVector.getName() + "." + labelExpression;
 			}
 			themeLabel.setLabelExpression(labelExpression);
 		}

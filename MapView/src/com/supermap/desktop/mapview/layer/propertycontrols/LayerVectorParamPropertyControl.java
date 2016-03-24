@@ -1,5 +1,6 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.JoinItems;
 import com.supermap.desktop.Application;
@@ -13,6 +14,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
@@ -32,10 +34,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 /**
  * 显示过滤条件、对象显示顺序、设置图层关联属性表因为有额外的功能界面要开发实现，暂缓
@@ -69,6 +71,8 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	private JButton buttonDisplayFilter;
 	private JComboBox<String> comboBoxOrder;
 	private JButton buttonJoinItem;
+	private ArrayList<Dataset> datasets;
+	
 	DocumentListener documentListener = new DocumentListener() {
 
 		@Override
@@ -114,7 +118,11 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			IFormMap iFormMap = Application.getActiveApplication().getActiveForm() instanceof IFormMap ? ((IFormMap) Application.getActiveApplication()
 					.getActiveForm()) : null;
 			if (iFormMap != null) {
-				DialogResult dialogResult = sqlDialog.showDialog("", getModifiedLayerPropertyModel().getDataset());
+				if (null==datasets) {
+					datasets = new ArrayList<Dataset>();
+					datasets.add(getModifiedLayerPropertyModel().getDataset());
+				}
+				DialogResult dialogResult = sqlDialog.showDialog("", datasets.toArray(new Dataset[datasets.size()]));
 				if (dialogResult == DialogResult.OK) {
 					String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 
@@ -488,14 +496,21 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	protected void setJoinItems() {
 		JoinItems joinItems = getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
+		this.datasets = new ArrayList<Dataset>();
 		JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
-		jDialogJoinItem.setCurrentDataset(getLayerPropertyModel().getLayers()[0].getDataset());
+		Dataset dataset = getModifiedLayerPropertyModel().getDataset();
+		this.datasets.add(dataset);
+		jDialogJoinItem.setCurrentDataset(dataset);
 		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
 			// 修改属性并销毁
 			joinItems = jDialogJoinItem.getJoinItems();
+			for (int i = 0; i < joinItems.getCount(); i++) {
+				this.datasets.add(dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()));
+			}
 			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
 			jDialogJoinItem.dispose();
 			joinItems.dispose();
+			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged();
 		}
 	}
 }

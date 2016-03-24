@@ -602,7 +602,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				buttonSplit.setEnabled(false);
 			}
 
-			if (selectedRows.length >= 2 && MathUtilties.isContiuityArray(selectedRows)) {
+			if (selectedRows.length >= 2 && MathUtilties.isContinuouslyArray(selectedRows)) {
 				buttonMerge.setEnabled(true);
 			} else {
 				buttonMerge.setEnabled(false);

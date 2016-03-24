@@ -3,7 +3,11 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -38,6 +42,24 @@ public class SmDialog extends JDialog implements WindowListener {
 		this.setDialogResult(DialogResult.APPLY);
 		this.setVisible(true);
 		return this.getDialogResult();
+	}
+
+	/**
+	 * 覆盖父类的方法。实现自己的添加了ESCAPE键监听
+	 */
+	@Override
+	protected JRootPane createRootPane() {
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		JRootPane rootPane = new JRootPane();
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+		return rootPane;
 	}
 
 	protected transient DialogResult dialogResult = DialogResult.APPLY;

@@ -816,6 +816,10 @@ public class LayersTree extends JTree {
 		firePropertyChange("LayerChange", null, null);
 	}
 
+	public void fireLayerPropertyChanged(){
+		firePropertyChange("LayerPropertyChanged", null, null);
+	}
+	
 	public void layerRemoved() {
 		firePropertyChange("LayerRemoved", null, null);
 	}

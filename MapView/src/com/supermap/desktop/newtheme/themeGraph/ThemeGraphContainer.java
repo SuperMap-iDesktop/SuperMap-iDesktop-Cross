@@ -1,7 +1,6 @@
 package com.supermap.desktop.newtheme.themeGraph;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,7 +21,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import com.supermap.data.*;
@@ -33,6 +31,7 @@ import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -163,6 +162,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private PropertyChangeListener layerPropertyChangeListener = new LayersTreeChangeListener();
 	private MouseListener tableMouseListener = new TableMouseListener();
 	protected TextStyleDialog textStyleDialog;
+	private ArrayList<String> comboBoxArray = new ArrayList<String>();
+	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
+	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 
 	/**
 	 * @wbp.parser.constructor
@@ -481,7 +483,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxOffsetX() {
 		this.comboBoxOffsetX.setEditable(true);
-		getFieldComboBox(this.comboBoxOffsetX);
+		ThemeUtil.getFieldComboBox(comboBoxOffsetX, datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetX, true);
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeGraph.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
@@ -500,7 +502,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxOffsetY() {
 		this.comboBoxOffsetY.setEditable(true);
-		getFieldComboBox(this.comboBoxOffsetY);
+		ThemeUtil.getFieldComboBox(comboBoxOffsetY, datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetY, true);
 		this.comboBoxOffsetY.addItem("0");
 		String offsetY = themeGraph.getOffsetY();
 		if (StringUtilties.isNullOrEmpty(offsetY)) {
@@ -514,40 +516,40 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	}
 
-	/**
-	 * 表达式
-	 *
-	 * @return m_fieldComboBox
-	 */
-	private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
-		int count = datasetVector.getFieldCount();
-		JoinItems joinItems = this.themeGraphLayer.getDisplayFilter().getJoinItems();
-		int itemsCount = joinItems.getCount();
-		for (int j = 0; j < count; j++) {
-			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
-			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
-					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = datasetVector.getName() + "." + fieldInfo.getName();
-				comboBox.addItem(item);
-			}
-		}
-		for (int i = 0; i < itemsCount; i++) {
-			if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
-				DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
-				int tempDatasetFieldCount = tempDataset.getFieldCount();
-				for (int j = 0; j < tempDatasetFieldCount; j++) {
-					FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
-					if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
-							|| tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
-						String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
-						comboBox.addItem(tempDatasetItem);
-					}
-				}
-			}
-		}
-		comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
-		return comboBox;
-	}
+	// /**
+	// * 表达式
+	// *
+	// * @return m_fieldComboBox
+	// */
+	// private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
+	// int count = datasetVector.getFieldCount();
+	// JoinItems joinItems = this.themeGraphLayer.getDisplayFilter().getJoinItems();
+	// int itemsCount = joinItems.getCount();
+	// for (int j = 0; j < count; j++) {
+	// FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
+	// if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
+	// || fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
+	// String item = fieldInfo.getName();
+	// comboBox.addItem(item);
+	// }
+	// }
+	// for (int i = 0; i < itemsCount; i++) {
+	// if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
+	// DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+	// int tempDatasetFieldCount = tempDataset.getFieldCount();
+	// for (int j = 0; j < tempDatasetFieldCount; j++) {
+	// FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
+	// if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
+	// || tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
+	// String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
+	// comboBox.addItem(tempDatasetItem);
+	// }
+	// }
+	// }
+	// }
+	// comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
+	// return comboBox;
+	// }
 
 	private void initpanelSizeLimite(JPanel panelSizeLimite) {
 		this.textFieldMaxValue.setText(String.valueOf(this.themeGraph.getMaxGraphSize()));
@@ -623,14 +625,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		TableRowCellEditor rowEditor = new TableRowCellEditor(tableGraphInfo);
 		for (int i = 0; i < this.graphCount; i++) {
 			ThemeGraphItem item = themeGraph.getItem(i);
-			final String expression = item.getGraphExpression();
+			String expression = item.getGraphExpression();
+			if (expression.indexOf(".") > 0 && expression.substring(0, expression.indexOf(".")).equals(datasetVector.getName())
+					&& expression.split("\\.").length < 2) {
+				expression = expression.substring(expression.indexOf(".") + 1, expression.length());
+			}
 			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
 			this.tableGraphInfo.setValueAt(item.getCaption(), i, TABLE_COLUMN_CAPTION);
 			fieldComboBox = new SteppedComboBox(new String[] {});
 			fieldComboBox.removeAllItems();
-			getFieldComboBox(fieldComboBox);
+			ThemeUtil.getFieldComboBox(fieldComboBox, datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true);
 			removeRepeatItem(fieldComboBox, expression);
 			Dimension d = fieldComboBox.getPreferredSize();
 			fieldComboBox.setPreferredSize(new Dimension(d.width, d.height));
@@ -643,7 +649,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	private void removeRepeatItem(SteppedComboBox comboBox, String expression) {
 		for (int i = 0; i < themeGraph.getCount(); i++) {
-			comboBox.removeItem(themeGraph.getItem(i).getGraphExpression());
+			String tempExpression = themeGraph.getItem(i).getGraphExpression();
+			if (expression.indexOf(".") > 0 && tempExpression.substring(0, tempExpression.indexOf(".")).equals(datasetVector.getName())) {
+				comboBox.removeItem(tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length()));
+			} else {
+				comboBox.removeItem(tempExpression);
+			}
 		}
 		comboBox.addItem(expression);
 		comboBox.removeItem(MapViewProperties.getString("String_Combobox_Expression"));
@@ -670,9 +681,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				String expression = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
 				if (!StringUtilties.isNullOrEmptyString(expression) && !expression.equalsIgnoreCase(graphExpression)) {
 					ThemeGraphItem item = themeGraph.getItem(selectRow);
-					String caption = expression.substring(expression.lastIndexOf(".") + 1, expression.length());
-					item.setGraphExpression(expression);
-					item.setCaption(caption);
+					if (expression.contains(".")) {
+						item.setGraphExpression(expression);
+					} else {
+						item.setGraphExpression(datasetVector.getName() + "." + expression);
+					}
+					item.setCaption(expression);
 					resetMapSize();
 					getTable();
 					refreshMapAtOnce();
@@ -917,10 +931,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				refreshMapAtOnce();
 				if (tableGraphInfo.getRowCount() == 0) {
 					setToolBarButtonEnable(false);
-					//重置最大，最小和柱宽度
+					// 重置最大，最小和柱宽度
 					textFieldMaxValue.setText("0");
 					textFieldMinValue.setText("0");
-					spinnerBarWidth.setValue(0);
+					spinnerBarWidth.setValue(0.0);
 					buttonAdd.setEnabled(true);
 				}
 				if (selectRow != tableGraphInfo.getRowCount() && tableGraphInfo.getRowCount() > 0) {
@@ -1063,9 +1077,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 		private String getCaption(String graphExpression) {
 			String caption = graphExpression;
-			String[] info = graphExpression.split("\\.");
-			if (info.length == 2) {
-				caption = graphExpression.substring(graphExpression.indexOf(".") + 1, graphExpression.length());
+			if (graphExpression.indexOf(".") > 0) {
+				String[] info = graphExpression.split("\\.");
+				if (info.length == 2) {
+					caption = graphExpression.substring(graphExpression.indexOf(".") + 1, graphExpression.length());
+				}
 			}
 			return caption;
 		}
@@ -1245,13 +1261,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
-				if (StringUtilties.isNullOrEmptyString(themeGraph.getOffsetY())) {
-					getSqlExpression(comboBoxOffsetY, "0");
-				} else {
-					getSqlExpression(comboBoxOffsetY, themeGraph.getOffsetY());
+				String tempOffsetY = themeGraph.getOffsetY();
+				if (StringUtilties.isNullOrEmptyString(tempOffsetY)) {
+					tempOffsetY = "0";
 				}
+				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
+				ThemeUtil.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, tempOffsetY, true);
 				String offsetY = comboBoxOffsetY.getSelectedItem().toString();
-				themeGraph.setOffsetY(offsetY);
+				if (offsetY.contains(".")) {
+					themeGraph.setOffsetY(offsetY);
+				} else {
+					themeGraph.setOffsetY(datasetVector.getName() + "." + offsetY);
+				}
 				refreshMapAtOnce();
 			}
 		}
@@ -1261,13 +1282,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
-				if (StringUtilties.isNullOrEmptyString(themeGraph.getOffsetX())) {
-					getSqlExpression(comboBoxOffsetX, "0");
-				} else {
-					getSqlExpression(comboBoxOffsetX, themeGraph.getOffsetX());
+				String tempOffsetX = themeGraph.getOffsetX();
+				if (StringUtilties.isNullOrEmptyString(tempOffsetX)) {
+					tempOffsetX = "0";
 				}
+				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
+				ThemeUtil.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, tempOffsetX, true);
 				String offsetX = comboBoxOffsetX.getSelectedItem().toString();
-				themeGraph.setOffsetX(offsetX);
+				if (offsetX.contains(".")) {
+					themeGraph.setOffsetY(offsetX);
+				} else {
+					themeGraph.setOffsetY(datasetVector.getName() + "." + offsetX);
+				}
 				refreshMapAtOnce();
 			}
 		}
@@ -1681,40 +1707,40 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.tableGraphInfo.removeMouseListener(this.tableMouseListener);
 	}
 
-	/**
-	 * 获取表达式项
-	 *
-	 * @param jComboBoxField
-	 */
-	private void getSqlExpression(JComboBox<String> jComboBoxField, String expression) {
-		// 判断是否为“表达式”项
-		if (MapViewProperties.getString("String_Combobox_Expression").equals(jComboBoxField.getSelectedItem())) {
-			SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
-			int allItems = jComboBoxField.getItemCount();
-			Dataset[] datasets = new Dataset[1];
-			datasets[0] = datasetVector;
-			DialogResult dialogResult = null;
-			ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
-			fieldTypes.add(FieldType.INT16);
-			fieldTypes.add(FieldType.INT32);
-			fieldTypes.add(FieldType.INT64);
-			fieldTypes.add(FieldType.DOUBLE);
-			fieldTypes.add(FieldType.SINGLE);
-			dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
-			if (null != dialogResult && dialogResult == DialogResult.OK) {
-				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-				if (filter != null && !filter.isEmpty()) {
-					jComboBoxField.insertItemAt(filter, allItems - 1);
-					jComboBoxField.setSelectedIndex(allItems - 1);
-				} else {
-					jComboBoxField.setSelectedItem(expression);
-				}
-			} else {
-				jComboBoxField.setSelectedItem(expression);
-			}
-
-		}
-	}
+	// /**
+	// * 获取表达式项
+	// *
+	// * @param jComboBoxField
+	// */
+	// private void getSqlExpression(JComboBox<String> jComboBoxField, String expression) {
+	// // 判断是否为“表达式”项
+	// if (MapViewProperties.getString("String_Combobox_Expression").equals(jComboBoxField.getSelectedItem())) {
+	// SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
+	// int allItems = jComboBoxField.getItemCount();
+	// Dataset[] datasets = new Dataset[1];
+	// datasets[0] = datasetVector;
+	// DialogResult dialogResult = null;
+	// ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
+	// fieldTypes.add(FieldType.INT16);
+	// fieldTypes.add(FieldType.INT32);
+	// fieldTypes.add(FieldType.INT64);
+	// fieldTypes.add(FieldType.DOUBLE);
+	// fieldTypes.add(FieldType.SINGLE);
+	// dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
+	// if (null != dialogResult && dialogResult == DialogResult.OK) {
+	// String filter = sqlDialog.getQueryParameter().getAttributeFilter();
+	// if (filter != null && !filter.isEmpty()) {
+	// jComboBoxField.insertItemAt(filter, allItems - 1);
+	// jComboBoxField.setSelectedIndex(allItems - 1);
+	// } else {
+	// jComboBoxField.setSelectedItem(expression);
+	// }
+	// } else {
+	// jComboBoxField.setSelectedItem(expression);
+	// }
+	//
+	// }
+	// }
 
 	public void setItemGeoSytle() {
 		int[] selectedRow = this.tableGraphInfo.getSelectedRows();

@@ -9,8 +9,12 @@ public class MathUtilties {
 	public static double log(double a, double newBase) {
 		return Math.log(a) / Math.log(newBase);
 	}
-
-	public static boolean isContiuityArray(int[] array) {
+	/**
+	 * 判断数组是否为连续数组
+	 * @param array
+	 * @return
+	 */
+	public static boolean isContinuouslyArray(int[] array) {
 		int count = 0;
 		for (int i = 0; i < array.length; i++) {
 			if (i + 1 != array.length && array[i + 1] - array[i] == 1) {

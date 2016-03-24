@@ -34,7 +34,7 @@ import com.supermap.data.QueryParameter;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
-public class SQLExpressionDialog extends JDialog {
+public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonCancel;
 	private JButton jButtonOK;
 	private JTable jTableFieldInfo;

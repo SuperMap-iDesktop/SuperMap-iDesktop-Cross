@@ -130,7 +130,7 @@ public class ThemeGuideFactory {
 	public static boolean buildUniqueTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
-			String expression = "SmUserID";
+			String expression = getDataset().getName() + "." + "SmUserID";
 			if (ThemeUtil.isCountBeyond((DatasetVector) getDataset(), expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
@@ -158,8 +158,8 @@ public class ThemeGuideFactory {
 	public static boolean buildRangeTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
-			ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED, null,
-					0.1);
+			ThemeRange themeRange = ThemeRange.makeDefault((DatasetVector) getDataset(), getDataset().getName() + "." + "SmID", RangeMode.EQUALINTERVAL, 5,
+					ColorGradientType.GREENRED, null, 0.1);
 			if (null != themeRange) {
 				success = true;
 				themeRange.setPrecision(0.1);
@@ -181,7 +181,7 @@ public class ThemeGuideFactory {
 	public static void buildLabelUnformTheme(Layer layer) {
 		if (null != getDataset()) {
 			ThemeLabel themeLabel = new ThemeLabel();
-			themeLabel.setLabelExpression("SmUserID");
+			themeLabel.setLabelExpression(getDataset().getName()+".SmUserID");
 			themeLabel.setMaxLabelLength(8);
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel, layer);
 			themeTypeContainer.put(themeLabelUniformContainer.getThemeLabelLayer().getCaption(), themeLabelUniformContainer);
@@ -196,7 +196,7 @@ public class ThemeGuideFactory {
 	public static boolean buildLabelRangeTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
-			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), "SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
+			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName()+".SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
 			if (null != themeLabel && themeLabel.getCount() >= 2) {
 				themeLabel.setMaxLabelLength(8);
 				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel, layer);
@@ -290,7 +290,7 @@ public class ThemeGuideFactory {
 			DatasetVector datasetVector = (DatasetVector) getDataset();
 			ThemeGraph themeGraph = new ThemeGraph();
 			ThemeGraphItem themeGraphItem = new ThemeGraphItem();
-			themeGraphItem.setGraphExpression("SmID");
+			themeGraphItem.setGraphExpression(getDataset().getName() + "." + "SmID");
 			// 默认设置为SmID避免显示异常
 			themeGraphItem.setCaption("SmID");
 			themeGraph.insert(0, themeGraphItem);
@@ -305,7 +305,7 @@ public class ThemeGuideFactory {
 			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
 			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
-			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph,layer);
+			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph, layer);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
 			addPanelToThemeMainContainer(themeGraphContainer);
 			getDockbarThemeContainer().setVisible(true);
