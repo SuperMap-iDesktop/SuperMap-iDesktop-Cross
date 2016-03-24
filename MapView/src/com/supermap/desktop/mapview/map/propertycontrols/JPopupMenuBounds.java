@@ -94,7 +94,9 @@ public class JPopupMenuBounds extends JPopupMenu {
 		} else {
 			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(controlMouseListener);
 		}
-	};
+	}
+
+	;
 
 	private transient MouseListener controlMouseListener = new MouseAdapter() {
 
@@ -130,9 +132,9 @@ public class JPopupMenuBounds extends JPopupMenu {
 		Dimension dimension = new Dimension(200, 20);
 
 		panelSelectTargetInfo = new JPanel();
-		if(SystemPropertyUtilties.isWindows()){
+		if (SystemPropertyUtilties.isWindows()) {
 			panelSelectTargetInfo.setSize(220, 30);
-		}else {
+		} else {
 			panelSelectTargetInfo.setSize(280, 30);
 		}
 		panelSelectTargetInfo.setBorder(new LineBorder(Color.LIGHT_GRAY));
@@ -240,25 +242,38 @@ public class JPopupMenuBounds extends JPopupMenu {
 	 * 设为地图范围
 	 */
 	private void setMapBoundsClicked() {
-		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-		Map activeMap = activeMapControl.getMap();
+		Map activeMap = getCurrentMap();
 		this.rectangle2d = activeMap.getBounds().clone();
 		this.changeSupport.firePropertyChange(this.moduleName, null, this.rectangle2d);
+	}
+
+	private Map getCurrentMap() {
+		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+		return activeMapControl.getMap();
 	}
 
 	/**
 	 * 清除全幅显示
 	 */
 	private void clearFullShowBoundsClicked() {
-		// TODO: 2016/3/23 清除全幅显示
-		this.rectangle2d = Rectangle2D.getEMPTY();
+		Map currentMap = getCurrentMap();
+		if (moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
+			if (currentMap != null && currentMap.getBounds().getHeight() > 0 && currentMap.getBounds().getWidth() > 0) {
+				this.rectangle2d = currentMap.getBounds();
+			} else {
+				return;
+			}
+		} else {
+			this.rectangle2d = Rectangle2D.getEMPTY();
+		}
 		this.changeSupport.firePropertyChange(this.moduleName, null, this.rectangle2d);
 	}
 
-    /**
-     * 绘制对象选择
-     * @param actionCommand
-     */
+	/**
+	 * 绘制对象选择
+	 *
+	 * @param actionCommand
+	 */
 	private void drawButtonClicked(String actionCommand) {
 		final MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		activeMapControl.setTrackMode(TrackMode.TRACK);
@@ -271,9 +286,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 	 * 当前是否已选中对象
 	 */
 //	private boolean isSelect
-    /**
-     * 选择面对象
-     */
+
+	/**
+	 * 选择面对象
+	 */
 	private void selectButtonClicked() {
 		// TODO 如果已有选中对象则直接使用
 //		if(is)
@@ -301,11 +317,11 @@ public class JPopupMenuBounds extends JPopupMenu {
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					activeForm.showPopupMenu();
 					activeMapControl.removeMouseMotionListener(mouseMotionListener);
-                    panelSelectTargetInfo.setVisible(false);
+					panelSelectTargetInfo.setVisible(false);
 					abstractActiveMapcontrol(activeMapControl);
 					exitEdit();
 					((IFormMap) activeForm).getMapControl().removeMouseListener(this);
-					((FormMap)Application.getActiveApplication().getActiveForm()).clearSelection();
+					((FormMap) Application.getActiveApplication().getActiveForm()).clearSelection();
 				}
 			}
 		});
@@ -313,9 +329,9 @@ public class JPopupMenuBounds extends JPopupMenu {
 
 	/**
 	 * 得到复合对象的面对象
- 	 */
+	 */
 
-	private GeoRegion getCompoundGeoRegion(GeoCompound geoCompound){
+	private GeoRegion getCompoundGeoRegion(GeoCompound geoCompound) {
 		GeoRegion geoRegionResult = new GeoRegion();
 		GeoRegion geoRegionTemp = null;
 		for (int i = 0; i < geoCompound.getPartCount(); i++) {
@@ -324,8 +340,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 				geoRegionTemp = ((GeoPie) geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
 			} else if (geometry instanceof GeoRegion) {
 				geoRegionTemp = (GeoRegion) geometry;
-			} else if (geometry instanceof GeoEllipse){
-				geoRegionTemp = ((GeoEllipse)geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
+			} else if (geometry instanceof GeoEllipse) {
+				geoRegionTemp = ((GeoEllipse) geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
 			}
 		}
 		if (geoRegionTemp != null && geoRegionTemp.getPartCount() > 0) {
@@ -355,10 +371,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 						geoRegionTemp = ((GeoPie) geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
 					} else if (geometry instanceof GeoRegion) {
 						geoRegionTemp = (GeoRegion) geometry;
-					} else if (geometry instanceof GeoEllipse){
-						geoRegionTemp = ((GeoEllipse)geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
-					} else if(geometry instanceof GeoCompound){
-						geoRegionTemp = getCompoundGeoRegion((GeoCompound)geometry);
+					} else if (geometry instanceof GeoEllipse) {
+						geoRegionTemp = ((GeoEllipse) geometry).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT);
+					} else if (geometry instanceof GeoCompound) {
+						geoRegionTemp = getCompoundGeoRegion((GeoCompound) geometry);
 					}
 					if (geoRegionTemp != null && geoRegionTemp.getPartCount() > 0) {
 						for (int j = 0; j < geoRegionTemp.getPartCount(); j++) {
@@ -369,35 +385,34 @@ public class JPopupMenuBounds extends JPopupMenu {
 				}
 			}
 //			System.out.println("Time:"+(System.currentTimeMillis() - startTime));
-			if(isChanged){
+			if (isChanged) {
 				JPopupMenuBounds.this.geoRegion = geoClipRegion;
 				changeSupport.firePropertyChange(moduleName, null, JPopupMenuBounds.this.geoRegion);
 			}
 		} else {
 			Rectangle2D rectangle2dResult = null;
 			Layers layers = activeMapControl.getMap().getLayers();
-           
+
 			for (int i = 0; i < layers.getCount(); i++) {
 				Layer layer = layers.get(i);
-                if(!layer.isSelectable()){
-                    continue;
-                }
+				if (!layer.isSelectable()) {
+					continue;
+				}
 				Recordset recordset = layer.getSelection().toRecordset();
 				for (int k = 0; k < recordset.getRecordCount(); k++, recordset.moveNext()) {
 					Geometry geometry = recordset.getGeometry();
 					if (geometry != null) {
-						if(rectangle2dResult == null){
+						if (rectangle2dResult == null) {
 							rectangle2dResult = geometry.getBounds().clone();
 							isChanged = true;
-						}
-						else {
+						} else {
 							rectangle2dResult.union(geometry.getBounds().clone());
 							isChanged = true;
 						}
 					}
 				}
 			}
-            if (isChanged && rectangle2dResult != null && rectangle2dResult.getHeight() > 0 && rectangle2dResult.getWidth() > 0) {
+			if (isChanged && rectangle2dResult != null && rectangle2dResult.getHeight() > 0 && rectangle2dResult.getWidth() > 0) {
 				JPopupMenuBounds.this.rectangle2d = rectangle2dResult;
 				changeSupport.firePropertyChange(moduleName, null, JPopupMenuBounds.this.rectangle2d);
 			}

@@ -377,8 +377,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		resetSmStatusbarLayout();
 		initComponents();
 
-		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
-		this.mapControl.getMap().setName(title);
+		Map map = this.mapControl.getMap();
+		map.setWorkspace(Application.getActiveApplication().getWorkspace());
+		map.setName(title);
+
 		this.setComponent(this.jScrollPaneChildWindow);
 
 		if (Application.getActiveApplication().getMainFrame() != null) {
@@ -451,6 +453,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void initComponents() {
 		this.mapControl = new MapControl();
+		this.mapControl.setWaitCursorEnabled(false);
 		this.jScrollPaneChildWindow = new JScrollPane(mapControl);
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
@@ -642,7 +645,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 		} catch (InvalidScaleException ex) {
-			// TODO 不合法的比例尺设置，后续按需求增加日志记录功能
 			Application.getActiveApplication().getOutput().output(ex);
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
