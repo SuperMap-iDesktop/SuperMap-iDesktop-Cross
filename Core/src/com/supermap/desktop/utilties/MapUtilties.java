@@ -122,7 +122,7 @@ public class MapUtilties {
 		return resultLayer;
 	}
 
-	public static boolean reomveLayer(Map map, String name) {
+	public static boolean removeLayer(Map map, String name) {
 		boolean result = false;
 		try {
 			Layer layer = findLayerByName(map, name);
@@ -139,16 +139,6 @@ public class MapUtilties {
 		return result;
 	}
 
-	public static boolean reomveLayer(Map map, Layer layer) {
-		boolean result = false;
-		try {
-			result = map.getLayers().remove(layer);
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-
-		return result;
-	}
 
 	/**
 	 * 获取地图的所有子图层
@@ -254,30 +244,31 @@ public class MapUtilties {
 		return layers;
 	}
 
-	/**
-	 * 获取可用的图层的标题
-	 * 
-	 * @param map
-	 *            地图
-	 * @param parent
-	 *            所在的分组，如果是根图层，则为null
-	 * @param caption
-	 *            指定的图层标题
-	 * @return
-	 */
-	public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
-		String layerCaption = "";
-
-		try {
-			if (parent == null) {
-				layerCaption = map.getLayers().getAvailableCaption(caption);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-
-		return layerCaption;
-	}
+	//有点问题，不是根图层时返回空字符串
+//	/**
+//	 * 获取可用的图层的标题
+//	 *
+//	 * @param map
+//	 *            地图
+//	 * @param parent
+//	 *            所在的分组，如果是根图层，则为null
+//	 * @param caption
+//	 *            指定的图层标题
+//	 * @return
+//	 */
+//	public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
+//		String layerCaption = "";
+//
+//		try {
+//			if (parent == null) {
+//				layerCaption = map.getLayers().getAvailableCaption(caption);
+//			}
+//		} catch (Exception ex) {
+//			Application.getActiveApplication().getOutput().output(ex);
+//		}
+//
+//		return layerCaption;
+//	}
 
 	/**
 	 * 添加指定数据集到地图中

@@ -1103,7 +1103,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					}
 
 					for (int i = 0; i < removingLayers.size(); i++) {
-						MapUtilties.reomveLayer(this.getMapControl().getMap(), removingLayers.get(i));
+						MapUtilties.removeLayer(this.getMapControl().getMap(), removingLayers.get(i));
 					}
 
 					this.getMapControl().getMap().refresh();

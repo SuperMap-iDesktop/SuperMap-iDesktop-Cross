@@ -1207,6 +1207,19 @@ public class LayersTree extends JTree {
 		return result;
 	}
 
+	public Layer[] getCurrentSelectLayers() {
+		if (this.getLastSelectedPathComponent() == null) {
+			return null;
+		}
+		TreePath[] selectionPaths = this.getSelectionPaths();
+		ArrayList<Layer> seleteLayers = new ArrayList<>();
+		for (TreePath selectionPath : selectionPaths) {
+			Layer layer = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selectionPath.getLastPathComponent()).getUserObject()).getData();
+			seleteLayers.add(layer);
+		}
+		return seleteLayers.toArray(new Layer[seleteLayers.size()]);
+	}
+
 	/**
 	 * DragGestureListener:当该（子）类的对象检测到拖动启动动作时，调用此接口
 	 * 
