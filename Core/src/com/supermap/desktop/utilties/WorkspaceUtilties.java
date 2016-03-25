@@ -72,7 +72,7 @@ public class WorkspaceUtilties {
 
 	public static synchronized void addSaveWorkspaceListener(SaveWorkspaceListener listener) {
 		if (saveWorkspaceListeners == null) {
-			saveWorkspaceListeners = new CopyOnWriteArrayList<SaveWorkspaceListener>();
+			saveWorkspaceListeners = new CopyOnWriteArrayList<>();
 		}
 
 		if (!saveWorkspaceListeners.contains(listener)) {

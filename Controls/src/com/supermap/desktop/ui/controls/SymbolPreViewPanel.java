@@ -1,13 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoPoint;
@@ -23,12 +15,15 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
 import com.supermap.mapping.TrackingLayerDrawingEvent;
 import com.supermap.mapping.TrackingLayerDrawingListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.InteractionMode;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 /**
  * 符号预览面板
@@ -62,8 +57,8 @@ public class SymbolPreViewPanel extends JPanel {
 		fieldWorkspace = workspace;
 
 		if (symbolType.equals(SymbolType.MARKER)) {
-			setPreferredSize(new Dimension(80, 180));
-			setMinimumSize(new Dimension(80, 180));
+			setPreferredSize(new Dimension(80, 150));
+			setMinimumSize(new Dimension(80, 150));
 		} else if (symbolType.equals(SymbolType.LINE)) {
 			setPreferredSize(new Dimension(80, 180));
 			setMinimumSize(new Dimension(80, 180));
