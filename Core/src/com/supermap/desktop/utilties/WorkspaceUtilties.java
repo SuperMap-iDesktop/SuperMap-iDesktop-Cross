@@ -1,23 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
@@ -26,13 +8,13 @@ import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.PluginInfo;
-import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.PluginInfo;
+import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
@@ -41,12 +23,25 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.XMLCommand;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 工作空间工具类
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class WorkspaceUtilties {
 
@@ -92,7 +87,7 @@ public class WorkspaceUtilties {
 	}
 
 	public static boolean fireSaveWorkspaceEvent(boolean isSaveCurrentWorkspace, boolean isCloseAllOpenedWindows, boolean isCloseWorkspace,
-			WorkspaceConnectionInfo info) {
+	                                             WorkspaceConnectionInfo info) {
 		boolean result = true;
 		try {
 			SaveWorkspaceEvent event = new SaveWorkspaceEvent(Application.getActiveApplication().getMainFrame(), isSaveCurrentWorkspace,
@@ -118,10 +113,8 @@ public class WorkspaceUtilties {
 	/**
 	 * 打开所有类型的工作空间，建议其他地方在调用的时候直接构造WorkspaceConnectionInfo 调用该方法。
 	 *
-	 * @param info
-	 *            工作空间连接信息
-	 * @param first
-	 *            是否是第一次打开
+	 * @param info  工作空间连接信息
+	 * @param first 是否是第一次打开
 	 * @return 打开工作空间的结果
 	 */
 	public static OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo info, boolean first) {
@@ -129,7 +122,6 @@ public class WorkspaceUtilties {
 		try {
 			// 打开新的工作空间之前需要先关闭当前工作空间
 			if (WorkspaceUtilties.closeWorkspace()) {
-				Component parent = (Component) Application.getActiveApplication().getMainFrame();
 				((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.WAIT_CURSOR);
 				Toolkit.clearErrors();
 				boolean isOpened = false;
@@ -144,7 +136,7 @@ public class WorkspaceUtilties {
 
 					if (isOpened
 							&& (workspace.getType() == WorkspaceType.SMW || workspace.getType() == WorkspaceType.SMWU
-									|| workspace.getType() == WorkspaceType.SXW || workspace.getType() == WorkspaceType.SXWU)) {
+							|| workspace.getType() == WorkspaceType.SXW || workspace.getType() == WorkspaceType.SXWU)) {
 						boolean isAllExcuteThisOperation = false;
 						for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
 							Datasource datasource = workspace.getDatasources().get(i);
@@ -163,7 +155,7 @@ public class WorkspaceUtilties {
 											String message = MessageFormat.format(CoreProperties.getString("String_OpenReadOnlyDatasourceWarning"),
 													datasourceFilePath);
 											if (!isAllExcuteThisOperation) {
-												int dialogResult = JOptionPane.showConfirmDialog(parent, message);
+												int dialogResult = JOptionPaneUtilties.showConfirmDialog(message);
 												if (dialogResult == JOptionPane.YES_OPTION) {
 													readOnlyDatasourceDictionary.put(datasourceFilePath, datasource.getAlias());
 													isAllExcuteThisOperation = true;
@@ -266,8 +258,7 @@ public class WorkspaceUtilties {
 	/**
 	 * 将指定路径的工作空间添加到最近文件列表
 	 *
-	 * @param filePath
-	 *            要加入列表的文件路径
+	 * @param filePath 要加入列表的文件路径
 	 * @return 添加成功返回true，失败返回false
 	 */
 	public static void addWorkspaceFileToRecentFile(String filePath) {
@@ -285,7 +276,7 @@ public class WorkspaceUtilties {
 				if (menuItem != null) {
 					recentWorkspaceMenu.insert((IBaseItem) menuItem, 0);
 					if (recentWorkspaceMenu.getItemCount() > 7) {
-						removeRecentFile(((SmMenuItem) recentWorkspaceMenu.getItem(7)).getText());
+						removeRecentFile(recentWorkspaceMenu.getItem(7).getText());
 					}
 					saveRecentFile(filePathTemp);
 				}
@@ -375,7 +366,7 @@ public class WorkspaceUtilties {
 									}
 
 									// 保存文件
-									XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
+									XmlUtilties.saveXml(recentFilePath, document, document.getXmlEncoding());
 									break;
 								}
 							}
@@ -392,7 +383,7 @@ public class WorkspaceUtilties {
 		try {
 			for (IBaseItem item : recentWorkspaceMenu.items()) {
 				if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-					recentWorkspaceMenu.remove((IBaseItem) item);
+					recentWorkspaceMenu.remove(item);
 					break;
 				}
 			}
@@ -423,7 +414,7 @@ public class WorkspaceUtilties {
 
 									// 保存文件
 
-									XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
+									XmlUtilties.saveXml(recentFilePath, document, document.getXmlEncoding());
 									break;
 								}
 							}
@@ -451,8 +442,7 @@ public class WorkspaceUtilties {
 		}
 
 		if (isReadOnly) {
-			JOptionPane.showConfirmDialog(null, CoreProperties.getString("String_workspaceReadonly"),
-					CoreProperties.getString("String_workspaceReadonlyTitle"), JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
+			JOptionPaneUtilties.showMessageDialog(CoreProperties.getString("String_workspaceReadonly"));
 		}
 
 		return isReadOnly;
@@ -512,8 +502,7 @@ public class WorkspaceUtilties {
 				}
 				datasourcesName += datasources[datasources.length - 1];//
 				String message = MessageFormat.format(CommonProperties.getString("String_Message_CloseMemoryDatasource"), datasourcesName);
-				result = JOptionPane.showConfirmDialog(parent, message, CommonProperties.getString("String_Title_CloseWorkspace"), JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
+				result = JOptionPaneUtilties.showConfirmDialog(message);
 				if (result == JOptionPane.NO_OPTION || result == JOptionPane.CLOSED_OPTION) {
 					isContinue = false;
 				} else {
@@ -524,8 +513,7 @@ public class WorkspaceUtilties {
 			if (isContinue) {
 				if (WorkspaceUtilties.isWorkspaceModified()) {
 					if (GlobalParameters.isShowFormClosingInfo()) {
-						result = JOptionPane.showConfirmDialog(parent, CoreProperties.getString("String_SaveWorkspacePrompt"),
-								CoreProperties.getString("String_SaveWorkspace"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						result = JOptionPaneUtilties.showConfirmDialog(CoreProperties.getString("String_SaveWorkspacePrompt"));
 						if (result == JOptionPane.NO_OPTION) {
 							if (Application.getActiveApplication().getMainFrame().getFormManager().closeAll(false)) {
 								Application.getActiveApplication().getWorkspace().close();

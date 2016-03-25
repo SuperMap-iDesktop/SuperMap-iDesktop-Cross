@@ -1,29 +1,21 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import com.supermap.data.Scenes;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class DialogSaveAsScene extends SmDialog {
 
@@ -162,7 +154,7 @@ public class DialogSaveAsScene extends SmDialog {
 	private void okButton_Click() {
 		try {
 			DialogResult dialogResult = DialogResult.NO;
-			if (CommonToolkit.SceneWrap.checkAvailableSceneName(this.textFieldSceneName.getText(), oldSceneName)) {
+			if (SceneUtilties.checkAvailableSceneName(this.textFieldSceneName.getText(), oldSceneName)) {
 				dialogResult = DialogResult.YES;
 			} else {
 				String message = String.format(RealspaceViewProperties.getString("String_SaveAsScene_ExistName"), this.textFieldSceneName.getText());

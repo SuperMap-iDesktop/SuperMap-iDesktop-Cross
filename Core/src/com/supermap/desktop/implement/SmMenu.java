@@ -1,16 +1,6 @@
 package com.supermap.desktop.implement;
 
-import java.awt.Component;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IMenu;
@@ -22,6 +12,13 @@ import com.supermap.desktop.ui.XMLMenuGroup;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 public class SmMenu extends JMenu implements IMenu {
 	private static final long serialVersionUID = 1L;
@@ -308,7 +305,6 @@ public class SmMenu extends JMenu implements IMenu {
 				if ("WorkspaceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
 					if (WorkspaceUtilties.getPluginInfo() == null) {
 						WorkspaceUtilties.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
-						;
 					}
 
 					if (WorkspaceUtilties.getRecentWorkspaceMenu() == null) {

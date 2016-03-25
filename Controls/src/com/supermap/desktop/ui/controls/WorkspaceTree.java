@@ -106,7 +106,9 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.DatasourceUtilties;
+import com.supermap.desktop.utilties.LayoutUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.SceneUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
@@ -1556,7 +1558,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 							layoutNames.add(selectedNodeData.getData().toString());
 						}
-						CommonToolkit.LayoutWrap.deleteMapLayout(layoutNames.toArray(new String[layoutNames.size()]));
+						LayoutUtilties.deleteMapLayout(layoutNames.toArray(new String[layoutNames.size()]));
 					} else if (type.equals(NodeDataType.MAP_NAME)) {
 						ArrayList<String> mapNames = new ArrayList<String>();
 						for (TreePath treePath : getSelectionPaths()) {
@@ -1572,7 +1574,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 							sceneNames.add(selectedNodeData.getData().toString());
 						}
-						CommonToolkit.SceneWrap.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+						SceneUtilties.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
 					}
 				}
 				ToolbarUtilties.updataToolbarsState();

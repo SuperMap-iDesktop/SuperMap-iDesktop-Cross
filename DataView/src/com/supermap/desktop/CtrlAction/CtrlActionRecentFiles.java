@@ -1,13 +1,9 @@
 package com.supermap.desktop.CtrlAction;
 
-import java.io.File;
-import java.text.MessageFormat;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
@@ -21,6 +17,9 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import java.io.File;
+import java.text.MessageFormat;
 
 public class CtrlActionRecentFiles extends CtrlAction {
 

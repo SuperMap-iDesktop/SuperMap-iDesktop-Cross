@@ -4,7 +4,6 @@ import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilties.CursorUtilties;
@@ -12,7 +11,6 @@ import com.supermap.desktop.utilties.WorkspaceUtilties;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
