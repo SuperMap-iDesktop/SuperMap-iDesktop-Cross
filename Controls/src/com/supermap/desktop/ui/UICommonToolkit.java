@@ -5,28 +5,25 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMain;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 
-import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
 
 /**
  * 通用UI工具类
- *
  */
 public class UICommonToolkit {
+	private static SmOptionPane smOptionPane;
 
 	/**
 	 * 根据已有的WorkspaceTree得到选择的节点
-	 * 
+	 *
 	 * @return
 	 */
 	private UICommonToolkit() {
@@ -46,7 +43,7 @@ public class UICommonToolkit {
 
 	/**
 	 * 根据提供的WorkspaceTree得到选择的数据源
-	 * 
+	 *
 	 * @param workspaceTree
 	 * @return
 	 */
@@ -62,7 +59,7 @@ public class UICommonToolkit {
 
 	/**
 	 * 刷新指定的数据源
-	 * 
+	 *
 	 * @return
 	 */
 	public static void refreshSelectedDatasourceNode(String datasourceName) {
@@ -89,7 +86,7 @@ public class UICommonToolkit {
 
 	/**
 	 * 根据数据集刷新当前选中的数据源,并选中该数据集
-	 * 
+	 *
 	 * @return
 	 */
 	public static void refreshSelectedDatasetNode(Dataset dataset) {
@@ -128,7 +125,7 @@ public class UICommonToolkit {
 
 	/**
 	 * 获取工作空间管理器
-	 * 
+	 *
 	 * @return
 	 */
 	public static WorkspaceComponentManager getWorkspaceManager() {
@@ -148,7 +145,7 @@ public class UICommonToolkit {
 
 	/**
 	 * 获取图层管理器
-	 * 
+	 *
 	 * @return
 	 */
 	public static LayersComponentManager getLayersManager() {
@@ -168,18 +165,16 @@ public class UICommonToolkit {
 
 	/**
 	 * 判断名称是否合法
-	 * 
-	 * @param name
-	 *            要判断的名字
-	 * @param isAllowSpace
-	 *            是否允许空格
+	 *
+	 * @param name         要判断的名字
+	 * @param isAllowSpace 是否允许空格
 	 * @return
 	 */
 	public static boolean isLawName(String name, boolean isAllowSpace) {
 		String nameTemp = name;
 		boolean isLaw = true;
 		try {
-			char[] lawlessCode = new char[] { '/', '\\', '"', ':', '?', '*', '<', '>', '|' };
+			char[] lawlessCode = new char[]{'/', '\\', '"', ':', '?', '*', '<', '>', '|'};
 
 			if (!isAllowSpace) {
 				nameTemp = nameTemp.trim();
@@ -204,20 +199,22 @@ public class UICommonToolkit {
 
 	public static void showMessageDialog(String message) {
 		try {
-//			SmOptionPane smOptionPane = new SmOptionPane();
-//			smOptionPane.showMessageDialog(message);
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
-					JOptionPane.INFORMATION_MESSAGE);
+			SmOptionPane smOptionPane = getSmOptionPane();
+			smOptionPane.showMessageDialog(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//					JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
+
 	public static void showErrorMessageDialog(String message) {
 		try {
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			JOptionPane.showMessageDialog(parent, message, CommonProperties.getString("String_Error"), JOptionPane.ERROR_MESSAGE);
+			getSmOptionPane().showErrorDialog(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			JOptionPane.showMessageDialog(parent, message, CommonProperties.getString("String_Error"), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -230,9 +227,10 @@ public class UICommonToolkit {
 	public static int showConfirmDialog(String message) {
 		int result = 0;
 		try {
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			result = getSmOptionPane().showConfirmDialog(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -247,9 +245,18 @@ public class UICommonToolkit {
 	public static int showConfirmDialog(String message, String title) {
 		int result = 0;
 		try {
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			SmOptionPane smOptionPane = getSmOptionPane();
+			String titleTemp = smOptionPane.getTitle();
+			smOptionPane.setTitle(title);
+			result = smOptionPane.showConfirmDialog(message);
+			smOptionPane.setTitle(titleTemp);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			result = JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
+			if (smOptionPane != null) {
+				smOptionPane.dispose();
+			}
+			smOptionPane = null;
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
@@ -258,13 +265,20 @@ public class UICommonToolkit {
 	public static int showConfirmDialogWithCancel(String message) {
 		int result = 0;
 		try {
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
-					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			result = getSmOptionPane().showConfirmDialogWithCancle(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
 	}
 
+	private static SmOptionPane getSmOptionPane() {
+		if (smOptionPane == null) {
+			smOptionPane = new SmOptionPane();
+		}
+		return smOptionPane;
+	}
 }

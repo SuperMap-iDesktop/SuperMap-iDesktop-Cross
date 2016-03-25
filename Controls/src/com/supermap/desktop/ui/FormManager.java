@@ -591,7 +591,7 @@ public class FormManager implements IFormManager {
 						} else if (result == JOptionPane.NO_OPTION) {
 							// 不保存，直接关闭
 							form.clean();
-						} else if (result == JOptionPane.CANCEL_OPTION) {
+						} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
 							// 取消关闭操作
 							evt.setCancel(true);
 						}
