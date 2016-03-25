@@ -1,7 +1,5 @@
 package com.supermap.desktop.framemenus;
 
-import javax.swing.JFrame;
-
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
@@ -13,8 +11,9 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import javax.swing.*;
 
 public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 
@@ -53,7 +52,7 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 				JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
 				JDialogWorkspaceSaveAs dialog = new JDialogWorkspaceSaveAs(parent, true, JDialogWorkspaceSaveAs.saveAsFile);
 				dialogResult = dialog.showDialog();
-				if (dialogResult == DialogResult.OK || dialogResult == dialogResult.APPLY) {
+				if (dialogResult == DialogResult.OK || dialogResult == DialogResult.APPLY) {
 					if (info != null) {
 						UICommonToolkit.getWorkspaceManager().getWorkspaceTree().updateUI();
 					} else {

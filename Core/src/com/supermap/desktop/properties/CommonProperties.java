@@ -61,4 +61,6 @@ public class CommonProperties extends Properties {
 	public static final String stringDataset = "String_ColumnHeader_Dataset";
 	public static final String stringDatasource = "String_ColumnHeader_Datasource";
 	public static final String STRING_DATASET_TYPE = "String_DatasetType";
+	public static final String yes = "String_yes";
+	public static final String no = "String_no";
 }

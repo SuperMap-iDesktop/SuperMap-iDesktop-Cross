@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.utilties.CtrlActionUtilties;
+import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 
 import javax.swing.*;
@@ -78,7 +79,7 @@ public class SmMenuItem extends JCheckBoxMenuItem implements IBaseItem {
 				this.getCtrlAction().run();
 			} else {
 				Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
-				JOptionPane.showMessageDialog(null, this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
+				JOptionPaneUtilties.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

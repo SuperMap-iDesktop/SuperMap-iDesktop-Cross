@@ -211,25 +211,29 @@ class SymbolSettingPanel extends JPanel {
 
 		jLabelMarkerColor = new JLabel();
 		jLabelMarkerColor.setText(ControlsProperties.getString("String_Label_Color"));
+		jLabelFillOpaqueRate = new JLabel();
+		jLabelFillOpaqueRate.setText(CoreProperties.getString("String_Label_OpaqueRate"));
 
 		JLabel labelWidth = new JLabel(ControlsProperties.getString("String_Label_WidthMeasuringUnit"));
 		JLabel labelHeight = new JLabel(ControlsProperties.getString("String_Label_HightMeasuringUnit"));
 		JLabel labelAngle = new JLabel(ControlsProperties.getString("String_angle"));
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		constraints.fill = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.weightx = 100;
 		constraints.weighty = 100;
 		addMarkerComponent(jLabelMarkerColor, constraints, 0, 0, 1, 1);
 		addMarkerComponent(jLabelMarkerWidth, constraints, 0, 1, 1, 1);
 		addMarkerComponent(jLabelMarkerHeight, constraints, 0, 2, 1, 1);
 		addMarkerComponent(jLabelMarkerAngle, constraints, 0, 3, 1, 1);
+		addMarkerComponent(jLabelFillOpaqueRate, constraints, 0, 4, 1, 1);
 
 		addMarkerComponent(getSymbolMarkerColorButton(), constraints, 1, 0, 1, 1);
 		addMarkerComponent(getSymbolMarkerWidthJSpinner(), constraints, 1, 1, 1, 1);
 		addMarkerComponent(getSymbolMarkerHeightJSpinner(), constraints, 1, 2, 1, 1);
 		addMarkerComponent(getSymbolMarkerAngleSpinner(), constraints, 1, 3, 1, 1);
-		addMarkerComponent(getSymbolMarkerSizeBox(), constraints, 0, 4, 2, 1);
+		addMarkerComponent(getSymbolFillOpaqueRateSpinner(), constraints, 1, 4, 1, 1);
+		addMarkerComponent(getSymbolMarkerSizeBox(), constraints, 0, 5, 2, 1);
 		addMarkerComponent(labelWidth, constraints, 2, 1, 1, 1);
 		addMarkerComponent(labelHeight, constraints, 2, 2, 1, 1);
 		addMarkerComponent(labelAngle, constraints, 2, 3, 1, 1);
@@ -1038,7 +1042,7 @@ class SymbolSettingPanel extends JPanel {
 							return;
 						}
 						if (rateString == null || "".equals(rateString) || fillOpaque.equals(rateString) || Double.valueOf(rateString) > 100
-								|| Double.valueOf(rateString) < 0) {
+								|| Double.valueOf(rateString) < 0 || rateString.indexOf(".") != -1) {
 							return;
 						}
 						fillOpaque = rateString;

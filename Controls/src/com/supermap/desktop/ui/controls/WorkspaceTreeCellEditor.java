@@ -15,15 +15,15 @@ import com.supermap.data.SymbolMarkerLibrary;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit.DatasetWrap;
-import com.supermap.desktop.CommonToolkit.LayoutWrap;
-import com.supermap.desktop.CommonToolkit.SceneWrap;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.LayoutUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.SceneUtilties;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -177,11 +177,11 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String layoutName = (String) data;
 					if (layoutName.equals(stringTextField)) {
 						// 点错了！
-					} else if (LayoutWrap.checkAvailableLayoutName(stringTextField, layoutName)) {
+					} else if (LayoutUtilties.checkAvailableLayoutName(stringTextField, layoutName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormLayout && ((IFormLayout) formManager.get(i)).getText().equals(layoutName)) {
-								((IFormLayout) formManager.get(i)).setText(stringTextField);
+							if (formManager.get(i) instanceof IFormLayout && formManager.get(i).getText().equals(layoutName)) {
+								formManager.get(i).setText(stringTextField);
 							}
 						}
 						currentWorkspace.getLayouts().rename(layoutName, stringTextField);
@@ -200,8 +200,8 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					} else if (MapUtilties.checkAvailableMapName(stringTextField, mapName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormMap && ((IFormMap) formManager.get(i)).getText().equals(mapName)) {
-								((IFormMap) formManager.get(i)).setText(stringTextField);
+							if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
+								formManager.get(i).setText(stringTextField);
 							}
 						}
 						currentWorkspace.getMaps().rename(mapName, stringTextField);
@@ -216,11 +216,11 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String sceneName = (String) data;
 					if (sceneName.equals(stringTextField)) {
 						// 点错了
-					} else if (SceneWrap.checkAvailableSceneName(stringTextField, sceneName)) {
+					} else if (SceneUtilties.checkAvailableSceneName(stringTextField, sceneName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormScene && ((IFormScene) formManager.get(i)).getText().equals(sceneName)) {
-								((IFormScene) formManager.get(i)).setText(stringTextField);
+							if (formManager.get(i) instanceof IFormScene && formManager.get(i).getText().equals(sceneName)) {
+								formManager.get(i).setText(stringTextField);
 							}
 						}
 						currentWorkspace.getScenes().rename(sceneName, stringTextField);

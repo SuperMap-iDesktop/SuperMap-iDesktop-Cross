@@ -591,7 +591,7 @@ public class FormManager implements IFormManager {
 						} else if (result == JOptionPane.NO_OPTION) {
 							// 不保存，直接关闭
 							form.clean();
-						} else if (result == JOptionPane.CANCEL_OPTION) {
+						} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
 							// 取消关闭操作
 							evt.setCancel(true);
 						}
@@ -626,7 +626,7 @@ public class FormManager implements IFormManager {
 		try {
 			// DockingWindow 结构很奇特，以下代码用来判断是否需要移除一个子窗口
 			if (window instanceof IForm) {
-				this.childForms.remove((IForm) window);
+				this.childForms.remove(window);
 			} else if (window instanceof FloatingWindow && window.getChildWindowCount() > 0) {
 				DockingWindow dockingWindow = window.getChildWindow(0);
 				if (dockingWindow instanceof TabWindow) {
@@ -634,7 +634,7 @@ public class FormManager implements IFormManager {
 					for (int i = 0; i < tabWindow.getChildWindowCount(); i++) {
 						DockingWindow childWindow = tabWindow.getChildWindow(i);
 						if (childWindow instanceof IForm) {
-							this.childForms.remove((IForm) childWindow);
+							this.childForms.remove(childWindow);
 						}
 					}
 				}

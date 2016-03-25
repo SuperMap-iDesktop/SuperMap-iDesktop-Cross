@@ -1,20 +1,5 @@
 package com.supermap.desktop.dataviewresources.utilties;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.Datasources;
@@ -25,18 +10,28 @@ import com.supermap.data.Environment;
 import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit.DatasourceWrap;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
+import com.supermap.desktop.dialog.JDialogConfirm;
+import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 打开文件型数据源
@@ -225,10 +220,10 @@ public class DatasourceOpenFileUtilties {
 				// 如果需要询问
 				if (!DatasourceOpenFileUtilties.getIsDontAskReadOnlyOpen()) {
 					message = MessageFormat.format(CoreProperties.getString("String_OpenReadOnlyDatasourceWarning"), filePath);
-					int result = showIsReadOpenJOpition(message);
-					if (result == JOptionPane.YES_OPTION) {
+					DialogResult result = showIsReadOpenJOpition(message);
+					if (result == DialogResult.OK) {
 						isReadOnlyOpenTemp = DatasourceOpenFileUtilties.getIsReadOnlyOpen();
-					} else if (result == JOptionPane.NO_OPTION) {
+					} else if (result == DialogResult.CANCEL) {
 						Application.getActiveApplication().getOutput().output(openFailedMessage);
 						return null;
 					} else {
@@ -365,18 +360,17 @@ public class DatasourceOpenFileUtilties {
 	 * @param message
 	 * @return
 	 */
-	private static int showIsReadOpenJOpition(String message) {
-		JCheckBox dontAskAgain = new JCheckBox(DataViewProperties.getString("String_DontAskAgain"));
-		Object[] params = { message, dontAskAgain };
-		int result = JOptionPane.showConfirmDialog((Component) Application.getActiveApplication().getMainFrame(), params,
-				CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
-		boolean checkBoxState = dontAskAgain.isSelected();
+	private static DialogResult showIsReadOpenJOpition(String message) {
+
+		JDialogConfirm jDialogConfirm = new JDialogConfirm(message);
+		DialogResult result = jDialogConfirm.showDialog();
+		boolean checkBoxState = jDialogConfirm.isUsedAsDefault();
 		if (checkBoxState) {
 			DatasourceOpenFileUtilties.setIsDontAskReadOnlyOpen(true);
 		}
-		if (result == JOptionPane.YES_OPTION) {
+		if (result == DialogResult.OK) {
 			DatasourceOpenFileUtilties.setIsReadOnlyOpen(true);
-		} else if (result == JOptionPane.NO_OPTION) {
+		} else if (result == DialogResult.CANCEL) {
 			DatasourceOpenFileUtilties.setIsReadOnlyOpen(false);
 		}
 		return result;
@@ -412,7 +406,7 @@ public class DatasourceOpenFileUtilties {
 				list.add(engineInfo);
 			}
 		}
-		return (EngineInfo[]) list.toArray(new EngineInfo[list.size()]);
+		return list.toArray(new EngineInfo[list.size()]);
 	}
 
 	/**
@@ -446,7 +440,7 @@ public class DatasourceOpenFileUtilties {
 				}
 			}
 		}
-		return (String[]) arrayListAllSupportType.toArray(new String[arrayListAllSupportType.size()]);
+		return arrayListAllSupportType.toArray(new String[arrayListAllSupportType.size()]);
 	}
 
 	/**
@@ -466,7 +460,7 @@ public class DatasourceOpenFileUtilties {
 							strings.add(s.substring(1));
 						}
 					}
-					return (String[]) strings.toArray(new String[strings.size()]);
+					return strings.toArray(new String[strings.size()]);
 				} else {
 					return getEngineSupportFileExtensions(fileEngineInfo[i]);
 				}

@@ -1,12 +1,5 @@
 package com.supermap.desktop.layoutview;
 
-import java.awt.Cursor;
-
-import javax.swing.JFrame;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.FormLayout;
@@ -17,6 +10,12 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.LayoutUtilties;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class LayoutViewActivator implements BundleActivator {
 
@@ -70,7 +69,7 @@ public class LayoutViewActivator implements BundleActivator {
 
 			if (form == null) {
 				if (currentName == null || currentName.length() == 0) {
-					currentName = CommonToolkit.LayoutWrap.getAvailableLayoutName(CoreProperties.getString("String_WorkspaceNodeCaptionLayout"), true);
+					currentName = LayoutUtilties.getAvailableLayoutName(CoreProperties.getString("String_WorkspaceNodeCaptionLayout"), true);
 				}
 
 				formLayout = new FormLayout(currentName);

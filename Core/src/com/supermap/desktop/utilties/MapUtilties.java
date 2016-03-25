@@ -365,9 +365,7 @@ public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 			} else {
 				message = message + "\r\n" + String.format(CoreProperties.getString("String_MapDelete_Confirm_Multi"), mapNames.length);
 			}
-
-			if (JOptionPane.showConfirmDialog(null, message, CoreProperties.getString("String_MapDelete"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+			if (JOptionPaneUtilties.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
 				for (String mapName : mapNames) {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int i = formManager.getCount() - 1; i >= 0; i--) {

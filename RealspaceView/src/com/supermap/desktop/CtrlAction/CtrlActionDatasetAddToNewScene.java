@@ -1,10 +1,7 @@
 package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -13,12 +10,7 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.SceneUtilties;
-import com.supermap.realspace.Layer3DSetting;
-import com.supermap.realspace.Layer3DSettingGrid;
-import com.supermap.realspace.Layer3DSettingImage;
-import com.supermap.realspace.Layer3DSettingVector;
 import com.supermap.realspace.Scene;
 
 public class CtrlActionDatasetAddToNewScene extends CtrlAction {
@@ -31,7 +23,7 @@ public class CtrlActionDatasetAddToNewScene extends CtrlAction {
 	public void run() {
 		try {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			String name = CommonToolkit.SceneWrap.getAvailableSceneName(String.format("%s@%s", datasets[0].getName(), datasets[0].getDatasource().getAlias()),
+			String name = com.supermap.desktop.controls.utilties.SceneUtilties.getAvailableSceneName(String.format("%s@%s", datasets[0].getName(), datasets[0].getDatasource().getAlias()),
 					true);
 			IFormScene formScene = (IFormScene) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.SCENE, name);
 			if (formScene != null) {

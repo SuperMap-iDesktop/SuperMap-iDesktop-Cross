@@ -1,33 +1,21 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import com.supermap.data.Layouts;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.layoutview.LayoutViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilties.LayoutUtilties;
 
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -171,7 +159,7 @@ public class DialogSaveAsLayout extends SmDialog {
 		try {
 			DialogResult dialogResult = DialogResult.NO;
 
-			if (CommonToolkit.LayoutWrap.checkAvailableLayoutName(this.textFieldLayoutName.getText(), oldLayoutName)) {
+			if (LayoutUtilties.checkAvailableLayoutName(this.textFieldLayoutName.getText(), oldLayoutName)) {
 				dialogResult = DialogResult.YES;
 			} else {
 				String message = String.format(LayoutViewProperties.getString("String_SaveAsLayout_ExistName"), this.textFieldLayoutName.getText());

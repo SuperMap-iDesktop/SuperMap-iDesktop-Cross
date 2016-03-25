@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 public class LogUtilties {
 	private static final Log log = LogFactory.getLog(LogUtilties.class);
 
-	private static final int classNameLength = 30;
+	private static final int classNameLength = 50;
 	private static final String separator = "-------------------";
 
 	private LogUtilties() {

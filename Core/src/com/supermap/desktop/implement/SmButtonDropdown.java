@@ -8,6 +8,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLButtonDropdown;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.utilties.CtrlActionUtilties;
+import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 
 import javax.swing.*;
@@ -157,7 +158,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 				showPopupMenu();
 			} else {
 				Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
-				JOptionPane.showMessageDialog(null, this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
+				JOptionPaneUtilties.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

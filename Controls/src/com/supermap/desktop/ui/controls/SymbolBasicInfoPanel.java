@@ -130,9 +130,9 @@ class SymbolBasicInfoPanel extends JPanel {
 	public SymbolBasicInfoPanel(SymbolPanel symbolPanel) {
 		super();
 		setLayout(new BorderLayout());
-		setPreferredSize(new Dimension(175, 80));
-		setMinimumSize(new Dimension(175, 80));
-		setMaximumSize(new Dimension(250, 80));
+		setPreferredSize(new Dimension(175, 90));
+		setMinimumSize(new Dimension(175, 90));
+		setMaximumSize(new Dimension(250, 90));
 		jPanelSymbol = symbolPanel;
 		add(getBasicInfoPanel(), BorderLayout.CENTER);
 	}
@@ -150,23 +150,11 @@ class SymbolBasicInfoPanel extends JPanel {
 			jLabelSymbolID.setText(ControlsProperties.getString("String_Label_SymbolID"));
 
 			// 网格组布局可以实现任意大小
-			GridBagConstraints constrains = new GridBagConstraints();
-			constrains.weightx = 100;
-			constrains.weighty = 100;
-			constrains.fill = GridBagConstraints.WEST;
-			constrains.anchor = GridBagConstraints.WEST;
-			constrains.gridx = 0;
-			constrains.gridy = 0;
-			jPanelSymbolInfo.add(jLabelSymbolID, constrains);
-			constrains.gridx = 0;
-			constrains.gridy = 1;
-			jPanelSymbolInfo.add(jLabelSymbolName, constrains);
-			constrains.gridx = 1;
-			constrains.gridy = 0;
-			jPanelSymbolInfo.add(getSymbolIDComboBox(), constrains);
-			constrains.gridx = 1;
-			constrains.gridy = 1;
-			jPanelSymbolInfo.add(getSymbolNameComboBox(), constrains);
+			jPanelSymbolInfo.add(jLabelSymbolID, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+			jPanelSymbolInfo.add(jLabelSymbolName, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+			jPanelSymbolInfo.add(getSymbolIDComboBox(), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(99, 1));
+			jPanelSymbolInfo.add(getSymbolNameComboBox(), new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(99, 1));
+
 		}
 		return jPanelSymbolInfo;
 	}

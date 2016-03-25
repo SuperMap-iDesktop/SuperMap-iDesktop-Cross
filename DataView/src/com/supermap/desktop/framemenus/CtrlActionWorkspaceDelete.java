@@ -1,18 +1,17 @@
 package com.supermap.desktop.framemenus;
 
-import javax.swing.JOptionPane;
-
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import javax.swing.*;
 
 public class CtrlActionWorkspaceDelete extends CtrlAction {
 
