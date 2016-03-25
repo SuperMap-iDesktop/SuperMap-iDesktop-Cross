@@ -70,7 +70,8 @@ public class SQLExpressionDialog extends SmDialog {
 	private transient List<FieldType> thisFieldTypes;
 	private transient Object[][] tableData;
 	private DefaultTableModel defaultTableModel;
-	private static String[] NAMES = { ControlsProperties.getString("String_TableName_FieldName"),
+	private static String[] NAMES = { ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption"),
+			ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"),
 			ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType") };
 	private transient QueryParameter filedQueryParameter;
 	private transient DialogResult dialogResult = DialogResult.CANCEL;
@@ -126,7 +127,7 @@ public class SQLExpressionDialog extends SmDialog {
 	 * @param datasets
 	 * @param fieldTypes
 	 */
-	public DialogResult showDialog(Dataset[] datasets, List<FieldType> fieldTypes,String sqlExpression) {
+	public DialogResult showDialog(Dataset[] datasets, List<FieldType> fieldTypes, String sqlExpression) {
 		initialDialog(sqlExpression);
 
 		filedDatasets = datasets;
@@ -157,7 +158,7 @@ public class SQLExpressionDialog extends SmDialog {
 	 * 
 	 * @param datasets
 	 */
-	public DialogResult showDialog(String sqlExpression,Dataset... datasets) {
+	public DialogResult showDialog(String sqlExpression, Dataset... datasets) {
 		initialDialog(sqlExpression);
 
 		filedDatasets = datasets;
@@ -198,11 +199,12 @@ public class SQLExpressionDialog extends SmDialog {
 			}
 		}
 
-		tableData = new Object[allFieldCount][2];
+		tableData = new Object[allFieldCount][3];
 
 		int rowCount = 0;
-		String fieldNameColumn = null;
-		String fieldTypeColumn = null;
+		String fieldNameColumn = "";
+		String fieldTypeColumn = "";
+		String fieldCaptionColumn = "";
 		FieldType fieldType;
 
 		for (int i = 0; i < datasets.length; i++) {
@@ -210,16 +212,20 @@ public class SQLExpressionDialog extends SmDialog {
 
 			if (datasetVector != null) {
 				for (int fieldCount = 0; fieldCount < datasetVector.getFieldCount(); fieldCount++, rowCount++) {
-					
-					fieldTypeColumn = null;
 
 					fieldType = datasetVector.getFieldInfos().get(fieldCount).getType();
-					fieldTypeColumn = getFiledTypeChineseName(fieldType);
-					fieldNameColumn = datasetVector.getTableName();
-					fieldNameColumn += "." + datasetVector.getFieldInfos().get(fieldCount).getName();
-					
-					tableData[rowCount][0] = fieldNameColumn;
-					tableData[rowCount][1] = fieldTypeColumn;
+					if (0 == i) {
+						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
+						fieldTypeColumn = getFiledTypeChineseName(fieldType);
+						fieldNameColumn = datasetVector.getFieldInfos().get(fieldCount).getName();
+					} else {
+						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
+						fieldTypeColumn = getFiledTypeChineseName(fieldType);
+						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
+					}
+					tableData[rowCount][0] = fieldCaptionColumn;
+					tableData[rowCount][1] = fieldNameColumn;
+					tableData[rowCount][2] = fieldTypeColumn;
 				}
 			}
 		}
@@ -227,9 +233,9 @@ public class SQLExpressionDialog extends SmDialog {
 		defaultTableModel = new cellEditableModel(tableData, NAMES);
 		jTableFieldInfo.setModel(defaultTableModel);
 		jTableFieldInfo.repaint();
-		jTableFieldInfo.getColumn(ControlsProperties.getString("String_TableName_FieldName")).setPreferredWidth(100);
-		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(20);
-
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(100);
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
 	}
 
 	/**
@@ -257,25 +263,30 @@ public class SQLExpressionDialog extends SmDialog {
 			}
 		}
 
-		tableData = new Object[allFieldCount][2];
+		tableData = new Object[allFieldCount][3];
 
 		int rowCount = 0;
 		String fieldNameColumn = null;
 		String fieldTypeColumn = null;
-
+		String fieldCaptionColumn = null;
 		for (int ndataset = 0; ndataset < datasets.length; ndataset++) {
 			datasetVector = (DatasetVector) datasets[ndataset];
 			for (int fieldCount = 0; fieldCount < datasetVector.getFieldCount(); fieldCount++) {
-				fieldNameColumn = datasetVector.getTableName();
-				fieldTypeColumn = null;
 
 				fieldType = datasetVector.getFieldInfos().get(fieldCount).getType();
 				if (fieldTypes.contains(fieldType)) {
-					fieldTypeColumn = getFiledTypeChineseName(fieldType);
-					fieldNameColumn += "." + datasetVector.getFieldInfos().get(fieldCount).getName();
-
-					tableData[rowCount][0] = fieldNameColumn;
-					tableData[rowCount][1] = fieldTypeColumn;
+					if (0 == ndataset) {
+						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
+						fieldTypeColumn = getFiledTypeChineseName(fieldType);
+						fieldNameColumn = datasetVector.getFieldInfos().get(fieldCount).getName();
+					} else {
+						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
+						fieldTypeColumn = getFiledTypeChineseName(fieldType);
+						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
+					}
+					tableData[rowCount][0] = fieldCaptionColumn;
+					tableData[rowCount][1] = fieldNameColumn;
+					tableData[rowCount][2] = fieldTypeColumn;
 					rowCount++;
 				}
 			}
@@ -284,8 +295,9 @@ public class SQLExpressionDialog extends SmDialog {
 		defaultTableModel = new cellEditableModel(tableData, NAMES);
 		jTableFieldInfo.setModel(defaultTableModel);
 		jTableFieldInfo.repaint();
-		jTableFieldInfo.getColumn(ControlsProperties.getString("String_TableName_FieldName")).setPreferredWidth(90);
-		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(20);
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(100);
+		jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
 	}
 
 	// 初始化操作
@@ -314,6 +326,9 @@ public class SQLExpressionDialog extends SmDialog {
 			jScrollPanel = new JScrollPane();
 			jScrollPanel.setBounds(396, 144, 238, 140);
 			jScrollPanel.setViewportView(add(getTableFieldInfo()));
+
+			jScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			jScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		}
 		return jScrollPanel;
 	}
@@ -325,7 +340,8 @@ public class SQLExpressionDialog extends SmDialog {
 		if (jTableFieldInfo == null) {
 			defaultTableModel = new DefaultTableModel(NAMES, 0);
 			jTableFieldInfo = new JTable(defaultTableModel);
-
+			jTableFieldInfo.setSize(800, 500);
+			jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			jTableFieldInfo.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -335,7 +351,7 @@ public class SQLExpressionDialog extends SmDialog {
 						int row = jTableFieldInfo.getSelectedRow();
 						int column = jTableFieldInfo.getSelectedColumn();
 
-						if (column == 0 && jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
+						if (column == 1 && jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
 							String text = jTableFieldInfo.getValueAt(row, column).toString();
 							if (jTextAreaSQLSentence.getSelectionStart() != 0) {
 								text = " " + text;

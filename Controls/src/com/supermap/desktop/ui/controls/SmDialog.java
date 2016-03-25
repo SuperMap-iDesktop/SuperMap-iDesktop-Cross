@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-public class SmDialog extends JDialog implements WindowListener {
+public class SmDialog extends JDialog implements WindowListener{
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
@@ -49,16 +49,24 @@ public class SmDialog extends JDialog implements WindowListener {
 	 */
 	@Override
 	protected JRootPane createRootPane() {
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		KeyStroke strokeForESC = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		JRootPane rootPane = new JRootPane();
 		rootPane.registerKeyboardAction(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.CANCEL);
 				dispose();
 			}
-		}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
+		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.OK);
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
 

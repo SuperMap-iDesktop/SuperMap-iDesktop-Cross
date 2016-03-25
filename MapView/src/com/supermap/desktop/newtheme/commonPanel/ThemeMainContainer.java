@@ -29,7 +29,6 @@ public class ThemeMainContainer extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel labelThemeLayer = new JLabel();
-	// private JComboBox<String> comboBoxThemeLayer = new JComboBox<String>();
 	private JTextField textFieldThemeLayer = new JTextField();
 	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel panelThemeInfo = new JPanel();
@@ -38,25 +37,13 @@ public class ThemeMainContainer extends JPanel {
 	private ThemeChangePanel panel;
 
 	private Map map;
-	// private boolean isSetCombobox = false;
 
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-	// private LocalItemListener itemListener = new LocalItemListener();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
 	private LocalTreeSelectListener treeSelectListener = new LocalTreeSelectListener();
 	private LocalActionListener actionListener = new LocalActionListener();
 	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
 	private PropertyChangeListener layerRemoveListener;
-	// private MouseListener comboboxMouseListener = new MouseAdapter() {
-	//
-	// @Override
-	// public void mouseClicked(MouseEvent e) {
-	// if (e.getClickCount() == 1) {
-	// isSetCombobox = true;
-	// oldLayer = MapUtilties.findLayerByName(map, comboBoxThemeLayer.getSelectedItem().toString());
-	// }
-	// }
-	// };
 
 	private Layer newLayer;
 	// 标记位，用于标记当前
@@ -86,15 +73,14 @@ public class ThemeMainContainer extends JPanel {
 	private void initComponents() {
 		GridBagLayout layout = new GridBagLayout();
 		this.setLayout(layout);
-		this.textFieldThemeLayer.setEnabled(false);
-		// this.comboBoxThemeLayer.setEditable(true);
+		this.textFieldThemeLayer.setEditable(false);
+		this.textFieldThemeLayer.setBackground(Color.white);
 		this.buttonApply.setEnabled(false);
 		this.setLayout(new GridBagLayout());
 		this.scrollPane.setBorder(null);
 		// @formatter:off
 		this.checkBoxRefreshAtOnce.setSelected(true);
 		this.add(this.labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
-//		this.add(this.comboBoxThemeLayer,    new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 		this.add(this.textFieldThemeLayer,   new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 		this.add(this.scrollPane,            new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		this.add(this.checkBoxRefreshAtOnce, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setInsets(0,10,5,10).setAnchor(GridBagConstraints.WEST));
@@ -120,12 +106,10 @@ public class ThemeMainContainer extends JPanel {
 	 * 注册事件
 	 */
 	private void registActionListener() {
-		// this.comboBoxThemeLayer.addItemListener(this.itemListener);
 		this.layersTree.addMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
-		// this.comboBoxThemeLayer.getComponent(0).addMouseListener(comboboxMouseListener);
 		this.layerRemoveListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -133,18 +117,29 @@ public class ThemeMainContainer extends JPanel {
 			}
 		};
 		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) layersTree.getLastSelectedPathComponent();
+				Object obj = node.getUserObject();
+				TreeNodeData controlNodeData = (TreeNodeData) obj;
+				Object itemObj = controlNodeData.getData();
+				if (itemObj instanceof Layer) {
+					textFieldThemeLayer.setText(((Layer)itemObj).getCaption());
+				}
+			}
+		});
 	}
 
 	/**
 	 * 注销事件
 	 */
 	public void unregistActionListener() {
-		// this.comboBoxThemeLayer.removeItemListener(this.itemListener);
 		this.layersTree.removeMouseListener(this.localMouseListener);
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
-		// this.comboBoxThemeLayer.getComponent(0).removeMouseListener(comboboxMouseListener);
 		this.layersTree.removePropertyChangeListener("LayerRemoved", layerRemoveListener);
 	}
 
@@ -159,46 +154,6 @@ public class ThemeMainContainer extends JPanel {
 			}
 		}
 	}
-
-	// public JComboBox<String> getComboBoxThemeLayer() {
-	// return comboBoxThemeLayer;
-	// }
-	//
-	// public void setComboBoxThemeLayer(JComboBox<String> comboBoxThemeLayer) {
-	// this.comboBoxThemeLayer = comboBoxThemeLayer;
-	// }
-
-	// /**
-	// * 刷新专题图主界面
-	// *
-	// * @param layer
-	// */
-	// private void refreshThemeMainContainer(Layer layer) {
-	// if (null != layer) {
-	// if (null != layer.getTheme()) {
-	// ThemeGuideFactory.modifyTheme(layer);
-	// } else {
-	// updateThemeMainContainer();
-	// }
-	// }
-	// }
-
-	// class LocalItemListener implements ItemListener {
-	// @Override
-	// public void itemStateChanged(ItemEvent e) {
-	// if (e.getStateChange() == ItemEvent.SELECTED && e.getSource() == comboBoxThemeLayer) {
-	// if (isSetCombobox) {
-	// updateLayerProperty(oldLayer);
-	// }
-	// String layerCaption = (String) comboBoxThemeLayer.getSelectedItem();
-	// if (null != ThemeGuideFactory.getMapControl()) {
-	// map = ThemeGuideFactory.getMapControl().getMap();
-	// Layer layer = MapUtilties.findLayerByCaption(map, layerCaption);
-	// refreshThemeMainContainer(layer);
-	// }
-	// }
-	// }
-	// }
 
 	class RefreshAtOnceListener implements ActionListener {
 		@Override
@@ -223,54 +178,7 @@ public class ThemeMainContainer extends JPanel {
 		}
 		scrollPane.setViewportView(panelThemeInfo);
 		ThemeMainContainer.this.repaint();
-		// ThemeMainContainer.this.comboBoxThemeLayer.removeAllItems();
 	}
-
-	// /**
-	// * 刷新标签项下拉框中显示的子项
-	// */
-	// private void refreshComboBoxThemeLayer() {
-	// comboBoxThemeLayer.removeAllItems();
-	// map = ThemeGuideFactory.getMapControl().getMap();
-	// Layers layers = map.getLayers();
-	// for (int i = 0; i < layers.getCount(); i++) {
-	// addItemToComboBox(layers.get(i));
-	// }
-	// }
-
-	// /**
-	// * 利用递归将当前地图的专题图图层标题添加到combobox中
-	// *
-	// * @param layer
-	// */
-	// public void addItemToComboBox(Layer layer) {
-	// if (layer instanceof LayerGroup) {
-	// LayerGroup tempLayer = (LayerGroup) layer;
-	// for (int i = 0; i < tempLayer.getCount(); i++) {
-	// addItemToComboBox(tempLayer.get(i));
-	// }
-	// } else if (null != layer.getTheme()) {
-	// comboBoxThemeLayer.addItem(layer.getCaption());
-	// }
-	// }
-
-	// private void resetThemeMainContainer(Layer layer) {
-	// if (null != layer) {
-	// refreshComboBoxThemeLayer();
-	// if (comboBoxThemeLayer.getItemCount() > 0 && null != layer.getTheme()) {
-	// // 有专题图图层，comboBoxThemeLayer中有对应的专题图图层，刷新ThemeMainContainer
-	// comboBoxThemeLayer.setSelectedItem(layer.getCaption());
-	// } else {
-	// // 没有专题图图层，重置ThemeMainContainer
-	// comboBoxThemeLayer.removeAllItems();
-	// comboBoxThemeLayer.setSelectedItem("");
-	// updateThemeMainContainer();
-	// ThemeMainContainer.this.updateUI();
-	// }
-	// } else {
-	// updateThemeMainContainer();
-	// }
-	// }
 
 	class LocalTreeMouseListener extends MouseAdapter {
 
@@ -300,7 +208,6 @@ public class ThemeMainContainer extends JPanel {
 					textFieldThemeLayer.setText("");
 					updateThemeMainContainer();
 				}
-				// resetThemeMainContainer(newLayer);
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}

@@ -95,6 +95,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
+	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -215,15 +216,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent arg0) {
-				initComboBoxExpression();
-				initComboBoxOffsetX();
-				initComboBoxOffsetY();
-			}
-		});
+		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -270,6 +263,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
+		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -813,6 +807,19 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
 		}
+	}
+
+	class LayerPropertyChangeListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent e) {
+			if (!themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).getName().equals(themeUniqueLayer.getName())) {
+				initComboBoxExpression();
+				initComboBoxOffsetX();
+				initComboBoxOffsetY();
+			}
+		}
+
 	}
 
 	class LocalActionListener implements ActionListener {

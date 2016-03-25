@@ -72,7 +72,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	private JComboBox<String> comboBoxOrder;
 	private JButton buttonJoinItem;
 	private ArrayList<Dataset> datasets;
-	
+
 	DocumentListener documentListener = new DocumentListener() {
 
 		@Override
@@ -118,7 +118,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			IFormMap iFormMap = Application.getActiveApplication().getActiveForm() instanceof IFormMap ? ((IFormMap) Application.getActiveApplication()
 					.getActiveForm()) : null;
 			if (iFormMap != null) {
-				if (null==datasets) {
+				if (null == datasets) {
 					datasets = new ArrayList<Dataset>();
 					datasets.add(getModifiedLayerPropertyModel().getDataset());
 				}
@@ -314,6 +314,9 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void setDisplayAttributeFilterValue() {
 		String attributeFilter = textFieldDisplayFilter.getText() == null ? "" : textFieldDisplayFilter.getText();
+		if (!attributeFilter.contains(".")) {
+			attributeFilter = getModifiedLayerPropertyModel().getDataset().getName() + "." + attributeFilter;
+		}
 		getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
 		checkChanged();
 	}
@@ -450,7 +453,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		}
 	}
 
-	private class MouseJoinItemsListener extends MouseAdapter{
+	private class MouseJoinItemsListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 1) {
@@ -510,7 +513,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
 			jDialogJoinItem.dispose();
 			joinItems.dispose();
-			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged();
+			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
 		}
 	}
 }

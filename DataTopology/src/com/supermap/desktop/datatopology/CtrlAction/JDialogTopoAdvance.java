@@ -6,15 +6,19 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.Interface.ISmdialog;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
-public class JDialogTopoAdvance extends SmDialog {
+public class JDialogTopoAdvance extends JDialog implements ISmdialog {
 
 	/**
 	 * 
@@ -40,8 +44,10 @@ public class JDialogTopoAdvance extends SmDialog {
 
 	private transient DatasetVector targetDataset;
 	private transient Datasource datasource;
+	private DialogResult dialogResult;
 
 	private CommonButtonListener listener = new CommonButtonListener();
+
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -77,7 +83,7 @@ public class JDialogTopoAdvance extends SmDialog {
 		this.buttonQuite.removeActionListener(this.listener);
 		this.buttonMore.removeActionListener(this.listener);
 	}
-	
+
 	private void initResources() {
 		setTitle(DataTopologyProperties.getString("String_Form_AdvanceSettings"));
 		this.labelOvershootsTolerance.setText(DataTopologyProperties.getString("String_Label_OvershootsTolerance"));
@@ -183,7 +189,7 @@ public class JDialogTopoAdvance extends SmDialog {
 			sqlExpressionDialog = new SQLExpressionDialog();
 			Dataset[] datasets = new Dataset[1];
 			datasets[0] = targetDataset;
-			DialogResult dialogResult = sqlExpressionDialog.showDialog("",datasets);
+			DialogResult dialogResult = sqlExpressionDialog.showDialog("", datasets);
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlExpressionDialog.getQueryParameter().getAttributeFilter();
 				if (filter != null && !"".equals(filter.trim())) {
@@ -196,8 +202,8 @@ public class JDialogTopoAdvance extends SmDialog {
 	private void setTopologyInfo() {
 		try {
 			String arcFilterString = this.textFieldFilterExpression.getText();
-			if (null != arcFilterString && !arcFilterString.isEmpty() && !"".equals(arcFilterString)) {
-				this.topologyProcessingOptions.setArcFilterString(arcFilterString);
+			if (!StringUtilties.isNullOrEmpty(arcFilterString)) {
+				this.topologyProcessingOptions.setArcFilterString(targetDataset.getName() + "." + arcFilterString);
 			}
 			if (0 < this.comboBoxNotCutting.getItemCount()) {
 				String datasetName = this.comboBoxNotCutting.getSelectItem();
@@ -216,5 +222,52 @@ public class JDialogTopoAdvance extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+	@Override
+	protected JRootPane createRootPane() {
+		return enterPressed();
+	}
+
+	@Override
+	public JRootPane enterPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.OK);
+				setTopologyInfo();
+				unregistActionListener();
+				dispose();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+
+	@Override
+	public JRootPane escPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForESCAPE = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.CANCEL);
+				unregistActionListener();
+				dispose();
+			}
+		}, strokForESCAPE, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+
+	@Override
+	public DialogResult getDialogResult() {
+		return this.dialogResult;
+	}
+
+	@Override
+	public void setDialogResult(DialogResult dialogResult) {
+		this.dialogResult = dialogResult;
 	}
 }

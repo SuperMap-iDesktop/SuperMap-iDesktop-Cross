@@ -255,7 +255,6 @@ public class LayersTree extends JTree {
 		}
 	}
 
-
 	/**
 	 * 针对专题图的刷新,通过传入当前图层来刷新 当前图层需在被选中状态下
 	 * 
@@ -369,7 +368,7 @@ public class LayersTree extends JTree {
 	}
 
 	private DefaultTreeModel getTreeModel() {
-		
+
 		TreeNodeData mapData = new TreeNodeData(currentMap.getName(), NodeDataType.UNKNOWN);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(mapData);
 		if (currentMap.getWorkspace() != null) {
@@ -610,8 +609,8 @@ public class LayersTree extends JTree {
 				return;
 			}
 			String message = null;
-			if (paths.length == 1 && (((TreeNodeData)((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData() instanceof Layer)) {
-			
+			if (paths.length == 1 && (((TreeNodeData) ((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData() instanceof Layer)) {
+
 				message = MessageFormat.format(ControlsProperties.getString("String_RemoveLayerInfo"),
 						((Layer) ((TreeNodeData) ((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData()).getName());
 			} else {
@@ -811,15 +810,24 @@ public class LayersTree extends JTree {
 			}
 		}
 	}
-
+	/**
+	 * 修改图层属性
+	 */
 	public void firePropertyChangeWithLayerSelect() {
 		firePropertyChange("LayerChange", null, null);
 	}
-
-	public void fireLayerPropertyChanged(){
-		firePropertyChange("LayerPropertyChanged", null, null);
-	}
 	
+	/**
+	 * 属性变化页面添加外接表事件
+	 * @param layer
+	 */
+	public void fireLayerPropertyChanged(Layer layer) {
+		firePropertyChange("LayerPropertyChanged", null, layer);
+	}
+
+	/**
+	 * 删除图层事件
+	 */
 	public void layerRemoved() {
 		firePropertyChange("LayerRemoved", null, null);
 	}

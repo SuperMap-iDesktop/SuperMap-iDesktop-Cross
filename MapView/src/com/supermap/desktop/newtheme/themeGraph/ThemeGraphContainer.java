@@ -159,7 +159,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private ChangeListener startAngleListener = new StartAngleListener();
 	private ChangeListener roseAngleListener = new RoseAngleListener();
 	private ActionListener toolbarAction = new ToolBarAction();
-	private PropertyChangeListener layerPropertyChangeListener = new LayersTreeChangeListener();
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
+	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseListener tableMouseListener = new TableMouseListener();
 	protected TextStyleDialog textStyleDialog;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
@@ -516,41 +517,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	}
 
-	// /**
-	// * 表达式
-	// *
-	// * @return m_fieldComboBox
-	// */
-	// private JComboBox<String> getFieldComboBox(JComboBox<String> comboBox) {
-	// int count = datasetVector.getFieldCount();
-	// JoinItems joinItems = this.themeGraphLayer.getDisplayFilter().getJoinItems();
-	// int itemsCount = joinItems.getCount();
-	// for (int j = 0; j < count; j++) {
-	// FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
-	// if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
-	// || fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-	// String item = fieldInfo.getName();
-	// comboBox.addItem(item);
-	// }
-	// }
-	// for (int i = 0; i < itemsCount; i++) {
-	// if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
-	// DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
-	// int tempDatasetFieldCount = tempDataset.getFieldCount();
-	// for (int j = 0; j < tempDatasetFieldCount; j++) {
-	// FieldInfo tempfieldInfo = tempDataset.getFieldInfos().get(j);
-	// if (tempfieldInfo.getType() == FieldType.INT16 || tempfieldInfo.getType() == FieldType.INT32 || tempfieldInfo.getType() == FieldType.INT64
-	// || tempfieldInfo.getType() == FieldType.DOUBLE || tempfieldInfo.getType() == FieldType.SINGLE) {
-	// String tempDatasetItem = tempDataset.getName() + "." + tempDataset.getFieldInfos().get(j).getName();
-	// comboBox.addItem(tempDatasetItem);
-	// }
-	// }
-	// }
-	// }
-	// comboBox.addItem(MapViewProperties.getString("String_Combobox_Expression"));
-	// return comboBox;
-	// }
-
 	private void initpanelSizeLimite(JPanel panelSizeLimite) {
 		this.textFieldMaxValue.setText(String.valueOf(this.themeGraph.getMaxGraphSize()));
 		this.textFieldMinValue.setText(String.valueOf(this.themeGraph.getMinGraphSize()));
@@ -627,7 +593,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			ThemeGraphItem item = themeGraph.getItem(i);
 			String expression = item.getGraphExpression();
 			if (expression.indexOf(".") > 0 && expression.substring(0, expression.indexOf(".")).equals(datasetVector.getName())
-					&& expression.split("\\.").length < 2) {
+					&& expression.split("\\.").length == 2) {
 				expression = expression.substring(expression.indexOf(".") + 1, expression.length());
 			}
 			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
@@ -874,8 +840,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonMoveToForward.addActionListener(this.toolbarAction);
 		this.buttonMoveToNext.addActionListener(this.toolbarAction);
 		this.buttonMoveToLast.addActionListener(this.toolbarAction);
-		this.layersTree.addPropertyChangeListener("LayerChange", this.layerPropertyChangeListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 		this.tableGraphInfo.addMouseListener(this.tableMouseListener);
+		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	protected void setTextStyle(int x, int y, int styleType) {
@@ -918,6 +885,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
+	class LayerPropertyChangeListener implements PropertyChangeListener{
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (!themeGraphLayer.isDisposed()&&((Layer)evt.getNewValue()).getName().equals(themeGraphLayer.getName())) {
+				getTable();
+			}
+		}
+		
+	}
+	
 	class ToolBarAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1030,7 +1008,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			for (int i = 0; i < themeGraph.getCount(); i++) {
 				existItems.add(themeGraph.getItem(i).getGraphExpression());
 			}
-			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector, existItems);
+			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector,themeGraphLayer.getDisplayFilter().getJoinItems(),existItems);
 			addItemDialog.setLocation(x, y);
 			addItemDialog.setVisible(true);
 			if (addItemDialog.getDialogResult() == DialogResult.OK) {
@@ -1038,6 +1016,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				for (int i = 0; i < tempList.size(); i++) {
 					ThemeGraphItem item = new ThemeGraphItem();
 					String graphExpression = tempList.get(i);
+					if (!graphExpression.contains(".")) {
+						graphExpression = datasetVector.getName()+"."+graphExpression;
+					}
 					String caption = getCaption(graphExpression);
 					item.setGraphExpression(graphExpression);
 					item.setCaption(caption);
@@ -1703,44 +1684,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.buttonMoveToForward.removeActionListener(this.toolbarAction);
 		this.buttonMoveToNext.removeActionListener(this.toolbarAction);
 		this.buttonMoveToLast.removeActionListener(this.toolbarAction);
-		this.layersTree.removePropertyChangeListener("LayerChange", this.layerPropertyChangeListener);
+		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
 		this.tableGraphInfo.removeMouseListener(this.tableMouseListener);
+		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
-
-	// /**
-	// * 获取表达式项
-	// *
-	// * @param jComboBoxField
-	// */
-	// private void getSqlExpression(JComboBox<String> jComboBoxField, String expression) {
-	// // 判断是否为“表达式”项
-	// if (MapViewProperties.getString("String_Combobox_Expression").equals(jComboBoxField.getSelectedItem())) {
-	// SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
-	// int allItems = jComboBoxField.getItemCount();
-	// Dataset[] datasets = new Dataset[1];
-	// datasets[0] = datasetVector;
-	// DialogResult dialogResult = null;
-	// ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
-	// fieldTypes.add(FieldType.INT16);
-	// fieldTypes.add(FieldType.INT32);
-	// fieldTypes.add(FieldType.INT64);
-	// fieldTypes.add(FieldType.DOUBLE);
-	// fieldTypes.add(FieldType.SINGLE);
-	// dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
-	// if (null != dialogResult && dialogResult == DialogResult.OK) {
-	// String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-	// if (filter != null && !filter.isEmpty()) {
-	// jComboBoxField.insertItemAt(filter, allItems - 1);
-	// jComboBoxField.setSelectedIndex(allItems - 1);
-	// } else {
-	// jComboBoxField.setSelectedItem(expression);
-	// }
-	// } else {
-	// jComboBoxField.setSelectedItem(expression);
-	// }
-	//
-	// }
-	// }
 
 	public void setItemGeoSytle() {
 		int[] selectedRow = this.tableGraphInfo.getSelectedRows();

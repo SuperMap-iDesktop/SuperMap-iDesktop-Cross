@@ -8,8 +8,10 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -20,6 +22,8 @@ import javax.swing.border.TitledBorder;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -74,6 +78,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
+	private transient LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 
 	public ThemeLabelPropertyPanel(Layer themelabelLayer) {
 		this.themelabelLayer = themelabelLayer;
@@ -131,9 +137,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initPanelBGSet(panelBGSet);
 		initPanelLabelOffset(panelLabelOffset);
 		initPanelLabelEffectSet(panelLabelEffectSet);
-		this.comboBoxLabelExpression.setEditable(true);
 		initComboBoxLabelExpression();
-		ThemeUtil.getFieldComboBox(comboBoxLabelExpression, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, false);
 		//@formatter:off
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
@@ -147,6 +151,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	}
 
 	private void initComboBoxLabelExpression() {
+		this.comboBoxLabelExpression.setEditable(true);
+		this.comboBoxLabelExpression.removeAllItems();
+		ThemeUtil.getFieldComboBox(comboBoxLabelExpression, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, false);
 		String expression = themeLabel.getLabelExpression();
 		if (StringUtilties.isNullOrEmpty(expression)) {
 			expression = "0";
@@ -231,11 +238,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		panelLabelOffset.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,0));
 		panelLabelOffset.add(this.comboBoxOffsetUnity, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.labelOffsetX,        new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
-		this.comboBoxOffsetX.setEditable(true);
 		panelLabelOffset.add(this.comboBoxOffsetX,     new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.labelOffsetXUnity,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
 		panelLabelOffset.add(this.labelOffsetY,        new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(0,10,5,0));
-		this.comboBoxOffsetY.setEditable(true);
 		panelLabelOffset.add(this.comboBoxOffsetY,     new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelOffset.add(this.labelOffsetYUnity,   new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(0,10,5,10));
 		//@formatter:on
@@ -260,6 +265,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
+		this.comboBoxOffsetX.setEditable(true);
+		this.comboBoxOffsetX.removeAllItems();
 		ThemeUtil.getFieldComboBox(this.comboBoxOffsetX, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetX, true);
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = themeLabel.getOffsetX();
@@ -277,6 +284,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
+		this.comboBoxOffsetY.setEditable(true);
+		this.comboBoxOffsetY.removeAllItems();
 		ThemeUtil.getFieldComboBox(this.comboBoxOffsetY, datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetY, true);
 		this.comboBoxOffsetY.addItem("0");
 		String offsetY = themeLabel.getOffsetY();
@@ -378,6 +387,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.checkBoxShowSmallLabel.addActionListener(this.actionListener);
 		this.checkBoxShowSubscription.addActionListener(this.actionListener);
 		this.comboBoxTextPrecision.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
+		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -400,6 +410,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.checkBoxShowSmallLabel.removeActionListener(this.actionListener);
 		this.checkBoxShowSubscription.removeActionListener(this.actionListener);
 		this.comboBoxTextPrecision.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
+		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	private void refreshAtOnce() {
@@ -417,7 +428,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				Dataset[] datasets = ThemeUtil.getDatasets(themelabelLayer, datasetVector);
 				if (e.getSource() == comboBoxLabelExpression) {
 					// sql表达式
-					boolean isLabelExpressionChanged = ThemeUtil.getSqlExpression(comboBoxLabelExpression, datasets, comboBoxArray,themeLabel.getLabelExpression(), false);
+					boolean isLabelExpressionChanged = ThemeUtil.getSqlExpression(comboBoxLabelExpression, datasets, comboBoxArray,
+							themeLabel.getLabelExpression(), false);
 					if (isLabelExpressionChanged) {
 						// 设置标签表达式
 						setFieldInfo();
@@ -433,7 +445,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					if (StringUtilties.isNullOrEmpty(offsetXExpression)) {
 						offsetXExpression = "0";
 					}
-					boolean isOffsetXExpressionChanged = ThemeUtil.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, offsetXExpression, true);
+					boolean isOffsetXExpressionChanged = ThemeUtil
+							.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, offsetXExpression, true);
 					if (isOffsetXExpressionChanged) {
 						// 设置水平偏移量
 						setOffsetX();
@@ -443,7 +456,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					if (StringUtilties.isNullOrEmpty(offsetYExpression)) {
 						offsetYExpression = "0";
 					}
-					boolean isOffsetYExpressionChanged = ThemeUtil.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, offsetYExpression, true);
+					boolean isOffsetYExpressionChanged = ThemeUtil
+							.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, offsetYExpression, true);
 					if (isOffsetYExpressionChanged) {
 						// 设置垂直偏移量
 						setOffsetY();
@@ -567,7 +581,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				if (labelExpression.contains(".")) {
 					String datasetName = labelExpression.substring(0, labelExpression.indexOf("."));
 					dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(datasetName);
-					fieldName = labelExpression.substring(labelExpression.indexOf(".")+1, labelExpression.length());
+					fieldName = labelExpression.substring(labelExpression.indexOf(".") + 1, labelExpression.length());
 				}
 				FieldInfo fieldInfo = dataset.getFieldInfos().get(fieldName);
 				// 控制数值文本精度下拉框的可使用性
@@ -583,6 +597,19 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			}
 			themeLabel.setLabelExpression(labelExpression);
 		}
+	}
+
+	class LayerPropertyChangeListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (!themelabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themelabelLayer.getName())) {
+				initComboBoxLabelExpression();
+				initComboBoxOffsetX();
+				initComboBoxOffsetY();
+			}
+		}
+
 	}
 
 	class LocalKeyListener extends KeyAdapter {

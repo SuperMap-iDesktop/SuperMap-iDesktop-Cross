@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -26,7 +25,9 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
+import com.supermap.data.JoinItems;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -49,9 +50,9 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 	private ActionListener buttonAction = new ButtonAction();
 	private ArrayList<String> themeExpressionList = new ArrayList<String>();
 
-	public ThemeGraphAddItemDialog(DatasetVector datasetVector, ArrayList<String> list) {
+	public ThemeGraphAddItemDialog(DatasetVector datasetVector, JoinItems joinItems, ArrayList<String> list) {
 		this.datasetVector = datasetVector;
-		setList(list);
+		setList(joinItems, list);
 		initComponents();
 		initResources();
 		registActionListener();
@@ -96,23 +97,40 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 
 	private void initPanelButton(JPanel panelButton) {
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonAddExpression, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,3,0,5).setWeight(60, 0));
-		panelButton.add(this.buttonSure,          new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(20, 0));
-		panelButton.add(this.buttonCancel,        new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,3,0,5).setWeight(20, 0));
+		panelButton.add(this.buttonAddExpression,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 3, 0, 5).setWeight(60, 0));
+		panelButton.add(this.buttonSure, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 3, 0, 5).setWeight(20, 0));
+		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 3, 0, 5).setWeight(20, 0));
 	}
 
-	public void setList(ArrayList<String> list) {
+	public void setList(JoinItems joinItems, ArrayList<String> list) {
 		int count = datasetVector.getFieldCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
-			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
-					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = datasetVector.getName() + "." + fieldInfo.getName();
+			if (ThemeUtil.isDataType(fieldInfo.getType())) {
+				String item = fieldInfo.getName();
 				this.themeExpressionList.add(item);
 			}
 		}
+		int itemCount = joinItems.getCount();
+		for (int i = 0; i < itemCount; i++) {
+			DatasetVector tempDatasetVector = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+			int tempCount = tempDatasetVector.getFieldCount();
+			for (int j = 0; j < tempCount; j++) {
+				FieldInfo tempFieldInfo = tempDatasetVector.getFieldInfos().get(j);
+				if (ThemeUtil.isDataType(tempFieldInfo.getType())) {
+					String item = tempDatasetVector.getName() + "." + tempFieldInfo.getName();
+					this.themeExpressionList.add(item);
+				}
+			}
+		}
 		for (int i = 0; i < list.size(); i++) {
-			this.themeExpressionList.remove(list.get(i));
+			String tempString = list.get(i);
+			if (tempString.split("\\.").length == 2 && tempString.substring(0, tempString.indexOf(".")).equals(datasetVector.getName())) {
+				this.themeExpressionList.remove(tempString.substring(tempString.indexOf(".")+1,tempString.length()));
+			} else {
+				this.themeExpressionList.remove(list.get(i));
+			}
 		}
 		initListExpressions();
 	}
@@ -165,7 +183,7 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 			item.setSelected(!item.isSelected());
 			if (item.isSelected) {
 				resultList.add(item.toString());
-			}else {
+			} else {
 				resultList.remove(item.toString());
 			}
 			Rectangle rect = listExpressions.getCellBounds(index, index);
@@ -193,7 +211,6 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 			return this;
 		}
 	}
-
 
 	class CheckableItem {
 		private String str;

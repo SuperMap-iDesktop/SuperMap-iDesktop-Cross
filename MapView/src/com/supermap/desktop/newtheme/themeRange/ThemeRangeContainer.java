@@ -102,7 +102,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
-	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
+	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -175,7 +176,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initPanelProperty() {
 		//@formatter:off
 		initToolBar();
-		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, joinItems, comboBoxArray, true);
 		initComboBoxRangeExpression();
 		initComboBoxRangMethod();
 		initComboBoxRangeCount();
@@ -213,6 +213,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 */
 	private void initComboBoxRangeExpression() {
 		this.comboBoxExpression.setEditable(true);
+		this.comboBoxExpression.removeAllItems();
+		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, this.themeRangeLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true);
 		this.rangeExpression = this.themeRange.getRangeExpression();
 		if (StringUtilties.isNullOrEmpty(this.rangeExpression)) {
 			rangeExpression = "0";
@@ -266,7 +268,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		
+
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = this.themeRange.getOffsetX();
 		if (StringUtilties.isNullOrEmpty(offsetX)) {
@@ -539,6 +541,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
+		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -562,6 +565,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
+		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -1333,6 +1337,17 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 			return false;
 		}
+	}
+
+	class LayerPropertyChangeListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (!themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeRangeLayer.getName())) {
+				initComboBoxRangeExpression();
+			}
+		}
+
 	}
 
 	/**

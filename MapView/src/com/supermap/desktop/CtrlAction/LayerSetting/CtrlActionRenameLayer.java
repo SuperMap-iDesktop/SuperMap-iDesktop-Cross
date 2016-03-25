@@ -28,6 +28,7 @@ public class CtrlActionRenameLayer extends CtrlAction {
 			TreePath treeSelectionPath = layersTree.getSelectionPaths()[0];
 			layersTree.setEditable(true);
 			layersTree.startEditingAtPath(treeSelectionPath);
+			layersTree.firePropertyChangeWithLayerSelect();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
