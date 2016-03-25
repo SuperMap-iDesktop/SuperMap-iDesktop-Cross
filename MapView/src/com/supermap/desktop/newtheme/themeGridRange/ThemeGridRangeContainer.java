@@ -8,7 +8,6 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
@@ -18,7 +17,12 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridRangeItem;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -28,9 +32,13 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -86,7 +94,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalDefualTableModel tableModel;
-	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();;
+	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 
 	/**
 	 * @wbp.parser.constructor
@@ -696,7 +704,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为平方根分段
-					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"), "", JOptionPane.ERROR_MESSAGE);
+					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"));
+//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -710,7 +719,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为对数分段
-					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeTheme"), "", JOptionPane.ERROR_MESSAGE);
+					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeTheme"));
+//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeTheme"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -772,8 +782,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				ThemeGridRange theme = ThemeGridRange.makeDefault(datasetGrid, rangeMode, rangeCount, ColorGradientType.GREENRED);
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
-					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-							JOptionPane.ERROR_MESSAGE);
+					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
+//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
+//							JOptionPane.ERROR_MESSAGE);
 				} else {
 					refreshThemeRange(theme);
 				}
@@ -882,8 +893,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			ThemeGridRange theme = ThemeGridRange.makeDefault(datasetGrid, rangeMode, rangeLength, ColorGradientType.GREENRED);
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
-				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-						JOptionPane.ERROR_MESSAGE);
+				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
+//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
+//						JOptionPane.ERROR_MESSAGE);
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);
@@ -918,10 +930,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex == TABLE_COLUMN_RANGEVALUE || columnIndex == TABLE_COLUMN_CAPTION) {
-				return true;
-			}
-			return false;
+			return columnIndex == TABLE_COLUMN_RANGEVALUE || columnIndex == TABLE_COLUMN_CAPTION;
 		}
 	}
 

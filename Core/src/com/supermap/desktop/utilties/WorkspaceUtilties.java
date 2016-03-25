@@ -76,6 +76,7 @@ public class WorkspaceUtilties {
 		}
 
 		if (!saveWorkspaceListeners.contains(listener)) {
+
 			saveWorkspaceListeners.add(listener);
 		}
 	}

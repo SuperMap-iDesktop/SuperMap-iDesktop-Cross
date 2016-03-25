@@ -18,19 +18,27 @@ import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
 import com.supermap.desktop.newtheme.themeRange.ThemeRangeContainer;
 import com.supermap.desktop.newtheme.themeUnique.ThemeUniqueContainer;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.ThemeGraph;
+import com.supermap.mapping.ThemeGraphItem;
+import com.supermap.mapping.ThemeGraphType;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeUnique;
 import com.supermap.ui.MapControl;
 
-import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import java.awt.Point;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -133,8 +141,9 @@ public class ThemeGuideFactory {
 			String expression = getDataset().getName() + "." + "SmUserID";
 			if (ThemeUtil.isCountBeyond((DatasetVector) getDataset(), expression)) {
 				// 字段记录数大于3000条时建议不做专题图
-				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
-						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
+				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
+//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
+//						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 				return success;
 			}
 			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
