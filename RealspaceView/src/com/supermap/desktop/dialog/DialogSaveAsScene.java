@@ -2,12 +2,12 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Scenes;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilties.SceneUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

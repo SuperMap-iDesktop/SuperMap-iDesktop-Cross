@@ -190,7 +190,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 		buttonGroup.add(radioButtonQueryAttributeInfo);
 		buttonGroup.add(radioButtonQuerySpaceAndProperty);
-
+		this.getRootPane().setDefaultButton(buttonQuery);
 	}
 
 	/**
@@ -1189,7 +1189,7 @@ public class JDialogSQLQuery extends SmDialog {
 			fieldNames.add(builderFieldName.toString());
 			builderFieldName.setLength(0);
 		}
-		return (String[]) fieldNames.toArray(new String[fieldNames.size()]);
+		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 
 	private void SaveQueryResult(Recordset resultRecord) {

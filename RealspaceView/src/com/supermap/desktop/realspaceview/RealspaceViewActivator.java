@@ -6,11 +6,11 @@ import com.supermap.desktop.FormScene;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.SceneUtilties;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

@@ -66,6 +66,7 @@ public class SmOptionPane extends SmDialog {
 		this.setLocationRelativeTo(null);
 		this.setTitle(defaultTitle);
 		this.setResizable(false);
+		this.getRootPane().setDefaultButton(buttonYes);
 	}
 
 	private void initLayout() {
