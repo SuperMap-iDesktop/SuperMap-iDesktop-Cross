@@ -123,6 +123,7 @@ public class JDialogPyramidManager extends SmDialog {
 			}
 		};
 		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
+		this.getRootPane().setDefaultButton(buttonCreate);
 	}
 
 

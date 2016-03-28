@@ -151,6 +151,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			}
 		};
 		this.datasetChooser.setSupportDatasetTypes(this.supportDatasetTypes);
+		this.getRootPane().setDefaultButton(buttonOk);
 	}
 
 	//region 初始化布局

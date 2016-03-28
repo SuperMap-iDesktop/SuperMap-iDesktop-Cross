@@ -1,10 +1,8 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IPasswordCheck;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -110,6 +108,7 @@ public class JDialogChangePassword extends SmDialog {
 	private void initializeComponents() {
 		setBounds(100, 100, 391, 160);
 
+		this.getRootPane().setDefaultButton(buttonOK);
 		textFieldOldPassword = new JPasswordField();
 		textFieldNewPassword = new JPasswordField();
 		textFieldConfirm = new JPasswordField();
