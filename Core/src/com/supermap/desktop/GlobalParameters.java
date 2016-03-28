@@ -3,17 +3,12 @@ package com.supermap.desktop;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.spi.Filter;
-import org.apache.log4j.spi.LoggingEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
-import java.util.Properties;
 
 public class GlobalParameters {
 
@@ -517,15 +512,6 @@ public class GlobalParameters {
 		return result;
 	}
 
-	private static boolean isLogAction() {
-		boolean result = false;
-		String value = getValue("_startup_InfoType", "Action");
-		if (value != null) {
-			result = Boolean.valueOf(value);
-		}
-		return result;
-	}
-
 	public static boolean isShowFormClosingInfo() {
 		boolean result = false;
 		String value = getValue("_startup_workspace", "closenotify");
@@ -536,24 +522,7 @@ public class GlobalParameters {
 	}
 
 	private static void initLogInfo() {
-		Properties properties = System.getProperties();
-		properties.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
-		System.setProperties(properties);
-		if (!isOutPutToLog() || !isLogException()) {
-			LogManager.getLogger("exception").getLoggerRepository().setThreshold(Level.OFF);
-		}
-		if (!isOutPutToLog() || !isLogInformation()) {
-			LogManager.getLogger("info").setLevel(Level.OFF);
-
-		}
-		if (!isOutPutToLog() || !isLogAction()) {
-			LogManager.getRootLogger().getAppender("myFile").addFilter(new Filter() {
-				@Override
-				public int decide(LoggingEvent event) {
-					return Filter.DENY;
-				}
-			});
-		}
+		System.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
 	}
 
 

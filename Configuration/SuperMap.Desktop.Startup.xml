@@ -57,7 +57,7 @@
   <log logFolder="./log/Desktop/" outputToLog="true">
   </log>
   <!--输出信息的级别-->
-  <InfoType Exception="true" Information="true" Action = "true">
+  <InfoType Exception="true" Information="true">
   </InfoType>
   <!--帮助文档的加载设置-->
   <help onlineAddress="http://support.supermap.com.cn/onlinedoc/deskpronet/" type="1">
