@@ -63,4 +63,5 @@ public class CommonProperties extends Properties {
 	public static final String STRING_DATASET_TYPE = "String_DatasetType";
 	public static final String yes = "String_yes";
 	public static final String no = "String_no";
+	public static final String Operation = "String_Operation";
 }
