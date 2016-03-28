@@ -495,7 +495,7 @@ public class WorkspaceUtilties {
 			boolean isContinue = true;
 			Component parent = (Component) Application.getActiveApplication().getMainFrame();
 			// 提示保存内存型数据源
-			if (DatasourceUtilties.isContianMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
+			if (DatasourceUtilties.isContainMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
 				String[] datasources = DatasourceUtilties.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
 				String datasourcesName = "";
 				for (int i = 0; i < datasources.length - 1; i++) {

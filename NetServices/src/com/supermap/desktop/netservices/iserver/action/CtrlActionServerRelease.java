@@ -1,10 +1,5 @@
 package com.supermap.desktop.netservices.iserver.action;
 
-import java.text.MessageFormat;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -19,6 +14,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
+
+import javax.swing.*;
+import java.text.MessageFormat;
 
 public class CtrlActionServerRelease extends CtrlAction {
 
@@ -57,7 +55,7 @@ public class CtrlActionServerRelease extends CtrlAction {
 		Boolean closed = Application.getActiveApplication().getMainFrame().getFormManager().closeAll(true);
 		Boolean isContinue = true;
 		if (closed) {
-			if (DatasourceUtilties.isContianMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
+			if (DatasourceUtilties.isContainMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
 				String[] datasources = DatasourceUtilties.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
 				String datasourcesName = "";
 				for (int i = 0; i < datasources.length - 1; i++) {

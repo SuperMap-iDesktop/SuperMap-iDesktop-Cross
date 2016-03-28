@@ -47,7 +47,8 @@ public class LogUtilties {
 	}
 
 	/**
-	 * 输出debug时的信息，debug完后直接替换为outPut输出日志。
+	 * 输出debug时的信息
+	 * debug完后直接替换为outPut输出日志。
 	 *
 	 * @param message 信息
 	 */
@@ -61,7 +62,8 @@ public class LogUtilties {
 	}
 
 	/**
-	 * 输出debug时的信息，用于异常捕获，debug可以直接删除。
+	 * 输出debug时的信息，用于异常捕获。
+	 * debug完成后直接删除。
 	 *
 	 * @param message   输出信息
 	 * @param throwable 异常
