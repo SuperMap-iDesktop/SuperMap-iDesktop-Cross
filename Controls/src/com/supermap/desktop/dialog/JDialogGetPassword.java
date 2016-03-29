@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,14 +27,15 @@ public class JDialogGetPassword extends SmDialog{
 	 */
 	private JLabel jlabelPasswordMessage;
 	private JPasswordField jpasswordField;
-	
-	
-	private JButton buttonOk;
-	private JButton buttonCancel;
+
+
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 	
 	private String promptMessage;
 	/**
 	 * 创建密码输入框
+	 *
 	 * @param promptMessage 提示信息
 	 */
 	public JDialogGetPassword(String promptMessage) {
@@ -58,9 +60,9 @@ public class JDialogGetPassword extends SmDialog{
 		this.jlabelPasswordMessage = new JLabel(ControlsProperties.getString("String_LOGIN_PASSWORD_Message"));
 		this.jlabelPasswordMessage.setForeground(Color.RED);
 		this.jlabelPasswordMessage.setVisible(false);
-		
-		this.buttonOk = new JButton(ControlsProperties.getString("String_Button_Ok"));
-		this.buttonCancel = new JButton(ControlsProperties.getString("String_Button_Cancel"));
+
+		this.buttonOk = new SmButton(ControlsProperties.getString("String_Button_Ok"));
+		this.buttonCancel = new SmButton(ControlsProperties.getString("String_Button_Cancel"));
 		
 
 

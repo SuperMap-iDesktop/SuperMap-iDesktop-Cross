@@ -1,35 +1,28 @@
 package com.supermap.desktop.geometryoperation;
 
-import java.awt.Dimension;
+import com.supermap.data.DatasetType;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.FieldTypeUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-
-import com.supermap.data.DatasetType;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
 
 public class JDialogFieldOperationSetting extends JDialog implements ItemListener, ActionListener, ListSelectionListener {
 	/**
@@ -45,8 +38,8 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 	private JRadioButton radioButtonGeometry;
 	private JComboBox<String> comboBoxWeight;
 	private JComboBox<String> comboBoxGeometry;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 
 	private Map map;
 	private Layer editLayer;
@@ -140,8 +133,8 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		buttonGroup.add(this.radioButtonGeometry);
 		this.comboBoxWeight = new JComboBox<String>();
 		this.comboBoxGeometry = new JComboBox<String>();
-		this.buttonOK = new JButton("OK");
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonOK = new SmButton("OK");
+		this.buttonCancel = new SmButton("Cancel");
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
@@ -151,7 +144,7 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
 				.addGroup(groupLayout.createSequentialGroup()
 						.addComponent(this.labelEditLayer)
-						.addComponent(this.comboBoxEditLayer, GroupLayout.DEFAULT_SIZE, groupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
+						.addComponent(this.comboBoxEditLayer, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
 				.addComponent(this.table, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)

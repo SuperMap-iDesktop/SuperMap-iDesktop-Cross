@@ -1,27 +1,27 @@
 package com.supermap.desktop.ui.controls.prjcoordsys;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.JTree;
+import com.supermap.data.Enum;
+import com.supermap.data.GeoCoordSys;
+import com.supermap.data.GeoCoordSysType;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Unit;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFieldSearch;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentEvent;
@@ -36,25 +36,15 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import com.supermap.data.Enum;
-import com.supermap.data.GeoCoordSys;
-import com.supermap.data.GeoCoordSysType;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.Unit;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.TextFieldSearch;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 // @formatter:off
 /**
@@ -69,7 +59,7 @@ import com.supermap.desktop.utilties.XmlUtilties;
 public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -87,8 +77,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	private JTable tablePrjCoordSys; // 读取加载选中树节点的具体内容的 Table，主面板右边区域上半区域
 	private JTextArea textAreaDetail; // 显示选定投影详细信息，主面板右边区域下半区域
 
-	private JButton buttonApply;
-	private JButton buttonClose;
+	private SmButton buttonApply;
+	private SmButton buttonClose;
 
 	// 平面坐标系定义集合
 	private transient CoordSysDefine noneEarth = new CoordSysDefine(CoordSysDefine.NONE_ERRTH, null, ControlsProperties.getString("String_NoneEarth")); // 平面坐标系定义数据
@@ -205,7 +195,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 设置选定的投影（目前不支持自定义投影，所以如果是自定义投影，那么就不选择，是默认投影，则选中默认投影）
-	 * 
+	 *
 	 * @param prj
 	 */
 	public void setPrjCoordSys(PrjCoordSys prj) {
@@ -297,7 +287,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 创建工具条
-	 * 
+	 *
 	 * @return
 	 */
 	private JToolBar createToolBar() {
@@ -318,14 +308,14 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 创建工具条之下的内容面板
-	 * 
+	 *
 	 * @return
 	 */
 	private JPanel createCenterPanel() {
 		JPanel centerPanel = new JPanel();
 		createSplitPaneMain();
-		this.buttonApply = new JButton("Apply");
-		this.buttonClose = new JButton("Close");
+		this.buttonApply = new SmButton("Apply");
+		this.buttonClose = new SmButton("Close");
 
 		GroupLayout groupLayout = new GroupLayout(centerPanel);
 		groupLayout.setAutoCreateGaps(true);
@@ -351,7 +341,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 创建容纳 Tree 和 Table 的分割面板
-	 * 
+	 *
 	 * @return
 	 */
 	private JSplitPane createSplitPaneMain() {
@@ -369,7 +359,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 创建容纳 Table 和投影详细信息展示的分割面板
-	 * 
+	 *
 	 * @return
 	 */
 	private JSplitPane createSplitPaneDetails() {
@@ -395,7 +385,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 加载投影配置文件
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private void loadProjectionConfig() {
@@ -421,7 +411,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 根据指定路径加载投影配置文件，返回 xml 文档对象
-	 * 
+	 *
 	 * @param filePath
 	 * @return
 	 * @throws Exception
@@ -637,7 +627,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * // 如果双击的是叶子节点，那么提示应用，如果双击的是其他节点，没有任何效果
-	 * 
+	 *
 	 * @param e
 	 */
 	private void treeMouseDoubleClick(MouseEvent e) {
@@ -668,7 +658,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 获取指定父节点下，与指定 UserData 匹配的子节点
-	 * 
+	 *
 	 * @param node
 	 * @param define
 	 * @return
@@ -702,7 +692,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 确认并选择指定的投影。只有当前投影是叶子节点也就是具体的投影时，才提示是否应用。
-	 * 
+	 *
 	 * @param selectedDefine
 	 */
 	private void confirmSelected() {
@@ -737,7 +727,6 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	}
 
 	/**
-	 * 
 	 * @return JOptionPane.YES_OPTION / JOptionPane.NO_OPTION / JOptionPane.CLOSED_OPTION
 	 */
 	private int showConfirmMessage() {
@@ -787,7 +776,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 根据关键字搜索指定的 Define，并将所有结果添加到 SearchResultModel 中
-	 * 
+	 *
 	 * @param pattern
 	 * @param define
 	 * @param searchModel
@@ -812,9 +801,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 描述一个坐标系
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	public class CoordSysDefine {
 		public static final int USER_DEFINED = -1; // 用户自定义
@@ -964,7 +952,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 		/**
 		 * 获取该投影定义下所有的叶子节点（也就是所有的投影）
-		 * 
+		 *
 		 * @return
 		 */
 		public CoordSysDefine[] getAllLeaves() {
@@ -995,13 +983,12 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 投影信息 TableModel 的抽象基类，搜索结果的 Model 和 正常展示的 Model 各自有不同的实现。
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private abstract class AbstractPrjTableModel extends AbstractTableModel {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		protected static final int CAPTION = 0;
@@ -1045,13 +1032,12 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 选中节点之后，在 Table 上展示对应数据的 Model
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private class PrjCoordSysTableModel extends AbstractPrjTableModel {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
@@ -1131,14 +1117,13 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	/**
 	 * 在 Table 上展示搜索结果的 Model
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private class SearchResultModel extends AbstractPrjTableModel {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 

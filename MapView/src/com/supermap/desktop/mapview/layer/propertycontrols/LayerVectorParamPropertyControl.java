@@ -18,6 +18,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -27,7 +28,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -68,9 +68,9 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	private JComboBox<Object> comboBoxSymbolScale;
 	private SMFormattedTextField textFieldMinVisibleGeometrySize;
 	private JTextField textFieldDisplayFilter;
-	private JButton buttonDisplayFilter;
+	private SmButton buttonDisplayFilter;
 	private JComboBox<String> comboBoxOrder;
-	private JButton buttonJoinItem;
+	private SmButton buttonJoinItem;
 	private ArrayList<Dataset> datasets;
 
 	DocumentListener documentListener = new DocumentListener() {
@@ -171,9 +171,9 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		this.comboBoxSymbolScale = new JComboBox<Object>();
 		this.textFieldMinVisibleGeometrySize = new SMFormattedTextField(NumberFormat.getInstance());
 		this.textFieldDisplayFilter = new JTextField();
-		this.buttonDisplayFilter = new JButton("...");
+		this.buttonDisplayFilter = new SmButton("...");
 		this.comboBoxOrder = new JComboBox<String>();
-		this.buttonJoinItem = new JButton("SetLayerJoinItem...");
+		this.buttonJoinItem = new SmButton("SetLayerJoinItem...");
 
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);

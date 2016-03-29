@@ -1,25 +1,19 @@
 package com.supermap.desktop.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.GroupLayout;
+import com.supermap.desktop.ImportFileInfo;
+import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JCheckBox;
-import com.supermap.desktop.ImportFileInfo;
-import com.supermap.desktop.dataconversion.DataConversionProperties;
 
 public class FileProperty extends JDialog {
 
@@ -38,8 +32,8 @@ public class FileProperty extends JDialog {
 	private JLabel lblSize = new JLabel("size");
 	private JLabel lblLocation = new JLabel("location");
 	private JLabel lblType = new JLabel("type");
-	private JButton btnSure = new JButton();
-	private JButton btnQuit = new JButton();
+	private SmButton btnSure = new SmButton();
+	private SmButton btnQuit = new SmButton();
 
 	public FileProperty(Dialog owner,  ImportFileInfo fileInfo) {
 		super(owner,true);

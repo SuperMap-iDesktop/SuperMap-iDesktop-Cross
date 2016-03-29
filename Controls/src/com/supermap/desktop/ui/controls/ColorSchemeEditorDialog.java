@@ -1,11 +1,17 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
+import com.supermap.data.Colors;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -13,26 +19,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-
-import com.supermap.data.Colors;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
 
 /**
  * 自定义颜色编辑对话框
@@ -45,17 +31,17 @@ class ColorSchemeEditorDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JLabel jLabelPreViewLabel;
 
-	private JButton jButtonMoveBottomButton;
-	private JButton jButtonMoveDownButton;
-	private JButton jButtonMoveUpButton;
-	private JButton jButtonMoveTopButton;
-	private JButton jButtonRemoveColorButton;
-	private JButton jButtonEditColorButton;
-	private JButton jButtonAddColorButton;
-	private JButton jButtonClearSelectionButton;
-	private JButton jButtonCancelButton;
-	private JButton jButtonConfirmButton;
-	private JButton jButtonSelectAllButton;
+	private SmButton jButtonMoveBottomButton;
+	private SmButton jButtonMoveDownButton;
+	private SmButton jButtonMoveUpButton;
+	private SmButton jButtonMoveTopButton;
+	private SmButton jButtonRemoveColorButton;
+	private SmButton jButtonEditColorButton;
+	private SmButton jButtonAddColorButton;
+	private SmButton jButtonClearSelectionButton;
+	private SmButton jButtonCancelButton;
+	private SmButton jButtonConfirmButton;
+	private SmButton jButtonSelectAllButton;
 
 	private ColorsTableModel colorsTableModel;
 
@@ -99,7 +85,7 @@ class ColorSchemeEditorDialog extends JDialog {
 		setModal(true);
 		setResizable(false);
 		preColors = new Colors(colors);
-		colorLists = new LinkedList<Color>();
+		colorLists = new LinkedList<>();
 		for (int i = 0; i < colors.getCount(); i++) {
 			colorLists.add(colors.get(i));
 		}
@@ -195,7 +181,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.SELECT_ALL.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonSelectAllButton = new JButton(icon);
+			jButtonSelectAllButton = new SmButton(icon);
 			jButtonSelectAllButton.setToolTipText(ControlsProperties.getString("String_SelectAll"));
 			jButtonSelectAllButton.addActionListener(new ActionListener() {
 				@Override
@@ -244,7 +230,7 @@ class ColorSchemeEditorDialog extends JDialog {
 	 */
 	protected JButton getConfirmButton() {
 		if (jButtonConfirmButton == null) {
-			jButtonConfirmButton = new JButton();
+			jButtonConfirmButton = new SmButton();
 			jButtonConfirmButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -264,7 +250,7 @@ class ColorSchemeEditorDialog extends JDialog {
 	 */
 	protected JButton getCancelButton() {
 		if (jButtonCancelButton == null) {
-			jButtonCancelButton = new JButton();
+			jButtonCancelButton = new SmButton();
 			jButtonCancelButton.setText(CommonProperties.getString(CommonProperties.Cancel));
 			jButtonCancelButton.addActionListener(new ActionListener() {
 				@Override
@@ -365,7 +351,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.SELECT_PREVIOUS.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonClearSelectionButton = new JButton(icon);
+			jButtonClearSelectionButton = new SmButton(icon);
 			jButtonClearSelectionButton.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
 			jButtonClearSelectionButton.addActionListener(new ActionListener() {
 				@Override
@@ -410,7 +396,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_ADD_KEY_COLOR.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonAddColorButton = new JButton(icon);
+			jButtonAddColorButton = new SmButton(icon);
 			jButtonAddColorButton.setToolTipText(ControlsProperties.getString("String_Add"));
 			jButtonAddColorButton.addActionListener(new ActionListener() {
 				@Override
@@ -443,7 +429,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_EDIT_KEY_COLOER.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonEditColorButton = new JButton(icon);
+			jButtonEditColorButton = new SmButton(icon);
 			jButtonEditColorButton.setToolTipText(ControlsProperties.getString("String_Editor"));
 			jButtonEditColorButton.addActionListener(new ActionListener() {
 				@Override
@@ -480,7 +466,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_REMOVE_KEY_COLOR.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonRemoveColorButton = new JButton(icon);
+			jButtonRemoveColorButton = new SmButton(icon);
 			jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_Remove"));
 			jButtonRemoveColorButton.addActionListener(new ActionListener() {
 				@Override
@@ -525,7 +511,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_FIRST.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonMoveTopButton = new JButton(icon);
+			jButtonMoveTopButton = new SmButton(icon);
 			jButtonMoveTopButton.setToolTipText(ControlsProperties.getString("String_MoveFirst"));
 			jButtonMoveTopButton.addActionListener(new ActionListener() {
 				@Override
@@ -561,7 +547,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_UP.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonMoveUpButton = new JButton(icon);
+			jButtonMoveUpButton = new SmButton(icon);
 			jButtonMoveUpButton.setToolTipText(ControlsProperties.getString("String_MoveUp"));
 			jButtonMoveUpButton.addActionListener(new ActionListener() {
 				@Override
@@ -599,7 +585,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_DOWN.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonMoveDownButton = new JButton(icon);
+			jButtonMoveDownButton = new SmButton(icon);
 			jButtonMoveDownButton.setToolTipText(ControlsProperties.getString("String_MoveDown"));
 			jButtonMoveDownButton.addActionListener(new ActionListener() {
 				@Override
@@ -637,7 +623,7 @@ class ColorSchemeEditorDialog extends JDialog {
 			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_LAST.getImage(), 0, 0, null);
 			icon.setImage(bufferedImage);
 
-			jButtonMoveBottomButton = new JButton(icon);
+			jButtonMoveBottomButton = new SmButton(icon);
 			jButtonMoveBottomButton.setToolTipText(ControlsProperties.getString("String_MoveLast"));
 			jButtonMoveBottomButton.addActionListener(new ActionListener() {
 				@Override
@@ -662,8 +648,8 @@ class ColorSchemeEditorDialog extends JDialog {
 
 	/**
 	 * 预览标签
-	 * 
-	 * @return
+	 *
+	 * @return 预览标签
 	 */
 	protected JLabel getPreViewLabel() {
 		if (jLabelPreViewLabel == null) {

@@ -12,6 +12,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -37,9 +38,9 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 	private JTextField textFieldVersion;
 	private JTextArea textFieldDescription;
 
-	private JButton buttonApply;
-	private JButton buttonReset;
-	private JButton buttonChangePassword;
+	private SmButton buttonApply;
+	private SmButton buttonReset;
+	private SmButton buttonChangePassword;
 
 	private transient Workspace workspace;
 	private String description = "";
@@ -142,11 +143,11 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 		labelDescription = new JLabel("Description:");
 
-		buttonApply = new JButton("Apply");
+		buttonApply = new SmButton("Apply");
 
-		buttonReset = new JButton("Reset");
+		buttonReset = new SmButton("Reset");
 
-		buttonChangePassword = new JButton("Change Password...");
+		buttonChangePassword = new SmButton("Change Password...");
 
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);

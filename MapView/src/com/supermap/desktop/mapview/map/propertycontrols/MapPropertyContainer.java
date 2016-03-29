@@ -8,6 +8,7 @@ import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedEvent;
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
@@ -30,7 +31,7 @@ public class MapPropertyContainer extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JCheckBox checkBoxAutoApply;
-	private JButton buttonApply;
+	private SmButton buttonApply;
 	private JTabbedPane tabbledPane;
 	private ArrayList<AbstractPropertyControl> propertyControls;
 	private transient IFormMap formMap = null;
@@ -141,7 +142,7 @@ public class MapPropertyContainer extends JPanel {
 
 	private void initializeComponents() {
 		this.checkBoxAutoApply = new JCheckBox("AutoApply");
-		this.buttonApply = new JButton("Apply");
+		this.buttonApply = new SmButton("Apply");
 		this.tabbledPane = new JTabbedPane();
 		JPanel panelTabContainer = new JPanel();
 		panelTabContainer.setLayout(new BorderLayout());

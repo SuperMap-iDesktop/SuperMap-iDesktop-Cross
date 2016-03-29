@@ -5,7 +5,6 @@ import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.EngineType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit.DatasourceWrap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -13,13 +12,13 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,8 +28,8 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 	private final JPanel contentPanel = new JPanel();
 	private SmTextFieldLegit jTextFieldAlias;
 	private JLabel jLabelAlias;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 
 	/**
 	 * Create the dialog.
@@ -78,7 +77,7 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		contentPanel.setLayout(gl_contentPanel);
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		cancelButton = new JButton("Cancel");
+		cancelButton = new SmButton("Cancel");
 		cancelButton.setPreferredSize(new Dimension(75, 23));
 		cancelButton.addActionListener(new ActionListener() {
 
@@ -88,7 +87,7 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
-		okButton = new JButton("OK");
+		okButton = new SmButton("OK");
 		okButton.setPreferredSize(new Dimension(75, 23));
 		okButton.addActionListener(new ActionListener() {
 

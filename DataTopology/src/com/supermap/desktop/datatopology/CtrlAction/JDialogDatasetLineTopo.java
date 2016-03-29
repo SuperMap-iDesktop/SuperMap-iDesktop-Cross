@@ -1,12 +1,22 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
@@ -21,9 +31,9 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private JButton buttonMore = new JButton("String_Button_Advance");
-	private JButton buttonSure = new JButton("String_Button_OK");
-	private JButton buttonQuite = new JButton("String_Button_Cancel");
+	private SmButton buttonMore = new SmButton("String_Button_Advance");
+	private SmButton buttonSure = new SmButton("String_Button_OK");
+	private SmButton buttonQuite = new SmButton("String_Button_Cancel");
 	private JCheckBox checkboxLinesIntersected = new JCheckBox("String_LinesIntersected");
 	private JCheckBox checkboxOvershootsCleaned = new JCheckBox("String_CleanOvershoots");
 	private JCheckBox checkboxPseudoNodesCleaned = new JCheckBox("String_CleanPseudoNodes");
@@ -336,10 +346,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 				}
 			}
 		}
-		if (0 < count) {
-			return true;
-		}
-		return false;
+		return 0 < count;
 	}
 
 }

@@ -1,32 +1,53 @@
 package com.supermap.desktop.ui;
 
-import javax.swing.*;
-
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.SwingConstants;
-
-import com.supermap.data.conversion.*;
-import com.supermap.desktop.*;
+import com.supermap.data.conversion.ImportSettingBIL;
+import com.supermap.data.conversion.ImportSettingDXF;
+import com.supermap.data.conversion.ImportSettingGBDEM;
+import com.supermap.data.conversion.ImportSettingGJB;
+import com.supermap.data.conversion.ImportSettingGRD;
+import com.supermap.data.conversion.ImportSettingLIDAR;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingTEMSClutter;
+import com.supermap.data.conversion.ImportSettingUSGSDEM;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.FileTypeLocale;
+import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.action.CommonMouseListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.util.*;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.SteppedComboBox;
+import com.supermap.desktop.ui.controls.TableRowCellEditor;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.util.CommonFunction;
+import com.supermap.desktop.util.FileInfoModel;
 
-import javax.swing.JCheckBox;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Administrator 数据导入主体界面
@@ -59,8 +80,8 @@ public class DataImportFrame extends SmDialog {
 	private JButton buttonDelete = new JButton();
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
-	private JButton buttonImport = new JButton("import");
-	private JButton buttonClose = new JButton("string_button_close");
+	private SmButton buttonImport = new SmButton("import");
+	private SmButton buttonClose = new SmButton("string_button_close");
 	private JPanel panelFiles = new JPanel();
 	private JLabel labelTitle = new JLabel("string_label_importData");
 	private JLabel labelRemind = new JLabel("string_label_addFileRemind");

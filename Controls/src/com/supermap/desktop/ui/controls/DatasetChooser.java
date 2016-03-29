@@ -9,10 +9,11 @@ import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.cellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.cellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
@@ -55,10 +56,10 @@ public class DatasetChooser extends SmDialog {
 	private static final long serialVersionUID = 1L;
 	protected SortTable table;
 	protected MySortableTableModel tableModel;
-	protected JButton buttonOk = new JButton("string_button_sure");
+	protected SmButton buttonOk = new SmButton("string_button_sure");
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
-	private JButton cancelButton = new JButton("string_button_quit");
+	private SmButton cancelButton = new SmButton("string_button_quit");
 
 	private JLabel labelPath = new JLabel("String_FormDatasetBrowse_ToolStripLabelPath");
 	private JLabel labelScense = new JLabel("String_FormDatasetBrowse_ToolStripLabelDisplayType");
@@ -113,7 +114,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	public void initComponent() {
-
+		this.getRootPane().setDefaultButton(buttonOk);
 		setResizable(false);
 		initWorkspaceTree();
 

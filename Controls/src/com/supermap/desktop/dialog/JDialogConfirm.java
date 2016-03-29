@@ -1,28 +1,25 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JTextArea;
-
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JDialogConfirm extends SmDialog {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 	private JCheckBox checkBoxConfirm; // 是否保持本次设置，后面不再提示
 	private JTextArea textAreaMessage;
 
@@ -74,8 +71,8 @@ public class JDialogConfirm extends SmDialog {
 		setSize(new Dimension(450, 150));
 		setLocationRelativeTo(null);
 
-		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.True));
-		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.False));
+		this.buttonOK = new SmButton(CommonProperties.getString(CommonProperties.True));
+		this.buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.False));
 		this.checkBoxConfirm = new JCheckBox(ControlsProperties.getString("String_MessageBox_Checked"));
 		this.checkBoxConfirm.setSelected(true);
 		this.textAreaMessage = new JTextArea();

@@ -12,12 +12,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.cellRenders.TableDatasetCellRender;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
@@ -48,12 +49,12 @@ public class JDialogJoinItems extends SmDialog {
 
 
 	private JPanel panelButton = new JPanel();
-	private JButton buttonAdd = new JButton("add");
-	private JButton buttonDel = new JButton("del");
-	private JButton buttonSelectAll = new JButton("selectAll");
-	private JButton buttonReverse = new JButton("reverse");
-	private JButton buttonOk = new JButton("Ok");
-	private JButton buttonCancle = new JButton("cancle");
+	private SmButton buttonAdd = new SmButton("add");
+	private SmButton buttonDel = new SmButton("del");
+	private SmButton buttonSelectAll = new SmButton("selectAll");
+	private SmButton buttonReverse = new SmButton("reverse");
+	private SmButton buttonOk = new SmButton("Ok");
+	private SmButton buttonCancle = new SmButton("cancle");
 	private JScrollPane scrollPane = new JScrollPane();
 	private JoinItemsTable joinItemsTable = new JoinItemsTable();
 

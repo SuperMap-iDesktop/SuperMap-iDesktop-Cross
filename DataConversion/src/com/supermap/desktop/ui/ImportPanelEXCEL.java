@@ -1,38 +1,30 @@
 package com.supermap.desktop.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasource;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.TitledBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Administrator 实现右侧导入excel数据类型的界面
  */
 public class ImportPanelEXCEL extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private JCheckBox checkboxDataInfo;
 	private JCheckBox checkboxFieldIndex;
 	private transient ComboBoxDatasource comboBoxDatasource;
@@ -107,8 +99,8 @@ public class ImportPanelEXCEL extends JPanel {
 		labelFilepath = new JLabel();
 		textFieldFilePath = new JTextField();
 		textFieldFilePath.setEditable(false);
-		buttonProperty = new JButton();
-		
+		buttonProperty = new SmButton();
+
 		Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
 		comboBoxDatasource.setSelectedDatasource(datasource);
 		initResource();

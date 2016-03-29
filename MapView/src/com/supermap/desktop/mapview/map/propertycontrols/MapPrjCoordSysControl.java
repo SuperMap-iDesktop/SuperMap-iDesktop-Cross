@@ -7,6 +7,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilties.PrjCoordSysUtilties;
 import com.supermap.mapping.Map;
@@ -26,7 +27,7 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JCheckBox checkBoxIsDynamicProjection;
-	private JButton buttonProjectionSetting;
+	private SmButton buttonProjectionSetting;
 	private JLabel labelCoordName;
 	private JTextField textFieldCoordName;
 	private JLabel labelCoordUnit;
@@ -79,7 +80,7 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 	@Override
 	protected void initializeComponents() {
 		this.checkBoxIsDynamicProjection = new JCheckBox("DynamicProjection");
-		this.buttonProjectionSetting = new JButton("ProjectionSetting");
+		this.buttonProjectionSetting = new SmButton("ProjectionSetting");
 		this.labelCoordName = new JLabel("CoordName:");
 		this.textFieldCoordName = new JTextField();
 		this.textFieldCoordName.setEditable(false);

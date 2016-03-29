@@ -1,14 +1,7 @@
 package com.supermap.desktop;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.awt.*;
 
 public class FileChooserControl extends JComponent {
 
