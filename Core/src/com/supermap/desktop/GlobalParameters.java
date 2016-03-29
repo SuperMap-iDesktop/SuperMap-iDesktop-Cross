@@ -269,7 +269,7 @@ public class GlobalParameters {
 		if (value != null) {
 			logFolder = value;
 		}
-		System.setProperty("com.supermap.desktop.log4j.home", PathUtilties.getFullPathName(value, false));
+		System.setProperty("com.supermap.desktop.log4j.home", value);
 	}
 	//endregion
 
@@ -519,7 +519,7 @@ public class GlobalParameters {
 	private static void init() {
 		// 日志路径
 		String value = getValue("_startup_log", "logFolder");
-		setLogFolder(value);
+		setLogFolder(PathUtilties.getFullPathName(value, false));
 		boolean booleanValue;
 
 		// 日志是否输出
