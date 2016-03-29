@@ -1,19 +1,5 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -26,8 +12,16 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDataset;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasource;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class JDialogSetClipRegion extends SmDialog {
 
@@ -43,8 +37,8 @@ public class JDialogSetClipRegion extends SmDialog {
 	private JLabel labelFilter;
 	private JTextField textFieldFilter;
 	private JButton buttonFilter;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 
 	private transient DatasetVector datasetVector;
 	private transient GeoRegion region;
@@ -109,8 +103,8 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.labelFilter = new JLabel("Filter:");
 		this.textFieldFilter = new JTextField();
 		this.buttonFilter = new JButton("...");
-		this.buttonOK = new JButton("OK");
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonOK = new SmButton("OK");
+		this.buttonCancel = new SmButton("Cancel");
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);

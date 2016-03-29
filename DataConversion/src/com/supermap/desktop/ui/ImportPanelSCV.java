@@ -6,13 +6,13 @@ import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
 import javax.swing.*;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +25,7 @@ import java.util.List;
 public class ImportPanelSCV extends AbstractImportPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private JCheckBox checkboxFieldIndex;
 	private JCheckBox checkboxSpatialIndex;
 	private JComboBox<Object> comboBoxImportModel;
@@ -128,7 +128,7 @@ public class ImportPanelSCV extends AbstractImportPanel {
 		this.labelFilepath = new JLabel();
 		this.textFieldFilePath = new JTextField();
 		this.textFieldFilePath.setEditable(false);
-		this.buttonProperty = new JButton();
+		this.buttonProperty = new SmButton();
 		Datasource datasource = CommonFunction.getDatasource();
 		this.comboBoxDatasource.setSelectedDatasource(datasource);
 

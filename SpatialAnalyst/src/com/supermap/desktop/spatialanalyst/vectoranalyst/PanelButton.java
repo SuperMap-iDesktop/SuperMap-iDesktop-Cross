@@ -1,19 +1,15 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.GroupLayout.Alignment;
-
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class PanelButton extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton buttonOk;
@@ -45,8 +41,8 @@ public class PanelButton extends JPanel {
 	}
 
 	private void initComponent() {
-		this.buttonOk = new JButton("Ok");
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonOk = new SmButton("Ok");
+		this.buttonCancel = new SmButton("Cancel");
 	}
 
 	private void initResources() {

@@ -26,7 +26,6 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
-import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -160,7 +159,6 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		this.comboBoxGeometry = new JComboBox<IOperationData>();
 		this.buttonOK = new JButton("OK");
 		this.buttonCancel = new JButton("Cancel");
-
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);

@@ -1,17 +1,5 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.Border;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -21,21 +9,28 @@ import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerCaptionChangedEvent;
 import com.supermap.mapping.LayerCaptionChangedListener;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
-import com.supermap.mapping.LayerEvent;
 import com.supermap.mapping.LayerSelectableChangedEvent;
 import com.supermap.mapping.LayerSelectableChangedListener;
 import com.supermap.mapping.LayerSnapableChangedEvent;
 import com.supermap.mapping.LayerSnapableChangedListener;
 import com.supermap.mapping.LayerVisibleChangedEvent;
 import com.supermap.mapping.LayerVisibleChangedListener;
-import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 public class LayerPropertyContainer extends JPanel {
 
@@ -46,7 +41,7 @@ public class LayerPropertyContainer extends JPanel {
 
 	private JPanel panelContainer;
 	private JCheckBox checkBoxIsAutoApply;
-	private JButton buttonApply;
+	private SmButton buttonApply;
 	private transient IFormMap formMap;
 
 	// @formatter:off
@@ -189,7 +184,7 @@ public class LayerPropertyContainer extends JPanel {
 		scrollPaneContainer.setBorder(null);
 
 		this.checkBoxIsAutoApply = new JCheckBox("IsAutoApply");
-		this.buttonApply = new JButton("Apply");
+		this.buttonApply = new SmButton("Apply");
 
 		GroupLayout gl_mainContent = new GroupLayout(this);
 		gl_mainContent.setAutoCreateContainerGaps(true);

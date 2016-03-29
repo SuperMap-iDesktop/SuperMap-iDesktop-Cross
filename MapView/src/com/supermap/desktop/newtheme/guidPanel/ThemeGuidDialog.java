@@ -8,6 +8,7 @@ import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -16,7 +17,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,8 +26,8 @@ import java.awt.event.MouseEvent;
 public class ThemeGuidDialog extends SmDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel panelContent = new JPanel();
-	private JButton buttonOk = new JButton("OK");
-	private JButton buttonCancel = new JButton("Cancel");
+	private SmButton buttonOk = new SmButton("OK");
+	private SmButton buttonCancel = new SmButton("Cancel");
 	private JList<Object> listContent = new JList<Object>();
 	private transient GroupLayout gl_panelContent = new GroupLayout(panelContent);
 	private JLabel labelUniform = new JLabel();

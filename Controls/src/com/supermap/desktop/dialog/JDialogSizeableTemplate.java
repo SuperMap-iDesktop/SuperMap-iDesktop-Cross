@@ -1,17 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.JToolBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -24,15 +12,20 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import javax.swing.JCheckBox;
-import javax.swing.JScrollPane;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class JDialogSizeableTemplate extends SmDialog {
 
@@ -45,14 +38,14 @@ public class JDialogSizeableTemplate extends SmDialog {
 
 	final JPanel contentPanel = new JPanel();
 	private JToolBar toolBar;
-	private JButton buttonSelectAll;
-	private JButton buttonSelectInvert;
-	private JButton buttonDelete;
-	private JButton buttonSetting;
+	private SmButton buttonSelectAll;
+	private SmButton buttonSelectInvert;
+	private SmButton buttonDelete;
+	private SmButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox chckbxAutoClose;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 
 	/**
 	 * Create the dialog.
@@ -103,7 +96,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 						.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)));
 
-		buttonSelectAll = new JButton("SelectAll");
+		buttonSelectAll = new SmButton("SelectAll");
 		buttonSelectAll.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
 		buttonSelectAll.addActionListener(new ActionListener() {
@@ -115,7 +108,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		buttonSelectAll.setToolTipText("SelectAll");
 		toolBar.add(buttonSelectAll);
 
-		buttonSelectInvert = new JButton("SelectInvert");
+		buttonSelectInvert = new SmButton("SelectInvert");
 		buttonSelectInvert.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		buttonSelectInvert.addActionListener(new ActionListener() {
@@ -127,7 +120,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		buttonSelectInvert.setToolTipText("SelectInvert");
 		toolBar.add(buttonSelectInvert);
 		addSeparator();
-		buttonDelete = new JButton("Active");
+		buttonDelete = new SmButton("Active");
 		buttonDelete
 				.setIcon(new ImageIcon(JDialogSizeableTemplate.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		buttonDelete.addActionListener(new ActionListener() {
@@ -140,7 +133,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		toolBar.add(buttonDelete);
 		addSeparator();
-		buttonSetting = new JButton("Rename");
+		buttonSetting = new SmButton("Rename");
 		buttonSetting.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
 		buttonSetting.addActionListener(new ActionListener() {
@@ -160,7 +153,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		chckbxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		chckbxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 
-		okButton = new JButton("UnSave");
+		okButton = new SmButton("UnSave");
 		okButton.setPreferredSize(new Dimension(75, 23));
 		okButton.addActionListener(new ActionListener() {
 			@Override
@@ -171,7 +164,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		okButton.setToolTipText("");
 		okButton.setActionCommand("OK");
 
-		cancelButton = new JButton("Cancel");
+		cancelButton = new SmButton("Cancel");
 		cancelButton.setPreferredSize(new Dimension(75, 23));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override

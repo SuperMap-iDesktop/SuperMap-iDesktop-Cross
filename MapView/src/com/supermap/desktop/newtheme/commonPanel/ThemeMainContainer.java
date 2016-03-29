@@ -6,24 +6,34 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
-//import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.*;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+//import com.supermap.desktop.utilties.MapUtilties;
+
 /**
  * 屏蔽掉专题图下拉显示项
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 public class ThemeMainContainer extends JPanel {
 
@@ -33,7 +43,7 @@ public class ThemeMainContainer extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel panelThemeInfo = new JPanel();
 	private JCheckBox checkBoxRefreshAtOnce = new JCheckBox();
-	private JButton buttonApply = new JButton();
+	private JButton buttonApply = new SmButton();
 	private ThemeChangePanel panel;
 
 	private Map map;
@@ -269,7 +279,7 @@ public class ThemeMainContainer extends JPanel {
 							layersTree.setSelectionRow(row);
 						}
 					}
-			};
+			}
 		}.start();
 
 	}

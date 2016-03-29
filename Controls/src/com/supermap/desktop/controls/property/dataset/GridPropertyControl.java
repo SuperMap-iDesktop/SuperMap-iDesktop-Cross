@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.ColorsComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.ColorsUtilties;
 import com.supermap.desktop.utilties.PixelFormatUtilties;
 import com.supermap.mapping.Layers;
@@ -65,12 +66,12 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	private JLabel labelHasPyramid;
 	private JTextField textFieldHasPyramid;
 	private JLabel labelClipRegion;
-	private JButton buttonSetClipRegion;
-	private JButton buttonClearClipRegion;
+	private SmButton buttonSetClipRegion;
+	private SmButton buttonClearClipRegion;
 	private JLabel labelColorTable;
 	private ColorsComboBox comboBoxColors;
-	private JButton buttonReset;
-	private JButton buttonApply;
+	private SmButton buttonReset;
+	private SmButton buttonApply;
 
 	private DatasetGrid datasetGrid;
 
@@ -254,8 +255,8 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.textFieldHasPyramid = new JTextField();
 		this.textFieldHasPyramid.setEditable(false);
 		this.labelClipRegion = new JLabel("ClipRegion:");
-		this.buttonSetClipRegion = new JButton("Set...");
-		this.buttonClearClipRegion = new JButton("Clear");
+		this.buttonSetClipRegion = new SmButton("Set...");
+		this.buttonClearClipRegion = new SmButton("Clear");
 
 		JPanel panelOther = new JPanel();
 		panelOther.setBorder(BorderFactory.createTitledBorder(CoreProperties.getString(CoreProperties.Other)));
@@ -304,8 +305,8 @@ public class GridPropertyControl extends AbstractPropertyControl {
 				.addComponent(this.comboBoxColors, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 		// @formatter:on
 
-		this.buttonReset = new JButton("Reset");
-		this.buttonApply = new JButton("Apply");
+		this.buttonReset = new SmButton("Reset");
+		this.buttonApply = new SmButton("Apply");
 
 		GroupLayout gl_mainContent = new GroupLayout(this);
 		gl_mainContent.setAutoCreateContainerGaps(true);

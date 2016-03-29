@@ -226,33 +226,77 @@ public class GlobalParameters {
 		Environment.setFileCacheFolder(value);
 	}
 
-	*//**
+	*/
+	//region isOutPutLog
+	/**
 	 * 获取或设置一个值，指示是否生成运行日志，初始值为false。
-	 *//*
-	private static Boolean g_outputToLog = false;
+	 */
+	private static boolean outputToLog = false;
 
-	public static Boolean isOutputToLog() {
-		return g_outputToLog;
+	/**
+	 * 是否输出log日志 默认为false
+	 *
+	 * @return 是否输出
+	 */
+	public static boolean isOutPutToLog() {
+		return outputToLog;
 	}
 
-	public static void setOutputToLog(Boolean value) {
-		g_outputToLog = value;
+	public static void setOutputToLog(boolean value) {
+		outputToLog = value;
+	}
+	//endregion
+
+	//region logFolder
+	private static String logFolder = "./Log/Desktop";
+
+	/**
+	 * 获取日志输出路径，默认路径为jar包所在位置/bin/Log/Desktop
+	 *
+	 * @return 当前设置的相对路径
+	 */
+	public static String getLogFolder() {
+		return logFolder;
 	}
 
-	*//**
-	 * 获取或设置一个值，指示是否显示启动画面，初始值为true。
-	 *//*
-	private static String g_logFolder = "../Log/";
+	/**
+	 * 设置日志输出路径
+	 * 如果value为空，则使用配置文件中的值
+	 *
+	 * @param value 日志路径
+	 */
+	public static void setLogFolder(String value) {
+		if (value != null) {
+			logFolder = value;
+		}
+		System.setProperty("com.supermap.desktop.log4j.home", value);
+	}
+	//endregion
 
-	public static String getG_LogFolder() {
-		return g_logFolder;
+	//region LogInformation
+	private static boolean isLogInformation = false;
+
+	public static void setLogInformation(boolean value) {
+		isLogInformation = value;
 	}
 
-	public static void setG_LogFolder(String value) {
-		g_logFolder = value;
+	public static boolean isLogInformation() {
+		return isLogInformation;
+	}
+	//endregion
+
+	//region logException
+	private static boolean isLogException = false;
+
+	public static void setLogException(boolean isLogException) {
+		GlobalParameters.isLogException = isLogException;
 	}
 
-	*//**
+	public static boolean isLogException() {
+		return GlobalParameters.isLogException;
+	}
+	//endregion
+	/**
 	 * 获取或设置一个值，指示是否自动检查工作空间版本，初始值为true。
 	 *//*
 	private static Boolean g_autoCheckWorkspaceVersion = true;
@@ -408,9 +452,8 @@ public class GlobalParameters {
 				}
 			}
 		}
-		initLogInfo();
+		init();
 	}
-
 
 	private static void addResources(String info, Node node) {
 		NodeList childNodes = node.getChildNodes();
@@ -425,6 +468,7 @@ public class GlobalParameters {
 			resources.put(info, node.getAttributes());
 		}
 	}
+
 
 	/**
 	 * 获得节点非空子节点个数
@@ -449,7 +493,6 @@ public class GlobalParameters {
 		resources = null;
 		initResource();
 	}
-	//endregion
 
 	/**
 	 * 根据节点路径和属性名称来得到对应的值
@@ -472,45 +515,41 @@ public class GlobalParameters {
 		return result;
 	}
 
-	public static String getLogFolder() {
-		String defaultPath = "../log/Desktop";
+	//endregion
+	private static void init() {
+		// 日志路径
 		String value = getValue("_startup_log", "logFolder");
-		value = value == null ? defaultPath : value;
-		return PathUtilties.getFullPathName(value, false);
-	}
+		setLogFolder(PathUtilties.getFullPathName(value, false));
+		boolean booleanValue;
 
-	/**
-	 * 是否输出操作到log文件
-	 *
-	 * @return
-	 */
-	public static boolean isOutPutToLog() {
-		boolean result = false;
-		String value = getValue("_startup_log", "outputToLog");
+		// 日志是否输出
+		value = getValue("_startup_log", "outputToLog");
 		if (value != null) {
-			result = Boolean.valueOf(value);
+			booleanValue = Boolean.valueOf(value);
+			setOutputToLog(booleanValue);
 		}
-		return result;
-	}
 
-
-	public static boolean isLogException() {
-		boolean result = false;
-		String value = getValue("_startup_InfoType", "Exception");
+		// 操作日志
+		value = getValue("_startup_InfoType", "Information");
 		if (value != null) {
-			result = Boolean.valueOf(value);
+			booleanValue = Boolean.valueOf(value);
+			setLogInformation(booleanValue);
 		}
-		return result;
+
+		// 异常日志
+		value = getValue("_startup_InfoType", "Exception");
+		if (value != null) {
+			booleanValue = Boolean.valueOf(value);
+			setLogException(booleanValue);
+		}
+		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
-	public static boolean isLogInformation() {
-		boolean result = false;
-		String value = getValue("_startup_InfoType", "Information");
-		if (value != null) {
-			result = Boolean.valueOf(value);
-		}
-		return result;
-	}
+
+
+
+
+
 
 	public static boolean isShowFormClosingInfo() {
 		boolean result = false;
@@ -519,10 +558,6 @@ public class GlobalParameters {
 			result = Boolean.valueOf(value);
 		}
 		return result;
-	}
-
-	private static void initLogInfo() {
-		System.setProperty("com.supermap.desktop.log4j.home", getLogFolder());
 	}
 
 

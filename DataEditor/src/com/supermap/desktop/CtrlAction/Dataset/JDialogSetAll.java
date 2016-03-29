@@ -1,17 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.EncodeType;
@@ -25,13 +13,19 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.CharsetUtilties;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * 新建数据集的统一设置面板
- * 
- * @author XiaJT
  *
+ * @author XiaJT
  */
 public class JDialogSetAll extends SmDialog {
 
@@ -47,8 +41,8 @@ public class JDialogSetAll extends SmDialog {
 	private JComboBox comboboxCharest;
 	private JComboBox comboboxAddToNewMap;
 
-	private JButton buttonOk;
-	private JButton buttonCancel;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 
 	public JDialogSetAll() {
 		this.setSize(300, 250);
@@ -144,8 +138,8 @@ public class JDialogSetAll extends SmDialog {
 		comboboxAddToNewMap.setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
 
 		// 按钮
-		buttonOk = new JButton(CommonProperties.getString(CommonProperties.OK));
-		buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
+		buttonOk = new SmButton(CommonProperties.getString(CommonProperties.OK));
+		buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
 
 		// 添加控件到面板中
 		this.addComponentToPanel();

@@ -4,6 +4,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
@@ -19,9 +20,9 @@ import java.awt.event.ActionListener;
 public class SmOptionPane extends SmDialog {
 
 	private JPanel panelButton;
-	private JButton buttonYes;
-	private JButton buttonNo;
-	private JButton buttonCancle;
+	private SmButton buttonYes;
+	private SmButton buttonNo;
+	private SmButton buttonCancle;
 
 	private JTextArea textAreaMessage;
 	private JLabel labelIcon;
@@ -53,9 +54,9 @@ public class SmOptionPane extends SmDialog {
 
 	private void initComponents() {
 		this.panelButton = new JPanel();
-		this.buttonYes = new JButton();
-		this.buttonNo = new JButton();
-		this.buttonCancle = new JButton();
+		this.buttonYes = new SmButton();
+		this.buttonNo = new SmButton();
+		this.buttonCancle = new SmButton();
 		this.labelIcon = new JLabel();
 		this.textAreaMessage = new JTextArea();
 		this.textAreaMessage.setFont(textAreaMessage.getFont().deriveFont(Font.PLAIN, 15));

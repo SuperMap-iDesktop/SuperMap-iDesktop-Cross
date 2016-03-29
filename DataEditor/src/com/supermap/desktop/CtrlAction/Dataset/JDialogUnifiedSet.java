@@ -1,20 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
@@ -33,14 +18,20 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.CharsetUtilties;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class JDialogUnifiedSet extends JDialog {
 
@@ -57,8 +48,8 @@ public class JDialogUnifiedSet extends JDialog {
 	private static final int DATASET_IMAGE = 3;
 
 	private final JPanel contentPanel = new JPanel();
-	private JButton okButton = new JButton("OK");
-	private JButton cancelButton = new JButton("Cancel");
+	private SmButton okButton = new SmButton("OK");
+	private SmButton cancelButton = new SmButton("Cancel");
 	private final JPanel panel = new JPanel();
 	private JPanel buttonPane;
 	private JCheckBox checkboxTargetDatasource = new JCheckBox("targetDatasource");
@@ -363,7 +354,7 @@ public class JDialogUnifiedSet extends JDialog {
 				}else if(datasetKind != DATASET_GRID){
 					charsetes.clear();
 					charsetes.add(CharsetUtilties.getCharsetName(null));
-					checkboxCharset.setEnabled(false);;
+					checkboxCharset.setEnabled(false);
 					break;
 				}
 			}

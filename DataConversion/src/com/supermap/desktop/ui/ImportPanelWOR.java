@@ -8,12 +8,12 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.ImportInfoUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +26,7 @@ import java.util.List;
 public class ImportPanelWOR extends AbstractImportPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private JComboBox<Object> comboBoxImportModel;
 	private transient CharsetComboBox comboBoxCharset;
 	private JComboBox<Object> comboBoxCodingType;
@@ -102,7 +102,7 @@ public class ImportPanelWOR extends AbstractImportPanel {
 		this.labelFilePath = new JLabel();
 		this.textFieldFilePath = new JTextField();
 		this.textFieldFilePath.setEditable(false);
-		this.buttonProperty = new JButton();
+		this.buttonProperty = new SmButton();
 		this.labelCharset = new JLabel();
 		this.comboBoxCharset = new CharsetComboBox();
 

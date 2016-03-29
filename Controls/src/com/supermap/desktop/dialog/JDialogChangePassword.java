@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
@@ -26,8 +27,8 @@ public class JDialogChangePassword extends SmDialog {
 	private JLabel labelOldPassword;
 	private JLabel labelNewPassword;
 	private JLabel labelConfirm;
-	private JButton buttonCancel;
-	private JButton buttonOK;
+	private SmButton buttonCancel;
+	private SmButton buttonOK;
 	private String oldPassword = "";
 	private String newPassword = "";
 	private String confirmPassword = "";
@@ -115,8 +116,8 @@ public class JDialogChangePassword extends SmDialog {
 		labelOldPassword = new JLabel("Old Password:");
 		labelNewPassword = new JLabel("New Password:");
 		labelConfirm = new JLabel("Confirm:");
-		buttonCancel = new JButton("Cancel");
-		buttonOK = new JButton("OK");
+		buttonCancel = new SmButton("Cancel");
+		buttonOK = new SmButton("OK");
 
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(groupLayout);

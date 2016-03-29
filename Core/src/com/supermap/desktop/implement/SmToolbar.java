@@ -1,8 +1,5 @@
 package com.supermap.desktop.implement;
 
-import java.awt.Component;
-import java.util.ArrayList;
-import javax.swing.JToolBar;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
@@ -16,6 +13,10 @@ import com.supermap.desktop.ui.XMLLabel;
 import com.supermap.desktop.ui.XMLSeparator;
 import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class SmToolbar extends JToolBar implements IToolbar {
 
@@ -94,7 +95,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 				XMLCommand xmlItem = xmlToolbar.items().get(index);
 				IBaseItem item = null;
 				if (xmlItem instanceof XMLButton) {
-					item = new SmButton(null, xmlItem, this);
+					item = new SmCtrlActionButton(null, xmlItem, this);
 				} else if (xmlItem instanceof XMLButtonDropdown) {
 					item = new SmButtonDropdown(null, xmlItem, this);
 				} else if (xmlItem instanceof XMLLabel) {

@@ -1,4 +1,4 @@
-package com.supermap.desktop.ui.controls.CellRenders;
+package com.supermap.desktop.ui.controls.cellRenders;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.ui.controls.DataCell;

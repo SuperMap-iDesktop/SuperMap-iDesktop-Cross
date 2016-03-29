@@ -1,24 +1,5 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableColumn;
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
-
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
@@ -35,25 +16,28 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.utilties.CharsetUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
-import javax.swing.JCheckBox;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
-
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
 
 public class JDialogDatasetNew extends SmDialog {
 
@@ -77,8 +61,8 @@ public class JDialogDatasetNew extends SmDialog {
 	private JButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox checkboxAutoClose;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 	private String defaultDatasetName = "";
 	private transient Datasource targetDatasource;
 
@@ -212,7 +196,7 @@ public class JDialogDatasetNew extends SmDialog {
 		checkboxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		checkboxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 		checkboxAutoClose.setSelected(true);
-		okButton = new JButton();
+		okButton = new SmButton();
 		okButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -221,7 +205,7 @@ public class JDialogDatasetNew extends SmDialog {
 			}
 		});
 		getRootPane().setDefaultButton(okButton);
-		cancelButton = new JButton();
+		cancelButton = new SmButton();
 		cancelButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -435,7 +419,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private void setAbstractDatasourceComboBox(final DatasourceComboBox datasourceComboBox) {
 		try {
 			// 选择不同的数据源时更新要新建的数据集的名称
-			String item = (String) datasourceComboBox.getSelectItem();
+			String item = datasourceComboBox.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(item);
 			String datasetName = table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_DatasetName).toString();
 			if (table.getSelectedRow() != table.getRowCount() - 1) {

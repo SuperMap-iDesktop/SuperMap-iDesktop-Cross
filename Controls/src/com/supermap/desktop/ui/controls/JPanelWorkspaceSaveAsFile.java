@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -41,7 +42,7 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 
 	private void initComponents() {
 
-		jButtonBrowser = new JButton();
+		jButtonBrowser = new SmButton();
 		jTextFieldFileName = new JTextField();
 		jTextFieldFileName.setEditable(false);
 		jTextFieldFileName.getDocument().addDocumentListener(new DocumentListener() {
@@ -66,7 +67,7 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 		jLabelPassword = new JLabel();
 		jPasswordFieldPasswordConfrim = new JPasswordField();
 		jLabelPasswordConfrim = new JLabel();
-		jComboBoxVersion = new JComboBox<String>();
+		jComboBoxVersion = new JComboBox<>();
 		jLabelVersion = new JLabel();
 
 		jButtonBrowser.setText("...");
@@ -163,7 +164,7 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 	}
 
 	// Variables declaration - do not modify
-	private JButton jButtonBrowser;
+	private SmButton jButtonBrowser;
 	private JComboBox<String> jComboBoxVersion;
 	private JLabel jLabelFileName;
 	private JLabel jLabelPassword;

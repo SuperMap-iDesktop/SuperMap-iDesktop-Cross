@@ -7,13 +7,14 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.cellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.cellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -53,12 +54,12 @@ public class JDialogPyramidManager extends SmDialog {
 	// 按钮栏
 	private JPanel panelButtons;
 	private JCheckBox checkBoxAutoClose;
-	private JButton buttonCreate;
+	private SmButton buttonCreate;
 	/**
 	 * 删除数据集影像金字塔按钮
 	 */
-	private JButton buttonRemove;
-	private JButton buttonClose;
+	private SmButton buttonRemove;
+	private SmButton buttonClose;
 
 
 	public static final int ColumnSourceDatasetIndex = 0;
@@ -101,9 +102,9 @@ public class JDialogPyramidManager extends SmDialog {
 		// 按钮栏
 		this.panelButtons = new JPanel();
 		this.checkBoxAutoClose = new JCheckBox();
-		this.buttonCreate = new JButton();
-		this.buttonRemove = new JButton();
-		this.buttonClose = new JButton();
+		this.buttonCreate = new SmButton();
+		this.buttonRemove = new SmButton();
+		this.buttonClose = new SmButton();
 
 
 		datasetChooser = new DatasetChooser(this) {

@@ -7,6 +7,7 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
@@ -16,7 +17,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +30,7 @@ import java.util.List;
 public class ImportPanelCSV extends AbstractImportPanel {
 	private static final long serialVersionUID = 1L;
 
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private JCheckBox checkboxDataInfo;
 	private JComboBox<Object> comboBoxImportMode;
 	private transient CharsetComboBox comboBoxCharset;
@@ -113,7 +113,7 @@ public class ImportPanelCSV extends AbstractImportPanel {
 		this.labelFilePath = new JLabel();
 		this.textFieldFilePath = new JTextField();
 		this.textFieldFilePath.setEditable(false);
-		this.buttonProperty = new JButton();
+		this.buttonProperty = new SmButton();
 		this.labelCharset = new JLabel();
 		this.comboBoxCharset = new CharsetComboBox();
 		Datasource datasource = CommonFunction.getDatasource();

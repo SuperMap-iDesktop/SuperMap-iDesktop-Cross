@@ -1,7 +1,13 @@
 package com.supermap.desktop.ui;
 
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingBMP;
+import com.supermap.data.conversion.ImportSettingGIF;
+import com.supermap.data.conversion.ImportSettingIMG;
+import com.supermap.data.conversion.ImportSettingJPG;
+import com.supermap.data.conversion.ImportSettingPNG;
+import com.supermap.data.conversion.ImportSettingTIF;
 import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -9,13 +15,13 @@ import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +34,7 @@ import java.util.List;
 public class ImportPanelGRID extends AbstractImportPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private JComboBox<Object> comboBoxImportModel;
 	private transient CharsetComboBox comboBoxCharset;
 	private JComboBox<Object> comboBoxCodingType;
@@ -116,12 +122,12 @@ public class ImportPanelGRID extends AbstractImportPanel {
 		this.comboBoxDatasource = new DatasourceComboBox();
 		this.labelDatasetType = new JLabel();
 		this.labelCodingType = new JLabel();
-		this.comboBoxCodingType = new JComboBox<Object>();
+		this.comboBoxCodingType = new JComboBox<>();
 		this.panelTransform = new JPanel();
 		this.labelImportModel = new JLabel();
-		this.comboBoxImportModel = new JComboBox<Object>();
+		this.comboBoxImportModel = new JComboBox<>();
 		this.labelSaveImport = new JLabel();
-		this.comboBoxImportType = new JComboBox<Object>();
+		this.comboBoxImportType = new JComboBox<>();
 		this.labelPassword = new JLabel();
 		this.textFieldPassword = new JTextField();
 		this.labelNewLabel = new JLabel();
@@ -130,7 +136,7 @@ public class ImportPanelGRID extends AbstractImportPanel {
 		this.labelCharset = new JLabel();
 		this.textFieldFilePath = new JTextField();
 		this.textFieldFilePath.setEditable(false);
-		this.buttonProperty = new JButton();
+		this.buttonProperty = new SmButton();
 		this.comboBoxCharset = new CharsetComboBox();
 		this.fileChooser = new FileChooserControl();
 		this.fileChooser.getEditor().setEnabled(false);
