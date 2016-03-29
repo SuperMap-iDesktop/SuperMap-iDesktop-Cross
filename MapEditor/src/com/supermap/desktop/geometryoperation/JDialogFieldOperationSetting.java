@@ -71,6 +71,10 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 
 	}
 
+	public Layer getEditLayer() {
+		return this.editLayer;
+	}
+
 	public Map getMap() {
 		return this.map;
 	}
@@ -415,8 +419,49 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		try {
 			if (this.radioButtonAVG.isSelected() && this.selectedOperations != null) {
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationType(OperationType.AVG);
+					FieldOperation fieldOperation = this.selectedOperations[i];
+					// 设置字段操作类型
+					fieldOperation.setOperationType(OperationType.AVG);
+					// 设置附加数据，如果不是当前操作的字段类型
+					if (!(fieldOperation.getOperationData() instanceof AVGOperationData)) {
+						fieldOperation.setOperationData(this.comboBoxWeight.getItemAt(0));
+					}
 				}
+
+				// 设置 AVG 参数可用
+				this.comboBoxWeight.setEnabled(true);
+
+				// @formatter:off
+				/**
+				 * 设置 ComboBoxAVG 的选中状态
+				 * 1.table 中只选中了一条记录，如果该记录的 OperationData 为空，初始化为“平均”；
+				 * 2.table 中选中了多条记录，如果所有记录的 OperationData 都为空，全都初始化为“平均”；
+				 * 3.table 中选中了多条记录，如果所有记录的 OperationData 相同且不为空，则初始化为改 OperationData；
+				 * 4.table 中选中了多条记录，如果所有记录的 OperationData 不一致，则将 combobox 的当前选中置空。
+				 */
+				// @formatter:on
+				IOperationData currentData = this.selectedOperations[0].getOperationData();
+				boolean isDifferent = false;
+
+				for (int i = 0; i < selectedOperations.length; i++) {
+					if (currentData != selectedOperations[i].getOperationData()) {
+						isDifferent = true;
+						break;
+					}
+				}
+
+				if (!isDifferent) {
+					if (currentData == null) {
+						this.comboBoxWeight.setSelectedIndex(0);
+					} else {
+						this.comboBoxWeight.setSelectedItem(currentData);
+					}
+				} else {
+					this.comboBoxWeight.setSelectedItem(null);
+				}
+			} else {
+				this.comboBoxWeight.setEnabled(false);
+				this.comboBoxWeight.setSelectedItem(null);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -441,6 +486,8 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 				for (int i = 0; i < this.selectedOperations.length; i++) {
 					this.selectedOperations[i].setOperationType(OperationType.GEOMETRY);
 				}
+			} else {
+				this.comboBoxGeometry.setSelectedItem(null);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -610,6 +657,10 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 
 		public IOperationData getOperationData() {
 			return this.operationData;
+		}
+
+		public void setOperationData(IOperationData operationData) {
+			this.operationData = operationData;
 		}
 	}
 
