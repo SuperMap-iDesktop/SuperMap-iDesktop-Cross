@@ -359,7 +359,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				caption = caption.replaceAll(" - ", " <= X < ");
 			}
 			rangeItem.setCaption(caption);
-			this.tableLabelInfo.setValueAt( "<html><font   color="+rangeItem.getStyle().getForeColor()+">"+rangeItem.getCaption()+"</font></html>", i, TABLE_COLUMN_CAPTION);
+			this.tableLabelInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
 		}
 	}
 
