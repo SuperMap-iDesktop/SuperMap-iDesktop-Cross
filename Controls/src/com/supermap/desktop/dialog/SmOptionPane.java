@@ -220,6 +220,7 @@ public class SmOptionPane extends SmDialog {
 				dispose();
 			}
 		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		rootPane.setDefaultButton(buttonYes);
 		return rootPane;
 	}
 
