@@ -52,10 +52,9 @@ public class CtrlActionCombination extends CtrlAction {
 		try {
 			FormMap formMap = (FormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 			DatasetType datasetType = DatasetType.CAD;
-			// if (formMap.EditState.SelectedDatasetTypes.Count == 1)
-			// {
-			// datasetType = formMap.EditState.SelectedDatasetTypes[0];
-			// }
+			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
+				datasetType = formMap.getEditState().getselectedDatasetTypes().get(0);
+			}
 			Layer resultLayer = null;
 			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
@@ -204,11 +203,10 @@ public class CtrlActionCombination extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		// if ((Application.ActiveForm as FormMap) != null)
-		// {
-		// //(Application.ActiveForm as FormMap).EditState.CheckEnable();
-		// enable = (Application.ActiveForm as FormMap).EditState.IsCombinationEnable;
-		// }
+		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+			((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().checkEnable();
+			enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isCombinationEnable();
+		}
 		return enable;
 	}
 }

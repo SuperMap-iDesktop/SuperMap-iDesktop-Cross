@@ -31,4 +31,16 @@ public class ArrayUtilties {
 
 		return null;
 	}
+
+	public static <T> boolean isArrayContains(T[] array, T item) {
+		boolean result = false;
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == item) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
 }

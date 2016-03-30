@@ -461,7 +461,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 					this.servicesType = this.servicesType | ServiceType.RESTREALSPACE;
 				}
 
-				if (ListUtilties.IsListContainAny(this.workspaceInfo.getContainTypes(), DatasetType.CAD, DatasetType.GRID, DatasetType.LINE, DatasetType.LINEM,
+				if (ListUtilties.isListContainAny(this.workspaceInfo.getContainTypes(), DatasetType.CAD, DatasetType.GRID, DatasetType.LINE, DatasetType.LINEM,
 						DatasetType.NETWORK, DatasetType.POINT, DatasetType.REGION, DatasetType.TABULAR)) {
 					this.servicesType = this.servicesType | ServiceType.RESTSPATIALANALYST;
 				}

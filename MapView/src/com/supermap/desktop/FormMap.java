@@ -36,6 +36,7 @@ import com.supermap.desktop.implement.SmLabel;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.mapview.geometry.operation.EditState;
 import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -97,7 +98,6 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
@@ -125,6 +125,13 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private LengthUnit lengthUnit = LengthUnit.METER;
 	private AreaUnit areaUnit = AreaUnit.METER;
 	private AngleUnit angleUnit = AngleUnit.DEGREE;
+
+	private EditState editState = new EditState(this);
+
+	public EditState getEditState() {
+		return this.editState;
+	}
+
 	/**
 	 * 量算接口
 	 */
@@ -183,9 +190,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 
-			if (buttonType == MouseEvent.BUTTON3
-					&& clickCount == 1
-					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2 || getMapControl().getAction() == Action.SELECTCIRCLE)
+			if (buttonType == MouseEvent.BUTTON3 && clickCount == 1
+					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2
+							|| getMapControl().getAction() == Action.SELECTCIRCLE)
 					&& getMapControl().getTrackMode() == TrackMode.EDIT && isShowPopupMenu <= 0) {
 				showPopupMenu(e);
 			}
@@ -198,7 +205,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			setMapcontrolMouseClick(e);
 			// 绘制几何对象时，如果地图是地理坐标，进行超范围提示
 			if ((e.getButton() == MouseEvent.BUTTON1 && MapControlUtilties.isCreateGeometry(FormMap.this.mapControl))
-					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null && FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
+					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null
+							&& FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
 				Point2D mousePosition = FormMap.this.mapControl.getMap().pixelToMap(e.getPoint());
 
 				if (mousePosition.getX() > 180 || mousePosition.getX() < -180 || mousePosition.getY() > 90 || mousePosition.getY() < -90) {
@@ -313,7 +321,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				clearSelection();
 			} else if (KeyEvent.VK_A == e.getKeyCode() && e.isControlDown()) {
 				selectAll();
-			} else if ((KeyEvent.VK_Y == e.getKeyCode() || KeyEvent.VK_Z == e.getKeyCode()) && e.isControlDown() && Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+			} else if ((KeyEvent.VK_Y == e.getKeyCode() || KeyEvent.VK_Z == e.getKeyCode()) && e.isControlDown()
+					&& Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
 		}
@@ -411,12 +420,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		statusbar.setLayout(new GridBagLayout());
 
 		if (list.get(0) != null) {
-			statusbar.add(list.get(0), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(0),
+					new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(1) != null) {
-			statusbar.add(list.get(1), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(1),
+					new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(2) != null) {
 			statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
@@ -424,30 +433,30 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 		if (list.get(3) != null) {
 			list.get(3).setMinimumSize(new Dimension(200, list.get(3).getHeight()));
-			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(3),
+					new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(4) != null) {
-			statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(4),
+					new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(5) != null) {
 			list.get(5).setMinimumSize(new Dimension(60, list.get(5).getHeight()));
-			statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(5),
+					new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(6) != null) {
 			list.get(6).setMinimumSize(new Dimension(60, list.get(6).getHeight()));
-			statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(6),
+					new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(7) != null) {
-			statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(7),
+					new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 		if (list.get(8) != null) {
-			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+			statusbar.add(list.get(8),
+					new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		}
 	}
 
@@ -491,7 +500,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.pointYField.addKeyListener(this.keyAdapter);
 			addDrag();
 			this.layersTree.addTreeSelectionListener(this.layersTreeSelectionListener);
-//			this.layersTree.addMouseListener(this.layersTreeMouseAdapter);
+			// this.layersTree.addMouseListener(this.layersTreeMouseAdapter);
 		}
 	}
 
@@ -520,7 +529,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		if (null != layersTree) {
 			this.layersTree.removeTreeSelectionListener(this.layersTreeSelectionListener);
-//			this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
+			// this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
 		}
 
 	}
@@ -681,10 +690,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void initCenter() {
 		DecimalFormat format = new DecimalFormat("######0.0000");
-		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
-				.getCenter().getX());
-		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
-				.getCenter().getY());
+		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber")
+				: format.format(mapControl.getMap().getCenter().getX());
+		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber")
+				: format.format(mapControl.getMap().getCenter().getY());
 		this.pointXField.setText(x);
 		this.pointXField.setCaretPosition(0);
 		this.pointYField.setText(y);
@@ -1021,7 +1030,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-
 	@Override
 	public void deactived() {
 		try {
@@ -1130,8 +1138,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
+								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1242,7 +1250,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
@@ -1303,7 +1311,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Transferable transferable = dtde.getTransferable();
 				DataFlavor[] dataFlavors = dtde.getCurrentDataFlavors();
 				for (int i = 0; i < dataFlavors.length; i++) {
-					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
+					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor)
+							&& null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 						Map map = formMap.getMapControl().getMap();
@@ -1317,7 +1326,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 
 	}
-
 
 	public AngleUnit getAngleUnit() {
 		return angleUnit;
