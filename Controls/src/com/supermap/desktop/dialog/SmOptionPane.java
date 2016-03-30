@@ -65,7 +65,7 @@ public class SmOptionPane extends SmDialog {
 		this.textAreaMessage.setEditable(false);
 //		this.textAreaMessage.setBackground(this.getBackground());
 		this.textAreaMessage.setOpaque(false);
-		this.setSize((int) (280 * SystemPropertyUtilties.getSystemSizeRate()), (int) (100 * SystemPropertyUtilties.getSystemSizeRate()));
+		this.setSize((int) (300 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 		this.setLocationRelativeTo(null);
 		this.setTitle(defaultTitle);
 		this.setResizable(false);

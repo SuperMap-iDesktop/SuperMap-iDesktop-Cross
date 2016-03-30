@@ -1,43 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Stack;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRegion;
@@ -58,6 +20,22 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * 符号选择面板
@@ -1400,6 +1378,8 @@ public class SymbolPanel extends JPanel {
 			LabelInfo labelInfo = getLabelInfoBySymbolID(symbolID);
 			symbolBasicInfoPanel.refreshBasicInfo(symbolID, labelInfo.getSymbolName());
 
+			//// TODO: 2016/3/30 刷新
+//			symbolSettingPanel.refreshBasicInfo();
 			// TODO 系统字段隐藏透明设置中的透明设置百分比
 			// symbolSettingPanel.refreshS
 		}
