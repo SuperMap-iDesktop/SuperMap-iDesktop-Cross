@@ -25,11 +25,13 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 
 public class JDialogJoinItems extends SmDialog {
@@ -41,11 +43,10 @@ public class JDialogJoinItems extends SmDialog {
 	private static final int COLUMN_EXPRESSION = 5;
 	private static final int COLUMN_TYPE = 6;
 
-	private int[] tableWeight = new int[]{60, 110, 125, 125, 125, 350, 75};
+	private int[] tableWeight = new int[] { 60, 110, 125, 125, 125, 350, 75 };
 
 	private JoinItems joinItems = null;
 	private Dataset currentDataset = null;
-
 
 	private JPanel panelButton = new JPanel();
 	private JButton buttonAdd = new JButton("add");
@@ -57,20 +58,14 @@ public class JDialogJoinItems extends SmDialog {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JoinItemsTable joinItemsTable = new JoinItemsTable();
 
-	/*private final DefaultTableCellRenderer columnTableCellRenderer = new DefaultTableCellRenderer() {
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Dataset dataset = joinItemsTable.getCurrentDataset().getDatasource().getDatasets().get(value.toString());
-			DataCell dataCell = new DataCell();
-			dataCell.initDatasetType(dataset);
-			if (isSelected) {
-				dataCell.setBackground(table.getSelectionBackground());
-			} else {
-				dataCell.setBackground(table.getBackground());
-			}
-			return dataCell;
-		}
-	};*/
+	/*
+	 * private final DefaultTableCellRenderer columnTableCellRenderer = new DefaultTableCellRenderer() {
+	 * 
+	 * @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) { Dataset
+	 * dataset = joinItemsTable.getCurrentDataset().getDatasource().getDatasets().get(value.toString()); DataCell dataCell = new DataCell();
+	 * dataCell.initDatasetType(dataset); if (isSelected) { dataCell.setBackground(table.getSelectionBackground()); } else {
+	 * dataCell.setBackground(table.getBackground()); } return dataCell; } };
+	 */
 	private final DefaultCellEditor columnTableCellEditor = new DefaultCellEditor(new JComboBox()) {
 		DatasetComboBox datasetComboBox = null;
 		int currentRow = -1;
@@ -86,8 +81,8 @@ public class JDialogJoinItems extends SmDialog {
 		private DatasetComboBox getDatasetComboBox() {
 			if (datasetComboBox == null) {
 				datasetComboBox = new DatasetComboBox(currentDataset.getDatasource().getDatasets());
-				DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD, DatasetType.TABULAR, DatasetType.TEXT,
-						DatasetType.NETWORK, DatasetType.POINT3D, DatasetType.LINKTABLE, DatasetType.LINE3D, DatasetType.REGION3D};
+				DatasetType[] datasetTypes = new DatasetType[] { DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD, DatasetType.TABULAR,
+						DatasetType.TEXT, DatasetType.NETWORK, DatasetType.POINT3D, DatasetType.LINKTABLE, DatasetType.LINE3D, DatasetType.REGION3D };
 				datasetComboBox.setDatasetTypes(datasetTypes);
 				datasetComboBox.removeDataset(((JoinItemsTableModel) joinItemsTable.getModel()).getCurrentDataset());
 				datasetComboBox.addItemListener(new ItemListener() {
@@ -200,9 +195,8 @@ public class JDialogJoinItems extends SmDialog {
 
 		private void getComboBoxJoinType() {
 			if (comboBoxJoinType == null) {
-				comboBoxJoinType = new JComboBox<>(new DefaultComboBoxModel<>(new String[]{
-						CoreProperties.getString("String_JoinItem_Left"), CoreProperties.getString("String_JoinItem_Inner")
-				}));
+				comboBoxJoinType = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { CoreProperties.getString("String_JoinItem_Left"),
+						CoreProperties.getString("String_JoinItem_Inner") }));
 				comboBoxJoinType.addItemListener(new ItemListener() {
 					@Override
 					public void itemStateChanged(ItemEvent e) {
@@ -232,6 +226,7 @@ public class JDialogJoinItems extends SmDialog {
 		registListeners();
 		initComponentStates();
 		setTableStates();
+		getRootPane().setDefaultButton(buttonOk);
 	}
 
 	private void rememberTableWeight() {
@@ -369,6 +364,7 @@ public class JDialogJoinItems extends SmDialog {
 		joinItemsTable.setJoinItems(joinItems);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
 
 	}
 
@@ -423,7 +419,6 @@ public class JDialogJoinItems extends SmDialog {
 				.add(buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(10, 1));
 		panelButton.add(buttonCancle,
 				new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1));
-
 	}
 
 	public Dataset getCurrentDataset() {
@@ -465,11 +460,11 @@ public class JDialogJoinItems extends SmDialog {
 	}
 
 	class JoinItemsTableModel extends DefaultTableModel {
-		private boolean[] editable = {false, true, true, true, true, false, true};
-		private String[] headers = new String[]{CommonProperties.getString("String_ColumnHeader_Index"), CoreProperties.getString("String_Name"),
+		private boolean[] editable = { false, true, true, true, true, false, true };
+		private String[] headers = new String[] { CommonProperties.getString("String_ColumnHeader_Index"), CoreProperties.getString("String_Name"),
 				CoreProperties.getString("String_JoinItem_ForeignTable"), CoreProperties.getString("String_JoinItem_Field"),
 				CoreProperties.getString("String_JoinItem_ForeignField"), CoreProperties.getString("String_JoinItem_Filter"),
-				CoreProperties.getString("String_JoinItem_JoinType")};
+				CoreProperties.getString("String_JoinItem_JoinType") };
 
 		private Dataset currentDataset = null;
 
@@ -496,28 +491,30 @@ public class JDialogJoinItems extends SmDialog {
 		public Object getValueAt(int row, int column) {
 			if (row != -1 && row < joinItems.getCount()) {
 				switch (column) {
-					case 0:
-						// 序号
-						return row + 1;
-					case 1:
-						// 名称
-						return joinItems.get(row).getName();
-					case 2:
-						// 外接表
-						return currentDataset.getDatasource().getDatasets().get(joinItems.get(row).getForeignTable());
-					case 3:
-						// 本表字段
-						return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0].split("\\.")[1];
-					case 4:
-						// 外接表字段
-						return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[1].split("\\.")[1];
-					case 5:
-						// 关联表达式
-						return joinItems.get(row).getJoinFilter();
-					case 6:
-						return JoinTypeUtilties.getJoinTypeName(joinItems.get(row).getJoinType());
-					default:
-						return "";
+				case 0:
+					// 序号
+					return row + 1;
+				case 1:
+					// 名称
+					return joinItems.get(row).getName();
+				case 2:
+					// 外接表
+					return currentDataset.getDatasource().getDatasets().get(joinItems.get(row).getForeignTable());
+				case 3:
+					// 本表字段
+					return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0]
+							.split("\\.")[1];
+				case 4:
+					// 外接表字段
+					return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[1]
+							.split("\\.")[1];
+				case 5:
+					// 关联表达式
+					return joinItems.get(row).getJoinFilter();
+				case 6:
+					return JoinTypeUtilties.getJoinTypeName(joinItems.get(row).getJoinType());
+				default:
+					return "";
 				}
 			}
 			return "";
@@ -545,57 +542,57 @@ public class JDialogJoinItems extends SmDialog {
 				return;
 			}
 			switch (column) {
-				case 1:
-					joinItem.setName(value);
-					break;
-				case 2:
-					joinItem.setForeignTable(value);
-					int startIndex0 = joinItem.getJoinFilter().indexOf("=");
-					int endIndex0 = joinItem.getJoinFilter().lastIndexOf(".");
-					int filterLength = joinItem.getJoinFilter().length();
-					StringBuilder builder0 = new StringBuilder(joinItem.getJoinFilter());
+			case 1:
+				joinItem.setName(value);
+				break;
+			case 2:
+				joinItem.setForeignTable(value);
+				int startIndex0 = joinItem.getJoinFilter().indexOf("=");
+				int endIndex0 = joinItem.getJoinFilter().lastIndexOf(".");
+				int filterLength = joinItem.getJoinFilter().length();
+				StringBuilder builder0 = new StringBuilder(joinItem.getJoinFilter());
 
-					String joinField = joinItem.getJoinFilter().substring(endIndex0 + 1, filterLength);
-					FieldInfos fieldInfos = ((DatasetVector) currentDataset.getDatasource().getDatasets().get(value)).getFieldInfos();
-					boolean isExists = false;
-					for (int i = 0; i < fieldInfos.getCount(); i++) {
-						if (fieldInfos.get(i).getName().equals(joinField)) {
-							isExists = true;
-							break;
-						}
+				String joinField = joinItem.getJoinFilter().substring(endIndex0 + 1, filterLength);
+				FieldInfos fieldInfos = ((DatasetVector) currentDataset.getDatasource().getDatasets().get(value)).getFieldInfos();
+				boolean isExists = false;
+				for (int i = 0; i < fieldInfos.getCount(); i++) {
+					if (fieldInfos.get(i).getName().equals(joinField)) {
+						isExists = true;
+						break;
 					}
-					if (isExists) {
-						builder0.replace(startIndex0 + 1, endIndex0, value);
-					} else {
-						builder0.replace(startIndex0 + 1, filterLength, value + "." + fieldInfos.get(0).getName());
-					}
-					joinItem.setJoinFilter(builder0.toString());
-					fireTableDataChanged();
-					break;
-				case 3:
-					int startIndex = joinItem.getJoinFilter().indexOf(".");
-					int endIndex = joinItem.getJoinFilter().indexOf("=");
-					StringBuilder builder = new StringBuilder(joinItem.getJoinFilter());
-					builder.replace(startIndex + 1, endIndex, value);
-					joinItem.setJoinFilter(builder.toString());
-					fireTableDataChanged();
-					break;
-				case 4:
-					int startIndex1 = joinItem.getJoinFilter().lastIndexOf(".");
-					int endIndex1 = joinItem.getJoinFilter().length();
-					StringBuilder builder1 = new StringBuilder(joinItem.getJoinFilter());
-					builder1.replace(startIndex1 + 1, endIndex1, value);
-					joinItem.setJoinFilter(builder1.toString());
-					fireTableDataChanged();
-					break;
-				case 6:
-					JoinType joinTypeValue = JoinTypeUtilties.getJoinTypeValue(value);
-					if (joinTypeValue != null) {
-						joinItem.setJoinType(joinTypeValue);
-					}
-					break;
-				default:
-					Application.getActiveApplication().getOutput().output("How did you do it?");
+				}
+				if (isExists) {
+					builder0.replace(startIndex0 + 1, endIndex0, value);
+				} else {
+					builder0.replace(startIndex0 + 1, filterLength, value + "." + fieldInfos.get(0).getName());
+				}
+				joinItem.setJoinFilter(builder0.toString());
+				fireTableDataChanged();
+				break;
+			case 3:
+				int startIndex = joinItem.getJoinFilter().indexOf(".");
+				int endIndex = joinItem.getJoinFilter().indexOf("=");
+				StringBuilder builder = new StringBuilder(joinItem.getJoinFilter());
+				builder.replace(startIndex + 1, endIndex, value);
+				joinItem.setJoinFilter(builder.toString());
+				fireTableDataChanged();
+				break;
+			case 4:
+				int startIndex1 = joinItem.getJoinFilter().lastIndexOf(".");
+				int endIndex1 = joinItem.getJoinFilter().length();
+				StringBuilder builder1 = new StringBuilder(joinItem.getJoinFilter());
+				builder1.replace(startIndex1 + 1, endIndex1, value);
+				joinItem.setJoinFilter(builder1.toString());
+				fireTableDataChanged();
+				break;
+			case 6:
+				JoinType joinTypeValue = JoinTypeUtilties.getJoinTypeValue(value);
+				if (joinTypeValue != null) {
+					joinItem.setJoinType(joinTypeValue);
+				}
+				break;
+			default:
+				Application.getActiveApplication().getOutput().output("How did you do it?");
 			}
 		}
 
@@ -635,8 +632,8 @@ public class JDialogJoinItems extends SmDialog {
 
 			Dataset joinDataset = getForeignDataset(currentDataset);
 			if (joinDataset != null) {
-				String builder = currentDataset.getName() + "." + ((DatasetVector) currentDataset).getFieldInfos().get(0).getName() +
-						"=" + joinDataset.getName() + "." + ((DatasetVector) joinDataset).getFieldInfos().get(0).getName();
+				String builder = currentDataset.getName() + "." + ((DatasetVector) currentDataset).getFieldInfos().get(0).getName() + "="
+						+ joinDataset.getName() + "." + ((DatasetVector) joinDataset).getFieldInfos().get(0).getName();
 				joinItem.setForeignTable(joinDataset.getName());
 				joinItem.setJoinFilter(builder);
 			} else {
@@ -672,5 +669,34 @@ public class JDialogJoinItems extends SmDialog {
 	@Override
 	public void dispose() {
 		super.dispose();
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialogJoinItems.this.setDialogResult(DialogResult.OK);
+				JDialogJoinItems.this.dispose();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
+				JDialogJoinItems.this.dispose();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

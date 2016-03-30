@@ -35,6 +35,7 @@ import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import com.supermap.mapping.Layer;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -54,6 +55,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,7 +93,6 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 添加运算符号，需要判断位置是否需要在中间
 	 */
 	public static final int ADD_OPERATOR = 3;
-
 
 	private Dataset currentDataset = null;
 
@@ -156,6 +157,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 	private ISQLBuildComponent lastComponent = textareaQueryField;
 	private JoinItems joinItems = new JoinItems();
+
 	// endregion
 
 	public JDialogSQLQuery() {
@@ -207,7 +209,7 @@ public class JDialogSQLQuery extends SmDialog {
 		if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 			currentDataset = Application.getActiveApplication().getActiveDatasets()[0];
 			setWorkspaceTreeSelectedDataset(currentDataset);
-//			panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
+			// panelSaveSearchResult.setSelectedDatasources(currentDataset.getDatasource());
 			// 初始化字段信息表
 			tableFieldInfo.setDataset(currentDataset);
 			if (currentDataset.getType() == DatasetType.TABULAR) {
@@ -215,7 +217,7 @@ public class JDialogSQLQuery extends SmDialog {
 				radioButtonQueryAttributeInfo.setSelected(true);
 			}
 		} else if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-//			panelSaveSearchResult.setSelectedDatasources(Application.getActiveApplication().getActiveDatasources()[0]);
+			// panelSaveSearchResult.setSelectedDatasources(Application.getActiveApplication().getActiveDatasources()[0]);
 			setWorkspaceTreeSelectedDatasources(Application.getActiveApplication().getActiveDatasources()[0]);
 		}
 	}
@@ -243,7 +245,8 @@ public class JDialogSQLQuery extends SmDialog {
 	/**
 	 * 选中指定数据集
 	 *
-	 * @param dataset 需要选中的数据集
+	 * @param dataset
+	 *            需要选中的数据集
 	 */
 
 	private void setWorkspaceTreeSelectedDataset(Dataset dataset) {
@@ -491,9 +494,9 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化运算符号下拉框
 	 */
 	private void initJComboBoxOperator() {
-		jComboBoxOperator.setModel(new DefaultComboBoxModel<String>(new String[]{" + ", " - ", " * ", " / ", " \\ ", " > ", " = ", " < ", " >= ", " <= ", " <> ",
-				" ! ", " () ", " [] ", " '' ", " % ", " # ", " ^ ", " . ", " Mod ", " AND ", " OR ", " NOT ", " In ", " Between ", " Like ", " Is Null ",
-				" Is TRUE ", " Is FALSE "}));
+		jComboBoxOperator.setModel(new DefaultComboBoxModel<String>(new String[] { " + ", " - ", " * ", " / ", " \\ ", " > ", " = ", " < ", " >= ", " <= ",
+				" <> ", " ! ", " () ", " [] ", " '' ", " % ", " # ", " ^ ", " . ", " Mod ", " AND ", " OR ", " NOT ", " In ", " Between ", " Like ",
+				" Is Null ", " Is TRUE ", " Is FALSE " }));
 		jComboBoxOperator.setSelectedIndex(5);
 	}
 
@@ -501,35 +504,37 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化聚合函数下拉框
 	 */
 	private void initJComboBoxAggregationFunction() {
-		jComboBoxAggregationFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncAggregation"),
-				"Avg()", "Count()", "Max()", "Min()", "Sum()", "Stdev()", "Stdevp()", "Var()", "Varp()"}));
+		jComboBoxAggregationFunction.setModel(new DefaultComboBoxModel<String>(new String[] {
+				DataViewProperties.getString("String_SQLQueryCommonFuncAggregation"), "Avg()", "Count()", "Max()", "Min()", "Sum()", "Stdev()", "Stdevp()",
+				"Var()", "Varp()" }));
 	}
 
 	/**
 	 * 初始化数学函数下拉框
 	 */
 	private void initJComboBoxMathsOperation() {
-		jComboBoxMathsOperation.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncMath"), "Abs()",
-				"Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()",
-				"Radians()", "Rand()", "Round()", "Sign()", "Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()",
-				"CInt()", "CLng()", "CSng()", "CStr()", "Int()", "Fix()"}));
+		jComboBoxMathsOperation.setModel(new DefaultComboBoxModel<String>(new String[] { DataViewProperties.getString("String_SQLQueryCommonFuncMath"),
+				"Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()",
+				"Power()", "Radians()", "Rand()", "Round()", "Sign()", "Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()",
+				"CDbl()", "CInt()", "CLng()", "CSng()", "CStr()", "Int()", "Fix()" }));
 	}
 
 	/**
 	 * 初始化字符函数下拉框
 	 */
 	private void initJComboBoxStringFunction() {
-		jComboBoxStringFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncString"), "Ascii()",
-				"Char()", "Charindex()", "Difference()", "Left()", "Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()",
-				"Quotename()", "Reverse()", "Right()", "Rtrim()", "Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()"}));
+		jComboBoxStringFunction.setModel(new DefaultComboBoxModel<String>(new String[] { DataViewProperties.getString("String_SQLQueryCommonFuncString"),
+				"Ascii()", "Char()", "Charindex()", "Difference()", "Left()", "Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()",
+				"Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()", "Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()",
+				"Upper()" }));
 	}
 
 	/**
 	 * 初始化日期函数下拉框
 	 */
 	private void initJComboBoxTimeFunction() {
-		jComboBoxTimeFunction.setModel(new DefaultComboBoxModel<String>(new String[]{DataViewProperties.getString("String_SQLQueryCommonFuncTime"), "DateAdd()",
-				"Datediff()", "Datename()", "Datepart()", "Day()", "Getdate()", "Getutcdate()", "Month()", "Year()"}));
+		jComboBoxTimeFunction.setModel(new DefaultComboBoxModel<String>(new String[] { DataViewProperties.getString("String_SQLQueryCommonFuncTime"),
+				"DateAdd()", "Datediff()", "Datename()", "Datepart()", "Day()", "Getdate()", "Getutcdate()", "Month()", "Year()" }));
 	}
 
 	private void initQueryField() {
@@ -622,8 +627,10 @@ public class JDialogSQLQuery extends SmDialog {
 		panelSelectSearchData.setLayout(new GridBagLayout());
 		panelSelectSearchData.add(scrollPaneWorkspaceTree,
 				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.SOUTH));
-		panelSelectSearchData.add(labelFieldInfo,
-				new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(3,0,3,0));
+		panelSelectSearchData.add(
+				labelFieldInfo,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST)
+						.setInsets(3, 0, 3, 0));
 		panelSelectSearchData.add(scrollPaneFieldInfo,
 				new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.NORTH));
 		// @formatter:on
@@ -858,8 +865,9 @@ public class JDialogSQLQuery extends SmDialog {
 	};
 
 	private void checkButtonQueryState() {
-		if (textareaQueryField.getText() != null && textareaQueryField.getText().length() > 0) {
+		if (this.textareaQueryField.getText() != null && textareaQueryField.getText().length() > 0) {
 			this.buttonQuery.setEnabled(true);
+			getRootPane().setDefaultButton(this.buttonQuery);
 		} else {
 			this.buttonQuery.setEnabled(false);
 		}
@@ -904,7 +912,8 @@ public class JDialogSQLQuery extends SmDialog {
 				String modelName = "SqlQueryImport";
 				if (!SmFileChoose.isModuleExist(modelName)) {
 					String fileFilters = SmFileChoose.createFileFilter(DataViewProperties.getString("String_SQLFilter"), "xml");
-					SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataViewProperties.getString("String_openDialogTitle"), modelName, "OpenOne");
+					SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+							DataViewProperties.getString("String_openDialogTitle"), modelName, "OpenOne");
 				}
 				SmFileChoose smFileChoose = new SmFileChoose(modelName);
 
@@ -989,7 +998,7 @@ public class JDialogSQLQuery extends SmDialog {
 									}
 								}
 							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlstandardsql"))) {
-								//// TODO: 2016/3/17 sql语句 
+								// // TODO: 2016/3/17 sql语句
 							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlshoweTabular"))) {
 								Node value = node.getAttributes().getNamedItem("String_xmlValue");
 								if (value != null) {
@@ -1001,11 +1010,11 @@ public class JDialogSQLQuery extends SmDialog {
 									checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
 								}
 							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlshowOnScene"))) {
-								//// TODO: 2016/3/17 场景
-//								Node value = node.getAttributes().getNamedItem("String_xmlValue");
-//								if (value != null) {
-//									checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
-//								}
+								// // TODO: 2016/3/17 场景
+								// Node value = node.getAttributes().getNamedItem("String_xmlValue");
+								// if (value != null) {
+								// checkBoxHighLigthMap.setSelected(Boolean.valueOf(value.getNodeValue()));
+								// }
 							} else if (nodeName.equalsIgnoreCase(DataViewProperties.getString("String_xmlsaveResult"))) {
 								Node value = node.getAttributes().getNamedItem("String_xmlValue");
 								if (value != null) {
@@ -1047,14 +1056,12 @@ public class JDialogSQLQuery extends SmDialog {
 		return null;
 	}
 
-
 	private final ActionListener buttonExportActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 		}
 	};
-
 
 	/**
 	 * 关闭按钮事件
@@ -1079,93 +1086,97 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener queryActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			boolean isSuccessed;
-			QueryParameter queryParameter = null;
-			Recordset resultRecord = null;
-			try {
-
-				if (!panelSaveSearchResult.isSaveResult() && !checkBoxShowTabular.isSelected() && !checkBoxHighLigthMap.isSelected()
-						&& !checkBoxHighLigthScene.isSelected()) {
-					UICommonToolkit.showMessageDialog(DataViewProperties.getString("string_SQLQueryMessage"));
-					return;
-				}
-				setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				if (currentDataset != null && currentDataset instanceof DatasetVector) {
-					// 构建查询语句
-					DatasetVector currentDatasetVector = ((DatasetVector) currentDataset);
-					queryParameter = new QueryParameter();
-					queryParameter.setCursorType(CursorType.DYNAMIC);
-					queryParameter.setHasGeometry(true);
-
-					// 查询字段
-					String queryFields = textareaQueryField.getSQLExpression();
-					String[] queryFieldNames = getQueryFieldNames(queryFields);
-					queryParameter.setResultFields(queryFieldNames);
-					// 查询条件
-					queryParameter.setAttributeFilter(textareaQueryCondition.getSQLExpression());
-					// 分组字段
-					if (radioButtonQueryAttributeInfo.isSelected()) {
-						queryParameter.setGroupBy(textFieldGroupField.getSQLExpression().split(","));
-					}
-					// 排序字段
-					queryParameter.setOrderBy(sqlTableOrderByField.getSQLExpression().split(","));
-					// 关联表信息
-					if (joinItems != null) {
-						queryParameter.setJoinItems(joinItems);
-					}
-					// 查询模式：空间和属性信息 只属性信息
-					queryParameter.setHasGeometry(radioButtonQuerySpaceAndProperty.isSelected());
-					// 查询预处理
-					PreProcessSQLQuery(queryParameter);
-					queryParameter.setSpatialQueryObject(currentDatasetVector);
-					resultRecord = currentDatasetVector.query(queryParameter);
-					// 判断是否有查询结果，没有查询结果给出提示
-					if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-						if (StringUtilties.isNullOrEmpty(queryFields)) {
-							resultRecord.dispose();
-							resultRecord = null;
-						}
-						// 浏览地图
-						if (queryParameter.getHasGeometry() && checkBoxHighLigthMap.isSelected()) {
-							// 有空间信息时才有效
-							ShowResultInMap(currentDatasetVector, resultRecord);
-						}
-						// TODO 浏览场景
-
-						// 浏览属性表
-						if (checkBoxShowTabular.isSelected()) {
-							ShowResultInTabular(currentDatasetVector, resultRecord);
-						}
-						// TODO 关联浏览
-
-						// 保存查询结果
-						if (panelSaveSearchResult.isSaveResult()) {
-							SaveQueryResult(resultRecord);
-						}
-						isSuccessed = true;
-						if (isSuccessed) {
-							JDialogSQLQuery.this.dispose();
-						}
-					} else {
-						Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SQLQueryFailed"));
-					}
-				} else {
-					Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_PleaseSelectDataset"));
-				}
-			} catch (Exception e1) {
-				Application.getActiveApplication().getOutput().output(e1);
-			} finally {
-				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				if (queryParameter != null) {
-					queryParameter.dispose();
-				}
-				if (resultRecord != null && (!checkBoxShowTabular.isSelected() || resultRecord.getRecordCount() == 0)) {
-					resultRecord.dispose();
-					resultRecord = null;
-				}
-			}
+			query();
 		}
 	};
+
+	private void query() {
+		boolean isSuccessed;
+		QueryParameter queryParameter = null;
+		Recordset resultRecord = null;
+		try {
+
+			if (!panelSaveSearchResult.isSaveResult() && !checkBoxShowTabular.isSelected() && !checkBoxHighLigthMap.isSelected()
+					&& !checkBoxHighLigthScene.isSelected()) {
+				UICommonToolkit.showMessageDialog(DataViewProperties.getString("string_SQLQueryMessage"));
+				return;
+			}
+			setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			if (currentDataset != null && currentDataset instanceof DatasetVector) {
+				// 构建查询语句
+				DatasetVector currentDatasetVector = ((DatasetVector) currentDataset);
+				queryParameter = new QueryParameter();
+				queryParameter.setCursorType(CursorType.DYNAMIC);
+				queryParameter.setHasGeometry(true);
+
+				// 查询字段
+				String queryFields = textareaQueryField.getSQLExpression();
+				String[] queryFieldNames = getQueryFieldNames(queryFields);
+				queryParameter.setResultFields(queryFieldNames);
+				// 查询条件
+				queryParameter.setAttributeFilter(textareaQueryCondition.getSQLExpression());
+				// 分组字段
+				if (radioButtonQueryAttributeInfo.isSelected()) {
+					queryParameter.setGroupBy(textFieldGroupField.getSQLExpression().split(","));
+				}
+				// 排序字段
+				queryParameter.setOrderBy(sqlTableOrderByField.getSQLExpression().split(","));
+				// 关联表信息
+				if (joinItems != null) {
+					queryParameter.setJoinItems(joinItems);
+				}
+				// 查询模式：空间和属性信息 只属性信息
+				queryParameter.setHasGeometry(radioButtonQuerySpaceAndProperty.isSelected());
+				// 查询预处理
+				PreProcessSQLQuery(queryParameter);
+				queryParameter.setSpatialQueryObject(currentDatasetVector);
+				resultRecord = currentDatasetVector.query(queryParameter);
+				// 判断是否有查询结果，没有查询结果给出提示
+				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
+					if (StringUtilties.isNullOrEmpty(queryFields)) {
+						resultRecord.dispose();
+						resultRecord = null;
+					}
+					// 浏览地图
+					if (queryParameter.getHasGeometry() && checkBoxHighLigthMap.isSelected()) {
+						// 有空间信息时才有效
+						ShowResultInMap(currentDatasetVector, resultRecord);
+					}
+					// TODO 浏览场景
+
+					// 浏览属性表
+					if (checkBoxShowTabular.isSelected()) {
+						ShowResultInTabular(currentDatasetVector, resultRecord);
+					}
+					// TODO 关联浏览
+
+					// 保存查询结果
+					if (panelSaveSearchResult.isSaveResult()) {
+						SaveQueryResult(resultRecord);
+					}
+					isSuccessed = true;
+					if (isSuccessed) {
+						JDialogSQLQuery.this.dispose();
+					}
+				} else {
+					Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SQLQueryFailed"));
+				}
+			} else {
+				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_PleaseSelectDataset"));
+			}
+		} catch (Exception e1) {
+			Application.getActiveApplication().getOutput().output(e1);
+		} finally {
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			if (queryParameter != null) {
+				queryParameter.dispose();
+			}
+			if (resultRecord != null && (!checkBoxShowTabular.isSelected() || resultRecord.getRecordCount() == 0)) {
+				resultRecord.dispose();
+				resultRecord = null;
+			}
+		}
+	}
 
 	private String[] getQueryFieldNames(String queryFields) {
 		int bracketsCount = 0;
@@ -1206,7 +1217,8 @@ public class JDialogSQLQuery extends SmDialog {
 			if (resultDataset == null) {
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SQLQuerySaveAsResultFaield"));
 			} else {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SQLQuerySavaAsResultSucces"), resultDataset.getName()));
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(DataViewProperties.getString("String_SQLQuerySavaAsResultSucces"), resultDataset.getName()));
 			}
 		}
 
@@ -1228,14 +1240,14 @@ public class JDialogSQLQuery extends SmDialog {
 		if (activeForm instanceof IFormMap) {
 			formMap = ((IFormMap) activeForm);
 		}
-//		else {
-//			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
-//				if (Application.getActiveApplication().getMainFrame().getFormManager().get(i).getWindowType() == WindowType.MAP) {
-//					formMap = ((IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().get(i));
-//					Application.getActiveApplication().getMainFrame().getFormManager().setActiveForm(formMap);
-//				}
-//			}
-//		}
+		// else {
+		// for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
+		// if (Application.getActiveApplication().getMainFrame().getFormManager().get(i).getWindowType() == WindowType.MAP) {
+		// formMap = ((IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().get(i));
+		// Application.getActiveApplication().getMainFrame().getFormManager().setActiveForm(formMap);
+		// }
+		// }
+		// }
 		// 新地图打开
 		if (formMap == null) {
 			String name = MapUtilties.getAvailableMapName(
@@ -1272,9 +1284,8 @@ public class JDialogSQLQuery extends SmDialog {
 		try {
 			for (String field : queryParameter.getResultFields()) {
 				String strText = field.toUpperCase();
-				if (strText.contains("SUM(") || strText.contains("MAX(") || strText.contains("MIN(") || strText.contains("AVG(")
-						|| strText.contains("COUNT(") || strText.contains("STDEV(") || strText.contains("STDEVP(") || strText.contains("VAR(")
-						|| strText.contains("VARP(")) {
+				if (strText.contains("SUM(") || strText.contains("MAX(") || strText.contains("MIN(") || strText.contains("AVG(") || strText.contains("COUNT(")
+						|| strText.contains("STDEV(") || strText.contains("STDEVP(") || strText.contains("VAR(") || strText.contains("VARP(")) {
 					queryParameter.setCursorType(CursorType.STATIC);
 					break;
 				}
@@ -1301,7 +1312,7 @@ public class JDialogSQLQuery extends SmDialog {
 		}
 	};
 
-// endregion
+	// endregion
 
 	class GetAllValueList extends JList {
 		public GetAllValueList() {
@@ -1331,5 +1342,34 @@ public class JDialogSQLQuery extends SmDialog {
 				this.setSelectedIndex(0);
 			}
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (buttonQuery.isEnabled()) {
+					query();
+				}
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

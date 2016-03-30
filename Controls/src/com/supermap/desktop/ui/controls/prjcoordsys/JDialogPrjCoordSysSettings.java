@@ -3,18 +3,22 @@ package com.supermap.desktop.ui.controls.prjcoordsys;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -23,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -36,9 +41,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import com.supermap.data.Enum;
 import com.supermap.data.GeoCoordSys;
 import com.supermap.data.GeoCoordSysType;
@@ -345,7 +352,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 						.addComponent(this.buttonApply)
 						.addComponent(this.buttonClose)));
 		// @formatter:on
-
+		getRootPane().setDefaultButton(this.buttonApply);
 		return centerPanel;
 	}
 
@@ -1196,5 +1203,30 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		if (this.treePrjCoordSys.getRowCount() > 0) {
 			treePrjCoordSys.setSelectionRow(0);
 		}
+	}
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				applyPrjCoordSys();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonCloseClicked();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

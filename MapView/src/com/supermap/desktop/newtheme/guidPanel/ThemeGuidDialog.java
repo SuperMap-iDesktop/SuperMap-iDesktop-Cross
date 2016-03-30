@@ -6,6 +6,7 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
 
@@ -20,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -61,20 +63,20 @@ public class ThemeGuidDialog extends SmDialog {
 		this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		JScrollPane scrollPane = new JScrollPane();
-		if (isCadType) {
-			panel = newLabelThemePanel();
+		if (this.isCadType) {
+			this.panel = newLabelThemePanel();
 		} else if (isGridType) {
-			panel = new GridUniqueThemePanel(this);
+			this.panel = new GridUniqueThemePanel(this);
 		} else {
-			panel = new UniqueThemePanel(this);
+			this.panel = new UniqueThemePanel(this);
 		}
-		panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
-		panel.setBackground(Color.WHITE);
-		gl_panelContent.setHorizontalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
-				gl_panelContent.createSequentialGroup().addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
+		this.panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		this.panel.setBackground(Color.WHITE);
+		this.gl_panelContent.setHorizontalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
+				this.gl_panelContent.createSequentialGroup().addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED).addGap(20).addComponent(panel, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
 						.addContainerGap()));
-		gl_panelContent.setVerticalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
+		this.gl_panelContent.setVerticalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_panelContent
 						.createSequentialGroup()
 						.addGap(2)
@@ -86,10 +88,10 @@ public class ThemeGuidDialog extends SmDialog {
 		this.panelContent.setLayout(gl_panelContent);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonOk.setActionCommand("OK");
+		this.buttonOk.setActionCommand("OK");
 		buttonPane.add(buttonOk);
 		getRootPane().setDefaultButton(buttonOk);
-		buttonCancel.setActionCommand("Cancel");
+		this.buttonCancel.setActionCommand("Cancel");
 		buttonPane.add(buttonCancel);
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
@@ -100,6 +102,7 @@ public class ThemeGuidDialog extends SmDialog {
 						.addComponent(panelContent, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		getContentPane().setLayout(groupLayout);
+		getRootPane().setDefaultButton(this.buttonOk);
 	}
 
 	/**
@@ -113,9 +116,9 @@ public class ThemeGuidDialog extends SmDialog {
 		DataCell gridUniqueCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Unique"), InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE);
 		DataCell gridRangeCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Range"), InternalImageIconFactory.THEMEGUIDE_GRIDRANGE);
 		DataCell graphCell = new DataCell(MapViewProperties.getString("String_Theme_Graph"), InternalImageIconFactory.THEMEGUIDE_GRAPH);
-		if (isCadType) {
+		if (this.isCadType) {
 			listModel.addElement(labelDataCell);
-		} else if (isGridType) {
+		} else if (this.isGridType) {
 			listModel.addElement(gridUniqueCell);
 			listModel.addElement(gridRangeCell);
 		} else {
@@ -245,84 +248,91 @@ public class ThemeGuidDialog extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if ("OK".equals(e.getActionCommand())) {
-				int selectRow = listContent.getSelectedIndex();
-				boolean success = false;
-				if (!isCadType && !isGridType) {
-					// 创建专题图dockBar
-					createThemeContainer();
-				} else if (isGridType && 0 == selectRow) {
-					// 栅格单值专题图
-					success = ThemeGuideFactory.buildGridUniqueTheme();
-					if (success) {
-						ThemeGuidDialog.this.dispose();
-					}
-				} else if (isGridType && 1 == selectRow) {
-					// 栅格分段专题图
-					success = ThemeGuideFactory.buildGridRangeTheme();
-					if (success) {
-						ThemeGuidDialog.this.dispose();
-					}
-				} else {
-					// 标签统一风格专题图
-					if (isUniform) {
-						ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
-						ThemeGuidDialog.this.dispose();
-					} else if (isRange) {
-						ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
-						if (success) {
-							ThemeGuidDialog.this.dispose();
-						}
-					}
-				}
+				okButtonClicked();
 			} else if ("Cancel".equals(e.getActionCommand())) {
-				unregistListener();
-				ThemeGuidDialog.this.buttonCancel.removeActionListener(actionListener);
+				cancelButtonClicked();
+			}
+		}
+	}
+
+	private void cancelButtonClicked() {
+		unregistListener();
+		ThemeGuidDialog.this.buttonCancel.removeActionListener(actionListener);
+		ThemeGuidDialog.this.dispose();
+	}
+
+	private void okButtonClicked() {
+		int selectRow = listContent.getSelectedIndex();
+		boolean success = false;
+		if (!isCadType && !isGridType) {
+			// 创建专题图dockBar
+			createThemeContainer();
+		} else if (isGridType && 0 == selectRow) {
+			// 栅格单值专题图
+			success = ThemeGuideFactory.buildGridUniqueTheme();
+			if (success) {
 				ThemeGuidDialog.this.dispose();
 			}
-		}
-
-		private void createThemeContainer() {
-			int clickCount = listContent.getSelectedIndex();
-			boolean buildSuccessed = false;
-			switch (clickCount) {
-			case 0:
-				// 单值专题图
-				buildSuccessed = ThemeGuideFactory.buildUniqueTheme(ThemeUtil.getActiveLayer());
-				if (buildSuccessed) {
+		} else if (isGridType && 1 == selectRow) {
+			// 栅格分段专题图
+			success = ThemeGuideFactory.buildGridRangeTheme();
+			if (success) {
+				ThemeGuidDialog.this.dispose();
+			}
+		} else {
+			// 标签统一风格专题图
+			if (isUniform) {
+				ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
+				ThemeGuidDialog.this.dispose();
+			} else if (isRange) {
+				ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
+				if (success) {
 					ThemeGuidDialog.this.dispose();
 				}
-				break;
-			case 1:
-				// 分段专题图
-				buildSuccessed = ThemeGuideFactory.buildRangeTheme(ThemeUtil.getActiveLayer());
-				if (buildSuccessed) {
-					ThemeGuidDialog.this.dispose();
-				}
-				break;
-			case 2:
-				// 标签统一风格专题图
-				if (isUniform) {
-					ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
-					ThemeGuidDialog.this.dispose();
-				} else if (isRange) {
-					buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
-					if (buildSuccessed) {
-						ThemeGuidDialog.this.dispose();
-					}
-				}
-				break;
-			case 3:
-				// 统计专题图
-				buildSuccessed = ThemeGuideFactory.buildGraphTheme(ThemeUtil.getActiveLayer());
-				if (buildSuccessed) {
-					ThemeGuidDialog.this.dispose();
-				}
-				break;
-			default:
-				break;
 			}
 		}
+	}
 
+	private void createThemeContainer() {
+		int clickCount = listContent.getSelectedIndex();
+		boolean buildSuccessed = false;
+		switch (clickCount) {
+		case 0:
+			// 单值专题图
+			buildSuccessed = ThemeGuideFactory.buildUniqueTheme(ThemeUtil.getActiveLayer());
+			if (buildSuccessed) {
+				ThemeGuidDialog.this.dispose();
+			}
+			break;
+		case 1:
+			// 分段专题图
+			buildSuccessed = ThemeGuideFactory.buildRangeTheme(ThemeUtil.getActiveLayer());
+			if (buildSuccessed) {
+				ThemeGuidDialog.this.dispose();
+			}
+			break;
+		case 2:
+			// 标签统一风格专题图
+			if (isUniform) {
+				ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
+				ThemeGuidDialog.this.dispose();
+			} else if (isRange) {
+				buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
+			}
+			break;
+		case 3:
+			// 统计专题图
+			buildSuccessed = ThemeGuideFactory.buildGraphTheme(ThemeUtil.getActiveLayer());
+			if (buildSuccessed) {
+				ThemeGuidDialog.this.dispose();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	class LocalMouseListener extends MouseAdapter {
@@ -362,6 +372,34 @@ public class ThemeGuidDialog extends SmDialog {
 
 		}
 
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.OK);
+				okButtonClicked();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButtonClicked();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

@@ -731,8 +731,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (ThemeUtil.isCountBeyond(datasetVector, expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
-//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
-//						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 				comboBoxExpression.setSelectedItem("SmUserID");
 			} else {
 				if (!expression.contains(".")) {
@@ -748,8 +746,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					getTable();
 				} else {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"),
-//							CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 					String tempExpression = themeUnique.getUniqueExpression();
 					if (comboBoxArray.contains(tempExpression)) {
 						comboBoxExpression.setSelectedItem(tempExpression);

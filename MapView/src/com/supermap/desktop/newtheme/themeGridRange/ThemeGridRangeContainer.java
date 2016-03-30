@@ -639,9 +639,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
 				isMergeOrSplit = false;
 			}
-
+			
 			if (e.getSource() == comboBoxRangeMethod) {
-				isResetComboBox = true;
+				isResetComboBox = false;
 			}
 		}
 	}
@@ -705,7 +705,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"));
-//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -720,7 +719,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeTheme"));
-//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_UnMakeGridRangeTheme"), "", JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -783,8 +781,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
+					isResetComboBox = true;
 				} else {
 					refreshThemeRange(theme);
 				}
@@ -894,8 +891,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
+				isResetComboBox=true;
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);

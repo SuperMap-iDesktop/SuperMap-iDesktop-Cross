@@ -10,11 +10,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.JComponent;
+import javax.swing.JRootPane;
 import javax.swing.JToolBar;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -25,28 +27,20 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.StringUtilties;
-
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 
@@ -552,5 +546,33 @@ public class DialogSaveChildForms extends SmDialog {
 			}
 			return result;
 		}
+	}
+	
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonSave_Click();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.CANCEL;
+				dispose();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

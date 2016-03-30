@@ -9,13 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -62,14 +66,14 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		setBounds(100, 100, 575, 301);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		listDatasourceType = new JList<Object>();
+		this.listDatasourceType = new JList<Object>();
 		Font defaultFont = this.contentPanel.getFont();
 		Font font = new Font(defaultFont.getFontName(), defaultFont.getStyle(), (int) (defaultFont.getSize() * 1.4));
-		listDatasourceType.setFont(font);
+		this.listDatasourceType.setFont(font);
 
-		listDatasourceType.addListSelectionListener(new ListSelectionListener() {
+		this.listDatasourceType.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -78,8 +82,8 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 		});
 
-		okButton = new JButton();
-		okButton.setPreferredSize(new Dimension(75, 23));
+		this.okButton = new JButton();
+		this.okButton.setPreferredSize(new Dimension(75, 23));
 		if (DatasourceOperatorType.OPENDATABASE == type) {
 			this.setTitle(ControlsProperties.getString("String_Title_OpenDatabaseDataSourse"));
 			this.okButton.setText(CommonProperties.getString("String_Button_Open"));
@@ -91,40 +95,40 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			this.okButton.setText(CommonProperties.getString("String_Button_Open"));
 		}
 		this.initializeDatasourceType(type);
-		datasourceOperatorType = type;
+		this.datasourceOperatorType = type;
 
 		JPanel panel = this.getPanel(0);
 		JScrollPane scrollPane = new JScrollPane();
-		gl_contentPanel = new GroupLayout(contentPanel);
-		gl_contentPanel.setHorizontalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addGroup(
+		this.gl_contentPanel = new GroupLayout(contentPanel);
+		this.gl_contentPanel.setHorizontalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_contentPanel.createSequentialGroup().addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED).addComponent(panel, GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)));
-		gl_contentPanel.setVerticalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+		this.gl_contentPanel.setVerticalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup().addGap(78).addContainerGap(156, Short.MAX_VALUE))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
 				.addComponent(panel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE));
 		scrollPane.setViewportView(listDatasourceType);
-		contentPanel.setLayout(gl_contentPanel);
+		this.contentPanel.setLayout(gl_contentPanel);
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
 
-		cancelButton = new JButton();
-		cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
-		cancelButton.setPreferredSize(new Dimension(75, 23));
+		this.cancelButton = new JButton();
+		this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.cancelButton.setPreferredSize(new Dimension(75, 23));
 		buttonPane.add(cancelButton);
 
-		okButton.addActionListener(okActionListener);
-		cancelButton.addActionListener(new ActionListener() {
+		this.okButton.addActionListener(okActionListener);
+		this.cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CancelButtonActionPerformed();
+				cancelButtonActionPerformed();
 			}
 		});
+		getRootPane().setDefaultButton(this.okButton);
 	}
 
 	protected void listWorkspaceType_ItemSelectedChanged() {
@@ -175,8 +179,6 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenWebDatasource() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		String commonPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(null);
-		String ogcPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.OGC);
 		DataCell ogcDataCell = new DataCell();
 		ogcDataCell.initDatasourceType(EngineType.OGC, ControlsProperties.getString("String_OGC"));
 		DataCell iServerRestDataCell = new DataCell();
@@ -200,16 +202,12 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenOrNew() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		String commonPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(null);
 		DataCell sqlDataCell = new DataCell();
 		sqlDataCell.initDatasourceType(EngineType.SQLPLUS, ControlsProperties.getString("String_SQL"));
-		String oraclePath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.ORACLEPLUS);
 		DataCell oracleDataCell = new DataCell();
 		oracleDataCell.initDatasourceType(EngineType.ORACLEPLUS, ControlsProperties.getString("String_Oracle"));
-		String oracleSpatialPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.ORACLESPATIAL);
 		DataCell oracleSpatialDataCell = new DataCell();
 		oracleSpatialDataCell.initDatasourceType(EngineType.ORACLESPATIAL, ControlsProperties.getString("String_OracleSpatial"));
-		String postgreSqlPath = CommonToolkit.DatasourceImageWrap.getImageIconPath(EngineType.POSTGRESQL);
 		DataCell postgreSqlDataCell = new DataCell();
 		postgreSqlDataCell.initDatasourceType(EngineType.POSTGRESQL,ControlsProperties.getString("String_PostgreSQL"));
 		DataCell db2DataCell = new DataCell();
@@ -378,14 +376,14 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	private transient ActionListener okActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			OkButtonActionPerformed();
+			okButtonActionPerformed();
 		}
 	};
 
 	/**
 	 * OK按钮点击事件， 点击时调用面板的加载数据源方法。成功加载时调用关闭函数。
 	 */
-	private void OkButtonActionPerformed() {
+	private void okButtonActionPerformed() {
 		int openFlag = -1;
 
 		if (DatasourceOperatorType.OPENDATABASE == this.datasourceOperatorType) {
@@ -417,7 +415,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	 * 
 	 * @see #CloseDialog()
 	 */
-	private void CancelButtonActionPerformed() {
+	private void cancelButtonActionPerformed() {
 		this.CloseDialog();
 	}
 
@@ -426,6 +424,33 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	 */
 	private void CloseDialog() {
 		this.dispose();
+	}
+
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButtonActionPerformed();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButtonActionPerformed();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

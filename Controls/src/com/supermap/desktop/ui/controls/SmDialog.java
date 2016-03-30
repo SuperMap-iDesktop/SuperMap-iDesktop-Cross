@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-public class SmDialog extends JDialog implements WindowListener{
+public abstract class SmDialog extends JDialog implements WindowListener{
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
@@ -44,32 +44,38 @@ public class SmDialog extends JDialog implements WindowListener{
 		return this.getDialogResult();
 	}
 
+//	@Override
+//	protected JRootPane createRootPane() {
+//		KeyStroke strokeForESC = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+//		JRootPane rootPane = new JRootPane();
+//		rootPane.registerKeyboardAction(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				setDialogResult(DialogResult.CANCEL);
+//				dispose();
+//			}
+//		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
+//		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+//		rootPane.registerKeyboardAction(new ActionListener() {
+//			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				setDialogResult(DialogResult.OK);
+//			}
+//		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+//		return rootPane;
+//	}
 	/**
-	 * 覆盖父类的方法。实现自己的添加了ESCAPE键监听
+	 * 绑定enter/esc键点击事件,将该方法写入
+	 * 子类覆盖了JDialog的createRootPane方
+	 * 法已达到焦点在子类窗体内部时，点击
+	 * Enter，Esc时实现子类自定义的确定，
+	 * 取消功能
+	 * @return
 	 */
-	@Override
-	protected JRootPane createRootPane() {
-		KeyStroke strokeForESC = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		JRootPane rootPane = new JRootPane();
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.CANCEL);
-				dispose();
-			}
-		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.OK);
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
-	}
-
+	public abstract JRootPane keyBoardPressed();
+	
 	protected transient DialogResult dialogResult = DialogResult.APPLY;
 
 	public DialogResult getDialogResult() {

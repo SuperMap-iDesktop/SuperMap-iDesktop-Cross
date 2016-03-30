@@ -14,8 +14,10 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class JDialogChangePassword extends SmDialog {
 	/**
@@ -110,15 +112,15 @@ public class JDialogChangePassword extends SmDialog {
 	private void initializeComponents() {
 		setBounds(100, 100, 391, 160);
 
-		textFieldOldPassword = new JPasswordField();
-		textFieldNewPassword = new JPasswordField();
-		textFieldConfirm = new JPasswordField();
-		labelOldPassword = new JLabel("Old Password:");
-		labelNewPassword = new JLabel("New Password:");
-		labelConfirm = new JLabel("Confirm:");
-		buttonCancel = new JButton("Cancel");
-		buttonOK = new JButton("OK");
-
+		this.textFieldOldPassword = new JPasswordField();
+		this.textFieldNewPassword = new JPasswordField();
+		this.textFieldConfirm = new JPasswordField();
+		this.labelOldPassword = new JLabel("Old Password:");
+		this.labelNewPassword = new JLabel("New Password:");
+		this.labelConfirm = new JLabel("Confirm:");
+		this.buttonCancel = new JButton("Cancel");
+		this.buttonOK = new JButton("OK");
+		getRootPane().setDefaultButton(this.buttonOK);
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(groupLayout);
 		// @formatter:off
@@ -246,33 +248,33 @@ public class JDialogChangePassword extends SmDialog {
 	private void setButtonOKEnabeld() {
 		// 密码校验器为空，当然不能继续了
 		if (this.passwordCheck == null) {
-			buttonOK.setToolTipText(ControlsProperties.getString("String_PasswordCheckIsNull"));
+			this.buttonOK.setToolTipText(ControlsProperties.getString("String_PasswordCheckIsNull"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 输入的旧密码错误
 		if (!this.passwordCheck.checkPassword(this.getOldPassword())) {
-			buttonOK.setToolTipText(ControlsProperties.getString("String_OldPasswordIsFalse"));
+			this.buttonOK.setToolTipText(ControlsProperties.getString("String_OldPasswordIsFalse"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 新密码与校验密码不同时为空，不能继续
 		if (!StringUtilties.stringEquals(this.newPassword, this.confirmPassword, this.isIgnoreCase)) {
-			buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordDiff"));
+			this.buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordDiff"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 新密码与旧密码相同，不能继续
 		if (StringUtilties.stringEquals(this.newPassword, this.oldPassword, this.isIgnoreCase)) {
-			buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordNeedChange"));
+			this.buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordNeedChange"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 		// 所有条件满足设为 true
-		buttonOK.setToolTipText("");
+		this.buttonOK.setToolTipText("");
 		setButtonOKEnabledInEDT(true);
 
 	}
@@ -320,5 +322,32 @@ public class JDialogChangePassword extends SmDialog {
 	private void confirmPasswordChanged() {
 		this.confirmPassword = String.valueOf(this.textFieldConfirm.getPassword());
 		setButtonOKEnabeld();
+	}
+
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOKClicked();				
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonCancelClicked();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

@@ -7,6 +7,8 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,7 +63,7 @@ public class JDialogGetPassword extends SmDialog{
 		
 		this.buttonOk = new JButton(ControlsProperties.getString("String_Button_Ok"));
 		this.buttonCancel = new JButton(ControlsProperties.getString("String_Button_Cancel"));
-		
+		getRootPane().setDefaultButton(this.buttonOk);
 
 
 		// @formatter:off
@@ -142,6 +144,33 @@ public class JDialogGetPassword extends SmDialog{
 	public String getPassword(){
 		// TODO 密码加密解密
 		return String.valueOf(this.jpasswordField.getPassword());
+	}
+
+	@Override 
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canelButton_Click();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

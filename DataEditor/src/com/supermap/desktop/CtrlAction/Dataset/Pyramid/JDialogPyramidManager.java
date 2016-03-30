@@ -21,9 +21,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -275,20 +277,20 @@ public class JDialogPyramidManager extends SmDialog {
 	}
 
 	private void showDatasetChooseDialog() {
-		if (datasetChooser.showDialog() == DialogResult.OK) {
+		if (this.datasetChooser.showDialog() == DialogResult.OK) {
 			int beforeRowCount = tableDatasets.getRowCount();
-			pyramidManagerTableModel.addDataset(datasetChooser.getSelectedDatasets());
+			this.pyramidManagerTableModel.addDataset(datasetChooser.getSelectedDatasets());
 			int afterRowCount = tableDatasets.getRowCount();
 			if (afterRowCount > beforeRowCount) {
-				tableDatasets.setRowSelectionInterval(beforeRowCount, afterRowCount - 1);
-				tableDatasets.scrollRectToVisible(tableDatasets.getCellRect(tableDatasets.getRowCount() - 1, 0, true));
+				this.tableDatasets.setRowSelectionInterval(beforeRowCount, afterRowCount - 1);
+				this.tableDatasets.scrollRectToVisible(tableDatasets.getCellRect(tableDatasets.getRowCount() - 1, 0, true));
 			}
 		}
 
 	}
 
 	private void bulidPyramid() {
-		if (pyramidManagerTableModel.bulidPyramid() && checkBoxAutoClose.isSelected()) {
+		if (this.pyramidManagerTableModel.bulidPyramid() && this.checkBoxAutoClose.isSelected()) {
 			this.dispose();
 		}
 	}
@@ -297,7 +299,7 @@ public class JDialogPyramidManager extends SmDialog {
 		try {
 			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-			if (pyramidManagerTableModel.deletePyramid() && checkBoxAutoClose.isSelected()) {
+			if (this.pyramidManagerTableModel.deletePyramid() && this.checkBoxAutoClose.isSelected()) {
 				this.dispose();
 			}
 		} catch (Exception e) {
@@ -317,28 +319,29 @@ public class JDialogPyramidManager extends SmDialog {
 	}
 
 	private void checkButtonSelectAllAndInvertState() {
-		if (tableDatasets.getRowCount() > 0 != buttonSelectAll.isEnabled()) {
-			buttonSelectAll.setEnabled(tableDatasets.getRowCount() > 0);
-			buttonSelectInvert.setEnabled(tableDatasets.getRowCount() > 0);
+		if (this.tableDatasets.getRowCount() > 0 != this.buttonSelectAll.isEnabled()) {
+			this.buttonSelectAll.setEnabled(this.tableDatasets.getRowCount() > 0);
+			this.buttonSelectInvert.setEnabled(this.tableDatasets.getRowCount() > 0);
 		}
 	}
 
 
 	private void checkButtonDeleteState() {
-		if (tableDatasets.getSelectedRows().length > 0 != buttonDelete.isEnabled()) {
-			buttonDelete.setEnabled(tableDatasets.getSelectedRows().length > 0);
+		if (this.tableDatasets.getSelectedRows().length > 0 != buttonDelete.isEnabled()) {
+			this.buttonDelete.setEnabled(tableDatasets.getSelectedRows().length > 0);
 		}
 	}
 
 	private void checkButtonCreateState() {
-		if (pyramidManagerTableModel.isCreateEnable() != buttonCreate.isEnabled()) {
-			buttonCreate.setEnabled(pyramidManagerTableModel.isCreateEnable());
+		if (this.pyramidManagerTableModel.isCreateEnable() != this.buttonCreate.isEnabled()) {
+			this.buttonCreate.setEnabled(pyramidManagerTableModel.isCreateEnable());
+			getRootPane().setDefaultButton(this.buttonCreate);
 		}
 	}
 
 	private void checkButtonRemoveState() {
-		if (pyramidManagerTableModel.isRemoveEnable() != buttonRemove.isEnabled()) {
-			buttonRemove.setEnabled(pyramidManagerTableModel.isRemoveEnable());
+		if (this.pyramidManagerTableModel.isRemoveEnable() != buttonRemove.isEnabled()) {
+			this.buttonRemove.setEnabled(pyramidManagerTableModel.isRemoveEnable());
 		}
 	}
 	//endregion
@@ -346,12 +349,12 @@ public class JDialogPyramidManager extends SmDialog {
 
 
 	private void initComponentStates() {
-		buttonSelectAll.setEnabled(false);
-		buttonSelectInvert.setEnabled(false);
-		buttonDelete.setEnabled(false);
-		buttonCreate.setEnabled(false);
-		buttonRemove.setEnabled(false);
-		checkBoxAutoClose.setSelected(true);
+		this.buttonSelectAll.setEnabled(false);
+		this.buttonSelectInvert.setEnabled(false);
+		this.buttonDelete.setEnabled(false);
+		this.buttonCreate.setEnabled(false);
+		this.buttonRemove.setEnabled(false);
+		this.checkBoxAutoClose.setSelected(true);
 
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 		java.util.List<Dataset> activeSupportDatasets = new ArrayList<>();
@@ -370,13 +373,41 @@ public class JDialogPyramidManager extends SmDialog {
 				activeSupportDatasets.add(activeDataset);
 			}
 		}
-		pyramidManagerTableModel.setCurrentDatasets(activeSupportDatasets);
+		this.pyramidManagerTableModel.setCurrentDatasets(activeSupportDatasets);
 
 	}
 
 	@Override
 	public void dispose() {
-		datasetChooser.dispose();
+		this.datasetChooser.dispose();
 		super.dispose();
 	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				bulidPyramid();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+	
 }

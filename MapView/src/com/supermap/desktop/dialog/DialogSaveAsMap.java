@@ -4,9 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.supermap.data.Maps;
@@ -54,53 +57,53 @@ public class DialogSaveAsMap extends SmDialog {
 		setTitle("Map Save As...");
 		setBounds(100, 100, 359, 127);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-		lblNewLabelMapName = new JLabel("Map Name:");
-		textFieldMapName = new JTextField();
-		textFieldMapName.addKeyListener(new KeyAdapter() {
+		this.lblNewLabelMapName = new JLabel("Map Name:");
+		this.textFieldMapName = new JTextField();
+		this.textFieldMapName.addKeyListener(new KeyAdapter() {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				textFieldMapName_KeyPerformed();
 			}
 		});
-		textFieldMapName.setColumns(10);
-		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
+		this.textFieldMapName.setColumns(10);
+		GroupLayout gl_contentPanel = new GroupLayout(this.contentPanel);
 		gl_contentPanel.setHorizontalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addComponent(textFieldMapName, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
-				.addComponent(lblNewLabelMapName, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE));
+				.addComponent(this.textFieldMapName, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+				.addComponent(this.lblNewLabelMapName, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE));
 		gl_contentPanel.setVerticalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_contentPanel.createSequentialGroup().addComponent(lblNewLabelMapName).addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(textFieldMapName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.textFieldMapName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addContainerGap(176, Short.MAX_VALUE)));
-		contentPanel.setLayout(gl_contentPanel);
+		this.contentPanel.setLayout(gl_contentPanel);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener() {
+		this.okButton = new JButton("OK");
+		this.okButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		okButton.setActionCommand("OK");
+		this.okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		this.cancelButton = new JButton("Cancel");
+		this.cancelButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelButton_Click();
 			}
 		});
-		cancelButton.setActionCommand("Cancel");
+		this.cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
-
+		getRootPane().setDefaultButton(this.okButton);
 		this.setLocationRelativeTo(null);
 		initializeResources();
 	}
@@ -199,5 +202,31 @@ public class DialogSaveAsMap extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

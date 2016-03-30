@@ -7,9 +7,11 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * 弹出提示框
@@ -66,6 +68,7 @@ public class SmOptionPane extends SmDialog {
 		this.setLocationRelativeTo(null);
 		this.setTitle(defaultTitle);
 		this.setResizable(false);
+		getRootPane().setDefaultButton(this.buttonYes);
 	}
 
 	private void initLayout() {
@@ -183,6 +186,35 @@ public class SmOptionPane extends SmDialog {
 		this.buttonNo.setVisible(true);
 		this.buttonCancle.setVisible(false);
 		return result;
+	}
+
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				result = JOptionPane.OK_OPTION;
+				dispose();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				result = JOptionPane.CANCEL_OPTION;
+				dispose();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

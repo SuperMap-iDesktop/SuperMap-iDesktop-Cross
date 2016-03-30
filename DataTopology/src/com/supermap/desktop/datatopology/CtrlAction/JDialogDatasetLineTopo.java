@@ -11,9 +11,11 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class JDialogDatasetLineTopo extends SmDialog {
 
@@ -71,10 +73,10 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		this.checkboxRedundantVerticesCleaned.setText(DataTopologyProperties.getString("String_RedundantVertices"));
 		this.labelDatasource.setText(CommonProperties.getString("String_Label_Datasource"));
 		this.labelDataset.setText(CommonProperties.getString("String_Label_Dataset"));
-		this.panelDatasource.setBorder(
-				new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		this.panelTopoProcessingOptions.setBorder(
-				new TitledBorder(null, DataTopologyProperties.getString("String_FixTopoErrorSettings"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		this.panelDatasource.setBorder(new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
+		this.panelTopoProcessingOptions.setBorder(new TitledBorder(null, DataTopologyProperties.getString("String_FixTopoErrorSettings"), TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
 	}
 
 	private void initComponents() {
@@ -125,6 +127,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		getContentPane().add(this.buttonMore,                 new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,10,60).setWeight(20, 0));
 		getContentPane().add(this.buttonSure,                 new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,0,10,0).setWeight(60, 0));
 		getContentPane().add(this.buttonQuite,                new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,5,10,10).setWeight(20, 0));
+		getRootPane().setDefaultButton(this.buttonSure);
 		//@formatter:on
 	}
 
@@ -340,6 +343,36 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				topologyProcess();
+				unregistActionListener();
+				dispose();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				unregistActionListener();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

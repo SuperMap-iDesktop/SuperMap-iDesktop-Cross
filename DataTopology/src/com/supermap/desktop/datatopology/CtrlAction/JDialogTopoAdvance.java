@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-public class JDialogTopoAdvance extends JDialog implements ISmdialog {
+public class JDialogTopoAdvance extends SmDialog {
 
 	/**
 	 * 
@@ -105,6 +105,7 @@ public class JDialogTopoAdvance extends JDialog implements ISmdialog {
 		initContentPane();
 		initPanelToleranceSetting();
 		initPanelLinesIntersected();
+		getRootPane().setDefaultButton(buttonSure);
 	}
 
 	private void initPanelLinesIntersected() {
@@ -223,15 +224,16 @@ public class JDialogTopoAdvance extends JDialog implements ISmdialog {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 	@Override
 	protected JRootPane createRootPane() {
-		return enterPressed();
+		return keyBoardPressed();
 	}
 
 	@Override
-	public JRootPane enterPressed() {
+	public JRootPane keyBoardPressed() {
 		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
 
 			@Override
@@ -242,13 +244,7 @@ public class JDialogTopoAdvance extends JDialog implements ISmdialog {
 				dispose();
 			}
 		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
-	}
-
-	@Override
-	public JRootPane escPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForESCAPE = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
 
 			@Override
@@ -257,7 +253,7 @@ public class JDialogTopoAdvance extends JDialog implements ISmdialog {
 				unregistActionListener();
 				dispose();
 			}
-		}, strokForESCAPE, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
 

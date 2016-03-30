@@ -28,10 +28,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
@@ -57,6 +59,7 @@ import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -92,6 +95,7 @@ public class DataExportFrame extends SmDialog {
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
 	private JButton buttonExport = new JButton("string_button_outport");
+	private final JButton buttonClose = new JButton("string_button_close");
 	private JPanel panelTable = new JPanel();
 	private JLabel labelCompression = new JLabel("string_label_compression");
 	private JLabel labelRecordFile = new JLabel("string_label_lblFile");
@@ -109,7 +113,6 @@ public class DataExportFrame extends SmDialog {
 	private JLabel labelConfrimPassword = new JLabel("string_label_lblConfrimPassword");
 	private JComboBox<Object> comboBoxCAD = new JComboBox<Object>();
 	private ArrayList<ExportFileInfo> exports;
-	private final JButton buttonClose = new JButton("string_button_close");
 	private final JRadioButton radioButtonNO = new JRadioButton("no");
 	private JLabel labelCover = new JLabel("Cover");
 	private JLabel labelFilePath = new JLabel("FilePath");
@@ -140,11 +143,11 @@ public class DataExportFrame extends SmDialog {
 	private void registActionListener() {
 		this.commonListenerDataExport = new CommonListener(this);
 		this.exportKeyAction = new ExportKeyAction(this);
-		this.outportMouseListener =new OutportMouseListener(this);
+		this.outportMouseListener = new OutportMouseListener(this);
 		this.commonListener = new CommonListener();
 		this.keyAdapter = new LocalKeyAdapter();
 		this.documentListener = new LocalDocumentListener();
-		
+
 		this.buttonAddFile.addActionListener(this.commonListenerDataExport);
 		this.buttonDelete.addActionListener(this.commonListenerDataExport);
 		this.buttonClose.addActionListener(this.commonListenerDataExport);
@@ -168,7 +171,7 @@ public class DataExportFrame extends SmDialog {
 		this.textFieldPassword.addKeyListener(this.keyAdapter);
 		this.textFieldCompression.getDocument().addDocumentListener(this.documentListener);
 		this.addWindowListener(new WindowAdapter() {
-			
+
 			@Override
 			public void windowClosed(WindowEvent e) {
 				unregistActionListener();
@@ -487,15 +490,16 @@ public class DataExportFrame extends SmDialog {
 			hasExportInfo = true;
 		}
 		if (hasExportInfo) {
-			buttonDelete.setEnabled(true);
-			buttonExport.setEnabled(true);
-			buttonInvertSelect.setEnabled(true);
-			buttonSelectAll.setEnabled(true);
+			this.buttonDelete.setEnabled(true);
+			this.buttonExport.setEnabled(true);
+			this.buttonInvertSelect.setEnabled(true);
+			this.buttonSelectAll.setEnabled(true);
+			getRootPane().setDefaultButton(this.buttonExport);
 		} else {
-			buttonDelete.setEnabled(false);
-			buttonExport.setEnabled(false);
-			buttonInvertSelect.setEnabled(false);
-			buttonSelectAll.setEnabled(false);
+			this.buttonDelete.setEnabled(false);
+			this.buttonExport.setEnabled(false);
+			this.buttonInvertSelect.setEnabled(false);
+			this.buttonSelectAll.setEnabled(false);
 		}
 	}
 
@@ -728,19 +732,24 @@ public class DataExportFrame extends SmDialog {
 				// 关闭
 				dispose();
 			} else if (c == buttonExport) {
-				// 导出
-				if (exports.isEmpty()) {
-					UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ExportSettingPanel_Cue_AddFiles"));
-				} else {
-					FormProgressTotal formProgress = new FormProgressTotal();
-					formProgress.setTitle(DataConversionProperties.getString("String_FormExport_FormText"));
-					formProgress.doWork(new DataExportCallable(exports, table, radioButtonOK.isSelected()));
-					if (checkboxIsClose.isSelected()) {
-						dispose();
-					}
-				}
+				export();
 			}
 
+		}
+
+	}
+
+	private void export() {
+		// 导出
+		if (exports.isEmpty()) {
+			UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ExportSettingPanel_Cue_AddFiles"));
+		} else {
+			FormProgressTotal formProgress = new FormProgressTotal();
+			formProgress.setTitle(DataConversionProperties.getString("String_FormExport_FormText"));
+			formProgress.doWork(new DataExportCallable(exports, table, radioButtonOK.isSelected()));
+			if (checkboxIsClose.isSelected()) {
+				dispose();
+			}
 		}
 	}
 
@@ -909,6 +918,33 @@ public class DataExportFrame extends SmDialog {
 
 	public JComboBox<String> getComboBoxFileType() {
 		return comboBoxFileType;
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				export();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

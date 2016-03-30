@@ -44,7 +44,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -306,7 +305,6 @@ public class JDialogDatasetCopy extends SmDialog {
 		
 		this.buttonOk.setToolTipText("");
 		this.buttonOk.setActionCommand("OK");
-		getRootPane().setDefaultButton(buttonOk);
 
 		this.buttonCancel = new JButton("Cancel");
 		
@@ -410,6 +408,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			buttonSelectInvert.setEnabled(true);
 			buttonSetting.setEnabled(true);
 			buttonOk.setEnabled(true);
+			getRootPane().setDefaultButton(buttonOk);
 		} else {
 			buttonDelete.setEnabled(false);
 			buttonSelectAll.setEnabled(false);
@@ -635,7 +634,7 @@ public class JDialogDatasetCopy extends SmDialog {
 	 */
 	private void cancelButton_Click() {
 		try {
-			this.setVisible(false);
+			dispose();
 			this.dialogResult = DialogResult.CANCEL;
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -816,5 +815,32 @@ public class JDialogDatasetCopy extends SmDialog {
 			}
 			return value;
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				copyDataset();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

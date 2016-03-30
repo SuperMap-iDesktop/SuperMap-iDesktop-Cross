@@ -13,9 +13,11 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class DialogSaveAsScene extends SmDialog {
 
@@ -27,7 +29,7 @@ public class DialogSaveAsScene extends SmDialog {
 	private boolean isNewWindow = false;
 	private String formTitle = "";
 	private transient Scenes scenes;
-	
+
 	private String oldSceneName;
 
 	/**
@@ -143,6 +145,7 @@ public class DialogSaveAsScene extends SmDialog {
 				this.okButton.setEnabled(false);
 			} else if (!UICommonToolkit.isLawName(name, false)) {
 				this.okButton.setEnabled(false);
+				getRootPane().setDefaultButton(this.okButton);
 			} else {
 				this.okButton.setEnabled(true);
 			}
@@ -177,5 +180,32 @@ public class DialogSaveAsScene extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

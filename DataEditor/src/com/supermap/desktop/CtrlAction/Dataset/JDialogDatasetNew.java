@@ -13,9 +13,12 @@ import javax.swing.table.TableColumn;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.GroupLayout;
+import javax.swing.KeyStroke;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.SwingConstants;
 
@@ -50,6 +53,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -90,13 +94,13 @@ public class JDialogDatasetNew extends SmDialog {
 		setTitle("Template");
 		setBounds(100, 100, 677, 405);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		toolBar = new JToolBar();
-		toolBar.setFloatable(false);
+		this.toolBar = new JToolBar();
+		this.toolBar.setFloatable(false);
 
-		table = new MutiTable();
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.table = new MutiTable();
+		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "Index", "TargetDatasource", "CreateType", "DatasetName", "EncodeType",
 				"Charset", "AddToMap" }) {
@@ -112,17 +116,17 @@ public class JDialogDatasetNew extends SmDialog {
 			}
 		};
 
-		table.setModel(tableModel);
-		table.putClientProperty("terminateEditOnFocusLost", true);
+		this.table.setModel(tableModel);
+		this.table.putClientProperty("terminateEditOnFocusLost", true);
 		initializeColumns();
 
-		table.getModel().addTableModelListener(new TableModelListener() {
+		this.table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				table_ValueChanged(e);
 			}
 		});
-		table.addMouseListener(new MouseAdapter() {
+		this.table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				checkButtonState();
@@ -133,7 +137,7 @@ public class JDialogDatasetNew extends SmDialog {
 				checkButtonState();
 			}
 		});
-		table.setRowHeight(23);
+		this.table.setRowHeight(23);
 		JScrollPane scrollPaneTable = new JScrollPane(table);
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 
@@ -153,21 +157,21 @@ public class JDialogDatasetNew extends SmDialog {
 		);
 		// @formatter:on
 
-		buttonSelectAll = new JButton();
-		buttonSelectAll
+		this.buttonSelectAll = new JButton();
+		this.buttonSelectAll
 				.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		buttonSelectAll.addActionListener(new ActionListener() {
+		this.buttonSelectAll.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonSelectAll_Click();
 			}
 		});
-		toolBar.add(buttonSelectAll);
-		buttonSelectInvert = new JButton();
-		buttonSelectInvert.setIcon(new ImageIcon(JDialogDatasetNew.class
+		this.toolBar.add(buttonSelectAll);
+		this.buttonSelectInvert = new JButton();
+		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogDatasetNew.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		buttonSelectInvert.addActionListener(new ActionListener() {
+		this.buttonSelectInvert.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -187,33 +191,33 @@ public class JDialogDatasetNew extends SmDialog {
 				buttonDelete_Click();
 			}
 		});
-		buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
-		buttonDelete.setEnabled(false);
-		toolBar.add(buttonDelete);
+		this.buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
+		this.buttonDelete.setEnabled(false);
+		this.toolBar.add(buttonDelete);
 		this.toolBar.add(createSeparator());
 
-		buttonSetting = new JButton();
-		buttonSetting.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
-		buttonSetting.addActionListener(new ActionListener() {
+		this.buttonSetting = new JButton();
+		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
+		this.buttonSetting.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonSetting_Click();
 			}
 		});
-		buttonSetting.setEnabled(false);
-		toolBar.add(buttonSetting);
-		contentPanel.setLayout(gl_contentPanel);
+		this.buttonSetting.setEnabled(false);
+		this.toolBar.add(buttonSetting);
+		this.contentPanel.setLayout(gl_contentPanel);
 
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		checkboxAutoClose = new JCheckBox("Auto Close");
-		checkboxAutoClose.setVerticalAlignment(SwingConstants.TOP);
-		checkboxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
-		checkboxAutoClose.setSelected(true);
-		okButton = new JButton();
-		okButton.addActionListener(new ActionListener() {
+		this.checkboxAutoClose = new JCheckBox("Auto Close");
+		this.checkboxAutoClose.setVerticalAlignment(SwingConstants.TOP);
+		this.checkboxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
+		this.checkboxAutoClose.setSelected(true);
+		this.okButton = new JButton();
+		this.okButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -221,8 +225,8 @@ public class JDialogDatasetNew extends SmDialog {
 			}
 		});
 		getRootPane().setDefaultButton(okButton);
-		cancelButton = new JButton();
-		cancelButton.addActionListener(new ActionListener() {
+		this.cancelButton = new JButton();
+		this.cancelButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -266,18 +270,18 @@ public class JDialogDatasetNew extends SmDialog {
 			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
 			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
 
-			table.getColumnModel().getColumn(COLUMN_INDEX_INDEX).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_TARGETDATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_DatasetType).setHeaderValue(DataEditorProperties.getString("String_CreateType"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_DatasetName).setHeaderValue(DataEditorProperties.getString("String_ColumnTitle_DtName"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_EncodeType).setHeaderValue(CommonProperties.getString("String_ColumnHeader_EncodeType"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_Charset).setHeaderValue(DataEditorProperties.getString("String_Charset"));
-			table.getColumnModel().getColumn(COLUMN_INDEX_WindowMode).setHeaderValue(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_INDEX).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_TARGETDATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_DatasetType).setHeaderValue(DataEditorProperties.getString("String_CreateType"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_DatasetName).setHeaderValue(DataEditorProperties.getString("String_ColumnTitle_DtName"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_EncodeType).setHeaderValue(CommonProperties.getString("String_ColumnHeader_EncodeType"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_Charset).setHeaderValue(DataEditorProperties.getString("String_Charset"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_WindowMode).setHeaderValue(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
 
-			buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
-			buttonSelectInvert.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
-			buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
-			buttonSetting.setToolTipText(CommonProperties.getString("String_ToolBar_SetBatch"));
+			this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
+			this.buttonSelectInvert.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
+			this.buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
+			this.buttonSetting.setToolTipText(CommonProperties.getString("String_ToolBar_SetBatch"));
 			this.checkboxAutoClose.setText(CommonProperties.getString("String_CheckBox_CloseDialog"));
 		}
 	}
@@ -429,7 +433,7 @@ public class JDialogDatasetNew extends SmDialog {
 			copyPreDatasetInfo(rowIndex);
 			checkButtonState();
 		}
-		table.getModel().setValueAt(datasetName, rowIndex, COLUMN_INDEX_DatasetName);
+		this.table.getModel().setValueAt(datasetName, rowIndex, COLUMN_INDEX_DatasetName);
 	}
 
 	private void setAbstractDatasourceComboBox(final DatasourceComboBox datasourceComboBox) {
@@ -458,12 +462,12 @@ public class JDialogDatasetNew extends SmDialog {
 			if (rowIndex == -1) {
 				datas[COLUMN_INDEX_INDEX] = "1";
 				if (0 < Application.getActiveApplication().getActiveDatasources().length) {
-					targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+					this.targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
 					DataCell datasourceCell = new DataCell();
 					datasourceCell.initDatasourceType(targetDatasource);
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = datasourceCell;
 					String datasetName = this.getDefaultDatasetName(DatasetType.POINT);
-					defaultDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
+					this.defaultDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
 					datas[COLUMN_INDEX_DatasetName] = defaultDatasetName;
 				} else {
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = "";
@@ -646,10 +650,10 @@ public class JDialogDatasetNew extends SmDialog {
 				if (!datasource.getDatasets().isAvailableDatasetName(datasetName)) {
 					// 如果输入的数据集名称非法，重置名称
 					datasetName = CommonToolkit.DatasetWrap.getAvailableDatasetName(datasource, datasetName, getAllDatasetNames(datasource, rowIndex));
-					table.getModel().setValueAt(datasetName, rowIndex, columnIndex);
+					this.table.getModel().setValueAt(datasetName, rowIndex, columnIndex);
 				} else if (hasSameDatasetName(datasetName, rowIndex)) {
 					datasetName = datasetName + "_1";
-					table.getModel().setValueAt(datasetName, rowIndex, columnIndex);
+					this.table.getModel().setValueAt(datasetName, rowIndex, columnIndex);
 				}
 			}
 		} catch (Exception ex) {
@@ -927,5 +931,31 @@ public class JDialogDatasetNew extends SmDialog {
 		public Object getCellEditorValue() {
 			return comboboxEncodingType.getSelectedItem();
 		}
+	}
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

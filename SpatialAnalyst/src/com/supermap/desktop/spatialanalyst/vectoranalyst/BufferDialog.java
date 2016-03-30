@@ -4,15 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
@@ -50,6 +56,9 @@ public class BufferDialog extends SmDialog {
 		@Override
 		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
 			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable && isHasResultDatasource);
+			if (panelButton.getButtonOk().isEnabled()) {
+				getRootPane().setDefaultButton(panelButton.getButtonOk());
+			}
 		}
 	};
 
@@ -146,6 +155,7 @@ public class BufferDialog extends SmDialog {
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
 		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
+		getRootPane().setDefaultButton(panelButton.getButtonOk());
 	}
 
 	private void setPanelGroupButtonLayout() {
@@ -239,7 +249,6 @@ public class BufferDialog extends SmDialog {
 	}
 
 	class LocalActionListener implements ActionListener {
-		private boolean flag;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -266,22 +275,56 @@ public class BufferDialog extends SmDialog {
 				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 				setSize(getLinePanelDimension());
 			} else if (e.getSource() == panelButton.getButtonOk()) {
-				try {
-					if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
-						flag = ((PanelPointOrRegionAnalyst) panelBufferType).createCurrentBuffer();
-
-					} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
-						flag = ((PanelLineBufferAnalyst) panelBufferType).CreateCurrentBuffer();
-					}
-				} catch (Exception e1) {
-					BufferDialog.this.dispose();
-				}
-				if (flag) {
-					BufferDialog.this.dispose();
-				}
+				okButtonClicked();
 			} else if (e.getSource() == panelButton.getButtonCancel()) {
 				BufferDialog.this.dispose();
 			}
 		}
+
 	}
+
+	private void okButtonClicked() {
+		boolean flag = false;
+		try {
+			if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
+				flag = ((PanelPointOrRegionAnalyst) panelBufferType).createCurrentBuffer();
+
+			} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
+				flag = ((PanelLineBufferAnalyst) panelBufferType).CreateCurrentBuffer();
+			}
+		} catch (Exception e1) {
+			BufferDialog.this.dispose();
+		}
+		if (flag) {
+			BufferDialog.this.dispose();
+		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButtonClicked();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+
 }

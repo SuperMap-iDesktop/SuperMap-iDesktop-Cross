@@ -16,6 +16,7 @@ import com.supermap.ui.MapControl;
 import com.supermap.ui.SelectionMode;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -129,6 +130,7 @@ public class JDialogOperationSetting extends SmDialog {
 				return backUpValue;
 			}
 		});
+		getRootPane().setDefaultButton(this.buttonOK);
 	}
 
 	/**
@@ -285,5 +287,30 @@ public class JDialogOperationSetting extends SmDialog {
 		super.dispose();
 	}
 
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
 
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOkClicked();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
 }
