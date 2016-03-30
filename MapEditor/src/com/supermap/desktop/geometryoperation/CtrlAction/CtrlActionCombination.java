@@ -3,6 +3,7 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -25,6 +26,7 @@ import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 
@@ -62,22 +64,19 @@ public class CtrlActionCombination extends CtrlAction {
 				}
 			}
 
-			HashMap<String, Object> values = new HashMap<>();
-			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", formMap.getMapControl().getMap());
-			// JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(formMap.getMapControl().getMap(), datasetType);
-			// if (formCombination.ShowDialog() == DialogResult.OK)
-			// {
-			resultLayer = formCombination.getEditLayer();
-			// values = formCombination.PropertyData;
-			combinationObjects(formMap, resultLayer, values);
-			// }
+			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", formMap.getMapControl().getMap(), datasetType);
+			if (formCombination.showDialog() == DialogResult.OK) {
+				resultLayer = formCombination.getEditLayer();
+				Map<String, Object> values = formCombination.getPropertyData();
+				combinationObjects(formMap, resultLayer, values);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 
 	}
 
-	private void combinationObjects(FormMap formMap, Layer resultLayer, HashMap<String, Object> propertyData) {
+	private void combinationObjects(FormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
 		Recordset recordset = null;
 		Geometry geometry = null;
 		try {

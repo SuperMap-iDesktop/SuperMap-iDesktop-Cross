@@ -68,12 +68,13 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private FieldOperation[] selectedOperations;
 	private DatasetType resultDatasetType;
 
-	public JDialogFieldOperationSetting(String title) {
-		this(title, null);
+	public JDialogFieldOperationSetting(String title, DatasetType resultDatasetType) {
+		this(title, null, resultDatasetType);
 	}
 
-	public JDialogFieldOperationSetting(String title, Map map) {
+	public JDialogFieldOperationSetting(String title, Map map, DatasetType resultDatasetType) {
 		setTitle(title);
+		this.resultDatasetType = resultDatasetType;
 		initializeComponents();
 		initializeResources();
 		registerEvents();
@@ -83,6 +84,10 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	public Layer getEditLayer() {
 		return this.editLayer;
+	}
+
+	public java.util.Map<String, Object> getPropertyData() {
+		return null;
 	}
 
 	public Map getMap() {
@@ -690,7 +695,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	}
 
 	public static void main(String[] args) {
-		JDialogFieldOperationSetting dialog = new JDialogFieldOperationSetting("");
+		JDialogFieldOperationSetting dialog = new JDialogFieldOperationSetting("", DatasetType.LINE);
 		dialog.setSize(new Dimension(400, 300));
 		dialog.setVisible(true);
 	}
