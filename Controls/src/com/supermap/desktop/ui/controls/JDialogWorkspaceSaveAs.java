@@ -20,9 +20,11 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.metal.MetalBorders;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class JDialogWorkspaceSaveAs extends SmDialog {
 
@@ -51,7 +53,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		setBounds(100, 100, 575, 301);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		listWorkspaceType = new JList<String>();
 		listWorkspaceType.setBorder(MetalBorders.getTextBorder());
@@ -84,63 +86,64 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		});
 
 		Font font = new Font(null, 0, 15);
-		listWorkspaceType.setFont(font);
-		listWorkspaceType.addListSelectionListener(new ListSelectionListener() {
+		this.listWorkspaceType.setFont(font);
+		this.listWorkspaceType.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				listWorkspaceType_ItemSelectedChanged();
 			}
 		});
 
-		panelSaveAsFile = new JPanelWorkspaceSaveAsFile();
-		groupLayoutContentPanel = new GroupLayout(contentPanel);
-		groupLayoutContentPanel.setHorizontalGroup(groupLayoutContentPanel.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayoutContentPanel.createSequentialGroup().addComponent(listWorkspaceType, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(panelSaveAsFile, GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)));
-		groupLayoutContentPanel.setVerticalGroup(groupLayoutContentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayoutContentPanel.createSequentialGroup().addGap(78).addContainerGap(156, Short.MAX_VALUE))
-				.addComponent(listWorkspaceType, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-				.addComponent(panelSaveAsFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE));
+		this.panelSaveAsFile = new JPanelWorkspaceSaveAsFile();
+		this.groupLayoutContentPanel = new GroupLayout(this.contentPanel);
+		this.groupLayoutContentPanel.setHorizontalGroup(this.groupLayoutContentPanel.createParallelGroup(Alignment.LEADING).addGroup(
+				this.groupLayoutContentPanel.createSequentialGroup().addComponent(this.listWorkspaceType, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelSaveAsFile, GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)));
+		this.groupLayoutContentPanel.setVerticalGroup(this.groupLayoutContentPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(this.groupLayoutContentPanel.createSequentialGroup().addGap(78).addContainerGap(156, Short.MAX_VALUE))
+				.addComponent(this.listWorkspaceType, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+				.addComponent(this.panelSaveAsFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE));
 
-		contentPanel.setLayout(groupLayoutContentPanel);
+		this.contentPanel.setLayout(groupLayoutContentPanel);
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		okButton = new JButton(CommonProperties.getString("String_Button_OK"));
-		okButton.setPreferredSize(new java.awt.Dimension(75, 23));
-		okButton.setActionCommand("OK");
+		this.okButton = new JButton(CommonProperties.getString("String_Button_OK"));
+		this.okButton.setPreferredSize(new java.awt.Dimension(75, 23));
+		this.okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
-		cancelButton = new JButton(CommonProperties.getString("String_Button_Cancel"));
-		cancelButton.setPreferredSize(new java.awt.Dimension(75, 23));
-		cancelButton.setActionCommand("Cancel");
+		this.cancelButton = new JButton(CommonProperties.getString("String_Button_Cancel"));
+		this.cancelButton.setPreferredSize(new java.awt.Dimension(75, 23));
+		this.cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 
-		okButton.addActionListener(new OkBUttonActionLisenter());
-		cancelButton.addActionListener(new ActionListener() {
+		this.okButton.addActionListener(new OkButtonActionLisenter());
+		this.cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
+		getRootPane().setDefaultButton(this.okButton);
 		if (flag == saveAsFile) {
 			JPanel existingPanel = getPanel();
 			JPanel newPanel = getPanel(saveAsFile);
 			this.groupLayoutContentPanel.replace(existingPanel, newPanel);
-			listWorkspaceType.setSelectedIndex(saveAsFile);
+			this.listWorkspaceType.setSelectedIndex(saveAsFile);
 		} else if (flag == saveAsOracle) {
 			JPanel existingPanel = getPanel();
 			JPanel newPanel = getPanel(saveAsOracle);
 			this.groupLayoutContentPanel.replace(existingPanel, newPanel);
-			listWorkspaceType.setSelectedIndex(saveAsOracle);
+			this.listWorkspaceType.setSelectedIndex(saveAsOracle);
 		} else if (flag == saveAsSQL) {
 			JPanel existingPanel = getPanel();
 			JPanel newPanel = getPanel(saveAsSQL);
 			this.groupLayoutContentPanel.replace(existingPanel, newPanel);
-			listWorkspaceType.setSelectedIndex(saveAsSQL);
+			this.listWorkspaceType.setSelectedIndex(saveAsSQL);
 		}
 	}
 
@@ -186,131 +189,162 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		return result;
 	}
 
-	class OkBUttonActionLisenter implements ActionListener {
-
-		private void setWorkspaceVersion(WorkspaceConnectionInfo workspaceConnectionInfo, String workspaceVersion) {
-			if ("SuperMap UGC 7.0".equals(workspaceVersion)) {
-				workspaceConnectionInfo.setVersion(WorkspaceVersion.UGC70);
-			}
-			if ("SuperMap UGC 6.0".equals(workspaceVersion)) {
-				workspaceConnectionInfo.setVersion(WorkspaceVersion.UGC60);
-			}
-		}
-
-		private void saveAs(Workspace workspace, WorkspaceConnectionInfo workspaceConnectionInfo, String workspaceName, String fileName) {
-			try {
-				if (workspaceConnectionInfo.getVersion() == WorkspaceVersion.UGC60
-						&& JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialogWithCancel(ControlsProperties.getString("String_WorkspaceSaveAs_Confirm"))) {
-					return;
-				}
-				String WorkspaceBeforeName = workspace.getCaption();
-				if (null != fileName) {
-					workspace.setCaption(fileName);
-				}
-				if (workspace.saveAs(workspaceConnectionInfo)) {
-					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_WorkspaceSaveAs") + workspaceName);
-					dispose();
-				} else {
-					workspace.setCaption(WorkspaceBeforeName);
-					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_SaveWorkspace_Failed"));
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-		}
+	class OkButtonActionLisenter implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String workspaceFileName = "";
-			String workspacePassword = "";
-			String workspacePasswordConfirm = "";
-			String workspaceVersion = "";
-			String serverName = "";
-			String databaseName = "";
-			String userName = "";
-			String userPassword = "";
-			String workspaceName = "";
-			Workspace workspace = Application.getActiveApplication().getWorkspace();
-			final JPanel tempPanel = getPanel();
-			int index = listWorkspaceType.getSelectedIndex();
+			okButtonClicked();
+		}
 
-			if (tempPanel instanceof JPanelWorkspaceSaveAsFile) {
-				String fileName = ((JPanelWorkspaceSaveAsFile) tempPanel).getFileName();
-				workspaceFileName = ((JPanelWorkspaceSaveAsFile) tempPanel).getjTextFieldFileName().getText();
-				workspacePassword = String.valueOf(((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().getPassword());
-				workspacePasswordConfirm = String.valueOf(((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPasswordConfrim().getPassword());
-				workspaceConnectionInfo.setServer(workspaceFileName);
-				workspaceConnectionInfo.setType(getWorkspaceType(workspaceFileName));
-				if (workspaceFileName.isEmpty()) {
-					UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_FileName_Empty"));
-					((JPanelWorkspaceSaveAsFile) tempPanel).getjButtonBrowser().requestFocus();
+	}
+
+	private WorkspaceType getWorkspaceType(String workspaceFilePath) {
+		String fileType = workspaceFilePath.substring(workspaceFilePath.indexOf(".") + 1, workspaceFilePath.length());
+		WorkspaceType result = WorkspaceType.SMWU;
+		if ("smwu".equalsIgnoreCase(fileType)) {
+			result = WorkspaceType.SMWU;
+		}
+		if ("sxwu".equalsIgnoreCase(fileType)) {
+			result = WorkspaceType.SXWU;
+		}
+		return result;
+	}
+
+	private void setWorkspaceVersion(WorkspaceConnectionInfo workspaceConnectionInfo, String workspaceVersion) {
+		if ("SuperMap UGC 7.0".equals(workspaceVersion)) {
+			workspaceConnectionInfo.setVersion(WorkspaceVersion.UGC70);
+		}
+		if ("SuperMap UGC 6.0".equals(workspaceVersion)) {
+			workspaceConnectionInfo.setVersion(WorkspaceVersion.UGC60);
+		}
+	}
+
+	private void saveAs(Workspace workspace, WorkspaceConnectionInfo workspaceConnectionInfo, String workspaceName, String fileName) {
+		try {
+			if (workspaceConnectionInfo.getVersion() == WorkspaceVersion.UGC60
+					&& JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialogWithCancel(ControlsProperties.getString("String_WorkspaceSaveAs_Confirm"))) {
+				return;
+			}
+			String WorkspaceBeforeName = workspace.getCaption();
+			if (null != fileName) {
+				workspace.setCaption(fileName);
+			}
+			if (workspace.saveAs(workspaceConnectionInfo)) {
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_WorkspaceSaveAs") + workspaceName);
+				dispose();
+			} else {
+				workspace.setCaption(WorkspaceBeforeName);
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_SaveWorkspace_Failed"));
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private void okButtonClicked() {
+		String workspaceFileName = "";
+		String workspacePassword = "";
+		String workspacePasswordConfirm = "";
+		String workspaceVersion = "";
+		String serverName = "";
+		String databaseName = "";
+		String userName = "";
+		String userPassword = "";
+		String workspaceName = "";
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		final JPanel tempPanel = getPanel();
+		int index = listWorkspaceType.getSelectedIndex();
+
+		if (tempPanel instanceof JPanelWorkspaceSaveAsFile) {
+			String fileName = ((JPanelWorkspaceSaveAsFile) tempPanel).getFileName();
+			workspaceFileName = ((JPanelWorkspaceSaveAsFile) tempPanel).getjTextFieldFileName().getText();
+			workspacePassword = String.valueOf(((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().getPassword());
+			workspacePasswordConfirm = String.valueOf(((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPasswordConfrim().getPassword());
+			this.workspaceConnectionInfo.setServer(workspaceFileName);
+			this.workspaceConnectionInfo.setType(getWorkspaceType(workspaceFileName));
+			if (workspaceFileName.isEmpty()) {
+				UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_FileName_Empty"));
+				((JPanelWorkspaceSaveAsFile) tempPanel).getjButtonBrowser().requestFocus();
+				return;
+			}
+			if (workspaceFileName.toLowerCase().endsWith(".smwu")) {
+				if (!workspacePassword.equals(workspacePasswordConfirm)) {
+					UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_Password_Confirm"));
+					((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().requestFocus();
 					return;
-				}
-				if (workspaceFileName.toLowerCase().endsWith(".smwu")) {
-					if (!workspacePassword.equals(workspacePasswordConfirm)) {
-						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_ErrorProvider_Password_Confirm"));
-						((JPanelWorkspaceSaveAsFile) tempPanel).getjPasswordFieldPassword().requestFocus();
-						return;
-					} else {
-						workspaceConnectionInfo.setPassword(workspacePassword);
-					}
-				}
-				workspaceVersion = (String) ((JPanelWorkspaceSaveAsFile) tempPanel).getjComboBoxVersion().getSelectedItem();
-				setWorkspaceVersion(workspaceConnectionInfo, workspaceVersion);
-				fileName = fileName.lastIndexOf(".") > 0 ? fileName.substring(0, fileName.lastIndexOf(".")) : fileName;
-				saveAs(workspace, workspaceConnectionInfo, workspaceFileName, fileName);
-			}
-			if (tempPanel instanceof JPanelWorkspaceSaveAsSQL) {
-				serverName = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxServer().getSelectedItem();
-				databaseName = ((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldDatabaseName().getText();
-				userName = ((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldUserName().getText();
-				userPassword = String.valueOf(((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldPassword().getPassword());
-				workspaceName = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxWorkspaceName().getSelectedItem();
-				workspaceVersion = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxWorkspaceVersion().getSelectedItem();
-				if (saveAsOracle == index) {
-					workspaceConnectionInfo.setType(WorkspaceType.ORACLE);
-					workspaceConnectionInfo.setServer(serverName);
-					workspaceConnectionInfo.setDatabase(databaseName);
-					if (null == workspaceName || workspaceName.isEmpty()) {
-						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
-					} else {
-						workspaceConnectionInfo.setName(workspaceName);
-					}
-					workspaceConnectionInfo.setUser(userName);
-					workspaceConnectionInfo.setPassword(userPassword);
-					setWorkspaceVersion(workspaceConnectionInfo, workspaceVersion);
-					saveAs(workspace, workspaceConnectionInfo, workspaceName, workspaceName);
-				}
-				if (saveAsSQL == index) {
-					workspaceConnectionInfo.setType(WorkspaceType.SQL);
-					workspaceConnectionInfo.setDriver("SQL Server");
-					workspaceConnectionInfo.setServer(serverName);
-					workspaceConnectionInfo.setDatabase(databaseName);
-					if (null == workspaceName || workspaceName.isEmpty()) {
-						UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
-					} else {
-						workspaceConnectionInfo.setName(workspaceName);
-					}
-					workspaceConnectionInfo.setUser(userName);
-					workspaceConnectionInfo.setPassword(userPassword);
-					setWorkspaceVersion(workspaceConnectionInfo, workspaceVersion);
-					saveAs(workspace, workspaceConnectionInfo, workspaceName, workspaceName);
+				} else {
+					this.workspaceConnectionInfo.setPassword(workspacePassword);
 				}
 			}
-			PropertyManagerUtilties.refreshPropertyManager();
+			workspaceVersion = (String) ((JPanelWorkspaceSaveAsFile) tempPanel).getjComboBoxVersion().getSelectedItem();
+			setWorkspaceVersion(this.workspaceConnectionInfo, workspaceVersion);
+			fileName = fileName.lastIndexOf(".") > 0 ? fileName.substring(0, fileName.lastIndexOf(".")) : fileName;
+			saveAs(workspace,this.workspaceConnectionInfo, workspaceFileName, fileName);
 		}
-
-		private WorkspaceType getWorkspaceType(String workspaceFilePath) {
-			String fileType = workspaceFilePath.substring(workspaceFilePath.indexOf(".") + 1, workspaceFilePath.length());
-			WorkspaceType result = WorkspaceType.SMWU;
-			if ("smwu".equalsIgnoreCase(fileType)) {
-				result = WorkspaceType.SMWU;
+		if (tempPanel instanceof JPanelWorkspaceSaveAsSQL) {
+			serverName = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxServer().getSelectedItem();
+			databaseName = ((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldDatabaseName().getText();
+			userName = ((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldUserName().getText();
+			userPassword = String.valueOf(((JPanelWorkspaceSaveAsSQL) tempPanel).getjTextFieldPassword().getPassword());
+			workspaceName = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxWorkspaceName().getSelectedItem();
+			workspaceVersion = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxWorkspaceVersion().getSelectedItem();
+			if (this.saveAsOracle == index) {
+				this.workspaceConnectionInfo.setType(WorkspaceType.ORACLE);
+				this.workspaceConnectionInfo.setServer(serverName);
+				this.workspaceConnectionInfo.setDatabase(databaseName);
+				if (null == workspaceName || workspaceName.isEmpty()) {
+					UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
+				} else {
+					this.workspaceConnectionInfo.setName(workspaceName);
+				}
+				this.workspaceConnectionInfo.setUser(userName);
+				this.workspaceConnectionInfo.setPassword(userPassword);
+				setWorkspaceVersion(this.workspaceConnectionInfo, workspaceVersion);
+				saveAs(workspace, this.workspaceConnectionInfo, workspaceName, workspaceName);
 			}
-			if ("sxwu".equalsIgnoreCase(fileType)) {
-				result = WorkspaceType.SXWU;
+			if (this.saveAsSQL == index) {
+				this.workspaceConnectionInfo.setType(WorkspaceType.SQL);
+				this.workspaceConnectionInfo.setDriver("SQL Server");
+				this.workspaceConnectionInfo.setServer(serverName);
+				this.workspaceConnectionInfo.setDatabase(databaseName);
+				if (null == workspaceName || workspaceName.isEmpty()) {
+					UICommonToolkit.showMessageDialog(CoreProperties.getString("String_WorkspaceName_Empty"));
+				} else {
+					this.workspaceConnectionInfo.setName(workspaceName);
+				}
+				this.workspaceConnectionInfo.setUser(userName);
+				this.workspaceConnectionInfo.setPassword(userPassword);
+				setWorkspaceVersion(this.workspaceConnectionInfo, workspaceVersion);
+				saveAs(workspace, this.workspaceConnectionInfo, workspaceName, workspaceName);
 			}
-			return result;
 		}
+		PropertyManagerUtilties.refreshPropertyManager();
+	}
 
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButtonClicked();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

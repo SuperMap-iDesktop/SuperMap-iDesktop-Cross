@@ -5,12 +5,19 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
+
 import com.supermap.data.GeoText;
+import com.supermap.data.QueryParameter;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -66,7 +73,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public GeoText getGeoText() {
-		return textStylePanel.getGeoText();
+		return this.textStylePanel.getGeoText();
 	}
 
 	/**
@@ -75,7 +82,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param geoText
 	 */
 	public void setGeoText(GeoText geoText) {
-		textStylePanel.setGeoText(geoText);
+		this.textStylePanel.setGeoText(geoText);
 	}
 
 	/**
@@ -84,7 +91,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public TextStyle getTextStyle() {
-		return textStylePanel.getTextStyle();
+		return this.textStylePanel.getTextStyle();
 	}
 
 	/**
@@ -93,7 +100,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param textStyle
 	 */
 	public void setTextStyle(TextStyle textStyle) {
-		textStylePanel.setTextStyle(textStyle);
+		this.textStylePanel.setTextStyle(textStyle);
 	}
 
 	/**
@@ -102,7 +109,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public boolean isThemeText() {
-		return textStylePanel.isThemeText();
+		return this.textStylePanel.isThemeText();
 	}
 
 	/**
@@ -111,7 +118,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param themeTextStyle
 	 */
 	public void setThemeText(boolean value) {
-		textStylePanel.setThemeText(value);
+		this.textStylePanel.setThemeText(value);
 	}
 
 	/**
@@ -120,7 +127,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public boolean is3DText() {
-		return textStylePanel.is3DText();
+		return this.textStylePanel.is3DText();
 	}
 
 	/**
@@ -129,7 +136,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param value
 	 */
 	public void set3DText(boolean value) {
-		textStylePanel.set3DText(value);
+		this.textStylePanel.set3DText(value);
 	}
 
 	/**
@@ -138,7 +145,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public Object getMapObject() {
-		return textStylePanel.getMapObject();
+		return this.textStylePanel.getMapObject();
 	}
 
 	/**
@@ -147,7 +154,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param object
 	 */
 	public void setMapObject(Object object) {
-		textStylePanel.setMapObject(object);
+		this.textStylePanel.setMapObject(object);
 	}
 
 	/**
@@ -156,7 +163,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public boolean getEditable() {
-		return textStylePanel.getEditable();
+		return this.textStylePanel.getEditable();
 	}
 
 	/**
@@ -165,7 +172,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param value
 	 */
 	public void setEditable(boolean value) {
-		textStylePanel.setEditable(value);
+		this.textStylePanel.setEditable(value);
 	}
 
 	/**
@@ -174,7 +181,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	public String getSampleText() {
-		return textStylePanel.getSampleText();
+		return this.textStylePanel.getSampleText();
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class TextStyleDialog extends SmDialog {
 	 * @param value
 	 */
 	public void setSampleText(String text) {
-		textStylePanel.setSampleText(text);
+		this.textStylePanel.setSampleText(text);
 	}
 
 	/**
@@ -193,15 +200,18 @@ public class TextStyleDialog extends SmDialog {
 	 */
 	public DialogResult showDialog() {
 		this.setVisible(true);
-		return dialogResult;
+		return this.dialogResult;
 	}
 
 	/**
 	 * 文本设置对话框的结果，如果点击"确定"则返回设置的文本，如果点击"取消"则返回null
 	 * 
-	 * @param geoText 需要设置的文本
-	 * @param isThemeText 是否是专题图中的文本
-	 * @param is3DText 是否是三维文本
+	 * @param geoText
+	 *            需要设置的文本
+	 * @param isThemeText
+	 *            是否是专题图中的文本
+	 * @param is3DText
+	 *            是否是三维文本
 	 * @return
 	 */
 	public static GeoText showDialog(GeoText geoText, boolean isThemeText, boolean is3DText) {
@@ -222,9 +232,12 @@ public class TextStyleDialog extends SmDialog {
 	/**
 	 * 文本风格设置对话框的结果，如果点击"确定"则返回设置的文本风格，如果点击"取消"则返回null
 	 * 
-	 * @param textStyle 文本风格
-	 * @param isThemeText 是否是专题图中的文本
-	 * @param is3DText 是否是三维文本
+	 * @param textStyle
+	 *            文本风格
+	 * @param isThemeText
+	 *            是否是专题图中的文本
+	 * @param is3DText
+	 *            是否是三维文本
 	 * @return
 	 */
 	public static TextStyle showDialog(TextStyle textStyle, boolean isThemeText, boolean is3DText) {
@@ -248,12 +261,12 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	protected JPanel getPanelButton() {
-		if (jPanelButton == null) {
-			jPanelButton = new JPanel();
-			jPanelButton.add(getButtonConfirm());
-			jPanelButton.add(getButtonCancel());
+		if (this.jPanelButton == null) {
+			this.jPanelButton = new JPanel();
+			this.jPanelButton.add(getButtonConfirm());
+			this.jPanelButton.add(getButtonCancel());
 		}
-		return jPanelButton;
+		return this.jPanelButton;
 	}
 
 	/**
@@ -262,10 +275,10 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	protected JButton getButtonConfirm() {
-		if (buttonConfirm == null) {
-			buttonConfirm = new ControlButton();
-			buttonConfirm.setText(ControlsProperties.getString("String_Button_Ok"));
-			buttonConfirm.addActionListener(new ActionListener() {
+		if (this.buttonConfirm == null) {
+			this.buttonConfirm = new ControlButton();
+			this.buttonConfirm.setText(ControlsProperties.getString("String_Button_Ok"));
+			this.buttonConfirm.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dialogResult = DialogResult.OK;
@@ -274,7 +287,8 @@ public class TextStyleDialog extends SmDialog {
 
 			});
 		}
-		return buttonConfirm;
+		getRootPane().setDefaultButton(this.buttonConfirm);
+		return this.buttonConfirm;
 	}
 
 	/**
@@ -283,10 +297,10 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	protected JButton getButtonCancel() {
-		if (buttonCancel == null) {
-			buttonCancel = new ControlButton();
-			buttonCancel.setText(ControlsProperties.getString("String_Button_Cancel"));
-			buttonCancel.addActionListener(new ActionListener() {
+		if (this.buttonCancel == null) {
+			this.buttonCancel = new ControlButton();
+			this.buttonCancel.setText(ControlsProperties.getString("String_Button_Cancel"));
+			this.buttonCancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dialogResult = DialogResult.CANCEL;
@@ -295,7 +309,7 @@ public class TextStyleDialog extends SmDialog {
 
 			});
 		}
-		return buttonCancel;
+		return this.buttonCancel;
 	}
 
 	/**
@@ -304,10 +318,10 @@ public class TextStyleDialog extends SmDialog {
 	 * @return
 	 */
 	protected TextStylePanel getTextStylePanel() {
-		if (textStylePanel == null) {
-			textStylePanel = new TextStylePanel();
+		if (this.textStylePanel == null) {
+			this.textStylePanel = new TextStylePanel();
 		}
-		return textStylePanel;
+		return this.textStylePanel;
 	}
 
 	class SetWindowListener implements WindowListener {
@@ -349,5 +363,34 @@ public class TextStyleDialog extends SmDialog {
 			// do nothing
 		}
 
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.OK;
+				setVisible(false);
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.CANCEL;
+				setVisible(false);
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

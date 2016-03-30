@@ -142,8 +142,6 @@ public class ThemeGuideFactory {
 			if (ThemeUtil.isCountBeyond((DatasetVector) getDataset(), expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
-//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"),
-//						CoreProperties.getString("String_MessageBox_Title"), JOptionPane.INFORMATION_MESSAGE);
 				return success;
 			}
 			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
@@ -475,7 +473,7 @@ public class ThemeGuideFactory {
 	}
 
 	/**
-	 * 根据
+	 * 修改专题图图层
 	 *
 	 * @param layer
 	 */

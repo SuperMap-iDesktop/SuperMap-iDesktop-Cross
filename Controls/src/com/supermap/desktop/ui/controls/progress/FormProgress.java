@@ -11,8 +11,10 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
@@ -48,7 +50,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 		labelMessage = new JLabel("...");
 		labelRemaintime = new JLabel("...");
 		buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
-
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -70,7 +72,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 				.addComponent(this.buttonCancel, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT));
 		// @formatter:on
 
-		buttonCancel.addActionListener(new ActionListener() {
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancel();
@@ -98,7 +100,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	public void doWork(final UpdateProgressCallable doWork) {
 		doWork.setUpdate(this);
 
-		worker = new SwingWorker<Boolean, Object>() {
+		this.worker = new SwingWorker<Boolean, Object>() {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
@@ -140,7 +142,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 			}
 		};
 
-		worker.execute();
+		this.worker.execute();
 		if (null != this) {
 			this.setVisible(true);
 		}
@@ -149,7 +151,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	public void doWork(final UpdateProgressCallable doWork, final IAfterWork<Boolean> afterWork) {
 		doWork.setUpdate(this);
 
-		worker = new SwingWorker<Boolean, Object>() {
+		this.worker = new SwingWorker<Boolean, Object>() {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
@@ -192,7 +194,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 			}
 		};
 
-		worker.execute();
+		this.worker.execute();
 		if (null != this) {
 			this.setVisible(true);
 		}
@@ -303,5 +305,24 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
 		// 默认实现，后续进行初始化操作
 
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancel();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

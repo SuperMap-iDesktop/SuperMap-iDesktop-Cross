@@ -505,14 +505,13 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		this.datasets.add(dataset);
 		jDialogJoinItem.setCurrentDataset(dataset);
 		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
-			// 修改属性并销毁
-			joinItems = jDialogJoinItem.getJoinItems();
-			for (int i = 0; i < joinItems.getCount(); i++) {
-				this.datasets.add(dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()));
+			// 修改属性
+			JoinItems tempJoinItems = jDialogJoinItem.getJoinItems();
+			for (int i = 0; i < tempJoinItems.getCount(); i++) {
+				this.datasets.add(dataset.getDatasource().getDatasets().get(tempJoinItems.get(i).getForeignTable()));
 			}
-			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(joinItems);
+			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
 			jDialogJoinItem.dispose();
-			joinItems.dispose();
 			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
 		}
 	}

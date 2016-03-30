@@ -12,8 +12,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.cellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.cellRenders.TableDatasourceCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
@@ -33,10 +33,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -128,25 +130,25 @@ public class DatasetChooser extends SmDialog {
 		toolBar.setRollover(true);
 		toolBar.setFloatable(false);
 
-		toolBar.add(labelPath);
-		textFieldPath.setEditable(false);
+		toolBar.add(this.labelPath);
+		this.textFieldPath.setEditable(false);
 
-		toolBar.add(textFieldPath);
-		textFieldPath.setColumns(10);
+		toolBar.add(this.textFieldPath);
+		this.textFieldPath.setColumns(10);
 
 		JSeparator separator = new JSeparator();
 		toolBar.add(separator);
 
-		toolBar.add(buttonSelectAll);
+		toolBar.add(this.buttonSelectAll);
 
 		JSeparator separatorF = new JSeparator();
 		separatorF.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorF);
 
-		toolBar.add(buttonInvertSelect);
-		toolBar.add(labelScense);
-		buttonInvertSelect.addActionListener(new CommonButtonAction());
-		buttonSelectAll.addActionListener(new CommonButtonAction());
+		toolBar.add(this.buttonInvertSelect);
+		toolBar.add(this.labelScense);
+		this.buttonInvertSelect.addActionListener(new CommonButtonAction());
+		this.buttonSelectAll.addActionListener(new CommonButtonAction());
 		JScrollPane scrollPaneTree = new JScrollPane();
 		//@formatter:off
 		//toolBar,
@@ -179,25 +181,25 @@ public class DatasetChooser extends SmDialog {
 		JSeparator separatorS = new JSeparator();
 		separatorS.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorS);
-		datasetTypeComboBox = new DatasetTypeComboBox();
-		datasetTypeComboBox.addItemListener(new ItemListener() {
+		this.datasetTypeComboBox = new DatasetTypeComboBox();
+		this.datasetTypeComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// 关联查询
 				compositeSearch();
 			}
 		});
-		datasetTypeComboBox.setMaximumRowCount(10);
+		this.datasetTypeComboBox.setMaximumRowCount(10);
 
-		toolBar.add(datasetTypeComboBox);
+		toolBar.add(this.datasetTypeComboBox);
 
 		JSeparator separatorT = new JSeparator();
 		separatorT.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorT);
-		textFieldSearch = new JTextField();
-		toolBar.add(textFieldSearch);
-		textFieldSearch.setColumns(10);
-		textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+		this.textFieldSearch = new JTextField();
+		toolBar.add(this.textFieldSearch);
+		this.textFieldSearch.setColumns(10);
+		this.textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				compositeSearch();
@@ -214,7 +216,7 @@ public class DatasetChooser extends SmDialog {
 			}
 		});
 		//@formatter:off
-		toolBar.add(labelSearch);
+		toolBar.add(this.labelSearch);
 
 		JScrollPane scrollPaneTable = new JScrollPane();
 		GroupLayout gl_panelTable = new GroupLayout(panelTable);
@@ -226,34 +228,31 @@ public class DatasetChooser extends SmDialog {
 			gl_panelTable.createParallelGroup(Alignment.LEADING)
 				.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
 		);
-		buttonOk.addActionListener(new CommonButtonAction());
-		buttonOk.setActionCommand("OK");
-		cancelButton.addActionListener(new CommonButtonAction());
+		this.buttonOk.addActionListener(new CommonButtonAction());
+		this.buttonOk.setActionCommand("OK");
+		this.cancelButton.addActionListener(new CommonButtonAction());
 
-		table = new SortTable();
-		tableModel = new MySortableTableModel();
-		table.setModel(tableModel);
-		table.setShowHorizontalLines(false);
-		table.setShowVerticalLines(false);
-//		CommonListCellRenderer render = new CommonListCellRenderer();
-		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASET_NAME).setCellRenderer(new TableDatasetCellRender());
-		table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
-//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setCellRenderer(render);
-//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setResizable(true);
-		scrollPaneTable.setViewportView(table);
-		panelTable.setLayout(gl_panelTable);
+		this.table = new SortTable();
+		this.tableModel = new MySortableTableModel();
+		this.table.setModel(tableModel);
+		this.table.setShowHorizontalLines(false);
+		this.table.setShowVerticalLines(false);
+		this.table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASET_NAME).setCellRenderer(new TableDatasetCellRender());
+		this.table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
+		scrollPaneTable.setViewportView(this.table);
+		this.panelTable.setLayout(gl_panelTable);
 
 		contentPane.setLayout(gl_contentPane);
 		//@formatter:on
 		// table监听选中行数改变事件
-		buttonOk.setEnabled(false);
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		this.buttonOk.setEnabled(false);
+		this.table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				checkButtonOkState();
 			}
 		});
-		table.addMouseListener(new MouseAdapter() {
+		this.table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
@@ -266,17 +265,17 @@ public class DatasetChooser extends SmDialog {
 
 	private void initWorkspaceTree() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		workspaceTree = new WorkspaceTree(workspace);
-		workspaceTree.setMapsNodeVisible(false);
-		workspaceTree.setResourcesNodeVisible(false);
-		workspaceTree.setScenesNodeVisible(false);
-		workspaceTree.setLayoutsNodeVisible(false);
-		workspaceTree.addTreeSelectionListener(selectChangeListener);
+		this.workspaceTree = new WorkspaceTree(workspace);
+		this.workspaceTree.setMapsNodeVisible(false);
+		this.workspaceTree.setResourcesNodeVisible(false);
+		this.workspaceTree.setScenesNodeVisible(false);
+		this.workspaceTree.setLayoutsNodeVisible(false);
+		this.workspaceTree.addTreeSelectionListener(this.selectChangeListener);
 		// 删除不用显示的数据集节点
-		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
+		DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
 		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
-		workspaceTree.expandRow(1);
+		this.workspaceTree.expandRow(1);
 		for (int i = datasourceTreeNode.getChildCount() - 1; i >= 0; i--) {
 			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
 			for (int j = 0; j < childDatasourceTreeNode.getChildCount(); j++) {
@@ -289,7 +288,7 @@ public class DatasetChooser extends SmDialog {
 			}
 		}
 		// 不可编辑
-		workspaceTree.setEditable(false);
+		this.workspaceTree.setEditable(false);
 
 		// 拖拽监听事件删除
 		for (MouseMotionListener mouseMotionListener : this.workspaceTree.getMouseMotionListeners()) {
@@ -301,33 +300,30 @@ public class DatasetChooser extends SmDialog {
 			this.workspaceTree.removeKeyListener(keyListener);
 		}
 		this.workspaceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		workspaceTree.updateUI();
+		this.workspaceTree.updateUI();
 	}
 
 	private void initResources() {
-//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
-//		table.getColumnModel().getColumn(COLUMN_INDEX_CURRENT_DATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDatasource"));
-//		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET_TYPE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_DatasetType"));
-		labelPath.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelPath"));
-		labelScense.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelDisplayType"));
-		buttonSelectAll.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		buttonInvertSelect.setIcon(new ImageIcon(DatasetChooser.class
+		this.labelPath.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelPath"));
+		this.labelScense.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelDisplayType"));
+		this.buttonSelectAll.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+		this.buttonInvertSelect.setIcon(new ImageIcon(DatasetChooser.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		labelSearch.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/controlsresources/SortType/Image_FindFiles.png")));
-		buttonOk.setText(CommonProperties.getString("String_Button_OK"));
-		cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
-		buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
-		buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
+		this.labelSearch.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/controlsresources/SortType/Image_FindFiles.png")));
+		this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
+		this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
+		this.buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
 	}
 
 	private void initComponentStates() {
-		datasetTypeComboBox.setSelectedIndex(0);
+		this.datasetTypeComboBox.setSelectedIndex(0);
 
 		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
 		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
 		if (datasourceTreeNode.getChildCount() > 0) {
-			workspaceTree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) datasourceTreeNode.getChildAt(0)).getPath()));
+			this.workspaceTree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) datasourceTreeNode.getChildAt(0)).getPath()));
 		}
 
 	}
@@ -466,7 +462,10 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	public void checkButtonOkState() {
-		this.buttonOk.setEnabled(this.table.getSelectedRowCount() > 0);
+		if (this.table.getSelectedRowCount() > 0) {
+			this.buttonOk.setEnabled(true);
+			getRootPane().setDefaultButton(this.buttonOk);
+		}
 	}
 
 	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
@@ -589,5 +588,33 @@ public class DatasetChooser extends SmDialog {
 			}
 			return resultDataset;
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane(){
+		return keyBoardPressed();
+	}
+	
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOkClicked();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.CANCEL);
+				dispose();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

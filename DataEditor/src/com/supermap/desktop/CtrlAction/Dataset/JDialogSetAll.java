@@ -17,9 +17,11 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.CharsetUtilties;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
@@ -56,20 +58,20 @@ public class JDialogSetAll extends SmDialog {
 	 * 初始化控件
 	 */
 	private void initComponent() {
-		checkBoxTargetDatasource = new JCheckBox("TargetDatasource:");
-		checkBoxDatasetType = new JCheckBox("DatasetType:");
-		checkBoxEncodingType = new JCheckBox("EncodingType:");
-		checkBoxCharest = new JCheckBox("Charset:");
-		checkBoxAddToNewMap = new JCheckBox("AddToNewMap:");
+		this.checkBoxTargetDatasource = new JCheckBox("TargetDatasource:");
+		this.checkBoxDatasetType = new JCheckBox("DatasetType:");
+		this.checkBoxEncodingType = new JCheckBox("EncodingType:");
+		this.checkBoxCharest = new JCheckBox("Charset:");
+		this.checkBoxAddToNewMap = new JCheckBox("AddToNewMap:");
 
-		comboboxTargetDatasource = new JComboBox();
-		comboboxDatasetType = new DatasetComboBox();
-		comboboxEncodingType = new JComboBox();
-		comboboxCharest = new JComboBox();
-		comboboxAddToNewMap = new JComboBox();
+		this.comboboxTargetDatasource = new JComboBox();
+		this.comboboxDatasetType = new DatasetComboBox();
+		this.comboboxEncodingType = new JComboBox();
+		this.comboboxCharest = new JComboBox();
+		this.comboboxAddToNewMap = new JComboBox();
 
 		// 初始化目标数据源
-		comboboxTargetDatasource = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
+		this.comboboxTargetDatasource = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
 
 		// 初始化数据类型
 		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
@@ -82,20 +84,20 @@ public class JDialogSetAll extends SmDialog {
 		datasetTypes.add(DatasetType.POINT3D);
 		datasetTypes.add(DatasetType.LINE3D);
 		datasetTypes.add(DatasetType.REGION3D);
-		comboboxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		this.comboboxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 
 		// 初始化字符集
-		comboboxEncodingType.removeAllItems();
+		this.comboboxEncodingType.removeAllItems();
 		ArrayList<String> temptempEncodeType = new ArrayList<String>();
 		temptempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.NONE));
 		temptempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.BYTE));
 		temptempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT16));
 		temptempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT24));
 		temptempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT32));
-		comboboxEncodingType.setModel(new DefaultComboBoxModel<String>(temptempEncodeType.toArray(new String[temptempEncodeType.size()])));
+		this.comboboxEncodingType.setModel(new DefaultComboBoxModel<String>(temptempEncodeType.toArray(new String[temptempEncodeType.size()])));
 
 		// 初始化编码格式
-		comboboxCharest.removeAllItems();
+		this.comboboxCharest.removeAllItems();
 		ArrayList<String> charsetes = new ArrayList<String>();
 		charsetes.add(CharsetUtilties.getCharsetName(Charset.OEM));
 		charsetes.add(CharsetUtilties.getCharsetName(Charset.EASTEUROPE));
@@ -125,21 +127,22 @@ public class JDialogSetAll extends SmDialog {
 		charsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5GERMAN));
 		charsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5SWEDISH));
 		charsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5NORWEGIAN));
-		comboboxCharest.setModel(new DefaultComboBoxModel<String>(charsetes.toArray(new String[charsetes.size()])));
+		this.comboboxCharest.setModel(new DefaultComboBoxModel<String>(charsetes.toArray(new String[charsetes.size()])));
 
 		// 初始化是否加入地图
-		comboboxAddToNewMap.removeAllItems();
+		this.comboboxAddToNewMap.removeAllItems();
 		ArrayList<String> addTos = new ArrayList<String>();
 		addTos.add(AddToWindowMode.toString(AddToWindowMode.NONEWINDOW));
 		addTos.add(AddToWindowMode.toString(AddToWindowMode.NEWWINDOW));
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			addTos.add(AddToWindowMode.toString(AddToWindowMode.CURRENTWINDOW));
 		}
-		comboboxAddToNewMap.setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
+		this.comboboxAddToNewMap.setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
 
 		// 按钮
 		buttonOk = new SmButton(CommonProperties.getString(CommonProperties.OK));
 		buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
+		this.getRootPane().setDefaultButton(this.buttonOk);
 
 		// 添加控件到面板中
 		this.addComponentToPanel();
@@ -183,24 +186,24 @@ public class JDialogSetAll extends SmDialog {
 	 * 控件资源化
 	 */
 	private void initializeResource() {
-		checkBoxTargetDatasource.setText(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
-		checkBoxDatasetType.setText(DataEditorProperties.getString("String_CreateType"));
-		checkBoxEncodingType.setText(CommonProperties.getString("String_ColumnHeader_EncodeType"));
-		checkBoxCharest.setText(DataEditorProperties.getString("String_Charset"));
-		checkBoxAddToNewMap.setText(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
+		this.checkBoxTargetDatasource.setText(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
+		this.checkBoxDatasetType.setText(DataEditorProperties.getString("String_CreateType"));
+		this.checkBoxEncodingType.setText(CommonProperties.getString("String_ColumnHeader_EncodeType"));
+		this.checkBoxCharest.setText(DataEditorProperties.getString("String_Charset"));
+		this.checkBoxAddToNewMap.setText(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
 	}
 
 	/**
 	 * 添加监听器
 	 */
 	private void addListeners() {
-		comboboxTargetDatasource.addActionListener(commonActionListener);
-		comboboxDatasetType.addActionListener(commonActionListener);
-		comboboxEncodingType.addActionListener(commonActionListener);
-		comboboxCharest.addActionListener(commonActionListener);
-		comboboxAddToNewMap.addActionListener(commonActionListener);
-		buttonOk.addActionListener(commonActionListener);
-		buttonCancel.addActionListener(commonActionListener);
+		this.comboboxTargetDatasource.addActionListener(commonActionListener);
+		this.comboboxDatasetType.addActionListener(commonActionListener);
+		this.comboboxEncodingType.addActionListener(commonActionListener);
+		this.comboboxCharest.addActionListener(commonActionListener);
+		this.comboboxAddToNewMap.addActionListener(commonActionListener);
+		this.buttonOk.addActionListener(commonActionListener);
+		this.buttonCancel.addActionListener(commonActionListener);
 	}
 
 	private ActionListener commonActionListener = new SetActionListener();
@@ -309,4 +312,32 @@ public class JDialogSetAll extends SmDialog {
 			}
 		}
 	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOk_Clicked();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonCancel_Clicked();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+
 }

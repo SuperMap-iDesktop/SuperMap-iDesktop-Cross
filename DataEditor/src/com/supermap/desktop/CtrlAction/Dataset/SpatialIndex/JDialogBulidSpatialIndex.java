@@ -17,8 +17,8 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.cellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.cellRenders.TableDatasourceCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -29,11 +29,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -402,6 +404,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			this.buttonSelectAll.setEnabled(this.tableDatasets.getRowCount() > 0);
 			this.buttonSelectInvert.setEnabled(this.tableDatasets.getRowCount() > 0);
 			this.buttonOk.setEnabled(this.tableDatasets.getRowCount() > 0);
+			getRootPane().setDefaultButton(this.buttonOk);
 		}
 	}
 
@@ -607,4 +610,34 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			return this.comboBox.getSelectedItem();
 		}
 	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.OK);
+				buttonOkClick();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setDialogResult(DialogResult.CANCEL);
+				JDialogBulidSpatialIndex.this.dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
+	}
+	
 }

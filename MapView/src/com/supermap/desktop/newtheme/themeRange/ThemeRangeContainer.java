@@ -1014,11 +1014,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_SquareRoot")));
-//					JOptionPane.showMessageDialog(
-//							null,
-//							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
 					// 重置分段方法下拉框
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
@@ -1035,12 +1030,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_Logarithm")));
-//					JOptionPane.showMessageDialog(
-//							null,
-//							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
-					// 重置分段方法下拉框
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -1095,11 +1084,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 有负数且为对数分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_Logarithm")));
-//				JOptionPane.showMessageDialog(
-//						null,
-//						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
 				// 重置字段表达式下拉框
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeRange.getRangeExpression());
@@ -1109,11 +1093,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 有负数且为平方根分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_SquareRoot")));
-//				JOptionPane.showMessageDialog(
-//						null,
-//						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
 				// 重置字段表达式下拉框
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeRange.getRangeExpression());
@@ -1147,13 +1126,11 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, joinItems, precision);
 				} else {
 					rangeExpression = datasetVector.getName() + "." + rangeExpression;
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, joinItems, precision);
+					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
 				}
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-//					JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
 					resetComboBoxRangeExpression(themeRange.getRangeExpression());
 					isResetComboBox = true;
 				} else {
@@ -1326,8 +1303,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-//				JOptionPane.showMessageDialog(null, MapViewProperties.getString("String_Theme_UpdataFailed"), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
 				comboBoxExpression.setSelectedItem(themeRange.getRangeExpression());
 				isResetComboBox = true;
 			} else {

@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +32,7 @@ public class DialogSaveAsLayout extends SmDialog {
 	private transient Layouts layouts;
 
 	private String oldLayoutName;
+
 	/**
 	 * Create the dialog.
 	 */
@@ -44,17 +46,17 @@ public class DialogSaveAsLayout extends SmDialog {
 		lblNewLabelLayoutName = new JLabel("Layout Name:");
 		textFieldLayoutName = new JTextField();
 		textFieldLayoutName.addKeyListener(new KeyListener() {
-			
+
 			@Override
 			public void keyTyped(KeyEvent e) {
 				textFieldLayoutName_ActionPerformed();
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				textFieldLayoutName_ActionPerformed();
 			}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				textFieldLayoutName_ActionPerformed();
@@ -70,7 +72,7 @@ public class DialogSaveAsLayout extends SmDialog {
 						.addComponent(textFieldLayoutName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addContainerGap(176, Short.MAX_VALUE)));
 		contentPanel.setLayout(gl_contentPanel);
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -96,6 +98,7 @@ public class DialogSaveAsLayout extends SmDialog {
 
 		initializeResources();
 		this.setLocationRelativeTo(null);
+		getRootPane().setDefaultButton(okButton);
 	}
 
 	public String getLayoutName() {
@@ -183,5 +186,32 @@ public class DialogSaveAsLayout extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okButton_Click();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_Click();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

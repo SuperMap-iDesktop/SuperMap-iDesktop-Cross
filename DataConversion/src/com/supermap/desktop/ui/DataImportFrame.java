@@ -306,6 +306,7 @@ public class DataImportFrame extends SmDialog {
 		pane.setViewportView(panelParams);
 		this.panelParams.setLayout(new GridBagLayout());
 		this.panelParams.add(this.labelRemind, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.buttonImport.setEnabled(false);
 		//@formatter:on
 	}
 
@@ -379,15 +380,16 @@ public class DataImportFrame extends SmDialog {
 			hasImportInfo = true;
 		}
 		if (hasImportInfo) {
-			buttonImport.setEnabled(true);
-			buttonDelete.setEnabled(true);
-			buttonSelectAll.setEnabled(true);
-			buttonInvertSelect.setEnabled(true);
+			this.buttonImport.setEnabled(true);
+			this.buttonDelete.setEnabled(true);
+			this.buttonSelectAll.setEnabled(true);
+			this.buttonInvertSelect.setEnabled(true);
+			this.getRootPane().setDefaultButton(this.buttonImport);
 		} else {
-			buttonImport.setEnabled(false);
-			buttonDelete.setEnabled(false);
-			buttonSelectAll.setEnabled(false);
-			buttonInvertSelect.setEnabled(false);
+			this.buttonImport.setEnabled(false);
+			this.buttonDelete.setEnabled(false);
+			this.buttonSelectAll.setEnabled(false);
+			this.buttonInvertSelect.setEnabled(false);
 		}
 	}
 
@@ -623,6 +625,37 @@ public class DataImportFrame extends SmDialog {
 
 	public JButton getButtonImport() {
 		return buttonImport;
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 导入
+				CommonFunction.importData(table, fileInfos);
+				if (checkBoxAutoClose.isSelected()) {
+					dispose();
+				}
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

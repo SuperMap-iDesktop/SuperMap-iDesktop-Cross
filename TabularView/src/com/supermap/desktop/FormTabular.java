@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
-	//region 变量定义
+	//region 鍙橀噺瀹氫箟
 	/**
 	 *
 	 */
@@ -49,7 +49,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private static final int ROW_HEADER_WIDTH = 70;
 
 	/**
-	 * 序号列的列号，第0列为序号列
+	 * 搴忓彿鍒楃殑鍒楀彿锛岀0鍒椾负搴忓彿鍒�
 	 */
 
 	private TabularTableModel tabularTableModel;
@@ -164,7 +164,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		super(title, icon, component);
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
-		// 设置行高
+		// 璁剧疆琛岄珮
 
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		jScrollPaneChildWindow = new JScrollPane(jTableTabular);
@@ -205,7 +205,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.getSelectionModel().addListSelectionListener(listSelectionListener);
 		this.rowHeader.addMouseMotionListener(rowHeaderMouseMotionListener);
 		this.rowHeader.addMouseListener(rowHeaderMouseListener);
-		// 表头点击选中一列
+		// 琛ㄥご鐐瑰嚮閫変腑涓�鍒�
 		this.jTableTabular.getTableHeader().addMouseMotionListener(columnHeaderMouseMotionListener);
 
 		this.jTableTabular.getTableHeader().addMouseListener(columnHeaderMouseListener);
@@ -256,7 +256,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	/**
-	 * 设置不可编辑
+	 * 璁剧疆涓嶅彲缂栬緫
 	 */
 	private void initStatusbars() {
 		SmStatusbar smStatusbar = this.getStatusbar();
@@ -286,19 +286,19 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public void windowHidden() {
-		// 隐藏
+		// 闅愯棌
 	}
 
 	@Override
 	public void windowShown() {
-		// 显示
+		// 鏄剧ず
 		UICommonToolkit.getLayersManager().setMap(null);
 	}
 
 	private void setColumnsWidth() {
-		// 设置列宽
+		// 璁剧疆鍒楀
 		for (int i = 0; i < jTableTabular.getColumnModel().getColumnCount(); i++) {
-			// 设置宽度
+			// 璁剧疆瀹藉害
 			jTableTabular.getColumnModel().getColumn(i).setMaxWidth(Integer.MAX_VALUE);
 			jTableTabular.getColumnModel().getColumn(i).setMinWidth(MIN_COLUMN_WIDTH);
 			jTableTabular.getColumnModel().getColumn(i).setPreferredWidth(PREFER_COLUMN_WIDTH);
@@ -306,7 +306,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	/**
-	 * bool类型的渲染器
+	 * bool绫诲瀷鐨勬覆鏌撳櫒
 	 *
 	 * @author XiaJT
 	 */
@@ -357,7 +357,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	/**
-	 * 日期类型的编辑器
+	 * 鏃ユ湡绫诲瀷鐨勭紪杈戝櫒
 	 *
 	 * @author XiaJT
 	 */
@@ -382,7 +382,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	/**
-	 * 日期类型渲染器
+	 * 鏃ユ湡绫诲瀷娓叉煋鍣�
 	 *
 	 * @author XiaJT
 	 */
@@ -425,7 +425,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public void setRecordset(Recordset recordset) {
 
-		// 数据信息
+		// 鏁版嵁淇℃伅
 		if (this.tabularTableModel != null) {
 			this.tabularTableModel.dispose();
 		}
@@ -433,7 +433,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.tabularTableModel = new TabularTableModel(recordset);
 		this.jTableTabular.setModel(this.tabularTableModel);
 
-		// 编辑时保存
+		// 缂栬緫鏃朵繚瀛�
 		TableCellEditor tableCellEditor = jTableTabular.getDefaultEditor(JTable.class);
 		tableCellEditor.addCellEditorListener(new CellEditorListener() {
 
@@ -452,21 +452,21 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			}
 		});
 
-		// 设置选中时不默认选中一行或一列
+		// 璁剧疆閫変腑鏃朵笉榛樿閫変腑涓�琛屾垨涓�鍒�
 		jTableTabular.setColumnSelectionAllowed(true);
 		jTableTabular.setRowSelectionAllowed(true);
 
-		// 设置选中字体颜色不变
+		// 璁剧疆閫変腑瀛椾綋棰滆壊涓嶅彉
 		jTableTabular.setSelectionForeground(COLOR_WORD_SELECTED);
 
 
-		// 设置多选可用
+		// 璁剧疆澶氶�夊彲鐢�
 		jTableTabular.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		// 不拖动
+		// 涓嶆嫋鍔�
 		jTableTabular.getTableHeader().setReorderingAllowed(false);
 
-		// 设置居中显示
+		// 璁剧疆灞呬腑鏄剧ず
 		DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
 		cellRenderer.setHorizontalAlignment(JTextField.CENTER);
 		jTableTabular.setDefaultRenderer(Object.class, cellRenderer);
@@ -474,7 +474,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		jTableTabular.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		((DefaultTableCellRenderer) jTableTabular.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-		// bool类型编辑器
+		// bool绫诲瀷缂栬緫鍣�
 		JComboBox<String> booleanEditorControl = new JComboBox<String>();
 		booleanEditorControl.addItem("");
 		booleanEditorControl.addItem("True");
@@ -490,9 +490,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		objectEditorControl.setHorizontalAlignment(JTextField.CENTER);
 		DefaultCellEditor objectCellEditor = new DefaultCellEditor(objectEditorControl);
 		this.jTableTabular.setDefaultEditor(Object.class, objectCellEditor);
-		// 设置列宽
+		// 璁剧疆鍒楀
 		setColumnsWidth();
-		// 设置行高
+		// 璁剧疆琛岄珮
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		this.jTableTabular.updateUI();
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -527,7 +527,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	/**
-	 * 定位函数
+	 * 瀹氫綅鍑芥暟
 	 */
 	@Override
 	public void goToRow(int goToRow) {
@@ -575,7 +575,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 		int[] selectedRows = this.getSelectedRows();
 		for (int i = 0; i < selectedRows.length; i++) {
-			// 第一列为ID
+			// 绗竴鍒椾负ID
 			selectedRows[i] = (int) this.jTableTabular.getModel().getValueAt(selectedRows[i], 0);
 		}
 		Recordset statisticRecordset = recordset.getDataset().query(selectedRows, CursorType.DYNAMIC);

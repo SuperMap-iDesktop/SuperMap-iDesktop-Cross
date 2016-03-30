@@ -8,9 +8,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
  */
 public class JDialogSymbolsChange extends SmDialog {
 
-	//region 变量定义
+	// region 变量定义
 	private SymbolType symbolType;
 
 	private PanelSymbolSet panelPoint;
@@ -72,7 +74,8 @@ public class JDialogSymbolsChange extends SmDialog {
 		}
 		return result;
 	}
-	//endregion
+
+	// endregion
 
 	public JDialogSymbolsChange(SymbolType symbolType, List<GeoStyle> geoStylesBeforeList) {
 		this.symbolType = symbolType;
@@ -115,7 +118,7 @@ public class JDialogSymbolsChange extends SmDialog {
 	private void changeSymbolMarket(GeoStyle geoStyleAfter) {
 		getSymbolEnables();
 
-		//region 点面板
+		// region 点面板
 		if (symbolEnables[0]) {
 			// 符号类型
 			for (GeoStyle geoStyle : geoStylesBeforeList) {
@@ -144,13 +147,13 @@ public class JDialogSymbolsChange extends SmDialog {
 		if (symbolEnables[4]) {
 			// 透明度
 			// TODO 没有设置透明度的地方，先屏蔽
-//			for (GeoStyle geoStyle : geoStylesBeforeList) {
-//				geoStyle.;
-//			}
+			// for (GeoStyle geoStyle : geoStylesBeforeList) {
+			// geoStyle.;
+			// }
 		}
-		//endregion
+		// endregion
 
-		//region 线面板
+		// region 线面板
 		if (symbolEnables[5]) {
 			// 线型
 			for (GeoStyle geoStyle : geoStylesBeforeList) {
@@ -169,7 +172,7 @@ public class JDialogSymbolsChange extends SmDialog {
 				geoStyle.setLineColor(geoStyleAfter.getLineColor());
 			}
 		}
-		//endregion
+		// endregion
 
 		if (symbolEnables[8]) {
 			// 填充类型
@@ -247,7 +250,6 @@ public class JDialogSymbolsChange extends SmDialog {
 		}
 	}
 
-
 	private void initComponents() {
 		panelButton = new JPanel();
 		panelPoint = new PanelSymbolSet(5);
@@ -261,16 +263,16 @@ public class JDialogSymbolsChange extends SmDialog {
 		this.setTitle(getResources("String_BatchSettingStyle"));
 
 		panelPoint.setBorder(BorderFactory.createTitledBorder(getResources("String_SymbolStyle")));
-		panelPoint.initResources(new String[]{getResources("String_MarkType"), getResources("String_MarkSize"), getResources("String_MarkColor"),
-				getResources("String_RotationAngle"), getResources("String_Transparency")});
+		panelPoint.initResources(new String[] { getResources("String_MarkType"), getResources("String_MarkSize"), getResources("String_MarkColor"),
+				getResources("String_RotationAngle"), getResources("String_Transparency") });
 
 		panelLine.setBorder(BorderFactory.createTitledBorder(getResources("String_LineStyle")));
-		panelLine.initResources(new String[]{getResources("String_LineType"), getResources("String_LineWidth"), getResources("String_LineColor")});
+		panelLine.initResources(new String[] { getResources("String_LineType"), getResources("String_LineWidth"), getResources("String_LineColor") });
 
 		panelFill.setBorder(BorderFactory.createTitledBorder(getResources("String_FillStyle")));
-		panelFill.initResources(new String[]{getResources("String_FillType"), getResources("String_BackColor"), getResources("String_ForColor"),
+		panelFill.initResources(new String[] { getResources("String_FillType"), getResources("String_BackColor"), getResources("String_ForColor"),
 				getResources("String_Transparency"), getResources("String_GradientType"), getResources("String_GradientAngle"),
-				getResources("String_GradientOffXCheck"), getResources("String_GradientOffYCheck")});
+				getResources("String_GradientOffXCheck"), getResources("String_GradientOffYCheck") });
 
 		buttonNext.setText(CommonProperties.getString(CommonProperties.Next));
 		buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
@@ -278,18 +280,26 @@ public class JDialogSymbolsChange extends SmDialog {
 
 	private void initLayout() {
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonNext, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+		panelButton.add(buttonNext, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST)
+				.setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
+		panelButton.add(buttonCancle,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
 
 		JPanel panelCenter = new JPanel();
 		panelCenter.setLayout(new GridBagLayout());
-		panelCenter.add(panelPoint, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCenter.add(panelLine, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCenter.add(panelFill, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCenter.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
+		panelCenter.add(panelPoint,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCenter.add(panelLine,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCenter.add(panelFill,
+				new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCenter.add(panelButton,
+				new GridBagConstraintsHelper(0, 3, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
 
 		this.setLayout(new GridBagLayout());
-		this.add(panelCenter, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10).setWeight(1, 1));
+		this.add(panelCenter, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10)
+				.setWeight(1, 1));
+		getRootPane().setDefaultButton(this.buttonNext);
 	}
 
 	private void registListeners() {
@@ -388,7 +398,8 @@ public class JDialogSymbolsChange extends SmDialog {
 			int x = 0, y = 0;
 			this.setLayout(new GridBagLayout());
 			for (int i = 0; i < checkBoxCount; i++) {
-				GridBagConstraintsHelper gridBagConstraintsHelper = new GridBagConstraintsHelper(x, y, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0);
+				GridBagConstraintsHelper gridBagConstraintsHelper = new GridBagConstraintsHelper(x, y, 1, 1).setFill(GridBagConstraints.NONE)
+						.setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0);
 				this.add(checkBoxList.get(i), gridBagConstraintsHelper);
 				x++;
 				if (x == 3) {
@@ -397,5 +408,37 @@ public class JDialogSymbolsChange extends SmDialog {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (showSymbolDialog() == DialogResult.OK) {
+					changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getStyle());
+					JDialogSymbolsChange.this.setDialogResult(DialogResult.OK);
+					JDialogSymbolsChange.this.clean();
+				}
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
+				JDialogSymbolsChange.this.clean();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

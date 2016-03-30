@@ -22,9 +22,11 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class JDialogSizeableTemplate extends SmDialog {
@@ -51,20 +53,20 @@ public class JDialogSizeableTemplate extends SmDialog {
 	 * Create the dialog.
 	 */
 	public JDialogSizeableTemplate() {
-		allForms = new ArrayList<IForm>();
+		this.allForms = new ArrayList<IForm>();
 
 		this.setModal(true);
 		setTitle("Template");
 		setBounds(100, 100, 554, 361);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-		toolBar = new JToolBar();
-		toolBar.setFloatable(false);
+		this.toolBar = new JToolBar();
+		this.toolBar.setFloatable(false);
 
-		table = new MutiTable();
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		this.table = new MutiTable();
+		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "", "Form Name", "Form Type" }) {
 			boolean[] columnEditables = new boolean[] { true, true, false };
@@ -74,11 +76,11 @@ public class JDialogSizeableTemplate extends SmDialog {
 				return columnEditables[column];
 			}
 		};
-		table.setModel(tableModel);
+		this.table.setModel(tableModel);
 
-		table.setCheckHeaderColumn(0);
+		this.table.setCheckHeaderColumn(0);
 
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		this.table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				tableChildForms_valueChanged(e);
@@ -99,19 +101,18 @@ public class JDialogSizeableTemplate extends SmDialog {
 		buttonSelectAll = new SmButton("SelectAll");
 		buttonSelectAll.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		buttonSelectAll.addActionListener(new ActionListener() {
+		this.buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonSelectAll_Click();
 			}
 		});
-		buttonSelectAll.setToolTipText("SelectAll");
-		toolBar.add(buttonSelectAll);
-
+		this.buttonSelectAll.setToolTipText("SelectAll");
+		this.toolBar.add(buttonSelectAll);
 		buttonSelectInvert = new SmButton("SelectInvert");
 		buttonSelectInvert.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		buttonSelectInvert.addActionListener(new ActionListener() {
+		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonSelectInvert_Click();
@@ -119,11 +120,11 @@ public class JDialogSizeableTemplate extends SmDialog {
 		});
 		buttonSelectInvert.setToolTipText("SelectInvert");
 		toolBar.add(buttonSelectInvert);
-		addSeparator();
+		toolBar.addSeparator();
 		buttonDelete = new SmButton("Active");
 		buttonDelete
 				.setIcon(new ImageIcon(JDialogSizeableTemplate.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
-		buttonDelete.addActionListener(new ActionListener() {
+		this.buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonActive_Click();
@@ -132,26 +133,26 @@ public class JDialogSizeableTemplate extends SmDialog {
 		buttonDelete.setToolTipText("Delete");
 		buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		toolBar.add(buttonDelete);
-		addSeparator();
+		toolBar.addSeparator();
 		buttonSetting = new SmButton("Rename");
 		buttonSetting.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
-		buttonSetting.addActionListener(new ActionListener() {
+		this.buttonSetting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonRename_Click();
 			}
 		});
-		buttonSetting.setToolTipText("Setting");
-		toolBar.add(buttonSetting);
-		contentPanel.setLayout(gl_contentPanel);
+		this.buttonSetting.setToolTipText("Setting");
+		this.toolBar.add(buttonSetting);
+		this.contentPanel.setLayout(gl_contentPanel);
 
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		chckbxAutoClose = new JCheckBox("Is Save Layer3D KML");
-		chckbxAutoClose.setVerticalAlignment(SwingConstants.TOP);
-		chckbxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
+		this.chckbxAutoClose = new JCheckBox("Is Save Layer3D KML");
+		this.chckbxAutoClose.setVerticalAlignment(SwingConstants.TOP);
+		this.chckbxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 
 		okButton = new SmButton("UnSave");
 		okButton.setPreferredSize(new Dimension(75, 23));
@@ -161,8 +162,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 				buttonUnSave_Click();
 			}
 		});
-		okButton.setToolTipText("");
-		okButton.setActionCommand("OK");
+		this.okButton.setToolTipText("");
+		this.okButton.setActionCommand("OK");
 
 		cancelButton = new SmButton("Cancel");
 		cancelButton.setPreferredSize(new Dimension(75, 23));
@@ -172,8 +173,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 				buttonClose_Click();
 			}
 		});
-		cancelButton.setToolTipText("");
-		cancelButton.setActionCommand("Cancel");
+		this.cancelButton.setToolTipText("");
+		this.cancelButton.setActionCommand("Cancel");
 
 		GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
 		gl_buttonPane.setHorizontalGroup(gl_buttonPane.createParallelGroup(Alignment.TRAILING).addGroup(
@@ -190,14 +191,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(okButton).addComponent(chckbxAutoClose)
 										.addComponent(cancelButton)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		buttonPane.setLayout(gl_buttonPane);
-
+		this.getRootPane().setDefaultButton(this.okButton);
 		initializeResources();
-	}
-
-	private void addSeparator() {
-		JToolBar.Separator separator = new JToolBar.Separator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		toolBar.add(separator);
 	}
 
 	private void initializeResources() {
@@ -367,5 +362,32 @@ public class JDialogSizeableTemplate extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonUnSave_Click();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonClose_Click();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

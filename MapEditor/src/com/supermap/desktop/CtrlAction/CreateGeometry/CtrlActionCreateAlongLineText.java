@@ -29,6 +29,7 @@ import com.supermap.ui.TrackedListener;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -146,7 +147,8 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			this.setSize((int) (360 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			buttonOK.setEnabled(false);
+			this.buttonOK.setEnabled(false);
+			getRootPane().setDefaultButton(this.buttonOK);
 		}
 
 		private void initListeners() {
@@ -235,16 +237,22 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
 		private void initLayout() {
 			panelButton.setLayout(new GridBagLayout());
-			panelButton.add(buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(99, 1));
-			panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1));
+			panelButton.add(buttonOK,
+					new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(99, 1));
+			panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+					.setWeight(1, 1));
 
 			JPanel panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
-			panel.add(labelDescribe, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
-			panel.add(textFieldText, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
-			panel.add(panelButton, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+			panel.add(labelDescribe,
+					new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
+			panel.add(textFieldText,
+					new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+			panel.add(panelButton,
+					new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 			this.setLayout(new GridBagLayout());
-			this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(10).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+			this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(10).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(1, 1));
 		}
 
 		private void initResources() {
@@ -272,6 +280,34 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				}
 			}
 			refreshTrackingLayer();
+		}
+
+		@Override
+		protected JRootPane createRootPane() {
+			return keyBoardPressed();
+		}
+
+		@Override
+		public JRootPane keyBoardPressed() {
+			JRootPane rootPane = new JRootPane();
+			KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+			rootPane.registerKeyboardAction(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					buttonOkClicked();
+				}
+			}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+			KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+			rootPane.registerKeyboardAction(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dialogResult = DialogResult.CANCEL;
+					dispose();
+				}
+			}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+			return rootPane;
 		}
 	}
 }

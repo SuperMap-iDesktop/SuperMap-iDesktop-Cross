@@ -47,6 +47,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JSpinner spinnerFontCount = new JSpinner();
 	private JLabel labelAlignmentStyle = new JLabel();
 	private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();
+	private JLabel labelSplitSeparator = new JLabel();
+	private JComboBox<String> comboBoxSplitSeparator = new JComboBox<String>();
+	private JCheckBox checkBoxOptimizeMutilineAlignment = new JCheckBox();
 	// panelFontHeight
 	private JLabel labelMaxFontHeight = new JLabel();
 	private JTextField textFieldMaxFontHeight = new JTextField();
@@ -174,10 +177,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		unregistActionListener();
 		this.comboBoxLineDirection.addItemListener(this.itemListener);
 		this.comboBoxOverLength.addItemListener(this.itemListener);
+		this.comboBoxSplitSeparator.addItemListener(this.itemListener);
 		this.checkBoxRotateLabel.addActionListener(this.actionListener);
 		this.checkBoxFixedFontAngl.addActionListener(this.actionListener);
 		this.checkBoxRemoveRepeatLabel.addActionListener(this.actionListener);
 		this.checkBoxRepeatIntervalFixed.addActionListener(this.actionListener);
+		this.checkBoxOptimizeMutilineAlignment.addActionListener(this.actionListener);
 		this.textFieldHorizontal.addKeyListener(this.localKeyListener);
 		this.textFieldRepeatInterval.addKeyListener(this.localKeyListener);
 		this.textFieldVertical.addKeyListener(this.localKeyListener);
@@ -197,10 +202,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	public void unregistActionListener() {
 		this.comboBoxLineDirection.removeItemListener(this.itemListener);
 		this.comboBoxOverLength.removeItemListener(this.itemListener);
+		this.comboBoxSplitSeparator.removeItemListener(this.itemListener);
 		this.checkBoxRotateLabel.removeActionListener(this.actionListener);
 		this.checkBoxFixedFontAngl.removeActionListener(this.actionListener);
 		this.checkBoxRemoveRepeatLabel.removeActionListener(this.actionListener);
 		this.checkBoxRepeatIntervalFixed.removeActionListener(this.actionListener);
+		this.checkBoxOptimizeMutilineAlignment.removeActionListener(this.actionListener);
 		this.textFieldHorizontal.removeKeyListener(this.localKeyListener);
 		this.textFieldRepeatInterval.removeKeyListener(this.localKeyListener);
 		this.textFieldVertical.removeKeyListener(this.localKeyListener);
@@ -224,8 +231,10 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.labelFontSpace.setText(MapViewProperties.getString("String_SpaceRatio"));
 		this.labelRepeatInterval.setText(MapViewProperties.getString("String_RepeatInterval"));
 		this.checkBoxRepeatIntervalFixed.setText(MapViewProperties.getString("String_RepeatIntervalFixed"));
+		this.checkBoxOptimizeMutilineAlignment.setText(MapViewProperties.getString("String_OptimizeMutilineAlignment"));
 
 		this.labelOverLength.setText(MapViewProperties.getString("String_OverLengthLabelMode"));
+		this.labelSplitSeparator.setText(MapViewProperties.getString("String_SplitSeparator"));
 		this.labelFontCount.setText(MapViewProperties.getString("String_CharCount"));
 
 		this.labelMaxFontHeight.setText(MapViewProperties.getString("String_MaxHeight"));
@@ -407,17 +416,21 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				MapViewProperties.getString("String_OverLengthLabelMode_NewLine"), MapViewProperties.getString("String_OverLengthLabelMode_Omit") }));
 		if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NONE) {
 			this.comboBoxOverLength.setSelectedIndex(0);
-			this.spinnerFontCount.setEnabled(false);
-			this.comboBoxAlignmentStyle.setEnabled(false);
+			resetPanelTextFontStation(false);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NEWLINE) {
 			this.comboBoxOverLength.setSelectedIndex(1);
-			this.spinnerFontCount.setEnabled(true);
-			this.comboBoxAlignmentStyle.setEnabled(true);
+			resetPanelTextFontStation(true);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.OMIT) {
 			this.comboBoxOverLength.setSelectedIndex(2);
-			this.spinnerFontCount.setEnabled(true);
-			this.comboBoxAlignmentStyle.setEnabled(true);
+			resetCheckBoxState(true);
 		}
+	}
+
+	private void resetPanelTextFontStation(boolean flag) {
+		this.spinnerFontCount.setEnabled(flag);
+		this.comboBoxAlignmentStyle.setEnabled(flag);
+		this.comboBoxSplitSeparator.setEnabled(flag);
+		this.checkBoxOptimizeMutilineAlignment.setEnabled(flag);
 	}
 
 	/**
@@ -429,17 +442,27 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		//@formatter:off
 		initComboBoxOverLength();
 		initComboBoxAlignmentStyle();
+		initComboBoxSplitSeparator();
 		panelTextFontSet.setLayout(new GridBagLayout());
 		this.comboBoxOverLength.setPreferredSize(this.textFieldDimension);
 		this.spinnerFontCount.setPreferredSize(this.textFieldDimension);
 		this.comboBoxAlignmentStyle.setPreferredSize(this.textFieldDimension);
+		this.comboBoxSplitSeparator.setPreferredSize(this.textFieldDimension);
 		panelTextFontSet.add(this.labelOverLength,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelTextFontSet.add(this.comboBoxOverLength,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextFontSet.add(this.labelFontCount,           new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextFontSet.add(this.spinnerFontCount,         new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextFontSet.add(this.labelAlignmentStyle,      new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelTextFontSet.add(this.comboBoxAlignmentStyle,   new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.labelSplitSeparator,      new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.comboBoxSplitSeparator,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.labelFontCount,           new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.spinnerFontCount,         new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.labelAlignmentStyle,      new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.comboBoxAlignmentStyle,   new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTextFontSet.add(this.checkBoxOptimizeMutilineAlignment,  new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST));
 		//@formatter:on
+	}
+
+	private void initComboBoxSplitSeparator() {
+		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<String>(new String[] {" ","/","\\","、",";"}));
+		this.comboBoxSplitSeparator.setEnabled(false);
 	}
 
 	private void initComboBoxAlignmentStyle() {
@@ -478,7 +501,17 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 					refreshAtOnce();
 					return;
 				}
+				if (e.getSource()==comboBoxSplitSeparator) {
+					setSplitSeparator();
+					refreshAtOnce();
+					return;
+				}
 			}
+		}
+
+		private void setSplitSeparator() {
+			String split = comboBoxSplitSeparator.getSelectedItem().toString();
+			themeLabel.setSplitSeparator(split.toCharArray()[0]);
 		}
 
 		private void setTextAlignment() {
@@ -509,15 +542,13 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			int overLength = comboBoxOverLength.getSelectedIndex();
 			if (0 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NONE);
-				spinnerFontCount.setEnabled(false);
+				resetPanelTextFontStation(false);
 			} else if (1 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
-				spinnerFontCount.setEnabled(true);
-				comboBoxAlignmentStyle.setEnabled(true);
+				resetPanelTextFontStation(true);
 			} else {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
-				spinnerFontCount.setEnabled(true);
-				comboBoxAlignmentStyle.setEnabled(true);
+				resetPanelTextFontStation(true);
 			}
 		}
 
@@ -566,8 +597,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			} else if (e.getSource() == checkBoxRotateLabel) {
 				// 设置沿线标注项可设置
 				setRotateLabel();
+			}else if (e.getSource()==checkBoxOptimizeMutilineAlignment) {
+				setAlignment();
 			}
 			refreshAtOnce();
+		}
+
+		private void setAlignment() {
+			themeLabel.setOptimizeMutilineAlignment(checkBoxOptimizeMutilineAlignment.isSelected());
 		}
 
 		/**

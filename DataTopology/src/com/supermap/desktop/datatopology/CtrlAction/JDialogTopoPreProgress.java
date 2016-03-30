@@ -24,8 +24,10 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		buttonDelete
 				.setIcon(new ImageIcon(JDialogTopoPreProgress.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
-		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance")+":");
+		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance") + ":");
 		labelConsultDataset.setText(DataTopologyProperties.getString("String_Label_ConsultDataset"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_COUNT).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
@@ -311,6 +313,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		boolean isVertexArcInserted = checkBoxVertexArcInserted.isSelected();
 		if (isVertexesSnapped || isArcsInserted || isPolygonsChecked || isVertexArcInserted) {
 			buttonSure.setEnabled(true);
+			getRootPane().setDefaultButton(buttonSure);
 		} else {
 			buttonSure.setEnabled(false);
 		}
@@ -446,9 +449,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		if (0 < Application.getActiveApplication().getActiveDatasources().length) {
 			datasource = Application.getActiveApplication().getActiveDatasources()[0];
 		}
-		DatasetType[] datasetTypes = new DatasetType[]{
-				DatasetType.POINT, DatasetType.LINE, DatasetType.REGION
-		};
+		DatasetType[] datasetTypes = new DatasetType[] { DatasetType.POINT, DatasetType.LINE, DatasetType.REGION };
 		String[] datasetType = new String[4];
 		datasetType[DatasetType_All] = CommonProperties.getString("String_DatasetType_All");
 		datasetType[DatasetType_Point] = CommonProperties.getString("String_DatasetType_Point");
@@ -456,13 +457,12 @@ public class JDialogTopoPreProgress extends SmDialog {
 		datasetType[DatasetType_Region] = CommonProperties.getString("String_DatasetType_Region");
 		DatasetChooserDataTopo chooser = new DatasetChooserDataTopo(this, true, datasource, table, datasetTypes);
 		chooser = null;
-//		chooser.setVisible(true);
+		// chooser.setVisible(true);
 	}
 
 	public JTextField getTextFieldTolerance() {
 		return textFieldTolerance;
 	}
-
 
 	public DatasetComboBox getComboBoxConsultDataset() {
 		return comboBoxConsultDataset;
@@ -502,6 +502,34 @@ public class JDialogTopoPreProgress extends SmDialog {
 
 	public void setCheckBoxPolygonsChecked(JCheckBox checkBoxPolygonsChecked) {
 		this.checkBoxPolygonsChecked = checkBoxPolygonsChecked;
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				preProgressDataset();
+				dispose();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }

@@ -14,10 +14,12 @@ import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
 public class JDialogPrjCoordSysTranslator extends SmDialog {
@@ -79,7 +81,8 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	/**
 	 * 新建投影转换窗口
 	 *
-	 * @param beforePrj 转换之前的投影信息
+	 * @param beforePrj
+	 *            转换之前的投影信息
 	 */
 	public JDialogPrjCoordSysTranslator(PrjCoordSys beforePrj) {
 		this.beforePrj = beforePrj;
@@ -219,6 +222,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		// 主界面
 		this.buttonOK = new SmButton("OK");
 		this.buttonCancel = new SmButton("Cancel");
+		this.getRootPane().setDefaultButton(this.buttonOK);
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
@@ -258,7 +262,8 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 	private void registerEvents() {
 		unregisterEvents();
-		caretPositionListener.registerComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX, textFieldTranslateY, textFieldTranslateZ);
+		caretPositionListener.registerComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
+				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.addItemListener(this.itemListener);
 		this.buttonSetPrj.addActionListener(this.actionListener);
 		this.buttonOK.addActionListener(this.actionListener);
@@ -266,7 +271,8 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX, textFieldTranslateY, textFieldTranslateZ);
+		caretPositionListener.deregisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
+				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.removeItemListener(this.itemListener);
 		this.buttonSetPrj.removeActionListener(this.actionListener);
 		this.buttonOK.removeActionListener(this.actionListener);
@@ -356,5 +362,32 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	private void buttonCancelClicked() {
 		this.dialogResult = DialogResult.CANCEL;
 		setVisible(false);
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOKClicked();
+			}
+		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonCancelClicked();
+			}
+		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

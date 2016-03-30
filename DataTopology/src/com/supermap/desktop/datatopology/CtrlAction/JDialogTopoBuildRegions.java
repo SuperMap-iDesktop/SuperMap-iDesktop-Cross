@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
@@ -117,8 +118,8 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		this.labelResultDataset.setText(CommonProperties.getString("String_Label_Dataset"));
 		this.checkBoxtopologyPropress.setText(DataTopologyProperties.getString("String_Topo_Build"));
 		this.checkBoxtopologyPropress.setToolTipText(DataTopologyProperties.getString("String_TopoLineTipsInfo"));
-		this.panelDatasource.setBorder(new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING, TitledBorder.TOP,
-				null, null));
+		this.panelDatasource.setBorder(new TitledBorder(null, CommonProperties.getString("String_ColumnHeader_SourceData"), TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
 		this.panelResultData.setBorder(new TitledBorder(null, CommonProperties.getString("String_GroupBox_ResultData"), TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
 	}
@@ -294,7 +295,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		this.checkboxUndershootsExtended.setEnabled(false);
 		this.checkboxRedundantVerticesCleaned.setEnabled(false);
 		this.buttonMore.setEnabled(false);
-
+		getRootPane().setDefaultButton(buttonOk);
 		this.textFieldResultDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -469,5 +470,41 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean isTopoprogress = checkBoxtopologyPropress.isSelected();
+				if (isTopoprogress) {
+					topologyProcess();
+				}
+				topologyBuildRegion();
+				unregistAction();
+				buttonCancel.removeActionListener(buttonListener);
+				dispose();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				unregistAction();
+				buttonCancel.removeActionListener(buttonListener);
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 }

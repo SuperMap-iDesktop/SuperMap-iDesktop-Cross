@@ -58,7 +58,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 控件初始化
+	 * 鎺т欢鍒濆鍖�
 	 */
 	private void initComponent() {
 		this.setSize(400, 220);
@@ -85,7 +85,7 @@ public class JDialogTabularGoTo extends SmDialog {
 
 		jButtonClose = new SmButton("Close");
 		jButtonGoTo = new SmButton("GoTo");
-
+		getRootPane().setDefaultButton(this.jButtonGoTo);
 		buttonGroupPlaceType = new ButtonGroup();
 		jRadioButtonAbsolute = new JRadioButton();
 		jRadioButtonRelative = new JRadioButton();
@@ -117,7 +117,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 资源化
+	 * 璧勬簮鍖�
 	 */
 	private void initResources() {
 		this.setTitle(TabularViewProperties.getString("String_FormTabularGoTo_Title"));
@@ -129,7 +129,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 初始化属性
+	 * 鍒濆鍖栧睘鎬�
 	 */
 	private void init() {
 		jTextFieldNowPlace.setEditable(false);
@@ -141,7 +141,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 重新计算显示的值
+	 * 閲嶆柊璁＄畻鏄剧ず鐨勫��
 	 */
 	private void resetValue() {
 		IFormTabular formTabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
@@ -217,10 +217,10 @@ public class JDialogTabularGoTo extends SmDialog {
 		try {
 			int goToRow = 0;
 			if (jRadioButtonAbsolute.isSelected()) {
-				// 绝对
+				// 缁濆
 				goToRow = Integer.parseInt(jTextFieldAbsolutePlace.getText());
 			} else {
-				// 相对
+				// 鐩稿
 				goToRow = selectRow + Integer.parseInt(jTextFieldRelativePlace.getText());
 			}
 			if (goToRow == selectRow) {
@@ -239,6 +239,33 @@ public class JDialogTabularGoTo extends SmDialog {
 		} finally {
 			resetValue();
 		}
+	}
+
+	@Override
+	protected JRootPane createRootPane() {
+		return keyBoardPressed();
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				goToRow();
+			}
+		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		rootPane.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		return rootPane;
 	}
 
 }
