@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation.CtrlAction;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,21 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.mapping.Layer;
 
+// @formatter:off
+/**
+ * 1.组合之后更改 Selection，无法触发 GeometrySelected 
+ * 2.暂时没有实现刷新打开的属性窗口
+ * 3.221行，.net 没有释放，因为大数据会崩溃，测试可以留意一下是否如此
+ * 4.需要想办法解决编辑功能 enable() 频繁读写 recordset 的问题
+ * 
+ * @author highsad
+ *
+ */
+// @formatter:on
 public class CtrlActionDecompose extends CtrlAction {
 
 	public CtrlActionDecompose(IBaseItem caller, IForm formClass) {
@@ -65,7 +79,7 @@ public class CtrlActionDecompose extends CtrlAction {
 							tempgeometrys.add(currentgeomentry);
 						}
 					}
-					// geometrys = tempgeometrys.toArray();
+					geometrys = tempgeometrys.toArray(new Geometry[tempgeometrys.size()]);
 				} else if (geometry.getType() == GeometryType.GEOLINE && ((GeoLine) geometry).getPartCount() > 1) {
 					geometrys = new Geometry[((GeoLine) geometry).getPartCount()];
 					for (int i = 0; i < ((GeoLine) geometry).getPartCount(); i++) {
@@ -108,7 +122,7 @@ public class CtrlActionDecompose extends CtrlAction {
 					Boolean dr = recordset.delete();
 					for (int i = 0; i < fieldValues.length; i++) {
 						if (!fieldInfos.get(i).isSystemField()) {
-							// values.add(fieldInfos.get(i).getName(), fieldValues[i]);
+							values.put(fieldInfos.get(i).getName(), fieldValues[i]);
 						}
 					}
 					for (int j = 0; j < geometrys.length; j++) {
@@ -123,19 +137,26 @@ public class CtrlActionDecompose extends CtrlAction {
 			formMap.getMapControl().getEditHistory().batchEnd();
 			layer.getSelection().clear();
 			if (resultIDs.size() > 0) {
-				// layer.getSelection().addRange(resultIDs.ToArray());
+				int[] ids = ArrayUtilties.convertToInt(resultIDs.toArray(new Integer[resultIDs.size()]));
+				layer.getSelection().addRange(ids);
 				// SuperMap.Desktop.UI.CommonToolkit.RefreshTabularForm(recordset.Dataset);
 				// _Toolkit.InvokeGeometrySelectedEvent(formMap.MapControl, new GeometrySelectedEventArgs(resultIDs.Count));
-				// Application.getActiveApplication().getOutput().output(String.Format(Properties.MapEditorResources.String_GeometryEdit_DecomposeSuccess,
-				// resultIDs.Count));
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_DecomposeSuccess"), resultIDs.size()));
 			}
 			formMap.getMapControl().getMap().refresh();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			recordset.getBatch().update();
-			// CommonToolkit.ReleaseGeometry(ref geometry);
-			// CommonToolkit.ReleaseRecordset(ref recordset);
+			if (geometry != null) {
+				geometry.dispose();
+			}
+
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
 		}
 	}
 
@@ -146,62 +167,76 @@ public class CtrlActionDecompose extends CtrlAction {
 		Geometry geometry = null;
 		try {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+
 			if (formMap != null && formMap.getMapControl().getActiveEditableLayer() != null) {
+
 				Layer layer = formMap.getMapControl().getActiveEditableLayer();
 				if (layer.getSelection().getCount() >= 1) {
 					recordset = layer.getSelection().toRecordset();
 					recordset.moveFirst();
+
 					while (!recordset.isEOF()) {
 						geometry = recordset.getGeometry();
-						if (geometry == null) {
 
-						} else if (geometry.getType() == GeometryType.GEOCOMPOUND) {
-							bEnable = true;
-							break;
-						} else if (geometry.getType() == GeometryType.GEOLINE) {
-							bEnable = ((GeoLine) geometry).getPartCount() > 1;
-							if (bEnable) {
+						try {
+							if (geometry == null) {
 								break;
+							} else if (geometry.getType() == GeometryType.GEOCOMPOUND) {
+								bEnable = true;
+								break;
+							} else if (geometry.getType() == GeometryType.GEOLINE) {
+								bEnable = ((GeoLine) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
+							} else if (geometry.getType() == GeometryType.GEOLINE3D) {
+								bEnable = ((GeoLine3D) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
+							} else if (geometry.getType() == GeometryType.GEOREGION) {
+								bEnable = ((GeoRegion) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
+							} else if (geometry.getType() == GeometryType.GEOREGION3D) {
+								bEnable = ((GeoRegion3D) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
+							} else if (geometry.getType() == GeometryType.GEOLINEM) {
+								bEnable = ((GeoLineM) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
+							} else if (geometry.getType() == GeometryType.GEOTEXT) {
+								bEnable = ((GeoText) geometry).getPartCount() > 1;
+								if (bEnable) {
+									break;
+								}
 							}
-						} else if (geometry.getType() == GeometryType.GEOLINE3D) {
-							bEnable = ((GeoLine3D) geometry).getPartCount() > 1;
-							if (bEnable) {
-								break;
-							}
-						} else if (geometry.getType() == GeometryType.GEOREGION) {
-							bEnable = ((GeoRegion) geometry).getPartCount() > 1;
-							if (bEnable) {
-								break;
-							}
-						} else if (geometry.getType() == GeometryType.GEOREGION3D) {
-							bEnable = ((GeoRegion3D) geometry).getPartCount() > 1;
-							if (bEnable) {
-								break;
-							}
-						} else if (geometry.getType() == GeometryType.GEOLINEM) {
-							bEnable = ((GeoLineM) geometry).getPartCount() > 1;
-							if (bEnable) {
-								break;
-							}
-						} else if (geometry.getType() == GeometryType.GEOTEXT) {
-							bEnable = ((GeoText) geometry).getPartCount() > 1;
-							if (bEnable) {
-								break;
+
+							recordset.moveNext();
+						} finally {
+							if (geometry != null) {
+								geometry.dispose();
 							}
 						}
-						// CommonToolkit.ReleaseGeometry(ref geometry);//不释放对象，大数据容易崩溃UGDC-1240
-						recordset.moveNext();
 					}
 				}
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+		} finally {
+			if (geometry != null) {
+				geometry.dispose();
+			}
+
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
 		}
-		// finally
-		// {
-		// CommonToolkit.ReleaseGeometry(ref geometry);
-		// CommonToolkit.ReleaseRecordset(ref recordset);
-		// }
 
 		return bEnable;
 	}

@@ -24,9 +24,20 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 
+// @formatter:off
+/**
+ * 1.组合之后更改 Selection，无法触发 GeometrySelected
+ * 2.暂时没有实现刷新打开的属性窗口
+ * 3.需要想办法解决编辑功能 enable() 频繁读写 recordset 的问题
+ * 
+ * @author highsad
+ *
+ */
+// @formatter:on
 public class CtrlActionCombination extends CtrlAction {
 
 	public CtrlActionCombination(IBaseItem caller, IForm formClass) {
@@ -176,15 +187,19 @@ public class CtrlActionCombination extends CtrlAction {
 			formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 			formMap.getMapControl().getEditHistory().batchEnd();
 			formMap.getMapControl().getMap().refresh();
-			Application.getActiveApplication().getOutput().output(""/* Properties.CoreResources.String_Success */);
+			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Completed"));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
+
+			if (geometry != null) {
+				geometry.dispose();
+			}
 		}
-		// CommonToolkit.
-		//
-		// ReleaseGeometry(ref geometry);CommonToolkit.
-		//
-		// ReleaseRecordset(ref recordset);
 	}
 
 	@Override

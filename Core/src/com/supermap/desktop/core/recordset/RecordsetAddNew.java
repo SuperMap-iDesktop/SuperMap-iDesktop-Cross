@@ -38,8 +38,8 @@ public class RecordsetAddNew {
 	public void update() {
 		this.recordset.getBatch().update();
 		if (this.addHistoryIDs.size() > 0) {
-			int[] historys = ArrayUtilties.convertToInt(this.addHistoryIDs.toArray(new Integer[this.addHistoryIDs.size()]));
-			Recordset addHistoryRecordset = this.recordset.getDataset().query(historys, CursorType.DYNAMIC);
+			int[] histories = ArrayUtilties.convertToInt(this.addHistoryIDs.toArray(new Integer[this.addHistoryIDs.size()]));
+			Recordset addHistoryRecordset = this.recordset.getDataset().query(histories, CursorType.DYNAMIC);
 			try {
 				this.editHistory.add(EditType.ADDNEW, addHistoryRecordset, false);
 			} catch (Exception ex) {

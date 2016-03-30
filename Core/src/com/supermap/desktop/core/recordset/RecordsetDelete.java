@@ -31,8 +31,8 @@ public class RecordsetDelete {
 
 	public void update() {
 		if (this.deleteHistoryIDs.size() > 0) {
-			int[] historys = ArrayUtilties.convertToInt(this.deleteHistoryIDs.toArray(new Integer[this.deleteHistoryIDs.size()]));
-			Recordset deleteRecordset = this.recordset.getDataset().query(historys, CursorType.DYNAMIC);
+			int[] histories = ArrayUtilties.convertToInt(this.deleteHistoryIDs.toArray(new Integer[this.deleteHistoryIDs.size()]));
+			Recordset deleteRecordset = this.recordset.getDataset().query(histories, CursorType.DYNAMIC);
 			try {
 				this.editHistory.add(EditType.DELETE, deleteRecordset, false);
 

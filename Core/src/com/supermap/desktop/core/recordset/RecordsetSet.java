@@ -13,32 +13,32 @@ import com.supermap.desktop.utilties.ArrayUtilties;
 
 // 时间紧迫，先这样，理应有更为严谨美观的结构
 public class RecordsetSet {
-	private Recordset m_recordset;
-	private EditHistory m_editHistory;
-	private Map<Integer, Geometry> m_setHistorys;
+	private Recordset recordset;
+	private EditHistory editHistory;
+	private Map<Integer, Geometry> setHistories;
 
 	public RecordsetSet(Recordset recordset, EditHistory editHistory) {
-		this.m_recordset = recordset;
-		this.m_editHistory = editHistory;
-		this.m_setHistorys = new HashMap<Integer, Geometry>();
+		this.recordset = recordset;
+		this.editHistory = editHistory;
+		this.setHistories = new HashMap<Integer, Geometry>();
 	}
 
 	public void begin() {
-		this.m_setHistorys.clear();
+		this.setHistories.clear();
 	}
 
 	public void update() {
-		if (this.m_setHistorys.keySet().size() > 0) {
-			int[] histories = ArrayUtilties.convertToInt(this.m_setHistorys.keySet().toArray(new Integer[this.m_setHistorys.keySet().size()]));
-			Recordset setRecordset = this.m_recordset.getDataset().query(histories, CursorType.DYNAMIC);
+		if (this.setHistories.keySet().size() > 0) {
+			int[] histories = ArrayUtilties.convertToInt(this.setHistories.keySet().toArray(new Integer[this.setHistories.keySet().size()]));
+			Recordset setRecordset = this.recordset.getDataset().query(histories, CursorType.DYNAMIC);
 			try {
-				this.m_editHistory.add(EditType.MODIFY, setRecordset, false);
+				this.editHistory.add(EditType.MODIFY, setRecordset, false);
 				setRecordset.getBatch().begin();
 				setRecordset.edit();
-				for (Integer key : this.m_setHistorys.keySet()) {
+				for (Integer key : this.setHistories.keySet()) {
 					setRecordset.seekID(key);
 					setRecordset.edit();
-					setRecordset.setGeometry(this.m_setHistorys.get(key));
+					setRecordset.setGeometry(this.setHistories.get(key));
 				}
 				setRecordset.getBatch().update();
 			} catch (Exception ex) {
@@ -55,7 +55,7 @@ public class RecordsetSet {
 
 	public void setGeometry(int id, Geometry geometry) {
 		if (id > -1) {
-			this.m_setHistorys.put(id, geometry);
+			this.setHistories.put(id, geometry);
 		}
 	}
 }
