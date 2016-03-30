@@ -21,6 +21,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -81,13 +82,12 @@ public class CtrlActionCombination extends CtrlAction {
 						recordset.moveNext();
 					}
 					if (layer.getName() == resultLayer.getName()) {
-						// RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
-						// delete.Begin();
-						// for (int dd = 0; dd < layer.getSelection().getCount(); dd++)
-						// {
-						// delete.delete(layer.getSelection().get(dd));
-						// }
-						// delete.Update();
+						RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
+						delete.begin();
+						for (int dd = 0; dd < layer.getSelection().getCount(); dd++) {
+							delete.delete(layer.getSelection().get(dd));
+						}
+						delete.update();
 					}
 					recordset.dispose();
 				}
@@ -187,15 +187,14 @@ public class CtrlActionCombination extends CtrlAction {
 		// ReleaseRecordset(ref recordset);
 	}
 
-@Override
-	public boolean enable()
-    {
-        boolean enable = false;
+	@Override
+	public boolean enable() {
+		boolean enable = false;
 		// if ((Application.ActiveForm as FormMap) != null)
 		// {
 		// //(Application.ActiveForm as FormMap).EditState.CheckEnable();
 		// enable = (Application.ActiveForm as FormMap).EditState.IsCombinationEnable;
 		// }
-        return enable;
-    }
+		return enable;
+	}
 }
