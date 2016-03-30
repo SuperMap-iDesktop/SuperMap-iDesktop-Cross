@@ -19,6 +19,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -52,10 +53,10 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JTable tableRecordset;
-	private JButton buttonAdd;
-	private JButton buttonDelete;
-	private JButton buttonReset;
-	private JButton buttonApply;
+	private SmButton buttonAdd;
+	private SmButton buttonDelete;
+	private SmButton buttonReset;
+	private SmButton buttonApply;
 	private JCheckBox checkBoxShowWarning;
 
 	private transient DatasetVector datasetVector;
@@ -120,10 +121,10 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeComponents() {
-		this.buttonAdd = new JButton("Add");
-		this.buttonDelete = new JButton("Delete");
-		this.buttonReset = new JButton("Reset");
-		this.buttonApply = new JButton("Apply");
+		this.buttonAdd = new SmButton("Add");
+		this.buttonDelete = new SmButton("Delete");
+		this.buttonReset = new SmButton("Reset");
+		this.buttonApply = new SmButton("Apply");
 		this.checkBoxShowWarning = new JCheckBox("ShowWarning");
 
 		initializeTable();
@@ -555,12 +556,9 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				return true;
 			}
 
-			if ((this.fieldInfos.get(row).getType() == FieldType.TEXT || this.fieldInfos.get(row).getType() == FieldType.WTEXT) && column == MAX_LENGTH) {
-				return true;
-			}
+			return (this.fieldInfos.get(row).getType() == FieldType.TEXT || this.fieldInfos.get(row).getType() == FieldType.WTEXT) && column == MAX_LENGTH;
 
-			return false;
-		}
+			}
 
 		@Override
 		public int getRowCount() {

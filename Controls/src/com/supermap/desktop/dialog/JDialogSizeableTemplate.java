@@ -1,22 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.JComponent;
-import javax.swing.JRootPane;
-import javax.swing.JToolBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -29,19 +12,22 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 
-import javax.swing.JCheckBox;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
 
 public class JDialogSizeableTemplate extends SmDialog {
 
@@ -54,14 +40,14 @@ public class JDialogSizeableTemplate extends SmDialog {
 
 	final JPanel contentPanel = new JPanel();
 	private JToolBar toolBar;
-	private JButton buttonSelectAll;
-	private JButton buttonSelectInvert;
-	private JButton buttonDelete;
-	private JButton buttonSetting;
+	private SmButton buttonSelectAll;
+	private SmButton buttonSelectInvert;
+	private SmButton buttonDelete;
+	private SmButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox chckbxAutoClose;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 
 	/**
 	 * Create the dialog.
@@ -112,8 +98,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 						.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)));
 
-		this.buttonSelectAll = new JButton("SelectAll");
-		this.buttonSelectAll.setIcon(new ImageIcon(JDialogSizeableTemplate.class
+		buttonSelectAll = new SmButton("SelectAll");
+		buttonSelectAll.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
 		this.buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
@@ -123,9 +109,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 		});
 		this.buttonSelectAll.setToolTipText("SelectAll");
 		this.toolBar.add(buttonSelectAll);
-
-		this.buttonSelectInvert = new JButton("SelectInvert");
-		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogSizeableTemplate.class
+		buttonSelectInvert = new SmButton("SelectInvert");
+		buttonSelectInvert.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
@@ -133,11 +118,11 @@ public class JDialogSizeableTemplate extends SmDialog {
 				buttonSelectInvert_Click();
 			}
 		});
-		this.buttonSelectInvert.setToolTipText("SelectInvert");
-		this.toolBar.add(buttonSelectInvert);
-		this.toolBar.addSeparator();
-		this.buttonDelete = new JButton("Active");
-		this.buttonDelete
+		buttonSelectInvert.setToolTipText("SelectInvert");
+		toolBar.add(buttonSelectInvert);
+		toolBar.addSeparator();
+		buttonDelete = new SmButton("Active");
+		buttonDelete
 				.setIcon(new ImageIcon(JDialogSizeableTemplate.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonDelete.addActionListener(new ActionListener() {
 			@Override
@@ -145,12 +130,12 @@ public class JDialogSizeableTemplate extends SmDialog {
 				buttonActive_Click();
 			}
 		});
-		this.buttonDelete.setToolTipText("Delete");
-		this.buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
-		this.toolBar.add(buttonDelete);
-		this.toolBar.addSeparator();
-		this.buttonSetting = new JButton("Rename");
-		this.buttonSetting.setIcon(new ImageIcon(JDialogSizeableTemplate.class
+		buttonDelete.setToolTipText("Delete");
+		buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
+		toolBar.add(buttonDelete);
+		toolBar.addSeparator();
+		buttonSetting = new SmButton("Rename");
+		buttonSetting.setIcon(new ImageIcon(JDialogSizeableTemplate.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
 		this.buttonSetting.addActionListener(new ActionListener() {
 			@Override
@@ -169,9 +154,9 @@ public class JDialogSizeableTemplate extends SmDialog {
 		this.chckbxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		this.chckbxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 
-		this.okButton = new JButton("UnSave");
-		this.okButton.setPreferredSize(new Dimension(75, 23));
-		this.okButton.addActionListener(new ActionListener() {
+		okButton = new SmButton("UnSave");
+		okButton.setPreferredSize(new Dimension(75, 23));
+		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonUnSave_Click();
@@ -180,9 +165,9 @@ public class JDialogSizeableTemplate extends SmDialog {
 		this.okButton.setToolTipText("");
 		this.okButton.setActionCommand("OK");
 
-		this.cancelButton = new JButton("Cancel");
-		this.cancelButton.setPreferredSize(new Dimension(75, 23));
-		this.cancelButton.addActionListener(new ActionListener() {
+		cancelButton = new SmButton("Cancel");
+		cancelButton.setPreferredSize(new Dimension(75, 23));
+		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonClose_Click();
@@ -206,7 +191,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(okButton).addComponent(chckbxAutoClose)
 										.addComponent(cancelButton)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		buttonPane.setLayout(gl_buttonPane);
-		getRootPane().setDefaultButton(this.okButton);
+		this.getRootPane().setDefaultButton(this.okButton);
 		initializeResources();
 	}
 
@@ -380,16 +365,16 @@ public class JDialogSizeableTemplate extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane(){
+	protected JRootPane createRootPane() {
 		return keyBoardPressed();
 	}
-	
+
 	@Override
 	public JRootPane keyBoardPressed() {
 		JRootPane rootPane = new JRootPane();
 		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonUnSave_Click();
@@ -397,7 +382,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonClose_Click();

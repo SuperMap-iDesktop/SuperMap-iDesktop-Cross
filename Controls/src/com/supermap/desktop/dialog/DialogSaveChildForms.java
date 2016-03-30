@@ -1,22 +1,7 @@
 package com.supermap.desktop.dialog;
 
 import java.awt.BorderLayout;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.JComponent;
-import javax.swing.JRootPane;
-import javax.swing.JToolBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -32,17 +17,26 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.StringUtilties;
-import javax.swing.JCheckBox;
-import javax.swing.JScrollPane;
+
+import javax.swing.ImageIcon;
+
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class DialogSaveChildForms extends SmDialog {
 
@@ -55,15 +49,15 @@ public class DialogSaveChildForms extends SmDialog {
 
 	final JPanel contentPanel = new JPanel();
 	private JToolBar toolBar;
-	private JButton buttonSelectAll;
-	private JButton buttonSelectInvert;
-	private JButton buttonActive;
-	private JButton buttonRename;
+	private SmButton buttonSelectAll;
+	private SmButton buttonSelectInvert;
+	private SmButton buttonActive;
+	private SmButton buttonRename;
 	private MutiTable tableChildForms;
 	private JCheckBox checkBoxSaveLayer3DKML;
-	private JButton buttonSave;
-	private JButton buttonUnSave;
-	private JButton buttonCancel;
+	private SmButton buttonSave;
+	private SmButton buttonUnSave;
+	private SmButton buttonCancel;
 
 	/**
 	 * Create the dialog.
@@ -125,7 +119,7 @@ public class DialogSaveChildForms extends SmDialog {
 						.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)));
 
-		buttonSelectAll = new JButton("SelectAll");
+		buttonSelectAll = new SmButton("SelectAll");
 		buttonSelectAll.setIcon(new ImageIcon(DialogSaveChildForms.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
 		buttonSelectAll.addActionListener(new ActionListener() {
@@ -137,7 +131,7 @@ public class DialogSaveChildForms extends SmDialog {
 		buttonSelectAll.setToolTipText("SelectAll");
 		toolBar.add(buttonSelectAll);
 
-		buttonSelectInvert = new JButton("SelectInvert");
+		buttonSelectInvert = new SmButton("SelectInvert");
 		buttonSelectInvert.setIcon(new ImageIcon(DialogSaveChildForms.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		buttonSelectInvert.addActionListener(new ActionListener() {
@@ -149,7 +143,7 @@ public class DialogSaveChildForms extends SmDialog {
 		buttonSelectInvert.setToolTipText("SelectInvert");
 		toolBar.add(buttonSelectInvert);
 		addSeparator();
-		buttonActive = new JButton("Active");
+		buttonActive = new SmButton("Active");
 		buttonActive.setIcon(new ImageIcon(DialogSaveChildForms.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Active.png")));
 		buttonActive.addActionListener(new ActionListener() {
 			@Override
@@ -161,7 +155,7 @@ public class DialogSaveChildForms extends SmDialog {
 		buttonActive.setHorizontalAlignment(SwingConstants.LEFT);
 		toolBar.add(buttonActive);
 		addSeparator();
-		buttonRename = new JButton("Rename");
+		buttonRename = new SmButton("Rename");
 		buttonRename.setIcon(new ImageIcon(DialogSaveChildForms.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Rename.png")));
 		buttonRename.addActionListener(new ActionListener() {
 			@Override
@@ -181,18 +175,18 @@ public class DialogSaveChildForms extends SmDialog {
 		checkBoxSaveLayer3DKML.setVerticalAlignment(SwingConstants.TOP);
 		checkBoxSaveLayer3DKML.setHorizontalAlignment(SwingConstants.LEFT);
 
-		buttonSave = new JButton("Save");
+		buttonSave = new SmButton("Save");
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonSave_Click();
 			}
 		});
-		getRootPane().setDefaultButton(buttonSave);
+		this.getRootPane().setDefaultButton(buttonSave);
 		buttonSave.setToolTipText("");
 		buttonSave.setActionCommand("OK");
 
-		buttonUnSave = new JButton("UnSave");
+		buttonUnSave = new SmButton("UnSave");
 		buttonUnSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -202,7 +196,7 @@ public class DialogSaveChildForms extends SmDialog {
 		buttonUnSave.setToolTipText("");
 		buttonUnSave.setActionCommand("OK");
 
-		buttonCancel = new JButton("Cancel");
+		buttonCancel = new SmButton("Cancel");
 		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -496,7 +490,7 @@ public class DialogSaveChildForms extends SmDialog {
 
 		/**
 		 * 与工作空间中已存在的地图对比，地图名是否重复
-		 * 
+		 *
 		 * @param newName
 		 * @return
 		 */

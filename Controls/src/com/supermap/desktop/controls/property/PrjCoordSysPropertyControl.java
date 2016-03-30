@@ -4,6 +4,7 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysTranslator;
 import com.supermap.desktop.utilties.PrjCoordSysUtilties;
@@ -16,7 +17,6 @@ import java.awt.event.ActionListener;
 
 /**
  * @author highsad
- *
  */
 public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 
@@ -33,10 +33,10 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 	private JTextField textFieldCoordUnit;
 	private JLabel labelCoordInfo;
 	private JTextArea textAreaCoordInfo;
-	private JButton buttonExport;
-	private JButton buttonCopy;
-	private JButton buttonSet;
-	private JButton buttonConvert;
+	private SmButton buttonExport;
+	private SmButton buttonCopy;
+	private SmButton buttonSet;
+	private SmButton buttonConvert;
 
 	private boolean covertFlag;
 	private transient PrjCoordSysHandle prjHandle;
@@ -60,8 +60,7 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 
 	/**
 	 * @param prjHandle
-	 * @param covertFlag
-	 *            设置是否可以使用投影相关的功。只读数据源不能更改投影。
+	 * @param covertFlag 设置是否可以使用投影相关的功。只读数据源不能更改投影。
 	 */
 	public PrjCoordSysPropertyControl(PrjCoordSysHandle prjHandle, boolean covertFlag) {
 		super(ControlsProperties.getString("String_ProjectionInfo"));
@@ -86,12 +85,12 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 		this.labelCoordInfo = new JLabel("CoordInfo:");
 		this.textAreaCoordInfo = new JTextArea();
 		this.textAreaCoordInfo.setEditable(false);
-		this.buttonExport = new JButton("Export Coord...");
+		this.buttonExport = new SmButton("Export Coord...");
 		this.buttonExport.setVisible(false); // 关闭投影导出的功能，后续实现之后再开放
-		this.buttonCopy = new JButton("Copy Coord...");
+		this.buttonCopy = new SmButton("Copy Coord...");
 		this.buttonCopy.setVisible(false); // 关闭投影复制的功能，后续实现之后再开放
-		this.buttonSet = new JButton("Set Coord..");
-		this.buttonConvert = new JButton("Convert ProjectionSystem...");
+		this.buttonSet = new SmButton("Set Coord..");
+		this.buttonConvert = new SmButton("Convert ProjectionSystem...");
 
 		JScrollPane scrollPane = new JScrollPane(this.textAreaCoordInfo);
 		scrollPane.setBorder(MetalBorders.getTextFieldBorder());

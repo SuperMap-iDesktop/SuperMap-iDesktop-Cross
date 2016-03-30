@@ -10,6 +10,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 
@@ -47,8 +48,8 @@ public class JDialogMeasureSetting extends SmDialog {
 			CoreProperties.getString("String_Degree_Format_DDMMSS"), CoreProperties.getString("String_Degree_Format_Radian") };
 
 	private JPanel panelButton;
-	private JButton buttonOK;
-	private JButton buttonCancle;
+	private SmButton buttonOK;
+	private SmButton buttonCancle;
 
 	public JDialogMeasureSetting() {
 		super();
@@ -69,16 +70,16 @@ public class JDialogMeasureSetting extends SmDialog {
 		this.labelAngle = new JLabel();
 
 		this.comboBoxDistance = new JComboBox();
-		this.comboBoxDistance.setModel(new DefaultComboBoxModel(distanceModel));
+		this.comboBoxDistance.setModel(new DefaultComboBoxModel<>(distanceModel));
 		this.comboBoxArea = new JComboBox();
-		this.comboBoxArea.setModel(new DefaultComboBoxModel(areaModel));
+		this.comboBoxArea.setModel(new DefaultComboBoxModel<>(areaModel));
 		this.comboBoxAngle = new JComboBox();
-		this.comboBoxAngle.setModel(new DefaultComboBoxModel(angleModel));
+		this.comboBoxAngle.setModel(new DefaultComboBoxModel<>(angleModel));
 
 		this.panelButton = new JPanel();
-		this.buttonOK = new JButton();
-		this.buttonCancle = new JButton();
-		getRootPane().setDefaultButton(this.buttonOK);
+		this.buttonOK = new SmButton();
+		this.buttonCancle = new SmButton();
+		this.getRootPane().setDefaultButton(this.buttonOK);
 	}
 
 	private void initLayout() {

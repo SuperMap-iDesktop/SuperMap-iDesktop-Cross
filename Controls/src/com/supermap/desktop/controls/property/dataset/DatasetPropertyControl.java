@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.EncodeTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -47,8 +48,8 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 	private JLabel labelDescription;
 	private JTextArea textAreaDescription;
 
-	private JButton buttonReset;
-	private JButton buttonApply;
+	private SmButton buttonReset;
+	private SmButton buttonApply;
 
 	private Dataset dataset;
 	private String description = "";
@@ -223,8 +224,8 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 				.addComponent(this.textAreaDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 		// @formatter:on
 
-		this.buttonReset = new JButton("Reset");
-		this.buttonApply = new JButton("Apply");
+		this.buttonReset = new SmButton("Reset");
+		this.buttonApply = new SmButton("Apply");
 
 		JPanel panelButtons = new JPanel();
 		GroupLayout gl_panelButtons = new GroupLayout(panelButtons);

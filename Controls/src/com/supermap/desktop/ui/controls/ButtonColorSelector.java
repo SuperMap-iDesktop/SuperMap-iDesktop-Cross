@@ -1,9 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
+import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.plaf.metal.MetalComboBoxIcon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -11,15 +14,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.plaf.metal.MetalComboBoxIcon;
-
-import com.supermap.desktop.controls.ControlDefaultValues;
 
 public class ButtonColorSelector extends JPanel {
 
@@ -32,7 +26,7 @@ public class ButtonColorSelector extends JPanel {
 	private static final int DEFAULT_ARROW_WIDTH = 16;
 
 	private transient ColorSelectionPanel colorSelectionPanel;
-	private JButton buttonColorDisplay;
+	private SmButton buttonColorDisplay;
 	private transient ControlButton buttonArrow;
 	private JPopupMenu popupMenu;
 
@@ -71,7 +65,7 @@ public class ButtonColorSelector extends JPanel {
 
 	private void initializeComponents() {
 		this.colorSelectionPanel = new ColorSelectionPanel();
-		this.buttonColorDisplay = new JButton();
+		this.buttonColorDisplay = new SmButton();
 		this.colorSwatch = new ColorSwatch(this.color, 16, 75);
 		this.buttonColorDisplay.setIcon(this.colorSwatch);
 		this.buttonColorDisplay.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);

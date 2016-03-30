@@ -1,23 +1,19 @@
 package com.supermap.desktop.netservices.iserver;
 
-import java.awt.Dimension;
+import com.supermap.desktop.netservices.NetServicesProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
-
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-
-import com.supermap.desktop.netservices.NetServicesProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.SmDialog;
 
 /**
  * @author highsad iServer 服务发布的文件选择器，用在发布之前确认需要上传的文件和文件夹
@@ -30,8 +26,8 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JLabel labelMessage;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 	private PanelFolderSelector panelFolderSelector;
 	private String workspacePath;
 
@@ -60,10 +56,10 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private void initializeComponents() {
 		setTitle("Confirm");
 		this.labelMessage = new JLabel("message");
-		this.buttonOK = new JButton("OK");
+		this.buttonOK = new SmButton("OK");
 		this.buttonOK.setEnabled(true);
 		this.buttonOK.addActionListener(this);
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonCancel = new SmButton("Cancel");
 		this.buttonCancel.addActionListener(this);
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
@@ -81,7 +77,7 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addComponent(this.labelMessage,GroupLayout.PREFERRED_SIZE,groupLayout.PREFERRED_SIZE,groupLayout.PREFERRED_SIZE)
+				.addComponent(this.labelMessage,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.panelFolderSelector,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addGroup(groupLayout.createParallelGroup()
 						.addComponent(this.buttonOK)

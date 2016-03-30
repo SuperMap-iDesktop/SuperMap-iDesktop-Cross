@@ -5,6 +5,7 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 
@@ -30,8 +31,8 @@ public class JDialogSymbolsChange extends SmDialog {
 	private PanelSymbolSet panelFill;
 	private JPanel panelButton;
 
-	private JButton buttonNext;
-	private JButton buttonCancle;
+	private SmButton buttonNext;
+	private SmButton buttonCancle;
 
 	private List<GeoStyle> geoStylesBeforeList;
 	private SymbolDialog symbolDialog;
@@ -254,8 +255,8 @@ public class JDialogSymbolsChange extends SmDialog {
 		panelPoint = new PanelSymbolSet(5);
 		panelLine = new PanelSymbolSet(3);
 		panelFill = new PanelSymbolSet(8);
-		buttonNext = new JButton("Next");
-		buttonCancle = new JButton("Cancle");
+		buttonNext = new SmButton("Next");
+		buttonCancle = new SmButton("Cancle");
 	}
 
 	private void initResources() {

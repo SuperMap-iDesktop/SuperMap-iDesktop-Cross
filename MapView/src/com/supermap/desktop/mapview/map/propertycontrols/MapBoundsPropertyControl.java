@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.ScaleEditor;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
@@ -37,13 +38,13 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private JLabel labelScale;
 	private ScaleEditor scaleEditor;
 	private JCheckBox checkBoxIsVisibleScalesEnabled; // 设置固定比例尺
-	private JButton buttonSetVisibleScales; // 设置固定比例尺
+	private SmButton buttonSetVisibleScales; // 设置固定比例尺
 	private JCheckBox checkBoxIsClipRegionEnabled;
-	private JButton buttonClipRegion;
+	private SmButton buttonClipRegion;
 	private JCheckBox checkBoxIsViewBoundsLocked; // 锁定最大显示范围
-	private JButton buttonSetLockedViewBounds; // 设置最大显示范围
+	private SmButton buttonSetLockedViewBounds; // 设置最大显示范围
 	private JCheckBox checkBoxIsCustomBoundsEnabled; // 自定义全幅范围
-	private JButton buttonSetCustomBounds; // 设置自定义全幅范围
+	private SmButton buttonSetCustomBounds; // 设置自定义全幅范围
 
 	private JLabel labelCenterX;
 	private JFormattedTextField textFieldCenterX;
@@ -225,8 +226,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		activeMap.setCustomBoundsEnabled(this.isCustomBoundsEnabled);
 		if(!activeMap.getCustomBounds().equals(this.customBounds)){
 			activeMap.setCustomBounds(this.customBounds);
-            if(isCustomBoundsEnabled) {
-                activeMap.viewEntire();
+			if(isCustomBoundsEnabled) {
+				activeMap.viewEntire();
             }
 		}
 
@@ -249,17 +250,17 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.labelScale = new JLabel("CurrentScale:");
 		this.scaleEditor = new ScaleEditor(ScaleModel.NONE_SCALE);
 		this.checkBoxIsVisibleScalesEnabled = new JCheckBox("IsVisibleScaleEnabled");
-		this.buttonSetVisibleScales = new JButton("SetVisibleScales");
+		this.buttonSetVisibleScales = new SmButton("SetVisibleScales");
 		// TODO 固定比例尺先不支持 暂时屏蔽
 //		this.checkBoxIsVisibleScalesEnabled.setVisible(false);
 //		this.buttonSetVisibleScales.setVisible(false);
 
 		this.checkBoxIsClipRegionEnabled = new JCheckBox("IsClipRegionEnabled");
-		this.buttonClipRegion = new JButton("SetClipRegion");
+		this.buttonClipRegion = new SmButton("SetClipRegion");
 		this.checkBoxIsViewBoundsLocked = new JCheckBox("IsViewBoundsLocked");
-		this.buttonSetLockedViewBounds = new JButton("SetLockedViewBounds");
+		this.buttonSetLockedViewBounds = new SmButton("SetLockedViewBounds");
 		this.checkBoxIsCustomBoundsEnabled = new JCheckBox("IsCustomBoundsEnabled");
-		this.buttonSetCustomBounds = new JButton("SetCustomBounds");
+		this.buttonSetCustomBounds = new SmButton("SetCustomBounds");
 
 		NumberFormat numberFormat = NumberFormat.getNumberInstance();
 		numberFormat.setMinimumFractionDigits(10);

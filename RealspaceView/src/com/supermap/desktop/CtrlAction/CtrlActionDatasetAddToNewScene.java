@@ -23,7 +23,7 @@ public class CtrlActionDatasetAddToNewScene extends CtrlAction {
 	public void run() {
 		try {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			String name = com.supermap.desktop.controls.utilties.SceneUtilties.getAvailableSceneName(String.format("%s@%s", datasets[0].getName(), datasets[0].getDatasource().getAlias()),
+			String name = SceneUtilties.getAvailableSceneName(String.format("%s@%s", datasets[0].getName(), datasets[0].getDatasource().getAlias()),
 					true);
 			IFormScene formScene = (IFormScene) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.SCENE, name);
 			if (formScene != null) {

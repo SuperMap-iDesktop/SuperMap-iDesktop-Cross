@@ -1,40 +1,24 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.border.EmptyBorder;
-
 import com.supermap.data.Maps;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.MapUtilties;
 
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class DialogSaveAsMap extends SmDialog {
 
@@ -45,8 +29,8 @@ public class DialogSaveAsMap extends SmDialog {
 	 * 另存或保存地图时原来的地图名称
 	 */
 	private String myMapName;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 	private boolean isNewWindow = false;
 	private Maps maps;
 
@@ -82,8 +66,8 @@ public class DialogSaveAsMap extends SmDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		this.okButton = new JButton("OK");
-		this.okButton.addActionListener(new ActionListener() {
+		okButton = new SmButton("OK");
+		okButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -93,8 +77,8 @@ public class DialogSaveAsMap extends SmDialog {
 		this.okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		this.cancelButton = new JButton("Cancel");
-		this.cancelButton.addActionListener(new ActionListener() {
+		cancelButton = new SmButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {

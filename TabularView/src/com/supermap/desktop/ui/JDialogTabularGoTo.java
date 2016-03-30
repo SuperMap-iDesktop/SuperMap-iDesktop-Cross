@@ -1,8 +1,14 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.tabularview.TabularViewProperties;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,23 +17,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.MessageFormat;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
 
 public class JDialogTabularGoTo extends SmDialog {
 
@@ -54,8 +43,8 @@ public class JDialogTabularGoTo extends SmDialog {
 	private JTextField jTextFieldRelativeSpan;
 	private JTextField jTextFieldAbsoluteSpan;
 
-	private JButton jButtonGoTo;
-	private JButton jButtonClose;
+	private SmButton jButtonGoTo;
+	private SmButton jButtonClose;
 
 	private JRadioButton jRadioButtonRelative;
 	private JRadioButton jRadioButtonAbsolute;
@@ -94,8 +83,8 @@ public class JDialogTabularGoTo extends SmDialog {
 		jTextFieldAbsolutePlace.setPreferredSize(JTEXTFIELD_SIZE);
 		jTextFieldRelativePlace.setPreferredSize(JTEXTFIELD_SIZE);
 
-		jButtonClose = new JButton("Close");
-		jButtonGoTo = new JButton("GoTo");
+		jButtonClose = new SmButton("Close");
+		jButtonGoTo = new SmButton("GoTo");
 		getRootPane().setDefaultButton(this.jButtonGoTo);
 		buttonGroupPlaceType = new ButtonGroup();
 		jRadioButtonAbsolute = new JRadioButton();

@@ -1,36 +1,5 @@
 package com.supermap.desktop.netservices.iserver;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.CancellationException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -43,10 +12,27 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.CancellationException;
 
 public class JDialogServerRelease extends SmDialog implements ActionListener, ItemListener {
 
@@ -84,8 +70,8 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 	private JCheckBox checkBoxWMTSCHINA;
 	private JCheckBox checkBoxIsEditable;
 
-	private JButton buttonRelease;
-	private JButton buttonClose;
+	private SmButton buttonRelease;
+	private SmButton buttonClose;
 
 	private WorkspaceInfo workspaceInfo;
 	private int servicesType;
@@ -351,8 +337,8 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		// 主面板
 		JPanel panelMain = new JPanel();
 		setContentPane(panelMain);
-		this.buttonRelease = new JButton("Release");
-		this.buttonClose = new JButton("Close");
+		this.buttonRelease = new SmButton("Release");
+		this.buttonClose = new SmButton("Close");
 
 		GridBagLayout gbl_panelMain = new GridBagLayout();
 		setLayout(gbl_panelMain);
@@ -915,7 +901,6 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 	private ServerRelease FillServerRelease() {
 		ServerRelease serverRelease = new ServerRelease();
 		serverRelease.setHostType(this.hostType);
-		;
 		if (this.hostType == HostType.LOCAL) {
 			serverRelease.setHost(LOCALHOST);
 		} else if (this.hostType == HostType.REMOTE) {

@@ -13,6 +13,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 
 import javax.swing.*;
@@ -38,8 +39,8 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	private static final long serialVersionUID = 1L;
 	private JCheckBox checkBoxHideSysField;
 	private JCheckBox checkBoxHideDetail;
-	private JButton buttonReset;
-	private JButton buttonApply;
+	private SmButton buttonReset;
+	private SmButton buttonApply;
 	private transient Recordset recordset;
 	private JTable propertyTable;
 	private PropertyTableModel propertyTableModel;
@@ -153,8 +154,8 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		this.checkBoxHideSysField.setSelected(true);
 		this.checkBoxHideDetail = new JCheckBox("Hidden_DetailInfo");
 		this.checkBoxHideDetail.setSelected(true);
-		this.buttonReset = new JButton("reset");
-		this.buttonApply = new JButton("apply");
+		this.buttonReset = new SmButton("reset");
+		this.buttonApply = new SmButton("apply");
 
 		GroupLayout layout = new GroupLayout(this);
 		layout.setAutoCreateContainerGaps(true);
@@ -266,7 +267,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			this.propertyTable.getCellEditor().stopCellEditing();
 		}
 		checkIsSelected();
-		this.propertyTable.getColumnModel().getColumn(((PropertyTableModel) this.propertyTable.getModel()).getColumnCount() - 1)
+		this.propertyTable.getColumnModel().getColumn(this.propertyTable.getModel().getColumnCount() - 1)
 				.setCellEditor(new PropertyTableCellEditor(new JTextField()));
 		setColumnSize();
 	}
@@ -601,19 +602,11 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 						if (fieldData.isSystemField) {
 							return false;
 						} else {
-							if (fieldData.getType() == FieldType.LONGBINARY) {
-								return false;
-							} else {
-								return true;
-							}
+							return fieldData.getType() != FieldType.LONGBINARY;
 						}
 
 					} else {
-						if (fieldData.getType() == FieldType.LONGBINARY) {
-							return false;
-						} else {
-							return true;
-						}
+						return fieldData.getType() != FieldType.LONGBINARY;
 					}
 				}
 			}

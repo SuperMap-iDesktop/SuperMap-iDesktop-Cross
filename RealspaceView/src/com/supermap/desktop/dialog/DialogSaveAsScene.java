@@ -2,12 +2,13 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Scenes;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.SceneUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -24,8 +25,8 @@ public class DialogSaveAsScene extends SmDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JLabel lblNewLabelSceneName;
 	private JTextField textFieldSceneName;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 	private boolean isNewWindow = false;
 	private String formTitle = "";
 	private transient Scenes scenes;
@@ -63,7 +64,7 @@ public class DialogSaveAsScene extends SmDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		okButton = new JButton("OK");
+		okButton = new SmButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -73,7 +74,7 @@ public class DialogSaveAsScene extends SmDialog {
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		cancelButton = new JButton("Cancel");
+		cancelButton = new SmButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

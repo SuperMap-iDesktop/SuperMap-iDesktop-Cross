@@ -1,5 +1,17 @@
 package com.supermap.desktop.ui.controls.progress;
 
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IAfterWork;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
+import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -8,27 +20,6 @@ import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.JProgressBar;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IAfterWork;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.progress.Interface.IUpdateProgress;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.SmDialog;
 
 public class FormProgress extends SmDialog implements IUpdateProgress {
 	/**
@@ -46,7 +37,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	private JProgressBar progressBar = null;
 	private JLabel labelMessage = null;
 	private JLabel labelRemaintime = null;
-	private JButton buttonCancel = null;
+	private SmButton buttonCancel = null;
 
 	public FormProgress() {
 		setResizable(false);
@@ -54,12 +45,12 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setSize(450, 160);
 
-		this.progressBar = new JProgressBar();
-		this.progressBar.setStringPainted(true);
-		this.labelMessage = new JLabel("...");
-		this.labelRemaintime = new JLabel("...");
-		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
-		getRootPane().setDefaultButton(this.buttonCancel);
+		progressBar = new JProgressBar();
+		progressBar.setStringPainted(true);
+		labelMessage = new JLabel("...");
+		labelRemaintime = new JLabel("...");
+		buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);

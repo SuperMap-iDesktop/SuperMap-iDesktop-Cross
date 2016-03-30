@@ -7,6 +7,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.LayoutUtilties;
 
 import javax.swing.*;
@@ -25,8 +26,8 @@ public class DialogSaveAsLayout extends SmDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JLabel lblNewLabelLayoutName;
 	private JTextField textFieldLayoutName;
-	private JButton okButton;
-	private JButton cancelButton;
+	private SmButton okButton;
+	private SmButton cancelButton;
 	private boolean isNewWindow = false;
 	private transient Layouts layouts;
 
@@ -75,7 +76,7 @@ public class DialogSaveAsLayout extends SmDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		okButton = new JButton("OK");
+		okButton = new SmButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -85,7 +86,7 @@ public class DialogSaveAsLayout extends SmDialog {
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		cancelButton = new JButton("Cancel");
+		cancelButton = new SmButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

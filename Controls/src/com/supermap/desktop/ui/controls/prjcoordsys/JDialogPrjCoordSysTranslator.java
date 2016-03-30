@@ -9,6 +9,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
 
 import javax.swing.*;
@@ -31,7 +32,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 	private JLabel labelMethod;
 	private JComboBox<String> comboBoxMethod;
-	private JButton buttonSetPrj;
+	private SmButton buttonSetPrj;
 	private JLabel labelScaleDifference;
 	private SMFormattedTextField textFieldScaleDifference;
 	private JLabel labelRotationX;
@@ -46,8 +47,8 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	private SMFormattedTextField textFieldTranslateY;
 	private JLabel labelTranslateZ;
 	private SMFormattedTextField textFieldTranslateZ;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 
 	private transient CoordSysTransMethod method = CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION;
 	private transient CoordSysTransParameter parameter = new CoordSysTransParameter();
@@ -112,7 +113,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		this.comboBoxMethod = new JComboBox<>();
 		this.labelScaleDifference = new JLabel("ScaleDiff");
 		this.textFieldScaleDifference = new SMFormattedTextField(NumberFormat.getInstance());
-		this.buttonSetPrj = new JButton(ControlsProperties.getString("String_SetDesPrjCoordSys"));
+		this.buttonSetPrj = new SmButton(ControlsProperties.getString("String_SetDesPrjCoordSys"));
 
 		JPanel panelBase = new JPanel();
 		panelBase.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_BasicParameters")));
@@ -219,9 +220,9 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		// @formatter:on
 
 		// 主界面
-		this.buttonOK = new JButton("OK");
-		this.buttonCancel = new JButton("Cancel");
-		getRootPane().setDefaultButton(this.buttonOK);
+		this.buttonOK = new SmButton("OK");
+		this.buttonCancel = new SmButton("Cancel");
+		this.getRootPane().setDefaultButton(this.buttonOK);
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
@@ -260,6 +261,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void registerEvents() {
+		unregisterEvents();
 		caretPositionListener.registerComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
 				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.addItemListener(this.itemListener);

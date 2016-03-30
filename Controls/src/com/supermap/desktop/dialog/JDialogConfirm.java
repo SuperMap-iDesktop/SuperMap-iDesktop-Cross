@@ -1,32 +1,27 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JRootPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class JDialogConfirm extends SmDialog {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 	private JCheckBox checkBoxConfirm; // 是否保持本次设置，后面不再提示
 	private JTextArea textAreaMessage;
 
@@ -78,8 +73,8 @@ public class JDialogConfirm extends SmDialog {
 		setSize(new Dimension(450, 150));
 		setLocationRelativeTo(null);
 
-		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.True));
-		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.False));
+		this.buttonOK = new SmButton(CommonProperties.getString(CommonProperties.True));
+		this.buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.False));
 		this.checkBoxConfirm = new JCheckBox(ControlsProperties.getString("String_MessageBox_Checked"));
 		this.checkBoxConfirm.setSelected(true);
 		this.textAreaMessage = new JTextArea();
@@ -87,7 +82,7 @@ public class JDialogConfirm extends SmDialog {
 		this.textAreaMessage.setBackground(this.getBackground());
 		this.textAreaMessage.setLineWrap(true);
 		this.textAreaMessage.setBorder(null);
-		getRootPane().setDefaultButton(this.buttonOK);
+		this.getRootPane().setDefaultButton(this.buttonOK);
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -112,25 +107,25 @@ public class JDialogConfirm extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane(){
+	protected JRootPane createRootPane() {
 		return keyBoardPressed();
 	}
-	
+
 	@Override
 	public JRootPane keyBoardPressed() {
 		JRootPane rootPane = new JRootPane();
 		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogConfirm.this.dialogResult = DialogResult.OK;
 				JDialogConfirm.this.dispose();
 			}
 		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogConfirm.this.dialogResult = DialogResult.CANCEL;

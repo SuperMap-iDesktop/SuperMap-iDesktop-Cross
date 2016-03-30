@@ -23,6 +23,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -34,7 +35,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,8 +67,8 @@ public class JDialogDatasetCopy extends SmDialog {
 	private JButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox checkBoxAutoClose;
-	private JButton buttonOk;
-	private JButton buttonCancel;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 	private JButton buttonAdd;
 	private transient Dataset[] datasets;
 	private JScrollPane scrollPaneTable;
@@ -300,13 +300,13 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.checkBoxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		this.checkBoxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 		this.checkBoxAutoClose.setSelected(true);
-		this.buttonOk = new JButton("OK");
+		this.buttonOk = new SmButton("OK");
 		this.buttonOk.setEnabled(false);
 		
 		this.buttonOk.setToolTipText("");
 		this.buttonOk.setActionCommand("OK");
 
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonCancel = new SmButton("Cancel");
 		
 		this.buttonCancel.setToolTipText("");
 		this.buttonCancel.setActionCommand("Cancel");

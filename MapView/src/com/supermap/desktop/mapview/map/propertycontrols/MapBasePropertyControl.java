@@ -6,6 +6,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.MapColorModeUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapColorMode;
@@ -45,7 +46,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private SMFormattedTextField textFieldMaxVisibleTextSize; // 文本最大尺寸
 	private SMFormattedTextField textFieldMaxVisibleVertex; // 最大可见节点数
 	private JCheckBox checkBoxIsOverlapDisplayed; // 显示压盖对象
-	private JButton buttonOverlapDisplayedOptions; // 压盖设置
+	private SmButton buttonOverlapDisplayedOptions; // 压盖设置
 	private JCheckBox checkBoxIsMarkerAngleFixed; // 固定符号角度
 	private JCheckBox checkBoxIsLineAntialias; // 线型反走样
 	private JCheckBox checkBoxIsTextAngleFixed; // 固定文本角度
@@ -171,7 +172,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.textFieldMinVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.textFieldMaxVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.textFieldMaxVisibleVertex = new SMFormattedTextField(NumberFormat.getIntegerInstance());
-		this.buttonOverlapDisplayedOptions = new JButton("OverlapDisplayedOptions");
+		this.buttonOverlapDisplayedOptions = new SmButton("OverlapDisplayedOptions");
 		this.checkBoxIsOverlapDisplayed = new JCheckBox("IsOverlapDisplayed");
 		this.checkBoxIsMarkerAngleFixed = new JCheckBox("IsMarkerAngleFixed");
 		this.checkBoxIsLineAntialias = new JCheckBox("IsLineAntialias");

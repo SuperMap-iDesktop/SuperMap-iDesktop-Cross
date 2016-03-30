@@ -11,13 +11,14 @@ import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -84,8 +85,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	// 按钮
 	private JPanel panelButton;
-	private JButton buttonOk;
-	private JButton buttonCancle;
+	private SmButton buttonOk;
+	private SmButton buttonCancle;
 	private JCheckBox checkBoxAutoClose;
 
 	private DatasetType[] supportDatasetTypes = new DatasetType[]{
@@ -142,8 +143,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 		// 按钮栏
 		this.panelButton = new JPanel();
-		this.buttonOk = new JButton();
-		this.buttonCancle = new JButton();
+		this.buttonOk = new SmButton();
+		this.buttonCancle = new SmButton();
 		this.checkBoxAutoClose = new JCheckBox();
 
 		this.datasetChooser = new DatasetChooser(this) {
@@ -153,6 +154,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			}
 		};
 		this.datasetChooser.setSupportDatasetTypes(this.supportDatasetTypes);
+		this.getRootPane().setDefaultButton(buttonOk);
 	}
 
 	//region 初始化布局

@@ -1,28 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSettingGJB;
 import com.supermap.desktop.ImportFileInfo;
@@ -30,11 +7,21 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 
  * @author xie GJB军用格式数据集导入
  */
 public class ImportPanelGJB extends JPanel {
@@ -52,7 +39,7 @@ public class ImportPanelGJB extends JPanel {
 	private JComboBox<Object> comboBoxImportModel;
 	private JCheckBox checkBoxIsImportEmptyDataset;
 	private JTextField textFieldResultDatapath;
-	private JButton buttonProperty;
+	private SmButton buttonProperty;
 	private CharsetComboBox comboBoxCharset;
 	private JPanel panelResultSet;
 	private JPanel panelDatapath;
@@ -96,7 +83,7 @@ public class ImportPanelGJB extends JPanel {
 		this.comboBoxImportModel = new JComboBox<Object>();
 		this.textFieldResultDatapath = new JTextField();
 		this.textFieldResultDataset = new JTextField();
-		this.buttonProperty = new JButton();
+		this.buttonProperty = new SmButton();
 		this.checkBoxIsImportEmptyDataset = new JCheckBox();
 		Datasource datasource = CommonFunction.getDatasource();
 		this.comboBoxDatasource.setSelectedDatasource(datasource);

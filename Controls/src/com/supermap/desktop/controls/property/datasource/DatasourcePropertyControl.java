@@ -13,6 +13,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -50,9 +51,9 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	private JTextField textFieldOpenType;
 	private JTextArea textFieldDescription;
 
-	private JButton buttonChangePassword;
-	private JButton buttonApply;
-	private JButton buttonReset;
+	private SmButton buttonChangePassword;
+	private SmButton buttonApply;
+	private SmButton buttonReset;
 
 	private String description = "";
 	private String newPassword = "";
@@ -148,11 +149,11 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		textFieldDescription = new JTextArea();
 		textFieldDescription.setBorder(MetalBorders.getTextFieldBorder());
 		labelDescription = new JLabel("Description:");
-		buttonChangePassword = new JButton();
+		buttonChangePassword = new SmButton();
 		buttonChangePassword.setText("ChangePassword...");
-		buttonApply = new JButton("Apply");
+		buttonApply = new SmButton("Apply");
 		buttonApply.setPreferredSize(DEFAULT_BUTTON_PREFERREDSIZE);
-		buttonReset = new JButton("OK");
+		buttonReset = new SmButton("OK");
 		buttonReset.setPreferredSize(DEFAULT_BUTTON_PREFERREDSIZE);
 
 		JScrollPane scrollPaneStatisticValue = new JScrollPane();

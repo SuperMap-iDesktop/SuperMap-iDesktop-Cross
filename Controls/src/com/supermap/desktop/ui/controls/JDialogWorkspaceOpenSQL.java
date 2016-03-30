@@ -6,6 +6,7 @@ import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.WorkspaceUtilties;
 
@@ -35,8 +36,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	/**
 	 * 创建一个打开的配置窗口
 	 *
-	 * @param DataBase
-	 *            数据库类型(SQL/Oracle)
+	 * @param DataBase 数据库类型(SQL/Oracle)
 	 */
 	public JDialogWorkspaceOpenSQL(java.awt.Frame parent, boolean modal, String DataBase) {
 		super(parent, modal);
@@ -61,8 +61,8 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	 */
 	private void initComponents() {
 
-		jButtonClose = new javax.swing.JButton();
-		jButtonOpen = new javax.swing.JButton();
+		jButtonClose = new SmButton();
+		jButtonOpen = new SmButton();
 		jComboBoxServer = new javax.swing.JComboBox();
 		jTextFieldDatabase = new javax.swing.JTextField();
 		jTextFieldUser = new javax.swing.JTextField();
@@ -90,7 +90,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jButtonOpen.setPreferredSize(new java.awt.Dimension(75, 23));
 
 		// TODO Oracle或Sql Server实例列表初始化
-		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
+		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[]{}));
 		jComboBoxServer.setEditable(true);
 
 		jComboBoxServer.getEditor().getEditorComponent().addFocusListener(new FocusListener() {
@@ -182,7 +182,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 				}
 			}
 		});
-		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
+		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[]{""}));
 		jComboBoxWorkspaceName.setEditable(true);
 		jComboBoxWorkspaceName.getComponent(0).addMouseListener(new MouseAdapter() {
 			@Override
@@ -465,8 +465,8 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	// Variables declaration - do not modify
 	private String DataBase;
 
-	private javax.swing.JButton jButtonClose;
-	private javax.swing.JButton jButtonOpen;
+	private SmButton jButtonClose;
+	private SmButton jButtonOpen;
 	private javax.swing.JComboBox jComboBoxServer;
 	private javax.swing.JComboBox jComboBoxWorkspaceName;
 	private javax.swing.JLabel jLabelDatabase;

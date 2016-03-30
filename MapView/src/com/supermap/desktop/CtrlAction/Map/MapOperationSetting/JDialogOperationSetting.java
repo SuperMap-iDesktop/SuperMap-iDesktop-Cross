@@ -10,6 +10,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.SelectionModeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.ui.MapControl;
@@ -46,8 +47,8 @@ public class JDialogOperationSetting extends SmDialog {
 	private SmTextFieldLegit textFieldSelectionLerance;
 
 	private JPanel panelButton;
-	private JButton buttonOK;
-	private JButton buttonCancle;
+	private SmButton buttonOK;
+	private SmButton buttonCancle;
 
 	private static final String[] SELECTION_MODE_STRINGS = new String[]{
 			SelectionModeUtilties.toString(SelectionMode.CONTAIN_INNER_POINT),
@@ -104,10 +105,10 @@ public class JDialogOperationSetting extends SmDialog {
 		this.textFieldSelectionLerance = new SmTextFieldLegit();
 
 		this.panelButton = new JPanel();
-		this.buttonOK = new JButton();
-		this.buttonCancle = new JButton();
+		this.buttonOK = new SmButton();
+		this.buttonCancle = new SmButton();
 
-		this.comboBoxSelectionMode.setModel(new DefaultComboBoxModel(SELECTION_MODE_STRINGS));
+		this.comboBoxSelectionMode.setModel(new DefaultComboBoxModel<>(SELECTION_MODE_STRINGS));
 		this.textFieldSelectionLerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {

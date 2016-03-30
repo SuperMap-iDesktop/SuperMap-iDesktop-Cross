@@ -1,18 +1,27 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.Recordset;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.Interface.ISmdialog;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,9 +44,9 @@ public class JDialogTopoAdvance extends SmDialog {
 	private JLabel labelNotCutting = new JLabel("String_NotCutting");
 	private JPanel panelLinesIntersected = new JPanel();
 	private JPanel panelToleranceSetting = new JPanel();
-	private JButton buttonMore = new JButton("...");
-	private JButton buttonSure = new JButton("String_Button_OK");
-	private JButton buttonQuite = new JButton("String_Button_Cancel");
+	private SmButton buttonMore = new SmButton("...");
+	private SmButton buttonSure = new SmButton("String_Button_OK");
+	private SmButton buttonQuite = new SmButton("String_Button_Cancel");
 	private transient TopologyProcessingOptions topologyProcessingOptions = new TopologyProcessingOptions();
 	private DatasetComboBox comboBoxNotCutting;
 	private SQLExpressionDialog sqlExpressionDialog;
@@ -158,9 +167,9 @@ public class JDialogTopoAdvance extends SmDialog {
 						this.comboBoxNotCutting.addItem(cell);
 					}
 				}
-				this.textFieldOvershootsTolerance.setText(Double.toString(((DatasetVector) targetDataset).getTolerance().getDangle()));
-				this.textFieldUndershootsTolerance.setText(Double.toString(((DatasetVector) targetDataset).getTolerance().getExtend()));
-				this.textFieldVertexTorance.setText(Double.toString(((DatasetVector) targetDataset).getTolerance().getNodeSnap()));
+				this.textFieldOvershootsTolerance.setText(Double.toString(targetDataset.getTolerance().getDangle()));
+				this.textFieldUndershootsTolerance.setText(Double.toString(targetDataset.getTolerance().getExtend()));
+				this.textFieldVertexTorance.setText(Double.toString(targetDataset.getTolerance().getNodeSnap()));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

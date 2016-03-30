@@ -15,6 +15,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
@@ -121,8 +122,8 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		private JLabel labelDescribe;
 		private JTextField textFieldText;
 		private JPanel panelButton;
-		private JButton buttonOK;
-		private JButton buttonCancle;
+		private SmButton buttonOK;
+		private SmButton buttonCancle;
 		private GeoLine geoLine;
 
 		public JDialogCreateAlongText(IFormMap formMap, GeoCompound geoCompound) {
@@ -138,11 +139,11 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		}
 
 		private void initComponents() {
-			this.labelDescribe = new JLabel();
-			this.textFieldText = new JTextField();
-			this.panelButton = new JPanel();
-			this.buttonOK = new JButton();
-			this.buttonCancle = new JButton();
+			labelDescribe = new JLabel();
+			textFieldText = new JTextField();
+			panelButton = new JPanel();
+			buttonOK = new SmButton();
+			buttonCancle = new SmButton();
 			this.setSize((int) (360 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);

@@ -1,11 +1,11 @@
 package com.supermap.desktop.implement;
 
-import javax.swing.JComponent;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.enums.XMLCommandType;
 import com.supermap.desktop.ui.XMLCommand;
+
+import javax.swing.*;
 
 public class SmComponentFactory {
 
@@ -19,7 +19,7 @@ public class SmComponentFactory {
 		try {
 			if (xmlCommand != null) {
 				if (xmlCommand.getCommandType() == XMLCommandType.BUTTON) {
-					result = new SmButton(null, xmlCommand, parent);
+					result = new SmCtrlActionButton(null, xmlCommand, parent);
 				} else if (xmlCommand.getCommandType() == XMLCommandType.LABEL) {
 					result = new SmLabel(null, xmlCommand, parent);
 				} else if (xmlCommand.getCommandType() == XMLCommandType.TEXTBOX) {

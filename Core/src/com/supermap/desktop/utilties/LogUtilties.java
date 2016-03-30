@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilties;
 
+import com.supermap.desktop.GlobalParameters;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -8,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LogUtilties {
 	private static final Log log = LogFactory.getLog(LogUtilties.class);
+	private static final boolean isDebug = true;
 
 	private static final int classNameLength = 50;
 	private static final String separator = "-------------------";
@@ -21,12 +23,14 @@ public class LogUtilties {
 	 * @param message 信息
 	 */
 	public static void outPut(String message) {
-		StackTraceElement stackTrace = new Throwable().getStackTrace()[1];
-		String[] split = stackTrace.getClassName().split("\\.");
-		String classname = split[split.length - 1];
-		String info = classname + "." + stackTrace.getMethodName() + "()";
-		info = String.format("%-" + classNameLength + "s", info);// 格式化，空格补齐
-		log.info(info + " - " + message);
+		if (GlobalParameters.isOutPutToLog() && GlobalParameters.isLogInformation()) {
+			StackTraceElement stackTrace = new Throwable().getStackTrace()[1];
+			String[] split = stackTrace.getClassName().split("\\.");
+			String classname = split[split.length - 1];
+			String info = classname + "." + stackTrace.getMethodName() + "()";
+			info = String.format("%-" + classNameLength + "s", info);// 格式化，空格补齐
+			log.info(info + " - " + message);
+		}
 	}
 
 	/**
@@ -35,30 +39,43 @@ public class LogUtilties {
 	 * @param message   输出信息
 	 * @param throwable 异常
 	 */
+
 	public static void error(String message, Throwable throwable) {
-		log.error(message, throwable);
+		if (GlobalParameters.isOutPutToLog() && GlobalParameters.isLogException()) {
+			log.error(message, throwable);
+		}
 	}
 
 	/**
-	 * 输出debug时的信息，debug完后直接替换为outPut输出日志。
+	 * 输出debug时的信息
+	 * debug完后直接替换为outPut输出日志。
 	 *
 	 * @param message 信息
 	 */
 	public static void debug(String message) {
-		String info = getCurrentInfo(2);
-		System.err.println(info + " - " + message);
+		if (!LogUtilties.isDebug()) {
+			LogUtilties.outPut(message);
+		} else {
+			String info = getCurrentInfo(2);
+			System.err.println(info + " - " + message);
+		}
 	}
 
 	/**
-	 * 输出debug时的信息，用于异常捕获，debug可以直接删除。
+	 * 输出debug时的信息，用于异常捕获。
+	 * debug完成后直接删除。
 	 *
 	 * @param message   输出信息
 	 * @param throwable 异常
 	 */
 	public static void debug(String message, Throwable throwable) {
-		String info = getCurrentInfo(2);
-		System.err.println(info + " - " + message);
-		throwable.printStackTrace();
+		if (!LogUtilties.isDebug()) {
+			LogUtilties.error(message, throwable);
+		} else {
+			String info = getCurrentInfo(2);
+			System.err.println(info + " - " + message);
+			throwable.printStackTrace();
+		}
 	}
 
 	/**
@@ -72,6 +89,15 @@ public class LogUtilties {
 		String[] split = stackTrace.getClassName().split("\\.");
 		String classname = split[split.length - 1];
 		return classname + "." + stackTrace.getMethodName() + "(" + stackTrace.getFileName() + ":" + stackTrace.getLineNumber() + ")  ";
+	}
+
+	/**
+	 * 是否处于debug模式
+	 *
+	 * @return
+	 */
+	private static boolean isDebug() {
+		return isDebug;
 	}
 
 	/**

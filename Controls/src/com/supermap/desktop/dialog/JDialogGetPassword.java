@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
@@ -15,8 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class JDialogGetPassword extends SmDialog{
-	
+public class JDialogGetPassword extends SmDialog {
+
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
 	/**
@@ -28,15 +29,17 @@ public class JDialogGetPassword extends SmDialog{
 	 */
 	private JLabel jlabelPasswordMessage;
 	private JPasswordField jpasswordField;
-	
-	
-	private JButton buttonOk;
-	private JButton buttonCancel;
-	
+
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
+
 	private String promptMessage;
+
 	/**
 	 * 创建密码输入框
-	 * @param promptMessage 提示信息
+	 *
+	 * @param promptMessage
+	 *            提示信息
 	 */
 	public JDialogGetPassword(String promptMessage) {
 		this.promptMessage = promptMessage;
@@ -52,20 +55,17 @@ public class JDialogGetPassword extends SmDialog{
 	 * 初始化组件
 	 */
 	private void initComponent() {
-		
+
 		this.contentPanel = new JPanel();
-		
+
 		this.jlabelPromptMessage = new JLabel(this.promptMessage);
 		this.jpasswordField = new JPasswordField();
 		this.jlabelPasswordMessage = new JLabel(ControlsProperties.getString("String_LOGIN_PASSWORD_Message"));
 		this.jlabelPasswordMessage.setForeground(Color.RED);
 		this.jlabelPasswordMessage.setVisible(false);
-		
-		this.buttonOk = new JButton(ControlsProperties.getString("String_Button_Ok"));
-		this.buttonCancel = new JButton(ControlsProperties.getString("String_Button_Cancel"));
-		getRootPane().setDefaultButton(this.buttonOk);
-
-
+		this.buttonOk = new SmButton(ControlsProperties.getString("String_Button_Ok"));
+		this.buttonCancel = new SmButton(ControlsProperties.getString("String_Button_Cancel"));
+		this.getRootPane().setDefaultButton(this.buttonOk);
 		// @formatter:off
 		this.contentPanel.setLayout(new GridBagLayout());
 		this.contentPanel.add(jlabelPromptMessage, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST)  .setInsets(10, 10, 2, 10).setWeight(1, 1));
@@ -76,33 +76,32 @@ public class JDialogGetPassword extends SmDialog{
 		this.add(contentPanel);
 		// @formatter:on
 
-		
 	}
 
-	private void addListeners(){
+	private void addListeners() {
 		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				canelButton_Click();
 			}
 		});
-		
+
 		this.buttonOk.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		
+
 		this.jpasswordField.addKeyListener(new KeyAdapter() {
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				JDialogGetPassword.this.jlabelPasswordMessage.setVisible(false);
-				if(KeyEvent.VK_ENTER == e.getKeyCode()){
+				if (KeyEvent.VK_ENTER == e.getKeyCode()) {
 					okButton_Click();
-				} else if(KeyEvent.VK_ESCAPE == e.getKeyCode()){
+				} else if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
 					canelButton_Click();
 				}
 			}
@@ -118,8 +117,8 @@ public class JDialogGetPassword extends SmDialog{
 		}
 	}
 
-	private void okButton_Click(){
-		if(this.isRightPassword(getPassword())){
+	private void okButton_Click() {
+		if (this.isRightPassword(getPassword())) {
 			// 密码正确
 			this.setDialogResult(DialogResult.OK);
 			this.dispose();
@@ -129,34 +128,36 @@ public class JDialogGetPassword extends SmDialog{
 			this.jpasswordField.requestFocus();
 			this.jlabelPasswordMessage.setVisible(true);
 		}
-			
+
 	}
 
 	/**
 	 * 判断密码是否正确，需要根据对应情况自行重新
-	 * @param password 当前输入的密码
+	 * 
+	 * @param password
+	 *            当前输入的密码
 	 * @return
 	 */
-	public boolean isRightPassword(String password){
+	public boolean isRightPassword(String password) {
 		return true;
 	}
-	
-	public String getPassword(){
+
+	public String getPassword() {
 		// TODO 密码加密解密
 		return String.valueOf(this.jpasswordField.getPassword());
 	}
 
-	@Override 
-	protected JRootPane createRootPane(){
+	@Override
+	protected JRootPane createRootPane() {
 		return keyBoardPressed();
 	}
-	
+
 	@Override
 	public JRootPane keyBoardPressed() {
 		JRootPane rootPane = new JRootPane();
 		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
@@ -164,7 +165,7 @@ public class JDialogGetPassword extends SmDialog{
 		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				canelButton_Click();

@@ -13,6 +13,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 
@@ -59,11 +60,11 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private SMFormattedTextField textFieldExtend;
 	private JLabel labelSmallPolygon;
 	private SMFormattedTextField textFieldSmallPolygon;
-	private JButton buttonDefaultTolerance;
-	private JButton buttonClearTolerance;
+	private SmButton buttonDefaultTolerance;
+	private SmButton buttonClearTolerance;
 
-	private JButton buttonReset;
-	private JButton buttonApply;
+	private SmButton buttonReset;
+	private SmButton buttonApply;
 
 	private transient DatasetVector datasetVector;
 
@@ -220,8 +221,8 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.textFieldGrain = new SMFormattedTextField(numberFormatter);
 		this.labelSmallPolygon = new JLabel("SmallPolygon:");
 		this.textFieldSmallPolygon = new SMFormattedTextField(numberFormatter);
-		this.buttonDefaultTolerance = new JButton("Default");
-		this.buttonClearTolerance = new JButton("Clear");
+		this.buttonDefaultTolerance = new SmButton("Default");
+		this.buttonClearTolerance = new SmButton("Clear");
 
 		JPanel panelTolerance = new JPanel();
 		panelTolerance.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetTolerance")));
@@ -268,8 +269,8 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 						.addComponent(this.buttonClearTolerance)));
 		// |@formatter:on
 
-		this.buttonReset = new JButton("Reset");
-		this.buttonApply = new JButton("Apply");
+		this.buttonReset = new SmButton("Reset");
+		this.buttonApply = new SmButton("Apply");
 		GroupLayout gl_mainContent = new GroupLayout(this);
 		gl_mainContent.setAutoCreateContainerGaps(true);
 		gl_mainContent.setAutoCreateGaps(true);

@@ -30,6 +30,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -112,12 +113,12 @@ public class JDialogSQLQuery extends SmDialog {
 	private JLabel labelGroupField = new JLabel("groupField");
 	private JLabel labelOrderByField = new JLabel("orderByField");
 
-	private JButton buttonImport = new JButton("import");
-	private JButton buttonExport = new JButton("export");
+	private SmButton buttonImport = new SmButton("import");
+	private SmButton buttonExport = new SmButton("export");
 	private JButton buttonGetAllValue = new JButton("getAllValue");
-	private JButton buttonQuery = new JButton("query");
-	private JButton buttonClear = new JButton("clear");
-	private JButton buttonClose = new JButton("close");
+	private SmButton buttonQuery = new SmButton("query");
+	private SmButton buttonClear = new SmButton("clear");
+	private SmButton buttonClose = new SmButton("close");
 
 	private JTextField textFieldGOTO = new JTextField();
 	private SQLTextfield textFieldGroupField = new SQLTextfield();
@@ -192,7 +193,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 		buttonGroup.add(radioButtonQueryAttributeInfo);
 		buttonGroup.add(radioButtonQuerySpaceAndProperty);
-
+		this.getRootPane().setDefaultButton(buttonQuery);
 	}
 
 	/**
@@ -1200,7 +1201,7 @@ public class JDialogSQLQuery extends SmDialog {
 			fieldNames.add(builderFieldName.toString());
 			builderFieldName.setLength(0);
 		}
-		return (String[]) fieldNames.toArray(new String[fieldNames.size()]);
+		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 
 	private void SaveQueryResult(Recordset resultRecord) {

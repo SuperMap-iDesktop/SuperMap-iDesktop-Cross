@@ -11,21 +11,21 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,9 +36,9 @@ import java.util.ArrayList;
 
 public class JDialogTopoBuildRegions extends SmDialog {
 	private static final long serialVersionUID = 1L;
-	private JButton buttonMore = new JButton("String_Button_Advance");
-	private JButton buttonOk = new JButton("String_Button_OK");
-	private JButton buttonCancel = new JButton("String_Button_Cancel");
+	private SmButton buttonMore = new SmButton("String_Button_Advance");
+	private SmButton buttonOk = new SmButton("String_Button_OK");
+	private SmButton buttonCancel = new SmButton("String_Button_Cancel");
 	private JCheckBox checkboxLinesIntersected = new JCheckBox("String_LinesIntersected");
 	private JCheckBox checkboxOvershootsCleaned = new JCheckBox("String_CleanOvershoots");
 	private JCheckBox checkboxPseudoNodesCleaned = new JCheckBox("String_CleanPseudoNodes");
@@ -178,7 +178,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 					}
 				}
 
-				this.comboBoxDatasource = new DatasourceComboBox((Datasource[]) datasourceList.toArray(datasourceArray));
+				this.comboBoxDatasource = new DatasourceComboBox(datasourceList.toArray(datasourceArray));
 				for (int i = 0; i < this.comboBoxDatasource.getItemCount(); i++) {
 					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDataName().equals(currentDatasource.getAlias())) {
 						this.comboBoxDatasource.setSelectedIndex(i);
@@ -400,10 +400,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				}
 			}
 		}
-		if (0 < count) {
-			return true;
-		}
-		return false;
+		return 0 < count;
 	}
 
 	/**

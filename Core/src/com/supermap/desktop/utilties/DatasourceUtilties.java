@@ -1,16 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.awt.Cursor;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.JFrame;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -22,13 +11,22 @@ import com.supermap.data.Toolkit;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
-import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.implement.SmMenu;
 import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.XMLCommand;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * 数据源工具类
@@ -140,7 +138,7 @@ public class DatasourceUtilties {
 	 * @param workspace
 	 * @return
 	 */
-	public static boolean isContianMemoryDatasource(Workspace workspace) {
+	public static boolean isContainMemoryDatasource(Workspace workspace) {
 		boolean isContian = false;
 		try {
 			for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
@@ -230,7 +228,7 @@ public class DatasourceUtilties {
 					if (menuItem != null) {
 						recentDatasourceMenu.insert((IBaseItem) menuItem, 0);
 						if (recentDatasourceMenu.getItemCount() > 7) {
-							removeRecentFile(((SmMenuItem) recentDatasourceMenu.getItem(7)).getText());
+							removeRecentFile(recentDatasourceMenu.getItem(7).getText());
 						}
 						saveRecentFile(filePath);
 					}
@@ -321,7 +319,7 @@ public class DatasourceUtilties {
 									}
 
 									// 保存文件
-									XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
+									XmlUtilties.saveXml(recentFilePath, document, document.getXmlEncoding());
 									break;
 								}
 							}
@@ -338,7 +336,7 @@ public class DatasourceUtilties {
 		try {
 			for (IBaseItem item : recentDatasourceMenu.items()) {
 				if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-					recentDatasourceMenu.remove((IBaseItem) item);
+					recentDatasourceMenu.remove(item);
 				}
 			}
 
@@ -367,7 +365,7 @@ public class DatasourceUtilties {
 									}
 
 									// 保存文件
-									XmlUtilties.saveXml(recentFilePath, (Node) document, document.getXmlEncoding());
+									XmlUtilties.saveXml(recentFilePath, document, document.getXmlEncoding());
 									break;
 								}
 							}

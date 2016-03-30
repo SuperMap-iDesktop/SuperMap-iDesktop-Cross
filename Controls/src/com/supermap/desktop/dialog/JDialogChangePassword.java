@@ -1,12 +1,11 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IPasswordCheck;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
@@ -30,8 +29,8 @@ public class JDialogChangePassword extends SmDialog {
 	private JLabel labelOldPassword;
 	private JLabel labelNewPassword;
 	private JLabel labelConfirm;
-	private JButton buttonCancel;
-	private JButton buttonOK;
+	private SmButton buttonCancel;
+	private SmButton buttonOK;
 	private String oldPassword = "";
 	private String newPassword = "";
 	private String confirmPassword = "";
@@ -112,15 +111,16 @@ public class JDialogChangePassword extends SmDialog {
 	private void initializeComponents() {
 		setBounds(100, 100, 391, 160);
 
-		this.textFieldOldPassword = new JPasswordField();
-		this.textFieldNewPassword = new JPasswordField();
-		this.textFieldConfirm = new JPasswordField();
-		this.labelOldPassword = new JLabel("Old Password:");
-		this.labelNewPassword = new JLabel("New Password:");
-		this.labelConfirm = new JLabel("Confirm:");
-		this.buttonCancel = new JButton("Cancel");
-		this.buttonOK = new JButton("OK");
-		getRootPane().setDefaultButton(this.buttonOK);
+		this.getRootPane().setDefaultButton(buttonOK);
+		textFieldOldPassword = new JPasswordField();
+		textFieldNewPassword = new JPasswordField();
+		textFieldConfirm = new JPasswordField();
+		labelOldPassword = new JLabel("Old Password:");
+		labelNewPassword = new JLabel("New Password:");
+		labelConfirm = new JLabel("Confirm:");
+		buttonCancel = new SmButton("Cancel");
+		buttonOK = new SmButton("OK");
+
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(groupLayout);
 		// @formatter:off
@@ -325,24 +325,24 @@ public class JDialogChangePassword extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane(){
+	protected JRootPane createRootPane() {
 		return keyBoardPressed();
 	}
-	
+
 	@Override
 	public JRootPane keyBoardPressed() {
 		JRootPane rootPane = new JRootPane();
 		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				buttonOKClicked();				
+				buttonOKClicked();
 			}
 		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonCancelClicked();

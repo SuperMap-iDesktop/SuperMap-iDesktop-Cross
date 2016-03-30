@@ -217,6 +217,8 @@ class SymbolSettingPanel extends JPanel {
 		JLabel labelWidth = new JLabel(ControlsProperties.getString("String_Label_WidthMeasuringUnit"));
 		JLabel labelHeight = new JLabel(ControlsProperties.getString("String_Label_HightMeasuringUnit"));
 		JLabel labelAngle = new JLabel(ControlsProperties.getString("String_angle"));
+		JLabel labelPrecent = new JLabel(ControlsProperties.getString("String_precent"));
+
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -234,9 +236,11 @@ class SymbolSettingPanel extends JPanel {
 		addMarkerComponent(getSymbolMarkerAngleSpinner(), constraints, 1, 3, 1, 1);
 		addMarkerComponent(getSymbolFillOpaqueRateSpinner(), constraints, 1, 4, 1, 1);
 		addMarkerComponent(getSymbolMarkerSizeBox(), constraints, 0, 5, 2, 1);
+
 		addMarkerComponent(labelWidth, constraints, 2, 1, 1, 1);
 		addMarkerComponent(labelHeight, constraints, 2, 2, 1, 1);
 		addMarkerComponent(labelAngle, constraints, 2, 3, 1, 1);
+		addMarkerComponent(labelPrecent, constraints, 2, 4, 1, 1);
 	}
 
 	/**
