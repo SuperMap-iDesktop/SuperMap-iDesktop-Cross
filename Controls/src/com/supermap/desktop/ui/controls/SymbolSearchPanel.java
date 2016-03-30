@@ -1,31 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRegion;
@@ -36,6 +10,18 @@ import com.supermap.data.SymbolMarker;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * 符号搜索面板
@@ -111,6 +97,14 @@ class SymbolSearchPanel extends JPanel {
 			jTextFieldSymbolSearch.setMinimumSize(new Dimension(140, 25));
 			// 文本事件
 			jTextFieldSymbolSearch.getDocument().addDocumentListener(new SetDocumentListener());
+			jTextFieldSymbolSearch.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+						search();
+					}
+				}
+			});
 		}
 		return jTextFieldSymbolSearch;
 	}
@@ -124,8 +118,6 @@ class SymbolSearchPanel extends JPanel {
 	/**
 	 * 弹出历史浏览菜单
 	 * 
-	 * @param x
-	 * @param y
 	 */
 	public void popMenu() {
 		prevSearchMenu = new JPopupMenu();
@@ -313,8 +305,8 @@ class SymbolSearchPanel extends JPanel {
 			// 循环得到符号并将符号添加到Label，后将Label添加到JPanel
 			for (int i = 0; i < systemSymbolIDs.length; i++) {
 				// 这里减4主要是为了下面的文本显示
-				BufferedImage bufferedImage = new BufferedImage(width, height - 4, BufferedImage.TYPE_INT_ARGB);
-				GeoPoint geoPoint = (GeoPoint) geometry;
+				BufferedImage bufferedImage = new BufferedImage(width, height - 8, BufferedImage.TYPE_INT_ARGB);
+				GeoPoint geoPoint = geometry;
 				geoPoint.getStyle().setMarkerSymbolID(systemSymbolIDs[i]);
 				InternalToolkitControl.internalDraw(geoPoint, symbolsViewPanel.getResources(), bufferedImage.getGraphics());
 
@@ -340,7 +332,7 @@ class SymbolSearchPanel extends JPanel {
 				Point point = marker.getOrigin();
 				int x = point.x * width / UIEnvironment.symbolPointMax;
 				int y = point.y * height / UIEnvironment.symbolPointMax;
-				GeoPoint geoPoint = (GeoPoint) geometry;
+				GeoPoint geoPoint = geometry;
 				geoPoint.setX(x);
 				geoPoint.setY(y);
 				geoPoint.getStyle().setMarkerSymbolID(symbol.getID());
@@ -393,7 +385,7 @@ class SymbolSearchPanel extends JPanel {
 			for (int i = 0; i < systemSymbolIDs.length; i++) {
 				// 这里减8主要是为了下面的文本显示
 				BufferedImage bufferedImage = new BufferedImage(width, height - 8, BufferedImage.TYPE_INT_ARGB);
-				GeoLine geoLine = (GeoLine) geometry;
+				GeoLine geoLine = geometry;
 				geoLine.getStyle().setLineSymbolID(systemSymbolIDs[i]);
 				InternalToolkitControl.internalDraw(geoLine, symbolsViewPanel.getResources(), bufferedImage.getGraphics());
 
@@ -423,7 +415,7 @@ class SymbolSearchPanel extends JPanel {
 				BufferedImage bufferedImage = new BufferedImage(width, height - 8, BufferedImage.TYPE_INT_ARGB);
 
 				SymbolLine line = (SymbolLine) symbol;
-				GeoLine geoLine = (GeoLine) geometry;
+				GeoLine geoLine = geometry;
 				geoLine.getStyle().setLineSymbolID(line.getID());
 				InternalSymbolLine.internalDraw((SymbolLine) symbol, bufferedImage.getGraphics(), geoLine);
 
@@ -475,7 +467,7 @@ class SymbolSearchPanel extends JPanel {
 			for (int i = 0; i < systemSymbolIDs.length; i++) {
 				// 面的系统符号有7个
 				BufferedImage bufferedImage = new BufferedImage(width, height - 2, BufferedImage.TYPE_INT_ARGB);
-				GeoRegion geoRegion = (GeoRegion) geometry;
+				GeoRegion geoRegion = geometry;
 				geoRegion.getStyle().setFillSymbolID(systemSymbolIDs[i]);
 				InternalToolkitControl.internalDraw(geoRegion, symbolsViewPanel.getResources(), bufferedImage.getGraphics());
 
@@ -505,7 +497,7 @@ class SymbolSearchPanel extends JPanel {
 				BufferedImage bufferedImage = new BufferedImage(width, height - 2, BufferedImage.TYPE_INT_ARGB);
 
 				SymbolFill fill = (SymbolFill) symbol;
-				GeoRegion geoRegion = (GeoRegion) geometry;
+				GeoRegion geoRegion = geometry;
 				geoRegion.getStyle().setFillSymbolID(fill.getID());
 				InternalToolkitControl.internalDraw(geoRegion, symbolsViewPanel.getResources(), bufferedImage.getGraphics());
 
