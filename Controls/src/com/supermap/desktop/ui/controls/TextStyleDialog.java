@@ -366,31 +366,20 @@ public class TextStyleDialog extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dialogResult = DialogResult.CANCEL;
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.OK;
-				setVisible(false);
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				setVisible(false);
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonConfirm) {
+			dialogResult = DialogResult.OK;
+			setVisible(false);
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dialogResult = DialogResult.CANCEL;
+			dispose();
+		}
 	}
 }

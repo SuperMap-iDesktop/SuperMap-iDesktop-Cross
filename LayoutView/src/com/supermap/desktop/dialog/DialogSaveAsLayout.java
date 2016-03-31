@@ -26,8 +26,8 @@ public class DialogSaveAsLayout extends SmDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JLabel lblNewLabelLayoutName;
 	private JTextField textFieldLayoutName;
-	private SmButton okButton;
-	private SmButton cancelButton;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 	private boolean isNewWindow = false;
 	private transient Layouts layouts;
 
@@ -76,29 +76,29 @@ public class DialogSaveAsLayout extends SmDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		okButton = new SmButton("OK");
-		okButton.addActionListener(new ActionListener() {
+		buttonOk = new SmButton("OK");
+		buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		okButton.setActionCommand("OK");
-		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
-		cancelButton = new SmButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		buttonOk.setActionCommand("OK");
+		buttonPane.add(buttonOk);
+		getRootPane().setDefaultButton(buttonOk);
+		buttonCancel = new SmButton("Cancel");
+		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelButton_Click();
 			}
 		});
-		cancelButton.setActionCommand("Cancel");
-		buttonPane.add(cancelButton);
+		buttonCancel.setActionCommand("Cancel");
+		buttonPane.add(buttonCancel);
 
 		initializeResources();
 		this.setLocationRelativeTo(null);
-		getRootPane().setDefaultButton(okButton);
+		getRootPane().setDefaultButton(buttonOk);
 	}
 
 	public String getLayoutName() {
@@ -137,8 +137,8 @@ public class DialogSaveAsLayout extends SmDialog {
 		try {
 			this.setTitle(LayoutViewProperties.getString("String_Form_SaveAsLayout"));
 			this.lblNewLabelLayoutName.setText(LayoutViewProperties.getString("String_FormSaveAsLayout_LabelLayoutName"));
-			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
-			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
+			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -148,11 +148,11 @@ public class DialogSaveAsLayout extends SmDialog {
 		try {
 			String name = this.textFieldLayoutName.getText();
 			if (name == null || name.length() <= 0) {
-				this.okButton.setEnabled(false);
+				this.buttonOk.setEnabled(false);
 			} else if (!UICommonToolkit.isLawName(name, false)) {
-				this.okButton.setEnabled(false);
+				this.buttonOk.setEnabled(false);
 			} else {
-				this.okButton.setEnabled(true);
+				this.buttonOk.setEnabled(true);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -189,29 +189,17 @@ public class DialogSaveAsLayout extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButton_Click();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButton_Click();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButton_Click();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButton_Click();
+		}
 	}
 }

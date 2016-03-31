@@ -7,9 +7,15 @@ import com.supermap.desktop.ui.controls.SmDialog;
 public class ScaleEnabledContainer extends SmDialog{
 
 	@Override
-	public JRootPane keyBoardPressed() {
+	public void escapePressed() {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
-	
+
+	@Override
+	public void enterPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

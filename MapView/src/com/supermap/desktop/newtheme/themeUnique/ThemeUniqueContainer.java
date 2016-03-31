@@ -831,7 +831,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	class LayerPropertyChangeListener implements PropertyChangeListener {
 
-		@Override
+		@Override 
 		public void propertyChange(PropertyChangeEvent e) {
 			if (!themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).getName().equals(themeUniqueLayer.getName())) {
 				initComboBoxExpression();

@@ -513,6 +513,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
 			jDialogJoinItem.dispose();
 			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
+			checkChanged();
 		}
 	}
 }

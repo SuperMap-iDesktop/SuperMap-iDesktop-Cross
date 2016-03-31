@@ -36,7 +36,6 @@ import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import com.supermap.mapping.Layer;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -56,7 +55,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -657,11 +655,11 @@ public class JDialogSQLQuery extends SmDialog {
 	private void initPanelButton() {
 		// @formatter:off
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonImport,new GridBagConstraintsHelper(0,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelButton.add(buttonExport,new GridBagConstraintsHelper(1,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelButton.add(buttonQuery,new GridBagConstraintsHelper(2,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
-		panelButton.add(buttonClear,new GridBagConstraintsHelper(3,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
-		panelButton.add(buttonClose,new GridBagConstraintsHelper(4,0,1,1).setWeight(1,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		panelButton.add(buttonImport,new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
+		panelButton.add(buttonExport,new GridBagConstraintsHelper(1,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
+		panelButton.add(buttonQuery,new GridBagConstraintsHelper(2,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
+		panelButton.add(buttonClear,new GridBagConstraintsHelper(3,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
+		panelButton.add(buttonClose,new GridBagConstraintsHelper(4,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
 
 
 		// @formatter:on
@@ -894,15 +892,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener clearActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			clearScrollpaneallvalue();
-			textFieldGOTO.setText("");
-			checkButtonGetAllValueState();
-
-			textareaQueryField.clear();
-			textareaQueryCondition.clear();
-			textFieldGroupField.clear();
-			sqlTableOrderByField.clear();
-
+			clear();
 		}
 	};
 
@@ -1346,31 +1336,31 @@ public class JDialogSQLQuery extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonQuery && buttonQuery.isEnabled()) {
+			query();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClear) {
+			clear();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
+			dispose();
+		}
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (buttonQuery.isEnabled()) {
-					query();
-				}
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	private void clear() {
+		clearScrollpaneallvalue();
+		textFieldGOTO.setText("");
+		checkButtonGetAllValueState();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+		textareaQueryField.clear();
+		textareaQueryCondition.clear();
+		textFieldGroupField.clear();
+		sqlTableOrderByField.clear();
 	}
 }

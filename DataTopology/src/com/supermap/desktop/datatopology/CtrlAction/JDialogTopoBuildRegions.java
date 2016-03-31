@@ -336,19 +336,10 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			JComponent c = (JComponent) e.getSource();
 			if (c == buttonOk) {
-				boolean isTopoprogress = checkBoxtopologyPropress.isSelected();
-				if (isTopoprogress) {
-					topologyProcess();
-				}
-				topologyBuildRegion();
-				unregistAction();
-				buttonCancel.removeActionListener(buttonListener);
-				dispose();
+				okButtonClicked();
 			}
 			if (c == buttonCancel) {
-				unregistAction();
-				buttonCancel.removeActionListener(buttonListener);
-				dispose();
+				cancelButtonClicked();
 			}
 			if (c == buttonMore) {
 				openAdvanceDialog(topologyProcessingOptions);
@@ -362,6 +353,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				initTextFieldName(datasource);
 			}
 		}
+
 	}
 
 	/**
@@ -473,38 +465,34 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButtonClicked();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButtonClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButtonClicked();
+		}
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				boolean isTopoprogress = checkBoxtopologyPropress.isSelected();
-				if (isTopoprogress) {
-					topologyProcess();
-				}
-				topologyBuildRegion();
-				unregistAction();
-				buttonCancel.removeActionListener(buttonListener);
-				dispose();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	private void okButtonClicked() {
+		boolean isTopoprogress = checkBoxtopologyPropress.isSelected();
+		if (isTopoprogress) {
+			topologyProcess();
+		}
+		topologyBuildRegion();
+		unregistAction();
+		buttonCancel.removeActionListener(buttonListener);
+		dispose();
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				unregistAction();
-				buttonCancel.removeActionListener(buttonListener);
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	private void cancelButtonClicked() {
+		unregistAction();
+		buttonCancel.removeActionListener(buttonListener);
+		dispose();
 	}
 }

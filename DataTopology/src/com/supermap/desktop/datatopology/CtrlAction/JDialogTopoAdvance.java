@@ -183,13 +183,10 @@ public class JDialogTopoAdvance extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			JComponent c = (JComponent) e.getSource();
 			if (buttonSure == c) {
-				setTopologyInfo();
-				unregistActionListener();
-				dispose();
+				buttonSureClicked();
 			}
 			if (buttonQuite == c) {
-				unregistActionListener();
-				dispose();
+				quiteButtonClicked();
 			}
 			if (buttonMore == c) {
 				addItemToTextFieldFilterExpression();
@@ -236,38 +233,6 @@ public class JDialogTopoAdvance extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
-	}
-
-	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.OK);
-				setTopologyInfo();
-				unregistActionListener();
-				dispose();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.CANCEL);
-				unregistActionListener();
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
-	}
-
-	@Override
 	public DialogResult getDialogResult() {
 		return this.dialogResult;
 	}
@@ -275,5 +240,33 @@ public class JDialogTopoAdvance extends SmDialog {
 	@Override
 	public void setDialogResult(DialogResult dialogResult) {
 		this.dialogResult = dialogResult;
+	}
+
+	@Override
+	public void escapePressed() {
+		quiteButtonClicked();
+	}
+
+	@Override
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonSure) {
+			buttonSureClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonQuite) {
+			quiteButtonClicked();
+		}
+	}
+
+	private void quiteButtonClicked() {
+		setDialogResult(DialogResult.CANCEL);
+		unregistActionListener();
+		dispose();
+	}
+
+	private void buttonSureClicked() {
+		setDialogResult(DialogResult.OK);
+		setTopologyInfo();
+		unregistActionListener();
+		dispose();
 	}
 }

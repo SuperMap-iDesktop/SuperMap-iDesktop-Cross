@@ -35,12 +35,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * 栅格数据管理器
- * Created by XiaJt on 2016/1/1.
+ * 栅格数据管理器 Created by XiaJt on 2016/1/1.
  */
 public class JDialogPyramidManager extends SmDialog {
 
-	//region 定义变量
+	// region 定义变量
 	// 工具条
 	private JToolBar toolBar;
 	private JButton buttonAdd;
@@ -63,18 +62,15 @@ public class JDialogPyramidManager extends SmDialog {
 	private SmButton buttonRemove;
 	private SmButton buttonClose;
 
-
 	public static final int ColumnSourceDatasetIndex = 0;
 	public static final int ColumnSourceDatasourceIndex = 1;
 
 	private DatasetChooser datasetChooser;
 
-	private DatasetType[] supportDatasetTypes = new DatasetType[]{
-			DatasetType.GRID, DatasetType.GRIDCOLLECTION,
-			DatasetType.IMAGE, DatasetType.IMAGECOLLECTION
-	};
+	private DatasetType[] supportDatasetTypes = new DatasetType[] { DatasetType.GRID, DatasetType.GRIDCOLLECTION, DatasetType.IMAGE,
+			DatasetType.IMAGECOLLECTION };
 
-	//endregion
+	// endregion
 
 	public JDialogPyramidManager() {
 		initComponents();
@@ -108,7 +104,6 @@ public class JDialogPyramidManager extends SmDialog {
 		this.buttonRemove = new SmButton();
 		this.buttonClose = new SmButton();
 
-
 		datasetChooser = new DatasetChooser(this) {
 			@Override
 			protected boolean isSupportDatasource(Datasource datasource) {
@@ -129,19 +124,22 @@ public class JDialogPyramidManager extends SmDialog {
 		this.getRootPane().setDefaultButton(buttonCreate);
 	}
 
-
 	private void initResources() {
-		this.buttonAdd.setIcon(new ImageIcon(JDialogPyramidManager.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
-		this.buttonSelectAll.setIcon(new ImageIcon(JDialogPyramidManager.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogPyramidManager.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		this.buttonDelete.setIcon(new ImageIcon(JDialogPyramidManager.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+		this.buttonAdd
+				.setIcon(new ImageIcon(JDialogPyramidManager.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
+		this.buttonSelectAll.setIcon(new ImageIcon(JDialogPyramidManager.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogPyramidManager.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
+		this.buttonDelete.setIcon(new ImageIcon(JDialogPyramidManager.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.checkBoxAutoClose.setText(CommonProperties.getString(CommonProperties.CloseDialog));
 		this.buttonCreate.setText(CommonProperties.getString(CommonProperties.Create));
 		this.buttonRemove.setText(CommonProperties.getString(CommonProperties.Delete));
 		this.buttonClose.setText(CommonProperties.getString(CommonProperties.Close));
 	}
 
-	//region 初始化布局
+	// region 初始化布局
 	private void initLayouts() {
 		initToolBar();
 		initTable();
@@ -149,12 +147,18 @@ public class JDialogPyramidManager extends SmDialog {
 
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
-		centerPanel.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 0));
-		centerPanel.add(scrollPaneTable, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 98).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 5, 0));
-		centerPanel.add(panelButtons, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		centerPanel.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST)
+				.setInsets(0, 0, 5, 0));
+		centerPanel.add(
+				scrollPaneTable,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 98).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+						.setInsets(0, 0, 5, 0));
+		centerPanel.add(panelButtons,
+				new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 
 		this.setLayout(new GridBagLayout());
-		this.add(centerPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10));
+		this.add(centerPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER)
+				.setInsets(10));
 	}
 
 	private void initToolBar() {
@@ -182,14 +186,25 @@ public class JDialogPyramidManager extends SmDialog {
 
 	private void initPanelButtons() {
 		this.panelButtons.setLayout(new GridBagLayout());
-		this.panelButtons.add(checkBoxAutoClose, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(97, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 0, 5));
-		this.panelButtons.add(buttonCreate, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5));
-		this.panelButtons.add(buttonRemove, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5));
-		this.panelButtons.add(buttonClose, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		this.panelButtons.add(
+				checkBoxAutoClose,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(97, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST)
+						.setInsets(0, 0, 0, 5));
+		this.panelButtons.add(
+				buttonCreate,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 0, 5));
+		this.panelButtons.add(
+				buttonRemove,
+				new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 0, 5));
+		this.panelButtons.add(buttonClose,
+				new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
 	}
-	//endregion
 
-	//region 添加监听事件
+	// endregion
+
+	// region 添加监听事件
 	private void addListeners() {
 		this.buttonAdd.addActionListener(new ActionListener() {
 			@Override
@@ -311,8 +326,7 @@ public class JDialogPyramidManager extends SmDialog {
 		}
 	}
 
-
-	//region 检查按钮是否可用
+	// region 检查按钮是否可用
 	private void checkButtonStates() {
 		checkButtonSelectAllAndInvertState();
 		checkButtonDeleteState();
@@ -326,7 +340,6 @@ public class JDialogPyramidManager extends SmDialog {
 			this.buttonSelectInvert.setEnabled(this.tableDatasets.getRowCount() > 0);
 		}
 	}
-
 
 	private void checkButtonDeleteState() {
 		if (this.tableDatasets.getSelectedRows().length > 0 != buttonDelete.isEnabled()) {
@@ -346,9 +359,9 @@ public class JDialogPyramidManager extends SmDialog {
 			this.buttonRemove.setEnabled(pyramidManagerTableModel.isRemoveEnable());
 		}
 	}
-	//endregion
-	//endregion
 
+	// endregion
+	// endregion
 
 	private void initComponentStates() {
 		this.buttonSelectAll.setEnabled(false);
@@ -386,30 +399,21 @@ public class JDialogPyramidManager extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		JDialogPyramidManager.this.dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				bulidPyramid();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonCreate) {
+			bulidPyramid();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonRemove) {
+			deletePyramid();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
+			JDialogPyramidManager.this.dispose();
+		}
 	}
-	
+
 }

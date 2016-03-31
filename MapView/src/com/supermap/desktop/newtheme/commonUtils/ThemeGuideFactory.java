@@ -80,16 +80,7 @@ public class ThemeGuideFactory {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
 				container.setPanel(panel);
 			}
-			panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
-
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					if (!container.getCheckBoxRefreshAtOnce().isSelected()) {
-						container.getButtonApply().setEnabled(true);
-						container.setLayerPropertyChanged(true);
-					}
-				}
-			});
+			layerPropertyChange(panel);
 			getMapControl().getMap().addMapClosedListener(new MapClosedListener() {
 
 				@Override
@@ -114,6 +105,19 @@ public class ThemeGuideFactory {
 			return container;
 		}
 		return null;
+	}
+
+	private static void layerPropertyChange(final ThemeChangePanel panel) {
+		panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (!container.getCheckBoxRefreshAtOnce().isSelected()) {
+					container.getButtonApply().setEnabled(true);
+					container.setLayerPropertyChanged(true);
+				}
+			}
+		});
 	}
 
 	/**
@@ -353,6 +357,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeUniqueContainer);
 			if (null != container) {
 				container.setPanel(themeUniqueContainer);
+				layerPropertyChange(themeUniqueContainer);
 			}
 		}
 	}
@@ -370,6 +375,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeRangeContainer);
 			if (null != container) {
 				container.setPanel(themeRangeContainer);
+				layerPropertyChange(themeRangeContainer);
 			}
 		}
 	}
@@ -387,6 +393,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeLabelUniformContainer);
 			if (null != container) {
 				container.setPanel(themeLabelUniformContainer);
+				layerPropertyChange(themeLabelUniformContainer);
 			}
 		}
 	}
@@ -404,6 +411,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeLabelRangeContainer);
 			if (null != container) {
 				container.setPanel(themeLabelRangeContainer);
+				layerPropertyChange(themeLabelRangeContainer);
 			}
 		}
 	}
@@ -421,6 +429,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeGridUniqueContainer);
 			if (null != container) {
 				container.setPanel(themeGridUniqueContainer);
+				layerPropertyChange(themeGridUniqueContainer);
 			}
 		}
 	}
@@ -438,6 +447,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeGridRangeContainer);
 			if (null != container) {
 				container.setPanel(themeGridRangeContainer);
+				layerPropertyChange(themeGridRangeContainer);
 			}
 		}
 	}
@@ -455,6 +465,7 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
 			if (null != container) {
 				container.setPanel(themeGraphContainer);
+				layerPropertyChange(themeGraphContainer);
 			}
 		}
 	}

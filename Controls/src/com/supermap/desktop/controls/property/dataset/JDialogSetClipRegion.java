@@ -35,7 +35,7 @@ public class JDialogSetClipRegion extends SmDialog {
 	private JLabel labelFilter;
 	private JTextField textFieldFilter;
 	private JButton buttonFilter;
-	private SmButton buttonOK;
+	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
 	private transient DatasetVector datasetVector;
@@ -58,7 +58,7 @@ public class JDialogSetClipRegion extends SmDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == buttonOK) {
+			if (e.getSource() == buttonOk) {
 				buttonOKClicked();
 			} else if (e.getSource() == buttonCancel) {
 				buttonCancelClicked();
@@ -101,7 +101,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.labelFilter = new JLabel("Filter:");
 		this.textFieldFilter = new JTextField();
 		this.buttonFilter = new JButton("...");
-		this.buttonOK = new SmButton("OK");
+		this.buttonOk = new SmButton("OK");
 		this.buttonCancel = new SmButton("Cancel");
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
@@ -124,7 +124,7 @@ public class JDialogSetClipRegion extends SmDialog {
 										.addComponent(this.buttonFilter))))
 				.addGroup(groupLayout.createSequentialGroup()
 						.addContainerGap(10, Short.MAX_VALUE)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
@@ -142,7 +142,7 @@ public class JDialogSetClipRegion extends SmDialog {
 						.addComponent(this.buttonFilter))
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 	}
@@ -152,14 +152,14 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.labelDatasource.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
 		this.labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Dataset));
 		this.labelFilter.setText(ControlsProperties.getString("String_LabelFilter"));
-		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
 	private void registerEvents() {
 		this.comboBoxDatasource.addItemListener(this.itemListener);
 		this.comboBoxDataset.addItemListener(this.itemListener);
-		this.buttonOK.addActionListener(this.actionListener);
+		this.buttonOk.addActionListener(this.actionListener);
 		this.buttonCancel.addActionListener(this.actionListener);
 	}
 
@@ -218,37 +218,26 @@ public class JDialogSetClipRegion extends SmDialog {
 	}
 
 	private void setComponentEnabled() {
-		this.buttonOK.setEnabled(this.datasetVector != null);
-		if (buttonOK.isEnabled()) {
-			this.getRootPane().setDefaultButton(this.buttonOK);
+		this.buttonOk.setEnabled(this.datasetVector != null);
+		if (buttonOk.isEnabled()) {
+			this.getRootPane().setDefaultButton(this.buttonOk);
 		}
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dialogResult = DialogResult.CANCEL;
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOKClicked();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOKClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dialogResult = DialogResult.CANCEL;
+			dispose();
+		}
 	}
 }

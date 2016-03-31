@@ -46,8 +46,8 @@ public class JDialogSizeableTemplate extends SmDialog {
 	private SmButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox chckbxAutoClose;
-	private SmButton okButton;
-	private SmButton cancelButton;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 
 	/**
 	 * Create the dialog.
@@ -154,52 +154,52 @@ public class JDialogSizeableTemplate extends SmDialog {
 		this.chckbxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		this.chckbxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 
-		okButton = new SmButton("UnSave");
-		okButton.setPreferredSize(new Dimension(75, 23));
-		okButton.addActionListener(new ActionListener() {
+		buttonOk = new SmButton("UnSave");
+		buttonOk.setPreferredSize(new Dimension(75, 23));
+		buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				buttonUnSave_Click();
+				buttonOkClick();
 			}
 		});
-		this.okButton.setToolTipText("");
-		this.okButton.setActionCommand("OK");
+		this.buttonOk.setToolTipText("");
+		this.buttonOk.setActionCommand("OK");
 
-		cancelButton = new SmButton("Cancel");
-		cancelButton.setPreferredSize(new Dimension(75, 23));
-		cancelButton.addActionListener(new ActionListener() {
+		buttonCancel = new SmButton("Cancel");
+		buttonCancel.setPreferredSize(new Dimension(75, 23));
+		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				buttonClose_Click();
+				buttonCancelClick();
 			}
 		});
-		this.cancelButton.setToolTipText("");
-		this.cancelButton.setActionCommand("Cancel");
+		this.buttonCancel.setToolTipText("");
+		this.buttonCancel.setActionCommand("Cancel");
 
 		GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
 		gl_buttonPane.setHorizontalGroup(gl_buttonPane.createParallelGroup(Alignment.TRAILING).addGroup(
 				gl_buttonPane.createSequentialGroup().addContainerGap().addComponent(chckbxAutoClose)
 						.addPreferredGap(ComponentPlacement.RELATED, 215, Short.MAX_VALUE)
-						.addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(buttonOk, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap()));
+						.addComponent(buttonCancel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap()));
 		gl_buttonPane.setVerticalGroup(gl_buttonPane.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_buttonPane
 						.createSequentialGroup()
 						.addGap(5)
 						.addGroup(
-								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(okButton).addComponent(chckbxAutoClose)
-										.addComponent(cancelButton)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(buttonOk).addComponent(chckbxAutoClose)
+										.addComponent(buttonCancel)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		buttonPane.setLayout(gl_buttonPane);
-		this.getRootPane().setDefaultButton(this.okButton);
+		this.getRootPane().setDefaultButton(this.buttonOk);
 		initializeResources();
 	}
 
 	private void initializeResources() {
 		try {
 			this.setTitle(CoreProperties.getString("String_Save"));
-			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
-			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
+			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
 
 			table.getColumnModel().getColumn(1).setHeaderValue(CoreProperties.getString("String_Name"));
 			table.getColumnModel().getColumn(2).setHeaderValue(CoreProperties.getString("String_DataType"));
@@ -346,7 +346,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		}
 	}
 
-	private void buttonUnSave_Click() {
+	private void buttonOkClick() {
 		try {
 			this.dispose();
 			this.dialogResult = DialogResult.NO;
@@ -355,7 +355,7 @@ public class JDialogSizeableTemplate extends SmDialog {
 		}
 	}
 
-	private void buttonClose_Click() {
+	private void buttonCancelClick() {
 		try {
 			this.setVisible(false);
 			this.dialogResult = DialogResult.CANCEL;
@@ -365,29 +365,17 @@ public class JDialogSizeableTemplate extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonCancelClick();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonUnSave_Click();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonClose_Click();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOkClick();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			buttonCancelClick();
+		}
 	}
 }

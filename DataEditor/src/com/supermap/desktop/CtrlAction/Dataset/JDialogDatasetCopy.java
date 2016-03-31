@@ -73,7 +73,7 @@ public class JDialogDatasetCopy extends SmDialog {
 	private transient Dataset[] datasets;
 	private JScrollPane scrollPaneTable;
 	private DatasourceComboBox targetBox;
-	
+
 	private MouseAdapter tableMouseListener;
 	private KeyAdapter tableKeyListener;
 	private MouseAdapter scrollPaneMouseListener;
@@ -94,6 +94,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		initResources();
 		registActionListener();
 	}
+
 	public JDialogDatasetCopy(Dataset[] datasets) {
 		this.datasets = datasets;
 		initComponents();
@@ -201,7 +202,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		});
 	}
 
-	private void unregistActionListener(){
+	private void unregistActionListener() {
 		this.table.removeMouseListener(this.tableMouseListener);
 		this.table.removeKeyListener(this.tableKeyListener);
 		this.scrollPaneTable.removeMouseListener(this.scrollPaneMouseListener);
@@ -214,7 +215,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.buttonCancel.removeActionListener(this.buttonCancelListener);
 		this.targetBox.removeActionListener(this.targetBoxListener);
 	}
-	
+
 	public void initComponents() {
 		this.setModal(true);
 		setBounds(100, 100, 677, 405);
@@ -228,9 +229,9 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.table.setRowHeight(23);
 		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		@SuppressWarnings("serial")
-		DDLExportTableModel tableModel = new DDLExportTableModel(new String[]{"Dataset", "CurrentDatasource", "TargetDatasource", "TargetDataset",
-				"EncodeType", "Charset"}) {
-			boolean[] columnEditables = new boolean[]{false, false, true, true, true, true};
+		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "Dataset", "CurrentDatasource", "TargetDatasource", "TargetDataset",
+				"EncodeType", "Charset" }) {
+			boolean[] columnEditables = new boolean[] { false, false, true, true, true, true };
 
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -273,7 +274,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		buttonSelectInvert.setEnabled(false);
 		buttonSelectInvert.setIcon(new ImageIcon(JDialogDatasetCopy.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		
+
 		this.toolBar.add(buttonSelectInvert);
 		this.toolBar.add(createSeparator());
 		this.buttonDelete = new JButton();
@@ -289,7 +290,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.buttonSetting.setEnabled(false);
 		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetCopy.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
-		
+
 		this.toolBar.add(buttonSetting);
 		this.contentPanel.setLayout(gl_contentPanel);
 
@@ -302,12 +303,12 @@ public class JDialogDatasetCopy extends SmDialog {
 		this.checkBoxAutoClose.setSelected(true);
 		this.buttonOk = new SmButton("OK");
 		this.buttonOk.setEnabled(false);
-		
+
 		this.buttonOk.setToolTipText("");
 		this.buttonOk.setActionCommand("OK");
 
 		this.buttonCancel = new SmButton("Cancel");
-		
+
 		this.buttonCancel.setToolTipText("");
 		this.buttonCancel.setActionCommand("Cancel");
 
@@ -818,29 +819,17 @@ public class JDialogDatasetCopy extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButton_Click();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				copyDataset();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			copyDataset();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButton_Click();
+		}
 	}
 }

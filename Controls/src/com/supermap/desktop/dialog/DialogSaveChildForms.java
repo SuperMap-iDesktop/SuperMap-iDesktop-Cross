@@ -1,7 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -14,13 +12,10 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.StringUtilties;
-
-import javax.swing.ImageIcon;
-
-import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -28,10 +23,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
@@ -235,8 +229,11 @@ public class DialogSaveChildForms extends SmDialog {
 		try {
 			this.setTitle(CoreProperties.getString("String_Save"));
 			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonCancel.setToolTipText(CommonProperties.getString("String_Button_Cancel"));
 			this.buttonSave.setText(CoreProperties.getString("String_Save"));
+			this.buttonSave.setToolTipText(CoreProperties.getString("String_Save"));
 			this.buttonUnSave.setText(CoreProperties.getString("String_FormSaveWindow_ButtonNotSave"));
+			this.buttonUnSave.setToolTipText(CoreProperties.getString("String_FormSaveWindow_ButtonNotSave"));
 
 			tableChildForms.getColumnModel().getColumn(FormInfoTableModel.NAME).setHeaderValue(CoreProperties.getString("String_Name"));
 			tableChildForms.getColumnModel().getColumn(FormInfoTableModel.TYPE).setHeaderValue(CoreProperties.getString("String_DataType"));
@@ -440,8 +437,8 @@ public class DialogSaveChildForms extends SmDialog {
 
 	private void buttonClose_Click() {
 		try {
-			this.setVisible(false);
 			this.dialogResult = DialogResult.CANCEL;
+			this.dispose();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -543,30 +540,20 @@ public class DialogSaveChildForms extends SmDialog {
 	}
 	
 	@Override
-	protected JRootPane createRootPane(){
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonClose_Click();
 	}
-	
+
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonSave_Click();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton()==this.buttonSave) {
+			buttonSave_Click();
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonUnSave) {
+			buttonUnSave_Click();
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
+			buttonClose_Click();
+		}
 	}
 }

@@ -49,6 +49,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
@@ -326,7 +327,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.tableLabelInfo.setRowHeight(20);
 		TableColumn visibleColumn = this.tableLabelInfo.getColumn(MapViewProperties.getString("String_Title_Visible"));
 		visibleColumn.setMaxWidth(40);
-		initColumnIcon();
+		List<ThemeLabelItem> items = initColumnIcon();
+		this.tableLabelInfo.getColumnModel().getColumn(2).setCellRenderer(new TableColorCellRenderer(items));
 		this.tableLabelInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableLabelInfo;
@@ -335,9 +337,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	/**
 	 * 填充图片和字段
 	 */
-	private void initColumnIcon() {
+	private List<ThemeLabelItem> initColumnIcon() {
+		List<ThemeLabelItem> result = new ArrayList<ThemeLabelItem>();
 		for (int i = 0; i < this.labelCount; i++) {
 			ThemeLabelItem rangeItem = this.themeLabel.getItem(i);
+			result.add(rangeItem);
 			boolean isVisible = rangeItem.isVisible();
 			ImageIcon visibleIcon = InternalImageIconFactory.VISIBLE;
 			if (!isVisible) {
@@ -361,6 +365,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			rangeItem.setCaption(caption);
 			this.tableLabelInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
 		}
+		return result;
 	}
 
 	/**
@@ -437,7 +442,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener );
+		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -778,11 +783,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_SquareRoot")));
-//					JOptionPane.showMessageDialog(
-//							null,
-//							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//									MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
+					// JOptionPane.showMessageDialog(
+					// null,
+					// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+					// MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+					// JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -806,11 +811,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_Logarithm")));
-//					JOptionPane.showMessageDialog(
-//							null,
-//							MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//									MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-//							JOptionPane.ERROR_MESSAGE);
+					// JOptionPane.showMessageDialog(
+					// null,
+					// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+					// MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+					// JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -854,11 +859,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 有负数且为平方根分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_SquareRoot")));
-//				JOptionPane.showMessageDialog(
-//						null,
-//						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//								MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
+				// JOptionPane.showMessageDialog(
+				// null,
+				// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+				// MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
+				// JOptionPane.ERROR_MESSAGE);
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;
@@ -867,11 +872,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 有负数且为对数分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_Logarithm")));
-//				JOptionPane.showMessageDialog(
-//						null,
-//						MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-//								MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-//						JOptionPane.ERROR_MESSAGE);
+				// JOptionPane.showMessageDialog(
+				// null,
+				// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
+				// MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
+				// JOptionPane.ERROR_MESSAGE);
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;

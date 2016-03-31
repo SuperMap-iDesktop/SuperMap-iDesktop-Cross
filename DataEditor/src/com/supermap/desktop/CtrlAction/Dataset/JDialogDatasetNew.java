@@ -62,8 +62,8 @@ public class JDialogDatasetNew extends SmDialog {
 	private JButton buttonSetting;
 	private MutiTable table;
 	private JCheckBox checkboxAutoClose;
-	private SmButton okButton;
-	private SmButton cancelButton;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 	private String defaultDatasetName = "";
 	private transient Datasource targetDatasource;
 
@@ -197,17 +197,17 @@ public class JDialogDatasetNew extends SmDialog {
 		checkboxAutoClose.setVerticalAlignment(SwingConstants.TOP);
 		checkboxAutoClose.setHorizontalAlignment(SwingConstants.LEFT);
 		checkboxAutoClose.setSelected(true);
-		okButton = new SmButton();
-		okButton.addActionListener(new ActionListener() {
+		buttonOk = new SmButton();
+		buttonOk.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		this.getRootPane().setDefaultButton(okButton);
-		cancelButton = new SmButton();
-		cancelButton.addActionListener(new ActionListener() {
+		this.getRootPane().setDefaultButton(buttonOk);
+		buttonCancel = new SmButton();
+		buttonCancel.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -219,15 +219,15 @@ public class JDialogDatasetNew extends SmDialog {
 		GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
 		gl_buttonPane.setHorizontalGroup(gl_buttonPane.createParallelGroup(Alignment.TRAILING).addGroup(
 				gl_buttonPane.createSequentialGroup().addContainerGap().addComponent(checkboxAutoClose)
-						.addPreferredGap(ComponentPlacement.RELATED, 227, Short.MAX_VALUE).addComponent(okButton, 75, 75, 75)
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(cancelButton, 75, 75, 75).addContainerGap()));
+						.addPreferredGap(ComponentPlacement.RELATED, 227, Short.MAX_VALUE).addComponent(buttonOk, 75, 75, 75)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(buttonCancel, 75, 75, 75).addContainerGap()));
 		gl_buttonPane.setVerticalGroup(gl_buttonPane.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_buttonPane
 						.createSequentialGroup()
 						.addGap(5)
 						.addGroup(
-								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(okButton).addComponent(checkboxAutoClose)
-										.addComponent(cancelButton)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+								gl_buttonPane.createParallelGroup(Alignment.BASELINE, false).addComponent(buttonOk).addComponent(checkboxAutoClose)
+										.addComponent(buttonCancel)).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		buttonPane.setLayout(gl_buttonPane);
 		// @formatter:on
 
@@ -248,8 +248,8 @@ public class JDialogDatasetNew extends SmDialog {
 	private void initializeResources() {
 		if (table != null) {
 			this.setTitle(DataEditorProperties.getString("String_ToolStripMenuItem_NewDataset"));
-			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
-			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
+			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
 
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_INDEX).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_TARGETDATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
@@ -913,30 +913,19 @@ public class JDialogDatasetNew extends SmDialog {
 			return comboboxEncodingType.getSelectedItem();
 		}
 	}
+
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButton_Click();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButton_Click();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButton_Click();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButton_Click();
+		}
 	}
 }

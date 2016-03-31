@@ -1187,29 +1187,17 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonCloseClicked();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				applyPrjCoordSys();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonCloseClicked();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonApply) {
+			applyPrjCoordSys();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
+			buttonCloseClicked();
+		}
 	}
 }

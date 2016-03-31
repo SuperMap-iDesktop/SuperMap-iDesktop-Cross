@@ -38,7 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -61,7 +60,7 @@ public class DatasetChooser extends SmDialog {
 	protected SmButton buttonOk = new SmButton("string_button_sure");
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
-	private SmButton cancelButton = new SmButton("string_button_quit");
+	private SmButton buttonCancel = new SmButton("string_button_quit");
 
 	private JLabel labelPath = new JLabel("String_FormDatasetBrowse_ToolStripLabelPath");
 	private JLabel labelScense = new JLabel("String_FormDatasetBrowse_ToolStripLabelDisplayType");
@@ -163,7 +162,7 @@ public class DatasetChooser extends SmDialog {
 						.addComponent(panelTable, GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
 				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 						.addComponent(buttonOk)
-						.addComponent(cancelButton)));
+						.addComponent(buttonCancel)));
 
 		gl_contentPane.setVerticalGroup(gl_contentPane.createSequentialGroup()
 				.addComponent(toolBar)
@@ -172,7 +171,7 @@ public class DatasetChooser extends SmDialog {
 						.addComponent(panelTable))
 				.addGroup(gl_contentPane.createParallelGroup()
 						.addComponent(buttonOk)
-						.addComponent(cancelButton)));
+						.addComponent(buttonCancel)));
 
 		gl_contentPane.setAutoCreateContainerGaps(true);
 		gl_contentPane.setAutoCreateGaps(true);
@@ -230,7 +229,7 @@ public class DatasetChooser extends SmDialog {
 		);
 		this.buttonOk.addActionListener(new CommonButtonAction());
 		this.buttonOk.setActionCommand("OK");
-		this.cancelButton.addActionListener(new CommonButtonAction());
+		this.buttonCancel.addActionListener(new CommonButtonAction());
 
 		this.table = new SortTable();
 		this.tableModel = new MySortableTableModel();
@@ -311,7 +310,7 @@ public class DatasetChooser extends SmDialog {
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
 		this.labelSearch.setIcon(new ImageIcon(DatasetChooser.class.getResource("/com/supermap/desktop/controlsresources/SortType/Image_FindFiles.png")));
 		this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
-		this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 		this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
 		this.buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
 	}
@@ -487,7 +486,7 @@ public class DatasetChooser extends SmDialog {
 			} else if (c == DatasetChooser.this.buttonInvertSelect) {
 				// 反选
 				TableUtilties.invertSelection(DatasetChooser.this.table);
-			} else if (c == DatasetChooser.this.cancelButton) {
+			} else if (c == DatasetChooser.this.buttonCancel) {
 				// 关闭
 				setDialogResult(DialogResult.CANCEL);
 				dispose();
@@ -590,31 +589,24 @@ public class DatasetChooser extends SmDialog {
 		}
 	}
 
+
 	@Override
-	protected JRootPane createRootPane(){
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButtonClicked();
 	}
-	
+
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOkClicked();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.CANCEL);
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton()==this.buttonOk) {
+			buttonOkClicked();
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
+			cancelButtonClicked();
+		}
+	}
+
+	private void cancelButtonClicked() {
+		setDialogResult(DialogResult.CANCEL);
+		dispose();
 	}
 }

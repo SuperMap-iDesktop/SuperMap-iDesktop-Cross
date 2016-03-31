@@ -16,9 +16,9 @@ public class SmButtonStyleImpl implements ISmButtonStyle {
 	}
 
 	private void defaultInit() {
-		preferredSize = new Dimension(75, 25);
-		maximumSize = new Dimension(75, 25);
-		minimumSize = new Dimension(75, 25);
+		preferredSize = new Dimension(80, 25);
+		maximumSize = new Dimension(80, 25);
+		minimumSize = new Dimension(80, 25);
 	}
 
 	@Override

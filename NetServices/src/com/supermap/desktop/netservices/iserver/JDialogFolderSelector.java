@@ -26,7 +26,7 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JLabel labelMessage;
-	private SmButton buttonOK;
+	private SmButton buttonOk;
 	private SmButton buttonCancel;
 	private PanelFolderSelector panelFolderSelector;
 	private String workspacePath;
@@ -37,8 +37,8 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 		public void FileSelectedChange(FileSelectedChangeEvent e) {
 			File workspaceFile = new File(workspacePath);
 			if (workspaceFile.equals(e.getFile())) {
-				buttonOK.setEnabled(e.getFile().isSelected());
-				getRootPane().setDefaultButton(buttonOK);
+				buttonOk.setEnabled(e.getFile().isSelected());
+				getRootPane().setDefaultButton(buttonOk);
 			}
 		}
 	};
@@ -56,9 +56,9 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private void initializeComponents() {
 		setTitle("Confirm");
 		this.labelMessage = new JLabel("message");
-		this.buttonOK = new SmButton("OK");
-		this.buttonOK.setEnabled(true);
-		this.buttonOK.addActionListener(this);
+		this.buttonOk = new SmButton("OK");
+		this.buttonOk.setEnabled(true);
+		this.buttonOk.addActionListener(this);
 		this.buttonCancel = new SmButton("Cancel");
 		this.buttonCancel.addActionListener(this);
 
@@ -73,14 +73,14 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 				.addComponent(this.panelFolderSelector,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addComponent(this.labelMessage,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.panelFolderSelector,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addGroup(groupLayout.createParallelGroup()
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 	}
@@ -88,13 +88,13 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	private void initializeResources() {
 		setTitle(NetServicesProperties.getString("String_Title_ConfirmSelection"));
 		this.labelMessage.setText(NetServicesProperties.getString("String_Message_ConfirmSelection"));
-		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == this.buttonOK) {
+		if (e.getSource() == this.buttonOk) {
 			this.dialogResult = DialogResult.OK;
 		} else if (e.getSource() == this.buttonCancel) {
 			this.dialogResult = DialogResult.CANCEL;
@@ -103,29 +103,17 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dialogResult = DialogResult.CANCEL;
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.OK;
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			dialogResult = DialogResult.OK;
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dialogResult = DialogResult.CANCEL;
+		}
 	}
 }

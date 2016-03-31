@@ -628,34 +628,22 @@ public class DataImportFrame extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// 导入
-				CommonFunction.importData(table, fileInfos);
-				if (checkBoxAutoClose.isSelected()) {
-					dispose();
-				}
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton()==this.buttonImport) {
+			// 导入
+			CommonFunction.importData(table, fileInfos);
+			if (checkBoxAutoClose.isSelected()) {
 				dispose();
 			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonClose) {
+			dispose();
+		}
 	}
 
 }

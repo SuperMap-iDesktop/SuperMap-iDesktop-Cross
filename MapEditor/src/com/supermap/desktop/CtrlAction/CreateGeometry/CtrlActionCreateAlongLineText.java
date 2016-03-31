@@ -122,8 +122,8 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		private JLabel labelDescribe;
 		private JTextField textFieldText;
 		private JPanel panelButton;
-		private SmButton buttonOK;
-		private SmButton buttonCancle;
+		private SmButton buttonOk;
+		private SmButton buttonCancel;
 		private GeoLine geoLine;
 
 		public JDialogCreateAlongText(IFormMap formMap, GeoCompound geoCompound) {
@@ -142,20 +142,20 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			labelDescribe = new JLabel();
 			textFieldText = new JTextField();
 			panelButton = new JPanel();
-			buttonOK = new SmButton();
-			buttonCancle = new SmButton();
+			buttonOk = new SmButton();
+			buttonCancel = new SmButton();
 			this.setSize((int) (360 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			this.buttonOK.setEnabled(false);
-			getRootPane().setDefaultButton(this.buttonOK);
+			this.buttonOk.setEnabled(false);
+			getRootPane().setDefaultButton(this.buttonOk);
 		}
 
 		private void initListeners() {
 			this.textFieldText.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if (e.getKeyChar() == KeyEvent.VK_ENTER && buttonOK.isEnabled()) {
+					if (e.getKeyChar() == KeyEvent.VK_ENTER && buttonOk.isEnabled()) {
 						buttonOkClicked();
 					} else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 						dispose();
@@ -178,14 +178,14 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 					updateText();
 				}
 			});
-			this.buttonOK.addActionListener(new ActionListener() {
+			this.buttonOk.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					buttonOkClicked();
 				}
 			});
 
-			this.buttonCancle.addActionListener(new ActionListener() {
+			this.buttonCancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					dialogResult = DialogResult.CANCEL;
@@ -201,10 +201,10 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
 		private void updateText() {
 			if (StringUtilties.isNullOrEmpty(getText().trim())) {
-				buttonOK.setEnabled(false);
+				buttonOk.setEnabled(false);
 				removeTrackingObject();
 			} else {
-				buttonOK.setEnabled(true);
+				buttonOk.setEnabled(true);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
 				geoText.getTextStyle().setFontName("");
 				geoText.getTextStyle().setSizeFixed(false);
@@ -237,9 +237,9 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
 		private void initLayout() {
 			panelButton.setLayout(new GridBagLayout());
-			panelButton.add(buttonOK,
+			panelButton.add(buttonOk,
 					new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(99, 1));
-			panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+			panelButton.add(buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
 					.setWeight(1, 1));
 
 			JPanel panel = new JPanel();
@@ -258,8 +258,8 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		private void initResources() {
 			this.setTitle(MapEditorProperties.getString("String_AlongLineTitle"));
 			labelDescribe.setText((MapEditorProperties.getString("String_AlongLineText")));
-			buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
-			buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+			buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
+			buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		}
 
 		public String getText() {
@@ -283,31 +283,20 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		}
 
 		@Override
-		protected JRootPane createRootPane() {
-			return keyBoardPressed();
+		public void escapePressed() {
+			dialogResult = DialogResult.CANCEL;
+			dispose();
 		}
 
 		@Override
-		public JRootPane keyBoardPressed() {
-			JRootPane rootPane = new JRootPane();
-			KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-			rootPane.registerKeyboardAction(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					buttonOkClicked();
-				}
-			}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-			KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-			rootPane.registerKeyboardAction(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dialogResult = DialogResult.CANCEL;
-					dispose();
-				}
-			}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-			return rootPane;
+		public void enterPressed() {
+			if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+				buttonOkClicked();
+			}
+			if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+				dialogResult = DialogResult.CANCEL;
+				dispose();
+			}
 		}
 	}
 }

@@ -58,7 +58,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 鎺т欢鍒濆鍖�
+	 * 控件初始化
 	 */
 	private void initComponent() {
 		this.setSize(400, 220);
@@ -117,7 +117,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 璧勬簮鍖�
+	 * 资源化
 	 */
 	private void initResources() {
 		this.setTitle(TabularViewProperties.getString("String_FormTabularGoTo_Title"));
@@ -129,7 +129,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 鍒濆鍖栧睘鎬�
+	 * 初始化属性
 	 */
 	private void init() {
 		jTextFieldNowPlace.setEditable(false);
@@ -141,7 +141,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 閲嶆柊璁＄畻鏄剧ず鐨勫��
+	 * 重新计算显示的值
 	 */
 	private void resetValue() {
 		IFormTabular formTabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
@@ -217,10 +217,10 @@ public class JDialogTabularGoTo extends SmDialog {
 		try {
 			int goToRow = 0;
 			if (jRadioButtonAbsolute.isSelected()) {
-				// 缁濆
+				// 绝对
 				goToRow = Integer.parseInt(jTextFieldAbsolutePlace.getText());
 			} else {
-				// 鐩稿
+				// 相对
 				goToRow = selectRow + Integer.parseInt(jTextFieldRelativePlace.getText());
 			}
 			if (goToRow == selectRow) {
@@ -242,30 +242,18 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				goToRow();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.jButtonGoTo) {
+			goToRow();
+		}
+		if (this.getRootPane().getDefaultButton() == this.jButtonClose) {
+			dispose();
+		}
 	}
 
 }

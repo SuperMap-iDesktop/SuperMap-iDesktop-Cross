@@ -33,7 +33,7 @@ import java.awt.image.BufferedImage;
 class LayerNodeDecorator implements TreeNodeDecorator {
 	@Override
 	public void decorate(JLabel label, TreeNodeData data) {
-		if (data.getType().equals(NodeDataType.LAYER)) {
+		if (data.getType().equals(NodeDataType.LAYER) && !((Layer) data.getData()).isDisposed()) {
 			Layer layer = (Layer) data.getData();
 			try {
 				label.setText(layer.getCaption());

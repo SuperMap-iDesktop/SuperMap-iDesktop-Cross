@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -48,7 +47,7 @@ import java.util.List;
  * @author XiaJT
  */
 public class JDialogBulidSpatialIndex extends SmDialog {
-	//region 成员变量
+	// region 成员变量
 	// 工具条
 	private JToolBar toolBar;
 	private JButton buttonAdd;
@@ -68,7 +67,6 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 	private DatasetChooser datasetChooser;
 
-
 	private final int rowHeight = 23;
 
 	/**
@@ -86,15 +84,13 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	// 按钮
 	private JPanel panelButton;
 	private SmButton buttonOk;
-	private SmButton buttonCancle;
+	private SmButton buttonCancel;
 	private JCheckBox checkBoxAutoClose;
 
-	private DatasetType[] supportDatasetTypes = new DatasetType[]{
-			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
-			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D,
-			DatasetType.LINE3D, DatasetType.REGION3D
-	};
-	//endregion
+	private DatasetType[] supportDatasetTypes = new DatasetType[] { DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
+			DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D };
+
+	// endregion
 
 	public JDialogBulidSpatialIndex() {
 		initComponents();
@@ -114,10 +110,14 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.buttonSelectInvert = new JButton();
 		this.buttonDelete = new JButton();
 
-		this.buttonAdd.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
-		this.buttonSelectAll.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
-		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
-		this.buttonDelete.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+		this.buttonAdd.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_AddMap.png")));
+		this.buttonSelectAll.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
+		this.buttonDelete.setIcon(new ImageIcon(JDialogBulidSpatialIndex.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		// 索引类型
 		this.panelIndexType = new JPanel();
 		this.labelIndexType = new JLabel();
@@ -144,7 +144,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		// 按钮栏
 		this.panelButton = new JPanel();
 		this.buttonOk = new SmButton();
-		this.buttonCancle = new SmButton();
+		this.buttonCancel = new SmButton();
 		this.checkBoxAutoClose = new JCheckBox();
 
 		this.datasetChooser = new DatasetChooser(this) {
@@ -157,7 +157,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.getRootPane().setDefaultButton(buttonOk);
 	}
 
-	//region 初始化布局
+	// region 初始化布局
 
 	/**
 	 * 初始化布局
@@ -171,14 +171,28 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
-		centerPanel.add(this.toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(3, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 5));
-		centerPanel.add(this.panelIndexType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 0));
-		centerPanel.add(this.scrollPaneTable, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 5));
-		centerPanel.add(this.scrollPaneDescribe, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 0));
-		centerPanel.add(this.panelButton, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		centerPanel.add(
+				this.toolBar,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(3, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE)
+						.setInsets(0, 0, 5, 5));
+		centerPanel.add(
+				this.panelIndexType,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL)
+						.setInsets(0, 0, 5, 0));
+		centerPanel.add(
+				this.scrollPaneTable,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
+						.setInsets(0, 0, 5, 5));
+		centerPanel.add(
+				this.scrollPaneDescribe,
+				new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
+						.setInsets(0, 0, 5, 0));
+		centerPanel.add(this.panelButton,
+				new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 
 		this.setLayout(new GridBagLayout());
-		this.add(centerPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(10).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		this.add(centerPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(10).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(1, 1));
 	}
 
 	/**
@@ -195,11 +209,14 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.toolBar.add(this.buttonDelete);
 	}
 
-
 	private void initPanelIndexType() {
 		this.panelIndexType.setLayout(new GridBagLayout());
-		this.panelIndexType.add(this.labelIndexType, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
-		this.panelIndexType.add(this.comboBoxIndexType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		this.panelIndexType.add(
+				this.labelIndexType,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER)
+						.setInsets(0, 0, 0, 5));
+		this.panelIndexType.add(this.comboBoxIndexType,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	/**
@@ -222,7 +239,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.tableDatasets.setModel(this.spatialIndexTableModel);
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASET).setCellRenderer(new TableDatasetCellRender());
 		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
-		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE).setCellEditor(new SpatialIndexTypeCellEditor(new JComboBox()));
+		this.tableDatasets.getColumnModel().getColumn(SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE)
+				.setCellEditor(new SpatialIndexTypeCellEditor(new JComboBox()));
 	}
 
 	/**
@@ -240,16 +258,22 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	 */
 	private void initPanelButton() {
 		this.panelButton.setLayout(new GridBagLayout());
-		this.panelButton.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(98, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		this.panelButton.add(this.buttonCancle, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
+		this.panelButton.add(
+				this.checkBoxAutoClose,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(98, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE)
+						.setInsets(0, 0, 0, 5));
+		this.panelButton.add(
+				this.buttonOk,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE)
+						.setInsets(0, 0, 0, 5));
+		this.panelButton.add(this.buttonCancel,
+				new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
 
 	}
 
-	//endregion
+	// endregion
 
-
-	//region 添加监听事件
+	// region 添加监听事件
 	private void addListeners() {
 		this.buttonAdd.addActionListener(new ActionListener() {
 			@Override
@@ -302,17 +326,18 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			}
 		});
 
-
 		MouseAdapter openDatasetChooseMouseListener = new MouseAdapter() {
-//			@Override
-//			public void mousePressed(MouseEvent e) {
-//				tableDatasets.requestFocus();
-//			}
+			// @Override
+			// public void mousePressed(MouseEvent e) {
+			// tableDatasets.requestFocus();
+			// }
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 &&
-						(tableDatasets.rowAtPoint(e.getPoint()) == -1 || tableDatasets.rowAtPoint(e.getPoint()) > tableDatasets.getRowCount() - 1 || tableDatasets.columnAtPoint(e.getPoint()) != SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE)) {
+				if (e.getButton() == MouseEvent.BUTTON1
+						&& e.getClickCount() == 2
+						&& (tableDatasets.rowAtPoint(e.getPoint()) == -1 || tableDatasets.rowAtPoint(e.getPoint()) > tableDatasets.getRowCount() - 1 || tableDatasets
+								.columnAtPoint(e.getPoint()) != SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE)) {
 					buttonAddClicked();
 				}
 			}
@@ -324,10 +349,10 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				setDialogResult(DialogResult.OK);
 				buttonOkClick();
-//				JDialogBulidSpatialIndex.this.dispose();
+				// JDialogBulidSpatialIndex.this.dispose();
 			}
 		});
-		this.buttonCancle.addActionListener(new ActionListener() {
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setDialogResult(DialogResult.CANCEL);
@@ -527,8 +552,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			this.tableDatasets.setValueAt(selectedItem, selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
 		}
 	}
-	//endregion
 
+	// endregion
 
 	private void initComponentStates() {
 		this.buttonSelectAll.setEnabled(false);
@@ -560,7 +585,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.textAreaQuadTree.setText("    " + CoreProperties.getString("String_QtreeDescription"));
 		this.labelIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.checkBoxAutoClose.setText(CommonProperties.getString("String_CheckBox_CloseDialog"));
 	}
 
@@ -578,7 +603,6 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 
 		private JComboBox<String> comboBox;
 
-
 		public SpatialIndexTypeCellEditor(JComboBox comboBox) {
 			super(comboBox);
 		}
@@ -586,7 +610,8 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			getCombobox();
-			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilties.getSupportSpatialIndexType((Dataset) table.getValueAt(row, SpatialIndexTableModel.COLUMN_DATASET))));
+			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilties.getSupportSpatialIndexType((Dataset) table.getValueAt(row,
+					SpatialIndexTableModel.COLUMN_DATASET))));
 			this.comboBox.setSelectedItem(table.getValueAt(row, column));
 			return this.comboBox;
 		}
@@ -612,32 +637,20 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		setDialogResult(DialogResult.CANCEL);
+		JDialogBulidSpatialIndex.this.dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.OK);
-				buttonOkClick();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.CANCEL);
-				JDialogBulidSpatialIndex.this.dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOkClick();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			setDialogResult(DialogResult.CANCEL);
+			JDialogBulidSpatialIndex.this.dispose();
+		}
 	}
-	
+
 }

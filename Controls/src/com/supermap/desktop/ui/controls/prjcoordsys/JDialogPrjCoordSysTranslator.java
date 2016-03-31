@@ -47,7 +47,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	private SMFormattedTextField textFieldTranslateY;
 	private JLabel labelTranslateZ;
 	private SMFormattedTextField textFieldTranslateZ;
-	private SmButton buttonOK;
+	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
 	private transient CoordSysTransMethod method = CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION;
@@ -61,7 +61,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == buttonSetPrj) {
 				buttonSetPrjClicked();
-			} else if (e.getSource() == buttonOK) {
+			} else if (e.getSource() == buttonOk) {
 				buttonOKClicked();
 			} else if (e.getSource() == buttonCancel) {
 				buttonCancelClicked();
@@ -220,9 +220,9 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		// @formatter:on
 
 		// 主界面
-		this.buttonOK = new SmButton("OK");
+		this.buttonOk = new SmButton("OK");
 		this.buttonCancel = new SmButton("Cancel");
-		this.getRootPane().setDefaultButton(this.buttonOK);
+		this.getRootPane().setDefaultButton(this.buttonOk);
 
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
@@ -237,7 +237,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 						.addComponent(panelOffset))
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGap(10,10,Short.MAX_VALUE)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
@@ -246,7 +246,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 						.addComponent(panelRotation)
 						.addComponent(panelOffset))
 				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 	}
@@ -256,7 +256,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		this.labelMethod.setText(ControlsProperties.getString("String_TransMethod"));
 		this.labelScaleDifference.setText(ControlsProperties.getString("String_ScaleDifference"));
 		this.buttonSetPrj.setText(ControlsProperties.getString("String_SetDesPrjCoordSys"));
-		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
@@ -266,7 +266,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.addItemListener(this.itemListener);
 		this.buttonSetPrj.addActionListener(this.actionListener);
-		this.buttonOK.addActionListener(this.actionListener);
+		this.buttonOk.addActionListener(this.actionListener);
 		this.buttonCancel.addActionListener(this.actionListener);
 	}
 
@@ -275,7 +275,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.removeItemListener(this.itemListener);
 		this.buttonSetPrj.removeActionListener(this.actionListener);
-		this.buttonOK.removeActionListener(this.actionListener);
+		this.buttonOk.removeActionListener(this.actionListener);
 		this.buttonCancel.removeActionListener(this.actionListener);
 	}
 
@@ -326,7 +326,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 			this.textFieldRotationY.setEditable(true);
 			this.textFieldRotationZ.setEditable(true);
 		}
-		this.buttonOK.setEnabled(this.targetPrj != null);
+		this.buttonOk.setEnabled(this.targetPrj != null);
 	}
 
 	/**
@@ -365,29 +365,17 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonCancelClicked();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOKClicked();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonCancelClicked();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOKClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			buttonCancelClicked();
+		}
 	}
 }

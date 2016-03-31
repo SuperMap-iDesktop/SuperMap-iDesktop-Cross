@@ -32,7 +32,7 @@ public class JDialogSymbolsChange extends SmDialog {
 	private JPanel panelButton;
 
 	private SmButton buttonNext;
-	private SmButton buttonCancle;
+	private SmButton buttonCancel;
 
 	private List<GeoStyle> geoStylesBeforeList;
 	private SymbolDialog symbolDialog;
@@ -256,7 +256,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		panelLine = new PanelSymbolSet(3);
 		panelFill = new PanelSymbolSet(8);
 		buttonNext = new SmButton("Next");
-		buttonCancle = new SmButton("Cancle");
+		buttonCancel = new SmButton("Cancle");
 	}
 
 	private void initResources() {
@@ -275,14 +275,14 @@ public class JDialogSymbolsChange extends SmDialog {
 				getResources("String_GradientOffXCheck"), getResources("String_GradientOffYCheck") });
 
 		buttonNext.setText(CommonProperties.getString(CommonProperties.Next));
-		buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
 	private void initLayout() {
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(buttonNext, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST)
 				.setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 5));
-		panelButton.add(buttonCancle,
+		panelButton.add(buttonCancel,
 				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
 
 		JPanel panelCenter = new JPanel();
@@ -308,7 +308,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		panelFill.addActionListeners(checkButtonNextState);
 
 		buttonNext.addActionListener(actionListenerOK);
-		buttonCancle.addActionListener(actionListenerCancle);
+		buttonCancel.addActionListener(actionListenerCancle);
 	}
 
 	private void clean() {
@@ -322,7 +322,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		panelFill.removeActionListeners(checkButtonNextState);
 
 		buttonNext.removeActionListener(actionListenerOK);
-		buttonCancle.removeActionListener(actionListenerCancle);
+		buttonCancel.removeActionListener(actionListenerCancle);
 	}
 
 	private String getResources(String s) {
@@ -411,34 +411,23 @@ public class JDialogSymbolsChange extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
+		JDialogSymbolsChange.this.clean();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (showSymbolDialog() == DialogResult.OK) {
-					changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getStyle());
-					JDialogSymbolsChange.this.setDialogResult(DialogResult.OK);
-					JDialogSymbolsChange.this.clean();
-				}
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonNext) {
+			if (showSymbolDialog() == DialogResult.OK) {
+				changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getStyle());
+				JDialogSymbolsChange.this.setDialogResult(DialogResult.OK);
 				JDialogSymbolsChange.this.clean();
 			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
+			JDialogSymbolsChange.this.clean();
+		}
 	}
 }
