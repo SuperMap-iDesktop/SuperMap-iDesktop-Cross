@@ -7,10 +7,12 @@ import java.util.List;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
+import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 import com.supermap.data.DatasetType;
+import com.supermap.data.GeoCompound;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLine3D;
 import com.supermap.data.GeoLineM;
@@ -18,6 +20,7 @@ import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoRegion3D;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
 import com.supermap.data.GeometryType;
@@ -190,19 +193,19 @@ public class EditState {
 						typeList.add(geometry.getType());
 					}
 
-					if (isMarkerGeometry(geometry)) {
+					if (GeometryUtilties.isPointGeometry(geometry)) {
 						if (!kindList.contains(GeometryKind.Point)) {
 							kindList.add(GeometryKind.Point);
 						}
-					} else if (isLineGeometry(geometry)) {
+					} else if (GeometryUtilties.isLineGeometry(geometry)) {
 						if (!kindList.contains(GeometryKind.Line)) {
 							kindList.add(GeometryKind.Line);
 						}
-					} else if (isRegionGeometry(geometry)) {
+					} else if (GeometryUtilties.isRegionGeometry(geometry)) {
 						if (!kindList.contains(GeometryKind.Region)) {
 							kindList.add(GeometryKind.Region);
 						}
-					} else if (isTextGeometry(geometry)) {
+					} else if (GeometryUtilties.isTextGeometry(geometry)) {
 						if (!kindList.contains(GeometryKind.Text)) {
 							kindList.add(GeometryKind.Text);
 						}
@@ -241,28 +244,6 @@ public class EditState {
 		}
 	}
 
-	/**
-	 * _Toolkit.IsMarkerGeometry
-	 * 
-	 * @param geometry
-	 * @return
-	 */
-	public boolean isMarkerGeometry(Geometry geometry) {
-		return geometry.getType() == GeometryType.GEOPOINT || geometry.getType() == GeometryType.GEOPOINT3D;
-	}
-
-	public boolean isLineGeometry(Geometry geometry) {
-		return geometry.getType() == GeometryType.GEOLINE || geometry.getType() == GeometryType.GEOLINE3D || geometry.getType() == GeometryType.GEOBSPLINE;
-	}
-
-	public boolean isRegionGeometry(Geometry geometry) {
-		return geometry.getType() == GeometryType.GEOREGION || GeometryType.GEOMULTIPOINT == GeometryType.GEOREGION3D;
-	}
-
-	public boolean isTextGeometry(Geometry geometry) {
-		return geometry.getType() == GeometryType.GEOTEXT || geometry.getType() == GeometryType.GEOTEXT3D;
-	}
-
 	public boolean isEraseEnable() {
 		return this.editableSelectedGeometryCount > 0
 				&& ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, GeometryKind.Line, GeometryKind.Region, GeometryKind.Compound);
@@ -283,7 +264,7 @@ public class EditState {
 
 	public boolean isSmoothEnable() {
 		return ListUtilties.isListContainAny(this.editableSelectedGeometryTypes, GeometryType.GEOLINE,
-				// GeometryType.GeoLineM,
+		// GeometryType.GeoLineM,
 				GeometryType.GEOREGION); // 排除参数化曲线
 	}
 
@@ -310,18 +291,18 @@ public class EditState {
 	}
 
 	public boolean isSplitByRegionEnable() {
-		return (this.editableSelectedGeometryCount > 0
-				&& ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE, DatasetType.CAD));
+		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+				DatasetType.CAD));
 	}
 
 	public boolean isSplitByLineEnable() {
-		return (this.editableSelectedGeometryCount > 0
-				&& ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE, DatasetType.CAD));
+		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+				DatasetType.CAD));
 	}
 
 	public boolean isSplitByGeometryEnable() {
-		return (this.editableSelectedGeometryCount > 0
-				&& ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE, DatasetType.CAD));
+		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+				DatasetType.CAD));
 	}
 
 	public boolean isRotateEnable() {
@@ -342,8 +323,8 @@ public class EditState {
 	}
 
 	public boolean isMirrorEnable() {
-		return (this.editableSelectedGeometryCount > 0
-				&& !ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, GeometryKind.Text, GeometryKind.Other));
+		return (this.editableSelectedGeometryCount > 0 && !ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, GeometryKind.Text,
+				GeometryKind.Other));
 	}
 
 	public boolean isPartialUpdateEnable() {
@@ -368,8 +349,9 @@ public class EditState {
 		try {
 			if (this.editableSelectedGeometryCount == 2) {
 				Layer layer = this.formMap.getMapControl().getActiveEditableLayer();
-				if (layer.isEditable() && layer.getSelection().getCount() == 2 && (layer.getDataset().getType() == DatasetType.LINE
-						|| layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.LINEM)) {
+				if (layer.isEditable()
+						&& layer.getSelection().getCount() == 2
+						&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.LINEM)) {
 					recordset = layer.getSelection().toRecordset();
 					GeoLine geometry1 = (GeoLine) recordset.getGeometry();
 					recordset.moveNext();
@@ -514,8 +496,10 @@ public class EditState {
 		try {
 			if (this.editableSelectedGeometryCount == 2) {
 				Layer layer = this.formMap.getMapControl().getActiveEditableLayer();
-				if (layer != null && layer.isEditable() && layer.getSelection().getCount() == 2 && (layer.getDataset().getType() == DatasetType.LINE
-						|| layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.LINEM)) {
+				if (layer != null
+						&& layer.isEditable()
+						&& layer.getSelection().getCount() == 2
+						&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.LINEM)) {
 					recordset = layer.getSelection().toRecordset();
 					GeoLine geometry1 = (GeoLine) recordset.getGeometry();
 					recordset.moveNext();
