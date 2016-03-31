@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -26,21 +28,29 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
+import com.supermap.mapping.TrackingLayer;
 
-public class JDialogFieldOperationSetting extends JDialog implements ItemListener, ActionListener, ListSelectionListener {
+public class JDialogFieldOperationSetting extends SmDialog implements ItemListener, ActionListener, ListSelectionListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final String TrackingLayerTag = "Tag_OperationTypeGeometry";
+
 	private JLabel labelEditLayer;
 	private JComboBox<Layer> comboBoxEditLayer;
 	private JTable table;
@@ -58,12 +68,13 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 	private FieldOperation[] selectedOperations;
 	private DatasetType resultDatasetType;
 
-	public JDialogFieldOperationSetting(String title) {
-		this(title, null);
+	public JDialogFieldOperationSetting(String title, DatasetType resultDatasetType) {
+		this(title, null, resultDatasetType);
 	}
 
-	public JDialogFieldOperationSetting(String title, Map map) {
+	public JDialogFieldOperationSetting(String title, Map map, DatasetType resultDatasetType) {
 		setTitle(title);
+		this.resultDatasetType = resultDatasetType;
 		initializeComponents();
 		initializeResources();
 		registerEvents();
@@ -73,6 +84,10 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 
 	public Layer getEditLayer() {
 		return this.editLayer;
+	}
+
+	public java.util.Map<String, Object> getPropertyData() {
+		return null;
 	}
 
 	public Map getMap() {
@@ -329,30 +344,53 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		this.radioButtonGeometry.setSelected(false);
 	}
 
+	// @formatter:off
+	/**
+	 * 设置下半部分字段操作设置，多选的情况下，值相同则显示这个值，值不同则置空，
+	 * 同时可用性的控制采用严谨性原则，即此项设置对多选的所有记录都可用的情况下，才可用。
+	 * 
+	 */
+	// @formatter:on
 	private void setControlsEnabled(FieldOperation[] fieldOperations) {
 		boolean radioButtonNullEnabled = true;
 		boolean radioButtonAVGEnabled = true;
 		boolean radioButtonSumEnabled = true;
 		boolean radioButtonGeometryEnabled = true;
-		boolean comboBoxWeightEnabled = true;
-		boolean comboBoxGeometryEnabled = true;
 		boolean buttonOKEnabled = true;
 
 		if (fieldOperations != null && fieldOperations.length > 0) {
 			for (int i = 0; i < fieldOperations.length; i++) {
 				FieldOperation fieldOperation = fieldOperations[i];
+				int availableOperationType = fieldOperation.getAvailableOperationType();
+				radioButtonNullEnabled = radioButtonNullEnabled && isContains(availableOperationType, OperationType.NULL);
+				radioButtonAVGEnabled = radioButtonAVGEnabled && isContains(availableOperationType, OperationType.AVG);
+				radioButtonSumEnabled = radioButtonSumEnabled && isContains(availableOperationType, OperationType.SUM);
+				radioButtonGeometryEnabled = radioButtonGeometryEnabled && isContains(availableOperationType, OperationType.GEOMETRY);
 			}
 		} else {
-
+			radioButtonNullEnabled = false;
+			radioButtonAVGEnabled = false;
+			radioButtonSumEnabled = false;
+			radioButtonGeometryEnabled = false;
+			buttonOKEnabled = false;
 		}
 
 		this.radioButtonNull.setEnabled(radioButtonNullEnabled);
 		this.radioButtonAVG.setEnabled(radioButtonAVGEnabled);
 		this.radioButtonSum.setEnabled(radioButtonSumEnabled);
 		this.radioButtonGeometry.setEnabled(radioButtonGeometryEnabled);
-		this.comboBoxWeight.setEnabled(comboBoxWeightEnabled);
-		this.comboBoxGeometry.setEnabled(comboBoxGeometryEnabled);
 		this.buttonOK.setEnabled(buttonOKEnabled);
+	}
+
+	/**
+	 * 判断可用类型（availableType）是否包含指定类型（type）
+	 * 
+	 * @param availableType
+	 * @param type
+	 * @return
+	 */
+	private boolean isContains(int availableType, int type) {
+		return (availableType & type) == type;
 	}
 
 	/**
@@ -396,11 +434,13 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 	}
 
 	private void buttonOKClicked() {
-
+		this.setVisible(false);
+		setDialogResult(DialogResult.OK);
 	}
 
 	private void buttonCancelClicked() {
-
+		this.setVisible(false);
+		setDialogResult(DialogResult.CANCEL);
 	}
 
 	private void radioButtonNullStateChanged() {
@@ -484,9 +524,55 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		try {
 			if (this.radioButtonGeometry.isSelected() && this.selectedOperations != null) {
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationType(OperationType.GEOMETRY);
+					FieldOperation fieldOperation = this.selectedOperations[i];
+					// 设置操作类型
+					fieldOperation.setOperationType(OperationType.GEOMETRY);
+					// 设置附加数据
+					if (!(fieldOperation.getOperationData() instanceof GeometryOperationData)) {
+						fieldOperation.setOperationData(this.comboBoxGeometry.getItemAt(0));
+					}
+				}
+
+				// 设置“保留对象”参数可用
+				this.comboBoxGeometry.setEnabled(true);
+
+				// @formatter:off
+				/**
+				 * 设置 ComboBoxGeometry 的选中状态
+				 * 1.table 中只选中了一条记录，如果该记录的 OperationData 为空，初始化为“第一个对象”；
+				 * 2.table 中选中了多条记录，如果所有记录的 OperationData 都为空，全都初始化为“第一个对象”；
+				 * 3.table 中选中了多条记录，如果所有记录的 OperationData 相同且不为空，则初始化为改 OperationData；
+				 * 4.table 中选中了多条记录，如果所有记录的 OperationData 不一致，则将 combobox 的当前选中置空。
+				 */
+				// @formatter:on
+				IOperationData currentData = this.selectedOperations[0].getOperationData();
+				boolean isDifferent = false;
+
+				for (int i = 0; i < this.selectedOperations.length; i++) {
+					if (currentData != this.selectedOperations[i].getOperationData()) {
+						isDifferent = true;
+						break;
+					}
+				}
+
+				if (!isDifferent) {
+					if (currentData == null) {
+						this.comboBoxGeometry.setSelectedIndex(0);
+					} else {
+						this.comboBoxGeometry.setSelectedItem(currentData);
+					}
+				} else {
+					this.comboBoxGeometry.setSelectedItem(null);
+				}
+
+				// 如果 table 中选中单条记录，就用这个字段来初始化 ComboBoxGeometry 各子项的 FieldValue
+				if (this.selectedOperations.length == 1) {
+					refreshComboBoxGeometryItems(this.selectedOperations[0].getFieldName());
+				} else {
+					refreshComboBoxGeometryItems(null);
 				}
 			} else {
+				this.comboBoxGeometry.setEnabled(false);
 				this.comboBoxGeometry.setSelectedItem(null);
 			}
 		} catch (Exception e) {
@@ -494,21 +580,110 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		}
 	}
 
+	/**
+	 * 在 ComboBoxGeometryItem 上显示指定 fieldName 的 fieldValue
+	 * 
+	 * @param fieldName
+	 */
+	private void refreshComboBoxGeometryItems(String fieldName) {
+		Recordset recordset = null;
+
+		try {
+			if (this.editLayer != null && this.editLayer.getSelection() != null && this.editLayer.getSelection().getCount() > 0) {
+				recordset = this.editLayer.getSelection().toRecordset();
+
+				for (int i = 0; i < this.comboBoxGeometry.getItemCount(); i++) {
+					GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getItemAt(i);
+					// 设置字段名
+					data.setFieldName(fieldName);
+					// 设置字段值
+					if (!StringUtilties.isNullOrEmpty(fieldName)) {
+						recordset.seekID(data.getID());
+						data.setFieldValue(recordset.getFieldValue(fieldName));
+					} else {
+						data.setFieldValue(null);
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			// 使用完毕，必须要释放 recordset
+			if (recordset != null && !recordset.isClosed()) {
+				recordset.close();
+				recordset.dispose();
+			}
+		}
+	}
+
 	private void comboBoxEditLayerSelectChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			setEditLayer(this.editLayer);
+		try {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				setEditLayer(this.editLayer);
+			}
+		} catch (Exception e2) {
+			Application.getActiveApplication().getOutput().output(e2);
 		}
 	}
 
 	private void comboBoxWeightSelectChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-
+		try {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				for (int i = 0; i < this.selectedOperations.length; i++) {
+					this.selectedOperations[i].setOperationData((IOperationData) this.comboBoxWeight.getSelectedItem());
+				}
+			}
+		} catch (Exception e2) {
+			Application.getActiveApplication().getOutput().output(e2);
 		}
 	}
 
 	private void comboBoxGeometrySelectChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
+		try {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getSelectedItem();
 
+				// 设置附加数据
+				for (int i = 0; i < this.selectedOperations.length; i++) {
+					this.selectedOperations[i].setOperationData(data);
+				}
+
+				// 地图上高亮显示
+				highlightGeometry(data.getID());
+			}
+		} catch (Exception e2) {
+			Application.getActiveApplication().getOutput().output(e2);
+		}
+	}
+
+	/**
+	 * 在地图上高亮显示指定 id 的几何对象
+	 * 
+	 * @param id
+	 */
+	private void highlightGeometry(int id) {
+		Recordset recordset = null;
+		Geometry geometry = null;
+
+		try {
+			recordset = this.editLayer.getSelection().toRecordset();
+			recordset.seekID(id);
+			geometry = recordset.getGeometry();
+
+			GeoStyle geoStyle = new GeoStyle();
+			geoStyle.setLineColor(Color.RED);
+			geoStyle.setLineWidth(2);
+			geometry.setStyle(geoStyle);
+			TrackingLayer trackingLayer = this.map.getTrackingLayer();
+			trackingLayer.add(geometry, TrackingLayerTag);
+			this.map.refresh();
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (recordset != null && !recordset.isClosed()) {
+				recordset.close();
+				recordset.dispose();
+			}
 		}
 	}
 
@@ -520,7 +695,7 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 	}
 
 	public static void main(String[] args) {
-		JDialogFieldOperationSetting dialog = new JDialogFieldOperationSetting("");
+		JDialogFieldOperationSetting dialog = new JDialogFieldOperationSetting("", DatasetType.LINE);
 		dialog.setSize(new Dimension(400, 300));
 		dialog.setVisible(true);
 	}
@@ -786,5 +961,11 @@ public class JDialogFieldOperationSetting extends JDialog implements ItemListene
 		public String toString() {
 			return getDescription();
 		}
+	}
+
+	@Override
+	public JRootPane keyBoardPressed() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

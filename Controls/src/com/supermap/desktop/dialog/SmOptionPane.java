@@ -8,7 +8,6 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +26,7 @@ public class SmOptionPane extends SmDialog {
 	private SmButton buttonCancel;
 
 	private JTextArea textAreaMessage;
-	private JLabel labelIcon;
+//	private JLabel labelIcon;
 
 	/**
 	 * 与JOptionPane结果保持一致，此处用int类型存储结果
@@ -58,13 +57,14 @@ public class SmOptionPane extends SmDialog {
 		this.buttonYes = new SmButton();
 		this.buttonNo = new SmButton();
 		this.buttonCancel = new SmButton();
-		this.labelIcon = new JLabel();
+//		this.labelIcon = new JLabel();
 		this.textAreaMessage = new JTextArea();
 		this.textAreaMessage.setFont(textAreaMessage.getFont().deriveFont(Font.PLAIN, 15));
 		this.textAreaMessage.setLineWrap(true);
 		this.textAreaMessage.setEditable(false);
-		this.textAreaMessage.setBackground(this.getBackground());
-		this.setSize((int) (320 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
+//		this.textAreaMessage.setBackground(this.getBackground());
+		this.textAreaMessage.setOpaque(false);
+		this.setSize((int) (300 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
 		this.setLocationRelativeTo(null);
 		this.setTitle(defaultTitle);
 		this.setResizable(false);
@@ -100,12 +100,9 @@ public class SmOptionPane extends SmDialog {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER)
-				.setInsets(0, (int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0, 0)
-				.setIpad((int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0));
-		panel.add(textAreaMessage,
-				new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
-		panel.add(panelButton, new GridBagConstraintsHelper(0, 1, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
+//		panel.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, (int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0, 0).setIpad((int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0));
+		panel.add(textAreaMessage, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 20, 0, 20));
+		panel.add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
 
 		this.setLayout(new GridBagLayout());
 		this.add(panel, new GridBagConstraintsHelper(0, 0).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10));
@@ -139,8 +136,8 @@ public class SmOptionPane extends SmDialog {
 	}
 
 	private void initResources() {
-		buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
-		buttonNo.setText(CommonProperties.getString(CommonProperties.no));
+		buttonYes.setText(CommonProperties.getString(CommonProperties.OK));
+		buttonNo.setText(CommonProperties.getString(CommonProperties.Cancel));
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
@@ -150,7 +147,7 @@ public class SmOptionPane extends SmDialog {
 
 	public int showMessageDialog(String message) {
 		this.buttonNo.setVisible(false);
-		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
+//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
 		return showDialog(message);
 	}
 
@@ -162,12 +159,14 @@ public class SmOptionPane extends SmDialog {
 	 * @return 结果
 	 */
 	public int showConfirmDialog(String message) {
-		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
 		return showDialog(message);
 	}
 
 	public int showConfirmDialogWithCancle(String message) {
-		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		this.buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
+		this.buttonNo.setText(CommonProperties.getString(CommonProperties.no));
 		this.buttonCancel.setVisible(true);
 		return showDialog(message);
 	}
@@ -181,12 +180,12 @@ public class SmOptionPane extends SmDialog {
 	 */
 	public int showErrorDialog(String message) {
 		this.buttonNo.setVisible(false);
-		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
+//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
 		return showDialog(message);
 	}
 
 	public int showWarningDialog(String message) {
-		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
+//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
 		return showDialog(message);
 	}
 
@@ -196,6 +195,9 @@ public class SmOptionPane extends SmDialog {
 		this.buttonYes.requestFocus();
 		this.setVisible(true);
 
+		// 还原修改
+		this.buttonYes.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonNo.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.buttonNo.setVisible(true);
 		this.buttonCancel.setVisible(false);
 		return result;
@@ -222,5 +224,4 @@ public class SmOptionPane extends SmDialog {
 			dispose();
 		}
 	}
-
 }

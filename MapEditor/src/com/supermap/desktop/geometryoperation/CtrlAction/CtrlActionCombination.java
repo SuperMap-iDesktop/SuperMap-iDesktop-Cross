@@ -3,6 +3,7 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -21,11 +22,24 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 
+// @formatter:off
+/**
+ * 1.组合之后更改 Selection，无法触发 GeometrySelected
+ * 2.暂时没有实现刷新打开的属性窗口
+ * 3.需要想办法解决编辑功能 enable() 频繁读写 recordset 的问题
+ * 
+ * @author highsad
+ *
+ */
+// @formatter:on
 public class CtrlActionCombination extends CtrlAction {
 
 	public CtrlActionCombination(IBaseItem caller, IForm formClass) {
@@ -38,10 +52,9 @@ public class CtrlActionCombination extends CtrlAction {
 		try {
 			FormMap formMap = (FormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 			DatasetType datasetType = DatasetType.CAD;
-			// if (formMap.EditState.SelectedDatasetTypes.Count == 1)
-			// {
-			// datasetType = formMap.EditState.SelectedDatasetTypes[0];
-			// }
+			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
+				datasetType = formMap.getEditState().getselectedDatasetTypes().get(0);
+			}
 			Layer resultLayer = null;
 			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
@@ -50,22 +63,19 @@ public class CtrlActionCombination extends CtrlAction {
 				}
 			}
 
-			HashMap<String, Object> values = new HashMap<>();
-			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", formMap.getMapControl().getMap());
-			// JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(formMap.getMapControl().getMap(), datasetType);
-			// if (formCombination.ShowDialog() == DialogResult.OK)
-			// {
-			resultLayer = formCombination.getEditLayer();
-			// values = formCombination.PropertyData;
-			combinationObjects(formMap, resultLayer, values);
-			// }
+			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", formMap.getMapControl().getMap(), datasetType);
+			if (formCombination.showDialog() == DialogResult.OK) {
+				resultLayer = formCombination.getEditLayer();
+				Map<String, Object> values = formCombination.getPropertyData();
+				combinationObjects(formMap, resultLayer, values);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 
 	}
 
-	private void combinationObjects(FormMap formMap, Layer resultLayer, HashMap<String, Object> propertyData) {
+	private void combinationObjects(FormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
 		Recordset recordset = null;
 		Geometry geometry = null;
 		try {
@@ -81,13 +91,12 @@ public class CtrlActionCombination extends CtrlAction {
 						recordset.moveNext();
 					}
 					if (layer.getName() == resultLayer.getName()) {
-						// RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
-						// delete.Begin();
-						// for (int dd = 0; dd < layer.getSelection().getCount(); dd++)
-						// {
-						// delete.delete(layer.getSelection().get(dd));
-						// }
-						// delete.Update();
+						RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
+						delete.begin();
+						for (int dd = 0; dd < layer.getSelection().getCount(); dd++) {
+							delete.delete(layer.getSelection().get(dd));
+						}
+						delete.update();
 					}
 					recordset.dispose();
 				}
@@ -176,26 +185,28 @@ public class CtrlActionCombination extends CtrlAction {
 			formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 			formMap.getMapControl().getEditHistory().batchEnd();
 			formMap.getMapControl().getMap().refresh();
-			Application.getActiveApplication().getOutput().output(""/* Properties.CoreResources.String_Success */);
+			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Completed"));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
+
+			if (geometry != null) {
+				geometry.dispose();
+			}
 		}
-		// CommonToolkit.
-		//
-		// ReleaseGeometry(ref geometry);CommonToolkit.
-		//
-		// ReleaseRecordset(ref recordset);
 	}
 
-@Override
-	public boolean enable()
-    {
-        boolean enable = false;
-		// if ((Application.ActiveForm as FormMap) != null)
-		// {
-		// //(Application.ActiveForm as FormMap).EditState.CheckEnable();
-		// enable = (Application.ActiveForm as FormMap).EditState.IsCombinationEnable;
-		// }
-        return enable;
-    }
+	@Override
+	public boolean enable() {
+		boolean enable = false;
+		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+			((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().checkEnable();
+			enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isCombinationEnable();
+		}
+		return enable;
+	}
 }
