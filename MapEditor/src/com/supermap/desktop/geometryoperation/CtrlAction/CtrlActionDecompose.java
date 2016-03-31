@@ -119,7 +119,7 @@ public class CtrlActionDecompose extends CtrlAction {
 					Object[] fieldValues = recordset.getValues();
 
 					formMap.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
-					Boolean dr = recordset.delete();
+					boolean dr = recordset.delete();
 					for (int i = 0; i < fieldValues.length; i++) {
 						if (!fieldInfos.get(i).isSystemField()) {
 							values.put(fieldInfos.get(i).getName(), fieldValues[i]);
