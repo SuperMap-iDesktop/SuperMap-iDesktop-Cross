@@ -265,7 +265,6 @@ public class JDialogJoinItems extends SmDialog {
 		} else {
 			checkButtonStates();
 		}
-		buttonOk.requestFocus();
 	}
 
 	private void registListeners() {
@@ -332,7 +331,6 @@ public class JDialogJoinItems extends SmDialog {
 		if ((this.joinItemsTable.getSelectedRows() != null && this.joinItemsTable.getSelectedRows().length > 0) != buttonDel.isEnabled()) {
 			this.buttonDel.setEnabled(this.joinItemsTable.getSelectedRows() != null && this.joinItemsTable.getSelectedRows().length > 0);
 		}
-		buttonOk.requestFocus();
 	}
 
 	private void reverse() {
