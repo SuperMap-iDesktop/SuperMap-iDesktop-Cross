@@ -10,6 +10,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingVector;
 import com.supermap.realspace.Layer3D;
@@ -50,11 +51,11 @@ public class SymbolDialog extends JDialog {
 
 	private JPanel jPanelButton;
 
-	private JButton jButtonOk;
+	private SmButton jButtonOk;
 
-	private JButton jButtonCancel;
+	private SmButton jButtonCancel;
 
-	private JButton jButtonApply;
+	private SmButton jButtonApply;
 
 	private transient SymbolPanel symbolPanel;
 
@@ -179,9 +180,9 @@ public class SymbolDialog extends JDialog {
 			if (jPanelButton == null) {
 				jPanelButton = new JPanel();
 				jPanelButton.setLayout(new GridBagLayout());
-				jButtonOk = new ControlButton();
+				jButtonOk = new SmButton();
 				jButtonOk.setText(CommonProperties.getString("String_Button_OK"));
-				jPanelButton.add(jButtonOk, new GridBagConstraintsHelper(0, 0).setAnchor(GridBagConstraints.EAST).setWeight(1, 0));
+				jPanelButton.add(jButtonOk, new GridBagConstraintsHelper(0, 0).setAnchor(GridBagConstraints.EAST).setWeight(0, 1).setInsets(0, 0, 0, 10));
 				jButtonOk.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -195,9 +196,9 @@ public class SymbolDialog extends JDialog {
 					}
 				});
 
-				jButtonCancel = new ControlButton();
+				jButtonCancel = new SmButton();
 				jButtonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
-				jPanelButton.add(jButtonCancel, new GridBagConstraintsHelper(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 20, 0, 20));
+				jPanelButton.add(jButtonCancel, new GridBagConstraintsHelper(1, 0).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1).setInsets(0, 0, 0, 10));
 				jButtonCancel.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -207,9 +208,9 @@ public class SymbolDialog extends JDialog {
 					}
 				});
 
-				jButtonApply = new ControlButton();
+				jButtonApply = new SmButton();
 				jButtonApply.setText(CommonProperties.getString(CommonProperties.Apply));
-				jPanelButton.add(jButtonApply, new GridBagConstraintsHelper(2, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 20));
+				jPanelButton.add(jButtonApply, new GridBagConstraintsHelper(2, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 10));
 				jButtonApply.addActionListener(new ActionListener() {
 
 					@Override

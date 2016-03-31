@@ -6,7 +6,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import javax.swing.*;
 
 /**
- * Created by Administrator on 2016/3/25.
+ * UICommonToolKit在Control中，Core中部分代码要用到提示框，此处提供一个接口
  */
 public class JOptionPaneUtilties {
 
