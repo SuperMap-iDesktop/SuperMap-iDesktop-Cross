@@ -20,7 +20,7 @@ public class JDialogConfirm extends SmDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private SmButton buttonOK;
+	private SmButton buttonOk;
 	private SmButton buttonCancel;
 	private JCheckBox checkBoxConfirm; // 是否保持本次设置，后面不再提示
 	private JTextArea textAreaMessage;
@@ -30,7 +30,7 @@ public class JDialogConfirm extends SmDialog {
 	 */
 	public JDialogConfirm() {
 		initializeComponents();
-		this.buttonOK.addActionListener(new ActionListener() {
+		this.buttonOk.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -73,7 +73,7 @@ public class JDialogConfirm extends SmDialog {
 		setSize(new Dimension(450, 150));
 		setLocationRelativeTo(null);
 
-		this.buttonOK = new SmButton(CommonProperties.getString(CommonProperties.True));
+		this.buttonOk = new SmButton(CommonProperties.getString(CommonProperties.True));
 		this.buttonCancel = new SmButton(CommonProperties.getString(CommonProperties.False));
 		this.checkBoxConfirm = new JCheckBox(ControlsProperties.getString("String_MessageBox_Checked"));
 		this.checkBoxConfirm.setSelected(true);
@@ -82,7 +82,7 @@ public class JDialogConfirm extends SmDialog {
 		this.textAreaMessage.setBackground(this.getBackground());
 		this.textAreaMessage.setLineWrap(true);
 		this.textAreaMessage.setBorder(null);
-		this.getRootPane().setDefaultButton(this.buttonOK);
+		this.getRootPane().setDefaultButton(this.buttonOk);
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -94,44 +94,33 @@ public class JDialogConfirm extends SmDialog {
 				.addGroup(groupLayout.createSequentialGroup()
 						.addComponent(this.checkBoxConfirm)
 						.addGap(10,10,Short.MAX_VALUE)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addComponent(this.textAreaMessage,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.checkBoxConfirm)
-						.addComponent(this.buttonOK)
+						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		JDialogConfirm.this.dialogResult = DialogResult.CANCEL;
+		JDialogConfirm.this.dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JDialogConfirm.this.dialogResult = DialogResult.OK;
-				JDialogConfirm.this.dispose();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JDialogConfirm.this.dialogResult = DialogResult.CANCEL;
-				JDialogConfirm.this.dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			JDialogConfirm.this.dialogResult = DialogResult.OK;
+			JDialogConfirm.this.dispose();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			JDialogConfirm.this.dialogResult = DialogResult.CANCEL;
+			JDialogConfirm.this.dispose();
+		}
 	}
 }

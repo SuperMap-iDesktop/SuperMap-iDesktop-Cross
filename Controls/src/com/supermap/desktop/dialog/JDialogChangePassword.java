@@ -16,7 +16,6 @@ import javax.swing.event.DocumentListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class JDialogChangePassword extends SmDialog {
 	/**
@@ -30,7 +29,7 @@ public class JDialogChangePassword extends SmDialog {
 	private JLabel labelNewPassword;
 	private JLabel labelConfirm;
 	private SmButton buttonCancel;
-	private SmButton buttonOK;
+	private SmButton buttonOk;
 	private String oldPassword = "";
 	private String newPassword = "";
 	private String confirmPassword = "";
@@ -111,7 +110,7 @@ public class JDialogChangePassword extends SmDialog {
 	private void initializeComponents() {
 		setBounds(100, 100, 391, 160);
 
-		this.getRootPane().setDefaultButton(buttonOK);
+		this.getRootPane().setDefaultButton(buttonOk);
 		textFieldOldPassword = new JPasswordField();
 		textFieldNewPassword = new JPasswordField();
 		textFieldConfirm = new JPasswordField();
@@ -119,7 +118,7 @@ public class JDialogChangePassword extends SmDialog {
 		labelNewPassword = new JLabel("New Password:");
 		labelConfirm = new JLabel("Confirm:");
 		buttonCancel = new SmButton("Cancel");
-		buttonOK = new SmButton("OK");
+		buttonOk = new SmButton("OK");
 
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(groupLayout);
@@ -140,7 +139,7 @@ public class JDialogChangePassword extends SmDialog {
 								.addComponent(textFieldNewPassword)
 								.addComponent(textFieldOldPassword, GroupLayout.PREFERRED_SIZE, 222, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(buttonOK,GroupLayout.PREFERRED_SIZE, 75 ,GroupLayout.PREFERRED_SIZE)
+							.addComponent(buttonOk,GroupLayout.PREFERRED_SIZE, 75 ,GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(buttonCancel,GroupLayout.PREFERRED_SIZE, 75 ,GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
@@ -163,7 +162,7 @@ public class JDialogChangePassword extends SmDialog {
 					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(buttonCancel)
-						.addComponent(buttonOK))
+						.addComponent(buttonOk))
 					.addContainerGap())
 		);
 		// @formatter:on
@@ -175,7 +174,7 @@ public class JDialogChangePassword extends SmDialog {
 		this.labelNewPassword.setText(ControlsProperties.getString("String_Label_NewPassword"));
 		this.labelConfirm.setText(ControlsProperties.getString("String_Label_ConfirmPassword"));
 		this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
-		this.buttonOK.setText(CommonProperties.getString("String_Button_OK"));
+		this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
 	}
 
 	private void registerEvents() {
@@ -186,7 +185,7 @@ public class JDialogChangePassword extends SmDialog {
 			}
 		});
 
-		this.buttonOK.addActionListener(new ActionListener() {
+		this.buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonOKClicked();
@@ -248,33 +247,33 @@ public class JDialogChangePassword extends SmDialog {
 	private void setButtonOKEnabeld() {
 		// 密码校验器为空，当然不能继续了
 		if (this.passwordCheck == null) {
-			this.buttonOK.setToolTipText(ControlsProperties.getString("String_PasswordCheckIsNull"));
+			this.buttonOk.setToolTipText(ControlsProperties.getString("String_PasswordCheckIsNull"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 输入的旧密码错误
 		if (!this.passwordCheck.checkPassword(this.getOldPassword())) {
-			this.buttonOK.setToolTipText(ControlsProperties.getString("String_OldPasswordIsFalse"));
+			this.buttonOk.setToolTipText(ControlsProperties.getString("String_OldPasswordIsFalse"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 新密码与校验密码不同时为空，不能继续
 		if (!StringUtilties.stringEquals(this.newPassword, this.confirmPassword, this.isIgnoreCase)) {
-			this.buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordDiff"));
+			this.buttonOk.setToolTipText(ControlsProperties.getString("String_NewPasswordDiff"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 新密码与旧密码相同，不能继续
 		if (StringUtilties.stringEquals(this.newPassword, this.oldPassword, this.isIgnoreCase)) {
-			this.buttonOK.setToolTipText(ControlsProperties.getString("String_NewPasswordNeedChange"));
+			this.buttonOk.setToolTipText(ControlsProperties.getString("String_NewPasswordNeedChange"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 		// 所有条件满足设为 true
-		this.buttonOK.setToolTipText("");
+		this.buttonOk.setToolTipText("");
 		setButtonOKEnabledInEDT(true);
 
 	}
@@ -283,7 +282,7 @@ public class JDialogChangePassword extends SmDialog {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				buttonOK.setEnabled(isEnabled);
+				buttonOk.setEnabled(isEnabled);
 			}
 		});
 	}
@@ -325,29 +324,17 @@ public class JDialogChangePassword extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonCancelClicked();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOKClicked();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonCancelClicked();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOKClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			buttonCancelClicked();
+		}
 	}
 }

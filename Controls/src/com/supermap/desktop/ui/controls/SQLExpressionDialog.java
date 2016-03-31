@@ -21,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
@@ -237,8 +238,10 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(100);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
+				80);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
+				.setPreferredWidth(100);
 		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
 	}
 
@@ -299,8 +302,10 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(100);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
+				80);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
+				.setPreferredWidth(100);
 		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
 	}
 
@@ -739,8 +744,8 @@ public class SQLExpressionDialog extends SmDialog {
 		if (this.jPanelCommonOperator == null) {
 			this.jPanelCommonOperator = new JPanel();
 			this.jPanelCommonOperator.setBounds(10, 135, 194, 149);
-			this.jPanelCommonOperator.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties.getString("String_CommonOperator"),
-					TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+			this.jPanelCommonOperator.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties
+					.getString("String_CommonOperator"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
 			this.jPanelCommonOperator.setLayout(null);
 			this.jPanelCommonOperator.add(getButtonPlus());
 			this.jPanelCommonOperator.add(getButtonSubtract());
@@ -845,10 +850,10 @@ public class SQLExpressionDialog extends SmDialog {
 				}
 			});
 
-			this.jComboBoxMathsOperation.setModel(new DefaultComboBoxModel(new String[] { "", "Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()",
-					"Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()", "Sin()",
-					"Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()", "CInt()", "CLng()", "CSng()", "CStr()", "Int()",
-					"Fix()" }));
+			this.jComboBoxMathsOperation.setModel(new DefaultComboBoxModel(new String[] { "", "Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()",
+					"Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()",
+					"Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()", "CInt()", "CLng()", "CSng()", "CStr()",
+					"Int()", "Fix()" }));
 			this.jComboBoxMathsOperation.setBounds(71, 20, 99, 22);
 		}
 		return this.jComboBoxMathsOperation;
@@ -867,9 +872,9 @@ public class SQLExpressionDialog extends SmDialog {
 				}
 			});
 
-			this.jComboBoxStringFunction.setModel(new DefaultComboBoxModel(new String[] { "", "Ascii()", "Char()", "Charindex()", "Difference()", "Left()", "Len()",
-					"Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()", "Soundex()",
-					"Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()" }));
+			this.jComboBoxStringFunction.setModel(new DefaultComboBoxModel(new String[] { "", "Ascii()", "Char()", "Charindex()", "Difference()", "Left()",
+					"Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()",
+					"Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()" }));
 			this.jComboBoxStringFunction.setBounds(71, 69, 99, 22);
 		}
 		return this.jComboBoxStringFunction;
@@ -1035,34 +1040,23 @@ public class SQLExpressionDialog extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dialogResult = DialogResult.CANCEL;
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				filedQueryParameter = new QueryParameter();
-				filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
-				dialogResult = DialogResult.OK;
-				dispose();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.jButtonOK) {
+			filedQueryParameter = new QueryParameter();
+			filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
+			dialogResult = DialogResult.OK;
+			dispose();
+		}
+		if (this.getRootPane().getDefaultButton() == this.jButtonCancel) {
+			dialogResult = DialogResult.CANCEL;
+			dispose();
+		}
 	}
 
 }

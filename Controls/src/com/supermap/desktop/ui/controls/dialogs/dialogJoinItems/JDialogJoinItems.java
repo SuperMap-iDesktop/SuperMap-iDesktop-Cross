@@ -55,7 +55,7 @@ public class JDialogJoinItems extends SmDialog {
 	private SmButton buttonSelectAll = new SmButton("selectAll");
 	private SmButton buttonReverse = new SmButton("reverse");
 	private SmButton buttonOk = new SmButton("Ok");
-	private SmButton buttonCancle = new SmButton("cancle");
+	private SmButton buttonCancel = new SmButton("cancle");
 	private JScrollPane scrollPane = new JScrollPane();
 	private JoinItemsTable joinItemsTable = new JoinItemsTable();
 
@@ -279,7 +279,7 @@ public class JDialogJoinItems extends SmDialog {
 			}
 		});
 
-		this.buttonCancle.addActionListener(new ActionListener() {
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
@@ -365,14 +365,13 @@ public class JDialogJoinItems extends SmDialog {
 		joinItemsTable.setJoinItems(joinItems);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
 
 	}
 
 	private void initResources() {
 		this.buttonAdd.setText(CommonProperties.getString(CommonProperties.Add));
 		this.buttonDel.setText(CommonProperties.getString(CommonProperties.Delete));
-		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.buttonSelectAll.setText(ControlsProperties.getString("String_SelectAll"));
 		this.buttonReverse.setText(ControlsProperties.getString("String_SelectReverse"));
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
@@ -418,7 +417,7 @@ public class JDialogJoinItems extends SmDialog {
 				new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(10, 1));
 		panelButton
 				.add(buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(10, 1));
-		panelButton.add(buttonCancle,
+		panelButton.add(buttonCancel,
 				new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1));
 	}
 
@@ -673,31 +672,20 @@ public class JDialogJoinItems extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
+		JDialogJoinItems.this.dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JDialogJoinItems.this.setDialogResult(DialogResult.OK);
-				JDialogJoinItems.this.dispose();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
-				JDialogJoinItems.this.dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			JDialogJoinItems.this.setDialogResult(DialogResult.OK);
+			JDialogJoinItems.this.dispose();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
+			JDialogJoinItems.this.dispose();
+		}
 	}
 }

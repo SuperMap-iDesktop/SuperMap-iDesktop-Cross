@@ -31,7 +31,6 @@ import javax.swing.event.ListSelectionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
@@ -440,8 +439,8 @@ public class DialogSaveChildForms extends SmDialog {
 
 	private void buttonClose_Click() {
 		try {
-			this.setVisible(false);
 			this.dialogResult = DialogResult.CANCEL;
+			this.dispose();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -543,30 +542,20 @@ public class DialogSaveChildForms extends SmDialog {
 	}
 	
 	@Override
-	protected JRootPane createRootPane(){
-		return keyBoardPressed();
+	public void escapePressed() {
+		buttonClose_Click();
 	}
-	
+
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonSave_Click();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton()==this.buttonSave) {
+			buttonSave_Click();
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonUnSave) {
+			buttonUnSave_Click();
+		}
+		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
+			buttonClose_Click();
+		}
 	}
 }

@@ -29,8 +29,8 @@ public class DialogSaveAsMap extends SmDialog {
 	 * 另存或保存地图时原来的地图名称
 	 */
 	private String myMapName;
-	private SmButton okButton;
-	private SmButton cancelButton;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 	private boolean isNewWindow = false;
 	private Maps maps;
 
@@ -66,28 +66,28 @@ public class DialogSaveAsMap extends SmDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		okButton = new SmButton("OK");
-		okButton.addActionListener(new ActionListener() {
+		buttonOk = new SmButton("OK");
+		buttonOk.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		this.okButton.setActionCommand("OK");
-		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
-		cancelButton = new SmButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		this.buttonOk.setActionCommand("OK");
+		buttonPane.add(buttonOk);
+		getRootPane().setDefaultButton(buttonOk);
+		buttonCancel = new SmButton("Cancel");
+		buttonCancel.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelButton_Click();
 			}
 		});
-		this.cancelButton.setActionCommand("Cancel");
-		buttonPane.add(cancelButton);
-		getRootPane().setDefaultButton(this.okButton);
+		this.buttonCancel.setActionCommand("Cancel");
+		buttonPane.add(buttonCancel);
+		getRootPane().setDefaultButton(this.buttonOk);
 		this.setLocationRelativeTo(null);
 		initializeResources();
 	}
@@ -99,8 +99,10 @@ public class DialogSaveAsMap extends SmDialog {
 	/**
 	 * 设置保存地图的前缀名称
 	 * 
-	 * @param name 地图名称
-	 * @param isNewWindow 是否为新窗体
+	 * @param name
+	 *            地图名称
+	 * @param isNewWindow
+	 *            是否为新窗体
 	 */
 	public void setMapName(String name, boolean isNewWindow) {
 		this.myMapName = name;
@@ -138,8 +140,8 @@ public class DialogSaveAsMap extends SmDialog {
 		try {
 			this.setTitle(MapViewProperties.getString("String_Form_SaveAsMap"));
 			this.lblNewLabelMapName.setText(MapViewProperties.getString("String_Label_InputMapName"));
-			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
-			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
+			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -149,11 +151,11 @@ public class DialogSaveAsMap extends SmDialog {
 		try {
 			String name = this.textFieldMapName.getText();
 			if (name == null || name.length() <= 0) {
-				this.okButton.setEnabled(false);
+				this.buttonOk.setEnabled(false);
 			} else if (!UICommonToolkit.isLawName(name, false)) {
-				this.okButton.setEnabled(false);
+				this.buttonOk.setEnabled(false);
 			} else {
-				this.okButton.setEnabled(true);
+				this.buttonOk.setEnabled(true);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -187,30 +189,19 @@ public class DialogSaveAsMap extends SmDialog {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButton_Click();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButton_Click();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButton_Click();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButton_Click();
+		}
 	}
 }

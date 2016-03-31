@@ -31,7 +31,7 @@ import java.awt.event.WindowEvent;
  */
 public class JDialogOperationSetting extends SmDialog {
 
-	//region 变量定义
+	// region 变量定义
 	private FormMap formMap;
 
 	private JCheckBox checkBoxRollingWheelWithoutDelay;
@@ -47,18 +47,16 @@ public class JDialogOperationSetting extends SmDialog {
 	private SmTextFieldLegit textFieldSelectionLerance;
 
 	private JPanel panelButton;
-	private SmButton buttonOK;
-	private SmButton buttonCancle;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 
-	private static final String[] SELECTION_MODE_STRINGS = new String[]{
-			SelectionModeUtilties.toString(SelectionMode.CONTAIN_INNER_POINT),
-			SelectionModeUtilties.toString(SelectionMode.CONTAIN_OBJECT),
-			SelectionModeUtilties.toString(SelectionMode.INTERSECT)
-	};
+	private static final String[] SELECTION_MODE_STRINGS = new String[] { SelectionModeUtilties.toString(SelectionMode.CONTAIN_INNER_POINT),
+			SelectionModeUtilties.toString(SelectionMode.CONTAIN_OBJECT), SelectionModeUtilties.toString(SelectionMode.INTERSECT) };
 	private WindowAdapter windowAdapter;
 	private ActionListener actionListener;
 	private ActionListener buttonOkListener;
-	//endregion
+
+	// endregion
 
 	public JDialogOperationSetting() {
 		super();
@@ -76,7 +74,7 @@ public class JDialogOperationSetting extends SmDialog {
 		initComponents();
 		initLayout();
 		initListeners();
-//		initComponentStates();
+		// initComponentStates();
 		initResources();
 	}
 
@@ -105,8 +103,8 @@ public class JDialogOperationSetting extends SmDialog {
 		this.textFieldSelectionLerance = new SmTextFieldLegit();
 
 		this.panelButton = new JPanel();
-		this.buttonOK = new SmButton();
-		this.buttonCancle = new SmButton();
+		this.buttonOk = new SmButton();
+		this.buttonCancel = new SmButton();
 
 		this.comboBoxSelectionMode.setModel(new DefaultComboBoxModel<>(SELECTION_MODE_STRINGS));
 		this.textFieldSelectionLerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
@@ -131,7 +129,7 @@ public class JDialogOperationSetting extends SmDialog {
 				return backUpValue;
 			}
 		});
-		getRootPane().setDefaultButton(this.buttonOK);
+		getRootPane().setDefaultButton(this.buttonOk);
 	}
 
 	/**
@@ -142,37 +140,57 @@ public class JDialogOperationSetting extends SmDialog {
 
 		JPanel panelCheckBox = new JPanel();
 		panelCheckBox.setLayout(new GridBagLayout());
-		panelCheckBox.add(checkBoxRollingWheelWithoutDelay, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCheckBox.add(checkBoxAutoScroll, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxRollingWheelWithoutDelay,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxAutoScroll, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(1, 1));
 
-//		panelCheckBox.add(checkBoxShowNavigationBar, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		// panelCheckBox.add(checkBoxShowNavigationBar, new GridBagConstraintsHelper(0, 1, 1,
+		// 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
-		panelCheckBox.add(checkBoxRefreshInInvalidArea, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panelCheckBox.add(checkBoxRefreshAtTracked, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxRefreshInInvalidArea,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		panelCheckBox.add(checkBoxRefreshAtTracked,
+				new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
 		JPanel panelLabel = new JPanel();
 		panelLabel.setLayout(new GridBagLayout());
-		panelLabel.add(labelSelectionMode, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 10));
-		panelLabel.add(comboBoxSelectionMode, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabel.add(
+				labelSelectionMode,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE)
+						.setInsets(0, 0, 0, 10));
+		panelLabel.add(comboBoxSelectionMode,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 
-		panelLabel.add(labelSelectionLerance, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 10));
-		panelLabel.add(textFieldSelectionLerance, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabel.add(
+				labelSelectionLerance,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE)
+						.setInsets(0, 0, 0, 10));
+		panelLabel.add(textFieldSelectionLerance,
+				new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.add(panelCheckBox, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
-		panel.add(panelLabel, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 10, 0, 0));
-		panel.add(this.panelButton, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
+		panel.add(panelLabel, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1)
+				.setInsets(0, 10, 0, 0));
+		panel.add(this.panelButton,
+				new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
 
 		this.getContentPane().setLayout(new GridBagLayout());
-		this.getContentPane().add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(10));
+		this.getContentPane().add(panel,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(10));
 	}
 
 	private void initPanelButton() {
 		this.panelButton.setLayout(new GridBagLayout());
 
-		this.panelButton.add(buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5));
-		this.panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+		this.panelButton.add(
+				buttonOk,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 0, 5));
+		this.panelButton.add(buttonCancel,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
 	}
 
 	/**
@@ -211,14 +229,14 @@ public class JDialogOperationSetting extends SmDialog {
 				}
 			}
 		});
-		this.buttonOK.addActionListener(this.buttonOkListener);
-		this.buttonCancle.addActionListener(this.actionListener);
+		this.buttonOk.addActionListener(this.buttonOkListener);
+		this.buttonCancel.addActionListener(this.actionListener);
 		this.addWindowListener(this.windowAdapter);
 	}
 
 	private void removeListeners() {
-		this.buttonOK.removeActionListener(this.buttonOkListener);
-		this.buttonCancle.removeActionListener(this.actionListener);
+		this.buttonOk.removeActionListener(this.buttonOkListener);
+		this.buttonCancel.removeActionListener(this.actionListener);
 		this.removeWindowListener(this.windowAdapter);
 	}
 
@@ -246,15 +264,15 @@ public class JDialogOperationSetting extends SmDialog {
 	private void initComponentStates() {
 		if (formMap != null) {
 			MapControl mapControl = formMap.getMapControl();
-			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());//鼠标延迟滚动
-			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());//自动滚屏
+			this.checkBoxRollingWheelWithoutDelay.setSelected(!mapControl.getRollingWheelWithoutDelay());// 鼠标延迟滚动
+			this.checkBoxAutoScroll.setSelected(mapControl.getMarginPanEnabled());// 自动滚屏
 			// todo 导航条
 			this.checkBoxShowNavigationBar.setSelected(false);
 			this.checkBoxShowNavigationBar.setVisible(false);
-			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());//局部刷新
-			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());//编辑实时更新
-			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));//选择模式
-			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));//点选容限
+			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());// 局部刷新
+			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());// 编辑实时更新
+			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));// 选择模式
+			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));// 点选容限
 
 		}
 	}
@@ -272,8 +290,8 @@ public class JDialogOperationSetting extends SmDialog {
 		this.labelSelectionMode.setText(MapViewProperties.getString("String_Label_SelectionMode"));
 		this.labelSelectionLerance.setText(MapViewProperties.getString("String_Label_SelectionTolerance"));
 
-		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
 	@Override
@@ -289,29 +307,17 @@ public class JDialogOperationSetting extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOkClicked();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			buttonOkClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dispose();
+		}
 	}
 }

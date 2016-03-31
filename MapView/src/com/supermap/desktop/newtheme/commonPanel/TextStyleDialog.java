@@ -27,8 +27,8 @@ public class TextStyleDialog extends SmDialog {
 		initComponents();
 	}
 
-	public TextStyleDialog(ThemeLabel themeLabel,int[] selectRow, Map map,Layer themeLabelLayer) {
-		this.textStyleContainer = new TextStyleContainer(themeLabel,selectRow, map,themeLabelLayer);
+	public TextStyleDialog(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
+		this.textStyleContainer = new TextStyleContainer(themeLabel, selectRow, map, themeLabelLayer);
 		initComponents();
 	}
 
@@ -51,7 +51,7 @@ public class TextStyleDialog extends SmDialog {
 	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
 		textStyleContainer.setRefreshAtOnce(isRefreshAtOnce);
 	}
-	
+
 	public TextStyleContainer getTextStyleContainer() {
 		return textStyleContainer;
 	}
@@ -64,24 +64,12 @@ public class TextStyleDialog extends SmDialog {
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	public void escapePressed() {
+		dispose();
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	@Override
+	public void enterPressed() {
+		dispose();
 	}
 }

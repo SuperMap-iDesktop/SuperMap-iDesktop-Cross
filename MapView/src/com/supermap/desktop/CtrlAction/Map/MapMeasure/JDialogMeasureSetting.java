@@ -8,9 +8,11 @@ import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 
 import javax.swing.*;
 
@@ -48,8 +50,8 @@ public class JDialogMeasureSetting extends SmDialog {
 			CoreProperties.getString("String_Degree_Format_DDMMSS"), CoreProperties.getString("String_Degree_Format_Radian") };
 
 	private JPanel panelButton;
-	private SmButton buttonOK;
-	private SmButton buttonCancle;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 
 	public JDialogMeasureSetting() {
 		super();
@@ -77,9 +79,9 @@ public class JDialogMeasureSetting extends SmDialog {
 		this.comboBoxAngle.setModel(new DefaultComboBoxModel<>(angleModel));
 
 		this.panelButton = new JPanel();
-		this.buttonOK = new SmButton();
-		this.buttonCancle = new SmButton();
-		this.getRootPane().setDefaultButton(this.buttonOK);
+		this.buttonOk = new SmButton();
+		this.buttonCancel = new SmButton();
+		this.getRootPane().setDefaultButton(this.buttonOk);
 	}
 
 	private void initLayout() {
@@ -113,9 +115,9 @@ public class JDialogMeasureSetting extends SmDialog {
 
 	private void initPanelButton() {
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(99, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE)
+		panelButton.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(99, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE)
 				.setInsets(0, 0, 0, 5));
-		panelButton.add(buttonCancle,
+		panelButton.add(buttonCancel,
 				new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
 	}
 
@@ -123,20 +125,20 @@ public class JDialogMeasureSetting extends SmDialog {
 		this.labelDistance.setText(MapViewProperties.getString("label_DistanceUnit"));
 		this.labelArea.setText(MapViewProperties.getString("label_AreaUnit"));
 		this.labelAngle.setText(MapViewProperties.getString("label_AngleUnit"));
-		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
+		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 
 	}
 
 	private void addListeners() {
-		this.buttonOK.addActionListener(new ActionListener() {
+		this.buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButtonClicked();
 			}
 		});
 
-		this.buttonCancle.addActionListener(new ActionListener() {
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
@@ -165,29 +167,17 @@ public class JDialogMeasureSetting extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButtonClicked();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButtonClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dispose();
+		}
 	}
 }

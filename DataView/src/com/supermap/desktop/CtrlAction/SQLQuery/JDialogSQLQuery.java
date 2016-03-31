@@ -894,15 +894,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener clearActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			clearScrollpaneallvalue();
-			textFieldGOTO.setText("");
-			checkButtonGetAllValueState();
-
-			textareaQueryField.clear();
-			textareaQueryCondition.clear();
-			textFieldGroupField.clear();
-			sqlTableOrderByField.clear();
-
+			clear();
 		}
 	};
 
@@ -1346,31 +1338,31 @@ public class JDialogSQLQuery extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonQuery && buttonQuery.isEnabled()) {
+			query();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClear) {
+			clear();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
+			dispose();
+		}
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (buttonQuery.isEnabled()) {
-					query();
-				}
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
+	private void clear() {
+		clearScrollpaneallvalue();
+		textFieldGOTO.setText("");
+		checkButtonGetAllValueState();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+		textareaQueryField.clear();
+		textareaQueryCondition.clear();
+		textFieldGroupField.clear();
+		sqlTableOrderByField.clear();
 	}
 }

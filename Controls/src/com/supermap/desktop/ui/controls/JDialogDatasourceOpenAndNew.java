@@ -44,8 +44,8 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	// Variables declaration
 	private int preSelectedIndex = -1;
 	private final JPanel contentPanel = new JPanel();
-	private javax.swing.JButton cancelButton;
-	private javax.swing.JButton okButton;
+	private javax.swing.JButton buttonCancel;
+	private javax.swing.JButton buttonOk;
 	private JList<Object> listDatasourceType;
 	private JPanelDatasourceInfoDatabase panelDatasourceInfoDatabase;
 	private JPanelDatasourceInfoWeb panelDatasourceInfoWeb;
@@ -82,17 +82,17 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 		});
 
-		this.okButton = new JButton();
-		this.okButton.setPreferredSize(new Dimension(75, 23));
+		this.buttonOk = new JButton();
+		this.buttonOk.setPreferredSize(new Dimension(75, 23));
 		if (DatasourceOperatorType.OPENDATABASE == type) {
 			this.setTitle(ControlsProperties.getString("String_Title_OpenDatabaseDataSourse"));
-			this.okButton.setText(CommonProperties.getString("String_Button_Open"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_Open"));
 		} else if (DatasourceOperatorType.NEWDATABASE == type) {
 			this.setTitle(ControlsProperties.getString("String_Title_NewDatabaseDataSourse"));
-			this.okButton.setText(ControlsProperties.getString("String_Button_Creat"));
+			this.buttonOk.setText(ControlsProperties.getString("String_Button_Creat"));
 		} else if (DatasourceOperatorType.OPENWEB == type) {
 			this.setTitle(ControlsProperties.getString("String_Title_OpenWebDataSourse"));
-			this.okButton.setText(CommonProperties.getString("String_Button_Open"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_Open"));
 		}
 		this.initializeDatasourceType(type);
 		this.datasourceOperatorType = type;
@@ -114,21 +114,21 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		buttonPane.add(okButton);
+		buttonPane.add(buttonOk);
 
-		this.cancelButton = new JButton();
-		this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
-		this.cancelButton.setPreferredSize(new Dimension(75, 23));
-		buttonPane.add(cancelButton);
+		this.buttonCancel = new JButton();
+		this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.buttonCancel.setPreferredSize(new Dimension(75, 23));
+		buttonPane.add(buttonCancel);
 
-		this.okButton.addActionListener(okActionListener);
-		this.cancelButton.addActionListener(new ActionListener() {
+		this.buttonOk.addActionListener(okActionListener);
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cancelButtonActionPerformed();
+				cancelButtonClicked();
 			}
 		});
-		getRootPane().setDefaultButton(this.okButton);
+		getRootPane().setDefaultButton(this.buttonOk);
 	}
 
 	protected void listWorkspaceType_ItemSelectedChanged() {
@@ -376,14 +376,14 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	private transient ActionListener okActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			okButtonActionPerformed();
+			okButtonClicked();
 		}
 	};
 
 	/**
 	 * OK按钮点击事件， 点击时调用面板的加载数据源方法。成功加载时调用关闭函数。
 	 */
-	private void okButtonActionPerformed() {
+	private void okButtonClicked() {
 		int openFlag = -1;
 
 		if (DatasourceOperatorType.OPENDATABASE == this.datasourceOperatorType) {
@@ -415,7 +415,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	 * 
 	 * @see #CloseDialog()
 	 */
-	private void cancelButtonActionPerformed() {
+	private void cancelButtonClicked() {
 		this.CloseDialog();
 	}
 
@@ -427,30 +427,18 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane(){
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButtonClicked();
 	}
-	
+
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButtonActionPerformed();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButtonActionPerformed();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButtonClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButtonClicked();
+		}
 	}
 
 }

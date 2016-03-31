@@ -29,8 +29,8 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 	private final JPanel contentPanel = new JPanel();
 	private SmTextFieldLegit jTextFieldAlias;
 	private JLabel jLabelAlias;
-	private SmButton okButton;
-	private SmButton cancelButton;
+	private SmButton buttonOk;
+	private SmButton buttonCancel;
 
 	/**
 	 * Create the dialog.
@@ -78,43 +78,43 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		contentPanel.setLayout(gl_contentPanel);
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		cancelButton = new SmButton("Cancel");
-		cancelButton.setPreferredSize(new Dimension(75, 23));
-		cancelButton.addActionListener(new ActionListener() {
+		buttonCancel = new SmButton("Cancel");
+		buttonCancel.setPreferredSize(new Dimension(75, 23));
+		buttonCancel.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelButton_Click();
 			}
 		});
-		cancelButton.setActionCommand("Cancel");
-		okButton = new SmButton("OK");
-		okButton.setPreferredSize(new Dimension(75, 23));
-		okButton.addActionListener(new ActionListener() {
+		buttonCancel.setActionCommand("Cancel");
+		buttonOk = new SmButton("OK");
+		buttonOk.setPreferredSize(new Dimension(75, 23));
+		buttonOk.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				okButton_Click();
 			}
 		});
-		okButton.setActionCommand("OK");
-		getRootPane().setDefaultButton(okButton);
+		buttonOk.setActionCommand("OK");
+		getRootPane().setDefaultButton(buttonOk);
 
 		GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
 		gl_buttonPane.setHorizontalGroup(gl_buttonPane.createParallelGroup(Alignment.LEADING).addGroup(
 				Alignment.TRAILING,
 				gl_buttonPane.createSequentialGroup().addContainerGap(158, Short.MAX_VALUE)
-						.addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(buttonOk, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap()));
+						.addComponent(buttonCancel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap()));
 		gl_buttonPane.setVerticalGroup(gl_buttonPane.createParallelGroup(Alignment.TRAILING).addGroup(
 				gl_buttonPane
 						.createSequentialGroup()
 						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addGroup(
 								gl_buttonPane.createParallelGroup(Alignment.BASELINE)
-										.addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+										.addComponent(buttonCancel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(buttonOk, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addContainerGap()));
 		buttonPane.setLayout(gl_buttonPane);
 
@@ -127,8 +127,8 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		try {
 			this.setTitle(DataEditorProperties.getString("String_Title_NewDatasourceMemory"));
 			this.jLabelAlias.setText(CommonProperties.getString("String_Label_Datasource"));
-			this.okButton.setText(CommonProperties.getString("String_Button_OK"));
-			this.cancelButton.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
+			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -194,31 +194,18 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		cancelButton_Click();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setDialogResult(DialogResult.OK);
-				okButton_Click();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelButton_Click();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButton_Click();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			cancelButton_Click();
+		}
 	}
-	
+
 }

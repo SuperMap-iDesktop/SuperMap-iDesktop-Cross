@@ -275,12 +275,16 @@ public class BufferDialog extends SmDialog {
 				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 				setSize(getLinePanelDimension());
 			} else if (e.getSource() == panelButton.getButtonOk()) {
-				okButtonClicked();
+				escapePressed();
 			} else if (e.getSource() == panelButton.getButtonCancel()) {
 				BufferDialog.this.dispose();
 			}
 		}
 
+	}
+
+	public void escapePressed() {
+		BufferDialog.this.dispose();
 	}
 
 	private void okButtonClicked() {
@@ -301,30 +305,14 @@ public class BufferDialog extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void enterPressed() {
+		if (panelButton.getButtonOk()==this.getRootPane().getDefaultButton()) {
+			okButtonClicked();
+		}
+		if (panelButton.getButtonCancel()==this.getRootPane().getDefaultButton()) {
+			BufferDialog.this.dispose();
+		}
 	}
 
-	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButtonClicked();
-			}
-		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
-	}
 
 }

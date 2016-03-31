@@ -37,8 +37,8 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 	private static final long serialVersionUID = 1L;
 	// UI Variables declaration - do not modify
 	private final JPanel contentPanel = new JPanel();
-	private javax.swing.JButton cancelButton;
-	private javax.swing.JButton okButton;
+	private javax.swing.JButton buttonCancel;
+	private javax.swing.JButton buttonOk;
 	private JList<String> listWorkspaceType;
 	private JPanelWorkspaceSaveAsFile panelSaveAsFile;
 	private transient GroupLayout groupLayoutContentPanel;
@@ -97,7 +97,8 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		this.panelSaveAsFile = new JPanelWorkspaceSaveAsFile();
 		this.groupLayoutContentPanel = new GroupLayout(this.contentPanel);
 		this.groupLayoutContentPanel.setHorizontalGroup(this.groupLayoutContentPanel.createParallelGroup(Alignment.LEADING).addGroup(
-				this.groupLayoutContentPanel.createSequentialGroup().addComponent(this.listWorkspaceType, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
+				this.groupLayoutContentPanel.createSequentialGroup()
+						.addComponent(this.listWorkspaceType, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelSaveAsFile, GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)));
 		this.groupLayoutContentPanel.setVerticalGroup(this.groupLayoutContentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(this.groupLayoutContentPanel.createSequentialGroup().addGap(78).addContainerGap(156, Short.MAX_VALUE))
@@ -110,25 +111,25 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		this.okButton = new JButton(CommonProperties.getString("String_Button_OK"));
-		this.okButton.setPreferredSize(new java.awt.Dimension(75, 23));
-		this.okButton.setActionCommand("OK");
-		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
+		this.buttonOk = new JButton(CommonProperties.getString("String_Button_OK"));
+		this.buttonOk.setPreferredSize(new java.awt.Dimension(75, 23));
+		this.buttonOk.setActionCommand("OK");
+		buttonPane.add(buttonOk);
+		getRootPane().setDefaultButton(buttonOk);
 
-		this.cancelButton = new JButton(CommonProperties.getString("String_Button_Cancel"));
-		this.cancelButton.setPreferredSize(new java.awt.Dimension(75, 23));
-		this.cancelButton.setActionCommand("Cancel");
-		buttonPane.add(cancelButton);
+		this.buttonCancel = new JButton(CommonProperties.getString("String_Button_Cancel"));
+		this.buttonCancel.setPreferredSize(new java.awt.Dimension(75, 23));
+		this.buttonCancel.setActionCommand("Cancel");
+		buttonPane.add(buttonCancel);
 
-		this.okButton.addActionListener(new OkButtonActionLisenter());
-		this.cancelButton.addActionListener(new ActionListener() {
+		this.buttonOk.addActionListener(new OkButtonActionLisenter());
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		getRootPane().setDefaultButton(this.okButton);
+		getRootPane().setDefaultButton(this.buttonOk);
 		if (flag == saveAsFile) {
 			JPanel existingPanel = getPanel();
 			JPanel newPanel = getPanel(saveAsFile);
@@ -279,7 +280,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 			workspaceVersion = (String) ((JPanelWorkspaceSaveAsFile) tempPanel).getjComboBoxVersion().getSelectedItem();
 			setWorkspaceVersion(this.workspaceConnectionInfo, workspaceVersion);
 			fileName = fileName.lastIndexOf(".") > 0 ? fileName.substring(0, fileName.lastIndexOf(".")) : fileName;
-			saveAs(workspace,this.workspaceConnectionInfo, workspaceFileName, fileName);
+			saveAs(workspace, this.workspaceConnectionInfo, workspaceFileName, fileName);
 		}
 		if (tempPanel instanceof JPanelWorkspaceSaveAsSQL) {
 			serverName = (String) ((JPanelWorkspaceSaveAsSQL) tempPanel).getjComboBoxServer().getSelectedItem();
@@ -322,29 +323,17 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 	}
 
 	@Override
-	protected JRootPane createRootPane() {
-		return keyBoardPressed();
+	public void escapePressed() {
+		dispose();
 	}
 
 	@Override
-	public JRootPane keyBoardPressed() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke strokeForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okButtonClicked();
-			}
-		}, strokeForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokeForEsc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.registerKeyboardAction(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		}, strokeForEsc, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		return rootPane;
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
+			okButtonClicked();
+		}
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
+			dispose();
+		}
 	}
 }
