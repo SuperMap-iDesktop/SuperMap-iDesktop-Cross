@@ -111,6 +111,7 @@ public class SymbolDialog extends JDialog {
 		this.setLayout(new GridBagLayout());
 		this.add(symbolPanel, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.add(getButtonPanel(), new GridBagConstraintsHelper(0, 1).setInsets(10, 0, 10, 0).setWeight(1, 0).setAnchor(GridBagConstraints.EAST));
+		this.getRootPane().setDefaultButton(jButtonOk);
 		this.setVisible(true);
 		return dialogResult;
 	}
