@@ -980,8 +980,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 						recordset = this.datasetVector.getRecordset(false, CursorType.STATIC);
 						int id = ((GeometryOperationData) this.operationData).getID();
 						recordset.seekID(id);
+						Object fieldValue = recordset.getFieldValue(this.fieldName);
 						return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(id), this.fieldName,
-								recordset.getFieldValue(this.fieldName).toString());
+								fieldValue == null ? "NULL" : fieldValue.toString());
 					}
 				} else {
 					result = this.operationData.getDescription();
