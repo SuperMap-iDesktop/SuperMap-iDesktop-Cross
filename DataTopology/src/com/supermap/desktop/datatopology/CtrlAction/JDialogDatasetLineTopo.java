@@ -88,7 +88,9 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	}
 
 	private void initComponents() {
-		setBounds(600, 300, 300, 360);
+		setSize(300, 360);
+		setLocationRelativeTo(null);
+		getRootPane().setDefaultButton(buttonSure);
 		initComboBoxColumn();
 		// @formatter:off
 		initContentPane();

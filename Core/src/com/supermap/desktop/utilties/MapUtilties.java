@@ -357,7 +357,7 @@ public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 		}
 	}*/
 
-	public static void deleteMaps(String[] mapNames) {
+	public static void deleteMaps(String... mapNames) {
 		try {
 			String message = CoreProperties.getString("String_MapDelete_Confirm");
 			if (mapNames.length == 1) {
