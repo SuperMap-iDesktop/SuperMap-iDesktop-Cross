@@ -99,7 +99,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
-	private JoinItems joinItems;
 
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_RANGEVALUE = 1;
@@ -148,8 +147,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
-			this.joinItems = layer.getDisplayFilter().getJoinItems();
-			this.themeLabelLayer.getDisplayFilter().setJoinItems(this.joinItems);
+			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
 			// 复制关联表信息到新图层中
 			this.layerName = this.themeLabelLayer.getName();
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
@@ -932,7 +930,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			} else {
 				ThemeLabel theme = null;
 				if (rangeExpression.contains(".")) {
-					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, joinItems);
+					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, themeLabelLayer
+							.getDisplayFilter().getJoinItems());
 				} else {
 					rangeExpression = datasetVector.getName() + "." + rangeExpression;
 					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, null);
@@ -983,7 +982,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			ThemeLabel theme = null;
 			if (rangeExpression.contains(".")) {
 				// 外部关联表字段制作专题图
-				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, joinItems);
+				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeLabelLayer
+						.getDisplayFilter().getJoinItems());
 			} else {
 				rangeExpression = datasetVector.getName() + "." + rangeExpression;
 				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null);
@@ -1092,7 +1092,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (!themeLabelLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeLabelLayer.getName())) {
+			if (null != themeLabelLayer && !themeLabelLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeLabelLayer.getName())) {
 				initComboBoxRangeExpression();
 			}
 		}

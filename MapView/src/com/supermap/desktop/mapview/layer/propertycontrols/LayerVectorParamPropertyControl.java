@@ -71,7 +71,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	private SmButton buttonDisplayFilter;
 	private JComboBox<String> comboBoxOrder;
 	private SmButton buttonJoinItem;
-	private ArrayList<Dataset> datasets;
+	private ArrayList<Dataset> datasets = new ArrayList<Dataset>();
 
 	DocumentListener documentListener = new DocumentListener() {
 
@@ -118,11 +118,15 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			IFormMap iFormMap = Application.getActiveApplication().getActiveForm() instanceof IFormMap ? ((IFormMap) Application.getActiveApplication()
 					.getActiveForm()) : null;
 			if (iFormMap != null) {
-				if (null == datasets) {
-					datasets = new ArrayList<Dataset>();
-					datasets.add(getModifiedLayerPropertyModel().getDataset());
+				datasets.clear();
+				Dataset dataset = getModifiedLayerPropertyModel().getDataset();
+				JoinItems tempJoinItems = getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
+				datasets.add(getModifiedLayerPropertyModel().getDataset());
+				for (int i = 0; i < tempJoinItems.getCount(); i++) {
+					datasets.add(dataset.getDatasource().getDatasets().get(tempJoinItems.get(i).getForeignTable()));
 				}
-				DialogResult dialogResult = sqlDialog.showDialog("", datasets.toArray(new Dataset[datasets.size()]));
+				DialogResult dialogResult = sqlDialog.showDialog(getModifiedLayerPropertyModel().getDisplayAttributeFilter(),
+						datasets.toArray(new Dataset[datasets.size()]));
 				if (dialogResult == DialogResult.OK) {
 					String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 
@@ -314,7 +318,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void setDisplayAttributeFilterValue() {
 		String attributeFilter = textFieldDisplayFilter.getText() == null ? "" : textFieldDisplayFilter.getText();
-		if (!attributeFilter.contains(".")) {
+		if (!StringUtilties.isNullOrEmpty(textFieldDisplayFilter.getText()) && !attributeFilter.contains(".")) {
 			attributeFilter = getModifiedLayerPropertyModel().getDataset().getName() + "." + attributeFilter;
 		}
 		getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
@@ -499,17 +503,12 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	protected void setJoinItems() {
 		JoinItems joinItems = getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().getJoinItems();
-		this.datasets = new ArrayList<Dataset>();
 		JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
 		Dataset dataset = getModifiedLayerPropertyModel().getDataset();
-		this.datasets.add(dataset);
 		jDialogJoinItem.setCurrentDataset(dataset);
 		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
 			// 修改属性
 			JoinItems tempJoinItems = jDialogJoinItem.getJoinItems();
-			for (int i = 0; i < tempJoinItems.getCount(); i++) {
-				this.datasets.add(dataset.getDatasource().getDatasets().get(tempJoinItems.get(i).getForeignTable()));
-			}
 			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
 			jDialogJoinItem.dispose();
 			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);

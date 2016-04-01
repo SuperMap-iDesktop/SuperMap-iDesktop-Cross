@@ -194,7 +194,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeGraphLayer = mapControl.getMap().getLayers().add(datasetVector, themeGraph, true);
-			this.themeGraphLayer.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
+			this.themeGraphLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeGraphLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -665,7 +665,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void resetMapSize() {
 		// 重置最大最小值来适应地图
 		Point pointStart = new Point(0, 0);
-		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 5));
+		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 10));
 		Point2D point2DStart = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointStart);
 		Point2D point2DEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointEnd);
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
@@ -885,17 +885,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 	}
 
-	class LayerPropertyChangeListener implements PropertyChangeListener{
+	class LayerPropertyChangeListener implements PropertyChangeListener {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (!themeGraphLayer.isDisposed()&&((Layer)evt.getNewValue()).getName().equals(themeGraphLayer.getName())) {
+			if (null != themeGraphLayer && !themeGraphLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeGraphLayer.getName())) {
 				getTable();
 			}
 		}
-		
+
 	}
-	
+
 	class ToolBarAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1008,7 +1008,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			for (int i = 0; i < themeGraph.getCount(); i++) {
 				existItems.add(themeGraph.getItem(i).getGraphExpression());
 			}
-			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector,themeGraphLayer.getDisplayFilter().getJoinItems(),existItems);
+			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), existItems);
 			addItemDialog.setLocation(x, y);
 			addItemDialog.setVisible(true);
 			if (addItemDialog.getDialogResult() == DialogResult.OK) {
@@ -1017,7 +1017,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					ThemeGraphItem item = new ThemeGraphItem();
 					String graphExpression = tempList.get(i);
 					if (!graphExpression.contains(".")) {
-						graphExpression = datasetVector.getName()+"."+graphExpression;
+						graphExpression = datasetVector.getName() + "." + graphExpression;
 					}
 					String caption = getCaption(graphExpression);
 					item.setGraphExpression(graphExpression);
@@ -1751,7 +1751,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	public void refreshMapAndLayer() {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
-		if (null != themeGraphLayer && null != themeGraphLayer.getTheme()) {
+		if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme().getType() == ThemeType.GRAPH) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
 			nowGraph.fromXML(this.themeGraph.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
