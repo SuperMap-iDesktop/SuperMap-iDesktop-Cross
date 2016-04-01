@@ -9,4 +9,5 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: Core;bundle-version="1.0.0",
  Controls;bundle-version="1.0.0"
 Export-Package: com.supermap.desktop,
- com.supermap.desktop.mapview
+ com.supermap.desktop.mapview,
+ com.supermap.desktop.mapview.geometry.operation

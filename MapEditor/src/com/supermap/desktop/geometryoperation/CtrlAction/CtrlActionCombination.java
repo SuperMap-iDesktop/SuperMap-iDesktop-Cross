@@ -1,7 +1,6 @@
 package com.supermap.desktop.geometryoperation.CtrlAction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class CtrlActionCombination extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (FormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+			FormMap formMap = (com.supermap.desktop.FormMap) Application.getActiveApplication().getActiveForm();
 			formMap.getEditState().checkEnable();
 			DatasetType datasetType = DatasetType.CAD;
 			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
@@ -91,7 +90,7 @@ public class CtrlActionCombination extends CtrlAction {
 						objectGeometrys.add(geometry);
 						recordset.moveNext();
 					}
-					if (layer.getName() == resultLayer.getName()) {
+					if (layer.getName().equals(resultLayer.getName())) {
 						RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
 						delete.begin();
 						for (int dd = 0; dd < layer.getSelection().getCount(); dd++) {

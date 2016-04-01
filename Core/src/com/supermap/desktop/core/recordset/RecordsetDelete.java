@@ -37,9 +37,12 @@ public class RecordsetDelete {
 				this.editHistory.add(EditType.DELETE, deleteRecordset, false);
 
 				deleteRecordset.getBatch().begin();
-				while (!deleteRecordset.isEOF()) {
-					deleteRecordset.delete();
-				}
+				
+				// 可能是组件缺陷，待验证
+				// while (!deleteRecordset.isEOF()) {
+				// deleteRecordset.delete();
+				// }
+				deleteRecordset.deleteAll();
 				deleteRecordset.getBatch().update();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
