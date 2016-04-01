@@ -111,7 +111,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 			for (int i = 0; i < model.getRowCount(); i++) {
 				FieldOperation fieldOperation = model.getFieldOperation(i);
-				int operationType = fieldOperation.getAvailableOperationType();
+				int operationType = fieldOperation.getOperationType();
 				String fieldName = fieldOperation.getFieldName();
 				FieldType fieldType = fieldOperation.getFieldType();
 
