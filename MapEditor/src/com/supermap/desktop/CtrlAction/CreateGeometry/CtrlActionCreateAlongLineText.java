@@ -56,7 +56,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
 				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.PixelLength(formMap.getMapControl()));
+				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.pixelLength(formMap.getMapControl()));
 				TextPart textPart = new TextPart();
 				textPart.setText(text);
 				geoText.addPart(textPart);
@@ -209,7 +209,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				geoText.getTextStyle().setFontName("");
 				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.PixelLength(formMap.getMapControl()));
+				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.pixelLength(formMap.getMapControl()));
 
 				for (int i = 0; i < formMap.getMapControl().getMap().getTrackingLayer().getCount(); i++) {
 					if (CreateAlongLineTextTracing.equals(formMap.getMapControl().getMap().getTrackingLayer().getTag(i))) {

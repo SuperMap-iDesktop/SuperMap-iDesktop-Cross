@@ -191,7 +191,7 @@ public class CreateTextAction {
 			this.editingGeoText = (GeoText) e.getGeometry();
 			this.editingGeoText.getTextStyle().setSizeFixed(false);
 			// DEFAULT_INPUT_HEIGHT / 2 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilties.PixelLength(this.mapControl));
+			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilties.pixelLength(this.mapControl));
 
 			// 获取 GeoText 的位置，将文本编辑控件显示到那个位置
 			Point2D centerPointMap = this.editingGeoText.getInnerPoint();

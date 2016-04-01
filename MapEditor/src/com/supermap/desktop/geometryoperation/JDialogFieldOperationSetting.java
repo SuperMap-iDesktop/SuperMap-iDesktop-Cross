@@ -8,6 +8,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -87,6 +88,93 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	}
 
 	public java.util.Map<String, Object> getPropertyData() {
+		java.util.Map<String, Object> properties = new HashMap<String, Object>();
+		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+
+		for (int i = 0; i < model.getRowCount(); i++) {
+			FieldOperation fieldOperation = model.getFieldOperation(i);
+			int operationType = fieldOperation.getAvailableOperationType();
+			String fieldName = fieldOperation.getFieldName();
+
+			if (operationType == OperationType.NULL) {
+				properties.put(fieldOperation.getFieldName(), null);
+			} else if (operationType == OperationType.SUM) {
+
+			} else if (operationType == OperationType.AVG) {
+
+			} else if (operationType == OperationType.GEOMETRY) {
+				Recordset recordset = null;
+				try {
+					recordset = this.editLayer.getSelection().toRecordset();
+					int id = ((GeometryOperationData) fieldOperation.getOperationData()).getID();
+					if (recordset.seekID(id)) {
+						properties.put(fieldName, recordset.getFieldValue(fieldName));
+					}
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(e);
+				} finally {
+					if (recordset != null) {
+						recordset.close();
+						recordset.dispose();
+					}
+				}
+			}
+		}
+		return properties;
+	}
+
+	private Object getSumData() {
+		// if (IsStringType(data.FieldInfo.Type))
+		// {
+		// recordset.MoveFirst();
+		// while (!recordset.IsEOF)
+		// {
+		// Object value = recordset.GetObject(data.FieldInfo.Name);
+		// ProcessSum(data, value);
+		// recordset.MoveNext();
+		// }
+		// }
+		// else
+		// {
+		// data.ResultValue = recordset.Statistic(data.FieldInfo.Name, StatisticMode.Sum);
+		// }
+		return null;
+	}
+
+	private Object getAVGData() {
+		// if (IsNumbericType(data.FieldInfo.Type))
+		// {
+		// if (data.WeightField != null)
+		// {
+		// Double weightSum = recordset.Statistic(data.WeightField.Name, StatisticMode.Sum);
+		// if (weightSum != 0)
+		// {
+		// Object weight = null;
+		// Object value = null;
+		// Double valueSum = 0;
+		// recordset.MoveFirst();
+		// while (!recordset.IsEOF)
+		// {
+		// value = recordset.GetObject(data.FieldInfo.Name);
+		// weight = recordset.GetObject(data.WeightField.Name);
+		// if (value != null && weight != null)
+		// {
+		// valueSum += (Convert.ToDouble(value) * Convert.ToDouble(weight));
+		// }
+		// recordset.MoveNext();
+		// }
+		// data.ResultValue = valueSum / weightSum;
+		// }
+		// else
+		// {
+		// data.ResultValue = 0;
+		// }
+		// }
+		// else
+		// {
+		// data.ResultValue = recordset.Statistic(data.FieldInfo.Name, StatisticMode.Sum) / recordset.RecordCount;
+		// }
+		// }
 		return null;
 	}
 
