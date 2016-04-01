@@ -1136,7 +1136,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		public String getDescription() {
 			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
 				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(this.id), this.fieldName,
-						this.fieldValue.toString());
+						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
 			} else {
 				return MessageFormat.format("SmID:{0}", this.id);
 			}
