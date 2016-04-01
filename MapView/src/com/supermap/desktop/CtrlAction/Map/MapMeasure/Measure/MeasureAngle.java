@@ -13,6 +13,7 @@ import com.supermap.data.TextPart;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AngleUnit;
+import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
@@ -324,44 +325,41 @@ public class MeasureAngle extends Measure {
 
 
 	private void drawAngleText(Point2Ds point2Ds, boolean isDrawing) {
-		{
-			try {
-				if (addedTags == null) {
-					addedTags = new ArrayList<>();
-				}
-				if (beforeUnit != null && beforeUnit != getAngleUnit()) {
-					clearAddedTags();
-				}
-				for (int i = 0; i < angleList.size(); i++) {
-					String tag = textTagTitle + i;
-					if (!addedTags.contains(tag)) {
-						addedTags.add(tag);
+		try {
+			if (addedTags == null) {
+				addedTags = new ArrayList<>();
+			}
+			if (beforeUnit != null && beforeUnit != getAngleUnit()) {
+				clearAddedTags();
+			}
+			for (int i = 0; i < angleList.size(); i++) {
+				String tag = textTagTitle + i;
+				if (!addedTags.contains(tag)) {
+					addedTags.add(tag);
 
-						String info = AngleUnit.getAngleInfo(getAngleUnit(), angleList.get(i));
-						Point2D pntMid = point2Ds.getItem(i + 1);
-						TextPart part = new TextPart(info, pntMid);
-						GeoText geotext = new GeoText(part);
+					String info = AngleUnit.getAngleInfo(getAngleUnit(), angleList.get(i));
+					Point2D pntMid = point2Ds.getItem(i + 1);
+					TextPart part = new TextPart(info, pntMid);
+					GeoText geotext = new GeoText(part);
 
-						TextStyle textStyle = geotext.getTextStyle();
-						textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
-								mapControl.getMap(), textStyle.isSizeFixed()));
-						textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
-						mapControl.getMap().getTrackingLayer().add(geotext, tag);
-					} else {
-						//如果已经绘制完成，需要替换以前对象的标签
-						if (!isDrawing) {
-							int index = mapControl.getMap().getTrackingLayer().indexOf(tag);
-							if (index > -1) {
-								mapControl.getMap().getTrackingLayer().setTag(index, tag + "FinishedMeasure");
-							}
+					TextStyle textStyle = geotext.getTextStyle();
+					textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
+							mapControl.getMap(), textStyle.isSizeFixed()));
+					textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
+					mapControl.getMap().getTrackingLayer().add(geotext, tag);
+				} else {
+					//如果已经绘制完成，需要替换以前对象的标签
+					if (!isDrawing) {
+						int index = mapControl.getMap().getTrackingLayer().indexOf(tag);
+						if (index > -1) {
+							mapControl.getMap().getTrackingLayer().setTag(index, tag + "FinishedMeasure");
 						}
 					}
 				}
-				beforeUnit = getAngleUnit();
-//				mapControl.getMap().refreshTrackingLayer();
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
 			}
+			beforeUnit = getAngleUnit();
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
@@ -404,5 +402,10 @@ public class MeasureAngle extends Measure {
 			}
 			beforeAzimuth = stackAzimuth.pop();
 		}
+	}
+
+	@Override
+	public MeasureType getMeasureType() {
+		return MeasureType.Angle;
 	}
 }

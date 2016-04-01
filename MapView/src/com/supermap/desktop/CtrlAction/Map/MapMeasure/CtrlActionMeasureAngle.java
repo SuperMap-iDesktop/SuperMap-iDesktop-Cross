@@ -2,11 +2,11 @@ package com.supermap.desktop.CtrlAction.Map.MapMeasure;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure.MeasureAngle;
+import com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure.MeasureUtilties;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.enums.MeasureType;
 import com.supermap.ui.MapControl;
 
 import java.util.HashMap;
@@ -23,36 +23,10 @@ public class CtrlActionMeasureAngle extends CtrlActionMeasureArea {
 
 	@Override
 	public void run() {
-		MeasureAngle measureAngle = getMeasureAngle();
-		if (measureAngle != null) {
-			measureAngle.startMeasure();
-		}
-	}
-
-	private MeasureAngle getMeasureAngle() {
-		MeasureAngle result = null;
-		final IForm activeForm = Application.getActiveApplication().getActiveForm();
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormMap) {
-			MapControl mapControl = ((FormMap) activeForm).getMapControl();
-			if (hashMap == null) {
-				hashMap = new HashMap<>();
-			}
-			result = hashMap.get(mapControl);
-			if (result == null) {
-				result = new MeasureAngle();
-				((FormMap) activeForm).addListener(new DockingWindowAdapter() {
-					@Override
-					public void windowClosed(DockingWindow window) {
-						if (window instanceof FormMap) {
-							hashMap.remove(((FormMap) window).getMapControl());
-							((FormMap) activeForm).removeListener(this);
-						}
-					}
-				});
-				hashMap.put(mapControl, result);
-			}
+			MeasureUtilties.startMeasure((FormMap) activeForm, MeasureType.Angle);
 		}
-		return result;
 	}
 
 	@Override

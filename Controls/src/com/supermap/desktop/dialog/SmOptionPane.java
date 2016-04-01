@@ -34,7 +34,7 @@ public class SmOptionPane extends SmDialog {
 	private int result = JOptionPane.CLOSED_OPTION;
 	private String defaultTitle = CoreProperties.getString("String_MessageBox_Title");
 
-	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()), (int) (180 * SystemPropertyUtilties.getSystemSizeRate()));
+	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()), (int) (130 * SystemPropertyUtilties.getSystemSizeRate()));
 
 	public SmOptionPane() {
 		init();
