@@ -34,7 +34,7 @@ public class SmOptionPane extends SmDialog {
 	private int result = JOptionPane.CLOSED_OPTION;
 	private String defaultTitle = CoreProperties.getString("String_MessageBox_Title");
 
-	private static final Dimension size = new Dimension((int) (320 * SystemPropertyUtilties.getSystemSizeRate()), (int) (130 * SystemPropertyUtilties.getSystemSizeRate()));
+	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()), (int) (130 * SystemPropertyUtilties.getSystemSizeRate()));
 
 	public SmOptionPane() {
 		init();
@@ -72,17 +72,6 @@ public class SmOptionPane extends SmDialog {
 
 	private void initLayout() {
 		this.panelButton.setLayout(new GridBagLayout());
-//		this.buttonYes.setMinimumSize(defaultSize);
-//		this.buttonNo.setMinimumSize(defaultSize);
-//		this.buttonCancel.setMinimumSize(defaultSize);
-//
-//		this.buttonYes.setPreferredSize(defaultSize);
-//		this.buttonNo.setPreferredSize(defaultSize);
-//		this.buttonCancel.setPreferredSize(defaultSize);
-//
-//		this.buttonYes.setMaximumSize(defaultSize);
-//		this.buttonNo.setMaximumSize(defaultSize);
-//		this.buttonCancel.setMaximumSize(defaultSize);
 
 		this.panelButton.add(buttonYes, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
 		this.panelButton.add(buttonNo, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
@@ -91,7 +80,7 @@ public class SmOptionPane extends SmDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 //		panel.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, (int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0, 0).setIpad((int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0));
-		panel.add(textAreaMessage, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 0, 0));
+		panel.add(textAreaMessage, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(10));
 		panel.add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
 
 		this.setLayout(new GridBagLayout());

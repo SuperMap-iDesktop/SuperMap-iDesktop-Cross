@@ -40,6 +40,7 @@ public class AddItemPanel extends JPopupMenu {
 	private ArrayList<ThemeGridUniqueItem> deleteGridUniqueItems;
 	private transient Dataset dataset;
 	private ThemeType themeType;
+	private JoinItems joinItems;
 
 	public AddItemPanel() {
 		initComponent();
@@ -66,7 +67,7 @@ public class AddItemPanel extends JPopupMenu {
 	 */
 	private void initUnaddedItems() {
 		if (themeType == ThemeType.UNIQUE) {
-			ThemeUnique themeUniqueTemp = ThemeUnique.makeDefault((DatasetVector) dataset, themeUnique.getUniqueExpression(), ColorGradientType.YELLOWGREEN);
+			ThemeUnique themeUniqueTemp = ThemeUnique.makeDefault((DatasetVector) dataset, themeUnique.getUniqueExpression(), ColorGradientType.YELLOWGREEN,joinItems);
 			List allItems = new ArrayList();
 			for (int i = 0; i < themeUniqueTemp.getCount(); i++) {
 				allItems.add(themeUniqueTemp.getItem(i).getUnique());
@@ -196,12 +197,14 @@ public class AddItemPanel extends JPopupMenu {
 		}
 		if (deleteGridUniqueItems != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
-				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(), String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
+				((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
+						String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
 			}
 		}
 		if (themeGridUnique != null && themeType == ThemeType.GRIDUNIQUE) {
 			for (int i = 0; i < themeGridUnique.getCount(); i++) {
-				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf(decimalFormat.format(themeGridUnique.getItem(i).getUnique())));
+				((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(),
+						String.valueOf(decimalFormat.format(themeGridUnique.getItem(i).getUnique())));
 			}
 		}
 	}
@@ -326,8 +329,10 @@ public class AddItemPanel extends JPopupMenu {
 					if (selectList != null && !selectList.isEmpty()) {
 						for (String selectItem : selectList) {
 							ThemeGridUniqueItem gridUniqueItem = getDeletedGridItem(selectItem);
-							((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf(decimalFormat.format(gridUniqueItem.getUnique())));
-							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((decimalFormat.format(gridUniqueItem.getUnique()))));
+							((DefaultListModel<String>) listRemoveFrom.getModel())
+									.removeElement(String.valueOf(decimalFormat.format(gridUniqueItem.getUnique())));
+							((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(),
+									String.valueOf((decimalFormat.format(gridUniqueItem.getUnique()))));
 							themeGridUnique.add(gridUniqueItem);
 							deleteGridUniqueItems.remove(gridUniqueItem);
 						}
@@ -356,7 +361,8 @@ public class AddItemPanel extends JPopupMenu {
 						HashMap<Integer, ThemeGridUniqueItem> result = getNeedDeleteGridItemHashMap(selectList);
 						for (int i = themeGridUnique.getCount() - 1; i >= 0; i--) {
 							if (result.get(i) != null) {
-								((DefaultListModel<String>) listAddto.getModel()).removeElement(String.valueOf((decimalFormat.format(result.get(i).getUnique()))));
+								((DefaultListModel<String>) listAddto.getModel())
+										.removeElement(String.valueOf((decimalFormat.format(result.get(i).getUnique()))));
 								((DefaultListModel<String>) listRemoveFrom.getModel()).add(listRemoveFrom.getModel().getSize(),
 										String.valueOf((decimalFormat.format(result.get(i).getUnique()))));
 								deleteGridUniqueItems.add(new ThemeGridUniqueItem(result.get(i)));
@@ -402,8 +408,10 @@ public class AddItemPanel extends JPopupMenu {
 				// 先从已删除的子项找
 				for (ThemeGridUniqueItem deleteGridItem : deleteGridUniqueItems) {
 					if (Double.compare(deleteGridItem.getUnique(), Double.parseDouble(caption)) == 0) {
-						((DefaultListModel<String>) listRemoveFrom.getModel()).removeElement(String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
-						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(), String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
+						((DefaultListModel<String>) listRemoveFrom.getModel())
+								.removeElement(String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
+						((DefaultListModel<String>) listAddto.getModel()).add(listAddto.getModel().getSize(),
+								String.valueOf((decimalFormat.format(deleteGridItem.getUnique()))));
 						themeGridUnique.add(deleteGridItem);
 						deleteGridUniqueItems.remove(deleteGridItem);
 						return;
@@ -496,6 +504,14 @@ public class AddItemPanel extends JPopupMenu {
 
 	public void setThemeType(ThemeType themeType) {
 		this.themeType = themeType;
+	}
+
+	public JoinItems getJoinItems() {
+		return joinItems;
+	}
+
+	public void setJoinItems(JoinItems joinItems) {
+		this.joinItems = joinItems;
 	}
 
 }

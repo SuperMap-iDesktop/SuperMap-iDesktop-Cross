@@ -34,6 +34,7 @@ import com.supermap.mapping.RangeMode;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeRange;
 import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -43,6 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -116,7 +118,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
-	private JoinItems joinItems;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
@@ -163,9 +164,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		MapControl mapControl = ThemeGuideFactory.getMapControl();
 		if (null != mapControl) {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(dataset, themeRange, true);
-			this.joinItems = layer.getDisplayFilter().getJoinItems();
 			// 添加关联字段
-			this.themeRangeLayer.getDisplayFilter().setJoinItems(this.joinItems);
+			this.themeRangeLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -1123,7 +1123,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				ThemeRange theme = null;
 				if (rangeExpression.contains(".")) {
 					// 外部连接表字段创建专题图
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, joinItems, precision);
+					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, themeRangeLayer
+							.getDisplayFilter().getJoinItems(), precision);
 				} else {
 					rangeExpression = datasetVector.getName() + "." + rangeExpression;
 					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
@@ -1295,7 +1296,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		if (rangeLength > 0) {
 			if (rangeExpression.contains(".")) {
 				// 外部连接表字段创建专题图
-				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, joinItems, precision);
+				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeRangeLayer
+						.getDisplayFilter().getJoinItems(), precision);
 			} else {
 				rangeExpression = datasetVector.getName() + "." + rangeExpression;
 				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
@@ -1347,7 +1349,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (!themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeRangeLayer.getName())) {
+			if (null != themeRangeLayer && !themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeRangeLayer.getName())) {
 				initComboBoxRangeExpression();
 			}
 		}
@@ -1404,7 +1406,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	public void refreshMapAndLayer() {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-		if (null != themeRangeLayer && null != themeRangeLayer.getTheme()) {
+		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.RANGE) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();
 			nowThemeRange.clear();
 			if (0 < this.themeRange.getCount()) {
