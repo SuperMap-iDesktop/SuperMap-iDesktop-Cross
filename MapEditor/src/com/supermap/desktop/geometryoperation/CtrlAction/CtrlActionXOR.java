@@ -54,7 +54,7 @@ public class CtrlActionXOR extends CtrlAction {
 					datasetType = DatasetType.REGION;
 				}
 			}
-			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("求交", formMap.getMapControl().getMap(), datasetType);
+			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("异或", formMap.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
 				this.editLayer = form.getEditLayer();
 				intersect(form.getPropertyData(), 3);

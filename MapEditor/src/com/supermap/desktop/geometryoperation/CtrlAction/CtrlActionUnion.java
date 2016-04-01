@@ -54,7 +54,7 @@ public class CtrlActionUnion extends CtrlAction {
 					datasetType = DatasetType.REGION;
 				}
 			}
-			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("求交", formMap.getMapControl().getMap(), datasetType);
+			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("求并", formMap.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
 				this.editLayer = form.getEditLayer();
 				intersect(form.getPropertyData(), 1);
