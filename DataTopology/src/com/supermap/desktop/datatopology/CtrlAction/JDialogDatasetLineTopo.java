@@ -21,11 +21,9 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class JDialogDatasetLineTopo extends SmDialog {
 
@@ -130,13 +128,14 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	}
 
 	private void initContentPane() {
+
 		//@formatter:off
 		getContentPane().setLayout(new GridBagLayout());
 		getContentPane().add(this.panelDatasource,            new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10,10,5,10).setWeight(1, 1));
 		getContentPane().add(this.panelTopoProcessingOptions, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10,10,5,10).setWeight(1, 1));
-		getContentPane().add(this.buttonMore,                 new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,10,10,60).setWeight(20, 0));
-		getContentPane().add(this.buttonSure,                 new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,0,10,0).setWeight(60, 0));
-		getContentPane().add(this.buttonQuite,                new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,5,10,10).setWeight(20, 0));
+		getContentPane().add(this.buttonMore,                 new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,10,10).setWeight(0, 0));
+		getContentPane().add(this.buttonSure,                 new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,0,10,10).setWeight(1, 0));
+		getContentPane().add(this.buttonQuite,                new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0,0,10,10).setWeight(0, 0));
 		getRootPane().setDefaultButton(this.buttonSure);
 		//@formatter:on
 	}
@@ -223,6 +222,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 * 改变下拉选项时修改comboBoxDataset的值
 	 */
 	private void changeComboBoxItem() {
+
 		String datasourceName = this.comboBoxDatasource.getSelectItem();
 		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 		this.hasDataset = insertItemToComboBox(datasource);

@@ -4,8 +4,6 @@ import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IMeasureAble;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
@@ -56,6 +54,18 @@ public abstract class Measure implements IMeasureAble {
 	// 两个编辑框
 	protected static JLabel labelTextBoxCurrent = new JLabel();
 	protected static JLabel labelTextBoxTotle = new JLabel();
+
+	protected boolean isMeasureAble = true;
+
+	public MapControl getMapControl() {
+		return mapControl;
+	}
+
+	@Override
+	public void setMapControl(MapControl mapControl) {
+		this.mapControl = mapControl;
+	}
+
 	// 地图控件
 	protected MapControl mapControl = null;
 
@@ -64,7 +74,7 @@ public abstract class Measure implements IMeasureAble {
 	//在ActionChanged的时候用这个对象来显示绘制好的部分
 	protected Geometry currentGeometry = null;
 
-	private static String tempTag = "tempGeometryTag";
+	private static final String tempTag = "tempGeometryTag";
 
 	protected DecimalFormat decimalFormat = new DecimalFormat("0.0000");
 
@@ -106,7 +116,7 @@ public abstract class Measure implements IMeasureAble {
 					actionTempGeometry(true);
 				} else {
 					// 画->其他
-					setTextBoxVisiable(false);
+					setTextBoxVisible(false);
 					endMeasure(false);
 				}
 			} else if (isPanAction(oldAction)) {
@@ -117,7 +127,7 @@ public abstract class Measure implements IMeasureAble {
 					inPan = false;
 					if (newAction != getMeasureAction()) {
 						// 漫游->其他
-						setTextBoxVisiable(false);
+						setTextBoxVisible(false);
 						endMeasure(false);
 					} else {
 						actionTempGeometry(false);
@@ -126,7 +136,6 @@ public abstract class Measure implements IMeasureAble {
 			}
 		}
 	};
-	private FormMap formMap;
 
 	private boolean isPanAction(Action action) {
 		return action == Action.PAN || action == Action.ZOOMIN || action == Action.ZOOMOUT || action == Action.ZOOMFREE || action == Action.ZOOMFREE2;
@@ -135,10 +144,10 @@ public abstract class Measure implements IMeasureAble {
 	@Override
 	public void stopMeasure() {
 		endMeasure(false);
-		formMap.getMapControl().setWaitCursorEnabled(true);
+		mapControl.setWaitCursorEnabled(true);
 	}
 
-	protected void setTextBoxVisiable(boolean isVisible) {
+	protected void setTextBoxVisible(boolean isVisible) {
 		labelTextBoxTotle.setVisible(isVisible);
 		labelTextBoxCurrent.setVisible(isVisible);
 	}
@@ -179,16 +188,15 @@ public abstract class Measure implements IMeasureAble {
 	 * 开始量算入口
 	 */
 	public void startMeasure() {
-		getMapControl();
-		if (formMap.getiMeasureAble() != this && formMap.getiMeasureAble() != null) {
-			formMap.getiMeasureAble().stopMeasure();
+		if (this.mapControl == null) {
+			return;
 		}
-		formMap.setiMeasureAble(this);
-		formMap.getMapControl().setWaitCursorEnabled(false);
+		isMeasureAble = false;
+		mapControl.setWaitCursorEnabled(false);
 //		removeListeners();
 //		cancleEdit();
-		mapControl.setTrackMode(TrackMode.TRACK);
-		mapControl.setLayout(null);
+		this.mapControl.setTrackMode(TrackMode.TRACK);
+		this.mapControl.setLayout(null);
 		// 添加编辑框到地图空间中
 		addTextBoxsToMapControl();
 		setMapAction();
@@ -198,18 +206,18 @@ public abstract class Measure implements IMeasureAble {
 		mapControl.requestFocusInWindow();
 	}
 
-	private void getMapControl() {
-		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof FormMap) {
-			formMap = (FormMap) activeForm;
-			this.mapControl = formMap.getMapControl();
-			initTextBoxs();
-		}
-	}
+//	private void getMapControl() {
+//		IForm activeForm = Application.getActiveApplication().getActiveForm();
+//		if (activeForm instanceof FormMap) {
+//			formMap = (FormMap) activeForm;
+//			this.mapControl = formMap.getMapControl();
+//			initTextBoxs();
+//		}
+//	}
 
 	private void addTextBoxsToMapControl() {
 		try {
-			setTextBoxVisiable(false);
+			setTextBoxVisible(false);
 			this.mapControl.remove(labelTextBoxTotle);
 			this.mapControl.add(labelTextBoxTotle);
 			this.mapControl.remove(labelTextBoxCurrent);
@@ -250,6 +258,7 @@ public abstract class Measure implements IMeasureAble {
 			if (mapControl != null) {
 				this.mapControl.setTrackMode(TrackMode.EDIT);
 			}
+			isMeasureAble = true;
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -311,7 +320,7 @@ public abstract class Measure implements IMeasureAble {
 			}
 			addedTags.remove(tag);
 		} else {
-			setTextBoxVisiable(false);
+			setTextBoxVisible(false);
 			removeLineAssistant();
 		}
 	}
@@ -397,7 +406,6 @@ public abstract class Measure implements IMeasureAble {
 
 			if (index >= 0) {
 				this.mapControl.getMap().getTrackingLayer().remove(index);
-//				this.mapControl.getMap().refreshTrackingLayer();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -434,7 +442,7 @@ public abstract class Measure implements IMeasureAble {
 
 
 	protected void cancleEdit() {
-		setTextBoxVisiable(false);
+		setTextBoxVisible(false);
 		endMeasure(false);
 	}
 
@@ -464,6 +472,12 @@ public abstract class Measure implements IMeasureAble {
 		}
 		return geoStyle;
 	}
+
+	@Override
+	public boolean isMeasureAble() {
+		return isMeasureAble;
+	}
+
 	//region 监听事件
 
 

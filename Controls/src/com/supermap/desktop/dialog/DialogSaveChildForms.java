@@ -1,7 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.BorderLayout;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
@@ -14,13 +12,10 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilties.StringUtilties;
-
-import javax.swing.ImageIcon;
-
-import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -28,7 +23,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -234,8 +229,11 @@ public class DialogSaveChildForms extends SmDialog {
 		try {
 			this.setTitle(CoreProperties.getString("String_Save"));
 			this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+			this.buttonCancel.setToolTipText(CommonProperties.getString("String_Button_Cancel"));
 			this.buttonSave.setText(CoreProperties.getString("String_Save"));
+			this.buttonSave.setToolTipText(CoreProperties.getString("String_Save"));
 			this.buttonUnSave.setText(CoreProperties.getString("String_FormSaveWindow_ButtonNotSave"));
+			this.buttonUnSave.setToolTipText(CoreProperties.getString("String_FormSaveWindow_ButtonNotSave"));
 
 			tableChildForms.getColumnModel().getColumn(FormInfoTableModel.NAME).setHeaderValue(CoreProperties.getString("String_Name"));
 			tableChildForms.getColumnModel().getColumn(FormInfoTableModel.TYPE).setHeaderValue(CoreProperties.getString("String_DataType"));

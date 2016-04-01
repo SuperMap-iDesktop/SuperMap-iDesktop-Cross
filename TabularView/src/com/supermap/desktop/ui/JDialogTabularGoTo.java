@@ -3,14 +3,11 @@ package com.supermap.desktop.ui;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,7 +58,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 鎺т欢鍒濆鍖�
+	 * 控件初始化
 	 */
 	private void initComponent() {
 		this.setSize(400, 220);
@@ -120,7 +117,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 璧勬簮鍖�
+	 * 资源化
 	 */
 	private void initResources() {
 		this.setTitle(TabularViewProperties.getString("String_FormTabularGoTo_Title"));
@@ -132,7 +129,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 鍒濆鍖栧睘鎬�
+	 * 初始化属性
 	 */
 	private void init() {
 		jTextFieldNowPlace.setEditable(false);
@@ -144,7 +141,7 @@ public class JDialogTabularGoTo extends SmDialog {
 	}
 
 	/**
-	 * 閲嶆柊璁＄畻鏄剧ず鐨勫��
+	 * 重新计算显示的值
 	 */
 	private void resetValue() {
 		IFormTabular formTabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
@@ -220,10 +217,10 @@ public class JDialogTabularGoTo extends SmDialog {
 		try {
 			int goToRow = 0;
 			if (jRadioButtonAbsolute.isSelected()) {
-				// 缁濆
+				// 绝对
 				goToRow = Integer.parseInt(jTextFieldAbsolutePlace.getText());
 			} else {
-				// 鐩稿
+				// 相对
 				goToRow = selectRow + Integer.parseInt(jTextFieldRelativePlace.getText());
 			}
 			if (goToRow == selectRow) {

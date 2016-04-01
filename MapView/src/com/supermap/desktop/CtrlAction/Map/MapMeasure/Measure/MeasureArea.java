@@ -9,6 +9,7 @@ import com.supermap.data.TextPart;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AreaUnit;
+import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
@@ -113,5 +114,10 @@ public class MeasureArea extends Measure {
 	@Override
 	protected void removeLastAdded() {
 		// 面积不需要
+	}
+
+	@Override
+	public MeasureType getMeasureType() {
+		return MeasureType.Area;
 	}
 }

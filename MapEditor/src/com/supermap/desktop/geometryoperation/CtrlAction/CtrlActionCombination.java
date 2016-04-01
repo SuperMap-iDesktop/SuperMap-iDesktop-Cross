@@ -51,6 +51,7 @@ public class CtrlActionCombination extends CtrlAction {
 	public void run() {
 		try {
 			FormMap formMap = (FormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+			formMap.getEditState().checkEnable();
 			DatasetType datasetType = DatasetType.CAD;
 			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
 				datasetType = formMap.getEditState().getselectedDatasetTypes().get(0);
@@ -202,11 +203,12 @@ public class CtrlActionCombination extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean enable = false;
-		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
-			((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().checkEnable();
-			enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isCombinationEnable();
-		}
-		return enable;
+		return true;
+		// boolean enable = false;
+		// if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+		// ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().checkEnable();
+		// enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isCombinationEnable();
+		// }
+		// return enable;
 	}
 }

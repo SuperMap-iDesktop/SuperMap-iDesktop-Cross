@@ -12,13 +12,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
@@ -26,13 +26,11 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 
 public class JDialogJoinItems extends SmDialog {
@@ -267,7 +265,6 @@ public class JDialogJoinItems extends SmDialog {
 		} else {
 			checkButtonStates();
 		}
-		buttonOk.requestFocus();
 	}
 
 	private void registListeners() {
@@ -334,7 +331,6 @@ public class JDialogJoinItems extends SmDialog {
 		if ((this.joinItemsTable.getSelectedRows() != null && this.joinItemsTable.getSelectedRows().length > 0) != buttonDel.isEnabled()) {
 			this.buttonDel.setEnabled(this.joinItemsTable.getSelectedRows() != null && this.joinItemsTable.getSelectedRows().length > 0);
 		}
-		buttonOk.requestFocus();
 	}
 
 	private void reverse() {
@@ -366,6 +362,7 @@ public class JDialogJoinItems extends SmDialog {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+
 	}
 
 	private void initResources() {
@@ -391,34 +388,22 @@ public class JDialogJoinItems extends SmDialog {
 		initPanelButton();
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
-		centerPanel.add(
-				scrollPane,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 100)
+		centerPanel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 100)
 						.setInsets(10, 10, 2, 10));
-		centerPanel.add(
-				panelButton,
-				new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1)
-						.setInsets(2, 10, 10, 10));
+		centerPanel.add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(2, 10, 10, 10));
 
 		this.setLayout(new GridBagLayout());
-		this.add(centerPanel,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraintsHelper.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
+		this.add(centerPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraintsHelper.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 	}
 
 	private void initPanelButton() {
 		panelButton.setLayout(new GridBagLayout());
-		panelButton
-				.add(buttonAdd, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(1, 1));
-		panelButton
-				.add(buttonDel, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(1, 1));
-		panelButton.add(buttonSelectAll, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST)
-				.setWeight(1, 1));
-		panelButton.add(buttonReverse,
-				new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(10, 1));
-		panelButton
-				.add(buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(10, 1));
-		panelButton.add(buttonCancel,
-				new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1));
+		panelButton.add(buttonAdd, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0, 10, 0, 0));
+		panelButton.add(buttonDel, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0, 10, 0, 0));
+		panelButton.add(buttonSelectAll, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0, 10, 0, 0));
+		panelButton.add(buttonReverse, new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0, 10, 0, 0));
+		panelButton.add(buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1).setInsets(0, 0, 0, 10));
+		panelButton.add(buttonCancel, new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(0, 1).setInsets(0, 0, 0, 10));
 	}
 
 	public Dataset getCurrentDataset() {

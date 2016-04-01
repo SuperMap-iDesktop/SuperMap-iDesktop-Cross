@@ -494,7 +494,7 @@ public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 	 * @param mapControl
 	 * @return
 	 */
-	public static double PixelLength(MapControl mapControl) {
+	public static double pixelLength(MapControl mapControl) {
 		Point2D pnt1 = mapControl.getMap().pixelToMap(new Point(1, 0));
 		Point2D pnt2 = mapControl.getMap().pixelToMap(new Point(0, 0));
 		double x = Math.abs(pnt1.getX() - pnt2.getX());

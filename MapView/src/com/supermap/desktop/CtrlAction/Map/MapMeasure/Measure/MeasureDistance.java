@@ -18,6 +18,7 @@ import com.supermap.data.TextStyle;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
+import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.FontUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
@@ -285,5 +286,8 @@ public class MeasureDistance extends Measure {
 //		mapControl.getMap().refreshTrackingLayer();
 	}
 
-
+	@Override
+	public MeasureType getMeasureType() {
+		return MeasureType.Distance;
+	}
 }
