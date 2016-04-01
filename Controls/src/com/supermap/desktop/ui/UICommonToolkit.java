@@ -276,10 +276,10 @@ public class UICommonToolkit {
 	}
 
 	private static SmOptionPane getSmOptionPane() {
-		return new SmOptionPane();
-//		if (smOptionPane == null) {
-//			smOptionPane = new SmOptionPane();
-//		}
-//		return smOptionPane;
+//		return new SmOptionPane();
+		if (smOptionPane == null) {
+			smOptionPane = new SmOptionPane();
+		}
+		return smOptionPane;
 	}
 }
