@@ -188,7 +188,6 @@ public class DataImportFrame extends SmDialog {
 		TableTooltipCellRenderer tooltipCellRenderer = TableTooltipCellRenderer.getInstance();
 		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellRenderer(tooltipCellRenderer);
 		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_data")).setCellRenderer(tooltipCellRenderer);
-		this.table.getColumn(DataConversionProperties.getString("string_tabletitle_state")).setCellRenderer(tooltipCellRenderer);
 		TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
 		for (int i = 0; i < this.fileInfos.size(); i++) {
 			final ImportFileInfo tempFileInfo = this.fileInfos.get(i);

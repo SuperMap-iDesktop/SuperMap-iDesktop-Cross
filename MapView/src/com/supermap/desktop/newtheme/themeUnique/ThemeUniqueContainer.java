@@ -157,7 +157,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		if (null != mapControl) {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
 			// 复制关联表信息到新图层中
-			this.themeUniqueLayer.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
+			this.themeUniqueLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -740,6 +740,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter()
 						.getJoinItems());
+
 				if (null != theme) {
 					themeUnique = new ThemeUnique(theme);
 					refreshColor();
@@ -831,9 +832,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	class LayerPropertyChangeListener implements PropertyChangeListener {
 
-		@Override 
+		@Override
 		public void propertyChange(PropertyChangeEvent e) {
-			if (!themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).getName().equals(themeUniqueLayer.getName())) {
+			if (null != themeUniqueLayer && !themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).getName().equals(themeUniqueLayer.getName())) {
 				initComboBoxExpression();
 				initComboBoxOffsetX();
 				initComboBoxOffsetY();
@@ -880,6 +881,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void addThemeItem() {
 			addItemPanel = new AddItemPanel(ThemeType.UNIQUE);
+			addItemPanel.setJoinItems(themeUniqueLayer.getDisplayFilter().getJoinItems());
 			addItemPanel.setDataset(datasetVector);
 			addItemPanel.setThemeUnique(themeUnique);
 			addItemPanel.setDeleteUniqueItems(deleteItems);
@@ -887,6 +889,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			addItemPanel.addPopupMenuListener(popmenuListener);
 			addItemPanel.show(buttonAdd, -addItemPanel.getWidth() / 2, buttonAdd.getHeight());
 			addItemPanel.setVisible(true);
+
 		}
 
 		/**
@@ -897,7 +900,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private boolean isNeedAddToDeleteItems(ThemeUniqueItem deleteItem) {
 			String deleteItemUnique = deleteItem.getUnique();
-			ThemeUnique themeUniqueTemp = ThemeUnique.makeDefault(datasetVector, themeUnique.getUniqueExpression(), ColorGradientType.YELLOWGREEN);
+			ThemeUnique themeUniqueTemp = ThemeUnique.makeDefault(datasetVector, themeUnique.getUniqueExpression(), ColorGradientType.YELLOWGREEN,
+					themeUniqueLayer.getDisplayFilter().getJoinItems());
 			for (int i = 0; i < themeUniqueTemp.getCount(); i++) {
 				if (themeUniqueTemp.getItem(i).getUnique().equals(deleteItemUnique)) {
 					return true;
@@ -1178,7 +1182,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	public void refreshMapAndLayer() {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
-		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme()) {
+		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme().getType() == ThemeType.UNIQUE) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
 			nowThemeUnique.fromXML(themeUnique.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);

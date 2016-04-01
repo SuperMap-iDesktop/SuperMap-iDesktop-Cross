@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -31,6 +32,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
@@ -94,7 +96,7 @@ public class SQLExpressionDialog extends SmDialog {
 	}
 
 	private void initialDialog(String expression) {
-		setSize(650, 350);
+		setSize(700, 350);
 		setResizable(false);
 		intializeForm();
 
@@ -238,11 +240,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
-				80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
-				.setPreferredWidth(100);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
+		resetTableCell();
 	}
 
 	/**
@@ -302,11 +300,16 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
-				80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
-				.setPreferredWidth(100);
+		resetTableCell();
+	}
+
+	private void resetTableCell() {
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setCellRenderer(TableTooltipCellRenderer.getInstance());
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(140);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setCellRenderer(TableTooltipCellRenderer.getInstance());
 		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setCellRenderer(TableTooltipCellRenderer.getInstance());
 	}
 
 	// 初始化操作
@@ -333,7 +336,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JScrollPane getPanel() {
 		if (this.jScrollPanel == null) {
 			this.jScrollPanel = new JScrollPane();
-			this.jScrollPanel.setBounds(396, 144, 238, 140);
+			this.jScrollPanel.setBounds(406, 142, 280, 140);
 			this.jScrollPanel.setViewportView(add(getTableFieldInfo()));
 
 			this.jScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -360,8 +363,8 @@ public class SQLExpressionDialog extends SmDialog {
 						int row = jTableFieldInfo.getSelectedRow();
 						int column = jTableFieldInfo.getSelectedColumn();
 
-						if (column == 1 && jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
-							String text = jTableFieldInfo.getValueAt(row, column).toString();
+						if (jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
+							String text = jTableFieldInfo.getValueAt(row, 1).toString();
 							if (jTextAreaSQLSentence.getSelectionStart() != 0) {
 								text = " " + text;
 							}
@@ -774,7 +777,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JTextArea getTextAreaSQLSentence() {
 		if (this.jTextAreaSQLSentence == null) {
 			this.jTextAreaSQLSentence = new JTextArea();
-			this.jTextAreaSQLSentence.setBounds(10, 10, 624, 119);
+			this.jTextAreaSQLSentence.setBounds(10, 10, 674, 119);
 			this.jTextAreaSQLSentence.setLineWrap(true);
 
 		}
@@ -790,7 +793,7 @@ public class SQLExpressionDialog extends SmDialog {
 			this.jPanelFunction.setLayout(null);
 			this.jPanelFunction.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties.getString("String_CommonFunction"),
 					TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-			this.jPanelFunction.setBounds(210, 135, 180, 149);
+			this.jPanelFunction.setBounds(210, 135, 190, 149);
 			this.jPanelFunction.add(getLabelMathsoperationLabel());
 			this.jPanelFunction.add(getLabelStringfunctionLabel());
 			this.jPanelFunction.add(getTimefunctionLabel());
@@ -854,7 +857,7 @@ public class SQLExpressionDialog extends SmDialog {
 					"Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()",
 					"Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()", "CInt()", "CLng()", "CSng()", "CStr()",
 					"Int()", "Fix()" }));
-			this.jComboBoxMathsOperation.setBounds(71, 20, 99, 22);
+			this.jComboBoxMathsOperation.setBounds(80, 20, 99, 22);
 		}
 		return this.jComboBoxMathsOperation;
 	}
@@ -875,7 +878,7 @@ public class SQLExpressionDialog extends SmDialog {
 			this.jComboBoxStringFunction.setModel(new DefaultComboBoxModel(new String[] { "", "Ascii()", "Char()", "Charindex()", "Difference()", "Left()",
 					"Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()",
 					"Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()" }));
-			this.jComboBoxStringFunction.setBounds(71, 69, 99, 22);
+			this.jComboBoxStringFunction.setBounds(80, 69, 99, 22);
 		}
 		return this.jComboBoxStringFunction;
 	}
@@ -895,7 +898,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 			this.jComboBoxTimeFunction.setModel(new DefaultComboBoxModel(new String[] { "", "DateAdd()", "Datediff()", "Datename()", "Datepart()", "Day()",
 					"Getdate()", "Getutcdate()", "Month()", "Year()" }));
-			this.jComboBoxTimeFunction.setBounds(71, 116, 99, 22);
+			this.jComboBoxTimeFunction.setBounds(80, 116, 99, 22);
 		}
 		return this.jComboBoxTimeFunction;
 	}
@@ -916,7 +919,7 @@ public class SQLExpressionDialog extends SmDialog {
 				}
 			});
 			this.jButtonOK.setText(CommonProperties.getString("String_Button_OK"));
-			this.jButtonOK.setBounds(428, 293, 75, 21);
+			this.jButtonOK.setBounds(488, 293, 75, 21);
 		}
 		getRootPane().setDefaultButton(this.jButtonOK);
 		return this.jButtonOK;
@@ -947,7 +950,7 @@ public class SQLExpressionDialog extends SmDialog {
 			});
 
 			this.jButtonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
-			this.jButtonCancel.setBounds(526, 293, 75, 21);
+			this.jButtonCancel.setBounds(566, 293, 75, 21);
 		}
 		return this.jButtonCancel;
 	}
@@ -1059,4 +1062,36 @@ public class SQLExpressionDialog extends SmDialog {
 		}
 	}
 
+	public static class TableTooltipCellRenderer extends JLabel implements TableCellRenderer {
+		private static TableTooltipCellRenderer tooltipCellRenderer;
+
+		private TableTooltipCellRenderer() {
+
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if (null != value) {
+				this.setText((String) value);
+				this.setToolTipText((String) value);
+			} else {
+				this.setText((String) value);
+			}
+			if (isSelected) {
+				this.setOpaque(true);
+				this.setBackground(new Color(36, 124, 255));
+			} else {
+				this.setOpaque(true);
+				this.setBackground(Color.white);
+			}
+			return this;
+		}
+
+		public static TableTooltipCellRenderer getInstance() {
+			if (null == tooltipCellRenderer) {
+				tooltipCellRenderer = new TableTooltipCellRenderer();
+			}
+			return tooltipCellRenderer;
+		}
+	}
 }

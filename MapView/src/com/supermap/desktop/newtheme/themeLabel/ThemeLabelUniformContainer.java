@@ -39,8 +39,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
-	private JoinItems joinItems;
-
 	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel, Layer layer) {
 		this.themeLabel = new ThemeLabel(themeLabel);
 		this.map = initCurrentTheme(datasetVector, layer);
@@ -85,8 +83,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		if (null != mapControl) {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
 			// 复制关联表信息到新图层中
-			this.joinItems = layer.getDisplayFilter().getJoinItems();
-			this.themeLabelLayer.getDisplayFilter().setJoinItems(this.joinItems);
+			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
 			
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);

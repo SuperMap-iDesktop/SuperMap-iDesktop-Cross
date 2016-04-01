@@ -32,12 +32,14 @@ import com.supermap.mapping.ThemeGridRange;
 import com.supermap.mapping.ThemeGridUnique;
 import com.supermap.mapping.ThemeLabel;
 import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeType;
 import com.supermap.mapping.ThemeUnique;
 import com.supermap.ui.MapControl;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -50,8 +52,14 @@ public class ThemeGuideFactory {
 	private static final String THEME_MAIN_CONTAINER_CLASS = "com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer";
 	private static IDockbar dockbarThemeContainer;
 	private static transient ThemeMainContainer container;
-	public static HashMap<String, ThemeChangePanel> themeTypeContainer = new HashMap<String, ThemeChangePanel>();
-
+	public static HashMap<String[], ThemeChangePanel> themeTypeContainer = new HashMap<String[], ThemeChangePanel>();
+	private static final String THEMETYPE_UNIQUE = "ThemeType_Unique";
+	private static final String THEMETYPE_RANGE="ThemeType_Range";
+	private static final String THEMETYPE_LABEL_UNIFORM="ThemeType_Label_Uniform";
+	private static final String THEMETYPE_LABEL_RANGE ="ThemeType_Label_Range";
+	private static final String THEMETYPE_GRAPH = "ThemeType_Graph";
+	private static final String THEMETYPE_GRID_UNIQUE="ThemeType_Grid_Unique";
+	private static final String THEMETYPE_GRID_RANGE="ThemeType_Grid_Range";
 	/**
 	 * 界面替换
 	 *
@@ -89,7 +97,7 @@ public class ThemeGuideFactory {
 						container.setLayerPropertyChanged(false);
 						themeTypeContainer.clear();
 						// 移除事件
-						HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
+						HashMap<String[], ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
 						Iterator<?> iterator = themeContainers.entrySet().iterator();
 						while (iterator.hasNext()) {
 							java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
@@ -106,7 +114,29 @@ public class ThemeGuideFactory {
 		}
 		return null;
 	}
-
+	/**
+	 * 
+	 * @param themetype
+	 * @param count
+	 * @return
+	 */
+	public static String getThemeTypeString(ThemeType themetype,int count){
+		String result = "";
+		if (themetype==ThemeType.UNIQUE) {
+			result = THEMETYPE_UNIQUE;
+		}
+		if (themetype==ThemeType.RANGE) {
+			result = THEMETYPE_RANGE;
+		}
+		if(themetype==ThemeType.LABEL&&count==0){
+			result = THEMETYPE_LABEL_UNIFORM;
+		}
+		if (themetype==ThemeType.LABEL&&count>0) {
+			
+		}
+		return THEMETYPE_UNIQUE;
+	}
+	
 	private static void layerPropertyChange(final ThemeChangePanel panel) {
 		panel.addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
 
@@ -152,7 +182,7 @@ public class ThemeGuideFactory {
 			if (null != themeUnique) {
 				success = true;
 				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique, layer);
-				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
+				themeTypeContainer.put(new String[]{themeUniqueContainer.getThemeUniqueLayer().getCaption(),THEMETYPE_UNIQUE}, themeUniqueContainer);
 				addPanelToThemeMainContainer(themeUniqueContainer);
 				getDockbarThemeContainer().setVisible(true);
 			} else {
@@ -175,7 +205,7 @@ public class ThemeGuideFactory {
 				success = true;
 				themeRange.setPrecision(0.1);
 				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange, layer);
-				themeTypeContainer.put(themeRangeContainer.getThemeRangeLayer().getCaption(), themeRangeContainer);
+				themeTypeContainer.put(new String[]{themeRangeContainer.getThemeRangeLayer().getCaption(),THEMETYPE_RANGE}, themeRangeContainer);
 				addPanelToThemeMainContainer(themeRangeContainer);
 				getDockbarThemeContainer().setVisible(true);
 			} else {
@@ -189,13 +219,13 @@ public class ThemeGuideFactory {
 	/**
 	 * 新建统一风格标签专题图
 	 */
-	public static void buildLabelUnformTheme(Layer layer) {
+	public static void buildLabelUniformTheme(Layer layer) {
 		if (null != getDataset()) {
 			ThemeLabel themeLabel = new ThemeLabel();
-			themeLabel.setLabelExpression(getDataset().getName()+".SmUserID");
+			themeLabel.setLabelExpression(getDataset().getName() + ".SmUserID");
 			themeLabel.setMaxLabelLength(8);
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel, layer);
-			themeTypeContainer.put(themeLabelUniformContainer.getThemeLabelLayer().getCaption(), themeLabelUniformContainer);
+			themeTypeContainer.put(new String[]{themeLabelUniformContainer.getThemeLabelLayer().getCaption(),THEMETYPE_LABEL_UNIFORM}, themeLabelUniformContainer);
 			addPanelToThemeMainContainer(themeLabelUniformContainer);
 			getDockbarThemeContainer().setVisible(true);
 		}
@@ -207,11 +237,12 @@ public class ThemeGuideFactory {
 	public static boolean buildLabelRangeTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
-			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName()+".SmID", RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENRED);
+			ThemeLabel themeLabel = ThemeLabel.makeDefault((DatasetVector) getDataset(), getDataset().getName() + ".SmID", RangeMode.EQUALINTERVAL, 5,
+					ColorGradientType.GREENRED);
 			if (null != themeLabel && themeLabel.getCount() >= 2) {
 				themeLabel.setMaxLabelLength(8);
 				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel, layer);
-				themeTypeContainer.put(themeLabelRangeContainer.getThemeLabelLayer().getCaption(), themeLabelRangeContainer);
+				themeTypeContainer.put(new String[]{themeLabelRangeContainer.getThemeLabelLayer().getCaption(),THEMETYPE_LABEL_RANGE}, themeLabelRangeContainer);
 				addPanelToThemeMainContainer(themeLabelRangeContainer);
 				getDockbarThemeContainer().setVisible(true);
 				success = true;
@@ -240,7 +271,7 @@ public class ThemeGuideFactory {
 				if (null != themeUnique) {
 					success = true;
 					ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
-					themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getCaption(), themeUniqueContainer);
+					themeTypeContainer.put(new String[]{themeUniqueContainer.getThemeUniqueLayer().getCaption(),THEMETYPE_GRID_UNIQUE}, themeUniqueContainer);
 					addPanelToThemeMainContainer(themeUniqueContainer);
 					getDockbarThemeContainer().setVisible(true);
 				} else {
@@ -272,7 +303,7 @@ public class ThemeGuideFactory {
 				if (null != themeUnique) {
 					success = true;
 					ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer((DatasetGrid) getDataset(), themeUnique);
-					themeTypeContainer.put(themeGridRangeContainer.getThemeRangeLayer().getCaption(), themeGridRangeContainer);
+					themeTypeContainer.put(new String[]{themeGridRangeContainer.getThemeRangeLayer().getCaption(),THEMETYPE_GRID_RANGE}, themeGridRangeContainer);
 					addPanelToThemeMainContainer(themeGridRangeContainer);
 					getDockbarThemeContainer().setVisible(true);
 				} else {
@@ -317,7 +348,7 @@ public class ThemeGuideFactory {
 			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph, layer);
-			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getCaption(), themeGraphContainer);
+			themeTypeContainer.put(new String[]{themeGraphContainer.getThemeGraphLayer().getCaption(),THEMETYPE_GRAPH}, themeGraphContainer);
 			addPanelToThemeMainContainer(themeGraphContainer);
 			getDockbarThemeContainer().setVisible(true);
 		}
@@ -350,16 +381,20 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetUniqueTheme(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_UNIQUE)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeUniqueContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_UNIQUE}, themeUniqueContainer);
 			if (null != container) {
 				container.setPanel(themeUniqueContainer);
 				layerPropertyChange(themeUniqueContainer);
 			}
 		}
+	}
+
+	private static boolean hasThemeContainer(Layer layer,String themeType) {
+		return null != themeTypeContainer.get(new String[]{layer.getCaption(),themeType});
 	}
 
 	/**
@@ -368,11 +403,11 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetRangeTheme(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_RANGE)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeRangeContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_RANGE}, themeRangeContainer);
 			if (null != container) {
 				container.setPanel(themeRangeContainer);
 				layerPropertyChange(themeRangeContainer);
@@ -386,11 +421,11 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelUniform(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_LABEL_UNIFORM)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeLabelUniformContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_LABEL_UNIFORM}, themeLabelUniformContainer);
 			if (null != container) {
 				container.setPanel(themeLabelUniformContainer);
 				layerPropertyChange(themeLabelUniformContainer);
@@ -404,11 +439,11 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelRange(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_LABEL_RANGE)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeLabelRangeContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_LABEL_RANGE}, themeLabelRangeContainer);
 			if (null != container) {
 				container.setPanel(themeLabelRangeContainer);
 				layerPropertyChange(themeLabelRangeContainer);
@@ -422,11 +457,11 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetGridUnique(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_GRID_UNIQUE)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeGridUniqueContainer themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeGridUniqueContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_GRID_UNIQUE}, themeGridUniqueContainer);
 			if (null != container) {
 				container.setPanel(themeGridUniqueContainer);
 				layerPropertyChange(themeGridUniqueContainer);
@@ -440,11 +475,11 @@ public class ThemeGuideFactory {
 	 * @returnff
 	 */
 	public static void resetGridRange(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_GRID_RANGE)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeGridRangeContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_GRID_RANGE}, themeGridRangeContainer);
 			if (null != container) {
 				container.setPanel(themeGridRangeContainer);
 				layerPropertyChange(themeGridRangeContainer);
@@ -458,11 +493,11 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetGraph(Layer layer) {
-		if (null != layer.getDataset() && null != themeTypeContainer.get(layer.getCaption())) {
+		if (hasThemeContainer(layer,THEMETYPE_GRAPH)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getCaption()));
-		} else if (null != layer.getDataset()) {
+		} else {
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(layer);
-			themeTypeContainer.put(layer.getCaption(), themeGraphContainer);
+			themeTypeContainer.put(new String[]{layer.getCaption(),THEMETYPE_GRAPH}, themeGraphContainer);
 			if (null != container) {
 				container.setPanel(themeGraphContainer);
 				layerPropertyChange(themeGraphContainer);
@@ -489,7 +524,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void modifyTheme(Layer layer) {
-		if (null != layer) {
+		if (null != layer && null != layer.getDataset()) {
 			if (layer.getTheme() instanceof ThemeUnique) {
 				resetUniqueTheme(layer);
 			} else if (layer.getTheme() instanceof ThemeRange) {

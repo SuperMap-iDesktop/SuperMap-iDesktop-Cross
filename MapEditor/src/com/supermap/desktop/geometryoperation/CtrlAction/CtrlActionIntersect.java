@@ -24,6 +24,7 @@ import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 
@@ -40,7 +41,8 @@ public class CtrlActionIntersect extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
+			this.formMap = (FormMap) Application.getActiveApplication().getActiveForm();
+			formMap.getEditState().checkEnable();
 			// 设置目标数据集类型
 			DatasetType datasetType = DatasetType.CAD;
 			if (formMap.getEditState().getSelectedGeometryTypes().size() == 1) {
@@ -53,20 +55,21 @@ public class CtrlActionIntersect extends CtrlAction {
 				}
 			}
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("求交", formMap.getMapControl().getMap(), datasetType);
-			form.showDialog();
+			if (form.showDialog() == DialogResult.OK) {
+				this.editLayer = form.getEditLayer();
+				intersect(form.getPropertyData(), 2);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	public void intersect() {
+	public void intersect(Map<String, Object> propertyData, int type) {
 		Recordset recordset = null;
 		try {
 			Geometry geometry = null;
 			GeoStyle resultStyle = null;
 			Geometry geometryIntersect = null;
-			Map<String, Object> propertyData;
-			// Map<String, Object> propertyData = GetPropertyData();
 			this.formMap.getMapControl().getEditHistory().batchBegin();
 			List<Layer> layers = MapUtilties.getLayers(this.formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
@@ -106,32 +109,28 @@ public class CtrlActionIntersect extends CtrlAction {
 									}
 								} else if (geometry != null && geometry.getType() == geoGeometryTemp.getType()) {
 									isIntersectInitialGeometry = true;
-									// switch (OperationType)
-									// {
-									// case _OperationType.Union:
-									// if (geometry.Type == GeometryType.GeoRegion)
-									// {
-									// geometry = Geometrist.Union(geometry, geoGeometryTemp);
-									// }
-									// else if (geometry.Type == GeometryType.GeoLine)
-									// geometry = UnionLine(geometry, geoGeometryTemp);
-									// break;
-									// case _OperationType.Intersect:
-									// geometry = Geometrist.Intersect(geometry, geoGeometryTemp);
-									// isIntersectInitialGeometry = false;
-									// break;
-									// case _OperationType.XOR:
-									// {
-									// geometry = Geometrist.Union(geometry, geoGeometryTemp);
-									// if (geometryIntersect != null)
-									// {
-									// geometryIntersect = Geometrist.Intersect(geometryIntersect, geoGeometryTemp);
-									// }
-									// }
-									// break;
-									// default:
-									// break;
-									// }
+									switch (type) {
+									case 1: // union
+										if (geometry.getType() == GeometryType.GEOREGION) {
+											geometry = Geometrist.union(geometry, geoGeometryTemp);
+										} else if (geometry.getType() == GeometryType.GEOLINE)
+											geometry = UnionLine(geometry, geoGeometryTemp);
+										break;
+									case 2: // intersect
+										geometry = Geometrist.intersect(geometry, geoGeometryTemp);
+										isIntersectInitialGeometry = false;
+										break;
+									case 3: // xor
+									{
+										geometry = Geometrist.union(geometry, geoGeometryTemp);
+										if (geometryIntersect != null) {
+											geometryIntersect = Geometrist.intersect(geometryIntersect, geoGeometryTemp);
+										}
+									}
+										break;
+									default:
+										break;
+									}
 								}
 								if (layer.getDataset() == this.editLayer.getDataset()) {
 									this.formMap.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
@@ -154,18 +153,15 @@ public class CtrlActionIntersect extends CtrlAction {
 			}
 
 			// 异或，考虑到多个对象问题，先并、交，再用并、交后的对象进行异或
-			// if (OperationType == _OperationType.XOR &&
-			// geometry != null &&
-			// geometryIntersect != null)
-			// {
-			// geometry = Geometrist.XOR(geometry, geometryIntersect);
-			// }
+			if (type == 3 && geometry != null && geometryIntersect != null) {
+				geometry = Geometrist.xOR(geometry, geometryIntersect);
+			}
 
 			if (geometry != null) {
 				recordset = ((DatasetVector) this.editLayer.getDataset()).getRecordset(true, CursorType.DYNAMIC);
 				if (recordset != null) {
 					geometry.setStyle(resultStyle);
-					// Boolean b1 = recordset.addNew(geometry, propertyData);
+					Boolean b1 = recordset.addNew(geometry, propertyData);
 					Boolean b2 = recordset.update();
 					this.formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 					// SuperMap.Desktop.UI.CommonToolkit.RefreshTabularForm(recordset.Dataset);
@@ -239,10 +235,11 @@ public class CtrlActionIntersect extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		Boolean enable = false;
-		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
-			enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isUnionEnable();
-		}
-		return enable;
+		// Boolean enable = false;
+		// if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+		// enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isUnionEnable();
+		// }
+		// return enable;
+		return true;
 	}
 }

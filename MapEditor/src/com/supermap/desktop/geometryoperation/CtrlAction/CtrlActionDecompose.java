@@ -18,6 +18,7 @@ import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -50,6 +51,7 @@ public class CtrlActionDecompose extends CtrlAction {
 		Geometry geometry = null;
 		try {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+			((FormMap)formMap).getEditState().checkEnable();
 			Layer layer = formMap.getMapControl().getActiveEditableLayer();
 			List<Integer> resultIDs = new ArrayList<Integer>();
 			recordset = layer.getSelection().toRecordset();

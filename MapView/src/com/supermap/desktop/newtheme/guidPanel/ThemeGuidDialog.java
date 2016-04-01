@@ -58,7 +58,7 @@ public class ThemeGuidDialog extends SmDialog {
 	 * 界面布局入口
 	 */
 	private void initComponents() {
-		setSize(480, 380);
+		setSize(480, 385);
 		setLocationRelativeTo(null);
 		this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -282,7 +282,7 @@ public class ThemeGuidDialog extends SmDialog {
 		} else {
 			// 标签统一风格专题图
 			if (isUniform) {
-				ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
+				ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 				ThemeGuidDialog.this.dispose();
 			} else if (isRange) {
 				ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
@@ -314,7 +314,7 @@ public class ThemeGuidDialog extends SmDialog {
 		case 2:
 			// 标签统一风格专题图
 			if (isUniform) {
-				ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
+				ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 				ThemeGuidDialog.this.dispose();
 			} else if (isRange) {
 				buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
@@ -350,7 +350,7 @@ public class ThemeGuidDialog extends SmDialog {
 					isRange = false;
 				} else if (2 == e.getClickCount()) {
 					// 新建标签统一风格专题图
-					ThemeGuideFactory.buildLabelUnformTheme(ThemeUtil.getActiveLayer());
+					ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}

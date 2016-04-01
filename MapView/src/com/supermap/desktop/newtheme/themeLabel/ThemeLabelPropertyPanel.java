@@ -603,7 +603,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (!themelabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themelabelLayer.getName())) {
+			if (null != themelabelLayer && !themelabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themelabelLayer.getName())) {
 				initComboBoxLabelExpression();
 				initComboBoxOffsetX();
 				initComboBoxOffsetY();

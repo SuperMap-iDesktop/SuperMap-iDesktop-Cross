@@ -2,10 +2,13 @@ package com.supermap.desktop.geometryoperation;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +22,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
@@ -32,11 +37,13 @@ import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
+import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.comboBox.ComboBoxItemT;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -53,8 +60,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private static final String TrackingLayerTag = "Tag_OperationTypeGeometry";
 
 	private JLabel labelEditLayer;
-	private JComboBox<Layer> comboBoxEditLayer;
+	private JComboBox<ComboBoxItemT<Layer>> comboBoxEditLayer;
 	private JTable table;
+	private ButtonGroup radioButtonGroup;
 	private JRadioButton radioButtonNull;
 	private JRadioButton radioButtonAVG;
 	private JRadioButton radioButtonSum;
@@ -80,102 +88,111 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		initializeResources();
 		registerEvents();
 		setMap(map);
-
+		setSize(new Dimension(600, 400));
+		setLocationRelativeTo(null);
 	}
 
 	public Layer getEditLayer() {
 		return this.editLayer;
 	}
 
+	/**
+	 * 获取字段操作的属性数据
+	 * 
+	 * @return
+	 */
 	public java.util.Map<String, Object> getPropertyData() {
 		java.util.Map<String, Object> properties = new HashMap<String, Object>();
 		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+		Recordset recordset = null;
 
-		for (int i = 0; i < model.getRowCount(); i++) {
-			FieldOperation fieldOperation = model.getFieldOperation(i);
-			int operationType = fieldOperation.getAvailableOperationType();
-			String fieldName = fieldOperation.getFieldName();
+		try {
+			recordset = this.editLayer.getSelection().toRecordset();
 
-			if (operationType == OperationType.NULL) {
-				properties.put(fieldOperation.getFieldName(), null);
-			} else if (operationType == OperationType.SUM) {
+			for (int i = 0; i < model.getRowCount(); i++) {
+				FieldOperation fieldOperation = model.getFieldOperation(i);
+				int operationType = fieldOperation.getOperationType();
+				String fieldName = fieldOperation.getFieldName();
+				FieldType fieldType = fieldOperation.getFieldType();
 
-			} else if (operationType == OperationType.AVG) {
-
-			} else if (operationType == OperationType.GEOMETRY) {
-				Recordset recordset = null;
-				try {
-					recordset = this.editLayer.getSelection().toRecordset();
+				if (operationType == OperationType.NULL) {
+					properties.put(fieldOperation.getFieldName(), null);
+				} else if (operationType == OperationType.SUM) {
+					properties.put(fieldName, getSumData(recordset, fieldName, fieldType));
+				} else if (operationType == OperationType.AVG) {
+					properties.put(fieldName, getAVGData(recordset, fieldName, fieldType, (AVGOperationData) fieldOperation.getOperationData()));
+				} else if (operationType == OperationType.GEOMETRY) {
 					int id = ((GeometryOperationData) fieldOperation.getOperationData()).getID();
 					if (recordset.seekID(id)) {
 						properties.put(fieldName, recordset.getFieldValue(fieldName));
 					}
-				} catch (Exception e) {
-					Application.getActiveApplication().getOutput().output(e);
-				} finally {
-					if (recordset != null) {
-						recordset.close();
-						recordset.dispose();
-					}
 				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
 			}
 		}
 		return properties;
 	}
 
-	private Object getSumData() {
-		// if (IsStringType(data.FieldInfo.Type))
-		// {
-		// recordset.MoveFirst();
-		// while (!recordset.IsEOF)
-		// {
-		// Object value = recordset.GetObject(data.FieldInfo.Name);
-		// ProcessSum(data, value);
-		// recordset.MoveNext();
-		// }
-		// }
-		// else
-		// {
-		// data.ResultValue = recordset.Statistic(data.FieldInfo.Name, StatisticMode.Sum);
-		// }
-		return null;
+	private Object getSumData(Recordset recordset, String fieldName, FieldType fieldType) {
+		Object result = null;
+
+		// 字符串型直接做连接
+		if (FieldTypeUtilties.isString(fieldType)) {
+			recordset.moveFirst();
+			while (!recordset.isEOF()) {
+				Object value = recordset.getObject(fieldName);
+
+				if (result == null) {
+					result = value;
+				} else {
+					if (value != null) {
+						result += value.toString();
+					}
+				}
+				recordset.moveNext();
+			}
+		} else {
+			result = recordset.statistic(fieldName, StatisticMode.SUM);
+		}
+		return result;
 	}
 
-	private Object getAVGData() {
-		// if (IsNumbericType(data.FieldInfo.Type))
-		// {
-		// if (data.WeightField != null)
-		// {
-		// Double weightSum = recordset.Statistic(data.WeightField.Name, StatisticMode.Sum);
-		// if (weightSum != 0)
-		// {
-		// Object weight = null;
-		// Object value = null;
-		// Double valueSum = 0;
-		// recordset.MoveFirst();
-		// while (!recordset.IsEOF)
-		// {
-		// value = recordset.GetObject(data.FieldInfo.Name);
-		// weight = recordset.GetObject(data.WeightField.Name);
-		// if (value != null && weight != null)
-		// {
-		// valueSum += (Convert.ToDouble(value) * Convert.ToDouble(weight));
-		// }
-		// recordset.MoveNext();
-		// }
-		// data.ResultValue = valueSum / weightSum;
-		// }
-		// else
-		// {
-		// data.ResultValue = 0;
-		// }
-		// }
-		// else
-		// {
-		// data.ResultValue = recordset.Statistic(data.FieldInfo.Name, StatisticMode.Sum) / recordset.RecordCount;
-		// }
-		// }
-		return null;
+	private Object getAVGData(Recordset recordset, String fieldName, FieldType fieldType, AVGOperationData operationData) {
+		Object result = null;
+
+		if (FieldTypeUtilties.isNumber(fieldType)) {
+			if (operationData.getFieldInfo() != null) {
+				double weightSum = recordset.statistic(operationData.getFieldInfo().getName(), StatisticMode.SUM);
+
+				if (weightSum != 0) {
+					Object weight = null;
+					Object value = null;
+					double valueSum = 0;
+
+					recordset.moveFirst();
+					while (!recordset.isEOF()) {
+						value = recordset.getObject(fieldName);
+						weight = recordset.getObject(operationData.getFieldInfo().getName());
+						if (value != null && weight != null) {
+							valueSum += (Double.valueOf(value.toString()) * Double.valueOf(weight.toString()));
+						}
+						recordset.moveNext();
+					}
+					result = valueSum / weightSum;
+				} else {
+					result = 0;
+				}
+			} else {
+				result = recordset.statistic(fieldName, StatisticMode.SUM) / recordset.getRecordCount();
+			}
+		}
+		return result;
 	}
 
 	public Map getMap() {
@@ -196,17 +213,15 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				ArrayList<Layer> layers = MapUtilties.getLayers(this.map);
 				for (Layer layer : layers) {
 					if (layer.isEditable() && (layer.getDataset().getType() == this.resultDatasetType || layer.getDataset().getType() == DatasetType.CAD)) {
-						this.comboBoxEditLayer.addItem(layer);
+						this.comboBoxEditLayer.addItem(new ComboBoxItemT<Layer>(layer, layer.getCaption()));
 						if (layer.getSelection().getCount() > 0 && this.comboBoxEditLayer.getSelectedIndex() == -1) {
 							this.comboBoxEditLayer.setSelectedIndex(this.comboBoxEditLayer.getItemCount() - 1);
-							this.editLayer = layer;
 						}
 					}
 				}
 
 				if (this.comboBoxEditLayer.getItemCount() > 0 && this.comboBoxEditLayer.getSelectedIndex() == -1) {
 					this.comboBoxEditLayer.setSelectedIndex(0);
-					this.editLayer = (Layer) this.comboBoxEditLayer.getSelectedItem();
 				}
 			}
 		} catch (Exception e) {
@@ -250,18 +265,20 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void initializeComponents() {
 		this.labelEditLayer = new JLabel("EditLayer:");
 		this.comboBoxEditLayer = new JComboBox<>();
+		JScrollPane scrollPaneTable = new JScrollPane();
 		this.table = new JTable();
 		FieldOperationTableModel tableModel = new FieldOperationTableModel();
 		this.table.setModel(tableModel);
+		scrollPaneTable.setViewportView(this.table);
 		this.radioButtonNull = new JRadioButton("NULL");
 		this.radioButtonAVG = new JRadioButton("AVG");
 		this.radioButtonSum = new JRadioButton("SUM");
 		this.radioButtonGeometry = new JRadioButton("Geometry");
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(this.radioButtonNull);
-		buttonGroup.add(this.radioButtonAVG);
-		buttonGroup.add(this.radioButtonSum);
-		buttonGroup.add(this.radioButtonGeometry);
+		this.radioButtonGroup = new ButtonGroup();
+		this.radioButtonGroup.add(this.radioButtonNull);
+		this.radioButtonGroup.add(this.radioButtonAVG);
+		this.radioButtonGroup.add(this.radioButtonSum);
+		this.radioButtonGroup.add(this.radioButtonGeometry);
 		this.comboBoxWeight = new JComboBox<IOperationData>();
 		this.comboBoxGeometry = new JComboBox<IOperationData>();
 		this.buttonOK = new JButton("OK");
@@ -275,7 +292,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				.addGroup(groupLayout.createSequentialGroup()
 						.addComponent(this.labelEditLayer)
 						.addComponent(this.comboBoxEditLayer, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-				.addComponent(this.table, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addComponent(this.radioButtonNull)
@@ -295,7 +312,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelEditLayer)
 						.addComponent(this.comboBoxEditLayer,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
-				.addComponent(this.table, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.radioButtonNull)
 						.addComponent(this.radioButtonAVG)
@@ -328,19 +345,20 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		this.radioButtonAVG.addItemListener(this);
 		this.radioButtonSum.addItemListener(this);
 		this.radioButtonGeometry.addItemListener(this);
+		this.comboBoxWeight.addItemListener(this);
+		this.comboBoxGeometry.addItemListener(this);
 		this.table.getSelectionModel().addListSelectionListener(this);
+		this.addWindowListener(new WindowAdapter() {
+			/**
+			 * Invoked when a window has been closed.
+			 */
+			@Override
+			public void windowClosed(WindowEvent e) {
+				removeTrackingTags();
+				map.refresh();
+			}
+		});
 	}
-
-	// private void unRegisterEvents() {
-	// this.comboBoxEditLayer.removeItemListener(this);
-	// this.buttonOK.removeActionListener(this);
-	// this.buttonCancel.removeActionListener(this);
-	// this.radioButtonNull.removeItemListener(this);
-	// this.radioButtonAVG.removeItemListener(this);
-	// this.radioButtonSum.removeItemListener(this);
-	// this.radioButtonGeometry.removeItemListener(this);
-	// this.table.getSelectionModel().removeListSelectionListener(this);
-	// }
 
 	/**
 	 * 设置选中的可编辑图层，刷新 Table，设置默认选中行，触发相应事件，回调 tableSelectionChanged 进入下一步的设置
@@ -349,6 +367,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	 */
 	private void setEditLayer(Layer layer) {
 		if (layer != null && layer.getDataset() instanceof DatasetVector) {
+			// 初始化 ComboBoxWeight
+			loadComboBoxWeight();
+
+			// 初始化 ComboBoxGeometry
+			loadComboBoxGeometry();
+
 			DatasetVector dataset = (DatasetVector) layer.getDataset();
 			FieldInfos fieldInfos = dataset.getFieldInfos();
 			FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
@@ -356,18 +380,15 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			// 初始化 Table
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				FieldInfo fieldInfo = fieldInfos.get(i);
-				model.addFieldOperation(createFieldOperation(fieldInfo));
+
+				if (!fieldInfo.isSystemField()) {
+					model.addFieldOperation(createFieldOperation(fieldInfo));
+				}
 			}
 
 			if (model.getRowCount() > 0) {
 				this.table.setRowSelectionInterval(0, 0);
 			}
-
-			// 初始化 ComboBoxWeight
-			loadComboBoxWeight();
-
-			// 初始化 ComboBoxGeometry
-			loadComboBoxGeometry();
 		}
 	}
 
@@ -375,7 +396,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		FieldOperation result = null;
 
 		if (fieldInfo != null) {
-			result = new FieldOperation(fieldInfo.getName(), fieldInfo.getCaption(), fieldInfo.getType());
+			result = new FieldOperation((DatasetVector) this.editLayer.getDataset(), fieldInfo.getName(), fieldInfo.getCaption(), fieldInfo.getType());
+			result.setOperationData(this.comboBoxGeometry.getItemAt(0));
 		}
 		return result;
 	}
@@ -389,7 +411,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	 */
 	// @formatter:on
 	private void setFieldOperations(FieldOperation[] fieldOperations) {
-		resetRadioButtonStates();
+		// 重置所有 radioButton 到未选择状态
+		this.radioButtonGroup.clearSelection();
 		if (fieldOperations != null && fieldOperations.length > 0) {
 			// 用第一条记录的操作类型初始化变量，后面遍历比较，不一致则跳出循环
 			int operationType = fieldOperations[0].getOperationType();
@@ -420,16 +443,6 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			}
 		}
 		setControlsEnabled(fieldOperations);
-	}
-
-	/**
-	 * 重置所有 radioButton 到未选择状态
-	 */
-	private void resetRadioButtonStates() {
-		this.radioButtonNull.setSelected(false);
-		this.radioButtonAVG.setSelected(false);
-		this.radioButtonSum.setSelected(false);
-		this.radioButtonGeometry.setSelected(false);
 	}
 
 	// @formatter:off
@@ -467,6 +480,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		this.radioButtonAVG.setEnabled(radioButtonAVGEnabled);
 		this.radioButtonSum.setEnabled(radioButtonSumEnabled);
 		this.radioButtonGeometry.setEnabled(radioButtonGeometryEnabled);
+		this.comboBoxWeight.setEnabled(radioButtonAVGEnabled && this.radioButtonAVG.isSelected());
+		this.comboBoxGeometry.setEnabled(radioButtonGeometryEnabled && this.radioButtonGeometry.isSelected());
 		this.buttonOK.setEnabled(buttonOKEnabled);
 	}
 
@@ -517,12 +532,15 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 			for (int i = 0; i < selection.getCount(); i++) {
 				GeometryOperationData operationData = new GeometryOperationData(selection.get(i));
+				this.comboBoxGeometry.addItem(operationData);
 			}
 		}
 	}
 
 	private void buttonOKClicked() {
 		this.setVisible(false);
+		removeTrackingTags();
+		this.map.refresh();
 		setDialogResult(DialogResult.OK);
 	}
 
@@ -535,8 +553,13 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		try {
 			if (this.radioButtonNull.isSelected() && this.selectedOperations != null) {
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationType(OperationType.NULL);
+					FieldOperation operation = this.selectedOperations[i];
+					operation.setOperationType(OperationType.NULL);
+					operation.setOperationData(new DefaultOperationData(OperationType.NULL, MapEditorProperties.getString("String_GeometryOperation_BeNull")));
 				}
+				removeTrackingTags();
+				this.map.refresh();
+				this.table.updateUI();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -591,6 +614,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				this.comboBoxWeight.setEnabled(false);
 				this.comboBoxWeight.setSelectedItem(null);
 			}
+			removeTrackingTags();
+			this.map.refresh();
+			this.table.updateUI();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -600,8 +626,13 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		try {
 			if (this.radioButtonSum.isSelected() && this.selectedOperations != null) {
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationType(OperationType.SUM);
+					FieldOperation operation = this.selectedOperations[i];
+					operation.setOperationType(OperationType.SUM);
+					operation.setOperationData(new DefaultOperationData(OperationType.SUM, MapEditorProperties.getString("String_GeometryOperation_SUM")));
 				}
+				removeTrackingTags();
+				this.map.refresh();
+				this.table.updateUI();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -663,6 +694,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				this.comboBoxGeometry.setEnabled(false);
 				this.comboBoxGeometry.setSelectedItem(null);
 			}
+			this.table.updateUI();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -707,6 +739,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void comboBoxEditLayerSelectChanged(ItemEvent e) {
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
+				ComboBoxItemT<Layer> selectedItem = (ComboBoxItemT<Layer>) this.comboBoxEditLayer.getSelectedItem();
+				this.editLayer = selectedItem.getData();
 				setEditLayer(this.editLayer);
 			}
 		} catch (Exception e2) {
@@ -716,10 +750,11 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	private void comboBoxWeightSelectChanged(ItemEvent e) {
 		try {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
+			if (e.getStateChange() == ItemEvent.SELECTED && this.selectedOperations != null) {
 				for (int i = 0; i < this.selectedOperations.length; i++) {
 					this.selectedOperations[i].setOperationData((IOperationData) this.comboBoxWeight.getSelectedItem());
 				}
+				this.table.updateUI();
 			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -728,13 +763,14 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	private void comboBoxGeometrySelectChanged(ItemEvent e) {
 		try {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
+			if (e.getStateChange() == ItemEvent.SELECTED && this.selectedOperations != null) {
 				GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getSelectedItem();
 
 				// 设置附加数据
 				for (int i = 0; i < this.selectedOperations.length; i++) {
 					this.selectedOperations[i].setOperationData(data);
 				}
+				this.table.updateUI();
 
 				// 地图上高亮显示
 				highlightGeometry(data.getID());
@@ -754,15 +790,17 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		Geometry geometry = null;
 
 		try {
+			TrackingLayer trackingLayer = this.map.getTrackingLayer();
+			removeTrackingTags();
+
 			recordset = this.editLayer.getSelection().toRecordset();
 			recordset.seekID(id);
 			geometry = recordset.getGeometry();
 
 			GeoStyle geoStyle = new GeoStyle();
 			geoStyle.setLineColor(Color.RED);
-			geoStyle.setLineWidth(2);
+			geoStyle.setLineWidth(1);
 			geometry.setStyle(geoStyle);
-			TrackingLayer trackingLayer = this.map.getTrackingLayer();
 			trackingLayer.add(geometry, TrackingLayerTag);
 			this.map.refresh();
 		} catch (Exception e) {
@@ -775,17 +813,20 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		}
 	}
 
+	private void removeTrackingTags() {
+		TrackingLayer trackingLayer = this.map.getTrackingLayer();
+		int index = trackingLayer.indexOf(TrackingLayerTag);
+		while (index >= 0) {
+			trackingLayer.remove(index);
+			index = trackingLayer.indexOf(TrackingLayerTag);
+		}
+	}
+
 	private void tableSelectionChanged() {
 		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
 		int[] rows = this.table.getSelectedRows();
 		this.selectedOperations = model.getFieldOperations(rows);
 		setFieldOperations(this.selectedOperations);
-	}
-
-	public static void main(String[] args) {
-		JDialogFieldOperationSetting dialog = new JDialogFieldOperationSetting("", DatasetType.LINE);
-		dialog.setSize(new Dimension(400, 300));
-		dialog.setVisible(true);
 	}
 
 	/**
@@ -823,7 +864,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				} else if (columnIndex == 1) {
 					return FieldTypeUtilties.getFieldTypeName(data.getFieldType());
 				} else if (columnIndex == 2) {
-					return data.getOperationData().getDescription();
+					return data.toString();
 				}
 			}
 
@@ -870,6 +911,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	}
 
 	private class FieldOperation {
+		private DatasetVector datasetVector;
 		private String fieldName;
 		private String fieldCaption;
 		private FieldType fieldType;
@@ -877,7 +919,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		private int availableOperationType = OperationType.NULL | OperationType.SUM | OperationType.AVG | OperationType.GEOMETRY;
 		private IOperationData operationData = null;
 
-		public FieldOperation(String fieldName, String fieldCaption, FieldType fieldType) {
+		public FieldOperation(DatasetVector datasetVector, String fieldName, String fieldCaption, FieldType fieldType) {
+			this.datasetVector = datasetVector;
 			this.fieldName = fieldName;
 			this.fieldCaption = fieldCaption;
 			this.fieldType = fieldType;
@@ -925,6 +968,35 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		public void setOperationData(IOperationData operationData) {
 			this.operationData = operationData;
 		}
+
+		@Override
+		public String toString() {
+			String result = "";
+			Recordset recordset = null;
+
+			try {
+				if (this.operationType == OperationType.GEOMETRY) {
+					if (!StringUtilties.isNullOrEmpty(this.fieldName) && this.operationData instanceof GeometryOperationData) {
+						recordset = this.datasetVector.getRecordset(false, CursorType.STATIC);
+						int id = ((GeometryOperationData) this.operationData).getID();
+						recordset.seekID(id);
+						Object fieldValue = recordset.getFieldValue(this.fieldName);
+						return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(id), this.fieldName,
+								fieldValue == null ? "NULL" : fieldValue.toString());
+					}
+				} else {
+					result = this.operationData.getDescription();
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				if (recordset != null) {
+					recordset.close();
+					recordset.dispose();
+				}
+			}
+			return result;
+		}
 	}
 
 	/**
@@ -962,6 +1034,31 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		 * @return
 		 */
 		String getDescription();
+	}
+
+	private class DefaultOperationData implements IOperationData {
+		private int operationType = OperationType.NONE;;
+		private String description;
+
+		public DefaultOperationData(int operationType, String description) {
+			this.operationType = operationType;
+			this.description = description;
+		}
+
+		@Override
+		public int getOperationType() {
+			return this.operationType;
+		}
+
+		@Override
+		public String getDescription() {
+			return this.description;
+		}
+
+		@Override
+		public String toString() {
+			return getDescription();
+		}
 	}
 
 	private class AVGOperationData implements IOperationData {
@@ -1039,7 +1136,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		public String getDescription() {
 			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
 				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(this.id), this.fieldName,
-						this.fieldValue.toString());
+						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
 			} else {
 				return MessageFormat.format("SmID:{0}", this.id);
 			}
