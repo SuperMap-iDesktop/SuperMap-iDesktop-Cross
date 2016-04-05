@@ -5,6 +5,10 @@ import com.supermap.desktop.Application;
 import com.supermap.layout.MapLayout;
 import com.supermap.mapping.Map;
 
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+
 public class FontUtilties {
 
 	// 经验值
@@ -171,5 +175,38 @@ public class FontUtilties {
 		}
 
 		return mapWidth;
+	}
+
+	private static AffineTransform atf = new AffineTransform();
+
+	private static FontRenderContext frc = new FontRenderContext(atf, true, true);
+
+	/**
+	 * 获得字符串在指定字体下的高度
+	 *
+	 * @param str  需要计算字符串
+	 * @param font 字体
+	 * @return 高度
+	 */
+	public static int getStringHeight(String str, Font font) {
+		if (str == null || str.isEmpty() || font == null) {
+			return 0;
+		}
+		return (int) font.getStringBounds(str, frc).getHeight();
+
+	}
+
+	/**
+	 * 获得字符串在指定字体下的宽度
+	 *
+	 * @param str  需要计算字符串
+	 * @param font 字体
+	 * @return 宽度
+	 */
+	public static int getStringWidth(String str, Font font) {
+		if (str == null || str.isEmpty() || font == null) {
+			return 0;
+		}
+		return (int) font.getStringBounds(str, frc).getWidth();
 	}
 }
