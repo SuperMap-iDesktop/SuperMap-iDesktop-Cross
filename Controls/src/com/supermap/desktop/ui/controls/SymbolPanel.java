@@ -158,8 +158,7 @@ public class SymbolPanel extends JPanel {
 		if (currentSymbolType.equals(SymbolType.MARKER)) {
 			SymbolLibrary symbolMarkerLibrary = currentResources.getMarkerLibrary();
 			symbolRootGroup = symbolMarkerLibrary.getRootGroup();
-			// 编码格式不同，重新赋值
-			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
+//			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
 			// modified by zhaosy 不是系统符号时根组直接显示当前符号所在路径
 			if (activeStyle.getMarkerSymbolID() > 0) {
 				getTreePath();
