@@ -1,6 +1,8 @@
 package com.supermap.desktop.geometry.Implements;
 
-import com.supermap.data.Geometry;
+import com.supermap.data.GeoArc;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
@@ -8,21 +10,22 @@ import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 
 public class DGeoArc extends AbstractGeometry implements ILineFeature, ILineConvertor, IRegionConvertor {
 
-	protected DGeoArc(Geometry geometry) {
-		super(geometry);
-		// TODO Auto-generated constructor stub
+	private GeoArc geoArc;
+
+	protected DGeoArc(GeoArc geoArc) {
+		super(geoArc);
+		this.geoArc = geoArc;
 	}
 
 	@Override
-	public Geometry convertToRegion(int segment) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeoRegion convertToRegion(int segment) {
+		GeoLine geoLine = convertToLine(segment);
+		return geoLine == null ? null : geoLine.convertToRegion();
 	}
 
 	@Override
-	public Geometry convertToLine(int segment) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeoLine convertToLine(int segment) {
+		return this.geoArc == null ? null : this.geoArc.convertToLine(segment);
 	}
 
 }
