@@ -167,7 +167,7 @@ public class SymbolPanel extends JPanel {
 			SymbolLibrary symbolLineLibrary = currentResources.getLineLibrary();
 			symbolRootGroup = symbolLineLibrary.getRootGroup();
 			// 编码格式不同，重新赋值
-			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
+//			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
 			if (activeStyle.getLineSymbolID() > 5) {
 				getTreePath();
 			}
@@ -175,7 +175,7 @@ public class SymbolPanel extends JPanel {
 			SymbolLibrary symbolFillLibrary = currentResources.getFillLibrary();
 			symbolRootGroup = symbolFillLibrary.getRootGroup();
 			// 编码格式不同，重新赋值
-			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
+//			symbolRootGroup.setName(ControlsProperties.getString("String_SymbolRootGroupName"));
 			if (activeStyle.getFillSymbolID() > 6) {
 				getTreePath();
 			}

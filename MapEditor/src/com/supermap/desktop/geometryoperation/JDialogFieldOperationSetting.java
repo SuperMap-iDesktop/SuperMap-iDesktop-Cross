@@ -1,33 +1,5 @@
 package com.supermap.desktop.geometryoperation;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.ScrollPane;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -51,6 +23,22 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
 import com.supermap.mapping.TrackingLayer;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class JDialogFieldOperationSetting extends SmDialog implements ItemListener, ActionListener, ListSelectionListener {
 	/**
@@ -152,7 +140,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 					result = value;
 				} else {
 					if (value != null) {
-						result += value.toString();
+						result = result + value.toString();
 					}
 				}
 				recordset.moveNext();
