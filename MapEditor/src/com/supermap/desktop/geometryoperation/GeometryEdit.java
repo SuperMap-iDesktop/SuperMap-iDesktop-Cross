@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 import com.supermap.data.DatasetType;
-import com.supermap.data.GeoCompound;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLine3D;
 import com.supermap.data.GeoLineM;
@@ -20,14 +19,13 @@ import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoRegion3D;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 
-public class EditState {
-	private FormMap formMap;
+public class GeometryEdit {
+	private IFormMap formMap;
 	EditAction editAction;
 	GeoStyle trackingStyle;
 	int selectedGeometryCount; // 当前选中对象的数目
@@ -43,7 +41,7 @@ public class EditState {
 
 	private EventListenerList listenerList = new EventListenerList();
 
-	public EditState(FormMap formMap) {
+	public GeometryEdit(IFormMap formMap) {
 		this.formMap = formMap;
 		this.selectedDatasetTypes = new ArrayList<DatasetType>();
 		this.editableDatasetTypes = new ArrayList<DatasetType>();
