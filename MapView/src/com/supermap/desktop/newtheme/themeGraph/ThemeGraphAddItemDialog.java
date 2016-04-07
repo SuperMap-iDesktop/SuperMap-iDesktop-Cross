@@ -37,6 +37,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.mapping.Layer;
 
 public class ThemeGraphAddItemDialog extends SmDialog {
 	/**
@@ -53,8 +54,10 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 	private ArrayList<String> resultList = new ArrayList<String>();
 	private ActionListener buttonAction = new ButtonAction();
 	private ArrayList<String> themeExpressionList = new ArrayList<String>();
-
-	public ThemeGraphAddItemDialog(DatasetVector datasetVector, JoinItems joinItems, ArrayList<String> list) {
+	private Layer layer;
+	
+	public ThemeGraphAddItemDialog(Layer layer,DatasetVector datasetVector, JoinItems joinItems, ArrayList<String> list) {
+		this.layer = layer;
 		this.datasetVector = datasetVector;
 		setList(joinItems, list);
 		initComponents();
@@ -254,7 +257,7 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 	 */
 	private void getSqlExpression() {
 		SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
-		Dataset[] datasets = new Dataset[1];
+		Dataset[] datasets = ThemeUtil.getDatasets(this.layer, datasetVector);
 		datasets[0] = datasetVector;
 		ArrayList<FieldType> fieldTypes = new ArrayList<FieldType>();
 		fieldTypes.add(FieldType.INT16);

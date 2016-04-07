@@ -77,7 +77,7 @@ public class WorkspaceComponentManager extends JComponent {
 		this.workspaceTree.setShowsRootHandles(true);
 		this.workspaceTree.setTransferHandler(new WorkspaceTreeTransferHandler());
 		this.workspaceTree.setLayoutsNodeVisible(false);
-		this.workspaceTree.setScenesNodeVisible(false);
+		this.workspaceTree.setScenesNodeVisible(true);
 
 		this.jScrollPane.setViewportView(this.workspaceTree);
 
@@ -374,8 +374,7 @@ public class WorkspaceComponentManager extends JComponent {
 				this.datasetVectorPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVector");
 				this.datasetTabularPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTabular");
 				this.datasetImagePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImage");
-				this.datasetImageCollectionPopupMenu = (JPopupMenu) manager
-						.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImageCollection");
+				this.datasetImageCollectionPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImageCollection");
 				this.datasetGridPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetGrid");
 				this.datasetTopologyPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTopology");
 				this.mapsPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuMaps");

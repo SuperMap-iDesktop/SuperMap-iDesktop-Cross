@@ -132,7 +132,16 @@ public class ThemeGuideFactory {
 			result = THEMETYPE_LABEL_UNIFORM;
 		}
 		if (themetype==ThemeType.LABEL&&count>0) {
-			
+			result = THEMETYPE_LABEL_RANGE;
+		}
+		if (themetype==ThemeType.GRIDUNIQUE) {
+			result = THEMETYPE_GRID_UNIQUE;
+		}
+		if (themetype==ThemeType.GRIDRANGE) {
+			result = THEMETYPE_GRID_RANGE;
+		}
+		if (themetype==ThemeType.GRAPH) {
+			result = THEMETYPE_GRAPH;
 		}
 		return THEMETYPE_UNIQUE;
 	}
