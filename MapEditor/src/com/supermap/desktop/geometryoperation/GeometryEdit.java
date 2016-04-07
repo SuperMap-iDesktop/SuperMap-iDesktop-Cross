@@ -7,10 +7,24 @@ import java.util.List;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.GeometryUtilties;
+import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IPointFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Abstract.ITextFeature;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.MapControl;
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLine3D;
@@ -20,37 +34,103 @@ import com.supermap.data.GeoRegion3D;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
-import com.supermap.data.Geometry3D;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 
+// @formatter:off
+/**
+ * 1.需要与地图交互的编辑
+ * 2.选中之后，点击执行出结果的编辑
+ * @author highsad
+ *
+ */
+// @formatter:on
 public class GeometryEdit {
 	private IFormMap formMap;
 	EditAction editAction;
 	GeoStyle trackingStyle;
 	int selectedGeometryCount; // 当前选中对象的数目
-	boolean has2DGeometrySelected;
-	boolean has3DGeometrySelected;
-	int editableSelectedGeometryCount;
-	List<DatasetType> selectedDatasetTypes;
-	List<DatasetType> editableDatasetTypes;
-	List<GeometryType> selectedGeometryTypes;
-	List<GeometryKind> selectedGeometryKinds;
-	List<GeometryKind> editableSelectedGeometryKinds;
-	List<GeometryType> editableSelectedGeometryTypes;
+	int editableSelectedGeometryCount; // 获取在可编辑图层上选中的几何对象个数
+
+	List<DatasetType> selectedDatasetTypes; // 选中对象所在的数据集类型集合
+	List<DatasetType> editableDatasetTypes; // 可编辑的数据集类型集合
+	List<GeometryType> selectedGeometryTypes; // 选中的几何对象类型集合
+	List<Class<?>> selectedGeometryFeatures; // 选中的几何对象 Feature 集合。Class<IPointFeature>/Class<ILineFeature>/Class<IRegionFeature>等。
+	List<Class<?>> editableSelectedGeometryFeatures; // 选中的可编辑图层几何对象 Feature 集合。。Class<IPointFeature>/Class<ILineFeature>/Class<IRegionFeature>等。
+	List<GeometryType> editableSelectedGeometryTypes; // 选中的可编辑图层集合对象类型集合
 
 	private EventListenerList listenerList = new EventListenerList();
 
-	public GeometryEdit(IFormMap formMap) {
+	private GeometryEdit(IFormMap formMap) {
 		this.formMap = formMap;
 		this.selectedDatasetTypes = new ArrayList<DatasetType>();
 		this.editableDatasetTypes = new ArrayList<DatasetType>();
 		this.selectedGeometryTypes = new ArrayList<GeometryType>();
-		this.selectedGeometryKinds = new ArrayList<GeometryKind>();
-		this.editableSelectedGeometryKinds = new ArrayList<GeometryKind>();
+		this.selectedGeometryFeatures = new ArrayList<Class<?>>();
+		this.editableSelectedGeometryFeatures = new ArrayList<Class<?>>();
 		this.editableSelectedGeometryTypes = new ArrayList<GeometryType>();
 		this.selectedGeometryCount = 0;
 		this.editableSelectedGeometryCount = 0;
+
+		if (this.formMap != null) {
+
+			// 选中对象状态改变
+			this.formMap.getMapControl().addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
+
+				@Override
+				public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
+					geometryStatusChange();
+				}
+			});
+
+			// 图层可编辑状态改变
+			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(new LayerEditableChangedListener() {
+
+				@Override
+				public void editableChanged(LayerEditableChangedEvent arg0) {
+					layersStatusChange();
+				}
+			});
+		}
+	}
+
+	/**
+	 * 获取所有图层
+	 * 
+	 * @return
+	 */
+	public List<Layer> getAllLayers() {
+		return MapUtilties.getLayers(this.formMap.getMapControl().getMap());
+	}
+
+	public IFormMap getFormMap() {
+		return this.formMap;
+	}
+
+	public MapControl getMapControl() {
+		return this.formMap.getMapControl();
+	}
+
+	public Map getMap() {
+		return this.formMap.getMapControl().getMap();
+	}
+
+	public Layer getActiveEditableLayer() {
+		return this.formMap.getMapControl().getActiveEditableLayer();
+	}
+
+	/**
+	 * 创建一个实例，由此可以保证实例中的 formMap 必定有效
+	 * 
+	 * @param formMap
+	 * @return
+	 */
+	public static GeometryEdit createInstance(IFormMap formMap) {
+		if (formMap == null) {
+			throw new IllegalArgumentException("formMap can not be null.");
+		}
+
+		return new GeometryEdit(formMap);
 	}
 
 	public void addEditActionChangeListener(EditActionChangeListener listener) {
@@ -106,157 +186,145 @@ public class GeometryEdit {
 		return this.editableSelectedGeometryTypes;
 	}
 
-	// 因为基本都会跑完，争取跑一遍拿完所有想要的状态，提高效率
-	// 用一个Action来跑，存取状态，其它的Action直接拿。
-	//
-
-	// @formatter:off
 	/**
-	 * 因为基本都会跑完，争取跑一遍拿完所有想要的状态，提高效率。
-	 *  用一个Action来跑，存取状态，其它的Action直接拿。
-	 *  目前是用_CtrlActionCombination来跑，但这个工具条或者菜单栏一旦隐藏就完了，最好以后实现一个专门机制，后续优化。
+	 * 获取当前地图窗口中，所需要的状态数据
 	 */
-	// @formatter:on
-	public void checkEnable() {
+	private void geometryStatusChange() {
 		try {
 			// 选中对象数目
-			this.selectedGeometryCount = 0;
-			this.editableSelectedGeometryCount = 0;
-			this.has3DGeometrySelected = false;
-			this.has2DGeometrySelected = false;
-			this.selectedDatasetTypes.clear();
-			this.editableDatasetTypes.clear();
-			this.selectedGeometryTypes.clear();
-			this.selectedGeometryKinds.clear();
-			this.editableSelectedGeometryKinds.clear();
-			this.editableSelectedGeometryTypes.clear();
+			resetGeometryStatus();
 
-			Selection[] selections = this.formMap.getMapControl().getMap().findSelection(true);
-			for (Selection selection : selections) {
-				// 选中对象数目
-				this.selectedGeometryCount += selection.getCount();
-				// 选中图层类型
-				if (!this.selectedDatasetTypes.contains(selection.getDataset().getType())) {
-					this.selectedDatasetTypes.add(selection.getDataset().getType());
+			Layers layers = this.formMap.getMapControl().getMap().getLayers();
+			for (int i = 0; i < layers.getCount(); i++) {
+				Layer layer = layers.get(i);
+
+				if (layer.getDataset() == null) {
+					continue;
 				}
 
-				this.processGeometryTypeList(selection, false);
-			}
-
-			for (int i = 0; i < this.formMap.getMapControl().getEditableLayers().length; i++) {
-				Layer layer = this.formMap.getMapControl().getEditableLayers()[i];
-				if (layer.getDataset() != null) {
-					this.editableDatasetTypes.add(layer.getDataset().getType());
+				if (layer.getSelection() == null || layer.getSelection().getCount() == 0) {
+					continue;
 				}
 
-				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
-					this.editableSelectedGeometryCount += layer.getSelection().getCount();
-
-					this.processGeometryTypeList(layer.getSelection(), true);
-				}
+				statisticGeometryData(layer);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	private void processGeometryTypeList(Selection selection, Boolean isEditableOnly) {
-		// 选中对象类型
+	/**
+	 * 统计指定图层 Geometry 的状态
+	 * 
+	 * @param layer
+	 */
+	private void statisticGeometryData(Layer layer) {
 		Recordset recordset = null;
-		Geometry geometry = null;
+
 		try {
-			List<GeometryType> typeList = null;
-			List<GeometryKind> kindList = null;
-			if (isEditableOnly) {
-				kindList = editableSelectedGeometryKinds;
-				typeList = editableSelectedGeometryTypes;
-			} else {
-				kindList = selectedGeometryKinds;
-				typeList = selectedGeometryTypes;
-			}
+			ArrayList<Class<?>> features = new ArrayList<>();
+			ArrayList<GeometryType> types = new ArrayList<>();
 
+			Selection selection = layer.getSelection();
 			recordset = selection.toRecordset();
+
+			recordset.moveFirst();
 			while (!recordset.isEOF()) {
-				geometry = recordset.getGeometry();
-				if (geometry != null) {
-					if (!this.has3DGeometrySelected && geometry instanceof Geometry3D) {
-						this.has3DGeometrySelected = true;
-					}
+				Geometry geometry = recordset.getGeometry();
 
-					if (!this.has2DGeometrySelected && !(geometry instanceof Geometry3D)) {
-						this.has2DGeometrySelected = true;
-					}
-
-					if (!typeList.contains(geometry.getType())) {
-						typeList.add(geometry.getType());
-					}
-
-					if (GeometryUtilties.isPointGeometry(geometry)) {
-						if (!kindList.contains(GeometryKind.Point)) {
-							kindList.add(GeometryKind.Point);
-						}
-					} else if (GeometryUtilties.isLineGeometry(geometry)) {
-						if (!kindList.contains(GeometryKind.Line)) {
-							kindList.add(GeometryKind.Line);
-						}
-					} else if (GeometryUtilties.isRegionGeometry(geometry)) {
-						if (!kindList.contains(GeometryKind.Region)) {
-							kindList.add(GeometryKind.Region);
-						}
-					} else if (GeometryUtilties.isTextGeometry(geometry)) {
-						if (!kindList.contains(GeometryKind.Text)) {
-							kindList.add(GeometryKind.Text);
-						}
-					} else if (geometry.getType() == GeometryType.GEOCOMPOUND) {
-						if (!kindList.contains(GeometryKind.Compound)) {
-							kindList.add(GeometryKind.Compound);
-						}
-					} else if (geometry.getType() == GeometryType.GEOLINEM) {
-						if (!kindList.contains(GeometryKind.LineM)) {
-							kindList.add(GeometryKind.LineM);
-						}
-					} else {
-						if (!kindList.contains(GeometryKind.Other)) {
-							kindList.add(GeometryKind.Other);
-						}
-					}
+				if (geometry == null) {
+					recordset.moveNext();
 				}
-				if (geometry != null) {
-					geometry.dispose();
+
+				try {
+					GeometryType type = geometry.getType();
+					if (!types.contains(type)) {
+						types.add(type);
+					}
+
+					IGeometry dGeometry = DGeometryFactory.create(geometry);
+					if (dGeometry instanceof IPointFeature && !features.contains(IPointFeature.class)) {
+						features.add(IPointFeature.class);
+					} else if (dGeometry instanceof ILineFeature && !features.contains(ILineFeature.class)) {
+						features.add(ILineFeature.class);
+					} else if (dGeometry instanceof IRegionFeature && !features.contains(IRegionFeature.class)) {
+						features.add(IRegionFeature.class);
+					} else if (dGeometry instanceof ITextFeature && !features.contains(ITextFeature.class)) {
+						features.add(ITextFeature.class);
+					} else if (dGeometry instanceof ICompoundFeature && !features.contains(ICompoundFeature.class)) {
+						features.add(ICompoundFeature.class);
+					}
+				} finally {
+					if (geometry != null) {
+						geometry.dispose();
+					}
 				}
 				recordset.moveNext();
 			}
-		} catch (
 
-		Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+			this.selectedGeometryCount += selection.getCount();
+			this.selectedGeometryFeatures.addAll(features);
+			this.selectedGeometryTypes.addAll(types);
+			if (layer.isEditable()) {
+				this.editableSelectedGeometryCount += selection.getCount();
+				this.editableSelectedGeometryFeatures.addAll(features);
+				this.editableSelectedGeometryTypes.addAll(types);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			if (recordset != null) {
+				recordset.close();
 				recordset.dispose();
-				recordset = null;
-			}
-			if (geometry != null) {
-				geometry.dispose();
-				geometry = null;
 			}
 		}
 	}
 
+	private void resetGeometryStatus() {
+		// 选中对象数目
+		this.selectedGeometryCount = 0;
+		this.editableSelectedGeometryCount = 0;
+		this.selectedDatasetTypes.clear();
+		this.selectedGeometryTypes.clear();
+		this.selectedGeometryFeatures.clear();
+		this.editableSelectedGeometryFeatures.clear();
+		this.editableSelectedGeometryTypes.clear();
+	}
+
+	private void layersStatusChange() {
+		try {
+			resetLayersStatus();
+
+			for (int i = 0; i < this.formMap.getMapControl().getEditableLayers().length; i++) {
+				Layer layer = this.formMap.getMapControl().getEditableLayers()[i];
+				if (layer.getDataset() != null) {
+					this.editableDatasetTypes.add(layer.getDataset().getType());
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	private void resetLayersStatus() {
+		this.editableDatasetTypes.clear();
+	}
+
 	public boolean isEraseEnable() {
 		return this.editableSelectedGeometryCount > 0
-				&& ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, GeometryKind.Line, GeometryKind.Region, GeometryKind.Compound);
+				&& ListUtilties.isListContainAny(this.editableSelectedGeometryFeatures, ILineFeature.class, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	public boolean isEraseOutPartEnable() {
-		return this.selectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryKinds, GeometryKind.Region, GeometryKind.Compound);
+		return this.selectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	public boolean isEditLineMEnable() {
-		return this.editableSelectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryKinds, GeometryKind.LineM);
+		return this.editableSelectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
 	}
 
 	public boolean isDeleteLineMvalueEnable() {
-		return this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.selectedGeometryKinds, GeometryKind.LineM);
+		return this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
 
 	}
 
@@ -269,8 +337,8 @@ public class GeometryEdit {
 	public boolean isUnionEnable() {
 		Boolean enable = false;
 		if (this.selectedGeometryCount > 1 && // 选中数至少2个
-				(this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
-				ListUtilties.isListOnlyContain(this.selectedGeometryKinds, GeometryKind.Region, GeometryKind.Line))// 只支持面
+				// (this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
+				ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class, ILineFeature.class))// 只支持面
 		{
 			// 是会否存在可编辑的“可操作保存”图层
 			DatasetType datasetType = DatasetType.CAD;
@@ -304,12 +372,12 @@ public class GeometryEdit {
 	}
 
 	public boolean isRotateEnable() {
-		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryKinds, GeometryKind.Compound,
-				GeometryKind.Text, GeometryKind.Point, GeometryKind.Region, GeometryKind.Line));
+		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class,
+				ITextFeature.class, IPointFeature.class, IRegionFeature.class, ILineFeature.class));
 	}
 
 	public boolean isReshapeEnable() {
-		return (this.editableSelectedGeometryCount == 1 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryKinds, GeometryKind.Compound));
+		return (this.editableSelectedGeometryCount == 1 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class));
 	}
 
 	public boolean isResampleEnable() {
@@ -320,10 +388,10 @@ public class GeometryEdit {
 		return ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD);
 	}
 
-	public boolean isMirrorEnable() {
-		return (this.editableSelectedGeometryCount > 0 && !ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, GeometryKind.Text,
-				GeometryKind.Other));
-	}
+	// public boolean isMirrorEnable() {
+	// return (this.editableSelectedGeometryCount > 0 && !ListUtilties.isListContainAny(this.editableSelectedGeometryKinds, ITextFeature.class,
+	// GeometryKind.Other));
+	// }
 
 	public boolean isPartialUpdateEnable() {
 		return ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION, DatasetType.LINE);
@@ -456,7 +524,7 @@ public class GeometryEdit {
 		Boolean result = false;
 		try {
 			if (this.editableSelectedGeometryCount > 0) {
-				result = this.editableSelectedGeometryKinds.contains(GeometryKind.Line);
+				result = this.editableSelectedGeometryFeatures.contains(ILineFeature.class);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -467,7 +535,7 @@ public class GeometryEdit {
 	public boolean isJointLineEnable() {
 		Boolean result = false;
 		if (ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.LINE) && this.selectedGeometryCount > 1) {
-			if (ListUtilties.isListOnlyContain(this.selectedGeometryKinds, GeometryKind.Line)) {
+			if (ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, ILineFeature.class)) {
 				result = true;
 			}
 		}
@@ -481,7 +549,7 @@ public class GeometryEdit {
 	public boolean isHolyRegionEnable() {
 		Boolean result = false;
 		if (ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION) && this.selectedGeometryCount > 1) {
-			if (ListUtilties.isListOnlyContain(this.selectedGeometryKinds, GeometryKind.Region)) {
+			if (ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class)) {
 				result = true;
 			}
 		}

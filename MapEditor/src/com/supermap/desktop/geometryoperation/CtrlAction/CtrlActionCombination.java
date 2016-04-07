@@ -18,10 +18,11 @@ import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
+import com.supermap.desktop.geometryoperation.GeometryEdit;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapeditor.MapEditorEnv;
@@ -50,25 +51,18 @@ public class CtrlActionCombination extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (com.supermap.desktop.FormMap) Application.getActiveApplication().getActiveForm();
-			MapEditorEnv.getEditState().checkEnable();
+			GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
 			DatasetType datasetType = DatasetType.CAD;
-			if (MapEditorEnv.getEditState().getselectedDatasetTypes().size() == 1) {
-				datasetType = MapEditorEnv.getEditState().getselectedDatasetTypes().get(0);
+			if (geometryEdit.getselectedDatasetTypes().size() == 1) {
+				datasetType = geometryEdit.getselectedDatasetTypes().get(0);
 			}
 			Layer resultLayer = null;
-			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
-			for (Layer layer : layers) {
-				if (layer.isEditable() && layer.getDataset().getType() == datasetType) {
-					resultLayer = layer;
-				}
-			}
 
-			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", formMap.getMapControl().getMap(), datasetType);
+			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", geometryEdit.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
 				resultLayer = formCombination.getEditLayer();
 				Map<String, Object> values = formCombination.getPropertyData();
-				combinationObjects(formMap, resultLayer, values);
+				combinationObjects(geometryEdit.getFormMap(), resultLayer, values);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -76,7 +70,7 @@ public class CtrlActionCombination extends CtrlAction {
 
 	}
 
-	private void combinationObjects(FormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
+	private void combinationObjects(IFormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
 		Recordset recordset = null;
 		Geometry geometry = null;
 		try {
@@ -203,12 +197,7 @@ public class CtrlActionCombination extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return true;
-		// boolean enable = false;
-		// if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
-		// ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().checkEnable();
-		// enable = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isCombinationEnable();
-		// }
-		// return enable;
+		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		return geometryEdit.isCombinationEnable();
 	}
 }
