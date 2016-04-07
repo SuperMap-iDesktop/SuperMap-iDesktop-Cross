@@ -449,8 +449,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		// @formatter:off
 		GridBagLayout layout = new GridBagLayout();
 		panelParameterSetting.setLayout(layout);
-		this.comboBoxOffsetUnity.setPreferredSize(new Dimension(140,23));
-		Dimension textDimension = new Dimension(100,23);
+		this.comboBoxOffsetUnity.setPreferredSize(new Dimension(130,23));
+		Dimension textDimension = new Dimension(90,23);
 		this.comboBoxOffsetX.setPreferredSize(textDimension);
 		this.comboBoxOffsetY.setPreferredSize(textDimension);
 		panelParameterSetting.add(this.labelOffsetUnity,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5,10,5,0));
@@ -483,38 +483,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		this.comboBoxOffsetX.setEditable(true);
-		ThemeUtil.getFieldComboBox(comboBoxOffsetX, datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetX, true);
-		this.comboBoxOffsetX.addItem("0");
-		String offsetX = themeGraph.getOffsetX();
-		if (StringUtilties.isNullOrEmpty(offsetX)) {
-			offsetX = "0";
-		}
-		this.comboBoxOffsetX.setSelectedItem(offsetX);
-		if (!offsetX.equals(this.comboBoxOffsetX.getSelectedItem())) {
-			this.comboBoxOffsetX.addItem(offsetX);
-			this.comboBoxOffsetX.setSelectedItem(offsetX);
-		}
-
+		ThemeUtil.initComboBox(comboBoxOffsetX, themeGraph.getOffsetX(), datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArrayForOffsetX, true, true);
 	}
 
 	/**
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
-		this.comboBoxOffsetY.setEditable(true);
-		ThemeUtil.getFieldComboBox(comboBoxOffsetY, datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetY, true);
-		this.comboBoxOffsetY.addItem("0");
-		String offsetY = themeGraph.getOffsetY();
-		if (StringUtilties.isNullOrEmpty(offsetY)) {
-			offsetY = "0";
-		}
-		this.comboBoxOffsetY.setSelectedItem(offsetY);
-		if (!offsetY.equals(this.comboBoxOffsetY.getSelectedItem())) {
-			this.comboBoxOffsetY.addItem(offsetY);
-			this.comboBoxOffsetY.setSelectedItem(offsetY);
-		}
-
+		ThemeUtil.initComboBox(comboBoxOffsetY, themeGraph.getOffsetY(), datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArrayForOffsetY, true, true);
 	}
 
 	private void initpanelSizeLimite(JPanel panelSizeLimite) {
@@ -665,7 +643,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void resetMapSize() {
 		// 重置最大最小值来适应地图
 		Point pointStart = new Point(0, 0);
-		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 10));
+		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 5));
 		Point2D point2DStart = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointStart);
 		Point2D point2DEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointEnd);
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
@@ -889,7 +867,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themeGraphLayer && !themeGraphLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeGraphLayer.getName())) {
+			if (null != themeGraphLayer && !themeGraphLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themeGraphLayer)) {
 				getTable();
 			}
 		}
@@ -924,6 +902,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == buttonAdd) {
 				addGraphItem();
+				return;
 			}
 			if (e.getSource() == buttonStyle) {
 				setItemGeoSytle();
@@ -1008,7 +987,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			for (int i = 0; i < themeGraph.getCount(); i++) {
 				existItems.add(themeGraph.getItem(i).getGraphExpression());
 			}
-			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(datasetVector, themeGraphLayer.getDisplayFilter().getJoinItems(), existItems);
+			ThemeGraphAddItemDialog addItemDialog = new ThemeGraphAddItemDialog(themeGraphLayer, datasetVector, themeGraphLayer.getDisplayFilter()
+					.getJoinItems(), existItems);
 			addItemDialog.setLocation(x, y);
 			addItemDialog.setVisible(true);
 			if (addItemDialog.getDialogResult() == DialogResult.OK) {
@@ -1753,6 +1733,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
 		if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme().getType() == ThemeType.GRAPH) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
+			nowGraph.clear();
+			for (int i = 0; i < this.themeGraph.getCount(); i++) {
+				nowGraph.add(this.themeGraph.getItem(i));
+			}
 			nowGraph.fromXML(this.themeGraph.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
 			this.map.refresh();

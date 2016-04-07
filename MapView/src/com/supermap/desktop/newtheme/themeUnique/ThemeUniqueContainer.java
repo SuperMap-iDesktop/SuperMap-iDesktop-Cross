@@ -42,6 +42,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,6 +54,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -107,6 +109,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
+	private boolean isResetLayerProperty = false;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -121,6 +124,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			isResetLayerProperty = false;
+		}
+	};
 
 	/**
 	 * @wbp.parser.constructor
@@ -229,6 +238,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.comboBoxExpression.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetY.addItemListener(this.comboBoxItemListener);
+		this.comboBoxExpression.getComponent(0).addMouseListener(mouseAdapter);
+		this.comboBoxOffsetX.getComponent(0).addMouseListener(mouseAdapter);
+		this.comboBoxOffsetY.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
@@ -277,6 +289,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.comboBoxExpression.removeItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetX.removeItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetY.removeItemListener(this.comboBoxItemListener);
+		this.comboBoxExpression.getComponent(0).removeMouseListener(mouseAdapter);
+		this.comboBoxOffsetX.getComponent(0).removeMouseListener(mouseAdapter);
+		this.comboBoxOffsetY.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboboxColor.removeItemListener(this.comboBoxItemListener);
 		this.comboBoxOffsetUnity.removeItemListener(this.comboBoxItemListener);
 		this.buttonVisble.removeActionListener(this.actionListener);
@@ -332,39 +347,16 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化水平偏移量
 	 */
 	private void initComboBoxOffsetX() {
-		this.comboBoxOffsetX.setEditable(true);
-		this.comboBoxOffsetX.removeAllItems();
-		ThemeUtil.getFieldComboBox(comboBoxOffsetX, datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetX, true);
-		this.comboBoxOffsetX.addItem("0");
-		String offsetX = themeUnique.getOffsetX();
-		if (StringUtilties.isNullOrEmpty(offsetX)) {
-			offsetX = "0";
-		}
-		this.comboBoxOffsetX.setSelectedItem(offsetX);
-		if (!offsetX.equals(this.comboBoxOffsetX.getSelectedItem())) {
-			this.comboBoxOffsetX.addItem(offsetX);
-			this.comboBoxOffsetX.setSelectedItem(offsetX);
-		}
+		ThemeUtil.initComboBox(comboBoxOffsetX, themeUnique.getOffsetX(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArrayForOffsetX, true, true);
 	}
 
 	/**
 	 * 初始化垂直偏移量
 	 */
 	private void initComboBoxOffsetY() {
-		this.comboBoxOffsetY.setEditable(true);
-		this.comboBoxOffsetY.removeAllItems();
-		ThemeUtil.getFieldComboBox(comboBoxOffsetY, datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(), comboBoxArrayForOffsetY, true);
-		this.comboBoxOffsetY.addItem("0");
-		String offsetY = themeUnique.getOffsetY();
-		if (StringUtilties.isNullOrEmpty(offsetY)) {
-			offsetY = "0";
-		}
-		this.comboBoxOffsetY.setSelectedItem(offsetY);
-		if (!offsetY.equals(this.comboBoxOffsetY.getSelectedItem())) {
-			this.comboBoxOffsetY.addItem(offsetY);
-			this.comboBoxOffsetY.setSelectedItem(offsetY);
-		}
-
+		ThemeUtil.initComboBox(comboBoxOffsetY, themeUnique.getOffsetY(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArrayForOffsetY, true, true);
 	}
 
 	/**
@@ -416,19 +408,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化表达式
 	 */
 	private void initComboBoxExpression() {
-		this.comboBoxExpression.setEditable(true);
-		this.comboBoxExpression.removeAllItems();
-		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(), comboBoxArray, false);
-		String expression = themeUnique.getUniqueExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
-		}
-		expression = expression.substring(expression.indexOf(".") + 1, expression.length());
-		this.comboBoxExpression.setSelectedItem(expression.substring(expression.indexOf(".") + 1, expression.length()));
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
-		}
+		ThemeUtil.initComboBox(comboBoxExpression, themeUnique.getUniqueExpression(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArray, false, false);
 	}
 
 	/**
@@ -664,6 +645,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	class LocalComboBoxItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeUniqueLayer, datasetVector);
 				if (e.getSource() == comboBoxExpression) {
@@ -731,30 +715,39 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			if (ThemeUtil.isCountBeyond(datasetVector, expression)) {
 				// 字段记录数大于3000条时建议不做专题图
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
-				comboBoxExpression.setSelectedItem("SmUserID");
+				resetThemeItem();
 			} else {
 				if (!expression.contains(".")) {
 					// 非外部连接表字段创建专题图
 					expression = datasetVector.getName() + "." + expression;
-
 				}
 				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter()
 						.getJoinItems());
 
 				if (null != theme) {
+					boolean isOffsetFixed = themeUnique.isOffsetFixed();
+					String offsetX = themeUnique.getOffsetX();
+					String offsetY = themeUnique.getOffsetY();
 					themeUnique = new ThemeUnique(theme);
+					themeUnique.setOffsetFixed(isOffsetFixed);
+					themeUnique.setOffsetX(offsetX);
+					themeUnique.setOffsetY(offsetY);
 					refreshColor();
 					getTable();
 				} else {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-					String tempExpression = themeUnique.getUniqueExpression();
-					if (comboBoxArray.contains(tempExpression)) {
-						comboBoxExpression.setSelectedItem(tempExpression);
-					} else {
-						comboBoxExpression.setSelectedItem(tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length()));
-					}
+					resetThemeItem();
 
 				}
+			}
+		}
+
+		private void resetThemeItem() {
+			String tempExpression = themeUnique.getUniqueExpression();
+			if (comboBoxArray.contains(tempExpression)) {
+				comboBoxExpression.setSelectedItem(tempExpression);
+			} else {
+				comboBoxExpression.setSelectedItem(tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length()));
 			}
 		}
 
@@ -763,7 +756,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetX() {
 			String expressionOffsetX = comboBoxOffsetX.getSelectedItem().toString();
-			if (expressionOffsetX.contains(".")) {
+			if (expressionOffsetX.contains(".") || expressionOffsetX.equals("0")) {
 				themeUnique.setOffsetX(expressionOffsetX);
 			} else {
 				themeUnique.setOffsetX(datasetVector.getName() + "." + expressionOffsetX);
@@ -776,7 +769,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetY() {
 			String expressionOffsetY = comboBoxOffsetY.getSelectedItem().toString();
-			if (expressionOffsetY.contains(".")) {
+			if (expressionOffsetY.contains(".") || expressionOffsetY.equals("0")) {
 				themeUnique.setOffsetY(expressionOffsetY);
 			} else {
 				themeUnique.setOffsetY(datasetVector.getName() + "." + expressionOffsetY);
@@ -834,7 +827,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent e) {
-			if (null != themeUniqueLayer && !themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).getName().equals(themeUniqueLayer.getName())) {
+			if (null != themeUniqueLayer && !themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeUniqueLayer)) {
+				isResetLayerProperty = true;
 				initComboBoxExpression();
 				initComboBoxOffsetX();
 				initComboBoxOffsetY();

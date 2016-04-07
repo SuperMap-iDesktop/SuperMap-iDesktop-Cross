@@ -37,6 +37,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +45,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -97,6 +99,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
+	private boolean isResetLayerProperty = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 
@@ -112,6 +115,12 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			isResetLayerProperty = false;
+		}
+	};
 
 	/**
 	 * @wbp.parser.constructor
@@ -223,16 +232,19 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxExpression.setEditable(true);
 		this.comboBoxExpression.removeAllItems();
 		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true);
-		this.rangeExpression = themeLabel.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(rangeExpression)) {
-			this.rangeExpression = "0";
+		String expression = themeLabel.getRangeExpression();
+		if (StringUtilties.isNullOrEmpty(expression)) {
+			expression = "0";
 		}
-		String expression = rangeExpression.substring(rangeExpression.indexOf(".") + 1, rangeExpression.length());
+		if (expression.contains(datasetVector.getName())) {
+			expression = expression.substring(expression.indexOf(".") + 1, expression.length());
+		}
 		this.comboBoxExpression.setSelectedItem(expression);
 		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
 			this.comboBoxExpression.addItem(expression);
 			this.comboBoxExpression.setSelectedItem(expression);
 		}
+		ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true, false);
 	}
 
 	/**
@@ -431,6 +443,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.tableLabelInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxExpression.addItemListener(this.itemListener);
+		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
 		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseListener);
@@ -717,6 +730,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeLabelLayer, datasetVector);
 				if (e.getSource() == comboBoxColorStyle) {
@@ -857,11 +873,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 有负数且为平方根分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_SquareRoot")));
-				// JOptionPane.showMessageDialog(
-				// null,
-				// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-				// MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-				// JOptionPane.ERROR_MESSAGE);
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;
@@ -870,11 +881,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 有负数且为对数分段
 				UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 						MapViewProperties.getString("String_RangeMode_Logarithm")));
-				// JOptionPane.showMessageDialog(
-				// null,
-				// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-				// MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-				// JOptionPane.ERROR_MESSAGE);
 				isResetComboBox = true;
 				resetComboBoxRangeExpression(themeLabel.getRangeExpression());
 				return;
@@ -957,6 +963,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void refreshThemeLabel(ThemeLabel theme) {
 		if (null != theme) {
+			resetThemeLabelInfo(theme);
 			this.themeLabel = new ThemeLabel(theme);
 			this.themeLabel.setRangeExpression(rangeExpression);
 			refreshColor();
@@ -968,6 +975,37 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			this.labelCount = this.themeLabel.getCount();
 			this.comboBoxRangeCount.setSelectedIndex(this.labelCount - 2);
 		}
+	}
+
+	private void resetThemeLabelInfo(ThemeLabel themeLabelTemp) {
+		themeLabelTemp.setLabelExpression(this.themeLabel.getLabelExpression());
+		themeLabelTemp.setBackShape(this.themeLabel.getBackShape());
+		themeLabelTemp.setBackStyle(this.themeLabel.getBackStyle());
+		themeLabelTemp.setOffsetFixed(this.themeLabel.isOffsetFixed());
+		themeLabelTemp.setOffsetX(this.themeLabel.getOffsetX());
+		themeLabelTemp.setOffsetY(this.themeLabel.getOffsetY());
+		themeLabelTemp.setFlowEnabled(this.themeLabel.isFlowEnabled());
+		themeLabelTemp.setTextExpression(this.themeLabel.isTextExpression());
+		themeLabelTemp.setSmallGeometryLabeled(this.themeLabel.isSmallGeometryLabeled());
+		themeLabelTemp.setVertical(this.themeLabel.isVertical());
+		themeLabelTemp.setOverlapAvoided(this.themeLabel.isOverlapAvoided());
+		themeLabelTemp.setAllDirectionsOverlappedAvoided(this.themeLabel.isAllDirectionsOverlappedAvoided());
+		themeLabelTemp.setLeaderLineDisplayed(this.themeLabel.isLeaderLineDisplayed());
+		themeLabelTemp.setLeaderLineStyle(this.themeLabel.getLeaderLineStyle());
+		themeLabelTemp.setNumericPrecision(this.themeLabel.getNumericPrecision());
+		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
+		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
+		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
+		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
+		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
+		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
+		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
+		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
+		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
+		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
+		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
+		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
+		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
 	}
 
 	/**
@@ -1092,7 +1130,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themeLabelLayer && !themeLabelLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeLabelLayer.getName())) {
+			if (null != themeLabelLayer && !themeLabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themeLabelLayer)) {
+				isResetLayerProperty = true;
 				initComboBoxRangeExpression();
 			}
 		}

@@ -221,7 +221,7 @@ public class SQLExpressionDialog extends SmDialog {
 				for (int fieldCount = 0; fieldCount < datasetVector.getFieldCount(); fieldCount++, rowCount++) {
 
 					fieldType = datasetVector.getFieldInfos().get(fieldCount).getType();
-					if (0 == i) {
+					if (datasets.length == 1) {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
 						fieldNameColumn = datasetVector.getFieldInfos().get(fieldCount).getName();
@@ -280,11 +280,11 @@ public class SQLExpressionDialog extends SmDialog {
 
 				fieldType = datasetVector.getFieldInfos().get(fieldCount).getType();
 				if (fieldTypes.contains(fieldType)) {
-					if (0 == ndataset) {
+					if (datasets.length==1) {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
 						fieldNameColumn = datasetVector.getFieldInfos().get(fieldCount).getName();
-					} else {
+					}else{
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
 						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();

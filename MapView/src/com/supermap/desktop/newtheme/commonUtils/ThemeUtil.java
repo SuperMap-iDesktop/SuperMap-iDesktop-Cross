@@ -1,6 +1,7 @@
 package com.supermap.desktop.newtheme.commonUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComboBox;
 
@@ -95,6 +96,38 @@ public class ThemeUtil {
 	}
 
 	/**
+	 * 初始化comboBoxExpression，并设置默认选项
+	 * 
+	 * @param comboBoxExpression
+	 * @param tempExpression
+	 * @param datasetVector
+	 * @param joinItems
+	 * @param comboBoxArray
+	 * @param isDataType
+	 * @param addZero
+	 */
+	public static void initComboBox(JComboBox<String> comboBoxExpression, String tempExpression, DatasetVector datasetVector, JoinItems joinItems,
+			ArrayList<String> comboBoxArray, boolean isDataType, boolean addZero) {
+		comboBoxExpression.setEditable(true);
+		comboBoxExpression.removeAllItems();
+		getFieldComboBox(comboBoxExpression, datasetVector, joinItems, comboBoxArray, isDataType);
+		if (addZero) {
+			comboBoxExpression.addItem("0");
+		}
+		if (StringUtilties.isNullOrEmpty(tempExpression)) {
+			tempExpression = "0";
+		}
+		if (tempExpression.contains(datasetVector.getName()) && joinItems.getCount() == 0) {
+			tempExpression = tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length());
+		}
+		comboBoxExpression.setSelectedItem(tempExpression);
+		if (!tempExpression.equals(comboBoxExpression.getSelectedItem())) {
+			comboBoxExpression.addItem(tempExpression);
+			comboBoxExpression.setSelectedItem(tempExpression);
+		}
+	}
+
+	/**
 	 * 往combox中填充字段
 	 * 
 	 * @param comboBox
@@ -112,21 +145,27 @@ public class ThemeUtil {
 	public static JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, DatasetVector datasetVector, JoinItems joinItems,
 			ArrayList<String> comboBoxArray, boolean isDataType) {
 		int count = datasetVector.getFieldCount();
+		int itemsCount = joinItems.getCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (isDataType && isDataType(fieldInfo.getType())) {
 				String dataTypeitem = fieldInfo.getName();
+				if (0 < itemsCount) {
+					dataTypeitem = datasetVector.getName() + "." + dataTypeitem;
+				}
 				comboBox.addItem(dataTypeitem);
 				comboBoxArray.add(dataTypeitem);
 			}
 			if (!isDataType) {
 				String item = fieldInfo.getName();
+				if (0 < itemsCount) {
+					item = datasetVector.getName() + "." + item;
+				}
 				comboBox.addItem(item);
 				comboBoxArray.add(item);
 			}
 		}
 		if (null != joinItems) {
-			int itemsCount = joinItems.getCount();
 			for (int i = 0; i < itemsCount; i++) {
 				if (datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable()) instanceof DatasetVector) {
 					DatasetVector tempDataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());

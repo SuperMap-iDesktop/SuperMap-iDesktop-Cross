@@ -238,7 +238,11 @@ public class ThemeMainContainer extends JPanel {
 		if (null != panel && null != oldLayer && !oldLayer.isDisposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
-				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+				int count = -1;
+				if (oldLayer.getTheme() instanceof ThemeLabel) {
+					count = ((ThemeLabel)oldLayer.getTheme()).getCount();
+				}
+				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(new String[]{oldLayer.getCaption(),ThemeGuideFactory.getThemeTypeString(oldLayer.getTheme().getType(),count)});
 				if (null != panel) {
 					panel.unregistActionListener();
 					panel = null;
