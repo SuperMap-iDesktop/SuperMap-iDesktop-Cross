@@ -24,8 +24,9 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
+import com.supermap.desktop.geometryoperation.EditAction;
+import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.mapview.geometry.operation.EditAction;
 import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -61,7 +62,7 @@ public class CtrlActionErase extends CtrlActionGeometryEditBase {
 	protected boolean getEditEnable() {
 		boolean result = false;
 		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
-			result = ((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().isEraseEnable();
+			result = MapEditorEnv.getEditState().isEraseEnable();
 		}
 
 		return result;

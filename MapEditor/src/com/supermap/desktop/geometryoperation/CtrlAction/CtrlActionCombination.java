@@ -1,7 +1,6 @@
 package com.supermap.desktop.geometryoperation.CtrlAction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -50,11 +50,11 @@ public class CtrlActionCombination extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (FormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-			formMap.getEditState().checkEnable();
+			FormMap formMap = (com.supermap.desktop.FormMap) Application.getActiveApplication().getActiveForm();
+			MapEditorEnv.getEditState().checkEnable();
 			DatasetType datasetType = DatasetType.CAD;
-			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
-				datasetType = formMap.getEditState().getselectedDatasetTypes().get(0);
+			if (MapEditorEnv.getEditState().getselectedDatasetTypes().size() == 1) {
+				datasetType = MapEditorEnv.getEditState().getselectedDatasetTypes().get(0);
 			}
 			Layer resultLayer = null;
 			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
@@ -91,7 +91,7 @@ public class CtrlActionCombination extends CtrlAction {
 						objectGeometrys.add(geometry);
 						recordset.moveNext();
 					}
-					if (layer.getName() == resultLayer.getName()) {
+					if (layer.getName().equals(resultLayer.getName())) {
 						RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
 						delete.begin();
 						for (int dd = 0; dd < layer.getSelection().getCount(); dd++) {

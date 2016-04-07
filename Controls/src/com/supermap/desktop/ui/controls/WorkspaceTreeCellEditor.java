@@ -312,7 +312,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 				return retValue;
 			}
 		};
-		// One click to edit.
+		// One click to Edit.
 		editor.setClickCountToStart(1);
 		return editor;
 	}

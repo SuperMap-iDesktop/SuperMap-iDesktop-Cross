@@ -36,7 +36,6 @@ import com.supermap.desktop.implement.SmLabel;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.mapview.geometry.operation.EditState;
 import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -77,6 +76,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -125,12 +125,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private LengthUnit lengthUnit = LengthUnit.METER;
 	private AreaUnit areaUnit = AreaUnit.METER;
 	private AngleUnit angleUnit = AngleUnit.DEGREE;
-
-	private EditState editState = new EditState(this);
-
-	public EditState getEditState() {
-		return this.editState;
-	}
 
 	/**
 	 * 量算接口

@@ -24,7 +24,8 @@ public class SmButton extends JButton {
 
 	public SmButton(ImageIcon icon) {
 		super(icon);
-//		init();
+		init();
+		isUseDefaultSize = false;
 	}
 
 	private void init() {
@@ -58,6 +59,12 @@ public class SmButton extends JButton {
 	public void setIcon(Icon defaultIcon) {
 		setUseDefaultSize(false);
 		super.setIcon(defaultIcon);
+	}
+
+	@Override
+	public void setText(String text) {
+		super.setText(text);
+		this.setToolTipText(text);
 	}
 
 	public boolean isUseDefaultSize() {

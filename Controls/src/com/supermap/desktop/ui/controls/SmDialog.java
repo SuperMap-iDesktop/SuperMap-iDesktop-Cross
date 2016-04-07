@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-public abstract class SmDialog extends JDialog implements WindowListener{
+public abstract class SmDialog extends JDialog implements WindowListener {
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
@@ -39,15 +39,18 @@ public abstract class SmDialog extends JDialog implements WindowListener{
 	}
 
 	public DialogResult showDialog() {
-		this.setDialogResult(DialogResult.APPLY);
-		this.setVisible(true);
+		try {
+			this.setDialogResult(DialogResult.APPLY);
+			this.setVisible(true);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 		return this.getDialogResult();
 	}
+
 	/**
-	 * 覆盖JDialog的createRootPane方
-	 * 法已达到焦点在子类窗体内部时，点击
-	 * Enter，Esc时实现子类自定义的确定，
-	 * 取消功能
+	 * 覆盖JDialog的createRootPane方 法已达到焦点在子类窗体内部时，点击 Enter，Esc时实现子类自定义的确定， 取消功能
+	 * 
 	 * @return
 	 */
 	@Override
@@ -61,9 +64,9 @@ public abstract class SmDialog extends JDialog implements WindowListener{
 				escapePressed();
 			}
 		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0);
+		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		rootPane.registerKeyboardAction(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				enterPressed();
@@ -76,11 +79,12 @@ public abstract class SmDialog extends JDialog implements WindowListener{
 	 * 自定义的ESC按键功能
 	 */
 	public abstract void escapePressed();
+
 	/**
 	 * 自定义的ENTER按键功能
 	 */
 	public abstract void enterPressed();
-	
+
 	protected transient DialogResult dialogResult = DialogResult.APPLY;
 
 	public DialogResult getDialogResult() {

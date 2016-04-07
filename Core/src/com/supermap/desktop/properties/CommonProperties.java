@@ -64,4 +64,7 @@ public class CommonProperties extends Properties {
 	public static final String yes = "String_yes";
 	public static final String no = "String_no";
 	public static final String Operation = "String_Operation";
+	public static final String Edit = "String_Edit";
+	public static final String Property = "String_Property";
+
 }

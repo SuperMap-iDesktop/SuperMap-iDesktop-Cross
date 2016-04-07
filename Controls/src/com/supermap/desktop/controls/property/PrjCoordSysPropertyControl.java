@@ -90,7 +90,9 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 		this.buttonCopy = new SmButton("Copy Coord...");
 		this.buttonCopy.setVisible(false); // 关闭投影复制的功能，后续实现之后再开放
 		this.buttonSet = new SmButton("Set Coord..");
+		this.buttonSet.setUseDefaultSize(false);
 		this.buttonConvert = new SmButton("Convert ProjectionSystem...");
+		this.buttonConvert.setUseDefaultSize(false);
 
 		JScrollPane scrollPane = new JScrollPane(this.textAreaCoordInfo);
 		scrollPane.setBorder(MetalBorders.getTextFieldBorder());

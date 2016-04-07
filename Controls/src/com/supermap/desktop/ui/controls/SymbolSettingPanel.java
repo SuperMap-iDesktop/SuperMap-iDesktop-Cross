@@ -1035,31 +1035,42 @@ class SymbolSettingPanel extends JPanel {
 			opaqueTextField.addCaretListener(new CaretListener() {
 				@Override
 				public void caretUpdate(CaretEvent e) {
-					try {
-						String rateString = opaqueTextField.getText();
-						if (rateString.contains("d")) {
-							return;
-						}
-						try {
-							Double aDouble = Double.valueOf(rateString);
-						} catch (NumberFormatException e1) {
-							return;
-						}
-						if (rateString == null || "".equals(rateString) || fillOpaque.equals(rateString) || Double.valueOf(rateString) > 100
-								|| Double.valueOf(rateString) < 0 || rateString.indexOf(".") != -1) {
-							return;
-						}
-						fillOpaque = rateString;
-						int opaqueRate = Math.abs(Integer.valueOf(rateString) - 100);
-						activeStyle.setFillOpaqueRate(opaqueRate);
-						currentSymbolPanel.SetStyleAndRefresh(activeStyle);
-					} catch (Exception ex) {
-						Application.getActiveApplication().getOutput().output(ex);
+					String rateString = opaqueTextField.getText();
+					if (!isUseableNumber(rateString)) {
+						return;
 					}
+					fillOpaque = rateString;
+					int opaqueRate = Math.abs(Integer.valueOf(rateString) - 100);
+					activeStyle.setFillOpaqueRate(opaqueRate);
+					currentSymbolPanel.SetStyleAndRefresh(activeStyle);
 				}
 			});
 		}
 		return jSpinnerFillOpaqueRate;
+	}
+
+	/**
+	 * 判断输入数字是否在1~100之间
+	 * @param rateString
+	 * @return
+	 */
+	private boolean isUseableNumber(String rateString) {
+		if (rateString == null) {
+			return false;
+		}
+		if (rateString.contains("d")) {
+			return false;
+		}
+		try {
+			Double aDouble = Double.valueOf(rateString);
+		} catch (NumberFormatException e1) {
+			return false;
+		}
+		if (rateString == null || "".equals(rateString) || fillOpaque.equals(rateString) || Double.valueOf(rateString) > 100
+				|| Double.valueOf(rateString) < 0 || rateString.indexOf(".") != -1) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

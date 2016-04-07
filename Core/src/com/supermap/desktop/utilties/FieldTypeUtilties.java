@@ -102,6 +102,16 @@ public class FieldTypeUtilties {
 	}
 
 	/**
+	 * 判断字段是否字符串型
+	 * 
+	 * @param fieldType
+	 * @return
+	 */
+	public static boolean isString(FieldType fieldType) {
+		return fieldType == FieldType.WTEXT || fieldType == FieldType.TEXT;
+	}
+
+	/**
 	 * 获取字段类型对应的长度
 	 */
 	public static int getFieldTypeMaxLength(FieldType fieldType) {

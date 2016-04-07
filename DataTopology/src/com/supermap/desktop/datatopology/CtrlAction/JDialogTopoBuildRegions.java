@@ -15,7 +15,6 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
@@ -212,8 +211,8 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		this.getContentPane().add(this.panelDatasource,           new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10).setWeight(3, 1).setIpad(60, 0).setFill(GridBagConstraints.BOTH));
 		this.getContentPane().add(this.panelTopoProcessingOptions,new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 5, 10).setWeight(3, 1).setFill(GridBagConstraints.BOTH));
 		this.getContentPane().add(this.panelResultData,           new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 5, 10).setWeight(3, 1).setIpad(60, 0).setFill(GridBagConstraints.BOTH));
-		this.getContentPane().add(this.buttonOk,                  new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(3, 1).setInsets(0, 20, 10, 10));
-		this.getContentPane().add(this.buttonCancel,              new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(3, 1).setInsets(0, 5, 10, 0));
+		this.getContentPane().add(this.buttonOk,                  new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(1, 0).setInsets(0, 0, 10, 10));
+		this.getContentPane().add(this.buttonCancel,              new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
 	}
 
 	private void registAction() {

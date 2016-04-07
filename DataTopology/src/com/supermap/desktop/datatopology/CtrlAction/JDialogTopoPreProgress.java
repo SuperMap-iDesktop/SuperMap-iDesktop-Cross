@@ -144,8 +144,11 @@ public class JDialogTopoPreProgress extends SmDialog {
 
 	private void initComponents() {
 		toolBar.setFloatable(false);
-		setBounds(600, 300, 500, 380);
-		setMinimumSize(new Dimension(500,380));
+		Dimension size = new Dimension(500, 380);
+		setSize(size);
+		setMinimumSize(size);
+		setLocationRelativeTo(null);
+		getRootPane().setDefaultButton(buttonSure);
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -313,7 +316,6 @@ public class JDialogTopoPreProgress extends SmDialog {
 		boolean isVertexArcInserted = checkBoxVertexArcInserted.isSelected();
 		if (isVertexesSnapped || isArcsInserted || isPolygonsChecked || isVertexArcInserted) {
 			buttonSure.setEnabled(true);
-			getRootPane().setDefaultButton(buttonSure);
 		} else {
 			buttonSure.setEnabled(false);
 		}

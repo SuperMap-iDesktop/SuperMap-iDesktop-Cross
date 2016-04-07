@@ -11,10 +11,11 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.geometryoperation.EditAction;
+import com.supermap.desktop.geometryoperation.EditActionChangeEvent;
+import com.supermap.desktop.geometryoperation.EditActionChangeListener;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapview.geometry.operation.EditAction;
-import com.supermap.desktop.mapview.geometry.operation.EditActionChangeEvent;
-import com.supermap.desktop.mapview.geometry.operation.EditActionChangeListener;
+import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
@@ -98,8 +99,8 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 		formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
 		formMap.getMapControl().addKeyListener(this.keyListener);
 		formMap.getMapControl().addMouseListener(this.mouseListener);
-		((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().setEditAction(getEditAction());
-		((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().addEditActionChangeListener(this.editActionChangeListener);
+		MapEditorEnv.getEditState().setEditAction(getEditAction());
+		MapEditorEnv.getEditState().addEditActionChangeListener(this.editActionChangeListener);
 	}
 
 	protected void endEdit() {
@@ -107,10 +108,10 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 		formMap.getMapControl().removeActionChangedListener(this.actionChangedListener);
 		formMap.getMapControl().removeMouseListener(this.mouseListener);
 		formMap.getMapControl().removeKeyListener(this.keyListener);
-		formMap.getEditState().removeEditActionChangeListener(this.editActionChangeListener);
+		MapEditorEnv.getEditState().removeEditActionChangeListener(this.editActionChangeListener);
 
-		if (formMap.getEditState().getEditAction() == getEditAction()) {
-			formMap.getEditState().setEditAction(EditAction.NONE);
+		if (MapEditorEnv.getEditState().getEditAction() == getEditAction()) {
+			MapEditorEnv.getEditState().setEditAction(EditAction.NONE);
 		}
 		formMap.getMapControl().setAction(Action.SELECT2);
 		formMap.getMapControl().setTrackMode(TrackMode.EDIT);
@@ -160,7 +161,7 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 	public boolean check() {
 		boolean checkState = false;
 		try {
-			if (((FormMap) Application.getActiveApplication().getActiveForm()).getEditState().getEditAction() == getEditAction()) {
+			if (MapEditorEnv.getEditState().getEditAction() == getEditAction()) {
 				checkState = true;
 			}
 		} catch (Exception e) {
