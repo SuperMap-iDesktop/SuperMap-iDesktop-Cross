@@ -24,6 +24,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -50,10 +51,10 @@ public class CtrlActionCombination extends CtrlAction {
 	public void run() {
 		try {
 			FormMap formMap = (com.supermap.desktop.FormMap) Application.getActiveApplication().getActiveForm();
-			formMap.getEditState().checkEnable();
+			MapEditorEnv.getEditState().checkEnable();
 			DatasetType datasetType = DatasetType.CAD;
-			if (formMap.getEditState().getselectedDatasetTypes().size() == 1) {
-				datasetType = formMap.getEditState().getselectedDatasetTypes().get(0);
+			if (MapEditorEnv.getEditState().getselectedDatasetTypes().size() == 1) {
+				datasetType = MapEditorEnv.getEditState().getselectedDatasetTypes().get(0);
 			}
 			Layer resultLayer = null;
 			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());

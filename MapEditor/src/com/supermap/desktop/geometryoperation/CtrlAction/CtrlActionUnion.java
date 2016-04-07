@@ -24,6 +24,7 @@ import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
@@ -42,13 +43,13 @@ public class CtrlActionUnion extends CtrlAction {
 	public void run() {
 		try {
 			this.formMap = (FormMap) Application.getActiveApplication().getActiveForm();
-			formMap.getEditState().checkEnable();
+			MapEditorEnv.getEditState().checkEnable();
 			// 设置目标数据集类型
 			DatasetType datasetType = DatasetType.CAD;
-			if (formMap.getEditState().getSelectedGeometryTypes().size() == 1) {
-				if (formMap.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
-						|| formMap.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
-						|| formMap.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
+			if (MapEditorEnv.getEditState().getSelectedGeometryTypes().size() == 1) {
+				if (MapEditorEnv.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
+						|| MapEditorEnv.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
+						|| MapEditorEnv.getEditState().getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
 					datasetType = DatasetType.REGION3D;
 				} else {
 					datasetType = DatasetType.REGION;

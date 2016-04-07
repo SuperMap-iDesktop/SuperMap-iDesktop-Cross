@@ -1,4 +1,4 @@
-package com.supermap.desktop.mapview.geometry.operation;
+package com.supermap.desktop.geometryoperation;
 
 import java.util.EventObject;
 
