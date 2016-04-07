@@ -9,7 +9,7 @@
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/iDesktop Frame Configuration"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
-<intAttribute key="default_start_level" value="5"/>
+<intAttribute key="default_start_level" value="6"/>
 <stringAttribute key="deselected_workspace_plugins" value="LayoutEditor,LayoutView,UserPlugin_PathAnalyst"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
