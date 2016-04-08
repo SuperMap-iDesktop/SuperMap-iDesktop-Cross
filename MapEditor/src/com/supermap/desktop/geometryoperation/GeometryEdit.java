@@ -206,6 +206,7 @@ public class GeometryEdit {
 					continue;
 				}
 
+				this.selectedDatasetTypes.add(layer.getDataset().getType());
 				statisticGeometryData(layer);
 			}
 		} catch (Exception ex) {
