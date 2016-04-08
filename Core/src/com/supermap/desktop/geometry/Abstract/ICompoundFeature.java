@@ -1,11 +1,11 @@
 package com.supermap.desktop.geometry.Abstract;
 
 /**
- * 表示线特性
+ * 表示多类型复合特性
  * 
  * @author highsad
  *
  */
-public interface ILineFeature extends IGeometryFeature {
+public interface ICompoundFeature extends IGeometryFeature {
 
 }

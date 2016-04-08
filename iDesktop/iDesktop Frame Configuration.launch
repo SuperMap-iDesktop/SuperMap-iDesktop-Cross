@@ -9,8 +9,8 @@
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/iDesktop Frame Configuration"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
-<intAttribute key="default_start_level" value="5"/>
-<stringAttribute key="deselected_workspace_plugins" value="LayoutEditor,LayoutView,RealspaceEditor,RealspaceEffect,RealspaceView,UserPlugin_PathAnalyst"/>
+<intAttribute key="default_start_level" value="6"/>
+<stringAttribute key="deselected_workspace_plugins" value="LayoutEditor,LayoutView,UserPlugin_PathAnalyst"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
@@ -23,5 +23,5 @@
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="Assistant@5:default,Controls@2:default,Core@1:default,DataConversion@5:default,DataEditor@5:default,DataProcess@5:default,DataTopology@5:default,DataView@4:default,Frame@3:default,MapEditor@5:default,MapView@4:default,NetServices@5:default,SpatialAnalyst@5:default,TabularView@4:default,iDesktop@6:default"/>
+<stringAttribute key="workspace_bundles" value="Assistant@5:default,Controls@2:default,Core@1:default,DataConversion@5:default,DataEditor@5:default,DataProcess@5:default,DataTopology@5:default,DataView@4:default,Frame@3:default,MapEditor@5:default,MapView@4:default,NetServices@5:default,RealspaceEditor@5:default,RealspaceEffect@5:default,RealspaceView@4:default,SpatialAnalyst@5:default,TabularView@4:default,iDesktop@6:default"/>
 </launchConfiguration>

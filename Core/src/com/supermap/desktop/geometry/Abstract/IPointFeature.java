@@ -1,5 +1,11 @@
 package com.supermap.desktop.geometry.Abstract;
 
-public interface IPointFeature extends IGeometry {
+/**
+ * 表示点特性
+ * 
+ * @author highsad
+ *
+ */
+public interface IPointFeature extends IGeometryFeature {
 
 }

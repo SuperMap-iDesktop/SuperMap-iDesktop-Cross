@@ -11,7 +11,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 
-public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature, ILineFeature, ILineConvertor, IRegionConvertor {
+public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature, ILineConvertor, IRegionConvertor {
 
 	private GeoLineM geoLineM;
 

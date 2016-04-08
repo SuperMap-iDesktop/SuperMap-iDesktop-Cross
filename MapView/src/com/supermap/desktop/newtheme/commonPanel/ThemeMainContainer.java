@@ -132,11 +132,13 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) layersTree.getLastSelectedPathComponent();
-				Object obj = node.getUserObject();
-				TreeNodeData controlNodeData = (TreeNodeData) obj;
-				Object itemObj = controlNodeData.getData();
-				if (itemObj instanceof Layer) {
-					textFieldThemeLayer.setText(((Layer) itemObj).getCaption());
+				if (null != node) {
+					Object obj = node.getUserObject();
+					TreeNodeData controlNodeData = (TreeNodeData) obj;
+					Object itemObj = controlNodeData.getData();
+					if (itemObj instanceof Layer) {
+						textFieldThemeLayer.setText(((Layer) itemObj).getCaption());
+					}
 				}
 			}
 		});
@@ -238,7 +240,12 @@ public class ThemeMainContainer extends JPanel {
 		if (null != panel && null != oldLayer && !oldLayer.isDisposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
-				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
+				int count = -1;
+				if (oldLayer.getTheme() instanceof ThemeLabel) {
+					count = ((ThemeLabel) oldLayer.getTheme()).getCount();
+				}
+				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(new String[] { oldLayer.getCaption(),
+						ThemeGuideFactory.getThemeTypeString(oldLayer.getTheme().getType(), count) });
 				if (null != panel) {
 					panel.unregistActionListener();
 					panel = null;

@@ -74,7 +74,11 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
-
+	@Override
+	public void setFocusTraversalPolicy(FocusTraversalPolicy policy) {
+		// TODO Auto-generated method stub
+		super.setFocusTraversalPolicy(policy);
+	}
 	/**
 	 * 自定义的ESC按键功能
 	 */

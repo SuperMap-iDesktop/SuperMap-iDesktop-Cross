@@ -30,7 +30,7 @@ import java.awt.event.MouseEvent;
  *
  * @author huchenpu
  */
-public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
+public class JDialogWorkspaceOpenSQL extends SmDialog{
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -38,7 +38,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	 *
 	 * @param DataBase 数据库类型(SQL/Oracle)
 	 */
-	public JDialogWorkspaceOpenSQL(java.awt.Frame parent, boolean modal, String DataBase) {
+	public JDialogWorkspaceOpenSQL(JFrame parent, boolean modal, String DataBase) {
 		super(parent, modal);
 		this.DataBase = DataBase;
 		if ("SQL".equals(DataBase)) {
@@ -78,7 +78,7 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 		jLabelEmptyUser = new JLabel();
 		jLabelEmptyLabel = new JLabel();
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
+		getRootPane().setDefaultButton(this.jButtonOpen);
 		jButtonClose.setText(CommonProperties.getString("String_Button_Cancel"));
 		jButtonClose.addActionListener(new ActionListener() {
 			@Override
@@ -482,4 +482,19 @@ public class JDialogWorkspaceOpenSQL extends javax.swing.JDialog {
 	private JLabel jLabelEmptyUser;
 	private JLabel jLabelEmptyLabel;
 	// End of variables declaration
+
+	@Override
+	public void escapePressed() {
+		DialogExit();
+	}
+
+	@Override
+	public void enterPressed() {
+		if (getRootPane().getDefaultButton()==this.jButtonOpen) {
+			jButtonOpenActionPerformed();
+		}
+		if (getRootPane().getDefaultButton()==this.jButtonClose) {
+			DialogExit();
+		}
+	}
 }

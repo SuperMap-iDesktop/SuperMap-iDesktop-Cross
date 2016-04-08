@@ -172,7 +172,9 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 	@Override
 	public boolean equals(LayerPropertyModel model) {
 		LayerVectorParamPropertyModel vectorParamPropertyModel = (LayerVectorParamPropertyModel) model;
-
+		if (null == this.displayOrderField) {
+			this.displayOrderField = "";
+		}
 		return vectorParamPropertyModel != null && super.equals(vectorParamPropertyModel)
 				&& this.isCompleteLineSymbolDisplayed == vectorParamPropertyModel.isCompleteLineSymbolDisplayed()
 				&& this.isCrossroadOptimized == vectorParamPropertyModel.isCrossroadOptimized()
@@ -219,7 +221,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 				if (StringUtilties.isNullOrEmpty(this.displayOrderField)) {
 					layer.getDisplayFilter().setOrderBy(null);
 				} else {
-					layer.getDisplayFilter().setOrderBy(new String[]{MessageFormat.format("{0} {1}", this.displayOrderField, this.isDesc ? DESC : ASC)});
+					layer.getDisplayFilter().setOrderBy(new String[] { MessageFormat.format("{0} {1}", this.displayOrderField, this.isDesc ? DESC : ASC) });
 				}
 			}
 
@@ -352,8 +354,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 					enabled = hashMapTmp.get(IS_SYMBOL_SCALABLE) && !(layer.getTheme() instanceof ThemeLabel);
 					hashMapTmp.put(IS_SYMBOL_SCALABLE, enabled);
 					// 缩放基准比例尺，符号随图缩放设置为 false
-					enabled = hashMapTmp.get(SYMBOL_SCALE) && hashMapTmp.get(IS_SYMBOL_SCALABLE)
-							&& this.isSymbolScalable != null && this.isSymbolScalable;
+					enabled = hashMapTmp.get(SYMBOL_SCALE) && hashMapTmp.get(IS_SYMBOL_SCALABLE) && this.isSymbolScalable != null && this.isSymbolScalable;
 					hashMapTmp.put(SYMBOL_SCALE, enabled);
 					// 对象最小尺寸，数据集为点数据集则不可用
 					enabled = hashMapTmp.get(MIN_VISIBLE_GEOMETRY_SIZE) && dataset.getType() != DatasetType.POINT;

@@ -6,7 +6,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.JoinItems;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
@@ -119,6 +118,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
+	private boolean isResetLayerProperty = false;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -127,6 +127,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			isResetLayerProperty = false;
+		}
+	};
 
 	/**
 	 * @wbp.parser.constructor
@@ -234,19 +240,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化表达式下拉框
 	 */
 	private void initComboBoxRangeExpression() {
-		this.comboBoxExpression.setEditable(true);
-		this.comboBoxExpression.removeAllItems();
-		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, this.themeRangeLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true);
-		this.rangeExpression = this.themeRange.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(this.rangeExpression)) {
-			rangeExpression = "0";
-		}
-		String tempExpression = this.rangeExpression.substring(this.rangeExpression.indexOf(".") + 1, this.rangeExpression.length());
-		this.comboBoxExpression.setSelectedItem(tempExpression);
-		if (!tempExpression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(tempExpression);
-			this.comboBoxExpression.setSelectedItem(tempExpression);
-		}
+		ThemeUtil.initComboBox(comboBoxExpression, this.themeRange.getRangeExpression(), datasetVector, this.themeRangeLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArray, true, false);
 	}
 
 	/**
@@ -549,6 +544,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxExpression.addItemListener(this.itemListener);
+		this.comboBoxExpression.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboBoxRangePrecision.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
@@ -577,6 +573,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.removeMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
 		this.comboBoxExpression.removeItemListener(this.itemListener);
+		this.comboBoxExpression.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboBoxRangePrecision.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
@@ -896,6 +893,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeRangeLayer, datasetVector);
 				if (e.getSource() == comboBoxColorStyle) {
@@ -1121,14 +1121,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeRange.getCount()));
 			} else {
 				ThemeRange theme = null;
-				if (rangeExpression.contains(".")) {
-					// 外部连接表字段创建专题图
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, themeRangeLayer
-							.getDisplayFilter().getJoinItems(), precision);
-				} else {
-					rangeExpression = datasetVector.getName() + "." + rangeExpression;
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
-				}
+				// 外部连接表字段创建专题图
+				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, themeRangeLayer
+						.getDisplayFilter().getJoinItems(), precision);
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -1294,14 +1289,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		ThemeRange theme = null;
 		if (rangeLength > 0) {
-			if (rangeExpression.contains(".")) {
-				// 外部连接表字段创建专题图
-				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeRangeLayer
-						.getDisplayFilter().getJoinItems(), precision);
-			} else {
-				rangeExpression = datasetVector.getName() + "." + rangeExpression;
-				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
-			}
+			// 外部连接表字段创建专题图
+			theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeRangeLayer
+					.getDisplayFilter().getJoinItems(), precision);
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -1349,7 +1339,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themeRangeLayer && !themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).getName().equals(themeRangeLayer.getName())) {
+			if (null != themeRangeLayer && !themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themeRangeLayer)) {
+				isResetLayerProperty = true;
 				initComboBoxRangeExpression();
 			}
 		}

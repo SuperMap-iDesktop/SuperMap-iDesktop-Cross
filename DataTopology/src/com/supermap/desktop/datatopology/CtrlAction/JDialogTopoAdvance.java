@@ -149,10 +149,10 @@ public class JDialogTopoAdvance extends SmDialog {
 	private void initContentPane() {
 		// @formatter:off
 		getContentPane().setLayout(new GridBagLayout());
-		getContentPane().add(this.panelLinesIntersected, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(3, 1).setInsets(10));
-		getContentPane().add(this.panelToleranceSetting, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(3, 1).setInsets(10));
-		getContentPane().add(this.buttonSure,            new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,140,10,5).setWeight(100, 0));
-		getContentPane().add(this.buttonQuite,           new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5,  0,10,10));
+		getContentPane().add(this.panelLinesIntersected, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(3, 1).setInsets(10, 10, 5, 10));
+		getContentPane().add(this.panelToleranceSetting, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(3, 1).setInsets(0, 10, 5, 10));
+		getContentPane().add(this.buttonSure,            new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(1, 0).setInsets(0, 0, 10, 10));
+		getContentPane().add(this.buttonQuite,           new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
 		// @formatter:on
 	}
 
@@ -211,7 +211,7 @@ public class JDialogTopoAdvance extends SmDialog {
 		try {
 			String arcFilterString = this.textFieldFilterExpression.getText();
 			if (!StringUtilties.isNullOrEmpty(arcFilterString)) {
-				this.topologyProcessingOptions.setArcFilterString(targetDataset.getName() + "." + arcFilterString);
+				this.topologyProcessingOptions.setArcFilterString(arcFilterString);
 			}
 			if (0 < this.comboBoxNotCutting.getItemCount()) {
 				String datasetName = this.comboBoxNotCutting.getSelectItem();
