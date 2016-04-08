@@ -18,10 +18,10 @@ import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.geometryoperation.GeometryEdit;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -51,12 +51,11 @@ public class CtrlActionDecompose extends CtrlAction {
 		Recordset recordset = null;
 		Geometry geometry = null;
 		try {
-			IFormMap formMap = (IFormMap) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-			MapEditorEnv.getEditState().checkEnable();
-			Layer layer = formMap.getMapControl().getActiveEditableLayer();
+			GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+			Layer layer = geometryEdit.getActiveEditableLayer();
 			List<Integer> resultIDs = new ArrayList<Integer>();
 			recordset = layer.getSelection().toRecordset();
-			formMap.getMapControl().getEditHistory().batchBegin();
+			geometryEdit.getMapControl().getEditHistory().batchBegin();
 			recordset.getBatch().setMaxRecordCount(200);
 			recordset.getBatch().begin();
 			recordset.moveLast();
@@ -121,7 +120,7 @@ public class CtrlActionDecompose extends CtrlAction {
 					FieldInfos fieldInfos = recordset.getFieldInfos();
 					Object[] fieldValues = recordset.getValues();
 
-					formMap.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
+					geometryEdit.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
 					boolean dr = recordset.delete();
 					for (int i = 0; i < fieldValues.length; i++) {
 						if (!fieldInfos.get(i).isSystemField()) {
@@ -131,13 +130,13 @@ public class CtrlActionDecompose extends CtrlAction {
 					for (int j = 0; j < geometrys.length; j++) {
 						recordset.addNew(geometrys[j], values);
 						resultIDs.add(recordset.getID());
-						formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
+						geometryEdit.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 					}
 				}
 				recordset.movePrev();
 			}
 			recordset.getBatch().update();
-			formMap.getMapControl().getEditHistory().batchEnd();
+			geometryEdit.getMapControl().getEditHistory().batchEnd();
 			layer.getSelection().clear();
 			if (resultIDs.size() > 0) {
 				int[] ids = ArrayUtilties.convertToInt(resultIDs.toArray(new Integer[resultIDs.size()]));
@@ -147,7 +146,7 @@ public class CtrlActionDecompose extends CtrlAction {
 				Application.getActiveApplication().getOutput()
 						.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_DecomposeSuccess"), resultIDs.size()));
 			}
-			formMap.getMapControl().getMap().refresh();
+			geometryEdit.getMapControl().getMap().refresh();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {

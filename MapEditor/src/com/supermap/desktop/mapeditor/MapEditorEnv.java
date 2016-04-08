@@ -1,15 +1,15 @@
 package com.supermap.desktop.mapeditor;
 
-import com.supermap.desktop.geometryoperation.GeometryEdit;
+import com.supermap.desktop.geometryoperation.GeometryEditManager;
 
 public class MapEditorEnv {
 
-	private static GeometryEdit editState;
+	private static GeometryEditManager geometryEditManager;
 
-	public static GeometryEdit getEditState() {
-		if (editState == null) {
-			editState = new GeometryEdit(null);
+	public static GeometryEditManager getGeometryEditManager() {
+		if (geometryEditManager == null) {
+			geometryEditManager = new GeometryEditManager();
 		}
-		return editState;
+		return geometryEditManager;
 	}
 }

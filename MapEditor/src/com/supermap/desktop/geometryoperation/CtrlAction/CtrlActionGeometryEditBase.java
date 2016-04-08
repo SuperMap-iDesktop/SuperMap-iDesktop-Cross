@@ -7,13 +7,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometryoperation.EditAction;
 import com.supermap.desktop.geometryoperation.EditActionChangeEvent;
 import com.supermap.desktop.geometryoperation.EditActionChangeListener;
+import com.supermap.desktop.geometryoperation.GeometryEdit;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.ui.Action;
@@ -94,27 +94,28 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 	};
 
 	protected void startEdit() {
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
 
-		formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
-		formMap.getMapControl().addKeyListener(this.keyListener);
-		formMap.getMapControl().addMouseListener(this.mouseListener);
-		MapEditorEnv.getEditState().setEditAction(getEditAction());
-		MapEditorEnv.getEditState().addEditActionChangeListener(this.editActionChangeListener);
+		geometryEdit.getMapControl().addActionChangedListener(this.actionChangedListener);
+		geometryEdit.getMapControl().addKeyListener(this.keyListener);
+		geometryEdit.getMapControl().addMouseListener(this.mouseListener);
+		geometryEdit.setEditAction(getEditAction());
+		geometryEdit.addEditActionChangeListener(this.editActionChangeListener);
 	}
 
 	protected void endEdit() {
-		FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
-		formMap.getMapControl().removeActionChangedListener(this.actionChangedListener);
-		formMap.getMapControl().removeMouseListener(this.mouseListener);
-		formMap.getMapControl().removeKeyListener(this.keyListener);
-		MapEditorEnv.getEditState().removeEditActionChangeListener(this.editActionChangeListener);
+		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
 
-		if (MapEditorEnv.getEditState().getEditAction() == getEditAction()) {
-			MapEditorEnv.getEditState().setEditAction(EditAction.NONE);
+		geometryEdit.getMapControl().removeActionChangedListener(this.actionChangedListener);
+		geometryEdit.getMapControl().removeMouseListener(this.mouseListener);
+		geometryEdit.getMapControl().removeKeyListener(this.keyListener);
+		geometryEdit.removeEditActionChangeListener(this.editActionChangeListener);
+
+		if (geometryEdit.getEditAction() == getEditAction()) {
+			geometryEdit.setEditAction(EditAction.NONE);
 		}
-		formMap.getMapControl().setAction(Action.SELECT2);
-		formMap.getMapControl().setTrackMode(TrackMode.EDIT);
+		geometryEdit.getMapControl().setAction(Action.SELECT2);
+		geometryEdit.getMapControl().setTrackMode(TrackMode.EDIT);
 	}
 
 	protected void mapControl_ActionChanged(ActionChangedEvent e) {
@@ -161,7 +162,7 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 	public boolean check() {
 		boolean checkState = false;
 		try {
-			if (MapEditorEnv.getEditState().getEditAction() == getEditAction()) {
+			if (MapEditorEnv.getGeometryEditManager().instance().getEditAction() == getEditAction()) {
 				checkState = true;
 			}
 		} catch (Exception e) {
