@@ -6,7 +6,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.JoinItems;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
@@ -52,7 +51,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -1123,14 +1121,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeRange.getCount()));
 			} else {
 				ThemeRange theme = null;
-				if (rangeExpression.contains(".")) {
-					// 外部连接表字段创建专题图
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, themeRangeLayer
-							.getDisplayFilter().getJoinItems(), precision);
-				} else {
-					rangeExpression = datasetVector.getName() + "." + rangeExpression;
-					theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, null, precision);
-				}
+				// 外部连接表字段创建专题图
+				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeCount, ColorGradientType.GREENRED, themeRangeLayer
+						.getDisplayFilter().getJoinItems(), precision);
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -1296,14 +1289,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		ThemeRange theme = null;
 		if (rangeLength > 0) {
-			if (rangeExpression.contains(".")) {
-				// 外部连接表字段创建专题图
-				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeRangeLayer
-						.getDisplayFilter().getJoinItems(), precision);
-			} else {
-				rangeExpression = datasetVector.getName() + "." + rangeExpression;
-				theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null, precision);
-			}
+			// 外部连接表字段创建专题图
+			theme = ThemeRange.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeRangeLayer
+					.getDisplayFilter().getJoinItems(), precision);
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));

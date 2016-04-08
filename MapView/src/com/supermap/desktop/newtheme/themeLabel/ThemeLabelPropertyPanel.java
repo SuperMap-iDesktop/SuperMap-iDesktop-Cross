@@ -483,11 +483,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setOffsetY() {
 			String expression = comboBoxOffsetY.getSelectedItem().toString();
-			if (expression.contains(".") || expression.equals("0")) {
-				themeLabel.setOffsetY(expression);
-			} else {
-				themeLabel.setOffsetY(datasetVector.getName() + "." + expression);
-			}
+			themeLabel.setOffsetY(expression);
 		}
 
 		/**
@@ -495,11 +491,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setOffsetX() {
 			String expression = comboBoxOffsetX.getSelectedItem().toString();
-			if (expression.contains(".") || expression.equals("0")) {
-				themeLabel.setOffsetX(expression);
-			} else {
-				themeLabel.setOffsetX(datasetVector.getName() + "." + expression);
-			}
+			themeLabel.setOffsetX(expression);
 		}
 
 		/**
@@ -575,9 +567,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				} else {
 					comboBoxTextPrecision.setEnabled(false);
 				}
-			}
-			if (!labelExpression.contains(".")) {
-				labelExpression = datasetVector.getName() + "." + labelExpression;
 			}
 			themeLabel.setLabelExpression(labelExpression);
 		}

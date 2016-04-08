@@ -3,32 +3,25 @@ package com.supermap.desktop.ui.controls;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -40,15 +33,16 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonCancel;
 	private JButton jButtonOK;
 	private JTable jTableFieldInfo;
 	private JScrollPane jScrollPanel;
-	private JComboBox jComboBoxTimeFunction;
-	private JComboBox jComboBoxStringFunction;
-	private JComboBox jComboBoxMathsOperation;
+	private JComboBox<String> jComboBoxTimeFunction;
+	private JComboBox<String> jComboBoxStringFunction;
+	private JComboBox<String> jComboBoxMathsOperation;
 	private JLabel jLabelTimefunction;
 	private JLabel jLabelStringfunction;
 	private JLabel jLabelMathsoperation;
@@ -82,25 +76,15 @@ public class SQLExpressionDialog extends SmDialog {
 			ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType") };
 	private transient QueryParameter filedQueryParameter;
 	private transient DialogResult dialogResult = DialogResult.CANCEL;
+	private MouseAdapter mouseAdapter = new LocalMouseAdapter();
+	private ActionListener actionListener = new LocalComboboxAction();
+	private ActionListener buttonActionListener = new LocalButtonAction();
+	private MouseAdapter tableMouseAdapter = new LocalTableMouseAdapter();
 
 	private static Map<FieldType, String> map;
 
-	// 初始化操作
-	// ///////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * 默认构造函数
-	 */
-	public SQLExpressionDialog() {
-		super();
-		setModal(true);
-	}
-
 	private void initialDialog(String expression) {
-		setSize(700, 350);
-		setResizable(false);
-		intializeForm();
-
-		getContentPane().setLayout(null);
+		setSize(680, 350);
 		setTitle(ControlsProperties.getString("String_SQLExpression"));
 		setName("SQLExpressionDialog");
 
@@ -116,16 +100,211 @@ public class SQLExpressionDialog extends SmDialog {
 		}
 
 		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-
-		getContentPane().add(getTextAreaSQLSentence());
-		getContentPane().add(getPanelFunction());
-		getContentPane().add(getPanel());
-		getContentPane().add(getButtonOK());
-		getContentPane().add(getButtonCancel());
-
-		getContentPane().add(getPanelCommonOperator());
+		getContentPane().setLayout(new GridBagLayout());
+		this.jTextAreaSQLSentence = new JTextArea();
+		initPanelCommonOperator();
+		initPanelFunction();
+		this.jButtonOK = new SmButton();
+		this.jButtonCancel = new SmButton();
+		getRootPane().setDefaultButton(this.jButtonOK);
+		this.jScrollPanel = new JScrollPane();
+		//@formatter:off
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(this.jButtonOK,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 6, 3).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(3, 3));
+		getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(0, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,5,5,3).setWeight(0, 0).setIpad(10, 30));
+		getContentPane().add(this.jPanelFunction,       new GridBagConstraintsHelper(2, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,3).setWeight(0, 0).setIpad(0, 30));
+		getContentPane().add(this.jScrollPanel,         new GridBagConstraintsHelper(4, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,5).setWeight(0, 0).setIpad(20, 30));
+		getContentPane().add(panelButton,               new GridBagConstraintsHelper(4, 5, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		//@formatter:on
+		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
+		this.jTextAreaSQLSentence.select(0, expression.length());
+		intializeForm();
 		initialFieldTypeMap();
+		initResources();
+		registActionListener();
+	}
+
+	/**
+	 * 注册事件
+	 */
+	private void registActionListener() {
+		unRegistActionListener();
+		this.jButtonPlus.addMouseListener(this.mouseAdapter);
+		this.jButtonSubtract.addMouseListener(this.mouseAdapter);
+		this.jButtonMultiply.addMouseListener(this.mouseAdapter);
+		this.jButtonDivide.addMouseListener(this.mouseAdapter);
+		this.jButtonMore.addMouseListener(this.mouseAdapter);
+		this.jButtonLess.addMouseListener(this.mouseAdapter);
+		this.jButtonEqual.addMouseListener(this.mouseAdapter);
+		this.jButtonBracket.addMouseListener(this.mouseAdapter);
+		this.jButtonMoreOrEqual.addMouseListener(this.mouseAdapter);
+		this.jButtonLessOrEqual.addMouseListener(this.mouseAdapter);
+		this.jButtonLeftBracket.addMouseListener(this.mouseAdapter);
+		this.jButtonRightBracket.addMouseListener(this.mouseAdapter);
+		this.jButtonAndCompute.addMouseListener(this.mouseAdapter);
+		this.jButtonAnd.addMouseListener(this.mouseAdapter);
+		this.jButtonNot.addMouseListener(this.mouseAdapter);
+		this.jButtonLike.addMouseListener(this.mouseAdapter);
+		this.jButtonOr.addMouseListener(this.mouseAdapter);
+		this.jComboBoxMathsOperation.addActionListener(this.actionListener);
+		this.jComboBoxStringFunction.addActionListener(this.actionListener);
+		this.jComboBoxTimeFunction.addActionListener(this.actionListener);
+		this.jButtonOK.addActionListener(this.buttonActionListener);
+		this.jButtonCancel.addActionListener(this.buttonActionListener);
+		this.jTableFieldInfo.addMouseListener(this.tableMouseAdapter);
+	}
+
+	/**
+	 * 注销事件
+	 */
+	private void unRegistActionListener() {
+		this.jButtonPlus.removeMouseListener(this.mouseAdapter);
+		this.jButtonSubtract.removeMouseListener(this.mouseAdapter);
+		this.jButtonMultiply.removeMouseListener(this.mouseAdapter);
+		this.jButtonDivide.removeMouseListener(this.mouseAdapter);
+		this.jButtonMore.removeMouseListener(this.mouseAdapter);
+		this.jButtonLess.removeMouseListener(this.mouseAdapter);
+		this.jButtonEqual.removeMouseListener(this.mouseAdapter);
+		this.jButtonBracket.removeMouseListener(this.mouseAdapter);
+		this.jButtonMoreOrEqual.removeMouseListener(this.mouseAdapter);
+		this.jButtonLessOrEqual.removeMouseListener(this.mouseAdapter);
+		this.jButtonLeftBracket.removeMouseListener(this.mouseAdapter);
+		this.jButtonRightBracket.removeMouseListener(this.mouseAdapter);
+		this.jButtonAndCompute.removeMouseListener(this.mouseAdapter);
+		this.jButtonAnd.removeMouseListener(this.mouseAdapter);
+		this.jButtonNot.removeMouseListener(this.mouseAdapter);
+		this.jButtonLike.removeMouseListener(this.mouseAdapter);
+		this.jButtonOr.removeMouseListener(this.mouseAdapter);
+		this.jComboBoxMathsOperation.removeActionListener(this.actionListener);
+		this.jComboBoxStringFunction.removeActionListener(this.actionListener);
+		this.jComboBoxTimeFunction.removeActionListener(this.actionListener);
+		this.jButtonOK.removeActionListener(this.buttonActionListener);
+		this.jButtonCancel.removeActionListener(this.buttonActionListener);
+		this.jTableFieldInfo.removeMouseListener(this.tableMouseAdapter);
+	}
+
+	private void initResources() {
+		this.jButtonOK.setText(CommonProperties.getString("String_Button_OK"));
+		this.jButtonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.jComboBoxMathsOperation
+				.setModel(new DefaultComboBoxModel<String>(new String[] { "", "Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()", "Cot()",
+						"Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()", "Sin()",
+						"Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()", "CInt()", "CLng()", "CSng()", "CStr()", "Int()",
+						"Fix()" }));
+		this.jComboBoxStringFunction.setModel(new DefaultComboBoxModel<String>(new String[] { "", "Ascii()", "Char()", "Charindex()", "Difference()", "Left()",
+				"Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()",
+				"Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()" }));
+		this.jComboBoxTimeFunction.setModel(new DefaultComboBoxModel<String>(new String[] { "", "DateAdd()", "Datediff()", "Datename()", "Datepart()", "Day()",
+				"Getdate()", "Getutcdate()", "Month()", "Year()" }));
+		this.jLabelMathsoperation.setText(ControlsProperties.getString("String_ArithmeticOperation"));
+		this.jLabelStringfunction.setText(ControlsProperties.getString("String_CharacterHandling"));
+		this.jLabelTimefunction.setText(ControlsProperties.getString("String_DataAndTime"));
+	}
+
+	private void initPanelFunction() {
+		this.jPanelFunction = new JPanel();
+		this.jPanelFunction.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties.getString("String_CommonFunction"),
+				TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+		this.jLabelMathsoperation = new JLabel();
+
+		this.jLabelStringfunction = new JLabel();
+		this.jLabelTimefunction = new JLabel();
+		this.jComboBoxMathsOperation = new JComboBox<String>();
+		this.jComboBoxStringFunction = new JComboBox<String>();
+		this.jComboBoxTimeFunction = new JComboBox<String>();
+
+		//@formatter:off
+		this.jPanelFunction.setLayout(new GridBagLayout());
+		this.jPanelFunction.add(this.jLabelMathsoperation,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
+		this.jPanelFunction.add(this.jComboBoxMathsOperation, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelFunction.add(this.jLabelStringfunction,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
+		this.jPanelFunction.add(this.jComboBoxStringFunction, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelFunction.add(this.jLabelTimefunction,      new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
+		this.jPanelFunction.add(this.jComboBoxTimeFunction,   new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on
+	}
+
+	private void initPanelCommonOperator() {
+		this.jPanelCommonOperator = new JPanel();
+		this.jPanelCommonOperator.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties.getString("String_CommonOperator"),
+				TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+		this.jButtonPlus = new JButton("+");
+		this.jButtonSubtract = new JButton("-");
+		this.jButtonMultiply = new JButton("*");
+		this.jButtonDivide = new JButton("/");
+		this.jButtonAnd = new JButton("And");
+		this.jButtonMore = new JButton(">");
+		this.jButtonLess = new JButton("<");
+		this.jButtonEqual = new JButton("=");
+		this.jButtonBracket = new JButton("<>");
+		this.jButtonNot = new JButton("Not");
+		this.jButtonMoreOrEqual = new JButton(">=");
+		this.jButtonLessOrEqual = new JButton("<=");
+		this.jButtonLeftBracket = new JButton("(");
+		this.jButtonRightBracket = new JButton(")");
+		this.jButtonLike = new JButton("Like");
+		this.jButtonAndCompute = new JButton("&");
+		this.jButtonOr = new JButton("Or");
+		setOperatorButtonSize();
+		//@formatter:off
+		this.jPanelCommonOperator.setLayout(new GridBagLayout());
+		this.jPanelCommonOperator.add(this.jButtonPlus,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonSubtract, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonMultiply, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonDivide,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonAnd,      new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		
+		this.jPanelCommonOperator.add(this.jButtonMore,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonLess,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonEqual,    new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonBracket,  new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonNot,      new GridBagConstraintsHelper(4, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		
+		this.jPanelCommonOperator.add(this.jButtonMoreOrEqual, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonLessOrEqual, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonLeftBracket, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonRightBracket,new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonLike,        new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		
+		this.jPanelCommonOperator.add(this.jButtonAndCompute,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonOr,          new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on
+	}
+
+	private void setOperatorButtonSize() {
+		Dimension dimension = new Dimension(24, 30);
+		this.jButtonPlus.setPreferredSize(dimension);
+		this.jButtonSubtract.setPreferredSize(dimension);
+		this.jButtonMultiply.setPreferredSize(dimension);
+		this.jButtonDivide.setPreferredSize(dimension);
+		this.jButtonMore.setPreferredSize(dimension);
+		this.jButtonLess.setPreferredSize(dimension);
+		this.jButtonEqual.setPreferredSize(dimension);
+		this.jButtonBracket.setPreferredSize(dimension);
+		this.jButtonMoreOrEqual.setPreferredSize(dimension);
+		this.jButtonLessOrEqual.setPreferredSize(dimension);
+		this.jButtonLeftBracket.setPreferredSize(dimension);
+		this.jButtonRightBracket.setPreferredSize(dimension);
+		this.jButtonAndCompute.setPreferredSize(dimension);
+		Dimension tempDimension = new Dimension(36, 30);
+		this.jButtonAnd.setPreferredSize(tempDimension);
+		this.jButtonNot.setPreferredSize(tempDimension);
+		this.jButtonLike.setPreferredSize(tempDimension);
+		this.jButtonOr.setPreferredSize(tempDimension);
+	}
+
+	// 初始化操作
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * 默认构造函数
+	 */
+	public SQLExpressionDialog() {
+		super();
+		setModal(true);
 	}
 
 	/**
@@ -179,8 +358,6 @@ public class SQLExpressionDialog extends SmDialog {
 	private void intializeForm() {
 		try {
 			this.requestFocusInWindow();
-			sqlExpressionForm_GotFocus();
-
 			this.jComboBoxMathsOperation.setSelectedIndex(0);
 			this.jComboBoxStringFunction.setSelectedIndex(0);
 			this.jComboBoxTimeFunction.setSelectedIndex(0);
@@ -280,11 +457,11 @@ public class SQLExpressionDialog extends SmDialog {
 
 				fieldType = datasetVector.getFieldInfos().get(fieldCount).getType();
 				if (fieldTypes.contains(fieldType)) {
-					if (datasets.length==1) {
+					if (datasets.length == 1) {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
 						fieldNameColumn = datasetVector.getFieldInfos().get(fieldCount).getName();
-					}else{
+					} else {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
 						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
@@ -304,45 +481,17 @@ public class SQLExpressionDialog extends SmDialog {
 	}
 
 	private void resetTableCell() {
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setCellRenderer(TableTooltipCellRenderer.getInstance());
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setPreferredWidth(140);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setCellRenderer(TableTooltipCellRenderer.getInstance());
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
+				80);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setCellRenderer(
+				TableTooltipCellRenderer.getInstance());
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
+				.setPreferredWidth(100);
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setCellRenderer(
+				TableTooltipCellRenderer.getInstance());
 		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setCellRenderer(TableTooltipCellRenderer.getInstance());
-	}
-
-	// 初始化操作
-	// ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// 事件处理
-	// //////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * // 获得焦点时，全选表达框中的文本
-	 */
-	private void sqlExpressionForm_GotFocus() {
-		this.jTextAreaSQLSentence.setSelectionStart(0);
-		this.jTextAreaSQLSentence.selectAll();
-	}
-
-	// 事件处理
-	// //////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// 构造控件相关信息///////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * 构造panel，FieldInfo
-	 */
-	private JScrollPane getPanel() {
-		if (this.jScrollPanel == null) {
-			this.jScrollPanel = new JScrollPane();
-			this.jScrollPanel.setBounds(406, 142, 280, 140);
-			this.jScrollPanel.setViewportView(add(getTableFieldInfo()));
-
-			this.jScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			this.jScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		}
-		return jScrollPanel;
+		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setCellRenderer(
+				TableTooltipCellRenderer.getInstance());
 	}
 
 	/**
@@ -352,368 +501,13 @@ public class SQLExpressionDialog extends SmDialog {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
 			this.jTableFieldInfo = new JTable(defaultTableModel);
-			this.jTableFieldInfo.setSize(800, 500);
 			this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			this.jTableFieldInfo.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					// //双击ListViewFieldInfo的字段信息，将字段名插入到表达式文本框的SelectionStart位置
-					if (e.getClickCount() == 2) {
-						Point point = new Point(e.getX(), e.getY());
-						int row = jTableFieldInfo.getSelectedRow();
-						int column = jTableFieldInfo.getSelectedColumn();
-
-						if (jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
-							String text = jTableFieldInfo.getValueAt(row, 1).toString();
-							if (jTextAreaSQLSentence.getSelectionStart() != 0) {
-								text = " " + text;
-							}
-
-							setSQLSentenceText(jTextAreaSQLSentence, text, "");
-						}
-					}
-				}
-			});
 		}
 		return this.jTableFieldInfo;
 	}
 
 	/**
-	 * “+”
-	 */
-	private JButton getButtonPlus() {
-		if (this.jButtonPlus == null) {
-			this.jButtonPlus = new JButton();
-			this.jButtonPlus.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonPlus);
-				}
-			});
-
-			this.jButtonPlus.setBounds(10, 21, 27, 24);
-			this.jButtonPlus.setFont(new Font(ControlsProperties.getString("String_FontSong"), Font.BOLD, 12));
-			this.jButtonPlus.setName("");
-			this.jButtonPlus.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonPlus.setText("+");
-		}
-		return jButtonPlus;
-	}
-
-	/**
-	 * “-”
-	 */
-	private JButton getButtonSubtract() {
-		if (this.jButtonSubtract == null) {
-			this.jButtonSubtract = new JButton();
-			this.jButtonSubtract.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonSubtract);
-				}
-			});
-			this.jButtonSubtract.setBounds(44, 21, 27, 24);
-			this.jButtonSubtract.setFont(new Font("Cambria Math", Font.BOLD, 12));
-			this.jButtonSubtract.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonSubtract.setText("-");
-		}
-		return this.jButtonSubtract;
-	}
-
-	/**
-	 * “*”
-	 */
-	private JButton getButtonMultiply() {
-		if (jButtonMultiply == null) {
-			jButtonMultiply = new JButton();
-			jButtonMultiply.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonMultiply);
-				}
-			});
-			jButtonMultiply.setBounds(78, 21, 27, 24);
-			jButtonMultiply.setFont(new Font("", Font.BOLD, 16));
-			jButtonMultiply.setMargin(new Insets(0, 0, 0, 0));
-			jButtonMultiply.setText("*");
-		}
-		return jButtonMultiply;
-	}
-
-	/**
-	 * “/”
-	 */
-	private JButton getButtonDivide() {
-		if (jButtonDivide == null) {
-			jButtonDivide = new JButton();
-			jButtonDivide.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					buttonOperator_Click(jButtonDivide);
-				}
-			});
-			jButtonDivide.setBounds(112, 21, 27, 24);
-			jButtonDivide.setMargin(new Insets(0, 0, 0, 0));
-			jButtonDivide.setText("/");
-		}
-		return jButtonDivide;
-	}
-
-	/**
-	 * ">"
-	 */
-	private JButton getButtonMore() {
-		if (jButtonMore == null) {
-			jButtonMore = new JButton();
-			jButtonMore.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonMore);
-				}
-			});
-			jButtonMore.setBounds(10, 51, 27, 24);
-			jButtonMore.setMargin(new Insets(0, 0, 0, 0));
-			jButtonMore.setText(">");
-		}
-		return jButtonMore;
-	}
-
-/**
-	 * "<"
-	 */
-	private JButton getButtonLess() {
-		if (jButtonLess == null) {
-			jButtonLess = new JButton();
-			jButtonLess.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonLess);
-				}
-			});
-			jButtonLess.setBounds(44, 51, 27, 24);
-			jButtonLess.setMargin(new Insets(0, 0, 0, 0));
-			jButtonLess.setText("<");
-		}
-		return jButtonLess;
-	}
-
-	/**
-	 * "="
-	 */
-	private JButton getButtonEqual() {
-		if (jButtonEqual == null) {
-			jButtonEqual = new JButton();
-			jButtonEqual.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonEqual);
-				}
-			});
-			jButtonEqual.setBounds(78, 51, 27, 24);
-			jButtonEqual.setMargin(new Insets(0, 0, 0, 0));
-			jButtonEqual.setText("=");
-		}
-		return jButtonEqual;
-	}
-
-	/**
-	 * "<>"
-	 */
-	private JButton getButtonBracket() {
-		if (this.jButtonBracket == null) {
-			this.jButtonBracket = new JButton();
-			this.jButtonBracket.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonBracket);
-				}
-			});
-			this.jButtonBracket.setBounds(112, 51, 27, 24);
-			this.jButtonBracket.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonBracket.setText("<>");
-		}
-		return this.jButtonBracket;
-	}
-
-	/**
-	 * ">="
-	 */
-	private JButton getButtonMoreOrEqual() {
-		if (this.jButtonMoreOrEqual == null) {
-			this.jButtonMoreOrEqual = new JButton();
-			this.jButtonMoreOrEqual.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonMoreOrEqual);
-				}
-			});
-			this.jButtonMoreOrEqual.setBounds(10, 81, 27, 24);
-			this.jButtonMoreOrEqual.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonMoreOrEqual.setText(">=");
-		}
-		return this.jButtonMoreOrEqual;
-	}
-
-	/**
-	 * "<="
-	 */
-	private JButton getButtonLessOrEqual() {
-		if (this.jButtonLessOrEqual == null) {
-			this.jButtonLessOrEqual = new JButton();
-			this.jButtonLessOrEqual.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonLessOrEqual);
-				}
-			});
-			this.jButtonLessOrEqual.setBounds(44, 81, 27, 24);
-			this.jButtonLessOrEqual.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonLessOrEqual.setText("<=");
-		}
-		return this.jButtonLessOrEqual;
-	}
-
-	/**
-	 * "("
-	 */
-	private JButton getButtonLeftBracket() {
-		if (this.jButtonLeftBracket == null) {
-			this.jButtonLeftBracket = new JButton();
-			this.jButtonLeftBracket.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonLeftBracket);
-				}
-			});
-			this.jButtonLeftBracket.setBounds(78, 81, 27, 24);
-			this.jButtonLeftBracket.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonLeftBracket.setText("(");
-		}
-		return this.jButtonLeftBracket;
-	}
-
-	/**
-	 * ")"
-	 */
-	private JButton getButtonRightBracket() {
-		if (this.jButtonRightBracket == null) {
-			this.jButtonRightBracket = new JButton();
-			this.jButtonRightBracket.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonRightBracket);
-				}
-			});
-			this.jButtonRightBracket.setBounds(112, 81, 27, 24);
-			this.jButtonRightBracket.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonRightBracket.setText(")");
-		}
-		return jButtonRightBracket;
-	}
-
-	/**
-	 * "&"
-	 */
-	private JButton getButtonAndCompute() {
-		if (this.jButtonAndCompute == null) {
-			this.jButtonAndCompute = new JButton();
-			this.jButtonAndCompute.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonAndCompute);
-				}
-			});
-			this.jButtonAndCompute.setBounds(9, 111, 27, 24);
-			this.jButtonAndCompute.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonAndCompute.setText("&");
-		}
-		return this.jButtonAndCompute;
-	}
-
-	/**
-	 * "And"
-	 */
-	private JButton getButtonAnd() {
-		if (this.jButtonAnd == null) {
-			this.jButtonAnd = new JButton();
-			this.jButtonAnd.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonAnd);
-				}
-			});
-			this.jButtonAnd.setBounds(146, 21, 40, 24);
-			this.jButtonAnd.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonAnd.setText("And");
-		}
-		return this.jButtonAnd;
-	}
-
-	/**
-	 * "Not"
-	 */
-	private JButton getButtonNot() {
-		if (this.jButtonNot == null) {
-			this.jButtonNot = new JButton();
-			this.jButtonNot.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonNot);
-				}
-			});
-			this.jButtonNot.setBounds(146, 51, 40, 24);
-			this.jButtonNot.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonNot.setText("Not");
-		}
-		return this.jButtonNot;
-	}
-
-	/**
-	 * "Like"
-	 */
-	private JButton getButtonLike() {
-		if (this.jButtonLike == null) {
-			this.jButtonLike = new JButton();
-			this.jButtonLike.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					// do nothing
-				}
-			});
-			this.jButtonLike.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonLike);
-				}
-			});
-			this.jButtonLike.setBounds(146, 81, 40, 24);
-			this.jButtonLike.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonLike.setText("Like");
-		}
-		return this.jButtonLike;
-	}
-
-	/**
-	 * "Or"
-	 */
-	private JButton getButtonOr() {
-		if (this.jButtonOr == null) {
-			this.jButtonOr = new JButton();
-			this.jButtonOr.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					buttonOperator_Click(jButtonOr);
-				}
-			});
-			this.jButtonOr.setBounds(146, 111, 40, 24);
-			this.jButtonOr.setMargin(new Insets(0, 0, 0, 0));
-			this.jButtonOr.setText("Or");
-		}
-		return this.jButtonOr;
-	}
-
-	/**
-	 * // 点击Button之后，将Button上的字符内容输入到textArea中
+	 * 点击Button之后，将Button上的字符内容输入到textArea中
 	 * 
 	 * @param botton
 	 */
@@ -726,7 +520,7 @@ public class SQLExpressionDialog extends SmDialog {
 	}
 
 	/**
-	 * // 选择各项函数填充表达式文本框
+	 * 选择各项函数填充表达式文本框
 	 * 
 	 * @param comboBox
 	 */
@@ -740,191 +534,6 @@ public class SQLExpressionDialog extends SmDialog {
 		}
 	}
 
-	/**
-	 * 将各种Button加到panel上
-	 */
-	private JPanel getPanelCommonOperator() {
-		if (this.jPanelCommonOperator == null) {
-			this.jPanelCommonOperator = new JPanel();
-			this.jPanelCommonOperator.setBounds(10, 135, 194, 149);
-			this.jPanelCommonOperator.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties
-					.getString("String_CommonOperator"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-			this.jPanelCommonOperator.setLayout(null);
-			this.jPanelCommonOperator.add(getButtonPlus());
-			this.jPanelCommonOperator.add(getButtonSubtract());
-			this.jPanelCommonOperator.add(getButtonMultiply());
-			this.jPanelCommonOperator.add(getButtonDivide());
-			this.jPanelCommonOperator.add(getButtonAnd());
-			this.jPanelCommonOperator.add(getButtonMore());
-			this.jPanelCommonOperator.add(getButtonLess());
-			this.jPanelCommonOperator.add(getButtonEqual());
-			this.jPanelCommonOperator.add(getButtonBracket());
-			this.jPanelCommonOperator.add(getButtonNot());
-			this.jPanelCommonOperator.add(getButtonMoreOrEqual());
-			this.jPanelCommonOperator.add(getButtonLessOrEqual());
-			this.jPanelCommonOperator.add(getButtonLeftBracket());
-			this.jPanelCommonOperator.add(getButtonRightBracket());
-			this.jPanelCommonOperator.add(getButtonLike());
-			this.jPanelCommonOperator.add(getButtonAndCompute());
-			this.jPanelCommonOperator.add(getButtonOr());
-		}
-		return jPanelCommonOperator;
-	}
-
-	/**
-	 * 构造文本框
-	 */
-	private JTextArea getTextAreaSQLSentence() {
-		if (this.jTextAreaSQLSentence == null) {
-			this.jTextAreaSQLSentence = new JTextArea();
-			this.jTextAreaSQLSentence.setBounds(10, 10, 674, 119);
-			this.jTextAreaSQLSentence.setLineWrap(true);
-
-		}
-		return this.jTextAreaSQLSentence;
-	}
-
-	/**
-	 * 构造放Function的panel
-	 */
-	private JPanel getPanelFunction() {
-		if (this.jPanelFunction == null) {
-			this.jPanelFunction = new JPanel();
-			this.jPanelFunction.setLayout(null);
-			this.jPanelFunction.setBorder(new TitledBorder(new LineBorder(Color.LIGHT_GRAY, 1, false), ControlsProperties.getString("String_CommonFunction"),
-					TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-			this.jPanelFunction.setBounds(210, 135, 190, 149);
-			this.jPanelFunction.add(getLabelMathsoperationLabel());
-			this.jPanelFunction.add(getLabelStringfunctionLabel());
-			this.jPanelFunction.add(getTimefunctionLabel());
-			this.jPanelFunction.add(getComboBoxMathsOperation());
-			this.jPanelFunction.add(getComboBoxStringFunction());
-			this.jPanelFunction.add(getComboBoxTimeFunction());
-		}
-		return this.jPanelFunction;
-	}
-
-	/**
-	 * 构造MathsoperationLabel名称显示的Label
-	 */
-	private JLabel getLabelMathsoperationLabel() {
-		if (this.jLabelMathsoperation == null) {
-			this.jLabelMathsoperation = new JLabel();
-			this.jLabelMathsoperation.setBounds(10, 22, 94, 18);
-			this.jLabelMathsoperation.setText(ControlsProperties.getString("String_ArithmeticOperation"));
-		}
-		return this.jLabelMathsoperation;
-	}
-
-	/**
-	 * 构造Stringfunction名称显示的label
-	 */
-	private JLabel getLabelStringfunctionLabel() {
-		if (this.jLabelStringfunction == null) {
-			this.jLabelStringfunction = new JLabel();
-			this.jLabelStringfunction.setText(ControlsProperties.getString("String_CharacterHandling"));
-			this.jLabelStringfunction.setBounds(10, 66, 94, 29);
-		}
-		return this.jLabelStringfunction;
-	}
-
-	/**
-	 * 构造Timefunction名称显示的label
-	 */
-	private JLabel getTimefunctionLabel() {
-		if (this.jLabelTimefunction == null) {
-			this.jLabelTimefunction = new JLabel();
-			this.jLabelTimefunction.setText(ControlsProperties.getString("String_DataAndTime"));
-			this.jLabelTimefunction.setBounds(10, 118, 94, 18);
-		}
-		return this.jLabelTimefunction;
-	}
-
-	/**
-	 * 构造可选择MathsOperation的Combox
-	 */
-	private JComboBox getComboBoxMathsOperation() {
-		if (this.jComboBoxMathsOperation == null) {
-			this.jComboBoxMathsOperation = new JComboBox();
-			this.jComboBoxMathsOperation.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					comboBoxFunction_SelectedIndexChanged(jComboBoxMathsOperation);
-				}
-			});
-
-			this.jComboBoxMathsOperation.setModel(new DefaultComboBoxModel(new String[] { "", "Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()",
-					"Cos()", "Cot()", "Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()",
-					"Sin()", "Square()", "Sqrt()", "Tan()", "CBool()", "CByte()", "CCur()", "CDate()", "CDbl()", "CInt()", "CLng()", "CSng()", "CStr()",
-					"Int()", "Fix()" }));
-			this.jComboBoxMathsOperation.setBounds(80, 20, 99, 22);
-		}
-		return this.jComboBoxMathsOperation;
-	}
-
-	/**
-	 * 构造可选择StringFunction的Combox
-	 */
-	private JComboBox getComboBoxStringFunction() {
-		if (this.jComboBoxStringFunction == null) {
-			this.jComboBoxStringFunction = new JComboBox();
-			this.jComboBoxStringFunction.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					comboBoxFunction_SelectedIndexChanged(jComboBoxStringFunction);
-				}
-			});
-
-			this.jComboBoxStringFunction.setModel(new DefaultComboBoxModel(new String[] { "", "Ascii()", "Char()", "Charindex()", "Difference()", "Left()",
-					"Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()", "Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()",
-					"Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()", "Upper()" }));
-			this.jComboBoxStringFunction.setBounds(80, 69, 99, 22);
-		}
-		return this.jComboBoxStringFunction;
-	}
-
-	/**
-	 * 构造可选择TimeFunction的Combox
-	 */
-	private JComboBox getComboBoxTimeFunction() {
-		if (this.jComboBoxTimeFunction == null) {
-			this.jComboBoxTimeFunction = new JComboBox();
-			this.jComboBoxTimeFunction.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					comboBoxFunction_SelectedIndexChanged(jComboBoxTimeFunction);
-				}
-			});
-
-			this.jComboBoxTimeFunction.setModel(new DefaultComboBoxModel(new String[] { "", "DateAdd()", "Datediff()", "Datename()", "Datepart()", "Day()",
-					"Getdate()", "Getutcdate()", "Month()", "Year()" }));
-			this.jComboBoxTimeFunction.setBounds(80, 116, 99, 22);
-		}
-		return this.jComboBoxTimeFunction;
-	}
-
-	/**
-	 * OK
-	 */
-	private JButton getButtonOK() {
-		if (this.jButtonOK == null) {
-			this.jButtonOK = new JButton();
-			this.jButtonOK.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					filedQueryParameter = new QueryParameter();
-					filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
-					dialogResult = DialogResult.OK;
-					dispose();
-				}
-			});
-			this.jButtonOK.setText(CommonProperties.getString("String_Button_OK"));
-			this.jButtonOK.setBounds(488, 293, 75, 21);
-		}
-		getRootPane().setDefaultButton(this.jButtonOK);
-		return this.jButtonOK;
-	}
-
 	public QueryParameter getQueryParameter() {
 		return this.filedQueryParameter;
 
@@ -933,26 +542,6 @@ public class SQLExpressionDialog extends SmDialog {
 	public void setQueryParameter(QueryParameter queryParameter) {
 		this.filedQueryParameter = queryParameter;
 
-	}
-
-	/**
-	 * Cancel
-	 */
-	private JButton getButtonCancel() {
-		if (this.jButtonCancel == null) {
-			this.jButtonCancel = new JButton();
-			this.jButtonCancel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					dialogResult = DialogResult.CANCEL;
-					dispose();
-				}
-			});
-
-			this.jButtonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
-			this.jButtonCancel.setBounds(566, 293, 75, 21);
-		}
-		return this.jButtonCancel;
 	}
 
 	// 构造控件相关信息///////////////////////////////////////////////////////////////////////////////////////////
@@ -981,8 +570,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 *
-	 * @author caijunxia
-	 * @//重载DefaultTableModel，因为涉及到的isCellEditable在默认的DefaultTableModel中为true，导致无法双击选中单元格
+	 * @author 重载DefaultTableModel，因为涉及到的isCellEditable在默认的DefaultTableModel中为true，导致无法双击选中单元格
 	 */
 	class cellEditableModel extends DefaultTableModel {
 		public cellEditableModel(Object[][] data, Object[] columnNames) {
@@ -1044,25 +632,81 @@ public class SQLExpressionDialog extends SmDialog {
 
 	@Override
 	public void escapePressed() {
-		dialogResult = DialogResult.CANCEL;
-		dispose();
+		buttonCancelClicked();
 	}
 
 	@Override
 	public void enterPressed() {
 		if (this.getRootPane().getDefaultButton() == this.jButtonOK) {
-			filedQueryParameter = new QueryParameter();
-			filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
-			dialogResult = DialogResult.OK;
-			dispose();
+			buttonOkClicked();
 		}
 		if (this.getRootPane().getDefaultButton() == this.jButtonCancel) {
-			dialogResult = DialogResult.CANCEL;
-			dispose();
+			buttonCancelClicked();
 		}
 	}
 
-	public static class TableTooltipCellRenderer extends JLabel implements TableCellRenderer {
+	private void buttonOkClicked() {
+		filedQueryParameter = new QueryParameter();
+		filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
+		dialogResult = DialogResult.OK;
+		dispose();
+	}
+
+	private void buttonCancelClicked() {
+		dialogResult = DialogResult.CANCEL;
+		unRegistActionListener();
+		dispose();
+	}
+
+	class LocalTableMouseAdapter extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// //双击ListViewFieldInfo的字段信息，将字段名插入到表达式文本框的SelectionStart位置
+			if (e.getClickCount() == 2) {
+				Point point = new Point(e.getX(), e.getY());
+				int row = jTableFieldInfo.getSelectedRow();
+				int column = jTableFieldInfo.getSelectedColumn();
+
+				if (jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
+					String text = jTableFieldInfo.getValueAt(row, 1).toString();
+					if (jTextAreaSQLSentence.getSelectionStart() != 0) {
+						text = " " + text;
+					}
+
+					setSQLSentenceText(jTextAreaSQLSentence, text, "");
+				}
+			}
+		}
+	}
+
+	class LocalButtonAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == jButtonOK) {
+				buttonOkClicked();
+			}
+			if (e.getSource() == jButtonCancel) {
+				buttonCancelClicked();
+			}
+		}
+
+	}
+
+	class LocalComboboxAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			comboBoxFunction_SelectedIndexChanged((JComboBox<?>) e.getSource());
+		}
+	}
+
+	class LocalMouseAdapter extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			buttonOperator_Click((JButton) e.getSource());
+		}
+	}
+
+	static class TableTooltipCellRenderer extends JLabel implements TableCellRenderer {
 		private static TableTooltipCellRenderer tooltipCellRenderer;
 
 		private TableTooltipCellRenderer() {
@@ -1071,6 +715,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
 			if (null != value) {
 				this.setText((String) value);
 				this.setToolTipText((String) value);

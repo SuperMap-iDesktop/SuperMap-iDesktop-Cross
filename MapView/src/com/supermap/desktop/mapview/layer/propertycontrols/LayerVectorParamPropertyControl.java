@@ -281,7 +281,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 						FieldInfo fieldInfo = getLayerPropertyModel().getDataset().getFieldInfos().get(i);
 
 						if (FieldTypeUtilties.isNumber(fieldInfo.getType())) {
-							this.comboBoxOrder.addItem(fieldInfo.getName());
+							this.comboBoxOrder.addItem(getLayerPropertyModel().getDataset().getName()+"."+fieldInfo.getName());
 						}
 					}
 					if (StringUtilties.isNullOrEmpty(getLayerPropertyModel().getDisplayOrderField())) {
@@ -318,11 +318,10 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void setDisplayAttributeFilterValue() {
 		String attributeFilter = textFieldDisplayFilter.getText() == null ? "" : textFieldDisplayFilter.getText();
-		if (!StringUtilties.isNullOrEmpty(textFieldDisplayFilter.getText()) && !attributeFilter.contains(".")) {
-			attributeFilter = getModifiedLayerPropertyModel().getDataset().getName() + "." + attributeFilter;
+		if (!StringUtilties.isNullOrEmpty(textFieldDisplayFilter.getText())) {
+			getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
+			checkChanged();
 		}
-		getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
-		checkChanged();
 	}
 
 	@Override
@@ -476,7 +475,6 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void setControlEnabled(String propertyName, boolean enabled) {
-		// this.buttonJoinItem.setVisible(false);
 		if (propertyName.equals(LayerVectorParamPropertyModel.IS_COMPLETE_LINE_SYMBOL_DISPLAYED)) {
 			this.checkBoxIsCompleteLineSymbolDisplayed.setEnabled(enabled);
 		} else if (propertyName.equals(LayerVectorParamPropertyModel.IS_CROSSROAD_OPTIMIZED)) {
@@ -498,6 +496,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		} else if (propertyName.equals(LayerVectorParamPropertyModel.DISPLAY_ATTRIBUTE_FILTER)) {
 			this.textFieldDisplayFilter.setEnabled(enabled);
 			this.buttonDisplayFilter.setEnabled(enabled);
+			this.buttonJoinItem.setEnabled(enabled);
 		}
 	}
 
