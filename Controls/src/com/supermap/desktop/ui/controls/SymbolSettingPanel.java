@@ -1051,6 +1051,7 @@ class SymbolSettingPanel extends JPanel {
 
 	/**
 	 * 判断输入数字是否在1~100之间
+	 *
 	 * @param rateString
 	 * @return
 	 */

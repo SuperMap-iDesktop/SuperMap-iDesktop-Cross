@@ -1,10 +1,10 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Graphics;
-
 import com.supermap.data.Geometry;
 import com.supermap.data.Resources;
 import com.supermap.data.Toolkit;
+
+import java.awt.*;
 
 
 /**
@@ -19,13 +19,13 @@ import com.supermap.data.Toolkit;
  * @author 孔令亮
  * @version 2.0
  */
-class InternalToolkitControl extends Toolkit {
+public class InternalToolkitControl extends Toolkit {
     public InternalToolkitControl() {
     	//默认实现，后续进行初始化操作
     }
 
-    protected static boolean internalDraw(Geometry geometry, 
-    		Resources resources, Graphics graphics){
+	public static boolean internalDraw(Geometry geometry,
+	                                   Resources resources, Graphics graphics){
         return Toolkit.internalDraw(geometry, resources, graphics);
     }
     

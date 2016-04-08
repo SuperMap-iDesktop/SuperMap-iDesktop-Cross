@@ -29,5 +29,5 @@ public class UIEnvironment {
 		return resourcesPath;
 	}
 
-	static int symbolPointMax = 50000;
+	public static int symbolPointMax = 50000;
 }
