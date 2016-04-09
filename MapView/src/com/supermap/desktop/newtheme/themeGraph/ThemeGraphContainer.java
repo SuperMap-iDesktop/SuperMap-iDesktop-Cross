@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -496,8 +497,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void initpanelSizeLimite(JPanel panelSizeLimite) {
-		this.textFieldMaxValue.setText(String.valueOf(this.themeGraph.getMaxGraphSize()));
-		this.textFieldMinValue.setText(String.valueOf(this.themeGraph.getMinGraphSize()));
+		DecimalFormat format = new DecimalFormat("#.######");
+		this.textFieldMaxValue.setText(String.valueOf(format.format(this.themeGraph.getMaxGraphSize())));
+		this.textFieldMinValue.setText(String.valueOf(format.format(this.themeGraph.getMinGraphSize())));
 		// @formatter:off
 		panelSizeLimite.setLayout(new GridBagLayout());
 		panelSizeLimite.add(this.labelMaxValue,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(20, 1).setIpad(20, 0));
@@ -570,10 +572,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		for (int i = 0; i < this.graphCount; i++) {
 			ThemeGraphItem item = themeGraph.getItem(i);
 			String expression = item.getGraphExpression();
-			if (expression.indexOf(".") > 0 && expression.substring(0, expression.indexOf(".")).equals(datasetVector.getName())
-					&& expression.split("\\.").length == 2) {
-				expression = expression.substring(expression.indexOf(".") + 1, expression.length());
-			}
 			this.tableGraphInfo.setValueAt(expression, i, TABLE_COLUMN_EXPRESSION);
 			GeoStyle geoStyle = item.getUniformStyle();
 			this.tableGraphInfo.setValueAt(ThemeItemLabelDecorator.buildGraphIcon(geoStyle), i, TABLE_COLUMN_STYLE);
@@ -594,11 +592,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void removeRepeatItem(SteppedComboBox comboBox, String expression) {
 		for (int i = 0; i < themeGraph.getCount(); i++) {
 			String tempExpression = themeGraph.getItem(i).getGraphExpression();
-			if (expression.indexOf(".") > 0 && tempExpression.substring(0, tempExpression.indexOf(".")).equals(datasetVector.getName())) {
-				comboBox.removeItem(tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length()));
-			} else {
-				comboBox.removeItem(tempExpression);
-			}
+			comboBox.removeItem(tempExpression);
 		}
 		comboBox.addItem(expression);
 		comboBox.removeItem(MapViewProperties.getString("String_Combobox_Expression"));
@@ -625,11 +619,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				String expression = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
 				if (!StringUtilties.isNullOrEmptyString(expression) && !expression.equalsIgnoreCase(graphExpression)) {
 					ThemeGraphItem item = themeGraph.getItem(selectRow);
-					if (expression.contains(".")) {
-						item.setGraphExpression(expression);
-					} else {
-						item.setGraphExpression(datasetVector.getName() + "." + expression);
-					}
+					item.setGraphExpression(expression);
 					item.setCaption(expression);
 					resetMapSize();
 					getTable();
@@ -643,12 +633,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private void resetMapSize() {
 		// 重置最大最小值来适应地图
 		Point pointStart = new Point(0, 0);
-		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 5));
+		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 3));
 		Point2D point2DStart = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointStart);
 		Point2D point2DEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointEnd);
+		Point pointMinEnd = new Point(0,(int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 18));
+		Point2D point2DMinEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointMinEnd);
+		//设置一个坐标轴风格，避免显示异常
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
+		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
 		this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
-		this.textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
+		DecimalFormat decfmt = new DecimalFormat("#.######");   
+		this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
+		this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
 		this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
 	}
 
@@ -996,9 +992,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				for (int i = 0; i < tempList.size(); i++) {
 					ThemeGraphItem item = new ThemeGraphItem();
 					String graphExpression = tempList.get(i);
-					if (!graphExpression.contains(".")) {
-						graphExpression = datasetVector.getName() + "." + graphExpression;
-					}
 					String caption = getCaption(graphExpression);
 					item.setGraphExpression(graphExpression);
 					item.setCaption(caption);
@@ -1229,11 +1222,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
 				ThemeUtil.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, tempOffsetY, true);
 				String offsetY = comboBoxOffsetY.getSelectedItem().toString();
-				if (offsetY.contains(".")) {
-					themeGraph.setOffsetY(offsetY);
-				} else {
-					themeGraph.setOffsetY(datasetVector.getName() + "." + offsetY);
-				}
+				themeGraph.setOffsetY(offsetY);
 				refreshMapAtOnce();
 			}
 		}
@@ -1250,11 +1239,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
 				ThemeUtil.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, tempOffsetX, true);
 				String offsetX = comboBoxOffsetX.getSelectedItem().toString();
-				if (offsetX.contains(".")) {
-					themeGraph.setOffsetY(offsetX);
-				} else {
-					themeGraph.setOffsetY(datasetVector.getName() + "." + offsetX);
-				}
+				themeGraph.setOffsetY(offsetX);
 				refreshMapAtOnce();
 			}
 		}
@@ -1438,8 +1423,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
 			}
 			themeGraph.setGraphSizeFixed(!isAutoScale);
-			textFieldMaxValue.setText(String.valueOf(themeGraph.getMaxGraphSize()));
-			textFieldMinValue.setText(String.valueOf(themeGraph.getMinGraphSize()));
+			DecimalFormat decfmt = new DecimalFormat("#.######");
+			textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
+			textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
 			spinnerBarWidth.setValue(themeGraph.getBarWidth());
 		}
 	}

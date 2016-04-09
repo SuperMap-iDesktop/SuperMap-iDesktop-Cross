@@ -717,10 +717,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
 				resetThemeItem();
 			} else {
-				if (!expression.contains(".")) {
-					// 非外部连接表字段创建专题图
-					expression = datasetVector.getName() + "." + expression;
-				}
 				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter()
 						.getJoinItems());
 
@@ -756,12 +752,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetX() {
 			String expressionOffsetX = comboBoxOffsetX.getSelectedItem().toString();
-			if (expressionOffsetX.contains(".") || expressionOffsetX.equals("0")) {
-				themeUnique.setOffsetX(expressionOffsetX);
-			} else {
-				themeUnique.setOffsetX(datasetVector.getName() + "." + expressionOffsetX);
-			}
-
+			themeUnique.setOffsetX(expressionOffsetX);
 		}
 
 		/**
@@ -769,11 +760,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		 */
 		private void setOffsetY() {
 			String expressionOffsetY = comboBoxOffsetY.getSelectedItem().toString();
-			if (expressionOffsetY.contains(".") || expressionOffsetY.equals("0")) {
-				themeUnique.setOffsetY(expressionOffsetY);
-			} else {
-				themeUnique.setOffsetY(datasetVector.getName() + "." + expressionOffsetY);
-			}
+			themeUnique.setOffsetY(expressionOffsetY);
 		}
 
 		private void setOffsetUnity() {

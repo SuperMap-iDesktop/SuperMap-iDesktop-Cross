@@ -132,11 +132,13 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) layersTree.getLastSelectedPathComponent();
-				Object obj = node.getUserObject();
-				TreeNodeData controlNodeData = (TreeNodeData) obj;
-				Object itemObj = controlNodeData.getData();
-				if (itemObj instanceof Layer) {
-					textFieldThemeLayer.setText(((Layer) itemObj).getCaption());
+				if (null != node) {
+					Object obj = node.getUserObject();
+					TreeNodeData controlNodeData = (TreeNodeData) obj;
+					Object itemObj = controlNodeData.getData();
+					if (itemObj instanceof Layer) {
+						textFieldThemeLayer.setText(((Layer) itemObj).getCaption());
+					}
 				}
 			}
 		});
@@ -240,9 +242,10 @@ public class ThemeMainContainer extends JPanel {
 				// 不保存修改
 				int count = -1;
 				if (oldLayer.getTheme() instanceof ThemeLabel) {
-					count = ((ThemeLabel)oldLayer.getTheme()).getCount();
+					count = ((ThemeLabel) oldLayer.getTheme()).getCount();
 				}
-				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(new String[]{oldLayer.getCaption(),ThemeGuideFactory.getThemeTypeString(oldLayer.getTheme().getType(),count)});
+				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(new String[] { oldLayer.getCaption(),
+						ThemeGuideFactory.getThemeTypeString(oldLayer.getTheme().getType(), count) });
 				if (null != panel) {
 					panel.unregistActionListener();
 					panel = null;

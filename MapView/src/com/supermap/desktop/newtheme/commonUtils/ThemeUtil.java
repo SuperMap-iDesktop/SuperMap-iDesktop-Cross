@@ -117,9 +117,6 @@ public class ThemeUtil {
 		if (StringUtilties.isNullOrEmpty(tempExpression)) {
 			tempExpression = "0";
 		}
-		if (tempExpression.contains(datasetVector.getName()) && joinItems.getCount() == 0) {
-			tempExpression = tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length());
-		}
 		comboBoxExpression.setSelectedItem(tempExpression);
 		if (!tempExpression.equals(comboBoxExpression.getSelectedItem())) {
 			comboBoxExpression.addItem(tempExpression);
@@ -145,7 +142,11 @@ public class ThemeUtil {
 	public static JComboBox<String> getFieldComboBox(JComboBox<String> comboBox, DatasetVector datasetVector, JoinItems joinItems,
 			ArrayList<String> comboBoxArray, boolean isDataType) {
 		int count = datasetVector.getFieldCount();
-		int itemsCount = joinItems.getCount();
+
+		int itemsCount = -1;
+		if (null != joinItems) {
+			itemsCount = joinItems.getCount();
+		}
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (isDataType && isDataType(fieldInfo.getType())) {

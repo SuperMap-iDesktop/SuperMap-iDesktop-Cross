@@ -163,7 +163,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
 					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
 				String item = fieldInfo.getName();
-				((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(datasetVector.getName() + "." + item);
+				((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(item);
 				this.themeLabel.setNumericPrecision(1);
 			}
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
@@ -229,22 +229,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 初始化表达式
 	 */
 	private void initComboBoxRangeExpression() {
-		this.comboBoxExpression.setEditable(true);
-		this.comboBoxExpression.removeAllItems();
-		ThemeUtil.getFieldComboBox(comboBoxExpression, datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true);
-		String expression = themeLabel.getRangeExpression();
-		if (StringUtilties.isNullOrEmpty(expression)) {
-			expression = "0";
-		}
-		if (expression.contains(datasetVector.getName())) {
-			expression = expression.substring(expression.indexOf(".") + 1, expression.length());
-		}
-		this.comboBoxExpression.setSelectedItem(expression);
-		if (!expression.equals(this.comboBoxExpression.getSelectedItem())) {
-			this.comboBoxExpression.addItem(expression);
-			this.comboBoxExpression.setSelectedItem(expression);
-		}
-		ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(), comboBoxArray, true, false);
+		ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(),
+				comboBoxArray, true, false);
 	}
 
 	/**
@@ -935,14 +921,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setSelectedItem(String.valueOf(themeLabel.getCount()));
 			} else {
 				ThemeLabel theme = null;
-				if (rangeExpression.contains(".")) {
-					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, themeLabelLayer
-							.getDisplayFilter().getJoinItems());
-				} else {
-					rangeExpression = datasetVector.getName() + "." + rangeExpression;
-					theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, null);
-				}
-
+				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, labelCount, ColorGradientType.GREENRED, themeLabelLayer
+						.getDisplayFilter().getJoinItems());
 				if (null == theme) {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
@@ -1018,14 +998,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		double rangeLength = (double) spinnerRangeLength.getValue();
 		if (rangeLength > 0) {
 			ThemeLabel theme = null;
-			if (rangeExpression.contains(".")) {
-				// 外部关联表字段制作专题图
-				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeLabelLayer
-						.getDisplayFilter().getJoinItems());
-			} else {
-				rangeExpression = datasetVector.getName() + "." + rangeExpression;
-				theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, null);
-			}
+			// 外部关联表字段制作专题图
+			theme = ThemeLabel.makeDefault(datasetVector, rangeExpression, rangeMode, rangeLength, ColorGradientType.GREENRED, themeLabelLayer
+					.getDisplayFilter().getJoinItems());
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
