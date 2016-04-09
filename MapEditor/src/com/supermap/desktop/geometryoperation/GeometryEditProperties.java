@@ -20,9 +20,14 @@ public class GeometryEditProperties {
 	private List<DatasetType> editableDatasetTypes = new ArrayList<>(); // 可编辑的数据集类型集合
 	private List<GeometryType> selectedGeometryTypes = new ArrayList<>(); // 选中的几何对象类型集合
 	private List<GeometryType> editableSelectedGeometryTypes = new ArrayList<>(); // 选中的可编辑图层集合对象类型集合
-	private List<Class<?>> selectedGeometryFeatures = new ArrayList<>(); // 选中的几何对象 Feature 集合。Class<IPointFeature>/Class<ILineFeature>/Class<IRegionFeature>等。
-	private List<Class<?>> editableSelectedGeometryFeatures = new ArrayList<>(); // 选中的可编辑图层几何对象 Feature
-																					// 集合。。Class<IPointFeature>/Class<ILineFeature>/Class<IRegionFeature>等。
+	/**
+	 * 选中的几何对象特征 {@link}IGeometryFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	private List<Class<?>> selectedGeometryFeatures = new ArrayList<>();
+	/**
+	 * 选中的可编辑图层几何对象 Feature集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	private List<Class<?>> editableSelectedGeometryFeatures = new ArrayList<>();
 
 	public int getSelectedGeometryCount() {
 		return this.selectedGeometryCount;

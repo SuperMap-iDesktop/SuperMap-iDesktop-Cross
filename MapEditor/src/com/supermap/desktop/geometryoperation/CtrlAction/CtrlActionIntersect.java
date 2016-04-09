@@ -40,27 +40,7 @@ public class CtrlActionIntersect extends CtrlAction {
 
 	@Override
 	public void run() {
-		// try {
-		// GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
-		// // 设置目标数据集类型
-		// DatasetType datasetType = DatasetType.CAD;
-		// if (geometryEdit.getSelectedGeometryTypes().size() == 1) {
-		// if (geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
-		// || geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
-		// || geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
-		// datasetType = DatasetType.REGION3D;
-		// } else {
-		// datasetType = DatasetType.REGION;
-		// }
-		// }
-		// JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("求交", geometryEdit.getMapControl().getMap(), datasetType);
-		// if (form.showDialog() == DialogResult.OK) {
-		// this.editLayer = form.getEditLayer();
-		// intersect(form.getPropertyData(), 2);
-		// }
-		// } catch (Exception ex) {
-		// Application.getActiveApplication().getOutput().output(ex);
-		// }
+		
 	}
 
 	public void intersect(Map<String, Object> propertyData, int type) {

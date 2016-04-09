@@ -28,6 +28,17 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 
+//@formatter:off
+/**
+* 1.组合之后更改 Selection，无法触发 GeometrySelected 
+* 2.暂时没有实现刷新打开的属性窗口
+* 3.221行，.net 没有释放，因为大数据会崩溃，测试可以留意一下是否如此
+* 4.需要想办法解决编辑功能 enable() 频繁读写 recordset 的问题
+* 
+* @author highsad
+*
+*/
+//@formatter:on
 public class CombinationEditor extends AbstractEditor {
 
 	@Override
@@ -63,8 +74,8 @@ public class CombinationEditor extends AbstractEditor {
 					}
 				} else if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) // 只有一种时，目标相同或为CAD
 				{
-					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT || environment
-							.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
+					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT || environment.getEditProperties()
+							.getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
 						if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)
 								|| environment.getEditProperties().getEditableDatasetTypes()
 										.contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
