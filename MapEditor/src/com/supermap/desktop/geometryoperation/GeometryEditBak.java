@@ -1,10 +1,21 @@
 package com.supermap.desktop.geometryoperation;
 
-import javax.swing.event.EventListenerList;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.EventListenerList;
+
+import com.supermap.data.DatasetType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoLine3D;
+import com.supermap.data.GeoLineM;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoRegion3D;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
@@ -25,29 +36,9 @@ import com.supermap.mapping.Selection;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
-import com.supermap.data.DatasetType;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoLine3D;
-import com.supermap.data.GeoLineM;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoRegion3D;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Recordset;
 
-// @formatter:off
-/**
- * 1.需要与地图交互的编辑
- * 2.选中之后，点击执行出结果的编辑
- * @author highsad
- *
- */
-// @formatter:on
-public class GeometryEdit {
+public class GeometryEditBak {
 	private IFormMap formMap;
-	EditAction editAction;
 	GeoStyle trackingStyle;
 	int selectedGeometryCount; // 当前选中对象的数目
 	int editableSelectedGeometryCount; // 获取在可编辑图层上选中的几何对象个数
@@ -61,7 +52,7 @@ public class GeometryEdit {
 
 	private EventListenerList listenerList = new EventListenerList();
 
-	private GeometryEdit(IFormMap formMap) {
+	private GeometryEditBak(IFormMap formMap) {
 		this.formMap = formMap;
 		this.selectedDatasetTypes = new ArrayList<DatasetType>();
 		this.editableDatasetTypes = new ArrayList<DatasetType>();
@@ -125,40 +116,12 @@ public class GeometryEdit {
 	 * @param formMap
 	 * @return
 	 */
-	public static GeometryEdit createInstance(IFormMap formMap) {
+	public static GeometryEditBak createInstance(IFormMap formMap) {
 		if (formMap == null) {
 			throw new IllegalArgumentException("formMap can not be null.");
 		}
 
-		return new GeometryEdit(formMap);
-	}
-
-	public void addEditActionChangeListener(EditActionChangeListener listener) {
-		this.listenerList.add(EditActionChangeListener.class, listener);
-	}
-
-	public void removeEditActionChangeListener(EditActionChangeListener listener) {
-		this.listenerList.remove(EditActionChangeListener.class, listener);
-	}
-
-	public EditAction getEditAction() {
-		return this.editAction;
-	}
-
-	public void setEditAction(EditAction editAction) {
-		if (this.editAction != editAction) {
-			fireEditActionChange(new EditActionChangeEvent(this, this.editAction, editAction));
-		}
-	}
-
-	protected void fireEditActionChange(EditActionChangeEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == EditActionChangeListener.class) {
-				((EditActionChangeListener) listeners[i + 1]).editActionChange(e);
-			}
-		}
+		return new GeometryEditBak(formMap);
 	}
 
 	public GeoStyle getTrackingStyle() {

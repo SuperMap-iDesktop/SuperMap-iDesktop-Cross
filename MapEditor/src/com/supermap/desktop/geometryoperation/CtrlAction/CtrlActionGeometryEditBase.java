@@ -10,10 +10,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.geometryoperation.EditAction;
-import com.supermap.desktop.geometryoperation.EditActionChangeEvent;
-import com.supermap.desktop.geometryoperation.EditActionChangeListener;
-import com.supermap.desktop.geometryoperation.GeometryEdit;
+import com.supermap.desktop.geometryoperation.GeometryEditEnv;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapeditor.MapEditorEnv;
 import com.supermap.ui.Action;
@@ -30,10 +27,6 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 
 	protected boolean getEditEnable() {
 		return false;
-	}
-
-	protected EditAction getEditAction() {
-		return EditAction.NONE;
 	}
 
 	@Override
@@ -85,35 +78,21 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 		}
 	};
 
-	private EditActionChangeListener editActionChangeListener = new EditActionChangeListener() {
-
-		@Override
-		public void editActionChange(EditActionChangeEvent e) {
-			editState_EditStateActionChanged(e);
-		}
-	};
-
 	protected void startEdit() {
-		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
 
 		geometryEdit.getMapControl().addActionChangedListener(this.actionChangedListener);
 		geometryEdit.getMapControl().addKeyListener(this.keyListener);
 		geometryEdit.getMapControl().addMouseListener(this.mouseListener);
-		geometryEdit.setEditAction(getEditAction());
-		geometryEdit.addEditActionChangeListener(this.editActionChangeListener);
 	}
 
 	protected void endEdit() {
-		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
 
 		geometryEdit.getMapControl().removeActionChangedListener(this.actionChangedListener);
 		geometryEdit.getMapControl().removeMouseListener(this.mouseListener);
 		geometryEdit.getMapControl().removeKeyListener(this.keyListener);
-		geometryEdit.removeEditActionChangeListener(this.editActionChangeListener);
 
-		if (geometryEdit.getEditAction() == getEditAction()) {
-			geometryEdit.setEditAction(EditAction.NONE);
-		}
 		geometryEdit.getMapControl().setAction(Action.SELECT2);
 		geometryEdit.getMapControl().setTrackMode(TrackMode.EDIT);
 	}
@@ -131,9 +110,6 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 		}
 	}
 
-	void editState_EditStateActionChanged(EditActionChangeEvent e) {
-		endEdit();
-	}
 
 	protected void mapControl_MouseClick(MouseEvent e) {
 		// if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -156,17 +132,5 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 			endEdit();
 		}
 		return enable;
-	}
-
-	@Override
-	public boolean check() {
-		boolean checkState = false;
-		try {
-			if (MapEditorEnv.getGeometryEditManager().instance().getEditAction() == getEditAction()) {
-				checkState = true;
-			}
-		} catch (Exception e) {
-		}
-		return checkState;
 	}
 }
