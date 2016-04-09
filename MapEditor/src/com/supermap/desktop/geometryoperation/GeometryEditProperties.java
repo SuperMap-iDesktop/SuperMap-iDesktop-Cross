@@ -12,7 +12,7 @@ import com.supermap.data.GeometryType;
  * @author highsad
  *
  */
-class GeometryEditProperties {
+public class GeometryEditProperties {
 	private int selectedGeometryCount = 0; // 当前选中对象的数目
 	private int editableSelectedGeometryCount = 0; // 获取在可编辑图层上选中的几何对象个数
 

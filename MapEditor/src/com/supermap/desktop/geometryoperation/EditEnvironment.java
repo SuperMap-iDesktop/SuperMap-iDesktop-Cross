@@ -20,6 +20,8 @@ import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
+import com.supermap.desktop.geometryoperation.editor.IEditor;
+import com.supermap.desktop.geometryoperation.editor.NullEditor;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
@@ -46,7 +48,7 @@ import com.supermap.data.Recordset;
  *
  */
 // @formatter:on
-public class GeometryEditEnv implements GeometrySelectChangedListener, LayerEditableChangedListener {
+public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener {
 
 	private IFormMap formMap;
 	private GeometryEditProperties properties = new GeometryEditProperties();
@@ -116,7 +118,7 @@ public class GeometryEditEnv implements GeometrySelectChangedListener, LayerEdit
 		}
 	};
 
-	private GeometryEditEnv(IFormMap formMap) {
+	private EditEnvironment(IFormMap formMap) {
 		this.formMap = formMap;
 
 		if (this.formMap != null) {
@@ -164,9 +166,9 @@ public class GeometryEditEnv implements GeometrySelectChangedListener, LayerEdit
 	}
 
 	public void activateEditor(IEditor editor) {
-		this.editor.deactivate();
+		this.editor.deactivate(this);
 		this.editor = editor;
-		this.editor.activate();
+		this.editor.activate(this);
 	}
 
 	/**
@@ -175,12 +177,12 @@ public class GeometryEditEnv implements GeometrySelectChangedListener, LayerEdit
 	 * @param formMap
 	 * @return
 	 */
-	public static GeometryEditEnv createInstance(IFormMap formMap) {
+	public static EditEnvironment createInstance(IFormMap formMap) {
 		if (formMap == null) {
 			throw new IllegalArgumentException("formMap can not be null.");
 		}
 
-		return new GeometryEditEnv(formMap);
+		return new EditEnvironment(formMap);
 	}
 
 	@Override

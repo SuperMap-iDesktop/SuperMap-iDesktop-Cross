@@ -1,4 +1,4 @@
-package com.supermap.desktop.geometryoperation;
+package com.supermap.desktop.geometryoperation.editor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,9 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -28,18 +30,13 @@ import com.supermap.mapping.Layer;
 
 public class CombinationEditor extends AbstractEditor {
 
-	public CombinationEditor(GeometryEditEnv geometryEditEnv) {
-		super(geometryEditEnv);
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
-	public void activate() {
+	public void activate(EditEnvironment environment) {
 		try {
-			GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+			EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 			DatasetType datasetType = DatasetType.CAD;
-			if (getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().size() == 1) {
-				datasetType = getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().get(0);
+			if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) {
+				datasetType = environment.getEditProperties().getSelectedDatasetTypes().get(0);
 			}
 			Layer resultLayer = null;
 
@@ -55,28 +52,22 @@ public class CombinationEditor extends AbstractEditor {
 	}
 
 	@Override
-	public void deactivate() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean enble() {
+	public boolean enble(EditEnvironment environment) {
 		boolean result = false;
 		try {
-			if (getGeometryEditEnv().getEditProperties().getSelectedGeometryCount() > 1) {
-				if (getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().size() > 1)// 多种数据集时，目标要为CAD
+			if (environment.getEditProperties().getSelectedGeometryCount() > 1) {
+				if (environment.getEditProperties().getSelectedDatasetTypes().size() > 1)// 多种数据集时，目标要为CAD
 				{
-					if (getGeometryEditEnv().getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)) {
+					if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)) {
 						result = true;
 					}
-				} else if (getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().size() == 1) // 只有一种时，目标相同或为CAD
+				} else if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) // 只有一种时，目标相同或为CAD
 				{
-					if (!(getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT || getGeometryEditEnv()
+					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT || environment
 							.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
-						if (getGeometryEditEnv().getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)
-								|| getGeometryEditEnv().getEditProperties().getEditableDatasetTypes()
-										.contains(getGeometryEditEnv().getEditProperties().getSelectedDatasetTypes().get(0))) {
+						if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)
+								|| environment.getEditProperties().getEditableDatasetTypes()
+										.contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
 							result = true;
 						}
 					}
@@ -88,11 +79,6 @@ public class CombinationEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
-	}
-
-	@Override
-	public boolean check() {
-		return false;
 	}
 
 	private void combinationObjects(IFormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {

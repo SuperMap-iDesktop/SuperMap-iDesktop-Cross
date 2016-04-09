@@ -2,9 +2,8 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.geometryoperation.CombinationEditor;
-import com.supermap.desktop.geometryoperation.IEditor;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.geometryoperation.editor.CombinationEditor;
+import com.supermap.desktop.geometryoperation.editor.IEditor;
 
 // @formatter:off
 /**
@@ -16,9 +15,9 @@ import com.supermap.desktop.mapeditor.MapEditorEnv;
  *
  */
 // @formatter:on
-public class CtrlActionCombination extends CtrlActionEditor {
+public class CtrlActionCombination extends CtrlActionEditorBase {
 
-	private CombinationEditor editor;
+	private CombinationEditor editor = new CombinationEditor();
 
 	public CtrlActionCombination(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -26,9 +25,6 @@ public class CtrlActionCombination extends CtrlActionEditor {
 
 	@Override
 	public IEditor getEditor() {
-		if (this.editor == null) {
-			this.editor = new CombinationEditor(MapEditorEnv.getGeometryEditManager().instance());
-		}
 		return this.editor;
 	}
 }

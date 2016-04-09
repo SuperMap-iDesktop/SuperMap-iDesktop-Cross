@@ -21,10 +21,10 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.geometryoperation.GeometryEditEnv;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
@@ -64,7 +64,7 @@ public class CtrlActionXOR extends CtrlAction {
 	}
 
 	public void intersect(Map<String, Object> propertyData, int type) {
-		GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 		Recordset recordset = null;
 		try {
 			Geometry geometry = null;

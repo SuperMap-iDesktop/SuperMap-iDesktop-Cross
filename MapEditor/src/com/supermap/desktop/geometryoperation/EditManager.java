@@ -6,10 +6,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 
-public class GeometryEditManager {
-	private HashMap<IFormMap, GeometryEditEnv> maps = new HashMap<>();
+public class EditManager {
+	private HashMap<IFormMap, EditEnvironment> maps = new HashMap<>();
 
-	public GeometryEditManager() {
+	public EditManager() {
 
 	}
 
@@ -19,7 +19,7 @@ public class GeometryEditManager {
 	 * @param formMap
 	 * @return
 	 */
-	public GeometryEditEnv instance() {
+	public EditEnvironment instance() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 
 		if (activeForm instanceof IFormMap) {
@@ -34,13 +34,13 @@ public class GeometryEditManager {
 	 * @param formMap
 	 * @return
 	 */
-	public GeometryEditEnv instance(IFormMap formMap) {
-		GeometryEditEnv edit = null;
+	public EditEnvironment instance(IFormMap formMap) {
+		EditEnvironment edit = null;
 
 		if (this.maps.containsKey(formMap)) {
 			edit = this.maps.get(formMap);
 		} else if (formMap != null) {
-			edit = GeometryEditEnv.createInstance(formMap);
+			edit = EditEnvironment.createInstance(formMap);
 			this.maps.put(formMap, edit);
 		}
 		return edit;

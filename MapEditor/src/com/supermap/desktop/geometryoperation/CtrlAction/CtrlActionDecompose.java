@@ -21,9 +21,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.geometryoperation.GeometryEditEnv;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.mapping.Layer;
@@ -51,7 +51,7 @@ public class CtrlActionDecompose extends CtrlAction {
 		Recordset recordset = null;
 		Geometry geometry = null;
 		try {
-			GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+			EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 			Layer layer = geometryEdit.getActiveEditableLayer();
 			List<Integer> resultIDs = new ArrayList<Integer>();
 			recordset = layer.getSelection().toRecordset();

@@ -10,9 +10,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.geometryoperation.GeometryEditEnv;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
@@ -79,7 +79,7 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 	};
 
 	protected void startEdit() {
-		GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 
 		geometryEdit.getMapControl().addActionChangedListener(this.actionChangedListener);
 		geometryEdit.getMapControl().addKeyListener(this.keyListener);
@@ -87,7 +87,7 @@ public class CtrlActionGeometryEditBase extends CtrlAction {
 	}
 
 	protected void endEdit() {
-		GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 
 		geometryEdit.getMapControl().removeActionChangedListener(this.actionChangedListener);
 		geometryEdit.getMapControl().removeMouseListener(this.mouseListener);

@@ -23,7 +23,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
