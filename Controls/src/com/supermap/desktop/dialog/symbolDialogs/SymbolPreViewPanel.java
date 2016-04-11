@@ -136,4 +136,5 @@ public class SymbolPreViewPanel extends JPanel {
 		map.setViewBounds(new Rectangle2D(-10, -10, 10, 10));
 		map.refresh();
 	}
+
 }

@@ -4,6 +4,7 @@ import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolGroup;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,10 +29,13 @@ public abstract class JPanelSymbols extends JPanel {
 	 * 总共有多少列
 	 */
 	private int panelColumn;
+
+	private String searchString;
 	protected GeoStyle geoStyle;
 
 	public JPanelSymbols() {
 		this.setBackground(Color.WHITE);
+		this.setFocusable(true);
 		FlowLayout mgr = new FlowLayout(FlowLayout.LEADING, 1, 1) {
 
 			public Dimension preferredLayoutSize(Container target) {
@@ -110,11 +114,13 @@ public abstract class JPanelSymbols extends JPanel {
 //		SwingUtilities.invokeLater(new Runnable() {
 //			@Override
 //			public void run() {
-				if (symbolGroup.getLibrary().getRootGroup() == symbolGroup) {
-					initSystemPanels();
-				}
-				initDefaultPanel();
+		if (symbolGroup.getLibrary().getRootGroup() == symbolGroup) {
+			initSystemPanels();
+		}
+		initDefaultPanel();
 		addListeners();
+		search();
+		this.updateUI();
 //			}
 //		});
 	}
@@ -125,6 +131,7 @@ public abstract class JPanelSymbols extends JPanel {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					if (e.getSource() instanceof SymbolPanel) {
+						JPanelSymbols.this.requestFocus();
 						if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 							fireSymbolDoubleClicked();
 						}
@@ -191,7 +198,8 @@ public abstract class JPanelSymbols extends JPanel {
 
 	protected abstract void initDefaultPanel();
 
-	public void setSelectSymbol(int symbolId) {
+	public void setSelectSymbol() {
+		int symbolId = getCurrentSymbolId();
 		boolean isFind = false;
 		for (int i = 0; i < this.getComponentCount(); i++) {
 			if (((SymbolPanel) this.getComponent(i)).getSymbolID() == symbolId) {
@@ -212,7 +220,23 @@ public abstract class JPanelSymbols extends JPanel {
 		}
 	}
 
+	protected abstract int getCurrentSymbolId();
+
 	public void setGeoStyle(GeoStyle geoStyle) {
 		this.geoStyle = geoStyle;
+		setSelectSymbol();
 	}
+
+
+	public void setSearchString(String string) {
+		this.searchString = string;
+		search();
+	}
+
+	private void search() {
+		for (int i = 0; i < this.getComponentCount(); i++) {
+			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString) || ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase()));
+		}
+	}
+
 }

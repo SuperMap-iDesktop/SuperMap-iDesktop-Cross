@@ -50,8 +50,8 @@ public class SymbolPanelGeometryFactory {
 	private static GeoLine getPaintLine() {
 		// 初始化线对象并设置风格
 		Point2Ds point2Ds = new Point2Ds();
-		point2Ds.add(new Point2D(5, 32));
-		point2Ds.add(new Point2D(60, 32));
+		point2Ds.add(new Point2D(0, 30));
+		point2Ds.add(new Point2D(60, 30));
 		GeoLine paintLine = new GeoLine(point2Ds);
 		GeoStyle lineGeoStyle = new GeoStyle();
 		lineGeoStyle.setLineColor(new Color(13, 80, 143));

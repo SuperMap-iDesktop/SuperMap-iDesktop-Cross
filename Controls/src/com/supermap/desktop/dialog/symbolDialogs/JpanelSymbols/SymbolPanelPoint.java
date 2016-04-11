@@ -24,7 +24,7 @@ public class SymbolPanelPoint extends SymbolPanel {
 
 		// 二维点符号与二三维点符号分别处理
 		if (symbol instanceof SymbolMarker) {
-			bufferedImage = getSymbolMarkerBufferdImage(width, height, (SymbolMarker) symbol, ((GeoPoint) paintGeometry));
+			bufferedImage = getSymbolMarkerBuffedImage(width, height, (SymbolMarker) symbol, ((GeoPoint) paintGeometry));
 		} else {
 			bufferedImage = ((SymbolMarker3D) symbol).getThumbnail();
 		}
@@ -47,7 +47,7 @@ public class SymbolPanelPoint extends SymbolPanel {
 		return SymbolType.MARKER;
 	}
 
-	private BufferedImage getSymbolMarkerBufferdImage(int width, int height, SymbolMarker symbolMarker, GeoPoint geoPoint) {
+	private BufferedImage getSymbolMarkerBuffedImage(int width, int height, SymbolMarker symbolMarker, GeoPoint geoPoint) {
 		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Point point = symbolMarker.getOrigin();
 		int x = point.x * width / UIEnvironment.symbolPointMax;

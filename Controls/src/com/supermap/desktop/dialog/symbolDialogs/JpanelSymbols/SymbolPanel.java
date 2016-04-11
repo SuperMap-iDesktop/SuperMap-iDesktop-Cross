@@ -160,5 +160,7 @@ public abstract class SymbolPanel extends JPanel {
 		return symbol;
 	}
 
-
+	public String getSymbolName() {
+		return symbolName;
+	}
 }

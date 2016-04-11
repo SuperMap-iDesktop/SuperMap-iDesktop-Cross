@@ -1,11 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Graphics;
-
 import com.supermap.data.Geometry;
 import com.supermap.data.SymbolLine;
 
-class InternalSymbolLine extends SymbolLine {
+import java.awt.*;
+
+public class InternalSymbolLine extends SymbolLine {
 
 	protected InternalSymbolLine(long handle) {
 		super(handle);

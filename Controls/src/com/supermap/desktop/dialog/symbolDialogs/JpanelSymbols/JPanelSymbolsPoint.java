@@ -28,10 +28,16 @@ public class JPanelSymbolsPoint extends JPanelSymbols {
 	}
 
 	@Override
+	protected int getCurrentSymbolId() {
+		return this.geoStyle.getMarkerSymbolID();
+	}
+
+	@Override
 	public void setGeoStyle(GeoStyle geoStyle) {
 		super.setGeoStyle(geoStyle);
-		setSelectSymbol(this.geoStyle.getMarkerSymbolID());
+
 	}
+
 
 	@Override
 	protected void changeGeoStyleId(int symbolID) {
