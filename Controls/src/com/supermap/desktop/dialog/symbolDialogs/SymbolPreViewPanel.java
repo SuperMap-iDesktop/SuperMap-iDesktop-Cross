@@ -37,6 +37,7 @@ public class SymbolPreViewPanel extends JPanel {
 	private transient Geometry geometry;
 
 	private SymbolType symbolType;
+	private GeoStyle geoStyle;
 
 
 	/**
@@ -59,7 +60,8 @@ public class SymbolPreViewPanel extends JPanel {
 	}
 
 	public void setGeoStyle(GeoStyle style) {
-		geometry.setStyle(style);
+		this.geoStyle = style;
+		refreshMap();
 	}
 
 
@@ -78,7 +80,6 @@ public class SymbolPreViewPanel extends JPanel {
 			}
 			map = preViewMapControl.getMap();
 			initGeometry();
-
 		}
 		return preViewMapControl;
 	}
@@ -124,5 +125,15 @@ public class SymbolPreViewPanel extends JPanel {
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(200, 200);
+	}
+
+	public void refreshMap() {
+		geometry = SymbolPreViewPanel.getGeometry(symbolType);
+		geometry.setStyle(geoStyle);
+		// 设置几何对象风格，刷新Label上的显示
+		map.getTrackingLayer().clear();
+		map.getTrackingLayer().add(geometry, "geometry");
+		map.setViewBounds(new Rectangle2D(-10, -10, 10, 10));
+		map.refresh();
 	}
 }

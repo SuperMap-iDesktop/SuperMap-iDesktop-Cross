@@ -1,10 +1,15 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolLibrary;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.SymbolMarker3D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsPoint;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
+import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.ColorSwatch;
 import com.supermap.desktop.ui.controls.ControlButton;
@@ -31,8 +36,6 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	private JPanel panelMain;
 
-	private JPanelSymbols panelSymbols;
-	private SymbolPreViewPanel panelPreview;
 
 	// 显示大小
 	private JPanel panelShowSize;
@@ -88,12 +91,12 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	@Override
 	protected JPanel getPanelMain() {
-
 		return panelMain;
 	}
 
 	@Override
 	protected void initComponentHook() {
+		currentSymbolGroup = currentResources.getMarkerLibrary().getRootGroup();
 		pointInit();
 		this.setTitle(ControlsProperties.getString("String_PointStyleChoose"));
 	}
@@ -107,6 +110,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	private void pointInitComponents() {
 		panelMain = new JPanel();
+		panelSymbols = new JPanelSymbolsPoint();
 		panelPreview = new SymbolPreViewPanel(getSymbolType());
 		panelShowSize = new JPanel();
 		labelShowWidth = new JLabel();
@@ -196,6 +200,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 				double angle = Double.valueOf(text);
 				if (!DoubleUtilties.equals(angle, currentGeoStyle.getMarkerAngle(), pow)) {
 					currentGeoStyle.setMarkerAngle(angle);
+					geoStylePropertyChange.propertyChange();
 				}
 			}
 		});
@@ -212,6 +217,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 				}
 				double rate = Double.valueOf(text);
 				currentGeoStyle.setFillOpaqueRate((int) rate);
+				geoStylePropertyChange.propertyChange();
 			}
 		});
 
@@ -231,11 +237,57 @@ public class SymbolDialogPoint extends SymbolDialog {
 					currentGeoStyle.setLineColor(color);
 					markerColorSwatch.setColor(color);
 					colorButtonMarker.repaint();
+					geoStylePropertyChange.propertyChange();
 				}
 			}
 		});
-	}
 
+		panelSymbols.addSymbolSelectedChangedListener(new SymbolSelectedChangedListener() {
+			@Override
+			public void SymbolSelectedChangedEvent(Symbol symbol) {
+				if (symbol == null) {
+					spinnerShowWidth.setEnabled(true);
+					spinnerShowHeight.setEnabled(true);
+					checkBoxLockWidthHeightRate.setSelected(true);
+					checkBoxLockWidthHeightRate.setEnabled(false);
+					buttonSymbolColor.setEnabled(true);
+					spinnerSymbolAngle.setEnabled(false);
+					spinnerOpaqueRate.setEnabled(false);
+				} else if (symbol instanceof SymbolMarker3D) {
+					spinnerShowWidth.setEnabled(true);
+					spinnerShowHeight.setEnabled(true);
+					checkBoxLockWidthHeightRate.setEnabled(true);
+					buttonSymbolColor.setEnabled(true);
+					spinnerSymbolAngle.setEnabled(true);
+					spinnerOpaqueRate.setEnabled(true);
+				} else {
+					SymbolMarkerType markerType = SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol));
+					if (markerType == SymbolMarkerType.Vector) {
+						spinnerShowWidth.setEnabled(true);
+						spinnerShowHeight.setEnabled(true);
+						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setEnabled(true);
+						spinnerSymbolAngle.setEnabled(true);
+						spinnerOpaqueRate.setEnabled(true);
+					} else if (markerType == SymbolMarkerType.Raster) {
+						spinnerShowWidth.setEnabled(true);
+						spinnerShowHeight.setEnabled(true);
+						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setEnabled(false);
+						spinnerSymbolAngle.setEnabled(true);
+						spinnerOpaqueRate.setEnabled(true);
+					}
+				}
+				reloadSizeFormSymbolMarkerSizeController();
+				geoStylePropertyChange.propertyChange();
+			}
+
+			@Override
+			public void SymbolSelectedDoubleClicked() {
+				enterPressed();
+			}
+		});
+	}
 
 	private void loadSizeFormSymbolMarkerSizeController(JTextField source) {
 		try {
@@ -252,12 +304,19 @@ public class SymbolDialogPoint extends SymbolDialog {
 			if (((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField() != source) {
 				spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
 			}
+			geoStylePropertyChange.propertyChange();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			isSizeListenersEnable = true;
 		}
 
+	}
+
+
+	private void reloadSizeFormSymbolMarkerSizeController() {
+		symbolMarkerSizeController.reCalculateShowSize();
+		loadSizeFormSymbolMarkerSizeController();
 	}
 
 	private void loadSizeFormSymbolMarkerSizeController() {
@@ -348,15 +407,18 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	@Override
 	protected void prepareForShowDialogHook() {
-		panelPreview.setGeoStyle(currentGeoStyle);
 		symbolMarkerSizeController.setResources(currentResources);
 		symbolMarkerSizeController.setGeoStyle(currentGeoStyle);
+		markerColorSwatch.setColor(currentGeoStyle.getLineColor());
+		colorButtonMarker.repaint();
+		spinnerSymbolAngle.setValue(currentGeoStyle.getMarkerAngle());
+		spinnerOpaqueRate.setValue(currentGeoStyle.getFillOpaqueRate());
 		loadSizeFormSymbolMarkerSizeController();
 	}
 
+
 	private void initPanelSymbols() {
-		panelSymbols = new JPanelSymbolsPoint();
-		panelSymbols.setSymbolGroup(currentResources, currentResources.getMarkerLibrary().getRootGroup());
+		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
 	}
 
 	private void pointInitResources() {
@@ -392,4 +454,8 @@ public class SymbolDialogPoint extends SymbolDialog {
 		buttonSymbolColor = new DropDownColor(colorButtonMarker);
 	}
 
+	@Override
+	protected SymbolLibrary getLibrary() {
+		return currentResources.getMarkerLibrary();
+	}
 }

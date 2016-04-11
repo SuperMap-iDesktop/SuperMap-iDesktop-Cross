@@ -2,12 +2,17 @@ package com.supermap.desktop.dialog.symbolDialogs;
 
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolGroup;
+import com.supermap.data.SymbolGroups;
 import com.supermap.data.SymbolLibrary;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolFactory;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTree;
+import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -17,6 +22,8 @@ import com.supermap.desktop.utilties.LogUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +47,10 @@ public abstract class SymbolDialog extends SmDialog {
 	private JScrollPane scrollPaneWorkspaceResources = new JScrollPane();
 	private SymbolGroupTree treeWorkspaceResources;
 
+	protected JPanelSymbols panelSymbols;
+	protected SymbolPreViewPanel panelPreview;
+
+
 	private JPanel panelButton = new JPanel();
 	private SmButton buttonOK = new SmButton();
 	private SmButton buttonCancle = new SmButton();
@@ -52,6 +63,9 @@ public abstract class SymbolDialog extends SmDialog {
 
 	protected Color wrongColor = Color.red;
 	protected Color defaultColor = Color.BLACK;
+	protected SymbolGroup currentSymbolGroup;
+
+	protected IGeoStylePropertyChange geoStylePropertyChange;
 
 	/**
 	 * 精度
@@ -146,6 +160,13 @@ public abstract class SymbolDialog extends SmDialog {
 		setSize(width, height);
 		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		getRootPane().setDefaultButton(buttonOK);
+		geoStylePropertyChange = new IGeoStylePropertyChange() {
+			@Override
+			public void propertyChange() {
+				panelPreview.refreshMap();
+			}
+		};
+
 		initComponentHook();
 		this.setLocationRelativeTo(null);
 	}
@@ -270,6 +291,16 @@ public abstract class SymbolDialog extends SmDialog {
 				buttonApplyClicked();
 			}
 		});
+		this.treeWorkspaceResources.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				SymbolGroupTreeNode lastSelectedPathComponent = (SymbolGroupTreeNode) treeWorkspaceResources.getLastSelectedPathComponent();
+				if (lastSelectedPathComponent != null && lastSelectedPathComponent.getCurrentGroup() != currentSymbolGroup) {
+					currentSymbolGroup = lastSelectedPathComponent.getCurrentGroup();
+					panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
+				}
+			}
+		});
 	}
 
 	private void initResources() {
@@ -298,14 +329,16 @@ public abstract class SymbolDialog extends SmDialog {
 	private void prepareForShowDialog() {
 		this.dialogResult = DialogResult.CLOSED;
 		this.buttonApply.setEnabled(symbolApply != null);
+		panelPreview.setGeoStyle(currentGeoStyle);
 		prepareForShowDialogHook();
+		initCurrentSymbolGroup();
+		panelSymbols.setGeoStyle(currentGeoStyle);
 	}
 
 	/**
 	 * 用于给子类在显示窗口之前进行准备，无需要可不重写
 	 */
 	protected void prepareForShowDialogHook() {
-
 	}
 
 	/**
@@ -315,5 +348,32 @@ public abstract class SymbolDialog extends SmDialog {
 	 */
 	public GeoStyle getCurrentGeoStyle() {
 		return currentGeoStyle.clone();
+	}
+
+	private void initCurrentSymbolGroup() {
+		Symbol symbol = getLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
+		if (symbol != null) {
+			currentSymbolGroup = findSymbolGroup(symbol.getID());
+		}
+		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
+	}
+
+	protected abstract SymbolLibrary getLibrary();
+
+	private SymbolGroup findSymbolGroup(int symbol) {
+		SymbolGroup symbolGroup = currentResources.getMarkerLibrary().getRootGroup();
+		return findSymbolGroup(symbolGroup, symbol);
+	}
+
+	private SymbolGroup findSymbolGroup(SymbolGroup symbolGroup, int symbol) {
+		if (symbolGroup.indexOf(symbol) != -1) {
+			SymbolGroups childGroups = symbolGroup.getChildGroups();
+			for (int i = 0; i < childGroups.getCount(); i++) {
+				if (findSymbolGroup(childGroups.get(i), symbol) != null) {
+					return findSymbolGroup(childGroups.get(i), symbol);
+				}
+			}
+		}
+		return null;
 	}
 }

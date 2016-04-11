@@ -25,7 +25,7 @@ public class SymbolPanelGeometryFactory {
 		} else if (symbolType == SymbolType.FILL) {
 			return getPaintRegion();
 		}
-		throw new UnsupportedOperationException("unSuport" + symbolType.name());
+		throw new UnsupportedOperationException("unSupport" + symbolType.name());
 	}
 
 	/**
@@ -34,9 +34,9 @@ public class SymbolPanelGeometryFactory {
 	 * @return
 	 */
 	private static GeoPoint getPaintPoint() {
-		GeoPoint paintPoint = new GeoPoint(24, 24);
+		GeoPoint paintPoint = new GeoPoint(30, 30);
 		GeoStyle markerGeoStyle = new GeoStyle();
-		markerGeoStyle.setMarkerSize(new Size2D(4, 4));
+		markerGeoStyle.setMarkerSize(new Size2D(15, 15));
 		markerGeoStyle.setLineColor(new Color(13, 80, 143));
 		paintPoint.setStyle(markerGeoStyle);
 		return paintPoint;
