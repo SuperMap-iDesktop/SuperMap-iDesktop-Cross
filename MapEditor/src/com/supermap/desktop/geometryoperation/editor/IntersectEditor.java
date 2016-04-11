@@ -7,28 +7,20 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Abstract.ILineConvertor;
-import com.supermap.desktop.geometry.Abstract.ILineFeature;
-import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.ui.MapControl;
+import com.supermap.mapping.Selection;
 
 // @formatter:off
 /**
@@ -37,7 +29,8 @@ import com.supermap.ui.MapControl;
  * 不支持二维和三维几何对象混合求交。
  * 选中的对象如果有不支持的对象，直接忽略。
  * 结果对象风格以结果图层为主。
- * 
+ * 考虑到求交的对象不会有很多，因此实现中历史记录不使用提升性能的批量编辑模式。
+ * （历史记录提示性能的批量编辑操作需要以 recordset 整体为单位进行操作，而本功能使用的历史记录批量操作的目的是将多个单独的操作合并为一条历史记录）
  * @author highsad
  *
  */
@@ -72,13 +65,18 @@ public class IntersectEditor extends AbstractEditor {
 		// 按需重写
 	}
 
+	// @formatter:off
+	/* 
+	 * 1.仅支持面面求交，线线求交意义不大，不支持。
+	 * 2.不支持二维对象、三维对象混合。
+	 */
+	// @formatter:on
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean enable = false;
 		if (environment.getEditProperties().getSelectedGeometryCount() > 1 && // 选中数至少2个
 				// (this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
-				ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryFeatures(), IRegionFeature.class)) // 只支持面
-		{
+				ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryFeatures(), IRegionFeature.class)) {
 			// 是会否存在可编辑的“可操作保存”图层
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
@@ -98,132 +96,98 @@ public class IntersectEditor extends AbstractEditor {
 	}
 
 	/**
-	 * 将指定图层的选中对象
+	 * 将指定图层的选中对象做求交处理
 	 * 
 	 * @param layer
 	 * @return
 	 */
 	private Geometry intersect(Layer layer) {
 		Geometry result = null;
+		Recordset recordset = null;
 
 		try {
 
-		} catch (Exception e) {
-			// TODO: handle exception
-		} finally {
+			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+				recordset = layer.getSelection().toRecordset();
+				recordset.moveFirst();
 
+				while (!recordset.isEOF()) {
+					Geometry geometry = recordset.getGeometry();
+
+					try {
+						IGeometry dGeometry = DGeometryFactory.create(geometry); // 桌面对 Geometry 进行封装后的对象
+
+						// 表明是面特性对象
+						if (dGeometry instanceof IRegionFeature) {
+							result = GeometryUtilties.intersetct(result, ((IRegionFeature) dGeometry).convertToRegion(0), true);
+						}
+						recordset.moveNext();
+					} finally {
+						if (geometry != null) {
+							geometry.dispose();
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
 		}
 		return result;
 	}
 
-	public void intersect(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
-//		Geometry result = null;
-		// Recordset resultRecordset = null;
-		// environment.getMapControl().getEditHistory().batchBegin();
-		//
-		// try {
-		// GeoStyle resultStyle = null;
-		// List<Layer> layers = MapUtilties.getLayers(environment.getMapControl().getMap());
-		//
-		// for (Layer layer : layers) {
-		// if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
-		// Recordset recordset = layer.getSelection().toRecordset();
-		//
-		// try {
-		// if (recordset != null) {
-		// recordset.getBatch().begin();
-		// recordset.moveFirst();
-		//
-		// while (!recordset.isEOF()) {
-		// Geometry geometryTemp = recordset.getGeometry();
-		// recordset.moveNext();
-		// }
-		// }
-		// } finally {
-		// if (recordset != null) {
-		// recordset.close();
-		// recordset.dispose();
-		// }
-		// }
-		// layer.getSelection().clear();
-		// boolean isIntersectInitialGeometry = true;
-		// if (recordset != null) {
-		// recordset.getBatch().begin();
-		// while (!recordset.isEOF()) {
-		// Geometry geoGeometryTemp = null;
-		// if (layer.getDataset().getType() == DatasetType.CAD) {
-		// IGeometry dGeometry = DGeometryFactory.create(recordset.getGeometry());
-		//
-		// if (dGeometry instanceof IRegionFeature && dGeometry instanceof IRegionConvertor) {
-		// geoGeometryTemp = ((IRegionConvertor) dGeometry).convertToRegion(120);
-		// } else if (dGeometry instanceof ILineFeature && dGeometry instanceof ILineConvertor) {
-		// geoGeometryTemp = ((ILineConvertor) dGeometry).convertToLine(120);
-		// } else {
-		// geoGeometryTemp = recordset.getGeometry();
-		// }
-		// } else if (layer.getDataset().getType() == DatasetType.REGION) {
-		// geoGeometryTemp = recordset.getGeometry();
-		// } else {
-		// ILineConvertor lineConvertor = (ILineConvertor) DGeometryFactory.create(recordset.getGeometry());
-		// geoGeometryTemp = lineConvertor.convertToLine(120);
-		// }
-		//
-		// boolean tag = false;
-		// if (geoGeometryTemp != null) {
-		// if (geometry == null && isIntersectInitialGeometry) {
-		// geometry = geoGeometryTemp.clone();
-		//
-		// if (geometry.getStyle() != null) {
-		// resultStyle = geometry.getStyle().clone();
-		// }
-		// } else if (geometry != null && geometry.getType() == geoGeometryTemp.getType()) {
-		// isIntersectInitialGeometry = true;
-		// geometry = Geometrist.intersect(geometry, geoGeometryTemp);
-		// isIntersectInitialGeometry = false;
-		// }
-		// if (layer.getDataset() == editLayer.getDataset()) {
-		// environment.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
-		// recordset.delete();
-		// tag = true;
-		// }
-		// geoGeometryTemp.dispose();
-		// }
-		// if (!tag)
-		// recordset.moveNext();
-		// }
-		//
-		// }
-		// if (recordset != null) {
-		// recordset.getBatch().update();
-		// recordset.dispose();
-		// recordset = null;
-		// }
-		// }
-		// }
-		//
-		// if (geometry != null) {
-		// recordset = ((DatasetVector) editLayer.getDataset()).getRecordset(true, CursorType.DYNAMIC);
-		// if (recordset != null) {
-		// geometry.setStyle(resultStyle);
-		// recordset.addNew(geometry, propertyData);
-		// recordset.update();
-		// environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
-		// // SuperMap.Desktop.UI.CommonToolkit.RefreshTabularForm(recordset.Dataset);
-		// }
-		// }
-		// } catch (Exception ex) {
-		// Application.getActiveApplication().getOutput().output(ex);
-		// } finally {
-		// environment.getMapControl().getEditHistory().batchEnd();
-		//
-		// if (result != null) {
-		// result.dispose();
-		// }
-		//
-		// if (resultRecordset != null) {
-		// resultRecordset.close();
-		// resultRecordset.dispose();
-		// }
-		// }
+	private void intersect(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
+		Geometry result = null;
+		Recordset targetRecordset = null;
+		environment.getMapControl().getEditHistory().batchBegin();
+
+		try {
+
+			// 对选中数据求交
+			List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
+
+			for (Layer layer : selectedLayers) {
+				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
+					result = GeometryUtilties.intersetct(result, intersect(layer), true);
+				}
+			}
+
+			if (editLayer != null) {
+				Selection selection = editLayer.getSelection();
+				targetRecordset = ((DatasetVector) editLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
+
+				// 删除目标图层上的选中几何对象
+				targetRecordset.getBatch().begin();
+				for (int i = 0; i < selection.getCount(); i++) {
+					int id = selection.get(i);
+					targetRecordset.seekID(id);
+					environment.getMapControl().getEditHistory().add(EditType.DELETE, targetRecordset, true);
+					targetRecordset.delete();
+				}
+				targetRecordset.getBatch().update();
+
+				// 添加结果几何对象
+				targetRecordset.addNew(result, propertyData);
+				targetRecordset.update();
+				environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			environment.getMapControl().getEditHistory().batchEnd();
+
+			if (result != null) {
+				result.dispose();
+			}
+
+			if (targetRecordset != null) {
+				targetRecordset.close();
+				targetRecordset.dispose();
+			}
+		}
 	}
 }
