@@ -32,7 +32,7 @@ public enum SymbolMarkerType {
 	 * @param symbolMarker 点符号
 	 * @return 点符号类型
 	 */
-	public SymbolMarkerType getSymbolMarkerType(SymbolMarker symbolMarker) {
+	public static SymbolMarkerType getSymbolMarkerType(SymbolMarker symbolMarker) {
 		SymbolMarkerType result = SymbolMarkerType.Vector;
 		if (symbolMarker != null) {
 			int count = symbolMarker.getCount();

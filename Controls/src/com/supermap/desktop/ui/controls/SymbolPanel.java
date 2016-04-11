@@ -131,6 +131,7 @@ public class SymbolPanel extends JPanel {
 
 	/**
 	 * 默认构造函数，
+	 * @param symbol
 	 */
 	public SymbolPanel() {
 		super();
