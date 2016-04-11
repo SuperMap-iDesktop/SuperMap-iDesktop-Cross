@@ -374,7 +374,8 @@ public class WorkspaceComponentManager extends JComponent {
 				this.datasetVectorPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVector");
 				this.datasetTabularPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTabular");
 				this.datasetImagePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImage");
-				this.datasetImageCollectionPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImageCollection");
+				this.datasetImageCollectionPopupMenu = (JPopupMenu) manager
+						.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImageCollection");
 				this.datasetGridPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetGrid");
 				this.datasetTopologyPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTopology");
 				this.mapsPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuMaps");
@@ -568,7 +569,7 @@ public class WorkspaceComponentManager extends JComponent {
 							// add by huchenpu 20150706
 							// 这里必须要设置工作空间，否则不能显示出来。
 							// 而且不能在new SceneControl的时候就设置工作空间，必须等球显示出来的时候才能设置。
-							scene.setWorkspace(Application.getActiveApplication().getWorkspace());
+							formScene.setWorkspace(Application.getActiveApplication().getWorkspace());
 							scene.open(nodeText);
 							scene.refresh();
 							UICommonToolkit.getLayersManager().setScene(scene);

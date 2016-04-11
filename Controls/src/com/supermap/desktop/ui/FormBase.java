@@ -153,7 +153,15 @@ public class FormBase extends JFrame implements IFormMain {
 			dockbar.load(workEnvironment);
 			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
 			this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-			this.setVisible(true);
+
+			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					FormBase.this.setVisible(true);
+				}
+			});
 			this.formManager.setRootContainer(dockbar.getRootWindow());
 			this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
 
@@ -347,7 +355,7 @@ public class FormBase extends JFrame implements IFormMain {
 			IFormScene formScene = (IFormScene) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.SCENE, name);
 			if (formScene != null) {
 				Scene scene = formScene.getSceneControl().getScene();
-				scene.setWorkspace(Application.getActiveApplication().getWorkspace());
+				formScene.setWorkspace(Application.getActiveApplication().getWorkspace());
 				scene.open(name);
 				scene.refresh();
 				UICommonToolkit.getLayersManager().setScene(scene);
