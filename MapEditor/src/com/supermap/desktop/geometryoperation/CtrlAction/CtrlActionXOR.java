@@ -21,10 +21,10 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.geometryoperation.GeometryEdit;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapeditor.MapEditorEnv;
+import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
@@ -40,31 +40,31 @@ public class CtrlActionXOR extends CtrlAction {
 
 	@Override
 	public void run() {
-		try {
-			GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
-			// 设置目标数据集类型
-			DatasetType datasetType = DatasetType.CAD;
-			if (geometryEdit.getSelectedGeometryTypes().size() == 1) {
-				if (geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
-						|| geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
-						|| geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
-					datasetType = DatasetType.REGION3D;
-				} else {
-					datasetType = DatasetType.REGION;
-				}
-			}
-			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("异或", geometryEdit.getMapControl().getMap(), datasetType);
-			if (form.showDialog() == DialogResult.OK) {
-				this.editLayer = form.getEditLayer();
-				intersect(form.getPropertyData(), 3);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
+		// try {
+		// GeometryEditEnv geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		// // 设置目标数据集类型
+		// DatasetType datasetType = DatasetType.CAD;
+		// if (geometryEdit.getSelectedGeometryTypes().size() == 1) {
+		// if (geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
+		// || geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
+		// || geometryEdit.getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
+		// datasetType = DatasetType.REGION3D;
+		// } else {
+		// datasetType = DatasetType.REGION;
+		// }
+		// }
+		// JDialogFieldOperationSetting form = new JDialogFieldOperationSetting("异或", geometryEdit.getMapControl().getMap(), datasetType);
+		// if (form.showDialog() == DialogResult.OK) {
+		// this.editLayer = form.getEditLayer();
+		// intersect(form.getPropertyData(), 3);
+		// }
+		// } catch (Exception ex) {
+		// Application.getActiveApplication().getOutput().output(ex);
+		// }
 	}
 
 	public void intersect(Map<String, Object> propertyData, int type) {
-		GeometryEdit geometryEdit = MapEditorEnv.getGeometryEditManager().instance();
+		EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 		Recordset recordset = null;
 		try {
 			Geometry geometry = null;
