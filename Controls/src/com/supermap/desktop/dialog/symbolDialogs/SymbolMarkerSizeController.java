@@ -78,7 +78,7 @@ public class SymbolMarkerSizeController {
 		}
 		this.symbolShowWidth = formatDouble;
 		if (isLockSelected) {
-			this.symbolShowHeight = getFormatDouble(this.symbolShowHeight / WidthHeightRate);
+			this.symbolShowHeight = getFormatDouble(this.symbolShowWidth / WidthHeightRate);
 			this.symbolHeight = getSymbolSizeByShowSize(symbolShowHeight);
 		}
 		this.symbolWidth = getSymbolSizeByShowSize(this.symbolShowWidth);
@@ -169,14 +169,17 @@ public class SymbolMarkerSizeController {
 	private double getShowSizeBySymbolSize(double symbolSize) {
 		if (symbolSize <= 0) {
 			return symbolSize;
-		}//currentGeoStyle.getMarkerSymbolID()
-		// TODO: 2016/4/8
-		Symbol symbol = resources.getMarkerLibrary().findSymbol(1110);
-		int value = ((SymbolMarker) symbol).computeDisplaySize((int) symbolSize);
-		if (value > 500) {
-			return 500;
+		}
+		Symbol symbol = resources.getMarkerLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
+		if (symbol != null && symbol instanceof SymbolMarker) {
+			int value = ((SymbolMarker) symbol).computeDisplaySize((int) symbolSize);
+			if (value > 500) {
+				return 500;
+			} else {
+				return value;
+			}
 		} else {
-			return value;
+			return symbolSize;
 		}
 	}
 
@@ -194,4 +197,11 @@ public class SymbolMarkerSizeController {
 	}
 
 
+	/**
+	 * 重新计算显示大小，用于符号改变后的重新计算
+	 */
+	public void reCalculateShowSize() {
+		this.symbolShowHeight = getShowSizeBySymbolSize(symbolHeight);
+		this.symbolShowWidth = getShowSizeBySymbolSize(symbolWidth);
+	}
 }

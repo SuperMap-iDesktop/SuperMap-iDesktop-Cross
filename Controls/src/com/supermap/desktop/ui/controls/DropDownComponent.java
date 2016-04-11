@@ -1,17 +1,10 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalComboBoxIcon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.plaf.metal.MetalComboBoxIcon;
 
 /**
  * 颜色选择器弹出组件
@@ -48,7 +41,7 @@ public class DropDownComponent extends JComponent {
 		popupMenu = new JPopupMenu();
 		popupMenu.setBorderPainted(false);
 		popupMenu.add(jComponentDropDown, BorderLayout.CENTER);
-		jComponentDropDown.setPreferredSize(new Dimension(170, 205));
+//		jComponentDropDown.setPreferredSize(new Dimension(170, 205));
 		jButtonArrow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

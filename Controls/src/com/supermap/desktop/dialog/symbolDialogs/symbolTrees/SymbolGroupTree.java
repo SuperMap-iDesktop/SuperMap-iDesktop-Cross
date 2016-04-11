@@ -5,6 +5,7 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 
 /**
@@ -46,5 +47,31 @@ public class SymbolGroupTree extends JTree {
 	@Override
 	public boolean isEditable() {
 		return true;
+	}
+
+	public void setSelectedSymbolGroup(SymbolGroup currentSymbolGroup) {
+		SymbolGroupTreeNode root = (SymbolGroupTreeNode) this.getModel().getRoot();
+		SymbolGroupTreeNode treeNode = findTreeNode(root, currentSymbolGroup);
+		if (treeNode != null) {
+			TreePath path = new TreePath(treeNode);
+			this.setSelectionPath(path);
+			if (this.getParent() != null && this.getParent().getParent() instanceof JScrollPane) {
+				this.scrollPathToVisible(path);
+			}
+		}
+	}
+
+	private SymbolGroupTreeNode findTreeNode(SymbolGroupTreeNode node, SymbolGroup currentSymbolGroup) {
+		if (node.getCurrentGroup() == currentSymbolGroup) {
+			return node;
+		} else {
+			for (int i = 0; i < node.getChildCount(); i++) {
+				SymbolGroupTreeNode treeNode = findTreeNode(((SymbolGroupTreeNode) node.getChildAt(0)), currentSymbolGroup);
+				if (treeNode != null) {
+					return treeNode;
+				}
+			}
+		}
+		return null;
 	}
 }

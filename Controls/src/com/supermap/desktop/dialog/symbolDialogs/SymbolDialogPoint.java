@@ -1,14 +1,17 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolLibrary;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.SymbolMarker3D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsPoint;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
+import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.ColorSwatch;
-import com.supermap.desktop.ui.controls.ControlButton;
-import com.supermap.desktop.ui.controls.DropDownColor;
+import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.DoubleUtilties;
 
@@ -30,9 +33,6 @@ import java.beans.PropertyChangeListener;
 public class SymbolDialogPoint extends SymbolDialog {
 
 	private JPanel panelMain;
-
-	private JPanelSymbols panelSymbols;
-	private SymbolPreViewPanel panelPreview;
 
 	// 显示大小
 	private JPanel panelShowSize;
@@ -58,7 +58,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 	private JCheckBox checkBoxLockWidthHeightRate;
 
 	private JLabel labelSymbolColor;
-	private DropDownColor buttonSymbolColor;
+	private ButtonColorSelector buttonSymbolColor;
 
 	private JLabel labelSymbolAngle;
 	private JSpinner spinnerSymbolAngle;
@@ -69,9 +69,6 @@ public class SymbolDialogPoint extends SymbolDialog {
 	private JSpinner spinnerOpaqueRate;
 	private JLabel labelOpaqueRateUnit;
 
-
-	private ControlButton colorButtonMarker;
-	private ColorSwatch markerColorSwatch;
 
 	private SymbolMarkerSizeController symbolMarkerSizeController;
 	private boolean isSizeListenersEnable = true;
@@ -88,7 +85,6 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	@Override
 	protected JPanel getPanelMain() {
-
 		return panelMain;
 	}
 
@@ -107,7 +103,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	private void pointInitComponents() {
 		panelMain = new JPanel();
-		panelPreview = new SymbolPreViewPanel(getSymbolType());
+		panelSymbols = new JPanelSymbolsPoint();
 		panelShowSize = new JPanel();
 		labelShowWidth = new JLabel();
 		spinnerShowWidth = new JSpinner();
@@ -132,6 +128,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 		labelOpaqueRateUnit = new JLabel();
 		symbolMarkerSizeController = new SymbolMarkerSizeController();
 		checkBoxLockWidthHeightRate.setSelected(true);
+		buttonSymbolColor = new ButtonColorSelector();
 		caretListener = new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent e) {
@@ -152,7 +149,6 @@ public class SymbolDialogPoint extends SymbolDialog {
 		SymbolSpinnerUtilties.initSpinners(-1, 500, 1, "##0.0", spinnerShowHeight, spinnerShowWidth, spinnerSymbolHeight, spinnerSymbolWidth);
 		SymbolSpinnerUtilties.initSpinners(0, 360, 1, "##0", spinnerSymbolAngle);
 		SymbolSpinnerUtilties.initSpinners(0, 100, 1, "##0", spinnerOpaqueRate);
-		initButtonSymbolColor();
 
 	}
 
@@ -196,6 +192,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 				double angle = Double.valueOf(text);
 				if (!DoubleUtilties.equals(angle, currentGeoStyle.getMarkerAngle(), pow)) {
 					currentGeoStyle.setMarkerAngle(angle);
+					geoStylePropertyChange.propertyChange();
 				}
 			}
 		});
@@ -212,6 +209,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 				}
 				double rate = Double.valueOf(text);
 				currentGeoStyle.setFillOpaqueRate((int) rate);
+				geoStylePropertyChange.propertyChange();
 			}
 		});
 
@@ -223,19 +221,63 @@ public class SymbolDialogPoint extends SymbolDialog {
 			}
 		});
 
-		buttonSymbolColor.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+		buttonSymbolColor.addPropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				Color color = buttonSymbolColor.getColor();
 				if (color != null) {
 					currentGeoStyle.setLineColor(color);
-					markerColorSwatch.setColor(color);
-					colorButtonMarker.repaint();
+					geoStylePropertyChange.propertyChange();
 				}
 			}
 		});
-	}
 
+		panelSymbols.addSymbolSelectedChangedListener(new SymbolSelectedChangedListener() {
+			@Override
+			public void SymbolSelectedChangedEvent(Symbol symbol) {
+				if (symbol == null) {
+					spinnerShowWidth.setEnabled(true);
+					spinnerShowHeight.setEnabled(true);
+					checkBoxLockWidthHeightRate.setSelected(true);
+					checkBoxLockWidthHeightRate.setEnabled(false);
+					buttonSymbolColor.setEnabled(true);
+					spinnerSymbolAngle.setEnabled(false);
+					spinnerOpaqueRate.setEnabled(false);
+				} else if (symbol instanceof SymbolMarker3D) {
+					spinnerShowWidth.setEnabled(true);
+					spinnerShowHeight.setEnabled(true);
+					checkBoxLockWidthHeightRate.setEnabled(true);
+					buttonSymbolColor.setEnabled(true);
+					spinnerSymbolAngle.setEnabled(true);
+					spinnerOpaqueRate.setEnabled(true);
+				} else {
+					SymbolMarkerType markerType = SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol));
+					if (markerType == SymbolMarkerType.Vector) {
+						spinnerShowWidth.setEnabled(true);
+						spinnerShowHeight.setEnabled(true);
+						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setEnabled(true);
+						spinnerSymbolAngle.setEnabled(true);
+						spinnerOpaqueRate.setEnabled(true);
+					} else if (markerType == SymbolMarkerType.Raster) {
+						spinnerShowWidth.setEnabled(true);
+						spinnerShowHeight.setEnabled(true);
+						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setEnabled(false);
+						spinnerSymbolAngle.setEnabled(true);
+						spinnerOpaqueRate.setEnabled(true);
+					}
+				}
+				reloadSizeFormSymbolMarkerSizeController();
+				geoStylePropertyChange.propertyChange();
+			}
+
+			@Override
+			public void SymbolSelectedDoubleClicked() {
+				enterPressed();
+			}
+		});
+	}
 
 	private void loadSizeFormSymbolMarkerSizeController(JTextField source) {
 		try {
@@ -252,12 +294,19 @@ public class SymbolDialogPoint extends SymbolDialog {
 			if (((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField() != source) {
 				spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
 			}
+			geoStylePropertyChange.propertyChange();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			isSizeListenersEnable = true;
 		}
 
+	}
+
+
+	private void reloadSizeFormSymbolMarkerSizeController() {
+		symbolMarkerSizeController.reCalculateShowSize();
+		loadSizeFormSymbolMarkerSizeController();
 	}
 
 	private void loadSizeFormSymbolMarkerSizeController() {
@@ -277,41 +326,25 @@ public class SymbolDialogPoint extends SymbolDialog {
 	private void pointInitLayout() {
 		initPanelShowSize();
 		initPanelSymbolSize();
-		initPanelSymbols();
-
-		JPanel panelRight = new JPanel();
-		panelRight.setLayout(new GridBagLayout());
-		panelRight.add(panelPreview, new GridBagConstraintsHelper(0, 0, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(panelShowSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(panelSymbolSize, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(checkBoxLockWidthHeightRate, new GridBagConstraintsHelper(0, 3, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-
-		panelRight.add(labelSymbolColor, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelRight.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(new JPanel(), new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
-
-		panelRight.add(labelSymbolAngle, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelRight.add(spinnerSymbolAngle, new GridBagConstraintsHelper(1, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(labelSymbolAngleUnit, new GridBagConstraintsHelper(2, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
-
-		panelRight.add(labelOpaqueRate, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelRight.add(spinnerOpaqueRate, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelRight.add(labelOpaqueRateUnit, new GridBagConstraintsHelper(2, 6, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
-
-		panelRight.add(new JPanel(), new GridBagConstraintsHelper(0, 7, 3, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 
 		panelMain.setLayout(new GridBagLayout());
+		panelMain.add(panelShowSize, new GridBagConstraintsHelper(0, 0, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(panelSymbolSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(checkBoxLockWidthHeightRate, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
 
-		JPanel panel = new JPanel();
-		JScrollPane jScrollPane = new JScrollPane();
-		jScrollPane.setViewportView(panelSymbols);
-		jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		panel.setLayout(new GridBagLayout());
-		panel.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
+		panelMain.add(labelSymbolColor, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelMain.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(new JPanel(), new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
 
-		panelMain.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		panelMain.add(panelRight, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setInsets(10, 0, 10, 0));
+		panelMain.add(labelSymbolAngle, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelMain.add(spinnerSymbolAngle, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(labelSymbolAngleUnit, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
+
+		panelMain.add(labelOpaqueRate, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelMain.add(spinnerOpaqueRate, new GridBagConstraintsHelper(1, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(labelOpaqueRateUnit, new GridBagConstraintsHelper(2, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
+
+		panelMain.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	private void initPanelShowSize() {
@@ -348,16 +381,14 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	@Override
 	protected void prepareForShowDialogHook() {
-		panelPreview.setGeoStyle(currentGeoStyle);
 		symbolMarkerSizeController.setResources(currentResources);
 		symbolMarkerSizeController.setGeoStyle(currentGeoStyle);
+		buttonSymbolColor.setColor(currentGeoStyle.getLineColor());
+		spinnerSymbolAngle.setValue(currentGeoStyle.getMarkerAngle());
+		spinnerOpaqueRate.setValue(currentGeoStyle.getFillOpaqueRate());
 		loadSizeFormSymbolMarkerSizeController();
 	}
 
-	private void initPanelSymbols() {
-		panelSymbols = new JPanelSymbolsPoint();
-		panelSymbols.setSymbolGroup(currentResources, currentResources.getMarkerLibrary().getRootGroup());
-	}
 
 	private void pointInitResources() {
 		labelShowWidth.setText(ControlsProperties.getString("String_ShowWidth"));
@@ -384,12 +415,8 @@ public class SymbolDialogPoint extends SymbolDialog {
 	}
 
 
-	private void initButtonSymbolColor() {
-		colorButtonMarker = new ControlButton();
-		colorButtonMarker.setEnabled(false);
-		markerColorSwatch = new ColorSwatch(Color.white, 14, 60);
-		colorButtonMarker.setIcon(markerColorSwatch);
-		buttonSymbolColor = new DropDownColor(colorButtonMarker);
+	@Override
+	protected SymbolLibrary getLibrary() {
+		return currentResources.getMarkerLibrary();
 	}
-
 }

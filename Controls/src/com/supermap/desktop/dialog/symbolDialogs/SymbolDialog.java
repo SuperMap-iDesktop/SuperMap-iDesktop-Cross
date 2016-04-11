@@ -2,12 +2,17 @@ package com.supermap.desktop.dialog.symbolDialogs;
 
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolGroup;
+import com.supermap.data.SymbolGroups;
 import com.supermap.data.SymbolLibrary;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolFactory;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTree;
+import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -17,6 +22,10 @@ import com.supermap.desktop.utilties.LogUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +49,10 @@ public abstract class SymbolDialog extends SmDialog {
 	private JScrollPane scrollPaneWorkspaceResources = new JScrollPane();
 	private SymbolGroupTree treeWorkspaceResources;
 
+	protected JPanelSymbols panelSymbols;
+	protected SymbolPreViewPanel panelPreview;
+
+
 	private JPanel panelButton = new JPanel();
 	private SmButton buttonOK = new SmButton();
 	private SmButton buttonCancle = new SmButton();
@@ -52,11 +65,15 @@ public abstract class SymbolDialog extends SmDialog {
 
 	protected Color wrongColor = Color.red;
 	protected Color defaultColor = Color.BLACK;
+	protected SymbolGroup currentSymbolGroup;
+
+	protected IGeoStylePropertyChange geoStylePropertyChange;
 
 	/**
 	 * 精度
 	 */
 	protected double pow = 1;
+	private Resources currentRescources;
 
 	public SymbolDialog() {
 		init();
@@ -118,6 +135,7 @@ public abstract class SymbolDialog extends SmDialog {
 		}
 		this.currentGeoStyle = beforeGeoStyle.clone();
 		prepareForShowDialog();
+		textFieldSearch.setText("");
 		scrollPaneWorkspaceResources.requestFocus();
 		this.setVisible(true);
 		return dialogResult;
@@ -137,6 +155,7 @@ public abstract class SymbolDialog extends SmDialog {
 	 * 初始化面板
 	 */
 	private void initComponent() {
+		panelPreview = new SymbolPreViewPanel(getSymbolType());
 		initPanelWorkspaceResources();
 		initTabbedPane();
 		getRootPane().setFocusable(true);
@@ -146,7 +165,15 @@ public abstract class SymbolDialog extends SmDialog {
 		setSize(width, height);
 		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		getRootPane().setDefaultButton(buttonOK);
+		geoStylePropertyChange = new IGeoStylePropertyChange() {
+			@Override
+			public void propertyChange() {
+				panelPreview.refreshMap();
+			}
+		};
+		currentSymbolGroup = getLibrary().getRootGroup();
 		initComponentHook();
+		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -208,16 +235,35 @@ public abstract class SymbolDialog extends SmDialog {
 		initPanelButton();
 		initMenuBar();
 		this.setJMenuBar(this.menuBar);
+		Dimension minimumSize = new Dimension(200, 200);
+		panelPreview.setMinimumSize(minimumSize);
+		panelPreview.setPreferredSize(minimumSize);
+		panelPreview.setMaximumSize(minimumSize);
 
+		JPanel panelParent = new JPanel();
+		panelParent.setLayout(new GridBagLayout());
+		panelParent.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 10, 0));
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 10, 0));
-		panel.add(getPanelMain(), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(80, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
-		panel.add(panelButton, new GridBagConstraintsHelper(0, 1, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(100, 0).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(getPanelSymbols(), new GridBagConstraintsHelper(1, 0, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+
+		panelParent.add(panelPreview, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(getPanelMain(), new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.NORTH).setInsets(10, 0, 0, 0));
+
+		panelParent.add(panelButton, new GridBagConstraintsHelper(0, 2, 3, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
 
 		this.setLayout(new GridBagLayout());
-		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 10, 10).setFill(GridBagConstraints.BOTH));
+		this.add(panelParent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 10, 10).setFill(GridBagConstraints.BOTH));
+	}
+
+	private JPanel getPanelSymbols() {
+		JPanel panelSymbols = new JPanel();
+		JScrollPane jScrollPane = new JScrollPane();
+		jScrollPane.setViewportView(this.panelSymbols);
+		jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		panelSymbols.setLayout(new GridBagLayout());
+		panelSymbols.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
+		return panelSymbols;
 	}
 
 	/**
@@ -270,6 +316,36 @@ public abstract class SymbolDialog extends SmDialog {
 				buttonApplyClicked();
 			}
 		});
+		this.treeWorkspaceResources.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				SymbolGroupTreeNode lastSelectedPathComponent = (SymbolGroupTreeNode) treeWorkspaceResources.getLastSelectedPathComponent();
+				if (lastSelectedPathComponent != null && lastSelectedPathComponent.getCurrentGroup() != currentSymbolGroup) {
+					currentSymbolGroup = lastSelectedPathComponent.getCurrentGroup();
+					panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
+				}
+			}
+		});
+		this.textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				search();
+			}
+
+			private void search() {
+				panelSymbols.setSearchString(textFieldSearch.getText());
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				search();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				search();
+			}
+		});
 	}
 
 	private void initResources() {
@@ -298,14 +374,16 @@ public abstract class SymbolDialog extends SmDialog {
 	private void prepareForShowDialog() {
 		this.dialogResult = DialogResult.CLOSED;
 		this.buttonApply.setEnabled(symbolApply != null);
+		panelPreview.setGeoStyle(currentGeoStyle);
 		prepareForShowDialogHook();
+		initCurrentSymbolGroup();
+		panelSymbols.setGeoStyle(currentGeoStyle);
 	}
 
 	/**
 	 * 用于给子类在显示窗口之前进行准备，无需要可不重写
 	 */
 	protected void prepareForShowDialogHook() {
-
 	}
 
 	/**
@@ -315,5 +393,39 @@ public abstract class SymbolDialog extends SmDialog {
 	 */
 	public GeoStyle getCurrentGeoStyle() {
 		return currentGeoStyle.clone();
+	}
+
+	private void initCurrentSymbolGroup() {
+		Symbol symbol = getLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
+		if (symbol != null) {
+			treeWorkspaceResources.setSelectedSymbolGroup(findSymbolGroup(symbol.getID()));
+		}
+//		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
+	}
+
+	protected abstract SymbolLibrary getLibrary();
+
+	private SymbolGroup findSymbolGroup(int symbol) {
+		SymbolGroup symbolGroup = currentResources.getMarkerLibrary().getRootGroup();
+		return findSymbolGroup(symbolGroup, symbol);
+	}
+
+	private SymbolGroup findSymbolGroup(SymbolGroup symbolGroup, int symbol) {
+		if (symbolGroup.indexOf(symbol) == -1) {
+			SymbolGroups childGroups = symbolGroup.getChildGroups();
+			for (int i = 0; i < childGroups.getCount(); i++) {
+				SymbolGroup symbolGroup1 = findSymbolGroup(childGroups.get(i), symbol);
+				if (symbolGroup1 != null) {
+					return symbolGroup1;
+				}
+			}
+		} else {
+			return symbolGroup;
+		}
+		return null;
+	}
+
+	public Resources getCurrentRescources() {
+		return currentRescources;
 	}
 }
