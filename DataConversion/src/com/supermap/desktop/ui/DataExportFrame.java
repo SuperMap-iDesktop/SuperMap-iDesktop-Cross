@@ -115,6 +115,9 @@ public class DataExportFrame extends SmDialog {
 		initComponent();
 		registActionListener();
 		setButtonState();
+		this.componentList.add(this.buttonExport);
+		this.componentList.add(this.buttonClose);
+		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	private void registActionListener() {

@@ -49,12 +49,14 @@ public class JDialogChangePassword extends SmDialog {
 		initializeResources();
 		registerEvents();
 		setLocationRelativeTo(null);
+		initTraversalPolicy();
 	}
 
 	public JDialogChangePassword(String oldPassword) {
 		this();
 		this.oldPassword = oldPassword;
 		setButtonOKEnabledInEDT(false);
+		initTraversalPolicy();
 	}
 
 	public JDialogChangePassword(String oldPassword, boolean isIgnoreCase) {
@@ -62,8 +64,18 @@ public class JDialogChangePassword extends SmDialog {
 		this.oldPassword = oldPassword;
 		this.isIgnoreCase = isIgnoreCase;
 		setButtonOKEnabledInEDT(false);
+		initTraversalPolicy();
 	}
 
+	private void initTraversalPolicy(){
+		if (this.componentList.size()>0) {
+			this.componentList.clear();
+		}
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
+	}
+	
 	public boolean isIgnoreCase() {
 		return isIgnoreCase;
 	}

@@ -51,6 +51,9 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 		initializeResources();
 		setSize(new Dimension(600, 300));
 		setLocationRelativeTo(null);
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initializeComponents() {

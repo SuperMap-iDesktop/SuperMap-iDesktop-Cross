@@ -56,9 +56,6 @@ public class BufferDialog extends SmDialog {
 		@Override
 		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
 			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable && isHasResultDatasource);
-			if (panelButton.getButtonOk().isEnabled()) {
-				getRootPane().setDefaultButton(panelButton.getButtonOk());
-			}
 		}
 	};
 
@@ -136,8 +133,18 @@ public class BufferDialog extends SmDialog {
 		initComponent();
 		initResources();
 		registerEvent();
+		initTraversalPolicy();
 	}
 
+	private void initTraversalPolicy(){
+		if (this.componentList.size()>0) {
+			this.componentList.clear();
+		}
+		this.componentList.add(panelButton.getButtonOk());
+		this.componentList.add(panelButton.getButtonCancel());
+		this.setFocusTraversalPolicy(policy);
+	}
+	
 	private void initComponent() {
 		this.labelDataType = new JLabel("DataType");
 		this.panelDataType = new JPanel();
@@ -155,7 +162,6 @@ public class BufferDialog extends SmDialog {
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
 		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
-		getRootPane().setDefaultButton(panelButton.getButtonOk());
 	}
 
 	private void setPanelGroupButtonLayout() {
@@ -275,7 +281,7 @@ public class BufferDialog extends SmDialog {
 				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 				setSize(getLinePanelDimension());
 			} else if (e.getSource() == panelButton.getButtonOk()) {
-				escapePressed();
+				okButtonClicked();
 			} else if (e.getSource() == panelButton.getButtonCancel()) {
 				BufferDialog.this.dispose();
 			}

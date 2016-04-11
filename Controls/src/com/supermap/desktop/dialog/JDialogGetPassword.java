@@ -49,6 +49,9 @@ public class JDialogGetPassword extends SmDialog {
 		this.setSize(500, 160);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

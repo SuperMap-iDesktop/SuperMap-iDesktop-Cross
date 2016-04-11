@@ -6,22 +6,20 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -31,10 +29,10 @@ public class ThemeGuidDialog extends SmDialog {
 	private SmButton buttonOk = new SmButton("OK");
 	private SmButton buttonCancel = new SmButton("Cancel");
 	private JList<Object> listContent = new JList<Object>();
-	private transient GroupLayout gl_panelContent = new GroupLayout(panelContent);
 	private JLabel labelUniform = new JLabel();
 	private JLabel labelRange = new JLabel();
 	private JPanel panel;
+	private JPanel contentPanel = new JPanel();
 
 	private boolean isUniform = true;
 	private boolean isRange = false;
@@ -52,13 +50,16 @@ public class ThemeGuidDialog extends SmDialog {
 		initComponents();
 		initResources();
 		registListener();
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**
 	 * 界面布局入口
 	 */
 	private void initComponents() {
-		setSize(480, 385);
+		setSize(520, 360);
 		setLocationRelativeTo(null);
 		this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -72,36 +73,26 @@ public class ThemeGuidDialog extends SmDialog {
 		}
 		this.panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		this.panel.setBackground(Color.WHITE);
-		this.gl_panelContent.setHorizontalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
-				this.gl_panelContent.createSequentialGroup().addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED).addGap(20).addComponent(panel, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
-						.addContainerGap()));
-		this.gl_panelContent.setVerticalGroup(gl_panelContent.createParallelGroup(Alignment.LEADING).addGroup(
-				gl_panelContent
-						.createSequentialGroup()
-						.addGap(2)
-						.addGroup(
-								gl_panelContent.createParallelGroup(Alignment.LEADING).addComponent(panel, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-										.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))));
+		
 		addListItem();
+		
 		scrollPane.setViewportView(listContent);
-		this.panelContent.setLayout(gl_panelContent);
-		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		this.buttonOk.setActionCommand("OK");
-		buttonPane.add(buttonOk);
 		getRootPane().setDefaultButton(buttonOk);
 		this.buttonCancel.setActionCommand("Cancel");
-		buttonPane.add(buttonCancel);
-		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelContent, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, 459, GroupLayout.PREFERRED_SIZE));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup()
-						.addComponent(panelContent, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-		getContentPane().setLayout(groupLayout);
+		
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(this.buttonOk,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
+		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
+		getContentPane().setLayout(new GridBagLayout());
+		
+		this.contentPanel.setLayout(new GridBagLayout());
+		this.contentPanel.add(scrollPane,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 1));
+		this.contentPanel.add(this.panel,   new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(3, 1));
+		
+		getContentPane().add(contentPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 3));
+		getContentPane().add(panelButton,  new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		getRootPane().setDefaultButton(this.buttonOk);
 	}
 
@@ -168,26 +159,32 @@ public class ThemeGuidDialog extends SmDialog {
 		switch (selectRow) {
 		case 0:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), new UniqueThemePanel(this));
+				replaceRightPanel(new UniqueThemePanel(this));
 			}
 			break;
 		case 1:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), new RangeThemePanel(this));
+				replaceRightPanel(new RangeThemePanel(this));
 			}
 			break;
 		case 2:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), newLabelThemePanel());
+				replaceRightPanel(newLabelThemePanel());
 			}
 			break;
 		case 3:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), new GraphThemePanel(this));
+				replaceRightPanel(new GraphThemePanel(this));
 			}
 		default:
 			break;
 		}
+	}
+
+	private void replaceRightPanel(JPanel panel) {
+		this.contentPanel.remove(getRightPanel());
+		this.contentPanel.add(panel,   new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(3, 1));
+		this.contentPanel.updateUI();
 	}
 
 	/**
@@ -210,7 +207,7 @@ public class ThemeGuidDialog extends SmDialog {
 	 * @return
 	 */
 	private JPanel getRightPanel() {
-		return (JPanel) this.panelContent.getComponent(1);
+		return (JPanel) this.contentPanel.getComponent(1);
 	}
 
 	class LocalListSelectionListener implements ListSelectionListener {
@@ -230,12 +227,12 @@ public class ThemeGuidDialog extends SmDialog {
 		switch (selectRow) {
 		case 0:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), new GridUniqueThemePanel(this));
+				replaceRightPanel(new GridUniqueThemePanel(this));;
 			}
 			break;
 		case 1:
 			if (null != getRightPanel()) {
-				this.gl_panelContent.replace(getRightPanel(), new GridRangeThemePanel(this));
+				replaceRightPanel(new GridRangeThemePanel(this));
 			}
 			break;
 		default:

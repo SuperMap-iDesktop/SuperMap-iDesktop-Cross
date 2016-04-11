@@ -52,6 +52,9 @@ public class JDialogSetAll extends SmDialog {
 		this.initComponent();
 		this.initializeResource();
 		this.addListeners();
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

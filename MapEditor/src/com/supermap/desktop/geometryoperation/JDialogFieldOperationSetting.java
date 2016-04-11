@@ -78,6 +78,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		setMap(map);
 		setSize(new Dimension(600, 400));
 		setLocationRelativeTo(null);
+		this.componentList.add(this.buttonOK);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public Layer getEditLayer() {

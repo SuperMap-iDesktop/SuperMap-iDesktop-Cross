@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -63,6 +65,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	 */
 	public JDialogDatasourceOpenAndNew(JFrame owner, DatasourceOperatorType type) {
 		super(owner);
+		setModal(true);
 		setBounds(100, 100, 575, 301);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
@@ -128,7 +131,9 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				cancelButtonClicked();
 			}
 		});
-		getRootPane().setDefaultButton(this.buttonOk);
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	protected void listWorkspaceType_ItemSelectedChanged() {

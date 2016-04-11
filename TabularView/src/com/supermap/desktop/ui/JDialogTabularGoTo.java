@@ -55,6 +55,9 @@ public class JDialogTabularGoTo extends SmDialog {
 		setListener();
 		init();
 		initResources();
+		this.componentList.add(this.jButtonGoTo);
+		this.componentList.add(this.jButtonClose);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

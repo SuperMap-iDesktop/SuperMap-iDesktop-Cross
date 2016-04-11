@@ -90,6 +90,9 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		setLocationRelativeTo(owner);
 		initComponents();
 		initResources();
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initResources() {

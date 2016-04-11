@@ -239,6 +239,9 @@ public class JDialogDatasetNew extends SmDialog {
 
 		// 添加预加载的一行
 		copyPreDatasetInfo(0);
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	public boolean isAutoClose() {

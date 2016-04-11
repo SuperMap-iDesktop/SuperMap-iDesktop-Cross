@@ -10,8 +10,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 public abstract class SmDialog extends JDialog implements WindowListener {
+	
+	/**
+	 * 将要实现tab键切换顺序的控件添加到容器中
+	 * 
+	 * @return
+	 */
+	protected ArrayList<Component> componentList = new ArrayList<Component>();
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
@@ -74,11 +82,35 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
-	@Override
-	public void setFocusTraversalPolicy(FocusTraversalPolicy policy) {
-		// TODO Auto-generated method stub
-		super.setFocusTraversalPolicy(policy);
-	}
+
+	/**
+	 * tab键切换事件
+	 */
+	protected FocusTraversalPolicy policy = new FocusTraversalPolicy() {
+		public Component getFirstComponent(Container focusCycleRoot) {
+			return componentList.get(0);
+		}
+
+		public Component getLastComponent(Container focusCycleRoot) {
+			return componentList.get(componentList.size() - 1);
+		}
+
+		public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+			int index = componentList.indexOf(aComponent);
+
+			return componentList.get((index + 1) % componentList.size());
+		}
+
+		public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+			int index = componentList.indexOf(aComponent);
+			return componentList.get((index - 1 + componentList.size()) % componentList.size());
+		}
+
+		public Component getDefaultComponent(Container focusCycleRoot) {
+			return componentList.get(0);
+		}
+	};
+
 	/**
 	 * 自定义的ESC按键功能
 	 */

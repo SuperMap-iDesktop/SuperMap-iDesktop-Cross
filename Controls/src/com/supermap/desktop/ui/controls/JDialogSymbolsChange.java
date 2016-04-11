@@ -97,6 +97,9 @@ public class JDialogSymbolsChange extends SmDialog {
 				clean();
 			}
 		});
+		this.componentList.add(buttonNext);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void getSymbolEnables() {

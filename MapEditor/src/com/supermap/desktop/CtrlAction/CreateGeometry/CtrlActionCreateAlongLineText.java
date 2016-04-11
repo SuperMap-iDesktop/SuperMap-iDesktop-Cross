@@ -136,6 +136,9 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			initListeners();
 			initLayout();
 			initResources();
+			this.componentList.add(this.buttonOk);
+			this.componentList.add(this.buttonCancel);
+			this.setFocusTraversalPolicy(policy);
 		}
 
 		private void initComponents() {

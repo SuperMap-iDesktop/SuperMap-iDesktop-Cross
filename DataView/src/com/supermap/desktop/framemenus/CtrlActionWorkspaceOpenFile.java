@@ -69,10 +69,10 @@ public class CtrlActionWorkspaceOpenFile extends CtrlAction {
 				if (result != OpenWorkspaceResult.SUCCESSED) {
 					String stMsg;
 					if (result != OpenWorkspaceResult.FAILED_CANCEL) {
-						stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), fileChooser.getFilePath());
+						stMsg = MessageFormat.format(CoreProperties.getString("String_OpenWorkspaceFailed"), fileChooser.getFilePath());
 						Application.getActiveApplication().getWorkspace().close();
 					} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
-						stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed_WrongPassword"), fileChooser.getFilePath());
+						stMsg = MessageFormat.format(CoreProperties.getString("String_OpenWorkspaceFailed_WrongPassword"), fileChooser.getFilePath());
 					} else {
 						stMsg = DataViewProperties.getString("String_openWorkspaceCancle");
 					}

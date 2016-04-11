@@ -65,6 +65,9 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		initComponents();
 		initResources();
 		registActionListener();
+		this.componentList.add(this.buttonSure);
+		this.componentList.add(this.buttonQuite);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initResources() {

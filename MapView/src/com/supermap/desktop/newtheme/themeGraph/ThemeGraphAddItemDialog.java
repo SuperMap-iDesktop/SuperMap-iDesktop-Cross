@@ -63,6 +63,9 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		initComponents();
 		initResources();
 		registActionListener();
+		this.componentList.add(this.buttonSure);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void registActionListener() {
