@@ -149,4 +149,38 @@ public class GeometryUtilties {
 			}
 		}
 	}
+
+	// @formatter:off
+	/**
+	 * 两个对象合并。
+	 * @param geometry1
+	 * @param geometry2
+	 * @return
+	 */
+	// @formatter:on
+	public static Geometry union(Geometry geometry1, Geometry geometry2, boolean isDispose) {
+		try {
+			if (geometry1 == null && geometry2 != null) {
+				return geometry2.clone();
+			}
+
+			if (geometry1 != null && geometry2 == null) {
+				return geometry1.clone();
+			}
+
+			if (geometry1 != null && geometry2 != null) {
+				return Geometrist.union(geometry1, geometry2);
+			}
+
+			return null;
+		} finally {
+			if (isDispose && geometry1 != null) {
+				geometry1.dispose();
+			}
+
+			if (isDispose && geometry2 != null) {
+				geometry2.dispose();
+			}
+		}
+	}
 }
