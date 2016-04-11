@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
  * @author xuzw
  *
  */
-public class SymbolDialog extends JDialog {
+public class SymbolDialog extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,15 +67,26 @@ public class SymbolDialog extends JDialog {
 	public SymbolDialog() {
 		super();
 		this.setModal(true);
+		this.componentList.add(this.jButtonOk);
+		this.componentList.add(this.jButtonCancel);
+		this.componentList.add(this.jButtonApply);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public SymbolDialog(JDialog owner) {
 		super(owner);
 		this.setModal(true);
+		this.componentList.add(this.jButtonOk);
+		this.componentList.add(this.jButtonCancel);
+		this.componentList.add(this.jButtonApply);
+		this.setFocusTraversalPolicy(policy);
 	}
+
 	/**
 	 * 控制应用按钮是否可用，默认不可用
-	 * @param applyEnable 应用按钮是否可用
+	 * 
+	 * @param applyEnable
+	 *            应用按钮是否可用
 	 */
 	public void setApplyEnable(boolean applyEnable) {
 		this.applyEnable = applyEnable;
@@ -84,9 +95,12 @@ public class SymbolDialog extends JDialog {
 	/**
 	 * 显示符号选择器
 	 * 
-	 * @param resources 资源
-	 * @param geoStyle 用户传入的GeoStyle
-	 * @param symbolType 符号选择器类型
+	 * @param resources
+	 *            资源
+	 * @param geoStyle
+	 *            用户传入的GeoStyle
+	 * @param symbolType
+	 *            符号选择器类型
 	 * @return 返回用户对当前选择器的操作，确定按钮表示OK，取消按钮表示CANCLE
 	 */
 	public DialogResult showDialog(Resources resources, GeoStyle geoStyle, SymbolType symbolType) {
@@ -171,6 +185,22 @@ public class SymbolDialog extends JDialog {
 		}
 	}
 
+	private void buttonOkClicekd() {
+		try {
+			activeStyle = symbolPanel.getStyle();
+			dialogResult = DialogResult.OK;
+			setVisible(false);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	private void buttonCancelClicked() {
+		// 回滚到最初状态
+		dialogResult = DialogResult.CANCEL;
+		setVisible(false);
+	}
+
 	/**
 	 * 获取按钮面板
 	 * 
@@ -187,14 +217,9 @@ public class SymbolDialog extends JDialog {
 				jButtonOk.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						try {
-							activeStyle = symbolPanel.getStyle();
-							dialogResult = DialogResult.OK;
-							setVisible(false);
-						} catch (Exception e) {
-							Application.getActiveApplication().getOutput().output(e);
-						}
+						buttonOkClicekd();
 					}
+
 				});
 
 				jButtonCancel = new SmButton();
@@ -203,10 +228,9 @@ public class SymbolDialog extends JDialog {
 				jButtonCancel.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						// 回滚到最初状态
-						dialogResult = DialogResult.CANCEL;
-						setVisible(false);
+						buttonCancelClicked();
 					}
+
 				});
 
 				jButtonApply = new SmButton();
@@ -237,7 +261,7 @@ public class SymbolDialog extends JDialog {
 			Layer[] layers = ((IFormMap) activeForm).getActiveLayers();
 			for (Layer layer : layers) {
 				LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
-				if (null!=layerSetting) {
+				if (null != layerSetting) {
 					layerSetting.setStyle(symbolPanel.getStyle());
 				}
 			}
@@ -267,5 +291,23 @@ public class SymbolDialog extends JDialog {
 		style3D.setMarkerSize(style.getMarkerSize().getHeight());
 		style3D.setMarkerSymbolID(style.getMarkerSymbolID());
 		return style3D;
+	}
+
+	@Override
+	public void escapePressed() {
+		buttonCancelClicked();
+	}
+
+	@Override
+	public void enterPressed() {
+		if (this.getRootPane().getDefaultButton() == this.jButtonOk) {
+			buttonOkClicekd();
+		}
+		if (this.getRootPane().getDefaultButton()==this.jButtonCancel) {
+			buttonCancelClicked();
+		}
+		if (this.getRootPane().getDefaultButton()==this.jButtonApply) {
+			abstractJbuttonApplyLisenter();
+		}
 	}
 }

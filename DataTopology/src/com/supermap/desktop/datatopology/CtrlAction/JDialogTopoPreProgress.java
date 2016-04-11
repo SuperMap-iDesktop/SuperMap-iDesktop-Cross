@@ -68,6 +68,9 @@ public class JDialogTopoPreProgress extends SmDialog {
 		initComponents();
 		initResources();
 		initTableInfo();
+		this.componentList.add(this.buttonSure);
+		this.componentList.add(this.buttonQuite);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

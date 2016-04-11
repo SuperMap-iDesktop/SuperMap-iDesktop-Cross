@@ -93,6 +93,9 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		registerEvents();
 		setSize(600, 350);
 		setLocationRelativeTo(null);
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public CoordSysTransMethod getMethod() {

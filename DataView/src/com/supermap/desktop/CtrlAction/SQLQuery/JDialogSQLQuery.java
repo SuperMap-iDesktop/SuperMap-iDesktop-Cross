@@ -170,6 +170,10 @@ public class JDialogSQLQuery extends SmDialog {
 		registListeners();
 		initUndoComponents();
 		this.setLocationRelativeTo(null);
+		this.componentList.add(this.buttonQuery);
+		this.componentList.add(this.buttonClear);
+		this.componentList.add(this.buttonClose);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

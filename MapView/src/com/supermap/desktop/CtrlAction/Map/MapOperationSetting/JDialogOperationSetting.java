@@ -65,6 +65,9 @@ public class JDialogOperationSetting extends SmDialog {
 			this.formMap = (FormMap) activeForm;
 		}
 		init();
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

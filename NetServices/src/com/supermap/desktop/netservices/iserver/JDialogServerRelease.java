@@ -170,6 +170,9 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		initializeControls();
 		registerEvents();
 		setButtonReleaseEnabled();
+		this.componentList.add(buttonRelease);
+		this.componentList.add(buttonClose);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	@Override

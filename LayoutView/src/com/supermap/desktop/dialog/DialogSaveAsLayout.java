@@ -98,7 +98,9 @@ public class DialogSaveAsLayout extends SmDialog {
 
 		initializeResources();
 		this.setLocationRelativeTo(null);
-		getRootPane().setDefaultButton(buttonOk);
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public String getLayoutName() {

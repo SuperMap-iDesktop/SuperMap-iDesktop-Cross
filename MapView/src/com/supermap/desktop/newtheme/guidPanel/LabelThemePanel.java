@@ -5,6 +5,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 import java.awt.Color;
+
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
 
@@ -29,22 +30,22 @@ public class LabelThemePanel extends JPanel {
 	private void initComponents() {
 		// @formatter:off
 		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-
+		setBackground(Color.WHITE);	
+		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup()
-						.addGap(26)
+						.addGap(20)
 						.addComponent(labelUniformTheme)
-						.addGap(13)
+						.addGap(20)
 						.addComponent(labelRangeTheme)
-						.addContainerGap(250, Short.MAX_VALUE)));
+						.addContainerGap(170, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)
 										.addGroup(groupLayout.createSequentialGroup().addGap(20).addComponent(labelUniformTheme))
 										.addGroup(groupLayout.createSequentialGroup().addGap(21).addComponent(labelRangeTheme)))
-						.addContainerGap(226, Short.MAX_VALUE)));
+						.addContainerGap(180, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		this.labelUniformTheme.setOpaque(true);
 		this.labelUniformTheme.setBackground(Color.gray);

@@ -146,6 +146,9 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 			this.groupLayoutContentPanel.replace(existingPanel, newPanel);
 			this.listWorkspaceType.setSelectedIndex(saveAsSQL);
 		}
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public WorkspaceConnectionInfo getWorkspaceConnectionInfo() {

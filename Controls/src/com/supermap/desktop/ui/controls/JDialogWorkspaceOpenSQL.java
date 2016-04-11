@@ -48,6 +48,9 @@ public class JDialogWorkspaceOpenSQL extends SmDialog{
 		}
 		initComponents();
 		setLocationRelativeTo(null);
+		this.componentList.add(this.jButtonOpen);
+		this.componentList.add(this.jButtonClose);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**

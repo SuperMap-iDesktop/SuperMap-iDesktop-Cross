@@ -25,8 +25,7 @@ public class SmOptionPane extends SmDialog {
 	private SmButton buttonCancel;
 
 	private JTextArea textAreaMessage;
-//	private JLabel labelIcon;
-
+	// private JLabel labelIcon;
 
 	/**
 	 * 与JOptionPane结果保持一致，此处用int类型存储结果
@@ -34,7 +33,8 @@ public class SmOptionPane extends SmDialog {
 	private int result = JOptionPane.CLOSED_OPTION;
 	private String defaultTitle = CoreProperties.getString("String_MessageBox_Title");
 
-	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()), (int) (160 * SystemPropertyUtilties.getSystemSizeRate()));
+	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()),
+			(int) (160 * SystemPropertyUtilties.getSystemSizeRate()));
 
 	public SmOptionPane() {
 		init();
@@ -73,14 +73,28 @@ public class SmOptionPane extends SmDialog {
 	private void initLayout() {
 		this.panelButton.setLayout(new GridBagLayout());
 
-		this.panelButton.add(buttonYes, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
-		this.panelButton.add(buttonNo, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
-		this.panelButton.add(buttonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 10, 10));
+		this.panelButton.add(
+				buttonYes,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 10, 10));
+		this.panelButton.add(
+				buttonNo,
+				new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 10, 10));
+		this.panelButton.add(
+				buttonCancel,
+				new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST)
+						.setInsets(0, 0, 10, 10));
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-//		panel.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, (int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0, 0).setIpad((int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0));
-		panel.add(textAreaMessage, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10));
+		// panel.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0,
+		// 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, (int) (10 * SystemPropertyUtilties.getSystemSizeRate()), 0, 0).setIpad((int) (10 *
+		// SystemPropertyUtilties.getSystemSizeRate()), 0));
+		panel.add(
+				textAreaMessage,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER)
+						.setInsets(10));
 		panel.add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.SOUTH));
 
 		this.setLayout(new GridBagLayout());
@@ -126,44 +140,50 @@ public class SmOptionPane extends SmDialog {
 
 	public int showMessageDialog(String message) {
 		this.buttonNo.setVisible(false);
-//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
+		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
+		initTravelPolicy();
 		return showDialog(message);
 	}
-
 
 	/**
 	 * 询问
 	 *
-	 * @param message 信息
+	 * @param message
+	 *            信息
 	 * @return 结果
 	 */
 	public int showConfirmDialog(String message) {
-//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		initTravelPolicy();
 		return showDialog(message);
 	}
 
 	public int showConfirmDialogWithCancle(String message) {
-//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
 		this.buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
 		this.buttonNo.setText(CommonProperties.getString(CommonProperties.no));
 		this.buttonCancel.setVisible(true);
+		initTravelPolicy();
 		return showDialog(message);
 	}
 
 	/**
 	 * 错误提示
 	 *
-	 * @param message 信息
+	 * @param message
+	 *            信息
 	 * @return 结果
 	 */
 	public int showErrorDialog(String message) {
 		this.buttonNo.setVisible(false);
-//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
+		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
+		initTravelPolicy();
 		return showDialog(message);
 	}
 
 	public int showWarningDialog(String message) {
-//		this.labelIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
+		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
+		initTravelPolicy();
 		return showDialog(message);
 	}
 
@@ -178,7 +198,24 @@ public class SmOptionPane extends SmDialog {
 		this.buttonNo.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.buttonNo.setVisible(true);
 		this.buttonCancel.setVisible(false);
+		initTravelPolicy();
 		return result;
+	}
+
+	private void initTravelPolicy() {
+		if (this.componentList.size()>0) {
+			this.componentList.clear();
+		}
+		if (this.buttonYes.isVisible()) {
+			this.componentList.add(this.buttonYes);
+		}
+		if (this.buttonNo.isVisible()) {
+			this.componentList.add(this.buttonNo);
+		}
+		if (this.buttonCancel.isVisible()) {
+			this.componentList.add(this.buttonCancel);
+		}
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	@Override

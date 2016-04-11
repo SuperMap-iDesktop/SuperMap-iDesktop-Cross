@@ -64,6 +64,9 @@ public class JDialogMeasureSetting extends SmDialog {
 		initResources();
 		addListeners();
 		initComponentState();
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initComponents() {

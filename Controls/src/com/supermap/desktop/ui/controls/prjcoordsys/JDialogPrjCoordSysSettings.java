@@ -186,6 +186,9 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			setSize(new Dimension(1100, 600));
 			setLocationRelativeTo(null);
 			selectRootNode();
+			this.componentList.add(buttonApply);
+			this.componentList.add(buttonClose);
+			this.setFocusTraversalPolicy(policy);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

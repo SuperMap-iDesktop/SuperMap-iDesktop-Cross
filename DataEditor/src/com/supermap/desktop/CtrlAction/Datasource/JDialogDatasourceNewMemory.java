@@ -121,6 +121,9 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		initializeResources();
 		this.setLocationRelativeTo(null);
 		this.jTextFieldAlias.setText(getAvaliableDatasourceName("MemoryDatasource"));
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initializeResources() {
