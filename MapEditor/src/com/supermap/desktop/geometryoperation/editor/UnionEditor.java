@@ -11,9 +11,7 @@ import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -73,51 +71,6 @@ public class UnionEditor extends AbstractEditor {
 		return enable;
 	}
 
-	/**
-	 * 将指定图层的选中对象做合并处理
-	 * 
-	 * @param layer
-	 * @return
-	 */
-	private Geometry union(Layer layer) {
-		Geometry result = null;
-		Recordset recordset = null;
-
-		try {
-
-			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
-				recordset = layer.getSelection().toRecordset();
-				recordset.moveFirst();
-
-				while (!recordset.isEOF()) {
-					Geometry geometry = recordset.getGeometry();
-
-					try {
-						IGeometry dGeometry = DGeometryFactory.create(geometry); // 桌面对 Geometry 进行封装后的对象
-
-						// 表明是面特性对象
-						if (dGeometry instanceof IRegionFeature) {
-							result = GeometryUtilties.union(result, ((IRegionFeature) dGeometry).convertToRegion(0), true);
-						}
-						recordset.moveNext();
-					} finally {
-						if (geometry != null) {
-							geometry.dispose();
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			if (recordset != null) {
-				recordset.close();
-				recordset.dispose();
-			}
-		}
-		return result;
-	}
-
 	private void union(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
 		Geometry result = null;
 		Recordset targetRecordset = null;
@@ -130,7 +83,7 @@ public class UnionEditor extends AbstractEditor {
 
 			for (Layer layer : selectedLayers) {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
-					result = GeometryUtilties.union(result, union(layer), true);
+					result = GeometryUtilties.union(result, GeometryUtilties.union(layer), true);
 				}
 			}
 
