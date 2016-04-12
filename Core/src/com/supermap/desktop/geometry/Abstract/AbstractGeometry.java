@@ -16,4 +16,10 @@ public abstract class AbstractGeometry implements IGeometry {
 	public Geometry getGeometry() {
 		return this.geometry;
 	}
+
+	public void dispose() {
+		if (this.geometry != null) {
+			this.geometry.dispose();
+		}
+	}
 }

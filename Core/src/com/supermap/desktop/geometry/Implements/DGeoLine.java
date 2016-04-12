@@ -2,14 +2,17 @@ package com.supermap.desktop.geometry.Implements;
 
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 
-public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILineFeature, IRegionConvertor, ILineConvertor {
+public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, ILineFeature, IRegionConvertor, ILineConvertor {
 
 	private GeoLine geoLine;
 
@@ -50,4 +53,32 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILi
 		return this.geoLine;
 	}
 
+	@Override
+	public void addPart(Point2Ds part) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addPart(Geometry geometry) {
+		IGeometry dGeometry = DGeometryFactory.create(geometry);
+
+		try {
+			if (this.geoLine != null && dGeometry instanceof ILineConvertor) {
+				GeoLine geoLine = ((ILineConvertor) dGeometry).convertToLine(60);
+
+				if (geoLine != null) {
+					for (int i = 0; i < geoLine.getPartCount(); i++) {
+						this.geoLine.addPart(geoLine.getPart(i));
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (dGeometry != null) {
+				dGeometry.dispose();
+			}
+		}
+	}
 }

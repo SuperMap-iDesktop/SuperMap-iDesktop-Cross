@@ -3,15 +3,16 @@ package com.supermap.desktop.geometry.Implements;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLineM;
 import com.supermap.data.GeoRegion;
-import com.supermap.data.Point2Ds;
+import com.supermap.data.Geometry;
 import com.supermap.data.PointMs;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
-import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 
-public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature, ILineConvertor, IRegionConvertor {
+public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<PointMs>, ILineConvertor, IRegionConvertor {
 
 	private GeoLineM geoLineM;
 
@@ -46,12 +47,32 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature, IL
 	}
 
 	@Override
-	public Point2Ds getPart(int index) {
-		GeoLine geoLine = convertToLine(0);
-		return geoLine == null ? null : geoLine.getPart(index);
+	public PointMs getPart(int index) {
+		return this.geoLineM == null ? null : this.geoLineM.getPart(index);
 	}
 
-	public PointMs getPartM(int index) {
-		return this.geoLineM == null ? null : this.geoLineM.getPart(index);
+	@Override
+	public void addPart(PointMs part) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addPart(Geometry geometry) {
+		try {
+			if (this.geoLineM != null && geometry instanceof GeoLineM) {
+				GeoLineM geoLineM = (GeoLineM) geometry;
+
+				for (int i = 0; i < geoLineM.getPartCount(); i++) {
+					this.geoLineM.addPart(geoLineM.getPart(i));
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (geometry != null) {
+				geometry.dispose();
+			}
+		}
 	}
 }

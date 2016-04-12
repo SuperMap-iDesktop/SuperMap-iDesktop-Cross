@@ -20,14 +20,18 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Selection;
 
 //@formatter:off
 /**
@@ -54,7 +58,7 @@ public class CombinationEditor extends AbstractEditor {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
 					MapEditorProperties.getString("String_GeometryOperation_Combination"), geometryEdit.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
-				combinationObjects(geometryEdit.getFormMap(), formCombination.getEditLayer(), formCombination.getPropertyData());
+				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
@@ -92,21 +96,57 @@ public class CombinationEditor extends AbstractEditor {
 		return result;
 	}
 
-	private void combination(IFormMap formMap, Layer editLayer, Map<String, Object> propertyData) {
-		Recordset recordset = null;
-		Geometry geometry = null;
-		formMap.getMapControl().getEditHistory().batchBegin();
+	/**
+	 * @param environment
+	 * @param editLayer
+	 * @param propertyData
+	 */
+	private void combination(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
+		Recordset editRecordset = null;
+		IGeometry geometry = null;
+		environment.getFormMap().getMapControl().getEditHistory().batchBegin();
 
 		try {
+			editRecordset = ((DatasetVector) editLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
 
+			// 创建结果对象
+			geometry = DGeometryFactory.createNew(editLayer.getDataset().getType());
+
+			// 获取有选中对象的图层
+			List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
+
+			for (Layer layer : selectedLayers) {
+				geometry = GeometryUtilties.combination(geometry, layer);
+			}
+
+			// 删除目标图层选中的对象
+			RecordsetDelete delete = new RecordsetDelete(editRecordset, environment.getMapControl().getEditHistory());
+			delete.begin();
+			for (int i = 0; i < editLayer.getSelection().getCount(); i++) {
+				delete.delete(editLayer.getSelection().get(i));
+			}
+			delete.update();
+
+			// 添加结果对象到目标图层
+			editRecordset.addNew(geometry.getGeometry(), propertyData);
+			editRecordset.update();
+
+			// 清空目标图层选择集并选中组合之后的几何对象
+			int resultID = editRecordset.getID();
+			editLayer.getSelection().clear();
+			editLayer.getSelection().add(resultID);
+			environment.getMapControl().getEditHistory().add(EditType.ADDNEW, editRecordset, true);
+			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMapControl().getMap().refresh();
+			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Completed"));
 		} catch (Exception e) {
-			// TODO: handle exception
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			formMap.getMapControl().getEditHistory().batchEnd();
+			environment.getFormMap().getMapControl().getEditHistory().batchEnd();
 
-			if (recordset != null) {
-				recordset.close();
-				recordset.dispose();
+			if (editRecordset != null) {
+				editRecordset.close();
+				editRecordset.dispose();
 			}
 
 			if (geometry != null) {
