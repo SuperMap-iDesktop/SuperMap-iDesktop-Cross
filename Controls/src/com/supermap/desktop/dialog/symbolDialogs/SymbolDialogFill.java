@@ -417,7 +417,7 @@ public class SymbolDialogFill extends SymbolDialog {
 		buttonColorSelectorBack.setColor(currentGeoStyle.getFillBackColor());
 		checkBoxBackOpaque.setSelected(currentGeoStyle.getFillBackOpaque());
 		buttonLineType.setIcon(getLineIcon());
-		spinnerOpaque.setValue(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate()));
+		spinnerOpaque.setValue(Double.valueOf(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate())));//不转Double，linux抛异常
 		checkBoxFill.setSelected(currentGeoStyle.getFillGradientMode() != FillGradientMode.NONE);
 		comboBoxFillType.setSelectedItem(FillGradientModeUtilties.getFillGradientMode(currentGeoStyle.getFillGradientMode()));
 		spinnerHorizontal.setValue(currentGeoStyle.getFillGradientOffsetRatioX());

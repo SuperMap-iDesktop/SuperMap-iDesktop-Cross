@@ -161,9 +161,7 @@ public abstract class SymbolDialog extends SmDialog {
 		initTabbedPane();
 		getRootPane().setFocusable(true);
 		getRootPane().requestFocus();
-		int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
-		int height = (int) (650 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
-		setSize(width, height);
+		initSize();
 //		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		getRootPane().setDefaultButton(buttonOK);
 		geoStylePropertyChange = new IGeoStylePropertyChange() {
@@ -176,6 +174,18 @@ public abstract class SymbolDialog extends SmDialog {
 		initComponentHook();
 		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
 		this.setLocationRelativeTo(null);
+	}
+
+	private void initSize() {
+		if (SystemPropertyUtilties.isWindows()) {
+			int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			int height = (int) (650 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			setSize(width, height);
+		} else {
+			int width = (int) (1200 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			int height = (int) (780 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			setSize(width, height);
+		}
 	}
 
 	/**
@@ -247,7 +257,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 		panelParent.add(getPanelSymbols(), new GridBagConstraintsHelper(1, 0, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 
-		panelParent.add(panelPreview, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(panelPreview, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 0, 0));
 		panelParent.add(getPanelMain(), new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.NORTH).setInsets(10, 0, 0, 0));
 
 		panelParent.add(panelButton, new GridBagConstraintsHelper(0, 2, 3, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));

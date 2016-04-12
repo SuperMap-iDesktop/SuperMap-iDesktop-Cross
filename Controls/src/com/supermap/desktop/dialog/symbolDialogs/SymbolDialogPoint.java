@@ -394,7 +394,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 		symbolMarkerSizeController.setGeoStyle(currentGeoStyle);
 		buttonSymbolColor.setColor(currentGeoStyle.getLineColor());
 		spinnerSymbolAngle.setValue(currentGeoStyle.getMarkerAngle());
-		spinnerOpaqueRate.setValue(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate()));
+		spinnerOpaqueRate.setValue(Double.valueOf(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate())));// 不转double,linux抛异常
 		loadSizeFormSymbolMarkerSizeController();
 	}
 
