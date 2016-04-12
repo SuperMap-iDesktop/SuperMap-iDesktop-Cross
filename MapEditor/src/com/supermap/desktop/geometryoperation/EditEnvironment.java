@@ -22,6 +22,7 @@ import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.geometryoperation.editor.NullEditor;
+import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
@@ -276,12 +277,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			}
 
 			this.properties.setSelectedGeometryCount(this.properties.getSelectedGeometryCount() + selection.getCount());
-			this.properties.getSelectedGeometryFeatures().addAll(features);
-			this.properties.getSelectedGeometryTypes().addAll(types);
+			ListUtilties.addArraySingle(this.properties.getSelectedGeometryFeatures(), features.toArray(new Class<?>[features.size()]));
+			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
-				this.properties.getEditableSelectedGeometryFeatures().addAll(features);
-				this.properties.getEditableSelectedGeometryTypes().addAll(types);
+				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryFeatures(), features.toArray(new Class<?>[features.size()]));
+				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -311,7 +312,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			for (int i = 0; i < this.formMap.getMapControl().getEditableLayers().length; i++) {
 				Layer layer = this.formMap.getMapControl().getEditableLayers()[i];
-				if (layer.getDataset() != null) {
+				if (layer.getDataset() != null && !this.properties.getEditableDatasetTypes().contains(layer.getDataset().getType())) {
 					this.properties.getEditableDatasetTypes().add(layer.getDataset().getType());
 				}
 			}

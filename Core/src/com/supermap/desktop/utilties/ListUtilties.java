@@ -65,4 +65,22 @@ public class ListUtilties {
 			list.add(array[i]);
 		}
 	}
+
+	/**
+	 * 将数组添加到指定集合，保持单值
+	 * 
+	 * @param list
+	 * @param items
+	 */
+	public static <T> void addArraySingle(List<T> list, T[] array) {
+		if (list == null || array == null || array.length == 0) {
+			return;
+		}
+
+		for (int i = 0; i < array.length; i++) {
+			if (!list.contains(array[i])) {
+				list.add(array[i]);
+			}
+		}
+	}
 }
