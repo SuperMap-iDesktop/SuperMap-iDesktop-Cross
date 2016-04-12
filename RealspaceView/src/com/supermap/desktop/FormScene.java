@@ -62,7 +62,6 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private SceneControl sceneControl = null;
 	private String title = "";
-	JScrollPane jScrollPaneChildWindow = null;
 	private Layer3DsTree layer3DsTree;
 	private ArrayList<Layer3D> activeLayer3DsList = new ArrayList<Layer3D>();
 
