@@ -60,8 +60,7 @@ public abstract class SymbolDialog extends SmDialog {
 	protected Resources currentResources;
 	private ISymbolApply symbolApply;
 
-	protected GeoStyle beforeGeoStyle;
-	protected GeoStyle currentGeoStyle;
+	protected GeoStyle currentGeoStyle = new GeoStyle();
 
 	protected Color wrongColor = Color.red;
 	protected Color defaultColor = Color.BLACK;
@@ -73,9 +72,13 @@ public abstract class SymbolDialog extends SmDialog {
 	 * 精度
 	 */
 	protected double pow = 1;
-	private Resources currentRescources;
 
 	public SymbolDialog() {
+		init();
+	}
+
+	public SymbolDialog(JDialog dialog) {
+		super(dialog, true);
 		init();
 	}
 
@@ -126,14 +129,10 @@ public abstract class SymbolDialog extends SmDialog {
 			throw new NullPointerException("geoStyle should not null");
 		}
 		this.symbolApply = symbolApply;
-		if (beforeGeoStyle != null) {
-			beforeGeoStyle.dispose();
-		}
-		this.beforeGeoStyle = geoStyle;
 		if (currentGeoStyle != null) {
 			currentGeoStyle.dispose();
 		}
-		this.currentGeoStyle = beforeGeoStyle.clone();
+		this.currentGeoStyle = geoStyle.clone();
 		prepareForShowDialog();
 		textFieldSearch.setText("");
 		scrollPaneWorkspaceResources.requestFocus();
@@ -161,7 +160,7 @@ public abstract class SymbolDialog extends SmDialog {
 		getRootPane().setFocusable(true);
 		getRootPane().requestFocus();
 		int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
-		int height = (int) (600 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+		int height = (int) (650 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
 		setSize(width, height);
 		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		getRootPane().setDefaultButton(buttonOK);
@@ -424,8 +423,7 @@ public abstract class SymbolDialog extends SmDialog {
 		}
 		return null;
 	}
-
 	public Resources getCurrentRescources() {
-		return currentRescources;
+		return currentResources;
 	}
 }

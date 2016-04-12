@@ -56,4 +56,22 @@ public class SymbolSpinnerUtilties {
 		}
 		return true;
 	}
+
+	public static boolean isLegitNumber(int min, int max, String value) {
+		if (StringUtilties.isNullOrEmpty(value)) {
+			return false;
+		}
+		if (value.contains("d")) {
+			return false;
+		}
+		try {
+			Integer integer = Integer.valueOf(value);
+			if (integer > max || integer < min) {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }

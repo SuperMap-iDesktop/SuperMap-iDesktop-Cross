@@ -35,6 +35,14 @@ public class SymbolDialogLine extends SymbolDialog {
 	private JLabel labelLineColor;
 	private ButtonColorSelector buttonSymbolColor;
 
+	public SymbolDialogLine() {
+		super();
+	}
+
+	public SymbolDialogLine(JDialog dialog) {
+		super(dialog);
+	}
+
 
 	@Override
 	protected void initComponentHook() {
@@ -68,7 +76,7 @@ public class SymbolDialogLine extends SymbolDialog {
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				String text = textFieldLineWidth.getText();
-				if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 20, text)) {
+				if (!SymbolSpinnerUtilties.isLegitNumber(0.1d, 20d, text)) {
 					textFieldLineWidth.setForeground(wrongColor);
 					return;
 				} else {
