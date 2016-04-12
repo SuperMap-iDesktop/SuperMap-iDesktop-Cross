@@ -146,6 +146,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 	private void init() {
 		currentResources = Application.getActiveApplication().getWorkspace().getResources();
+		this.setTitle(ControlsProperties.getString("String_Title_SymbolDialog"));
 		initComponent();
 		addListeners();
 		initLayout();
@@ -390,8 +391,6 @@ public abstract class SymbolDialog extends SmDialog {
 	}
 
 	private void initResources() {
-		this.setTitle(ControlsProperties.getString("String_Title_SymbolDialog"));
-
 		labelSearch.setText(ControlsProperties.getString("String_Label_SymbolSearch"));
 		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));

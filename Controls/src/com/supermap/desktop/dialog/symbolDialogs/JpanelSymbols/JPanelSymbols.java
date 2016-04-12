@@ -70,7 +70,7 @@ public abstract class JPanelSymbols extends JPanel {
 	public JPanelSymbols() {
 		this.setBackground(Color.WHITE);
 		this.setFocusable(true);
-		wrapLayout = new WrapLayout(FlowLayout.LEADING, 1, 1);
+		wrapLayout = new WrapLayout(FlowLayout.LEADING);
 		wrapLayout.setAlignOnBaseline(true);
 		this.setLayout(wrapLayout);
 	}
