@@ -45,7 +45,6 @@ public abstract class SymbolPanel extends JPanel {
 		this.symbol = symbol;
 		this.symbolID = symbol.getID();
 		this.symbolName = symbol.getName();
-
 	}
 
 	/**
@@ -107,7 +106,7 @@ public abstract class SymbolPanel extends JPanel {
 			builder.append("</html>");
 			result = builder.toString();
 		}
-		Dimension preferredSize = new Dimension(fontSize, (int) (labelDimension.getHeight() + line * (FontUtilties.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 2)));
+		Dimension preferredSize = new Dimension(fontSize + 20, (int) (labelDimension.getHeight() + line * (FontUtilties.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 2)));
 		this.setMinimumSize(preferredSize);
 		this.setPreferredSize(preferredSize);
 		this.setMaximumSize(preferredSize);

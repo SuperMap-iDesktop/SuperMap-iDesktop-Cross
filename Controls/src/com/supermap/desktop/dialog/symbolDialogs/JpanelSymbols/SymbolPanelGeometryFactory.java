@@ -67,10 +67,10 @@ public class SymbolPanelGeometryFactory {
 	 */
 	private static GeoRegion getPaintRegion() {
 		Point2Ds point2Ds = new Point2Ds();
-		point2Ds.add(new Point2D(5, 5));
-		point2Ds.add(new Point2D(5, 75));
-		point2Ds.add(new Point2D(75, 75));
-		point2Ds.add(new Point2D(75, 5));
+		point2Ds.add(new Point2D(0, 0));
+		point2Ds.add(new Point2D(0, 59));
+		point2Ds.add(new Point2D(59, 59));
+		point2Ds.add(new Point2D(59, 0));
 		GeoRegion paintregion = new GeoRegion(point2Ds);
 		GeoStyle fillGeoStyle = new GeoStyle();
 		fillGeoStyle.setFillForeColor(new Color(13, 80, 143));

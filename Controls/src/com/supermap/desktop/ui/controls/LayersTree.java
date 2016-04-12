@@ -3,11 +3,13 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.mapping.Layer;
@@ -1035,7 +1037,15 @@ public class LayersTree extends JTree {
 				// }
 			} else if (layer != null && selections.length == 1) {
 				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
-				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType);
+				final Layer finalLayer = layer;
+				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType, new ISymbolApply() {
+					@Override
+					public void apply(GeoStyle geoStyle) {
+						LayerSettingVector layerSetting = (LayerSettingVector) finalLayer.getAdditionalSetting();
+						layerSetting.setStyle(geoStyle);
+						currentMap.refresh();
+					}
+				});
 				if (geostyle != null) {
 					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
 					layerSetting.setStyle(geostyle);
@@ -1102,9 +1112,16 @@ public class LayersTree extends JTree {
 	}
 
 	private void updateGraphItemStyle(TreeNodeData treeNodeData) {
-		ThemeGraphItem item = (ThemeGraphItem) treeNodeData.getData();
+		final ThemeGraphItem item = (ThemeGraphItem) treeNodeData.getData();
 		GeoStyle itemStyle = item.getUniformStyle();
-		GeoStyle geostyle = changeGeoStyle(itemStyle, SymbolType.FILL);
+		GeoStyle geostyle = changeGeoStyle(itemStyle, SymbolType.FILL, new ISymbolApply() {
+			@Override
+			public void apply(GeoStyle geoStyle) {
+				item.setUniformStyle(geoStyle);
+				currentMap.refresh();
+				firePropertyChangeWithLayerSelect();
+			}
+		});
 		if (geostyle != null) {
 			item.setUniformStyle(geostyle);
 			this.currentMap.refresh();
@@ -1151,9 +1168,16 @@ public class LayersTree extends JTree {
 	}
 
 	private void updateRangeItemStyle(SymbolType symbolType, TreeNodeData treeNodeData) {
-		ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
+		final ThemeRangeItem item = (ThemeRangeItem) treeNodeData.getData();
 		GeoStyle itemStyle = item.getStyle();
-		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType, new ISymbolApply() {
+			@Override
+			public void apply(GeoStyle geoStyle) {
+				item.setStyle(geoStyle);
+				currentMap.refresh();
+				firePropertyChangeWithLayerSelect();
+			}
+		});
 		if (geostyle != null) {
 			item.setStyle(geostyle);
 			this.currentMap.refresh();
@@ -1162,9 +1186,16 @@ public class LayersTree extends JTree {
 	}
 
 	private void updateThemeUniqueItemStyle(SymbolType symbolType, TreeNodeData treeNodeData) {
-		ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
+		final ThemeUniqueItem item = (ThemeUniqueItem) treeNodeData.getData();
 		GeoStyle itemStyle = item.getStyle();
-		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType);
+		GeoStyle geostyle = changeGeoStyle(itemStyle, symbolType, new ISymbolApply() {
+			@Override
+			public void apply(GeoStyle geoStyle) {
+				item.setStyle(geoStyle);
+				currentMap.refresh();
+				firePropertyChangeWithLayerSelect();
+			}
+		});
 		if (geostyle != null) {
 			item.setStyle(geostyle);
 			this.currentMap.refresh();
@@ -1198,18 +1229,15 @@ public class LayersTree extends JTree {
 		this.updateUI();
 	}
 
-	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType) {
+	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType, ISymbolApply symbolApply) {
 		GeoStyle result = null;
 		SymbolDialog symbolDialog = null;
 		try {
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-
 			CursorUtilties.setWaitCursor();
-			symbolDialog = new SymbolDialog();
-			symbolDialog.setApplyEnable(true);
-			DialogResult dialogResult = symbolDialog.showDialog(resources, beforeStyle, symbolType);
+			symbolDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+			DialogResult dialogResult = symbolDialog.showDialog(beforeStyle, symbolApply);
 			if (dialogResult == DialogResult.OK) {
-				result = symbolDialog.getStyle();
+				result = symbolDialog.getCurrentGeoStyle();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

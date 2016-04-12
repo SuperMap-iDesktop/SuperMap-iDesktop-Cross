@@ -4,7 +4,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
@@ -16,9 +15,9 @@ import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.controls.NodeDataType;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
@@ -457,7 +456,7 @@ public class WorkspaceComponentManager extends JComponent {
 
 				if (activeDatasets != null && !activeDatasets.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(activeDatasets.toArray(new Dataset[activeDatasets.size()]));
-					Application.getActiveApplication().setActiveDatasources(new Datasource[] { activeDatasets.get(0).getDatasource() });
+					Application.getActiveApplication().setActiveDatasources(new Datasource[]{activeDatasets.get(0).getDatasource()});
 				} else if (activeDatasources != null && !activeDatasources.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(null);
 					Application.getActiveApplication().setActiveDatasources(activeDatasources.toArray(new Datasource[activeDatasources.size()]));
@@ -552,7 +551,7 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					MapViewUtilties.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
+					MapViewUtilties.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedNodeData.getData()}, true);
 				} else if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {
@@ -589,17 +588,11 @@ public class WorkspaceComponentManager extends JComponent {
 						}
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
-					Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-					SymbolDialog symbolDialog = new SymbolDialog();
-					symbolDialog.showDialog(resources, new GeoStyle(), SymbolType.MARKER);
+					SymbolDialogFactory.getSymbolDialog(SymbolType.MARKER).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_LINE_LIBRARY) {
-					Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-					SymbolDialog symbolDialog = new SymbolDialog();
-					symbolDialog.showDialog(resources, new GeoStyle(), SymbolType.LINE);
+					SymbolDialogFactory.getSymbolDialog(SymbolType.LINE).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_FILL_LIBRARY) {
-					Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-					SymbolDialog symbolDialog = new SymbolDialog();
-					symbolDialog.showDialog(resources, new GeoStyle(), SymbolType.FILL);
+					SymbolDialogFactory.getSymbolDialog(SymbolType.FILL).showDialog(new GeoStyle());
 				}
 			} else if (buttonType == MouseEvent.BUTTON1 && clickCount == 1 && -1 == this.workspaceTree.getRowForLocation(evt.getX(), evt.getY())) {
 				// 单击空白处

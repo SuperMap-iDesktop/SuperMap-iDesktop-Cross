@@ -4,10 +4,13 @@ import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolGroup;
+import com.supermap.desktop.dialog.symbolDialogs.WrapLayout;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -17,91 +20,59 @@ import java.util.ArrayList;
  */
 public abstract class JPanelSymbols extends JPanel {
 
+	private final WrapLayout wrapLayout;
 	protected SymbolGroup symbolGroup;
 	protected Resources resources;
 	private SymbolPanel lastSelectedPanel;
 	private java.util.List<SymbolSelectedChangedListener> symbolSelectedChangedListeners;
-	/**
-	 * 总共有多少行
-	 */
-	private int panelRow;
-	/**
-	 * 总共有多少列
-	 */
-	private int panelColumn;
 
 	private String searchString;
 	protected GeoStyle geoStyle;
+	private KeyAdapter keyAdapter = new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == 37) {
+				// 左
+				setSelectSymbol(-1);
+			} else if (e.getKeyCode() == 38) {
+				// 上
+				setSelectSymbol(-wrapLayout.getColumn());
+			} else if (e.getKeyCode() == 39) {
+				//右
+				setSelectSymbol(1);
+			} else if (e.getKeyCode() == 40) {
+				//下
+				setSelectSymbol(wrapLayout.getColumn());
+			}
+		}
+	};
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getSource() instanceof SymbolPanel) {
+				JPanelSymbols.this.requestFocus();
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					fireSymbolDoubleClicked();
+				}
+				SymbolPanel symbolPanel = (SymbolPanel) e.getSource();
+				setSelectedSymbolPanel(symbolPanel);
+			}
+		}
+	};
+	;
+	private MouseAdapter mouseAdapter1 = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			JPanelSymbols.this.requestFocus();
+		}
+	};
 
 	public JPanelSymbols() {
 		this.setBackground(Color.WHITE);
 		this.setFocusable(true);
-		FlowLayout mgr = new FlowLayout(FlowLayout.LEADING, 1, 1) {
-
-			public Dimension preferredLayoutSize(Container target) {
-				return computeSize(target);
-			}
-
-			private Dimension computeSize(Container target) {
-				synchronized (target.getTreeLock()) {
-					panelColumn = -1;
-					int hgap = getHgap();
-					int vgap = getVgap();
-					int w = target.getWidth();
-
-					// Let this behave like a regular FlowLayout (single row)
-					// if the container hasn't been assigned any size yet
-					if (w == 0) {
-						w = Integer.MAX_VALUE;
-					}
-
-					Insets insets = target.getInsets();
-					if (insets == null) {
-						insets = new Insets(0, 0, 0, 0);
-					}
-					int reqdWidth = 0;
-
-					int maxWidth = w - (insets.left + insets.right + hgap * 2);
-					int n = target.getComponentCount();
-					int x = 0;
-					int y = insets.top + vgap; // FlowLayout starts by adding vgap, so do that here too.
-					int rowHeight = 0;
-					int rowCount = 0;
-					int columnCount = 0;
-					for (int i = 0; i < n; i++) {
-						Component c = target.getComponent(i);
-						if (c.isVisible()) {
-							Dimension d = c.getPreferredSize();
-							if (x == 0 || x + d.width <= maxWidth) {
-								// fits in current row.
-								if (x > 0) {
-									x += hgap;
-								}
-								x += d.width;
-								columnCount++;
-								rowHeight = Math.max(rowHeight, d.height);
-							} else {
-								// Start of new row
-								if (panelColumn == -1) {
-									panelColumn = columnCount;
-								}
-								rowCount++;
-								x = d.width;
-								y += vgap + rowHeight;
-								rowHeight = d.height;
-							}
-							reqdWidth = Math.max(reqdWidth, x);
-						}
-					}
-					y += rowHeight;
-					y += insets.bottom;
-					panelRow = rowCount;
-					return new Dimension(reqdWidth + insets.left + insets.right, y);
-				}
-			}
-		};
-		mgr.setAlignOnBaseline(true);
-		this.setLayout(mgr);
+		wrapLayout = new WrapLayout(FlowLayout.LEADING);
+		wrapLayout.setAlignOnBaseline(true);
+		this.setLayout(wrapLayout);
 	}
 
 	public void setSymbolGroup(Resources resources, final SymbolGroup symbolGroup) {
@@ -111,9 +82,6 @@ public abstract class JPanelSymbols extends JPanel {
 		this.resources = resources;
 		this.removeAll();
 		this.symbolGroup = symbolGroup;
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
 		if (symbolGroup.getLibrary().getRootGroup() == symbolGroup) {
 			initSystemPanels();
 		}
@@ -121,35 +89,57 @@ public abstract class JPanelSymbols extends JPanel {
 		addListeners();
 		search();
 		this.updateUI();
-//			}
-//		});
 	}
 
 	private void addListeners() {
 		for (int i = 0; i < this.getComponentCount(); i++) {
-			this.getComponent(i).addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e) {
-					if (e.getSource() instanceof SymbolPanel) {
-						JPanelSymbols.this.requestFocus();
-						if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-							fireSymbolDoubleClicked();
-						}
-						SymbolPanel symbolPanel = (SymbolPanel) e.getSource();
-						if (symbolPanel == lastSelectedPanel) {
-							return;
-						}
-						if (lastSelectedPanel != null) {
-							lastSelectedPanel.setUnselected();
-						}
-						symbolPanel.setSelected();
-						lastSelectedPanel = symbolPanel;
-						changeGeoStyleId(lastSelectedPanel.getSymbolID());
-						fireSymbolSelectedChanged(lastSelectedPanel.getSymbol());
-					}
-				}
-			});
+			this.getComponent(i).removeMouseListener(mouseAdapter);
+			this.getComponent(i).addMouseListener(mouseAdapter);
 		}
+		this.removeKeyListener(keyAdapter);
+		this.addKeyListener(keyAdapter);
+		this.removeMouseListener(mouseAdapter1);
+		this.addMouseListener(mouseAdapter1);
+	}
+
+	private void setSelectedSymbolPanel(SymbolPanel symbolPanel) {
+		if (symbolPanel == lastSelectedPanel || symbolPanel == null) {
+			return;
+		}
+		if (lastSelectedPanel != null) {
+			lastSelectedPanel.setUnselected();
+		}
+		symbolPanel.setSelected();
+		lastSelectedPanel = symbolPanel;
+		changeGeoStyleId(lastSelectedPanel.getSymbolID());
+		if (this.getParent() != null && this.getParent().getParent() instanceof JScrollPane) {
+			this.scrollRectToVisible(lastSelectedPanel.getBounds());
+		}
+		fireSymbolSelectedChanged(lastSelectedPanel.getSymbol());
+	}
+
+	private void setSelectSymbol(int distance) {
+		if (this.getComponentCount() <= 0 || distance == 0) {
+			return;
+		}
+		int currentIndex = this.getComponentZOrder(lastSelectedPanel);
+		SymbolPanel resultSymbolPanel = null;
+		if (distance > 0) {
+			for (int i = 0, j = currentIndex; i <= distance && j < this.getComponentCount(); j++) {
+				if (this.getComponent(j).isVisible()) {
+					resultSymbolPanel = ((SymbolPanel) this.getComponent(j));
+					i++;
+				}
+			}
+		} else {
+			for (int i = 0, j = currentIndex; i <= -distance && j >= 0; j--) {
+				if (this.getComponent(j).isVisible()) {
+					resultSymbolPanel = ((SymbolPanel) this.getComponent(j));
+					i++;
+				}
+			}
+		}
+		setSelectedSymbolPanel(resultSymbolPanel);
 	}
 
 	private void fireSymbolDoubleClicked() {
@@ -186,19 +176,14 @@ public abstract class JPanelSymbols extends JPanel {
 	 */
 	protected abstract void changeGeoStyleId(int symbolID);
 
-	private int getComponentRow(SymbolPanel symbolPanel) {
-		return this.getComponentZOrder(symbolPanel) / panelColumn;
-	}
-
-	private int getComponentColumn(SymbolPanel symbolPanel) {
-		return this.getComponentZOrder(symbolPanel) % panelColumn;
-	}
-
 	protected abstract void initSystemPanels();
 
 	protected abstract void initDefaultPanel();
 
-	public void setSelectSymbol() {
+	/**
+	 * 初始化的时候使用
+	 */
+	private void setSelectSymbol() {
 		int symbolId = getCurrentSymbolId();
 		boolean isFind = false;
 		for (int i = 0; i < this.getComponentCount(); i++) {
@@ -235,7 +220,9 @@ public abstract class JPanelSymbols extends JPanel {
 
 	private void search() {
 		for (int i = 0; i < this.getComponentCount(); i++) {
-			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString) || ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase()));
+			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString)
+					|| ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase())
+					|| String.valueOf(((SymbolPanel) this.getComponent(i)).getSymbolID()).toLowerCase().contains(searchString.toLowerCase()));
 		}
 	}
 

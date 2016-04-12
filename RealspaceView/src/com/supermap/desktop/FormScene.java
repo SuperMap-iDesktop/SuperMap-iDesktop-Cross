@@ -1,30 +1,5 @@
 package com.supermap.desktop;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoStyle3D;
@@ -35,7 +10,9 @@ import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.DialogSaveAsScene;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayer3DsChangedEvent;
 import com.supermap.desktop.event.ActiveLayer3DsChangedListener;
@@ -46,7 +23,6 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.SceneUtilties;
 import com.supermap.realspace.Layer3D;
@@ -56,6 +32,24 @@ import com.supermap.realspace.Scene;
 import com.supermap.realspace.Selection3D;
 import com.supermap.ui.Action3D;
 import com.supermap.ui.SceneControl;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClosingListener {
 
@@ -68,7 +62,6 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private SceneControl sceneControl = null;
 	private String title = "";
-	JScrollPane jScrollPaneChildWindow = null;
 	private Layer3DsTree layer3DsTree;
 	private ArrayList<Layer3D> activeLayer3DsList = new ArrayList<Layer3D>();
 
@@ -593,10 +586,10 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 
 			((JFrame) Application.getActiveApplication().getMainFrame()).setCursor(Cursor.WAIT_CURSOR);
-			symbolDialog = new SymbolDialog();
-			DialogResult dialogResult = symbolDialog.showDialog(resources, beforeStyle, symbolType);
+			symbolDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+			DialogResult dialogResult = symbolDialog.showDialog(beforeStyle);
 			if (dialogResult == DialogResult.OK) {
-				result = symbolDialog.getStyle();
+				result = symbolDialog.getCurrentGeoStyle();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

@@ -16,8 +16,10 @@ import com.supermap.mapping.LayerSettingVector;
 import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DSettingVector;
+import com.supermap.ui.SymbolPanel;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -26,6 +26,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,9 +75,24 @@ public abstract class SymbolDialog extends SmDialog {
 	 */
 	protected double pow = 1;
 	private Resources currentRescources;
-
+	
 	public SymbolDialog() {
 		init();
+	}
+
+	public SymbolDialog(JDialog dialog) {
+		super(dialog, true);
+		init();
+	}
+
+	public void escapePressed() {
+		this.dialogResult = DialogResult.CANCEL;
+		this.setVisible(false);
+	}
+
+	public void enterPressed() {
+		this.dialogResult = DialogResult.OK;
+		this.setVisible(false);
 	}
 
 
@@ -416,7 +432,12 @@ public abstract class SymbolDialog extends SmDialog {
 		return null;
 	}
 
-	public Resources getCurrentRescources() {
-		return currentRescources;
+	protected int getUnOpaqueRate(int value) {
+		return 100 - value;
 	}
+
+	public Resources getCurrentResources() {
+		return currentResources;
+	}
+
 }

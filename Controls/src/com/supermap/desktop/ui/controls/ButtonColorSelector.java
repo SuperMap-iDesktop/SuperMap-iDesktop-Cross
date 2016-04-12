@@ -66,7 +66,7 @@ public class ButtonColorSelector extends JPanel {
 	private void initializeComponents() {
 		this.colorSelectionPanel = new ColorSelectionPanel();
 		this.buttonColorDisplay = new SmButton();
-		this.colorSwatch = new ColorSwatch(this.color, 16, 75);
+		this.colorSwatch = new ColorSwatch(this.color, 16, 20);
 		this.buttonColorDisplay.setIcon(this.colorSwatch);
 		this.buttonColorDisplay.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
@@ -138,5 +138,12 @@ public class ButtonColorSelector extends JPanel {
 		this.colorSwatch.setIconHeight(size.height);
 		this.colorSwatch.setIconWidth(size.width);
 		this.buttonColorDisplay.repaint();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.buttonColorDisplay.setEnabled(enabled);
+		this.buttonArrow.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 }

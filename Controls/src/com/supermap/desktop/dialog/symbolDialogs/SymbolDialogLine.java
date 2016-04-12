@@ -35,9 +35,20 @@ public class SymbolDialogLine extends SymbolDialog {
 	private JLabel labelLineColor;
 	private ButtonColorSelector buttonSymbolColor;
 
+	public SymbolDialogLine() {
+		super();
+	}
+
+	public SymbolDialogLine(JDialog dialog) {
+		super(dialog);
+	}
+
 
 	@Override
 	protected void initComponentHook() {
+//		int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+//		int height = (int) (450 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+//		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		lineInit();
 		this.setTitle(ControlsProperties.getString("String_LineGeoStyleChoose"));
 	}
@@ -68,7 +79,7 @@ public class SymbolDialogLine extends SymbolDialog {
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				String text = textFieldLineWidth.getText();
-				if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 20, text)) {
+				if (!SymbolSpinnerUtilties.isLegitNumber(0.1d, 20d, text)) {
 					textFieldLineWidth.setForeground(wrongColor);
 					return;
 				} else {
@@ -115,11 +126,11 @@ public class SymbolDialogLine extends SymbolDialog {
 	private void lineInitLayout() {
 		panelMain.setLayout(new GridBagLayout());
 		panelMain.add(labelLineWidth, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelMain.add(spinnerLineWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5));
+		panelMain.add(spinnerLineWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 0, 5));
 		panelMain.add(labelLineWidthUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
 
-		panelMain.add(labelLineColor, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelMain.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 0, 5));
+		panelMain.add(labelLineColor, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
+		panelMain.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 5));
 		panelMain.add(new JPanel(), new GridBagConstraintsHelper(2, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 
 		panelMain.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
