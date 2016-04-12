@@ -78,11 +78,10 @@ public class CombinationEditor extends AbstractEditor {
 					}
 				} else if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) // 只有一种时，目标相同或为CAD
 				{
-					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT || environment.getEditProperties()
-							.getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
-						if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)
-								|| environment.getEditProperties().getEditableDatasetTypes()
-										.contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
+					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT
+							|| environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
+						if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD) || environment.getEditProperties()
+								.getEditableDatasetTypes().contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
 							result = true;
 						}
 					}
@@ -120,7 +119,7 @@ public class CombinationEditor extends AbstractEditor {
 			}
 
 			// 删除目标图层选中的对象
-			RecordsetDelete delete = new RecordsetDelete(editRecordset, environment.getMapControl().getEditHistory());
+			RecordsetDelete delete = new RecordsetDelete(editRecordset.getDataset(), environment.getMapControl().getEditHistory());
 			delete.begin();
 			for (int i = 0; i < editLayer.getSelection().getCount(); i++) {
 				delete.delete(editLayer.getSelection().get(i));
@@ -131,145 +130,24 @@ public class CombinationEditor extends AbstractEditor {
 			editRecordset.addNew(geometry.getGeometry(), propertyData);
 			editRecordset.update();
 
+			// 添加历史记录
+			environment.getMapControl().getEditHistory().add(EditType.ADDNEW, editRecordset, true);
+
 			// 清空目标图层选择集并选中组合之后的几何对象
 			int resultID = editRecordset.getID();
 			editLayer.getSelection().clear();
 			editLayer.getSelection().add(resultID);
-			environment.getMapControl().getEditHistory().add(EditType.ADDNEW, editRecordset, true);
-			environment.getMapControl().getEditHistory().batchEnd();
-			environment.getMapControl().getMap().refresh();
+
 			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Completed"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.getFormMap().getMapControl().getEditHistory().batchEnd();
+			environment.getMapControl().getMap().refresh();
 
 			if (editRecordset != null) {
 				editRecordset.close();
 				editRecordset.dispose();
-			}
-
-			if (geometry != null) {
-				geometry.dispose();
-			}
-		}
-	}
-
-	private void combinationObjects(IFormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
-		Recordset recordset = null;
-		Geometry geometry = null;
-		try {
-			formMap.getMapControl().getEditHistory().batchBegin();
-			List<Geometry> objectGeometrys = new ArrayList<Geometry>();
-			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
-			for (Layer layer : layers) {
-				if (layer.getSelection() != null) {
-					recordset = layer.getSelection().toRecordset();
-					while (!recordset.isEOF()) {
-						geometry = recordset.getGeometry();
-						objectGeometrys.add(geometry);
-						recordset.moveNext();
-					}
-					if (layer.getName().equals(resultLayer.getName())) {
-						RecordsetDelete delete = new RecordsetDelete(recordset, formMap.getMapControl().getEditHistory());
-						delete.begin();
-						for (int dd = 0; dd < layer.getSelection().getCount(); dd++) {
-							delete.delete(layer.getSelection().get(dd));
-						}
-						delete.update();
-					}
-					recordset.dispose();
-				}
-			}
-			DatasetVector resultDataset = (DatasetVector) resultLayer.getDataset();
-			recordset = resultDataset.getRecordset(false, CursorType.DYNAMIC);
-			if (resultDataset.getType() == DatasetType.CAD) {
-				GeoCompound geoObject = new GeoCompound();
-				for (Geometry g : objectGeometrys) {
-					geoObject.addPart(g);
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.LINE) {
-				GeoLine geoObject = new GeoLine();
-				for (Geometry g : objectGeometrys) {
-					for (int i = 0; i < ((GeoLine) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoLine) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.LINE3D) {
-				GeoLine3D geoObject = new GeoLine3D();
-				for (Geometry g : objectGeometrys) {
-					for (int i = 0; i < ((GeoLine3D) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoLine3D) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.REGION) {
-				GeoRegion geoObject = new GeoRegion();
-				for (Geometry g : objectGeometrys) {
-					for (int i = 0; i < ((GeoRegion) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoRegion) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.REGION3D) {
-				GeoRegion3D geoObject = new GeoRegion3D();
-				for (Geometry g : objectGeometrys) {
-					for (int i = 0; i < ((GeoRegion3D) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoRegion3D) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.LINEM) {
-				GeoLineM geoObject = new GeoLineM();
-				for (Geometry g : objectGeometrys) {
-					for (int i = 0; i < ((GeoLineM) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoLineM) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			} else if (resultDataset.getType() == DatasetType.TEXT) {
-				GeoText geoObject = new GeoText();
-				int index = 0;
-				for (Geometry g : objectGeometrys) {
-					if (index++ == 0) {
-						geoObject.setTextStyle(((GeoText) g).getTextStyle());
-					}
-					for (int i = 0; i < ((GeoText) g).getPartCount(); i++) {
-						geoObject.addPart(((GeoText) g).getPart(i));
-					}
-				}
-				recordset.addNew(geoObject, propertyData);
-				recordset.update();
-				geoObject.dispose();
-			}
-
-			int resultID = recordset.getID();
-			resultLayer.getSelection().clear();
-			resultLayer.getSelection().add(resultID);
-			formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
-			formMap.getMapControl().getEditHistory().batchEnd();
-			formMap.getMapControl().getMap().refresh();
-			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Completed"));
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			if (recordset != null) {
-				recordset.close();
-				recordset.dispose();
 			}
 
 			if (geometry != null) {
