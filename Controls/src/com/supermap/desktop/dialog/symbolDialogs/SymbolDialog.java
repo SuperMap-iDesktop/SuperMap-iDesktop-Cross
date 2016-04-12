@@ -44,6 +44,7 @@ public abstract class SymbolDialog extends SmDialog {
 	private JMenuItem menuItemProperty = new JMenuItem();
 	private JMenu menuEdit = new JMenu();
 
+	private JLabel labelSearch = new JLabel();
 	private JTextField textFieldSearch = new JTextField();
 
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -156,6 +157,9 @@ public abstract class SymbolDialog extends SmDialog {
 	 * 初始化面板
 	 */
 	private void initComponent() {
+		if (!SystemPropertyUtilties.isWindows()) {
+			labelSearch.setForeground(Color.white);
+		}
 		panelPreview = new SymbolPreViewPanel(getSymbolType());
 		initPanelWorkspaceResources();
 		initTabbedPane();
@@ -302,7 +306,8 @@ public abstract class SymbolDialog extends SmDialog {
 
 		// 编辑菜单
 		this.menuBar.add(this.menuEdit, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
-		this.menuBar.add(this.textFieldSearch, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1).setInsets(0, 0, 0, 20).setIpad(150, -2));
+		this.menuBar.add(this.labelSearch, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5).setWeight(1, 1));
+		this.menuBar.add(this.textFieldSearch, new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(0, 1).setInsets(0, 0, 0, 10).setIpad(150, -2));
 	}
 	//endregion
 
@@ -386,6 +391,7 @@ public abstract class SymbolDialog extends SmDialog {
 	private void initResources() {
 		this.setTitle(ControlsProperties.getString("String_Title_SymbolDialog"));
 
+		labelSearch.setText(ControlsProperties.getString("String_Label_SymbolSearch"));
 		this.buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
