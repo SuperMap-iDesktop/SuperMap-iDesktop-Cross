@@ -62,7 +62,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	private Map map;
 	private Layer editLayer;
-	private FieldOperation[] selectedOperations;
+	private int[] selectedOperations;
 	private DatasetType resultDatasetType;
 
 	public JDialogFieldOperationSetting(String title, DatasetType resultDatasetType) {
@@ -543,14 +543,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void radioButtonNullStateChanged() {
 		try {
 			if (this.radioButtonNull.isSelected() && this.selectedOperations != null) {
-				for (int i = 0; i < this.selectedOperations.length; i++) {
-					FieldOperation operation = this.selectedOperations[i];
-					operation.setOperationType(OperationType.NULL);
-					operation.setOperationData(new DefaultOperationData(OperationType.NULL, MapEditorProperties.getString("String_GeometryOperation_BeNull")));
-				}
+				updateSelectedOperationsData(new DefaultOperationData(OperationType.NULL, MapEditorProperties.getString("String_GeometryOperation_BeNull")));
 				removeTrackingTags();
 				this.map.refresh();
-				this.table.updateUI();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -560,13 +555,14 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void radioButtonAVGStateChanged() {
 		try {
 			if (this.radioButtonAVG.isSelected() && this.selectedOperations != null) {
+				FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					FieldOperation fieldOperation = this.selectedOperations[i];
-					// 设置字段操作类型
-					fieldOperation.setOperationType(OperationType.AVG);
+					int row = this.selectedOperations[i];
+					FieldOperation fieldOperation = model.getFieldOperation(row);
 					// 设置附加数据，如果不是当前操作的字段类型
 					if (!(fieldOperation.getOperationData() instanceof AVGOperationData)) {
-						fieldOperation.setOperationData(this.comboBoxWeight.getItemAt(0));
+						model.changeOperationData(row, this.comboBoxWeight.getItemAt(0));
 					}
 				}
 
@@ -582,11 +578,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				 * 4.table 中选中了多条记录，如果所有记录的 OperationData 不一致，则将 combobox 的当前选中置空。
 				 */
 				// @formatter:on
-				IOperationData currentData = this.selectedOperations[0].getOperationData();
+				IOperationData currentData = model.getFieldOperation(this.selectedOperations[0]).getOperationData();
 				boolean isDifferent = false;
 
-				for (int i = 0; i < selectedOperations.length; i++) {
-					if (currentData != selectedOperations[i].getOperationData()) {
+				for (int i = 0; i < this.selectedOperations.length; i++) {
+					int row = this.selectedOperations[i];
+					if (currentData != model.getFieldOperation(row).getOperationData()) {
 						isDifferent = true;
 						break;
 					}
@@ -607,7 +604,6 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			}
 			removeTrackingTags();
 			this.map.refresh();
-			this.table.updateUI();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -616,14 +612,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void radioButtonSumStateChanged() {
 		try {
 			if (this.radioButtonSum.isSelected() && this.selectedOperations != null) {
-				for (int i = 0; i < this.selectedOperations.length; i++) {
-					FieldOperation operation = this.selectedOperations[i];
-					operation.setOperationType(OperationType.SUM);
-					operation.setOperationData(new DefaultOperationData(OperationType.SUM, MapEditorProperties.getString("String_GeometryOperation_SUM")));
-				}
+				updateSelectedOperationsData(new DefaultOperationData(OperationType.SUM, MapEditorProperties.getString("String_GeometryOperation_SUM")));
 				removeTrackingTags();
 				this.map.refresh();
-				this.table.updateUI();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -633,13 +624,14 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void radioButtonGeometryStateChanged() {
 		try {
 			if (this.radioButtonGeometry.isSelected() && this.selectedOperations != null) {
+				FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					FieldOperation fieldOperation = this.selectedOperations[i];
-					// 设置操作类型
-					fieldOperation.setOperationType(OperationType.GEOMETRY);
+					int row = this.selectedOperations[i];
+					FieldOperation fieldOperation = model.getFieldOperation(row);
 					// 设置附加数据
 					if (!(fieldOperation.getOperationData() instanceof GeometryOperationData)) {
-						fieldOperation.setOperationData(this.comboBoxGeometry.getItemAt(0));
+						model.changeOperationData(row, this.comboBoxGeometry.getItemAt(0));
 					}
 				}
 
@@ -655,11 +647,13 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				 * 4.table 中选中了多条记录，如果所有记录的 OperationData 不一致，则将 combobox 的当前选中置空。
 				 */
 				// @formatter:on
-				IOperationData currentData = this.selectedOperations[0].getOperationData();
+				IOperationData currentData = model.getFieldOperation(this.selectedOperations[0]).getOperationData();
 				boolean isDifferent = false;
 
 				for (int i = 0; i < this.selectedOperations.length; i++) {
-					if (currentData != this.selectedOperations[i].getOperationData()) {
+					int row = this.selectedOperations[i];
+
+					if (currentData != model.getFieldOperation(row).getOperationData()) {
 						isDifferent = true;
 						break;
 					}
@@ -677,7 +671,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 				// 如果 table 中选中单条记录，就用这个字段来初始化 ComboBoxGeometry 各子项的 FieldValue
 				if (this.selectedOperations.length == 1) {
-					refreshComboBoxGeometryItems(this.selectedOperations[0].getFieldName());
+					refreshComboBoxGeometryItems(model.getFieldOperation(this.selectedOperations[0]).getFieldName());
 				} else {
 					refreshComboBoxGeometryItems(null);
 				}
@@ -685,7 +679,6 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				this.comboBoxGeometry.setEnabled(false);
 				this.comboBoxGeometry.setSelectedItem(null);
 			}
-			this.table.updateUI();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -742,10 +735,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void comboBoxWeightSelectChanged(ItemEvent e) {
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED && this.selectedOperations != null) {
-				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationData((IOperationData) this.comboBoxWeight.getSelectedItem());
-				}
-				this.table.updateUI();
+				updateSelectedOperationsData((IOperationData) this.comboBoxWeight.getSelectedItem());
 			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -758,16 +748,26 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getSelectedItem();
 
 				// 设置附加数据
-				for (int i = 0; i < this.selectedOperations.length; i++) {
-					this.selectedOperations[i].setOperationData(data);
-				}
-				this.table.updateUI();
+				updateSelectedOperationsData(data);
 
 				// 地图上高亮显示
 				highlightGeometry(data.getID());
 			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
+		}
+	}
+
+	/**
+	 * 更新选中字段的操作数据
+	 * 
+	 * @param operationData
+	 */
+	private void updateSelectedOperationsData(IOperationData operationData) {
+		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+
+		for (int i = 0; i < this.selectedOperations.length; i++) {
+			model.changeOperationData(this.selectedOperations[i], operationData);
 		}
 	}
 
@@ -815,9 +815,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	private void tableSelectionChanged() {
 		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
-		int[] rows = this.table.getSelectedRows();
-		this.selectedOperations = model.getFieldOperations(rows);
-		setFieldOperations(this.selectedOperations);
+		this.selectedOperations = this.table.getSelectedRows();
+		setFieldOperations(model.getFieldOperations(this.selectedOperations));
 	}
 
 	/**
@@ -899,6 +898,13 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			this.datas.add(fieldOperation);
 			fireTableDataChanged();
 		}
+
+		public void changeOperationData(int row, IOperationData operationData) {
+			if (row >= 0 && row < this.datas.size()) {
+				this.datas.get(row).setOperationData(operationData);
+				fireTableCellUpdated(row, FIELD_OPERATION);
+			}
+		}
 	}
 
 	private class FieldOperation {
@@ -906,7 +912,6 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		private String fieldName;
 		private String fieldCaption;
 		private FieldType fieldType;
-		private int operationType = OperationType.GEOMETRY;
 		private int availableOperationType = OperationType.NULL | OperationType.SUM | OperationType.AVG | OperationType.GEOMETRY;
 		private IOperationData operationData = null;
 
@@ -945,11 +950,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		}
 
 		public int getOperationType() {
-			return this.operationType;
-		}
-
-		public void setOperationType(int operationType) {
-			this.operationType = operationType;
+			return this.operationData.getOperationType();
 		}
 
 		public IOperationData getOperationData() {
@@ -966,7 +967,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			Recordset recordset = null;
 
 			try {
-				if (this.operationType == OperationType.GEOMETRY) {
+				if (getOperationType() == OperationType.GEOMETRY) {
 					if (!StringUtilties.isNullOrEmpty(this.fieldName) && this.operationData instanceof GeometryOperationData) {
 						recordset = this.datasetVector.getRecordset(false, CursorType.STATIC);
 						int id = ((GeometryOperationData) this.operationData).getID();
