@@ -29,9 +29,13 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
@@ -339,12 +343,10 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		this.comboBoxWeight.addItemListener(this);
 		this.comboBoxGeometry.addItemListener(this);
 		this.table.getSelectionModel().addListSelectionListener(this);
-		this.addWindowListener(new WindowAdapter() {
-			/**
-			 * Invoked when a window has been closed.
-			 */
+		this.addComponentListener(new ComponentAdapter() {
+
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void componentHidden(ComponentEvent e) {
 				removeTrackingTags();
 				map.refresh();
 			}
@@ -631,7 +633,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 					FieldOperation fieldOperation = model.getFieldOperation(row);
 					// 设置附加数据
 					if (!(fieldOperation.getOperationData() instanceof GeometryOperationData)) {
-						model.changeOperationData(row, this.comboBoxGeometry.getItemAt(0));
+						IOperationData data = this.comboBoxGeometry.getItemAt(0);
+						model.changeOperationData(row, data);
+						highlightGeometry(((GeometryOperationData) data).getID());
 					}
 				}
 

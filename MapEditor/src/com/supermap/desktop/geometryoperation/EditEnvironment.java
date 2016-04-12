@@ -215,7 +215,9 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 					continue;
 				}
 
-				this.properties.getSelectedDatasetTypes().add(layer.getDataset().getType());
+				if (!this.properties.getSelectedDatasetTypes().contains(layer.getDataset().getType())) {
+					this.properties.getSelectedDatasetTypes().add(layer.getDataset().getType());
+				}
 				this.properties.getSelectedLayers().add(layer);
 				statisticGeometryData(layer);
 			}
