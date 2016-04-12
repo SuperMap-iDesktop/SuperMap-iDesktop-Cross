@@ -82,9 +82,6 @@ public abstract class JPanelSymbols extends JPanel {
 		this.resources = resources;
 		this.removeAll();
 		this.symbolGroup = symbolGroup;
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
 		if (symbolGroup.getLibrary().getRootGroup() == symbolGroup) {
 			initSystemPanels();
 		}
@@ -92,8 +89,6 @@ public abstract class JPanelSymbols extends JPanel {
 		addListeners();
 		search();
 		this.updateUI();
-//			}
-//		});
 	}
 
 	private void addListeners() {

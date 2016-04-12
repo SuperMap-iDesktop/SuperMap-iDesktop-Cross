@@ -10,7 +10,7 @@ public class WrapLayout extends FlowLayout {
 
 	private int row;
 	/**
-	 * 一般没用，图层费风格管理器中才用到
+	 * 一般没用，图层风格管理器中才用到
 	 */
 	private int column;
 	private Dimension preferredLayoutSize;
