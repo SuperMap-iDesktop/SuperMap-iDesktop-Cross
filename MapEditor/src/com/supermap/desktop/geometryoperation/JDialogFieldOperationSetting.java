@@ -527,6 +527,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				GeometryOperationData operationData = new GeometryOperationData(selection.get(i));
 				this.comboBoxGeometry.addItem(operationData);
 			}
+			this.comboBoxGeometry.setSelectedItem(null);
 		}
 	}
 
@@ -853,11 +854,11 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			if (datas.size() > 0 && rowIndex >= 0 && rowIndex < datas.size() && columnIndex >= 0 && columnIndex < 3) {
 				FieldOperation data = datas.get(rowIndex);
 
-				if (columnIndex == 0) {
+				if (columnIndex == FIELD_NAME) {
 					return MessageFormat.format("{0}({1})", data.getFieldName(), data.getFieldCaption());
-				} else if (columnIndex == 1) {
+				} else if (columnIndex == FIELD_TYPE) {
 					return FieldTypeUtilties.getFieldTypeName(data.getFieldType());
-				} else if (columnIndex == 2) {
+				} else if (columnIndex == FIELD_OPERATION) {
 					return data.toString();
 				}
 			}
