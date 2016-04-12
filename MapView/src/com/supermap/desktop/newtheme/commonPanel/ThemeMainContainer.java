@@ -12,7 +12,6 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
@@ -27,8 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-//import com.supermap.desktop.utilties.MapUtilties;
 
 /**
  * 屏蔽掉专题图下拉显示项
@@ -59,8 +56,6 @@ public class ThemeMainContainer extends JPanel {
 	// 标记位，用于标记当前
 	private boolean layerPropertyChanged = false;
 	public Layer oldLayer;
-	public ThemeChangePanel lastChangePanel;
-	public Theme lastTheme;
 
 	public ThemeMainContainer() {
 		initComponents();
@@ -123,6 +118,8 @@ public class ThemeMainContainer extends JPanel {
 		this.layerRemoveListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
+				//删除图层时销毁已有地图
+				panel.unregistActionListener();
 				setLayerPropertyChanged(false);
 			}
 		};
@@ -197,6 +194,7 @@ public class ThemeMainContainer extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
+				ThemeGuideFactory.modifyTheme(newLayer);
 				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
 			}
 		}
@@ -208,8 +206,7 @@ public class ThemeMainContainer extends JPanel {
 		public void valueChanged(TreeSelectionEvent e) {
 			try {
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				// isSetCombobox = false;
-				if (null != e.getOldLeadSelectionPath()) {
+				if (null != e.getOldLeadSelectionPath() && isLayerPath(e.getNewLeadSelectionPath())) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
 				if (null != newLayer && null != newLayer.getTheme()) {
@@ -226,6 +223,20 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
+	public boolean isLayerPath(TreePath path) {
+		boolean result = false;
+		if (null != path && null != path.getLastPathComponent()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Object obj = node.getUserObject();
+			TreeNodeData controlNodeData = (TreeNodeData) obj;
+			Object itemObj = controlNodeData.getData();
+			if (itemObj instanceof Layer) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
 	public void updateLayerProperty(final TreePath path) {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
 		if (tree.getRowForPath(path) < 0) {
@@ -240,21 +251,12 @@ public class ThemeMainContainer extends JPanel {
 		if (null != panel && null != oldLayer && !oldLayer.isDisposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
-				int count = -1;
-				if (oldLayer.getTheme() instanceof ThemeLabel) {
-					count = ((ThemeLabel) oldLayer.getTheme()).getCount();
-				}
-				ThemeChangePanel panel = ThemeGuideFactory.themeTypeContainer.get(new String[] { oldLayer.getCaption(),
-						ThemeGuideFactory.getThemeTypeString(oldLayer.getTheme().getType(), count) });
 				if (null != panel) {
 					panel.unregistActionListener();
-					panel = null;
-					ThemeGuideFactory.themeTypeContainer.remove(oldLayer.getCaption());
 				}
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
-				panel = ThemeGuideFactory.themeTypeContainer.get(oldLayer.getCaption());
 				if (panel instanceof ThemeLabelUniformContainer) {
 					panel.refreshMapAndLayer();
 				} else if (panel instanceof ThemeLabelRangeContainer) {

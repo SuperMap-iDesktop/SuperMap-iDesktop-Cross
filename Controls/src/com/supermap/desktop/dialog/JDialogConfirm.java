@@ -47,16 +47,25 @@ public class JDialogConfirm extends SmDialog {
 				JDialogConfirm.this.setVisible(false);
 			}
 		});
+//		initTraversalPolicy();
+	}
+
+	private void initTraversalPolicy() {
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public JDialogConfirm(String message) {
 		this();
 		this.textAreaMessage.setText(message);
+//		initTraversalPolicy();
 	}
 
 	public JDialogConfirm(String message, boolean isUsedAsDefault) {
 		this(message);
 		this.checkBoxConfirm.setSelected(isUsedAsDefault);
+//		initTraversalPolicy();
 	}
 
 	public boolean isUsedAsDefault() {

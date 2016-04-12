@@ -63,6 +63,9 @@ public class DataImportFrame extends SmDialog {
 		registActionListener();
 		initDrag();
 		this.buttonAddFile.setSelected(false);
+		this.componentList.add(this.buttonImport);
+		this.componentList.add(this.buttonClose);
+		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	public DataImportFrame(JDialog owner, boolean modal) {
@@ -383,7 +386,6 @@ public class DataImportFrame extends SmDialog {
 			this.buttonDelete.setEnabled(true);
 			this.buttonSelectAll.setEnabled(true);
 			this.buttonInvertSelect.setEnabled(true);
-			this.getRootPane().setDefaultButton(this.buttonImport);
 		} else {
 			this.buttonImport.setEnabled(false);
 			this.buttonDelete.setEnabled(false);

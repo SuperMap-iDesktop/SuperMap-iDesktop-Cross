@@ -51,7 +51,8 @@ public class CombinationEditor extends AbstractEditor {
 			}
 			Layer resultLayer = null;
 
-			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting("组合", geometryEdit.getMap(), datasetType);
+			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
+					MapEditorProperties.getString("String_GeometryOperation_Combination"), geometryEdit.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
 				resultLayer = formCombination.getEditLayer();
 				Map<String, Object> values = formCombination.getPropertyData();

@@ -217,6 +217,10 @@ public class DialogSaveChildForms extends SmDialog {
 
 		this.setLocationRelativeTo(null);
 		initializeResources();
+		this.componentList.add(buttonSave);
+		this.componentList.add(buttonUnSave);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void addSeparator() {

@@ -3,14 +3,23 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 public abstract class SmDialog extends JDialog implements WindowListener {
+	
+	/**
+	 * 将要实现tab键切换顺序的控件添加到容器中
+	 * 
+	 * @return
+	 */
+	protected ArrayList<Component> componentList = new ArrayList<Component>();
 
 	public SmDialog() {
 		super((Frame) Application.getActiveApplication().getMainFrame(), true);
@@ -49,7 +58,7 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 覆盖JDialog的createRootPane方 法已达到焦点在子类窗体内部时，点击 Enter，Esc时实现子类自定义的确定， 取消功能
-	 *
+	 * 
 	 * @return
 	 */
 	@Override
@@ -74,11 +83,33 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 		return rootPane;
 	}
 
-	@Override
-	public void setFocusTraversalPolicy(FocusTraversalPolicy policy) {
-		// TODO Auto-generated method stub
-		super.setFocusTraversalPolicy(policy);
-	}
+	/**
+	 * tab键切换事件
+	 */
+	protected FocusTraversalPolicy policy = new FocusTraversalPolicy() {
+		public Component getFirstComponent(Container focusCycleRoot) {
+			return componentList.get(0);
+		}
+
+		public Component getLastComponent(Container focusCycleRoot) {
+			return componentList.get(componentList.size() - 1);
+		}
+
+		public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+			int index = componentList.indexOf(aComponent);
+
+			return componentList.get((index + 1) % componentList.size());
+		}
+
+		public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+			int index = componentList.indexOf(aComponent);
+			return componentList.get((index - 1 + componentList.size()) % componentList.size());
+		}
+
+		public Component getDefaultComponent(Container focusCycleRoot) {
+			return componentList.get(0);
+		}
+	};
 
 	/**
 	 * 自定义的ESC按键功能
@@ -134,6 +165,5 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 		// do nothing
 	}
-
 
 }

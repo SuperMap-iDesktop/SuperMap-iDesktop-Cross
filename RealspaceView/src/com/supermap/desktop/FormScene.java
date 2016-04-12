@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -30,6 +31,8 @@ import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.dialog.DialogSaveAsScene;
@@ -54,7 +57,12 @@ import com.supermap.realspace.Selection3D;
 import com.supermap.ui.Action3D;
 import com.supermap.ui.SceneControl;
 
-public class FormScene extends FormBaseChild implements IFormScene {
+public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClosingListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private DropTarget dropTargetImpl;
 
@@ -161,6 +169,23 @@ public class FormScene extends FormBaseChild implements IFormScene {
 	@Override
 	public SceneControl getSceneControl() {
 		return this.sceneControl;
+	}
+
+	// add by huchenpu 20150706
+	// 这里必须要设置工作空间，否则不能显示出来。
+	// 而且不能在new SceneControl的时候就设置工作空间，必须等球显示出来的时候才能设置。
+	public void setWorkspace(Workspace workspace) {
+		if (workspace != null && this.sceneControl != null && this.sceneControl.getScene() != null) {
+
+			// 首先移除上一次的绑定
+			if (this.sceneControl.getScene().getWorkspace() != null) {
+				this.sceneControl.getScene().getWorkspace().removeClosingListener(this);
+			}
+
+			// 再添加本次绑定
+			this.sceneControl.getScene().setWorkspace(workspace);
+			workspace.addClosingListener(this);
+		}
 	}
 
 	@Override
@@ -451,7 +476,7 @@ public class FormScene extends FormBaseChild implements IFormScene {
 	 */
 	@Override
 	public void windowHidden() {
-		// 未实现
+		this.sceneControl.getScene().close();
 	}
 
 	/**
@@ -602,6 +627,16 @@ public class FormScene extends FormBaseChild implements IFormScene {
 	}
 
 	/**
+	 * 场景窗口的资源释放只能在主线程，否则会崩溃，因此在关闭工作空间之前，先关闭已打开的场景
+	 */
+	@Override
+	public void workspaceClosing(WorkspaceClosingEvent arg0) {
+		if (this.sceneControl != null && this.sceneControl.getScene() != null) {
+			this.sceneControl.getScene().close();
+		}
+	}
+
+	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
 	 * 
 	 * @author xie
@@ -627,5 +662,4 @@ public class FormScene extends FormBaseChild implements IFormScene {
 
 		}
 	}
-
 }

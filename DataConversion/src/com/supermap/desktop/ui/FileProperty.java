@@ -2,6 +2,7 @@ package com.supermap.desktop.ui;
 
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
@@ -9,37 +10,41 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
-public class FileProperty extends JDialog {
+public class FileProperty extends SmDialog {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private JLabel lblFileType = new JLabel();
-	private JLabel lblFileLocation = new JLabel();
-	private JLabel lblFileSize = new JLabel();
-	private JLabel lblFileModify = new JLabel();
-	private JLabel lblProperty = new JLabel();
-	private JCheckBox chckbxHidden = new JCheckBox();
-	private JLabel lblDate = new JLabel("date");
-	private JLabel lblSize = new JLabel("size");
-	private JLabel lblLocation = new JLabel("location");
-	private JLabel lblType = new JLabel("type");
-	private SmButton btnSure = new SmButton();
-	private SmButton btnQuit = new SmButton();
+	private JLabel labelFileType = new JLabel();
+	private JLabel labelFileLocation = new JLabel();
+	private JLabel labelFileSize = new JLabel();
+	private JLabel labelFileModify = new JLabel();
+	private JLabel labelProperty = new JLabel();
+	private JCheckBox checkboxHidden = new JCheckBox();
+	private JLabel labelDate = new JLabel("date");
+	private JLabel labelSize = new JLabel("size");
+	private JLabel labelLocation = new JLabel("location");
+	private JLabel labelType = new JLabel("type");
+	private SmButton buttonSure = new SmButton();
+	private SmButton buttonQuit = new SmButton();
 
-	public FileProperty(Dialog owner,  ImportFileInfo fileInfo) {
+	public FileProperty(JDialog owner,  ImportFileInfo fileInfo) {
 		super(owner,true);
 		initComponent();
 		setFileInfo(fileInfo);
 		setLocationRelativeTo(owner);
+		this.componentList.add(this.buttonSure);
+		this.componentList.add(this.buttonQuit);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public FileProperty() {
@@ -52,18 +57,18 @@ public class FileProperty extends JDialog {
 			if (fileName.lastIndexOf(".")>0) {
 				String fileType = fileName.substring(fileName.lastIndexOf("."),
 						fileName.length());
-				this.lblType.setText("(" + fileType + ")");
+				this.labelType.setText("(" + fileType + ")");
 			}else {
-				this.lblType.setText(DataConversionProperties.getString("String_Dir"));
+				this.labelType.setText(DataConversionProperties.getString("String_Dir"));
 			}
-			this.lblLocation.setText(tempFileInfo.getFilePath());
+			this.labelLocation.setText(tempFileInfo.getFilePath());
 			File file = new File(tempFileInfo.getFilePath());
-			this.lblSize.setText(parseFileSize(file.length()));
+			this.labelSize.setText(parseFileSize(file.length()));
 			String dateStr = new String(
 					DataConversionProperties.getString("string_dataFormat_ch"));
 			SimpleDateFormat sdf = new SimpleDateFormat(dateStr);
-			this.lblDate.setText(sdf.format(file.lastModified()));
-			this.chckbxHidden.setSelected(file.isHidden());
+			this.labelDate.setText(sdf.format(file.lastModified()));
+			this.checkboxHidden.setSelected(file.isHidden());
 		}
 	}
 
@@ -95,14 +100,14 @@ public class FileProperty extends JDialog {
 				.getBorder("TitledBorder.border"), DataConversionProperties
 				.getString("string_border_panelBase"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, new Color(0, 0, 0)));
-		btnSure.addActionListener(new ActionListener() {
+		buttonSure.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		btnQuit.addActionListener(new ActionListener() {
+		buttonQuit.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -121,9 +126,9 @@ public class FileProperty extends JDialog {
 							.addComponent(panel, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
 							.addGap(14))
 						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
-							.addComponent(btnSure)
+							.addComponent(buttonSure)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnQuit)
+							.addComponent(buttonQuit)
 							.addGap(22))))
 		);
 		gl_contentPanel.setVerticalGroup(
@@ -133,8 +138,8 @@ public class FileProperty extends JDialog {
 					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnSure)
-						.addComponent(btnQuit))
+						.addComponent(buttonSure)
+						.addComponent(buttonQuit))
 					.addContainerGap(37, Short.MAX_VALUE))
 		);
 		GroupLayout gl_panel = new GroupLayout(panel);
@@ -144,21 +149,21 @@ public class FileProperty extends JDialog {
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGap(12)
-							.addComponent(lblProperty))
+							.addComponent(labelProperty))
 						.addGroup(gl_panel.createSequentialGroup()
 							.addContainerGap()
 							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblFileType)
-								.addComponent(lblFileLocation)
-								.addComponent(lblFileSize)
-								.addComponent(lblFileModify))))
+								.addComponent(labelFileType)
+								.addComponent(labelFileLocation)
+								.addComponent(labelFileSize)
+								.addComponent(labelFileModify))))
 					.addGap(25)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblDate)
-						.addComponent(lblSize)
-						.addComponent(lblLocation)
-						.addComponent(lblType)
-						.addComponent(chckbxHidden))
+						.addComponent(labelDate)
+						.addComponent(labelSize)
+						.addComponent(labelLocation)
+						.addComponent(labelType)
+						.addComponent(checkboxHidden))
 					.addContainerGap(218, Short.MAX_VALUE))
 		);
 		gl_panel.setVerticalGroup(
@@ -168,25 +173,25 @@ public class FileProperty extends JDialog {
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblFileType)
-								.addComponent(lblType))
+								.addComponent(labelFileType)
+								.addComponent(labelType))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblFileLocation)
+							.addComponent(labelFileLocation)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblFileSize)
+							.addComponent(labelFileSize)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblFileModify)
+							.addComponent(labelFileModify)
 							.addGap(10))
 						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(lblLocation)
+							.addComponent(labelLocation)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblSize)
+							.addComponent(labelSize)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblDate)
+							.addComponent(labelDate)
 							.addPreferredGap(ComponentPlacement.RELATED)))
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblProperty)
-						.addComponent(chckbxHidden))
+						.addComponent(labelProperty)
+						.addComponent(checkboxHidden))
 					.addContainerGap(44, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
@@ -195,13 +200,23 @@ public class FileProperty extends JDialog {
 
 	private void initResource() {
 		setTitle(DataConversionProperties.getString("string_fileProperty"));
-		this.lblFileLocation.setText(DataConversionProperties.getString("string_label_lblFileLocation"));
-		this.lblFileType.setText(DataConversionProperties.getString("string_label_lblFileType"));
-		this.lblFileModify.setText(DataConversionProperties.getString("string_label_lblFileLastModify"));
-		this.lblFileSize.setText(DataConversionProperties.getString("string_label_lblFileSize"));
-		this.lblProperty.setText(DataConversionProperties.getString("string_label_lblFileProperty"));
-		this.chckbxHidden.setText(DataConversionProperties.getString("string_chcekbox_hidden"));
-		this.btnSure.setText(DataConversionProperties.getString("string_button_sure"));
-		this.btnQuit.setText(DataConversionProperties.getString("string_button_quit"));
+		this.labelFileLocation.setText(DataConversionProperties.getString("string_label_lblFileLocation"));
+		this.labelFileType.setText(DataConversionProperties.getString("string_label_lblFileType"));
+		this.labelFileModify.setText(DataConversionProperties.getString("string_label_lblFileLastModify"));
+		this.labelFileSize.setText(DataConversionProperties.getString("string_label_lblFileSize"));
+		this.labelProperty.setText(DataConversionProperties.getString("string_label_lblFileProperty"));
+		this.checkboxHidden.setText(DataConversionProperties.getString("string_chcekbox_hidden"));
+		this.buttonSure.setText(DataConversionProperties.getString("string_button_sure"));
+		this.buttonQuit.setText(DataConversionProperties.getString("string_button_quit"));
+	}
+
+	@Override
+	public void escapePressed() {
+		dispose();
+	}
+
+	@Override
+	public void enterPressed() {
+		dispose();
 	}
 }

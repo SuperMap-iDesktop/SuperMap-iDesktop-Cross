@@ -3,13 +3,13 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
-import com.supermap.desktop.geometryoperation.editor.UnionEditor;
+import com.supermap.desktop.geometryoperation.editor.ProtectedDecomposeEditor;
 
-public class CtrlActionUnion extends CtrlActionEditorBase {
+public class CtrlActionProtectedDecompose extends CtrlActionEditorBase {
 
-	private UnionEditor editor = new UnionEditor();
+	private ProtectedDecomposeEditor editor = new ProtectedDecomposeEditor();
 
-	public CtrlActionUnion(IBaseItem caller, IForm formClass) {
+	public CtrlActionProtectedDecompose(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 		// TODO Auto-generated constructor stub
 	}

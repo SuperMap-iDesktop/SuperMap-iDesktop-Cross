@@ -93,6 +93,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		initComponents();
 		initResources();
 		registActionListener();
+		initTraversalPolicy();
 	}
 
 	public JDialogDatasetCopy(Dataset[] datasets) {
@@ -101,6 +102,13 @@ public class JDialogDatasetCopy extends SmDialog {
 		initializeCopyInfo();
 		initResources();
 		registActionListener();
+		initTraversalPolicy();
+	}
+
+	private void initTraversalPolicy() {
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void registActionListener() {

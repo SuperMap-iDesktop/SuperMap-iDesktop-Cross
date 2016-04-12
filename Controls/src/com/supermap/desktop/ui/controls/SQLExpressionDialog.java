@@ -84,7 +84,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private static Map<FieldType, String> map;
 
 	private void initialDialog(String expression) {
-		setSize(680, 350);
+		setSize(720, 350);
 		setTitle(ControlsProperties.getString("String_SQLExpression"));
 		setName("SQLExpressionDialog");
 
@@ -117,7 +117,7 @@ public class SQLExpressionDialog extends SmDialog {
 		getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(0, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,5,5,3).setWeight(0, 0).setIpad(10, 30));
 		getContentPane().add(this.jPanelFunction,       new GridBagConstraintsHelper(2, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,3).setWeight(0, 0).setIpad(0, 30));
 		getContentPane().add(this.jScrollPanel,         new GridBagConstraintsHelper(4, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,5).setWeight(0, 0).setIpad(20, 30));
-		getContentPane().add(panelButton,               new GridBagConstraintsHelper(4, 5, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		getContentPane().add(panelButton,               new GridBagConstraintsHelper(0, 5, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		//@formatter:on
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
@@ -336,6 +336,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 		setTableFieldInfo(datasets, thisFieldTypes);
 		this.setVisible(true);
+		initTraversalPolicy();
 		return dialogResult;
 	}
 
@@ -351,10 +352,17 @@ public class SQLExpressionDialog extends SmDialog {
 
 		setTableFieldInfo(filedDatasets);
 		this.setVisible(true);
+		initTraversalPolicy();
 		return dialogResult;
 
 	}
 
+	private void initTraversalPolicy(){
+		this.componentList.add(this.jButtonOK);
+		this.componentList.add(this.jButtonCancel);
+		this.setFocusTraversalPolicy(policy);
+	}
+	
 	private void intializeForm() {
 		try {
 			this.requestFocusInWindow();

@@ -4,11 +4,12 @@ import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 
-public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILineFeature, IRegionConvertor {
+public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILineFeature, IRegionConvertor, ILineConvertor {
 
 	private GeoLine geoLine;
 
@@ -19,9 +20,7 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILi
 
 	// @formatter:off
 	/*
-	 * (non-Javadoc)
 	 * 
-	 * @see com.supermap.desktop.geometry.Abstract.IRegionConvertor#convertToRegion(int) 
 	 * 本类 segment 参数无效
 	 */
 	// @formatter:on
@@ -38,6 +37,17 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature, ILi
 	@Override
 	public Point2Ds getPart(int index) {
 		return this.geoLine == null ? null : this.geoLine.getPart(index);
+	}
+
+	// @formatter:off
+	/*
+	 * 返回自己
+	 * 本类 segment 参数无效
+	 */
+	// @formatter:on
+	@Override
+	public GeoLine convertToLine(int segment) {
+		return this.geoLine;
 	}
 
 }

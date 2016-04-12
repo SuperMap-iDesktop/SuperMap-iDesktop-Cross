@@ -85,6 +85,8 @@ public class DialogSaveAsScene extends SmDialog {
 
 		initializeResources();
 		this.setLocationRelativeTo(null);
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
 	}
 
 	public String getSceneName() {
@@ -189,10 +191,10 @@ public class DialogSaveAsScene extends SmDialog {
 
 	@Override
 	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton()==this.buttonOk) {
+		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
 			okButton_Click();
 		}
-		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
+		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
 			cancelButton_Click();
 		}
 	}

@@ -6,9 +6,10 @@ import com.supermap.data.Point2Ds;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 
-public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, IRegionFeature, ILineConvertor {
+public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, IRegionFeature, IRegionConvertor, ILineConvertor {
 
 	private GeoRegion geoRegion;
 
@@ -27,6 +28,17 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, I
 		return this.geoRegion == null ? null : this.geoRegion.convertToLine();
 	}
 
+	/**
+	 * 返回自己
+	 * @param segment
+	 *            本类本参数无效
+	 * @return
+	 */
+	@Override
+	public GeoRegion convertToRegion(int segment) {
+		return this.geoRegion;
+	}
+
 	@Override
 	public int getPartCount() {
 		return this.geoRegion == null ? -1 : this.geoRegion.getPartCount();
@@ -36,5 +48,4 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, I
 	public Point2Ds getPart(int index) {
 		return this.geoRegion == null ? null : this.geoRegion.getPart(index);
 	}
-
 }

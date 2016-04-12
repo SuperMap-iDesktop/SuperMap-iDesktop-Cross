@@ -20,6 +20,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class JDialogSetClipRegion extends SmDialog {
 
@@ -79,6 +80,9 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.comboBoxDataset.setDatasets(this.comboBoxDatasource.getSelectedDatasource().getDatasets());
 		setComponentEnabled();
 		setLocationRelativeTo(null);
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public GeoRegion getRegion() {
@@ -240,4 +244,5 @@ public class JDialogSetClipRegion extends SmDialog {
 			dispose();
 		}
 	}
+
 }

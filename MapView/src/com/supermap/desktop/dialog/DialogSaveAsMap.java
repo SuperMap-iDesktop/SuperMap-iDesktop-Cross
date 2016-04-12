@@ -90,6 +90,9 @@ public class DialogSaveAsMap extends SmDialog {
 		getRootPane().setDefaultButton(this.buttonOk);
 		this.setLocationRelativeTo(null);
 		initializeResources();
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancel);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	public String getMapName() {

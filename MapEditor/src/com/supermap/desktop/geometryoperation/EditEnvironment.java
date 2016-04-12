@@ -216,6 +216,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 				}
 
 				this.properties.getSelectedDatasetTypes().add(layer.getDataset().getType());
+				this.properties.getSelectedLayers().add(layer);
 				statisticGeometryData(layer);
 			}
 		} catch (Exception ex) {
@@ -295,6 +296,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		this.properties.setSelectedGeometryCount(0);
 		this.properties.setEditableSelectedGeometryCount(0);
 		this.properties.getSelectedDatasetTypes().clear();
+		this.properties.getSelectedLayers().clear();
 		this.properties.getSelectedGeometryTypes().clear();
 		this.properties.getEditableSelectedGeometryTypes().clear();
 		this.properties.getSelectedGeometryFeatures().clear();

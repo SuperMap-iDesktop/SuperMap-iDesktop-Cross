@@ -1,6 +1,5 @@
 package com.supermap.desktop.utilties;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ListUtilties {
@@ -57,7 +56,7 @@ public class ListUtilties {
 	 * @param list
 	 * @param array
 	 */
-	public static <T> void addArray(ArrayList<T> list, T[] array) {
+	public static <T> void addArray(List<T> list, T[] array) {
 		if (list == null || array == null || array.length == 0) {
 			return;
 		}

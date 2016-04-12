@@ -81,6 +81,10 @@ public class JDialogPyramidManager extends SmDialog {
 		this.setTitle(DataEditorProperties.getString("String_FormDatasetPyramidManager_FormTitle"));
 		this.setSize(677, 405);
 		this.setLocationRelativeTo(null);
+		this.componentList.add(buttonCreate);
+		this.componentList.add(buttonRemove);
+		this.componentList.add(buttonClose);
+		this.setFocusTraversalPolicy(policy);
 	}
 
 	private void initComponents() {

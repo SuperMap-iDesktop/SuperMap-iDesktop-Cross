@@ -68,6 +68,7 @@ public class JDialogTopoAdvance extends SmDialog {
 		initComponents();
 		initResources();
 		registActionListener();
+		initTraversalPolicy();
 	}
 
 	public JDialogTopoAdvance(JDialog owner, boolean model, TopologyProcessingOptions topologyProcessingOptions, DatasetVector targetDataset,
@@ -80,8 +81,18 @@ public class JDialogTopoAdvance extends SmDialog {
 		initComponents();
 		initResources();
 		registActionListener();
+		initTraversalPolicy();
 	}
 
+	private void initTraversalPolicy(){
+		if (this.componentList.size()>0) {
+			componentList.clear();
+		}
+		this.componentList.add(this.buttonSure);
+		this.componentList.add(this.buttonQuite);
+		this.setFocusTraversalPolicy(policy);
+	}
+	
 	private void registActionListener() {
 		this.buttonSure.addActionListener(this.listener);
 		this.buttonQuite.addActionListener(this.listener);

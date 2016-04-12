@@ -21,20 +21,7 @@ import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
-// @formatter:off
-/**
- * 对象编辑—求交。多个对象，两两依次求交。
- * 仅支持面特征的集合对象求交。
- * 不支持二维和三维几何对象混合求交。
- * 选中的对象如果有不支持的对象，直接忽略。
- * 结果对象风格以结果图层为主。
- * 考虑到求交的对象不会有很多，因此实现中历史记录不使用提升性能的批量编辑模式。
- * （历史记录提示性能的批量编辑操作需要以 recordset 整体为单位进行操作，而本功能使用的历史记录批量操作的目的是将多个单独的操作合并为一条历史记录）
- * @author highsad
- *
- */
-// @formatter:on
-public class IntersectEditor extends AbstractEditor {
+public class UnionEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
@@ -50,22 +37,16 @@ public class IntersectEditor extends AbstractEditor {
 					datasetType = DatasetType.REGION;
 				}
 			}
-			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Intersect"),
-					environment.getMapControl().getMap(), datasetType);
+			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
+					.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
-				intersect(environment, form.getEditLayer(), form.getPropertyData());
+				union(environment, form.getEditLayer(), form.getPropertyData());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	// @formatter:off
-	/* 
-	 * 1.仅支持面面求交，线线求交意义不大，不支持。
-	 * 2.不支持二维对象、三维对象混合。
-	 */
-	// @formatter:on
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean enable = false;
@@ -90,7 +71,7 @@ public class IntersectEditor extends AbstractEditor {
 		return enable;
 	}
 
-	private void intersect(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
+	private void union(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
 		Geometry result = null;
 		Recordset targetRecordset = null;
 		environment.getMapControl().getEditHistory().batchBegin();
@@ -102,7 +83,7 @@ public class IntersectEditor extends AbstractEditor {
 
 			for (Layer layer : selectedLayers) {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
-					result = GeometryUtilties.intersetct(result, GeometryUtilties.intersect(layer), true);
+					result = GeometryUtilties.union(result, GeometryUtilties.union(layer), true);
 				}
 			}
 
