@@ -92,6 +92,29 @@ public class CombinationEditor extends AbstractEditor {
 		return result;
 	}
 
+	private void combination(IFormMap formMap, Layer editLayer, Map<String, Object> propertyData) {
+		Recordset recordset = null;
+		Geometry geometry = null;
+		formMap.getMapControl().getEditHistory().batchBegin();
+
+		try {
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			formMap.getMapControl().getEditHistory().batchEnd();
+
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
+
+			if (geometry != null) {
+				geometry.dispose();
+			}
+		}
+	}
+
 	private void combinationObjects(IFormMap formMap, Layer resultLayer, Map<String, Object> propertyData) {
 		Recordset recordset = null;
 		Geometry geometry = null;
@@ -197,8 +220,6 @@ public class CombinationEditor extends AbstractEditor {
 			int resultID = recordset.getID();
 			resultLayer.getSelection().clear();
 			resultLayer.getSelection().add(resultID);
-			// SuperMap.Desktop.UI.CommonToolkit.RefreshTabularForm(resultLayer.Dataset as DatasetVector);
-			// _Toolkit.InvokeGeometrySelectedEvent(formMap.MapControl, new GeometrySelectedEventArgs(resultLayer.Selection.Count));
 			formMap.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 			formMap.getMapControl().getEditHistory().batchEnd();
 			formMap.getMapControl().getMap().refresh();

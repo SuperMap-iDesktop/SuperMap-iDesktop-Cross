@@ -69,6 +69,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private int[] selectedOperations;
 	private DatasetType resultDatasetType;
 
+	private boolean isEditLayerEmpty = false;
+
 	public JDialogFieldOperationSetting(String title, DatasetType resultDatasetType) {
 		this(title, null, resultDatasetType);
 	}
@@ -360,6 +362,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	 */
 	private void setEditLayer(Layer layer) {
 		if (layer != null && layer.getDataset() instanceof DatasetVector) {
+			this.isEditLayerEmpty = ((DatasetVector) layer.getDataset()).getRecordCount() == 0;
+
 			// 初始化 ComboBoxWeight
 			loadComboBoxWeight();
 
@@ -390,7 +394,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		if (fieldInfo != null) {
 			result = new FieldOperation((DatasetVector) this.editLayer.getDataset(), fieldInfo.getName(), fieldInfo.getCaption(), fieldInfo.getType());
-			result.setOperationData(this.comboBoxGeometry.getItemAt(0));
+
+			if (this.comboBoxGeometry.getItemCount() > 0) {
+				result.setOperationData(this.comboBoxGeometry.getItemAt(0));
+			} else {
+				result.setOperationData(new DefaultOperationData(OperationType.NULL, MapEditorProperties.getString("String_GeometryOperation_BeNull")));
+			}
 		}
 		return result;
 	}
@@ -447,9 +456,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	// @formatter:on
 	private void setControlsEnabled(FieldOperation[] fieldOperations) {
 		boolean radioButtonNullEnabled = true;
-		boolean radioButtonAVGEnabled = true;
-		boolean radioButtonSumEnabled = true;
-		boolean radioButtonGeometryEnabled = true;
+		boolean radioButtonAVGEnabled = !this.isEditLayerEmpty;
+		boolean radioButtonSumEnabled = !this.isEditLayerEmpty;
+		boolean radioButtonGeometryEnabled = !this.isEditLayerEmpty;
 		boolean buttonOKEnabled = true;
 
 		if (fieldOperations != null && fieldOperations.length > 0) {
@@ -495,7 +504,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void loadComboBoxWeight() {
 		this.comboBoxWeight.removeAllItems();
 
-		if (this.editLayer != null && this.editLayer.getDataset() instanceof DatasetVector) {
+		if (this.editLayer != null && this.editLayer.getDataset() instanceof DatasetVector && !this.isEditLayerEmpty) {
 			// 添加第一项 -- 无加权字段(平均)
 			this.comboBoxWeight.addItem(new AVGOperationData());
 
@@ -520,7 +529,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private void loadComboBoxGeometry() {
 		this.comboBoxGeometry.removeAllItems();
 
-		if (this.editLayer != null && this.editLayer.getDataset() instanceof DatasetVector) {
+		if (this.editLayer != null && this.editLayer.getDataset() instanceof DatasetVector && !this.isEditLayerEmpty) {
 			Selection selection = this.editLayer.getSelection();
 
 			for (int i = 0; i < selection.getCount(); i++) {
@@ -955,7 +964,11 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		}
 
 		public int getOperationType() {
-			return this.operationData.getOperationType();
+			if (this.operationData == null) {
+				return OperationType.NONE;
+			} else {
+				return this.operationData.getOperationType();
+			}
 		}
 
 		public IOperationData getOperationData() {
