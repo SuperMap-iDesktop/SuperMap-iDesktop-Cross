@@ -139,4 +139,11 @@ public class ButtonColorSelector extends JPanel {
 		this.colorSwatch.setIconWidth(size.width);
 		this.buttonColorDisplay.repaint();
 	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.buttonColorDisplay.setEnabled(enabled);
+		this.buttonArrow.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
 }

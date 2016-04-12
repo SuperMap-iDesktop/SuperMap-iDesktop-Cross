@@ -3,7 +3,6 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +49,7 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 
 	/**
 	 * 覆盖JDialog的createRootPane方 法已达到焦点在子类窗体内部时，点击 Enter，Esc时实现子类自定义的确定， 取消功能
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -74,11 +73,13 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
 	}
+
 	@Override
 	public void setFocusTraversalPolicy(FocusTraversalPolicy policy) {
 		// TODO Auto-generated method stub
 		super.setFocusTraversalPolicy(policy);
 	}
+
 	/**
 	 * 自定义的ESC按键功能
 	 */
@@ -133,5 +134,6 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 		// do nothing
 	}
+
 
 }

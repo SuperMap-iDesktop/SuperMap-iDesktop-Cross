@@ -135,7 +135,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 				if (isSizeListenersEnable && e.getSource() instanceof JTextField) {
 					JTextField source = (JTextField) e.getSource();
 					String text = source.getText();
-					if (!SymbolSpinnerUtilties.isLegitNumber(-1, 500, text)) {
+					if (!SymbolSpinnerUtilties.isLegitNumber(-1.0d, 500.0d, text)) {
 						source.setForeground(wrongColor);
 						return;
 					} else {
@@ -183,7 +183,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				String text = textFieldSymbolAngle.getText();
-				if (!SymbolSpinnerUtilties.isLegitNumber(0, 360, text)) {
+				if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
 					textFieldSymbolAngle.setForeground(wrongColor);
 					return;
 				} else {
@@ -207,8 +207,8 @@ public class SymbolDialogPoint extends SymbolDialog {
 				} else {
 					textFieldOpaqueRate.setForeground(defaultColor);
 				}
-				double rate = Double.valueOf(text);
-				currentGeoStyle.setFillOpaqueRate((int) rate);
+				Integer integer = Integer.valueOf(text);
+				currentGeoStyle.setFillOpaqueRate(integer);
 				geoStylePropertyChange.propertyChange();
 			}
 		});
