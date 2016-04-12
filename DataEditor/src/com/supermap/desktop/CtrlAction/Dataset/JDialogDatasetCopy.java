@@ -106,9 +106,10 @@ public class JDialogDatasetCopy extends SmDialog {
 	}
 
 	private void initTraversalPolicy() {
-		this.componentList.add(buttonOk);
-		this.componentList.add(buttonCancel);
-		this.setFocusTraversalPolicy(policy);
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(this.policy);
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 	}
 
 	private void registActionListener() {
@@ -826,18 +827,4 @@ public class JDialogDatasetCopy extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		cancelButton_Click();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			copyDataset();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			cancelButton_Click();
-		}
-	}
 }

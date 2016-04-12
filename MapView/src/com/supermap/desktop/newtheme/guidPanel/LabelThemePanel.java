@@ -5,6 +5,9 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
@@ -15,12 +18,12 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 public class LabelThemePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel labelUniformTheme = new JLabel("");
-	private JLabel labelRangeTheme = new JLabel("");
+	private ThemeLabelDecorator labelUniformTheme;
+	private ThemeLabelDecorator labelRangeTheme;
+	private MouseAdapter mouseAdapter;
 
 	public LabelThemePanel() {
 		initComponents();
-		initResources();
 		registListener();
 	}
 
@@ -29,17 +32,19 @@ public class LabelThemePanel extends JPanel {
 	 */
 	private void initComponents() {
 		// @formatter:off
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);	
-		
+		this.setBackground(Color.WHITE);	
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		this.labelUniformTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_UNIFORM, MapViewProperties.getString("String_ThemeLabelUniformItem"));
+		this.labelUniformTheme.selected(true);
+		this.labelRangeTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_RANGES, MapViewProperties.getString("String_ThemeLabelRangeItem"));
+		this.labelRangeTheme.selected(false);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup()
 						.addGap(20)
 						.addComponent(labelUniformTheme)
-						.addGap(20)
 						.addComponent(labelRangeTheme)
-						.addContainerGap(170, Short.MAX_VALUE)));
+						.addContainerGap(115, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)
@@ -47,53 +52,45 @@ public class LabelThemePanel extends JPanel {
 										.addGroup(groupLayout.createSequentialGroup().addGap(21).addComponent(labelRangeTheme)))
 						.addContainerGap(180, Short.MAX_VALUE)));
 		setLayout(groupLayout);
-		this.labelUniformTheme.setOpaque(true);
-		this.labelUniformTheme.setBackground(Color.gray);
 		// @formatter:on
-	}
-
-	/**
-	 * 资源化
-	 */
-	private void initResources() {
-		this.labelUniformTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_UNIFORM);
-		this.labelUniformTheme.setText(MapViewProperties.getString("String_ThemeLabelUniformItem"));
-		this.labelUniformTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelUniformTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelRangeTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_RANGES);
-		this.labelRangeTheme.setText(MapViewProperties.getString("String_ThemeLabelRangeItem"));
-		this.labelRangeTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelRangeTheme.setHorizontalTextPosition(JLabel.CENTER);
 	}
 
 	/**
 	 * 注册事件
 	 */
 	private void registListener() {
-		// do nothing
+		this.mouseAdapter = new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				labelUniformTheme.selected(false);
+			}
+		};
+		this.addMouseListener(this.mouseAdapter);
 	}
 
 	/**
 	 * 注销事件
 	 */
 	public void unregistListener() {
-		// do nothing
+		this.removeMouseListener(this.mouseAdapter);
 	}
 
-	public JLabel getLabelUniformTheme() {
+	public ThemeLabelDecorator getLabelUniformTheme() {
 		return labelUniformTheme;
 	}
 
-	public void setLabelUniformTheme(JLabel labelUniformTheme) {
+	public void setLabelUniformTheme(ThemeLabelDecorator labelUniformTheme) {
 		this.labelUniformTheme = labelUniformTheme;
 	}
 
-	public JLabel getLabelRangeTheme() {
+	public ThemeLabelDecorator getLabelRangeTheme() {
 		return labelRangeTheme;
 	}
 
-	public void setLabelRangeTheme(JLabel labelRangeTheme) {
+	public void setLabelRangeTheme(ThemeLabelDecorator labelRangeTheme) {
 		this.labelRangeTheme = labelRangeTheme;
 	}
 
+	
 }

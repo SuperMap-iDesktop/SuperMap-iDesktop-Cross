@@ -367,18 +367,4 @@ public class JDialogSizeableTemplate extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCancelClick();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOkClick();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			buttonCancelClick();
-		}
-	}
 }

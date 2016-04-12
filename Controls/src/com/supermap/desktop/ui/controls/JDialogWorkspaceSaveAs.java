@@ -325,18 +325,4 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		PropertyManagerUtilties.refreshPropertyManager();
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButtonClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			dispose();
-		}
-	}
 }

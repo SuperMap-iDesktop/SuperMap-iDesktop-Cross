@@ -19,46 +19,27 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 public class RangeThemePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel labelRangeTheme = new JLabel("");
+	private ThemeLabelDecorator labelRangeTheme;
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 	private transient ThemeGuidDialog themeGuidDialog;
 
 	public RangeThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
-		initResources();
 		registListener();
 	}
 
 	private void initComponents() {
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-
+		this.labelRangeTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_RANGE, MapViewProperties.getString("String_Default"));
+		this.labelRangeTheme.selected(true);
+		this.setBackground(Color.WHITE);
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(20)
-								.addComponent(labelRangeTheme)
-								.addContainerGap(368, Short.MAX_VALUE))
-				);
-		groupLayout.setVerticalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(24)
-								.addComponent(labelRangeTheme)
-								.addContainerGap(223, Short.MAX_VALUE))
-				);
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
+				groupLayout.createSequentialGroup().addGap(20).addComponent(labelRangeTheme).addContainerGap(368, Short.MAX_VALUE)));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
+				groupLayout.createSequentialGroup().addGap(24).addComponent(labelRangeTheme).addContainerGap(223, Short.MAX_VALUE)));
 		setLayout(groupLayout);
-	}
-
-	private void initResources() {
-		this.labelRangeTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_RANGE);
-		this.labelRangeTheme.setText(MapViewProperties.getString("String_Default"));
-		this.labelRangeTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelRangeTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelRangeTheme.setOpaque(true);
-		this.labelRangeTheme.setBackground(Color.gray);
 	}
 
 	private void registListener() {

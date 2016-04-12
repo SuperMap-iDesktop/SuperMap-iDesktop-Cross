@@ -105,18 +105,4 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 		setVisible(false);
 	}
 
-	@Override
-	public void escapePressed() {
-		dialogResult = DialogResult.CANCEL;
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			dialogResult = DialogResult.OK;
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			dialogResult = DialogResult.CANCEL;
-		}
-	}
 }

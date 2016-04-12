@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 
@@ -13,7 +14,7 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 public abstract class SmDialog extends JDialog implements WindowListener {
-	
+
 	/**
 	 * 将要实现tab键切换顺序的控件添加到容器中
 	 * 
@@ -69,7 +70,12 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				escapePressed();
+				// esc键默认实现componentList中最后一个控件的事件
+				if (componentList.size() > 0) {
+					((JButton) componentList.get(componentList.size() - 1)).doClick();
+				}else {
+					dispose();
+				}
 			}
 		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -77,7 +83,11 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				enterPressed();
+				// 获取选中的按钮，若没有选中的按钮则通过doClick()方法来触发按钮绑定的事件
+				if (null != getRootPane().getDefaultButton()) {
+
+					getRootPane().getDefaultButton().doClick();
+				}
 			}
 		}, strokForEnter, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		return rootPane;
@@ -110,16 +120,6 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 			return componentList.get(0);
 		}
 	};
-
-	/**
-	 * 自定义的ESC按键功能
-	 */
-	public abstract void escapePressed();
-
-	/**
-	 * 自定义的ENTER按键功能
-	 */
-	public abstract void enterPressed();
 
 	protected transient DialogResult dialogResult = DialogResult.APPLY;
 

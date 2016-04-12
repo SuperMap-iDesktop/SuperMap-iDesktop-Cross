@@ -1,6 +1,7 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -17,36 +18,27 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class UniqueThemePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel labelUniqueTheme = new JLabel("");
+	private ThemeLabelDecorator labelUniqueTheme;
 	private transient LocalMouseListener localMouseListener = new LocalMouseListener();
 	private transient ThemeGuidDialog themeGuidDialog;
 
 	public UniqueThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
-		initResources();
 		registListener();
 	}
 
 	private void initComponents() {
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-
+		this.setBackground(Color.WHITE);
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		this.labelUniqueTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_UNIQUE, MapViewProperties.getString("String_Default"));
+		this.labelUniqueTheme.selected(true);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGap(20).addComponent(labelUniqueTheme).addContainerGap(368, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGap(24).addComponent(labelUniqueTheme).addContainerGap(223, Short.MAX_VALUE)));
 		setLayout(groupLayout);
-	}
-
-	private void initResources() {
-		this.labelUniqueTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_UNIQUE);
-		this.labelUniqueTheme.setText(MapViewProperties.getString("String_Default"));
-		this.labelUniqueTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelUniqueTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelUniqueTheme.setOpaque(true);
-		this.labelUniqueTheme.setBackground(Color.gray);
 	}
 
 	/**

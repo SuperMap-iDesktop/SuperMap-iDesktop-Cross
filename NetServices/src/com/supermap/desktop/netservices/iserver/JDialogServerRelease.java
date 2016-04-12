@@ -1010,18 +1010,4 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCloseClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonRelease) {
-			buttonReleaseClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
-			buttonCloseClicked();
-		}
-	}
 }

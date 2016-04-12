@@ -79,17 +79,6 @@ public abstract class SymbolDialog extends SmDialog {
 		init();
 	}
 
-	@Override
-	public void escapePressed() {
-		this.dialogResult = DialogResult.CANCEL;
-		this.setVisible(false);
-	}
-
-	@Override
-	public void enterPressed() {
-		this.dialogResult = DialogResult.OK;
-		this.setVisible(false);
-	}
 
 	/**
 	 * 不支持直接显示对话框,请使用showDialog(GeoStyle)方法或showDialog(GeoStyle，ISymbolApply)
@@ -299,14 +288,16 @@ public abstract class SymbolDialog extends SmDialog {
 		this.buttonOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				enterPressed();
+				dialogResult = DialogResult.OK;
+				setVisible(false);
 			}
 		});
 
 		this.buttonCancle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				escapePressed();
+				dialogResult = DialogResult.CANCEL;
+				setVisible(false);
 			}
 		});
 

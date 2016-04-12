@@ -174,6 +174,7 @@ public class JDialogSQLQuery extends SmDialog {
 		this.componentList.add(this.buttonClear);
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(this.buttonClose);
 	}
 
 	/**
@@ -1336,24 +1337,6 @@ public class JDialogSQLQuery extends SmDialog {
 				}
 				this.setSelectedIndex(0);
 			}
-		}
-	}
-
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonQuery && buttonQuery.isEnabled()) {
-			query();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonClear) {
-			clear();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
-			dispose();
 		}
 	}
 

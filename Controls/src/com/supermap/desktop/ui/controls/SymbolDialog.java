@@ -67,19 +67,12 @@ public class SymbolDialog extends SmDialog {
 	public SymbolDialog() {
 		super();
 		this.setModal(true);
-		this.componentList.add(this.jButtonOk);
-		this.componentList.add(this.jButtonCancel);
-		this.componentList.add(this.jButtonApply);
-		this.setFocusTraversalPolicy(policy);
+		
 	}
 
 	public SymbolDialog(JDialog owner) {
 		super(owner);
 		this.setModal(true);
-		this.componentList.add(this.jButtonOk);
-		this.componentList.add(this.jButtonCancel);
-		this.componentList.add(this.jButtonApply);
-		this.setFocusTraversalPolicy(policy);
 	}
 
 	/**
@@ -126,6 +119,10 @@ public class SymbolDialog extends SmDialog {
 		this.add(symbolPanel, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.add(getButtonPanel(), new GridBagConstraintsHelper(0, 1).setInsets(10, 0, 10, 0).setWeight(1, 0).setAnchor(GridBagConstraints.EAST));
 		this.getRootPane().setDefaultButton(jButtonOk);
+		this.componentList.add(this.jButtonOk);
+		this.componentList.add(this.jButtonCancel);
+		this.componentList.add(this.jButtonApply);
+		this.setFocusTraversalPolicy(policy);
 		this.setVisible(true);
 		return dialogResult;
 	}
@@ -293,21 +290,4 @@ public class SymbolDialog extends SmDialog {
 		return style3D;
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCancelClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.jButtonOk) {
-			buttonOkClicekd();
-		}
-		if (this.getRootPane().getDefaultButton()==this.jButtonCancel) {
-			buttonCancelClicked();
-		}
-		if (this.getRootPane().getDefaultButton()==this.jButtonApply) {
-			abstractJbuttonApplyLisenter();
-		}
-	}
 }

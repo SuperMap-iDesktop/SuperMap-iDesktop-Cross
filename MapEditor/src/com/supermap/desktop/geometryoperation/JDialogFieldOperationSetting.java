@@ -1139,18 +1139,4 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCancelClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOK) {
-			buttonOKClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			buttonCancelClicked();
-		}
-	}
 }

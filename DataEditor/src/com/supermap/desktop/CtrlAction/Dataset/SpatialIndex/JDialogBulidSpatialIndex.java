@@ -639,21 +639,4 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		setDialogResult(DialogResult.CANCEL);
-		JDialogBulidSpatialIndex.this.dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOkClick();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			setDialogResult(DialogResult.CANCEL);
-			JDialogBulidSpatialIndex.this.dispose();
-		}
-	}
-
 }

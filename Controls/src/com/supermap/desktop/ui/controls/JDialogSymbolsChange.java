@@ -97,9 +97,10 @@ public class JDialogSymbolsChange extends SmDialog {
 				clean();
 			}
 		});
-		this.componentList.add(buttonNext);
-		this.componentList.add(buttonCancel);
+		this.componentList.add(this.buttonNext);
+		this.componentList.add(this.buttonCancel);
 		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 	}
 
 	private void getSymbolEnables() {
@@ -413,24 +414,4 @@ public class JDialogSymbolsChange extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
-		JDialogSymbolsChange.this.clean();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonNext) {
-			if (showSymbolDialog() == DialogResult.OK) {
-				changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getStyle());
-				JDialogSymbolsChange.this.setDialogResult(DialogResult.OK);
-				JDialogSymbolsChange.this.clean();
-			}
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			JDialogSymbolsChange.this.setDialogResult(DialogResult.CANCEL);
-			JDialogSymbolsChange.this.clean();
-		}
-	}
 }

@@ -194,7 +194,7 @@ public class DialogSaveChildForms extends SmDialog {
 		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				buttonClose_Click();
+				buttonCancel_Click();
 			}
 		});
 		buttonCancel.setToolTipText("");
@@ -439,7 +439,7 @@ public class DialogSaveChildForms extends SmDialog {
 		}
 	}
 
-	private void buttonClose_Click() {
+	private void buttonCancel_Click() {
 		try {
 			this.dialogResult = DialogResult.CANCEL;
 			this.dispose();
@@ -543,21 +543,4 @@ public class DialogSaveChildForms extends SmDialog {
 		}
 	}
 	
-	@Override
-	public void escapePressed() {
-		buttonClose_Click();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton()==this.buttonSave) {
-			buttonSave_Click();
-		}
-		if (this.getRootPane().getDefaultButton()==this.buttonUnSave) {
-			buttonUnSave_Click();
-		}
-		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
-			buttonClose_Click();
-		}
-	}
 }

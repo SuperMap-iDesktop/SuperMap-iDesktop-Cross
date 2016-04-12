@@ -402,22 +402,4 @@ public class JDialogPyramidManager extends SmDialog {
 		super.dispose();
 	}
 
-	@Override
-	public void escapePressed() {
-		JDialogPyramidManager.this.dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonCreate) {
-			bulidPyramid();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonRemove) {
-			deletePyramid();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
-			JDialogPyramidManager.this.dispose();
-		}
-	}
-
 }
