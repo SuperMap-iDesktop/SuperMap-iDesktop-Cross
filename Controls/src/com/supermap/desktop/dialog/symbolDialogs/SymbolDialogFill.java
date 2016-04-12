@@ -80,6 +80,14 @@ public class SymbolDialogFill extends SymbolDialog {
 
 	private SymbolDialog symbolDialogLine;
 
+	public SymbolDialogFill() {
+		super();
+	}
+
+	public SymbolDialogFill(JDialog dialog) {
+		super(dialog);
+	}
+
 	@Override
 	protected void initComponentHook() {
 		fillInit();
@@ -102,6 +110,11 @@ public class SymbolDialogFill extends SymbolDialog {
 		checkBoxBackOpaque = new JCheckBox();
 		labelLineType = new JLabel();
 		buttonLineType = new JButton();
+		Dimension minimumSize = new Dimension(20, 23);
+		buttonLineType.setMinimumSize(minimumSize);
+		buttonLineType.setMaximumSize(minimumSize);
+		buttonLineType.setPreferredSize(minimumSize);
+
 		labelOpaque = new JLabel();
 		spinnerOpaque = new JSpinner();
 		labelOpaqueUnit = new JLabel();
@@ -133,11 +146,11 @@ public class SymbolDialogFill extends SymbolDialog {
 	private Icon getLineIcon() {
 		Point2Ds point2Ds = new Point2Ds();
 		point2Ds.add(new Point2D(9, 8));
-		point2Ds.add(new Point2D(120, 8));
+		point2Ds.add(new Point2D(90, 8));
 		GeoLine geoLine = new GeoLine(point2Ds);
 		GeoStyle lineGeoStyle = currentGeoStyle;
 		geoLine.setStyle(lineGeoStyle);
-		BufferedImage bufferedImage = new BufferedImage(130, 16, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bufferedImage = new BufferedImage(100, 16, BufferedImage.TYPE_INT_ARGB);
 		geoLine.getStyle().setLineSymbolID(lineGeoStyle.getLineSymbolID());
 		geoLine.getStyle().setLineWidth(0.1);
 		InternalToolkitControl.internalDraw(geoLine, currentResources, bufferedImage.getGraphics());
@@ -168,7 +181,7 @@ public class SymbolDialogFill extends SymbolDialog {
 		panelMain.add(labelBackColor, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
 		panelMain.add(buttonColorSelectorBack, new GridBagConstraintsHelper(1, 1, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 5));
 
-		panelMain.add(checkBoxBackOpaque, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 5));
+		panelMain.add(checkBoxBackOpaque, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 5));
 
 		panelMain.add(labelLineType, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
 		panelMain.add(buttonLineType, new GridBagConstraintsHelper(1, 3, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 5));
@@ -177,7 +190,7 @@ public class SymbolDialogFill extends SymbolDialog {
 		panelMain.add(spinnerOpaque, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
 		panelMain.add(labelOpaqueUnit, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 5));
 
-		panelMain.add(panelFill, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		panelMain.add(panelFill, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 		panelMain.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 
 	}
@@ -201,6 +214,10 @@ public class SymbolDialogFill extends SymbolDialog {
 		panelCenter.add(labelAngleUnit, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 5));
 
 		panelFill = new CompTitledPane(this.checkBoxFill, panelCenter);
+		Dimension minimumSize = new Dimension(20, (int) panelFill.getPreferredSize().getHeight());
+		panelFill.setMinimumSize(minimumSize);
+		panelFill.setMaximumSize(minimumSize);
+		panelFill.setPreferredSize(minimumSize);
 	}
 
 
@@ -228,7 +245,7 @@ public class SymbolDialogFill extends SymbolDialog {
 		buttonColorSelectorBack.addPropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				currentGeoStyle.setFillBackColor(buttonColorSelectorFore.getColor());
+				currentGeoStyle.setFillBackColor(buttonColorSelectorBack.getColor());
 				geoStylePropertyChange.propertyChange();
 			}
 		});
@@ -239,7 +256,7 @@ public class SymbolDialogFill extends SymbolDialog {
 				boolean isSelect = e.getStateChange() == ItemEvent.SELECTED;
 				checkBoxBackOpaque.setSelected(isSelect);
 				buttonColorSelectorBack.setEnabled(!isSelect);
-				currentGeoStyle.setFillBackOpaque(isSelect);
+				currentGeoStyle.setFillBackOpaque(!isSelect);
 				geoStylePropertyChange.propertyChange();
 			}
 		});
@@ -255,6 +272,7 @@ public class SymbolDialogFill extends SymbolDialog {
 							currentGeoStyle.setLineSymbolID(geoStyle.getLineSymbolID());
 							currentGeoStyle.setLineWidth(geoStyle.getLineWidth());
 							currentGeoStyle.setLineColor(geoStyle.getLineColor());
+							buttonLineType.setIcon(getLineIcon());
 							geoStylePropertyChange.propertyChange();
 						}
 					});
@@ -264,6 +282,7 @@ public class SymbolDialogFill extends SymbolDialog {
 						SymbolDialogFill.this.currentGeoStyle.setLineSymbolID(geoStyle.getLineSymbolID());
 						SymbolDialogFill.this.currentGeoStyle.setLineWidth(geoStyle.getLineWidth());
 						SymbolDialogFill.this.currentGeoStyle.setLineColor(geoStyle.getLineColor());
+						buttonLineType.setIcon(getLineIcon());
 						geoStylePropertyChange.propertyChange();
 					}
 				}
@@ -282,7 +301,7 @@ public class SymbolDialogFill extends SymbolDialog {
 					textFieldOpaque.setForeground(defaultColor);
 				}
 				Integer integer = Integer.valueOf(text);
-				currentGeoStyle.setFillOpaqueRate(integer);
+				currentGeoStyle.setFillOpaqueRate(getUnOpaqueRate(integer));
 				geoStylePropertyChange.propertyChange();
 			}
 		});
@@ -394,11 +413,11 @@ public class SymbolDialogFill extends SymbolDialog {
 
 	@Override
 	protected void prepareForShowDialogHook() {
-		buttonColorSelectorFore.setColor(currentGeoStyle.getFillBackColor());
+		buttonColorSelectorFore.setColor(currentGeoStyle.getFillForeColor());
 		buttonColorSelectorBack.setColor(currentGeoStyle.getFillBackColor());
 		checkBoxBackOpaque.setSelected(currentGeoStyle.getFillBackOpaque());
 		buttonLineType.setIcon(getLineIcon());
-		spinnerOpaque.setValue(currentGeoStyle.getFillOpaqueRate());
+		spinnerOpaque.setValue(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate()));
 		checkBoxFill.setSelected(currentGeoStyle.getFillGradientMode() != FillGradientMode.NONE);
 		comboBoxFillType.setSelectedItem(FillGradientModeUtilties.getFillGradientMode(currentGeoStyle.getFillGradientMode()));
 		spinnerHorizontal.setValue(currentGeoStyle.getFillGradientOffsetRatioX());

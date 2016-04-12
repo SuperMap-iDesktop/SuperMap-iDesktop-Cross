@@ -1,8 +1,16 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Application;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -12,16 +20,25 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.LabelBackShape;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -36,21 +53,21 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private static final long serialVersionUID = 1L;
 
 	private JLabel labelLabelExpression = new JLabel();
-	private JComboBox<String> comboBoxLabelExpression = new JComboBox<String>();
+	private JComboBox<String> comboBoxLabelExpression = new JComboBox<>();
 	// panelBackgroundSet
 	private JLabel labelBGShape = new JLabel();
-	private JComboBox<String> comboBoxBGShape = new JComboBox<String>();
-	private JLabel labelBGSytle = new JLabel();
+	private JComboBox<String> comboBoxBGShape = new JComboBox<>();
+	private JLabel labelBGStyle = new JLabel();
 	private JButton buttonBGStyle = new JButton();
 	// panelLabelOffset
 	private JLabel labelOffsetUnity = new JLabel();
-	private JComboBox<String> comboBoxOffsetUnity = new JComboBox<String>();
+	private JComboBox<String> comboBoxOffsetUnity = new JComboBox<>();
 	private JLabel labelOffsetX = new JLabel();
 	private JLabel labelOffsetXUnity = new JLabel();
-	private JComboBox<String> comboBoxOffsetX = new JComboBox<String>();
+	private JComboBox<String> comboBoxOffsetX = new JComboBox<>();
 	private JLabel labelOffsetY = new JLabel();
 	private JLabel labelOffsetYUnity = new JLabel();
-	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
+	private JComboBox<String> comboBoxOffsetY = new JComboBox<>();
 	// panelLabelEffectSet
 	private JCheckBox checkBoxFlowVisual = new JCheckBox();
 	private JCheckBox checkBoxShowSubscription = new JCheckBox();
@@ -59,20 +76,20 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private JCheckBox checkBoxShowLabelVertical = new JCheckBox();
 	private JLabel labelShowLabelVertical = new JLabel("?");
 	private JCheckBox checkBoxAutoAvoidance = new JCheckBox();
-	private JComboBox<String> comboBoxAutoAvoidance = new JComboBox<String>();
+	private JComboBox<String> comboBoxAutoAvoidance = new JComboBox<>();
 	private JCheckBox checkBoxDraftLine = new JCheckBox();
 	private JButton buttonDraftLine = new JButton();
 	private JLabel labelTextPrecision = new JLabel();
-	private JComboBox<String> comboBoxTextPrecision = new JComboBox<String>();
+	private JComboBox<String> comboBoxTextPrecision = new JComboBox<>();
 
 	private transient DatasetVector datasetVector;
 	private transient ThemeLabel themeLabel;
 	private transient Map map;
 	private transient SymbolType symbolType;
 	private boolean isRefreshAtOnce = true;
-	private ArrayList<String> comboBoxArray = new ArrayList<String>();
-	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
-	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
+	private ArrayList<String> comboBoxArray = new ArrayList<>();
+	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<>();
+	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<>();
 	private Layer themelabelLayer;
 	private String layerName;
 	private boolean isResetLayerProperty;
@@ -106,7 +123,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private void initResources() {
 		this.labelLabelExpression.setText(MapViewProperties.getString("String_label_Expression"));
 		this.labelBGShape.setText(MapViewProperties.getString("String_BackShape"));
-		this.labelBGSytle.setText(MapViewProperties.getString("String_BackStyle"));
+		this.labelBGStyle.setText(MapViewProperties.getString("String_BackStyle"));
 		this.labelOffsetUnity.setText(MapViewProperties.getString("String_LabelOffsetUnit"));
 		this.labelOffsetX.setText(MapViewProperties.getString("String_LabelOffsetX"));
 		this.labelOffsetY.setText(MapViewProperties.getString("String_LabelOffsetY"));
@@ -167,7 +184,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	/**
 	 * 背景设置布局入口
 	 *
-	 * @param panelBGSet
+	 * @param panelBGSet 背景设置面板
 	 */
 	private void initPanelBGSet(JPanel panelBGSet) {
 		//@formatter:off
@@ -175,7 +192,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxBackGround();
 		panelBGSet.add(this.labelBGShape,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelBGSet.add(this.comboBoxBGShape, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(70, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBGSet.add(this.labelBGSytle,    new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelBGSet.add(this.labelBGStyle,    new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelBGSet.add(this.buttonBGStyle,   new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(70, 0).setInsets(5,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
@@ -184,10 +201,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化背景形状下拉框
 	 */
 	private void initComboBoxBackGround() {
-		this.comboBoxBGShape.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_ColorTable_Default"),
+		this.comboBoxBGShape.setModel(new DefaultComboBoxModel<>(new String[]{MapViewProperties.getString("String_ColorTable_Default"),
 				MapViewProperties.getString("String_ThemeLabelBackShape_Rect"), MapViewProperties.getString("String_ThemeLabelBackShape_BoundRect"),
 				MapViewProperties.getString("String_ThemeLabelBackShape_Ellipse"), MapViewProperties.getString("String_ThemeLabelBackShape_Diamond"),
-				MapViewProperties.getString("String_ThemeLabelBackShape_Triangle"), MapViewProperties.getString("String_ThemeLabelBackShape_Marker") }));
+				MapViewProperties.getString("String_ThemeLabelBackShape_Triangle"), MapViewProperties.getString("String_ThemeLabelBackShape_Marker")}));
 		LabelBackShape labelBackShape = themeLabel.getBackShape();
 		if (labelBackShape == LabelBackShape.NONE) {
 			this.comboBoxBGShape.setSelectedIndex(0);
@@ -214,14 +231,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		if (labelBackShape != LabelBackShape.MARKER) {
 			symbolType = SymbolType.FILL;
 		} else {
-			symbolType = symbolType.MARKER;
+			symbolType = SymbolType.MARKER;
 		}
 	}
 
 	/**
 	 * 偏移量设置布局入口
 	 *
-	 * @param panelLabelOffset
+	 * @param panelLabelOffset 偏移量设置面板
 	 */
 	private void initPanelLabelOffset(JPanel panelLabelOffset) {
 		//@formatter:off
@@ -248,8 +265,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化偏移量单位下拉框
 	 */
 	private void initComboBoxUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
-				MapViewProperties.getString("String_ThemeLabelOffsetUnit_Millimeter"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<>(new String[]{
+				MapViewProperties.getString("String_ThemeLabelOffsetUnit_Millimeter"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
 		if (this.themeLabel.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -278,7 +295,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	/**
 	 * 效果设置布局入口
 	 *
-	 * @param panelLabelEffectSet
+	 * @param panelLabelEffectSet 效果设置面板
 	 */
 	private void initPanelLabelEffectSet(JPanel panelLabelEffectSet) {
 		//@formatter:off
@@ -322,8 +339,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化文本避让下拉框
 	 */
 	private void initComboboxAutoAvoidance() {
-		this.comboBoxAutoAvoidance.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_AllDirectionsAvoided"),
-				MapViewProperties.getString("String_TwoDirectionsAvoided") }));
+		this.comboBoxAutoAvoidance.setModel(new DefaultComboBoxModel<>(new String[]{MapViewProperties.getString("String_AllDirectionsAvoided"),
+				MapViewProperties.getString("String_TwoDirectionsAvoided")}));
 		boolean isAutoAvoidance = themeLabel.isAllDirectionsOverlappedAvoided();
 		if (isAutoAvoidance) {
 			this.comboBoxAutoAvoidance.setSelectedIndex(1);
@@ -336,8 +353,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化数值文本精度下拉框
 	 */
 	private void initComboBoxTextPrecision() {
-		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<String>(new String[] { "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
-				"0.0000001", "0.00000001", "0.000000001", "0.0000000001" }));
+		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<>(new String[]{"1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
+				"0.0000001", "0.00000001", "0.000000001", "0.0000000001"}));
 		this.comboBoxTextPrecision.setSelectedItem(themeLabel.getNumericPrecision());
 	}
 
@@ -576,7 +593,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themelabelLayer && !themelabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themelabelLayer)) {
+			if (null != themelabelLayer && !themelabelLayer.isDisposed() && evt.getNewValue().equals(themelabelLayer)) {
 				isResetLayerProperty = true;
 				initComboBoxLabelExpression();
 				initComboBoxOffsetX();
@@ -686,17 +703,21 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setLineStyle() {
 			symbolType = SymbolType.LINE;
-			SymbolDialog textStyleDialog = new SymbolDialog();
-			int width = buttonDraftLine.getWidth();
-			int height = buttonDraftLine.getHeight();
-			int x = buttonDraftLine.getLocationOnScreen().x + width;
-			int y = buttonDraftLine.getLocationOnScreen().y - height;
-			textStyleDialog.setLocation(x, y);
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+			SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+//			int width = buttonDraftLine.getWidth();
+//			int height = buttonDraftLine.getHeight();
+//			int x = buttonDraftLine.getLocationOnScreen().x + width;
+//			int y = buttonDraftLine.getLocationOnScreen().y - height;
+//			textStyleDialog.setLocation(x, y);
 			GeoStyle geoStyle = new GeoStyle();
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					themeLabel.setLeaderLineStyle(geoStyle);
+				}
+			});
 			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
 				themeLabel.setLeaderLineStyle(nowGeoStyle);
 			}
 		}
@@ -705,17 +726,21 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 * 设置背景风格
 		 */
 		private void setBackgroundStyle() {
-			SymbolDialog textStyleDialog = new SymbolDialog();
+			SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
 			int width = buttonBGStyle.getWidth();
 			int height = buttonBGStyle.getHeight();
 			int x = buttonBGStyle.getLocationOnScreen().x + width;
 			int y = buttonBGStyle.getLocationOnScreen().y - height;
 			textStyleDialog.setLocation(x, y);
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 			GeoStyle geoStyle = themeLabel.getBackStyle();
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					themeLabel.setBackStyle(geoStyle);
+				}
+			});
 			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
 				themeLabel.setBackStyle(nowGeoStyle);
 			}
 		}

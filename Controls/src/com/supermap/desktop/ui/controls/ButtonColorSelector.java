@@ -66,7 +66,7 @@ public class ButtonColorSelector extends JPanel {
 	private void initializeComponents() {
 		this.colorSelectionPanel = new ColorSelectionPanel();
 		this.buttonColorDisplay = new SmButton();
-		this.colorSwatch = new ColorSwatch(this.color, 16, 75);
+		this.colorSwatch = new ColorSwatch(this.color, 16, 20);
 		this.buttonColorDisplay.setIcon(this.colorSwatch);
 		this.buttonColorDisplay.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 

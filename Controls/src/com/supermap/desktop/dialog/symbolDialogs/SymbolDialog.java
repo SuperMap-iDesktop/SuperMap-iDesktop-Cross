@@ -29,6 +29,8 @@ import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * 符号面板基类
@@ -135,7 +137,7 @@ public abstract class SymbolDialog extends SmDialog {
 		this.currentGeoStyle = geoStyle.clone();
 		prepareForShowDialog();
 		textFieldSearch.setText("");
-		scrollPaneWorkspaceResources.requestFocus();
+		panelSymbols.requestFocus();
 		this.setVisible(true);
 		return dialogResult;
 	}
@@ -162,7 +164,7 @@ public abstract class SymbolDialog extends SmDialog {
 		int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
 		int height = (int) (650 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
 		setSize(width, height);
-		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
+//		setMinimumSize(new Dimension(((int) (0.5 * width)), height));
 		getRootPane().setDefaultButton(buttonOK);
 		geoStylePropertyChange = new IGeoStylePropertyChange() {
 			@Override
@@ -284,7 +286,7 @@ public abstract class SymbolDialog extends SmDialog {
 		// 文件菜单
 		this.menuBar.setLayout(new GridBagLayout());
 
-		this.menuFile.add(this.menuItemProperty);
+//		this.menuFile.add(this.menuItemProperty);
 //		this.menuFile.add(new JMenu("asd"));
 		this.menuBar.add(this.menuFile, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
 
@@ -325,14 +327,19 @@ public abstract class SymbolDialog extends SmDialog {
 				}
 			}
 		});
+		this.textFieldSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == 38 || e.getKeyCode() == 40) {
+					panelSymbols.requestFocus();
+//					panelSymbols
+				}
+			}
+		});
 		this.textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				search();
-			}
-
-			private void search() {
-				panelSymbols.setSearchString(textFieldSearch.getText());
 			}
 
 			@Override
@@ -344,6 +351,25 @@ public abstract class SymbolDialog extends SmDialog {
 			public void changedUpdate(DocumentEvent e) {
 				search();
 			}
+
+			private void search() {
+				panelSymbols.setSearchString(textFieldSearch.getText());
+			}
+		});
+
+		this.panelSymbols.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_DELETE) {
+
+				} else if (e.getKeyChar() == '\b') {
+					textFieldSearch.setText("");
+				} else if (e.getKeyChar() != '\uFFFF') {
+					textFieldSearch.setText(String.valueOf(e.getKeyChar()));
+					textFieldSearch.requestFocus();
+				}
+			}
+
 		});
 	}
 
@@ -372,7 +398,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 	private void prepareForShowDialog() {
 		this.dialogResult = DialogResult.CLOSED;
-		this.buttonApply.setEnabled(symbolApply != null);
+		this.buttonApply.setVisible(symbolApply != null);
 		panelPreview.setGeoStyle(currentGeoStyle);
 		prepareForShowDialogHook();
 		initCurrentSymbolGroup();
@@ -423,7 +449,12 @@ public abstract class SymbolDialog extends SmDialog {
 		}
 		return null;
 	}
-	public Resources getCurrentRescources() {
+
+	protected int getUnOpaqueRate(int value) {
+		return 100 - value;
+	}
+
+	public Resources getCurrentResources() {
 		return currentResources;
 	}
 }

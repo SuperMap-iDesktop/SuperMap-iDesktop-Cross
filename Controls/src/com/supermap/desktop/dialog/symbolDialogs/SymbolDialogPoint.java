@@ -78,6 +78,10 @@ public class SymbolDialogPoint extends SymbolDialog {
 		super();
 	}
 
+	public SymbolDialogPoint(JDialog dialog) {
+		super(dialog);
+	}
+
 	@Override
 	protected SymbolType getSymbolType() {
 		return SymbolType.MARKER;
@@ -208,7 +212,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 					textFieldOpaqueRate.setForeground(defaultColor);
 				}
 				Integer integer = Integer.valueOf(text);
-				currentGeoStyle.setFillOpaqueRate(integer);
+				currentGeoStyle.setFillOpaqueRate(getUnOpaqueRate(integer));
 				geoStylePropertyChange.propertyChange();
 			}
 		});
@@ -242,12 +246,15 @@ public class SymbolDialogPoint extends SymbolDialog {
 					checkBoxLockWidthHeightRate.setEnabled(false);
 					buttonSymbolColor.setEnabled(true);
 					spinnerSymbolAngle.setEnabled(false);
+
+					spinnerOpaqueRate.setToolTipText(ControlsProperties.getString("String_vectorSymbolCantSetOpaque"));
 					spinnerOpaqueRate.setEnabled(false);
 				} else if (symbol instanceof SymbolMarker3D) {
 					spinnerShowWidth.setEnabled(true);
 					spinnerShowHeight.setEnabled(true);
 					checkBoxLockWidthHeightRate.setEnabled(true);
-					buttonSymbolColor.setEnabled(true);
+					buttonSymbolColor.setToolTipText(CoreProperties.getString("String_Label_ColorSettingTip"));
+					buttonSymbolColor.setEnabled(false);
 					spinnerSymbolAngle.setEnabled(true);
 					spinnerOpaqueRate.setEnabled(true);
 				} else {
@@ -258,11 +265,13 @@ public class SymbolDialogPoint extends SymbolDialog {
 						checkBoxLockWidthHeightRate.setEnabled(true);
 						buttonSymbolColor.setEnabled(true);
 						spinnerSymbolAngle.setEnabled(true);
+						//spinnerOpaqueRate.setToolTipText(ControlsProperties.getString("String_vectorSymbolCantSetOpaque"));
 						spinnerOpaqueRate.setEnabled(true);
 					} else if (markerType == SymbolMarkerType.Raster) {
 						spinnerShowWidth.setEnabled(true);
 						spinnerShowHeight.setEnabled(true);
 						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setToolTipText(CoreProperties.getString("String_Label_ColorSettingTip"));
 						buttonSymbolColor.setEnabled(false);
 						spinnerSymbolAngle.setEnabled(true);
 						spinnerOpaqueRate.setEnabled(true);
@@ -329,20 +338,20 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 		panelMain.setLayout(new GridBagLayout());
 		panelMain.add(panelShowSize, new GridBagConstraintsHelper(0, 0, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panelMain.add(panelSymbolSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panelMain.add(checkBoxLockWidthHeightRate, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panelMain.add(panelSymbolSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
+		panelMain.add(checkBoxLockWidthHeightRate, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
 
-		panelMain.add(labelSymbolColor, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelMain.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(labelSymbolColor, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
+		panelMain.add(buttonSymbolColor, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 0));
 		panelMain.add(new JPanel(), new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
 
-		panelMain.add(labelSymbolAngle, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelMain.add(spinnerSymbolAngle, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelMain.add(labelSymbolAngleUnit, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(labelSymbolAngle, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
+		panelMain.add(spinnerSymbolAngle, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 0));
+		panelMain.add(labelSymbolAngleUnit, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 0));
 
-		panelMain.add(labelOpaqueRate, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panelMain.add(spinnerOpaqueRate, new GridBagConstraintsHelper(1, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
-		panelMain.add(labelOpaqueRateUnit, new GridBagConstraintsHelper(2, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER));
+		panelMain.add(labelOpaqueRate, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
+		panelMain.add(spinnerOpaqueRate, new GridBagConstraintsHelper(1, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 0));
+		panelMain.add(labelOpaqueRateUnit, new GridBagConstraintsHelper(2, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 0));
 
 		panelMain.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 	}
@@ -385,7 +394,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 		symbolMarkerSizeController.setGeoStyle(currentGeoStyle);
 		buttonSymbolColor.setColor(currentGeoStyle.getLineColor());
 		spinnerSymbolAngle.setValue(currentGeoStyle.getMarkerAngle());
-		spinnerOpaqueRate.setValue(currentGeoStyle.getFillOpaqueRate());
+		spinnerOpaqueRate.setValue(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate()));
 		loadSizeFormSymbolMarkerSizeController();
 	}
 
@@ -405,7 +414,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 		checkBoxLockWidthHeightRate.setText(ControlsProperties.getString("String_LockMarkerWidthAndHeight"));
 
-		labelSymbolColor.setText(ControlsProperties.getString("String_SymbolColor"));
+		labelSymbolColor.setText(CoreProperties.getString("String_Label_SymbolColor"));
 		labelSymbolAngle.setText(ControlsProperties.getString("String_Label_SymbolAngle"));
 		labelSymbolAngleUnit.setText(CoreProperties.getString("String_Degree_Format_Degree"));
 

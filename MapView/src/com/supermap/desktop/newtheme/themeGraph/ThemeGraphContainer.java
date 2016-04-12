@@ -1,10 +1,58 @@
 package com.supermap.desktop.newtheme.themeGraph;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Point2D;
+import com.supermap.data.SymbolType;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
+import com.supermap.desktop.enums.UnitValue;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
+import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.ColorSelectButton;
+import com.supermap.desktop.ui.controls.ColorsComboBox;
+import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.ui.controls.SteppedComboBox;
+import com.supermap.desktop.ui.controls.TableRowCellEditor;
+import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.mapping.GraduatedMode;
+import com.supermap.mapping.GraphAxesTextDisplayMode;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGraph;
+import com.supermap.mapping.ThemeGraphItem;
+import com.supermap.mapping.ThemeGraphTextFormat;
+import com.supermap.mapping.ThemeGraphType;
+import com.supermap.mapping.ThemeType;
+import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -17,28 +65,6 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
-import com.supermap.data.*;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.enums.UnitValue;
-import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
-import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.utilties.*;
-import com.supermap.mapping.*;
-import com.supermap.ui.MapControl;
 
 /**
  * @author Administrator 统计专题图实现类
@@ -1321,18 +1347,24 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	class ShowLeaderLineAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SymbolDialog textStyleDialog = new SymbolDialog();
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-			SymbolType symbolType = SymbolType.LINE;
+			SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(SymbolType.LINE);
 			GeoStyle geoStyle = themeGraph.getLeaderLineStyle();
 			DialogResult dialogResult = null;
+			ISymbolApply symbolApply = new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					themeGraph.setLeaderLineStyle(geoStyle);
+					refreshMapAtOnce();
+				}
+			};
 			if (null != geoStyle) {
-				dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+				dialogResult = textStyleDialog.showDialog(geoStyle, symbolApply);
 			} else {
-				dialogResult = textStyleDialog.showDialog(resources, new GeoStyle(), symbolType);
+
+				dialogResult = textStyleDialog.showDialog(new GeoStyle(), symbolApply);
 			}
 			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
 				themeGraph.setLeaderLineStyle(nowGeoStyle);
 				refreshMapAtOnce();
 			}
@@ -1656,22 +1688,26 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	public void setItemGeoSytle() {
-		int[] selectedRow = this.tableGraphInfo.getSelectedRows();
-		SymbolDialog textStyleDialog = new SymbolDialog();
-		String name = this.tableGraphInfo.getColumnName(TABLE_COLUMN_EXPRESSION);
-		int width = this.tableGraphInfo.getColumn(name).getWidth();
-		int height = this.tableGraphInfo.getTableHeader().getHeight();
-		int x = this.tableGraphInfo.getLocationOnScreen().x + width;
-		int y = this.tableGraphInfo.getLocationOnScreen().y - height;
-		textStyleDialog.setLocation(x, y);
-		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 		SymbolType symbolType = SymbolType.FILL;
+		final int[] selectedRow = this.tableGraphInfo.getSelectedRows();
+		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+//		String name = this.tableGraphInfo.getColumnName(TABLE_COLUMN_EXPRESSION);
+//		int width = this.tableGraphInfo.getColumn(name).getWidth();
+//		int height = this.tableGraphInfo.getTableHeader().getHeight();
+//		int x = this.tableGraphInfo.getLocationOnScreen().x + width;
+//		int y = this.tableGraphInfo.getLocationOnScreen().y - height;
+//		textStyleDialog.setLocation(x, y);
 
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeGraph.getItem(selectedRow[0]).getUniformStyle();
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
+			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					resetGeoSytle(selectedRow[0], geoStyle);
+				}
+			});
 			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
 				resetGeoSytle(selectedRow[0], nowGeoStyle);
 
 			}

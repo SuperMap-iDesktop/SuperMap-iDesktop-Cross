@@ -8,6 +8,8 @@ import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public abstract class JPanelSymbols extends JPanel {
 					int x = 0;
 					int y = insets.top + vgap; // FlowLayout starts by adding vgap, so do that here too.
 					int rowHeight = 0;
-					int rowCount = 0;
+//					int rowCount = 0;
 					int columnCount = 0;
 					for (int i = 0; i < n; i++) {
 						Component c = target.getComponent(i);
@@ -85,7 +87,7 @@ public abstract class JPanelSymbols extends JPanel {
 								if (panelColumn == -1) {
 									panelColumn = columnCount;
 								}
-								rowCount++;
+//								rowCount++;
 								x = d.width;
 								y += vgap + rowHeight;
 								rowHeight = d.height;
@@ -95,7 +97,7 @@ public abstract class JPanelSymbols extends JPanel {
 					}
 					y += rowHeight;
 					y += insets.bottom;
-					panelRow = rowCount;
+//					panelRow = rowCount;
 					return new Dimension(reqdWidth + insets.left + insets.right, y);
 				}
 			}
@@ -136,20 +138,75 @@ public abstract class JPanelSymbols extends JPanel {
 							fireSymbolDoubleClicked();
 						}
 						SymbolPanel symbolPanel = (SymbolPanel) e.getSource();
-						if (symbolPanel == lastSelectedPanel) {
-							return;
-						}
-						if (lastSelectedPanel != null) {
-							lastSelectedPanel.setUnselected();
-						}
-						symbolPanel.setSelected();
-						lastSelectedPanel = symbolPanel;
-						changeGeoStyleId(lastSelectedPanel.getSymbolID());
-						fireSymbolSelectedChanged(lastSelectedPanel.getSymbol());
+						setSelectedSymbolPanel(symbolPanel);
 					}
 				}
 			});
 		}
+		this.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == 37) {
+					// 左
+					setSelectSymbol(-1);
+				} else if (e.getKeyCode() == 38) {
+					// 上
+					setSelectSymbol(-panelColumn);
+				} else if (e.getKeyCode() == 39) {
+					//右
+					setSelectSymbol(1);
+				} else if (e.getKeyCode() == 40) {
+					//下
+					setSelectSymbol(panelColumn);
+				}
+			}
+		});
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				JPanelSymbols.this.requestFocus();
+			}
+		});
+	}
+
+	private void setSelectedSymbolPanel(SymbolPanel symbolPanel) {
+		if (symbolPanel == lastSelectedPanel || symbolPanel == null) {
+			return;
+		}
+		if (lastSelectedPanel != null) {
+			lastSelectedPanel.setUnselected();
+		}
+		symbolPanel.setSelected();
+		lastSelectedPanel = symbolPanel;
+		changeGeoStyleId(lastSelectedPanel.getSymbolID());
+		if (this.getParent() != null && this.getParent().getParent() instanceof JScrollPane) {
+			this.scrollRectToVisible(lastSelectedPanel.getBounds());
+		}
+		fireSymbolSelectedChanged(lastSelectedPanel.getSymbol());
+	}
+
+	private void setSelectSymbol(int distance) {
+		if (this.getComponentCount() <= 0 || distance == 0) {
+			return;
+		}
+		int currentIndex = this.getComponentZOrder(lastSelectedPanel);
+		SymbolPanel resultSymbolPanel = null;
+		if (distance > 0) {
+			for (int i = 0, j = currentIndex; i <= distance && j < this.getComponentCount(); j++) {
+				if (this.getComponent(j).isVisible()) {
+					resultSymbolPanel = ((SymbolPanel) this.getComponent(j));
+					i++;
+				}
+			}
+		} else {
+			for (int i = 0, j = currentIndex; i <= -distance && j >= 0; j--) {
+				if (this.getComponent(j).isVisible()) {
+					resultSymbolPanel = ((SymbolPanel) this.getComponent(j));
+					i++;
+				}
+			}
+		}
+		setSelectedSymbolPanel(resultSymbolPanel);
 	}
 
 	private void fireSymbolDoubleClicked() {
@@ -198,7 +255,10 @@ public abstract class JPanelSymbols extends JPanel {
 
 	protected abstract void initDefaultPanel();
 
-	public void setSelectSymbol() {
+	/**
+	 * 初始化的时候使用
+	 */
+	private void setSelectSymbol() {
 		int symbolId = getCurrentSymbolId();
 		boolean isFind = false;
 		for (int i = 0; i < this.getComponentCount(); i++) {
@@ -235,7 +295,9 @@ public abstract class JPanelSymbols extends JPanel {
 
 	private void search() {
 		for (int i = 0; i < this.getComponentCount(); i++) {
-			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString) || ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase()));
+			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString)
+					|| ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase())
+					|| String.valueOf(((SymbolPanel) this.getComponent(i)).getSymbolID()).toLowerCase().contains(searchString.toLowerCase()));
 		}
 	}
 

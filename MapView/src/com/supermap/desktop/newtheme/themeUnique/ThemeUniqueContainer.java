@@ -6,10 +6,12 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -23,7 +25,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
@@ -42,7 +43,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +54,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -94,8 +93,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private JLabel labelOffsetYUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
 	private AddItemPanel addItemPanel;
-	private String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
+	private String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
 	private transient ThemeUnique themeUnique;
 	private transient DatasetVector datasetVector;
 	private transient Layer themeUniqueLayer;
@@ -332,8 +331,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
 		if (this.themeUnique.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -422,7 +421,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[uniqueCount + 1][4], nameStrings) {
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings({ "unchecked", "rawtypes" })
+			@SuppressWarnings({"unchecked", "rawtypes"})
 			@Override
 			public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
 				if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
@@ -595,10 +594,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 根据当前数据集类型设置颜色方案
 	 *
-	 * @param geoStyle
-	 *            需要设置的风格
-	 * @param color
-	 *            设置的颜色
+	 * @param geoStyle 需要设置的风格
+	 * @param color    设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = datasetVector.getType();
@@ -1023,8 +1020,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow
-		 *            要重置的行
+		 * @param selectRow 要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
@@ -1054,17 +1050,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 设置文本风格
 	 */
 	private void setItemGeoSytle() {
-		int[] selectedRow = this.tableUniqueInfo.getSelectedRows();
-		SymbolDialog textStyleDialog = new SymbolDialog();
-		String name = this.tableUniqueInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-		int width = this.tableUniqueInfo.getColumn(name).getWidth();
-		int height = this.tableUniqueInfo.getTableHeader().getHeight();
-		int x = this.tableUniqueInfo.getLocationOnScreen().x + width;
-		int y = this.tableUniqueInfo.getLocationOnScreen().y - height;
-		textStyleDialog.setLocation(x, y);
-		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 		SymbolType symbolType = null;
-		GeoStyle geoStyle = new GeoStyle();
 		if (CommonToolkit.DatasetTypeWrap.isPoint(datasetVector.getType())) {
 			symbolType = SymbolType.MARKER;
 		} else if (CommonToolkit.DatasetTypeWrap.isLine(datasetVector.getType())) {
@@ -1072,6 +1058,16 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
 			symbolType = SymbolType.FILL;
 		}
+		final int[] selectedRow = this.tableUniqueInfo.getSelectedRows();
+		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+//		String name = this.tableUniqueInfo.getColumnName(TABLE_COLUMN_VISIBLE);
+//		int width = this.tableUniqueInfo.getColumn(name).getWidth();
+//		int height = this.tableUniqueInfo.getTableHeader().getHeight();
+//		int x = this.tableUniqueInfo.getLocationOnScreen().x + width;
+//		int y = this.tableUniqueInfo.getLocationOnScreen().y - height;
+//		textStyleDialog.setLocation(x, y);
+		GeoStyle geoStyle;
+
 
 		if (selectedRow.length == 1) {
 			if (selectedRow[0] != this.tableUniqueInfo.getRowCount() - 1) {
@@ -1079,17 +1075,22 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			} else {
 				geoStyle = this.themeUnique.getDefaultStyle();
 			}
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
-			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
-				if (selectedRow.length > 0) {
-					for (int i = 0; i < selectedRow.length; i++) {
-						if (selectedRow[i] != tableUniqueInfo.getRowCount() - 1) {
-							resetGeoSytle(selectedRow[i], nowGeoStyle);
-						} else {
-							this.themeUnique.setDefaultStyle(nowGeoStyle);
-						}
+			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					if (selectedRow[0] != tableUniqueInfo.getRowCount() - 1) {
+						resetGeoSytle(selectedRow[0], geoStyle);
+					} else {
+						themeUnique.setDefaultStyle(geoStyle);
 					}
+				}
+			});
+			if (dialogResult.equals(DialogResult.OK)) {
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
+				if (selectedRow[0] != tableUniqueInfo.getRowCount() - 1) {
+					resetGeoSytle(selectedRow[0], nowGeoStyle);
+				} else {
+					this.themeUnique.setDefaultStyle(nowGeoStyle);
 				}
 			}
 		} else {
@@ -1112,10 +1113,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow
-	 *            要重置文本风格的行
-	 * @param nowGeoStyle
-	 *            新的文本风格
+	 * @param selectRow   要重置文本风格的行
+	 * @param nowGeoStyle 新的文本风格
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeUniqueItem item = this.themeUnique.getItem(selectRow);

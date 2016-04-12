@@ -10,6 +10,9 @@ import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -23,7 +26,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -43,7 +45,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -591,17 +592,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 批量设置文本风格
 	 */
 	private void setItemGeoSytle() {
-		int[] selectedRow = this.tableRangeInfo.getSelectedRows();
-		SymbolDialog textStyleDialog = new SymbolDialog();
-		String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-		int width = this.tableRangeInfo.getColumn(name).getWidth();
-		int height = this.tableRangeInfo.getTableHeader().getHeight();
-		int x = this.tableRangeInfo.getLocationOnScreen().x + width;
-		int y = this.tableRangeInfo.getLocationOnScreen().y - height;
-		textStyleDialog.setLocation(x, y);
-		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 		SymbolType symbolType = null;
-
 		if (CommonToolkit.DatasetTypeWrap.isPoint(this.datasetVector.getType())) {
 			symbolType = SymbolType.MARKER;
 		} else if (CommonToolkit.DatasetTypeWrap.isLine(this.datasetVector.getType())) {
@@ -610,19 +601,30 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			symbolType = SymbolType.FILL;
 		}
 
+		final int[] selectedRow = this.tableRangeInfo.getSelectedRows();
+		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+//		String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
+//		int width = this.tableRangeInfo.getColumn(name).getWidth();
+//		int height = this.tableRangeInfo.getTableHeader().getHeight();
+//		int x = this.tableRangeInfo.getLocationOnScreen().x + width;
+//		int y = this.tableRangeInfo.getLocationOnScreen().y - height;
+//		textStyleDialog.setLocation(x, y);
+		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+
+
+
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeRange.getItem(selectedRow[0]).getStyle();
 
-			DialogResult dialogResult = textStyleDialog.showDialog(resources, geoStyle, symbolType);
-			if (dialogResult.equals(DialogResult.OK)) {
-				GeoStyle nowGeoStyle = textStyleDialog.getStyle();
-				if (selectedRow.length == 1) {
-					resetGeoSytle(selectedRow[0], nowGeoStyle);
-				} else {
-					for (int i = 0; i < selectedRow.length; i++) {
-						resetGeoSytle(selectedRow[i], nowGeoStyle);
-					}
+			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
+				@Override
+				public void apply(GeoStyle geoStyle) {
+					resetGeoSytle(selectedRow[0], geoStyle);
 				}
+			});
+			if (dialogResult.equals(DialogResult.OK)) {
+				GeoStyle nowGeoStyle = textStyleDialog.getCurrentGeoStyle();
+				resetGeoSytle(selectedRow[0], nowGeoStyle);
 			}
 		} else if (selectedRow.length > 1) {
 			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
@@ -648,8 +650,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 *            要重置文本风格的行
 	 * @param nowGeoStyle
 	 *            新的文本风格
-	 * @param symbolType
-	 *            文本的风格类型
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeRangeItem item = themeRange.getItem(selectRow);

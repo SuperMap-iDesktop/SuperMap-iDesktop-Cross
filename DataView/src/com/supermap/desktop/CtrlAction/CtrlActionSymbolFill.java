@@ -1,13 +1,13 @@
 package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.controls.SymbolDialog;
 
 public class CtrlActionSymbolFill extends CtrlAction {
 
@@ -19,9 +19,8 @@ public class CtrlActionSymbolFill extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-			SymbolDialog symbolDialog = new SymbolDialog();
-			symbolDialog.showDialog(resources, new GeoStyle(), SymbolType.FILL);
+			SymbolDialog symbolDialog = SymbolDialogFactory.getSymbolDialog(SymbolType.FILL);
+			symbolDialog.showDialog(new GeoStyle());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

@@ -5,6 +5,7 @@ import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.ui.controls.InternalToolkitControl;
+import com.supermap.desktop.utilties.FontUtilties;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -36,7 +37,7 @@ public class SymbolPanelFill extends SymbolPanel {
 			Font font = new Font("Dialog", 0, 14);
 			graphics.setFont(font);
 			graphics.setColor(new Color(13, 80, 143));
-			graphics.drawString("NULL", 25, 45);
+			graphics.drawString("NULL", (width - FontUtilties.getStringWidth("NULL", font)) / 2, (height + FontUtilties.getStringHeight("NULL", font)) / 2);
 		}
 		init(bufferedImage);
 	}
