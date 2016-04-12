@@ -83,7 +83,9 @@ public class SymbolGroupTreeNode extends DefaultMutableTreeNode {
 	}
 
 	public void setName(String name) {
-		currentGroup.setName(name);
+		if (!currentGroup.getName().equals(name)) {
+			currentGroup.setName(name);
+		}
 	}
 
 	public SymbolGroup getCurrentGroup() {
