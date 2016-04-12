@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.TabularUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -30,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.NumberFormatter;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -379,15 +381,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			tableModel.removeAllRows();
 			tableModel.intializeRows(this.datasetVector.getFieldInfos());
 
-			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
-				IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
-
-				if (form instanceof IFormTabular && ((IFormTabular) form).getRecordset().getDataset()== this.datasetVector) {
-					// 刷新已打开的当前修改数据的属性表，不同的窗口绑定不同的表格
-					Recordset recordset = this.datasetVector.getRecordset(false, CursorType.DYNAMIC);
-					((IFormTabular) form).setRecordset(recordset);
-				}
-			}
+			TabularUtilties.refreshTabularForm(this.datasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -558,7 +552,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 			return (this.fieldInfos.get(row).getType() == FieldType.TEXT || this.fieldInfos.get(row).getType() == FieldType.WTEXT) && column == MAX_LENGTH;
 
-			}
+		}
 
 		@Override
 		public int getRowCount() {
