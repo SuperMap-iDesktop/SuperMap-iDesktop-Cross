@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.GeoCompound;
@@ -25,6 +26,7 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -126,7 +128,7 @@ public class ProtectedDecomposeEditor extends AbstractEditor {
 						layer.getSelection().clear();
 						if (resultIDs.size() > 0) {
 							layer.getSelection().addRange(ArrayUtilties.convertToInt(resultIDs.toArray(new Integer[resultIDs.size()])));
-							// SuperMap.Desktop.UI.CommonToolkit.RefreshTabularForm(recordset.Dataset);
+							TabularUtilties.refreshTabularForm((DatasetVector) layer.getDataset());
 							// _Toolkit.InvokeGeometrySelectedEvent(formMap.MapControl, new SuperMap.UI.GeometrySelectedEventArgs(resultIDs.Count));
 							Application.getActiveApplication().getOutput()
 									.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_DecomposeSuccess"), resultIDs.size()));

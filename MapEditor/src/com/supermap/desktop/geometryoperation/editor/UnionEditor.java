@@ -18,6 +18,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -41,6 +42,7 @@ public class UnionEditor extends AbstractEditor {
 					.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
 				union(environment, form.getEditLayer(), form.getPropertyData());
+				TabularUtilties.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
