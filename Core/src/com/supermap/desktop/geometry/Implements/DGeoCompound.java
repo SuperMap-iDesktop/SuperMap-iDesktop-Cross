@@ -32,5 +32,4 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 			this.geoCompound.addPart(part);
 		}
 	}
-
 }

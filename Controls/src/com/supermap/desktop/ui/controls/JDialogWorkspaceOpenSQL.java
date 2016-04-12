@@ -30,13 +30,14 @@ import java.awt.event.MouseEvent;
  *
  * @author huchenpu
  */
-public class JDialogWorkspaceOpenSQL extends SmDialog{
+public class JDialogWorkspaceOpenSQL extends SmDialog {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 创建一个打开的配置窗口
 	 *
-	 * @param DataBase 数据库类型(SQL/Oracle)
+	 * @param DataBase
+	 *            数据库类型(SQL/Oracle)
 	 */
 	public JDialogWorkspaceOpenSQL(JFrame parent, boolean modal, String DataBase) {
 		super(parent, modal);
@@ -93,7 +94,7 @@ public class JDialogWorkspaceOpenSQL extends SmDialog{
 		jButtonOpen.setPreferredSize(new java.awt.Dimension(75, 23));
 
 		// TODO Oracle或Sql Server实例列表初始化
-		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[]{}));
+		jComboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
 		jComboBoxServer.setEditable(true);
 
 		jComboBoxServer.getEditor().getEditorComponent().addFocusListener(new FocusListener() {
@@ -185,7 +186,7 @@ public class JDialogWorkspaceOpenSQL extends SmDialog{
 				}
 			}
 		});
-		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[]{""}));
+		jComboBoxWorkspaceName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
 		jComboBoxWorkspaceName.setEditable(true);
 		jComboBoxWorkspaceName.getComponent(0).addMouseListener(new MouseAdapter() {
 			@Override
@@ -486,18 +487,4 @@ public class JDialogWorkspaceOpenSQL extends SmDialog{
 	private JLabel jLabelEmptyLabel;
 	// End of variables declaration
 
-	@Override
-	public void escapePressed() {
-		DialogExit();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (getRootPane().getDefaultButton()==this.jButtonOpen) {
-			jButtonOpenActionPerformed();
-		}
-		if (getRootPane().getDefaultButton()==this.jButtonClose) {
-			DialogExit();
-		}
-	}
 }

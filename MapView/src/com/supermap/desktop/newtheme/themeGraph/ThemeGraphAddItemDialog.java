@@ -55,8 +55,8 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 	private ActionListener buttonAction = new ButtonAction();
 	private ArrayList<String> themeExpressionList = new ArrayList<String>();
 	private Layer layer;
-	
-	public ThemeGraphAddItemDialog(Layer layer,DatasetVector datasetVector, JoinItems joinItems, ArrayList<String> list) {
+
+	public ThemeGraphAddItemDialog(Layer layer, DatasetVector datasetVector, JoinItems joinItems, ArrayList<String> list) {
 		this.layer = layer;
 		this.datasetVector = datasetVector;
 		setList(joinItems, list);
@@ -65,6 +65,7 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		registActionListener();
 		this.componentList.add(this.buttonSure);
 		this.componentList.add(this.buttonCancel);
+		this.componentList.add(this.buttonAddExpression);
 		this.setFocusTraversalPolicy(policy);
 	}
 
@@ -281,24 +282,6 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 			}
 		}
 
-	}
-
-	@Override
-	public void escapePressed() {
-		disposeDialog();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonAddExpression) {
-			getSqlExpression();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonSure) {
-			disposeDialog();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			disposeDialog();
-		}
 	}
 
 }

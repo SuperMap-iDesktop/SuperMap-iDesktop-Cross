@@ -84,15 +84,16 @@ public class JDialogTopoAdvance extends SmDialog {
 		initTraversalPolicy();
 	}
 
-	private void initTraversalPolicy(){
-		if (this.componentList.size()>0) {
+	private void initTraversalPolicy() {
+		if (this.componentList.size() > 0) {
 			componentList.clear();
 		}
 		this.componentList.add(this.buttonSure);
 		this.componentList.add(this.buttonQuite);
+		this.componentList.add(this.buttonMore);
 		this.setFocusTraversalPolicy(policy);
 	}
-	
+
 	private void registActionListener() {
 		this.buttonSure.addActionListener(this.listener);
 		this.buttonQuite.addActionListener(this.listener);
@@ -251,21 +252,6 @@ public class JDialogTopoAdvance extends SmDialog {
 	@Override
 	public void setDialogResult(DialogResult dialogResult) {
 		this.dialogResult = dialogResult;
-	}
-
-	@Override
-	public void escapePressed() {
-		quiteButtonClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonSure) {
-			buttonSureClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonQuite) {
-			quiteButtonClicked();
-		}
 	}
 
 	private void quiteButtonClicked() {

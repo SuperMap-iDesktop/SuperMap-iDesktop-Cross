@@ -106,7 +106,6 @@ public class SQLExpressionDialog extends SmDialog {
 		initPanelFunction();
 		this.jButtonOK = new SmButton();
 		this.jButtonCancel = new SmButton();
-		getRootPane().setDefaultButton(this.jButtonOK);
 		this.jScrollPanel = new JScrollPane();
 		//@formatter:off
 		JPanel panelButton = new JPanel();
@@ -126,6 +125,7 @@ public class SQLExpressionDialog extends SmDialog {
 		initialFieldTypeMap();
 		initResources();
 		registActionListener();
+		initTraversalPolicy();
 	}
 
 	/**
@@ -336,7 +336,6 @@ public class SQLExpressionDialog extends SmDialog {
 
 		setTableFieldInfo(datasets, thisFieldTypes);
 		this.setVisible(true);
-		initTraversalPolicy();
 		return dialogResult;
 	}
 
@@ -352,17 +351,17 @@ public class SQLExpressionDialog extends SmDialog {
 
 		setTableFieldInfo(filedDatasets);
 		this.setVisible(true);
-		initTraversalPolicy();
 		return dialogResult;
 
 	}
 
-	private void initTraversalPolicy(){
+	private void initTraversalPolicy() {
 		this.componentList.add(this.jButtonOK);
 		this.componentList.add(this.jButtonCancel);
 		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(this.jButtonOK);
 	}
-	
+
 	private void intializeForm() {
 		try {
 			this.requestFocusInWindow();
@@ -636,21 +635,6 @@ public class SQLExpressionDialog extends SmDialog {
 		map.put(FieldType.SINGLE, ControlsProperties.getString("String_FiledType_SinglePrecision"));
 		map.put(FieldType.TEXT, ControlsProperties.getString("String_FiledType_Text"));
 		map.put(FieldType.WTEXT, ControlsProperties.getString("String_FiledType_WText"));
-	}
-
-	@Override
-	public void escapePressed() {
-		buttonCancelClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.jButtonOK) {
-			buttonOkClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.jButtonCancel) {
-			buttonCancelClicked();
-		}
 	}
 
 	private void buttonOkClicked() {

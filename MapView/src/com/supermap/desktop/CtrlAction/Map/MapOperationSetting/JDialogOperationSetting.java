@@ -309,18 +309,4 @@ public class JDialogOperationSetting extends SmDialog {
 		super.dispose();
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOkClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			dispose();
-		}
-	}
 }

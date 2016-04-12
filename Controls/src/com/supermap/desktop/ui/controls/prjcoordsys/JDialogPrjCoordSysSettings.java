@@ -189,6 +189,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			this.componentList.add(buttonApply);
 			this.componentList.add(buttonClose);
 			this.setFocusTraversalPolicy(policy);
+			this.getRootPane().setDefaultButton(buttonClose);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -1189,18 +1190,4 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCloseClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonApply) {
-			applyPrjCoordSys();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonClose) {
-			buttonCloseClicked();
-		}
-	}
 }

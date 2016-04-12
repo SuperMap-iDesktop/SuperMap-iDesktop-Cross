@@ -112,6 +112,10 @@ public class DatasetChooser extends SmDialog {
 		initComponent();
 		initResources();
 		initComponentStates();
+		this.componentList.add(this.buttonOk);
+		this.componentList.add(this.buttonCancel);
+		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 	}
 
 	public void initComponent() {
@@ -488,8 +492,7 @@ public class DatasetChooser extends SmDialog {
 				TableUtilties.invertSelection(DatasetChooser.this.table);
 			} else if (c == DatasetChooser.this.buttonCancel) {
 				// 关闭
-				setDialogResult(DialogResult.CANCEL);
-				dispose();
+				cancelButtonClicked();
 			} else if (c == DatasetChooser.this.buttonOk) {
 				// 确定
 				buttonOkClicked();
@@ -586,22 +589,6 @@ public class DatasetChooser extends SmDialog {
 				resultDataset.add(this.datasetList.get(selectedRow));
 			}
 			return resultDataset;
-		}
-	}
-
-
-	@Override
-	public void escapePressed() {
-		cancelButtonClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton()==this.buttonOk) {
-			buttonOkClicked();
-		}
-		if (this.getRootPane().getDefaultButton()==this.buttonCancel) {
-			cancelButtonClicked();
 		}
 	}
 

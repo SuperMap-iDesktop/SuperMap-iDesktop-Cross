@@ -136,15 +136,16 @@ public class BufferDialog extends SmDialog {
 		initTraversalPolicy();
 	}
 
-	private void initTraversalPolicy(){
-		if (this.componentList.size()>0) {
+	private void initTraversalPolicy() {
+		if (this.componentList.size() > 0) {
 			this.componentList.clear();
 		}
 		this.componentList.add(panelButton.getButtonOk());
 		this.componentList.add(panelButton.getButtonCancel());
 		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
 	}
-	
+
 	private void initComponent() {
 		this.labelDataType = new JLabel("DataType");
 		this.panelDataType = new JPanel();
@@ -309,16 +310,5 @@ public class BufferDialog extends SmDialog {
 			BufferDialog.this.dispose();
 		}
 	}
-
-	@Override
-	public void enterPressed() {
-		if (panelButton.getButtonOk()==this.getRootPane().getDefaultButton()) {
-			okButtonClicked();
-		}
-		if (panelButton.getButtonCancel()==this.getRootPane().getDefaultButton()) {
-			BufferDialog.this.dispose();
-		}
-	}
-
 
 }

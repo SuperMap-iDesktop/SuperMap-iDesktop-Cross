@@ -63,13 +63,4 @@ public class TextStyleDialog extends SmDialog {
 		textStyleContainer.refreshMapAndLayer();
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		dispose();
-	}
 }

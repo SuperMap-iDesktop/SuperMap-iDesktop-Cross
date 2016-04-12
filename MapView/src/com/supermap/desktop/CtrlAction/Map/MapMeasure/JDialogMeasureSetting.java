@@ -169,18 +169,4 @@ public class JDialogMeasureSetting extends SmDialog {
 		super.dispose();
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButtonClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			dispose();
-		}
-	}
 }

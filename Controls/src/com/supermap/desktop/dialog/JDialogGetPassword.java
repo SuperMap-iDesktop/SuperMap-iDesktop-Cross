@@ -150,19 +150,4 @@ public class JDialogGetPassword extends SmDialog {
 		return String.valueOf(this.jpasswordField.getPassword());
 	}
 
-	@Override
-	public void escapePressed() {
-		canelButton_Click();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButton_Click();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			canelButton_Click();
-		}
-	}
-
 }

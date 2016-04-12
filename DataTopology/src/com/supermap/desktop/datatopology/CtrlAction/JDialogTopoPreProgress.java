@@ -509,20 +509,4 @@ public class JDialogTopoPreProgress extends SmDialog {
 		this.checkBoxPolygonsChecked = checkBoxPolygonsChecked;
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonSure) {
-			preProgressDataset();
-			dispose();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonQuite) {
-			dispose();
-		}
-	}
-
 }

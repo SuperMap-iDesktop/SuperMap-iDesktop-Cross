@@ -67,6 +67,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		registActionListener();
 		this.componentList.add(this.buttonSure);
 		this.componentList.add(this.buttonQuite);
+		this.componentList.add(this.buttonMore);
 		this.setFocusTraversalPolicy(policy);
 	}
 
@@ -355,25 +356,6 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			}
 		}
 		return 0 < count;
-	}
-
-	@Override
-	public void escapePressed() {
-		dispose();
-		unregistActionListener();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonSure) {
-			topologyProcess();
-			unregistActionListener();
-			dispose();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonQuite) {
-			dispose();
-			unregistActionListener();
-		}
 	}
 
 }

@@ -94,6 +94,7 @@ public class SymbolDialogFill extends SymbolDialog {
 	}
 
 	private void fillInit() {
+		this.setTitle(ControlsProperties.getString("String_FillSymbolChoose"));
 		fillInitComponents();
 		fillInitLayout();
 		fillAddListener();
@@ -391,6 +392,8 @@ public class SymbolDialogFill extends SymbolDialog {
 	private void getSymbolDialogLine() {
 		if (symbolDialogLine == null) {
 			symbolDialogLine = new SymbolDialogLine(this);
+			symbolDialogLine.setSize((int) (symbolDialogLine.getSize().getWidth() * 0.9), (int) (symbolDialogLine.getSize().getHeight() * 0.7));
+			symbolDialogLine.setLocationRelativeTo(null);
 		}
 	}
 

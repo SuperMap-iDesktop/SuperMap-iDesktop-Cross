@@ -66,6 +66,7 @@ public class DataImportFrame extends SmDialog {
 		this.componentList.add(this.buttonImport);
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(this.policy);
+		this.getRootPane().setDefaultButton(this.buttonClose);
 	}
 
 	public DataImportFrame(JDialog owner, boolean modal) {
@@ -626,25 +627,6 @@ public class DataImportFrame extends SmDialog {
 
 	public JButton getButtonImport() {
 		return buttonImport;
-	}
-
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton()==this.buttonImport) {
-			// 导入
-			CommonFunction.importData(table, fileInfos);
-			if (checkBoxAutoClose.isSelected()) {
-				dispose();
-			}
-		}
-		if (this.getRootPane().getDefaultButton()==this.buttonClose) {
-			dispose();
-		}
 	}
 
 }

@@ -307,16 +307,4 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 
 	}
 
-	@Override
-	public void escapePressed() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void enterPressed() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

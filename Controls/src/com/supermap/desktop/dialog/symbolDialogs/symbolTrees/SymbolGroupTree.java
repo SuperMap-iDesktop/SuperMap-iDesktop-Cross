@@ -23,9 +23,11 @@ public class SymbolGroupTree extends JTree {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 				JLabel jLabel = new JLabel(((SymbolGroupTreeNode) value).getName());
-				jLabel.setOpaque(true);
 				if (selected) {
+					jLabel.setOpaque(true);
 					jLabel.setBackground(new Color(150, 185, 255));
+				} else {
+					jLabel.setOpaque(false);
 				}
 				if (leaf) {
 					jLabel.setIcon(getLeafIcon());

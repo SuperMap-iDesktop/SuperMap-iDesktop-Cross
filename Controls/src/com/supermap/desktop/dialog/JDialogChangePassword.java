@@ -335,18 +335,4 @@ public class JDialogChangePassword extends SmDialog {
 		setButtonOKEnabeld();
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCancelClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOKClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			buttonCancelClicked();
-		}
-	}
 }

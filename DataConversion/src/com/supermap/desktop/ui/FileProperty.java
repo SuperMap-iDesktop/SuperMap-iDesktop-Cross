@@ -209,14 +209,4 @@ public class FileProperty extends SmDialog {
 		this.buttonSure.setText(DataConversionProperties.getString("string_button_sure"));
 		this.buttonQuit.setText(DataConversionProperties.getString("string_button_quit"));
 	}
-
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		dispose();
-	}
 }

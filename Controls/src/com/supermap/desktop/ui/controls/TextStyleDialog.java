@@ -365,21 +365,4 @@ public class TextStyleDialog extends SmDialog {
 
 	}
 
-	@Override
-	public void escapePressed() {
-		dialogResult = DialogResult.CANCEL;
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonConfirm) {
-			dialogResult = DialogResult.OK;
-			setVisible(false);
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			dialogResult = DialogResult.CANCEL;
-			dispose();
-		}
-	}
 }

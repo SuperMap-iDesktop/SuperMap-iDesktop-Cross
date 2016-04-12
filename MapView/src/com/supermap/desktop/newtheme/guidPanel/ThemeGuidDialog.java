@@ -29,8 +29,8 @@ public class ThemeGuidDialog extends SmDialog {
 	private SmButton buttonOk = new SmButton("OK");
 	private SmButton buttonCancel = new SmButton("Cancel");
 	private JList<Object> listContent = new JList<Object>();
-	private JLabel labelUniform = new JLabel();
-	private JLabel labelRange = new JLabel();
+	private ThemeLabelDecorator labelUniform;
+	private ThemeLabelDecorator labelRange;
 	private JPanel panel;
 	private JPanel contentPanel = new JPanel();
 
@@ -73,26 +73,36 @@ public class ThemeGuidDialog extends SmDialog {
 		}
 		this.panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		this.panel.setBackground(Color.WHITE);
-		
+
 		addListItem();
-		
+		listContent.setCellRenderer(new ListCellRenderer<Object>() {
+
+			@Override
+			public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				((DataCell) value).setSelected(isSelected);
+				return (DataCell) value;
+			}
+		});
 		scrollPane.setViewportView(listContent);
 		this.buttonOk.setActionCommand("OK");
 		getRootPane().setDefaultButton(buttonOk);
 		this.buttonCancel.setActionCommand("Cancel");
-		
+
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOk,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
+		panelButton.add(this.buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
 		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
 		getContentPane().setLayout(new GridBagLayout());
-		
+
 		this.contentPanel.setLayout(new GridBagLayout());
-		this.contentPanel.add(scrollPane,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 1));
-		this.contentPanel.add(this.panel,   new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(3, 1));
-		
-		getContentPane().add(contentPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 3));
-		getContentPane().add(panelButton,  new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		this.contentPanel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH)
+				.setInsets(3).setWeight(3, 1));
+		this.contentPanel.add(this.panel, new GridBagConstraintsHelper(3, 0, 7, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH)
+				.setInsets(3).setWeight(7, 1));
+
+		getContentPane().add(contentPanel,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 3));
+		getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		getRootPane().setDefaultButton(this.buttonOk);
 	}
 
@@ -183,7 +193,8 @@ public class ThemeGuidDialog extends SmDialog {
 
 	private void replaceRightPanel(JPanel panel) {
 		this.contentPanel.remove(getRightPanel());
-		this.contentPanel.add(panel,   new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(3, 1));
+		this.contentPanel.add(panel, new GridBagConstraintsHelper(3, 0, 7, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3)
+				.setWeight(7, 1));
 		this.contentPanel.updateUI();
 	}
 
@@ -227,7 +238,8 @@ public class ThemeGuidDialog extends SmDialog {
 		switch (selectRow) {
 		case 0:
 			if (null != getRightPanel()) {
-				replaceRightPanel(new GridUniqueThemePanel(this));;
+				replaceRightPanel(new GridUniqueThemePanel(this));
+				;
 			}
 			break;
 		case 1:
@@ -340,9 +352,8 @@ public class ThemeGuidDialog extends SmDialog {
 			if (e.getSource() == labelUniform) {
 				// 统一风格标签专题图
 				if (1 == e.getClickCount()) {
-					labelUniform.setOpaque(true);
-					labelUniform.setBackground(Color.gray);
-					labelRange.setBackground(Color.white);
+					labelUniform.selected(true);
+					labelRange.selected(false);
 					isUniform = true;
 					isRange = false;
 				} else if (2 == e.getClickCount()) {
@@ -354,9 +365,8 @@ public class ThemeGuidDialog extends SmDialog {
 			} else {
 				// 分段风格标签专题图
 				if (1 == e.getClickCount()) {
-					labelUniform.setBackground(Color.white);
-					labelRange.setOpaque(true);
-					labelRange.setBackground(Color.gray);
+					labelUniform.selected(false);
+					labelRange.selected(true);
 					isUniform = false;
 					isRange = true;
 				} else if (2 == e.getClickCount()) {
@@ -369,21 +379,6 @@ public class ThemeGuidDialog extends SmDialog {
 
 		}
 
-	}
-
-	@Override
-	public void escapePressed() {
-		cancelButtonPressed();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButtonPressed();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			cancelButtonPressed();
-		}
 	}
 
 }

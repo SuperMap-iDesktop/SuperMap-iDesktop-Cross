@@ -987,29 +987,18 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 * 设置分段方法
 		 */
 		private void setRangeMethod() {
-			String rangeMethod = comboBoxRangeMethod.getSelectedItem().toString();
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_EqualInterval"))) {
+			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
+			switch (rangeMethod) {
+			case 0:
 				// 等距分段
 				rangeMode = RangeMode.EQUALINTERVAL;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
 				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_StdDeviation"))) {
-				// 标准差分段
-				rangeMode = RangeMode.STDDEVIATION;
-				comboBoxRangeCount.setEnabled(false);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
-				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Quantile"))) {
-				// 等计数分段
-				rangeMode = RangeMode.QUANTILE;
-				comboBoxRangeCount.setEnabled(true);
-				spinnerRangeLength.setEnabled(false);
-				isCustom = false;
-				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
+				break;
+			case 1:
+				// 平方根分段
 				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
@@ -1025,7 +1014,18 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
+
+				break;
+			case 2:
+				// 标准差分段
+				rangeMode = RangeMode.STDDEVIATION;
+				comboBoxRangeCount.setEnabled(false);
+				spinnerRangeLength.setEnabled(false);
+				isCustom = false;
+				resetThemeInfo();
+				break;
+			case 3:
+				// 对数分段
 				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
@@ -1040,8 +1040,16 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			}
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
+				break;
+			case 4:
+				// 等计数分段
+				rangeMode = RangeMode.QUANTILE;
+				comboBoxRangeCount.setEnabled(true);
+				spinnerRangeLength.setEnabled(false);
+				isCustom = false;
+				resetThemeInfo();
+				break;
+			case 5:
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
 				double defaultRangeCount = 0.0;
@@ -1054,6 +1062,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(true);
 				makeDefaultAsCustom();
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -1128,7 +1139,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 					resetComboBoxRangeExpression(themeRange.getRangeExpression());
-					isResetComboBox = true;
 				} else {
 					refreshThemeRange(theme);
 				}
@@ -1296,7 +1306,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 				comboBoxExpression.setSelectedItem(themeRange.getRangeExpression());
-				isResetComboBox = true;
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);
