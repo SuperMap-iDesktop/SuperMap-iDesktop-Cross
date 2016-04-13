@@ -4,8 +4,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IToolbar;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.implement.SmButtonDropdown;
 import com.supermap.desktop.ui.ToolbarManager;
+
+import javax.swing.*;
 
 /**
  * Created by Administrator on 2015/11/10.
@@ -55,5 +56,11 @@ public class ToolbarUtilties {
 
 			}
 		}
+	}
+
+	public static JToolBar.Separator getVerticalSeparator() {
+		JToolBar.Separator separator = new JToolBar.Separator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		return separator;
 	}
 }
