@@ -3,16 +3,16 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class JDialogSymbolsChange extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (showSymbolDialog() == DialogResult.OK) {
-				changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getStyle());
+				changeSymbolMarket(JDialogSymbolsChange.this.symbolDialog.getCurrentGeoStyle());
 				JDialogSymbolsChange.this.setDialogResult(DialogResult.OK);
 				JDialogSymbolsChange.this.clean();
 			}
@@ -66,8 +66,8 @@ public class JDialogSymbolsChange extends SmDialog {
 	private DialogResult showSymbolDialog() {
 		DialogResult result = DialogResult.CANCEL;
 		if (symbolDialog == null) {
-			symbolDialog = new SymbolDialog(this);
-			result = symbolDialog.showDialog(Application.getActiveApplication().getWorkspace().getResources(), geoStylesBeforeList.get(0), this.symbolType);
+			symbolDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+			result = symbolDialog.showDialog(geoStylesBeforeList.get(0));
 		} else {
 			symbolDialog.setVisible(true);
 			result = symbolDialog.getDialogResult();
@@ -267,16 +267,16 @@ public class JDialogSymbolsChange extends SmDialog {
 		this.setTitle(getResources("String_BatchSettingStyle"));
 
 		panelPoint.setBorder(BorderFactory.createTitledBorder(getResources("String_SymbolStyle")));
-		panelPoint.initResources(new String[] { getResources("String_MarkType"), getResources("String_MarkSize"), getResources("String_MarkColor"),
-				getResources("String_RotationAngle"), getResources("String_Transparency") });
+		panelPoint.initResources(new String[]{getResources("String_MarkType"), getResources("String_MarkSize"), getResources("String_MarkColor"),
+				getResources("String_RotationAngle"), getResources("String_Transparency")});
 
 		panelLine.setBorder(BorderFactory.createTitledBorder(getResources("String_LineStyle")));
-		panelLine.initResources(new String[] { getResources("String_LineType"), getResources("String_LineWidth"), getResources("String_LineColor") });
+		panelLine.initResources(new String[]{getResources("String_LineType"), getResources("String_LineWidth"), getResources("String_LineColor")});
 
 		panelFill.setBorder(BorderFactory.createTitledBorder(getResources("String_FillStyle")));
-		panelFill.initResources(new String[] { getResources("String_FillType"), getResources("String_BackColor"), getResources("String_ForColor"),
+		panelFill.initResources(new String[]{getResources("String_FillType"), getResources("String_BackColor"), getResources("String_ForColor"),
 				getResources("String_Transparency"), getResources("String_GradientType"), getResources("String_GradientAngle"),
-				getResources("String_GradientOffXCheck"), getResources("String_GradientOffYCheck") });
+				getResources("String_GradientOffXCheck"), getResources("String_GradientOffYCheck")});
 
 		buttonNext.setText(CommonProperties.getString(CommonProperties.Next));
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
