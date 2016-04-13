@@ -38,7 +38,7 @@ public class RecordsetUtilties {
 			if (recordset != null && FieldTypeUtilties.isNumber(fieldType)) {
 
 				// 组件不支持64位统计
-				if (fieldType != FieldType.INT64) {
+				if (fieldType == FieldType.INT64) {
 					Long sum = 0L;
 					recordset.moveFirst();
 
