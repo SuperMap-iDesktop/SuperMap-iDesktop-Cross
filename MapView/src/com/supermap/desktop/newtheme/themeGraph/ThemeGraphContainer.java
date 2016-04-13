@@ -30,6 +30,7 @@ import com.supermap.desktop.ui.controls.SteppedComboBox;
 import com.supermap.desktop.ui.controls.TableRowCellEditor;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.GraduatedMode;
 import com.supermap.mapping.GraphAxesTextDisplayMode;
 import com.supermap.mapping.Layer;
@@ -574,6 +575,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.comboBoxMethod,   new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.toolbar,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(100, 0));
 		this.panelProperty.add(this.scollPane,        new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.BOTH).setWeight(100, 3));
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboBoxColor.setSelectedIndex(21);
+		} else {
+			this.comboBoxColor.setSelectedIndex(14);
+		}
+		refreshColor();
+		refreshMapAtOnce();
 		getTable();
 		this.scollPane.setViewportView(this.tableGraphInfo);
 		// @formatter:on

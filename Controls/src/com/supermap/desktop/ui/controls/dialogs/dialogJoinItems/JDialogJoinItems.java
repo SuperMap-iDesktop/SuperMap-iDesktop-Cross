@@ -14,6 +14,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -56,7 +57,8 @@ public class JDialogJoinItems extends SmDialog {
 	private SmButton buttonCancel = new SmButton("cancle");
 	private JScrollPane scrollPane = new JScrollPane();
 	private JoinItemsTable joinItemsTable = new JoinItemsTable();
-
+	protected static final DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD, DatasetType.TABULAR,
+			DatasetType.TEXT, DatasetType.NETWORK, DatasetType.POINT3D, DatasetType.LINKTABLE, DatasetType.LINE3D, DatasetType.REGION3D};
 	/*
 	 * private final DefaultTableCellRenderer columnTableCellRenderer = new DefaultTableCellRenderer() {
 	 * 
@@ -80,8 +82,7 @@ public class JDialogJoinItems extends SmDialog {
 		private DatasetComboBox getDatasetComboBox() {
 			if (datasetComboBox == null) {
 				datasetComboBox = new DatasetComboBox(currentDataset.getDatasource().getDatasets());
-				DatasetType[] datasetTypes = new DatasetType[] { DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD, DatasetType.TABULAR,
-						DatasetType.TEXT, DatasetType.NETWORK, DatasetType.POINT3D, DatasetType.LINKTABLE, DatasetType.LINE3D, DatasetType.REGION3D };
+
 				datasetComboBox.setDatasetTypes(datasetTypes);
 				datasetComboBox.removeDataset(((JoinItemsTableModel) joinItemsTable.getModel()).getCurrentDataset());
 				datasetComboBox.addItemListener(new ItemListener() {
@@ -290,6 +291,10 @@ public class JDialogJoinItems extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				rememberTableWeight();
+				DatasetChooser datasetChooser = new DatasetChooser(JDialogJoinItems.this) {
+
+				};
+				datasetChooser.setSupportDatasetTypes(datasetTypes);
 				JDialogJoinItems.this.addNewJoinItem();
 				setTableStates();
 			}

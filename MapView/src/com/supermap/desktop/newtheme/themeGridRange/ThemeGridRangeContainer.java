@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.RangeMode;
@@ -83,7 +84,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private String captiontype = "";
 	private boolean isRefreshAtOnce = true;
 	private boolean isCustom = false;
-	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
@@ -103,7 +103,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.datasetGrid = datasetGrid;
 		this.themeGridRange = new ThemeGridRange(themeGridRange);
 		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -146,10 +145,13 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
-		this.comboBoxColorStyle.setSelectedIndex(21);
-		if (isNewTheme) {
-			refreshColor();
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboBoxColorStyle.setSelectedIndex(21);
+		} else {
+			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
+		refreshColor();
+		refreshAtOnce();
 	}
 
 	/**
@@ -190,7 +192,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_RangeMode_EqualInterval"),
 				MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_Logarithm"),
 				MapViewProperties.getString("String_RangeMode_CustomInterval") }));
-		if (themeGridRange.getRangeMode() == RangeMode.NONE) {
+		if (themeGridRange.getRangeMode() == RangeMode.EQUALINTERVAL) {
 			this.comboBoxRangeMethod.setSelectedIndex(0);
 		} else if (themeGridRange.getRangeMode() == RangeMode.SQUAREROOT) {
 			this.comboBoxRangeMethod.setSelectedIndex(1);
@@ -410,8 +412,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	/**
 	 * 重置选择项颜色
 	 *
-	 * @param selectRow 要重置颜色的行
-	 * @param nowColor 新的颜色
+	 * @param selectRow
+	 *            要重置颜色的行
+	 * @param nowColor
+	 *            新的颜色
 	 */
 	private void resetColor(int selectRow, Color nowColor) {
 		ThemeGridRangeItem item = this.themeGridRange.getItem(selectRow);
@@ -583,7 +587,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			ThemeGridRangeItem tempThemeRangeItem = themeGridRange.getItem(selectRow);
@@ -602,18 +607,23 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	class LocalMouseListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			int[] selectedRows = tableRangeInfo.getSelectedRows();
-			if (selectedRows.length == 1) {
-				buttonMerge.setEnabled(false);
-				buttonSplit.setEnabled(true);
-			} else if (selectedRows.length >= 2) {
-				buttonSplit.setEnabled(false);
-			}
+			if (e.getSource() == tableRangeInfo) {
+				int[] selectedRows = tableRangeInfo.getSelectedRows();
+				if (selectedRows.length == 1) {
+					buttonMerge.setEnabled(false);
+					buttonSplit.setEnabled(true);
+				} else if (selectedRows.length >= 2) {
+					buttonSplit.setEnabled(false);
+				}
 
-			if (selectedRows.length >= 2 && MathUtilties.isContinuouslyArray(selectedRows)) {
-				buttonMerge.setEnabled(true);
-			} else {
-				buttonMerge.setEnabled(false);
+				if (selectedRows.length >= 2 && MathUtilties.isContinuouslyArray(selectedRows)) {
+					buttonMerge.setEnabled(true);
+				} else {
+					buttonMerge.setEnabled(false);
+				}
+			}
+			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
+				isMergeOrSplit = false;
 			}
 		}
 
@@ -636,10 +646,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				setItemColor(e.getX(), e.getY());
 				refreshAtOnce();
 			}
-			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
-				isMergeOrSplit = false;
-			}
-			
 			if (e.getSource() == comboBoxRangeMethod) {
 				isResetComboBox = false;
 			}
@@ -692,16 +698,19 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		 * 设置分段方法
 		 */
 		private void setRangeMethod() {
-			String rangeMethod = comboBoxRangeMethod.getSelectedItem().toString();
+			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
 			double minValue = datasetGrid.getGridStatisticsResult().getMinValue();
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_EqualInterval"))) {
+			switch (rangeMethod) {
+			case 0:
 				// 等距分段
 				rangeMode = RangeMode.EQUALINTERVAL;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
 				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
+				break;
+			case 1:
+				// 平方根分段
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"));
@@ -715,7 +724,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
+				break;
+			case 2:
+				// 对数分段
 				if (Double.compare(minValue, 0) < 0) {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeTheme"));
@@ -729,8 +740,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			}
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
+				break;
+			case 3:
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
 				double defaultRangeCount = 0;
@@ -744,6 +755,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(true);
 				makeDefaultAsCustom();
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -891,7 +905,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			if (null == theme || theme.getCount() == 0) {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-				isResetComboBox=true;
+				isResetComboBox = true;
 			} else {
 				this.isCustom = true;
 				refreshThemeRange(theme);

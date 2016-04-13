@@ -111,6 +111,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private JLabel labelGroupField = new JLabel("groupField");
 	private JLabel labelOrderByField = new JLabel("orderByField");
 
+	private SmButton buttonJoinItems = new SmButton("joinItem");
 	private SmButton buttonImport = new SmButton("import");
 	private SmButton buttonExport = new SmButton("export");
 	private JButton buttonGetAllValue = new JButton("getAllValue");
@@ -157,6 +158,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private ISQLBuildComponent lastComponent = textareaQueryField;
 	private JoinItems joinItems = new JoinItems();
 
+
 	// endregion
 
 	public JDialogSQLQuery() {
@@ -181,6 +183,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化控件
 	 */
 	private void initComponents() {
+		buttonJoinItems.setUseDefaultSize(false);
 		initWorkspaceTree();
 		initTableFieldInfo();
 		initGetAllValue();
@@ -249,8 +252,7 @@ public class JDialogSQLQuery extends SmDialog {
 	/**
 	 * 选中指定数据集
 	 *
-	 * @param dataset
-	 *            需要选中的数据集
+	 * @param dataset 需要选中的数据集
 	 */
 
 	private void setWorkspaceTreeSelectedDataset(Dataset dataset) {
@@ -314,6 +316,7 @@ public class JDialogSQLQuery extends SmDialog {
 		this.checkBoxShowTabular.setText(DataViewProperties.getString("String_SQLQueryShowTabular"));
 		this.checkBoxHighLigthMap.setText(DataViewProperties.getString("String_SQLQueryHighLightMapWnd"));
 
+		this.buttonJoinItems.setText(DataViewProperties.getString("String_SQLQueryRelated"));
 		this.buttonExport.setText(ControlsProperties.getString("String_Export"));
 		this.buttonImport.setText(ControlsProperties.getString("String_Import"));
 		this.buttonQuery.setText(DataViewProperties.getString("String_SQLButtonQuery"));
@@ -354,6 +357,8 @@ public class JDialogSQLQuery extends SmDialog {
 		this.listAllValue.addMouseListener(this.listAllValueMouseAdapter);
 		// 查询字段内容改变判断查询按钮状态
 		this.textareaQueryField.getDocument().addDocumentListener(this.documentListenerCheckQueryState);
+		// 设置关联字段
+		this.buttonJoinItems.addActionListener(buttonJoinItemsAction);
 		// 导入
 		this.buttonImport.addActionListener(this.buttonImportActionListener);
 		// 导出
@@ -527,7 +532,7 @@ public class JDialogSQLQuery extends SmDialog {
 	 * 初始化字符函数下拉框
 	 */
 	private void initJComboBoxStringFunction() {
-		jComboBoxStringFunction.setModel(new DefaultComboBoxModel<String>(new String[] { DataViewProperties.getString("String_SQLQueryCommonFuncString"),
+		jComboBoxStringFunction.setModel(new DefaultComboBoxModel<>(new String[] { DataViewProperties.getString("String_SQLQueryCommonFuncString"),
 				"Ascii()", "Char()", "Charindex()", "Difference()", "Left()", "Len()", "Lower()", "Ltrim()", "Nchar()", "Patindex()", "Replace()",
 				"Replicate()", "Quotename()", "Reverse()", "Right()", "Rtrim()", "Soundex()", "Space()", "Str()", "Stuff()", "Substring()", "Unicode()",
 				"Upper()" }));
@@ -660,11 +665,12 @@ public class JDialogSQLQuery extends SmDialog {
 	private void initPanelButton() {
 		// @formatter:off
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(buttonImport,new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
-		panelButton.add(buttonExport,new GridBagConstraintsHelper(1,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
-		panelButton.add(buttonQuery,new GridBagConstraintsHelper(2,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
-		panelButton.add(buttonClear,new GridBagConstraintsHelper(3,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
-		panelButton.add(buttonClose,new GridBagConstraintsHelper(4,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
+		panelButton.add(buttonJoinItems, new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,5,0,0));
+		panelButton.add(buttonImport,new GridBagConstraintsHelper(1,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
+		panelButton.add(buttonExport,new GridBagConstraintsHelper(2,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(0,10,0,0));
+		panelButton.add(buttonQuery,new GridBagConstraintsHelper(3,0,1,1).setWeight(100,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
+		panelButton.add(buttonClear,new GridBagConstraintsHelper(4,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
+		panelButton.add(buttonClose,new GridBagConstraintsHelper(5,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0,0,0,10));
 
 
 		// @formatter:on
@@ -756,22 +762,25 @@ public class JDialogSQLQuery extends SmDialog {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 				if (row == 0) {
 					if (lastComponent == textareaQueryField) {
-						lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
+						lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
 					} else {
-						// donothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
+						// doNothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
 					}
-				} else if (row == tableFieldInfo.getRowCount() - 1) {
-					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
-					jDialogJoinItem.setCurrentDataset(currentDataset);
-					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
-						// 先设值再释放资源
-						JoinItems joinItems = JDialogSQLQuery.this.joinItems;
-						JDialogSQLQuery.this.joinItems = jDialogJoinItem.getJoinItems();
-						tableFieldInfo.setJoinItem(JDialogSQLQuery.this.joinItems);
-						joinItems.dispose();
-					}
-				} else if (row != -1) {
-					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
+				}
+//				else if (row == tableFieldInfo.getRowCount() - 1) {
+//					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
+//					jDialogJoinItem.setCurrentDataset(currentDataset);
+//					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
+//						// 先设值再释放资源
+//						JoinItems joinItems = JDialogSQLQuery.this.joinItems;
+//						JDialogSQLQuery.this.joinItems = jDialogJoinItem.getJoinItems();
+//						tableFieldInfo.setJoinItem(JDialogSQLQuery.this.joinItems);
+//						joinItems.dispose();
+//					}
+//				}
+				else if (row != -1) {
+//					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
+					lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
 				}
 			}
 		}
@@ -900,6 +909,22 @@ public class JDialogSQLQuery extends SmDialog {
 			clear();
 		}
 	};
+
+	private ActionListener buttonJoinItemsAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
+			jDialogJoinItem.setCurrentDataset(currentDataset);
+			if (jDialogJoinItem.showDialog() == DialogResult.OK) {
+				// 先设值再释放资源
+				JoinItems joinItems = JDialogSQLQuery.this.joinItems;
+				JDialogSQLQuery.this.joinItems = jDialogJoinItem.getJoinItems();
+				tableFieldInfo.setJoinItem(JDialogSQLQuery.this.joinItems);
+				joinItems.dispose();
+			}
+		}
+	};
+	;
 
 	private final ActionListener buttonImportActionListener = new ActionListener() {
 		@Override
