@@ -165,7 +165,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
 		// 设置行高
-
+		jTableTabular.setSurrendersFocusOnKeystroke(true);
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		jScrollPaneChildWindow = new JScrollPane(jTableTabular);
 		jScrollPaneChildWindow.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);

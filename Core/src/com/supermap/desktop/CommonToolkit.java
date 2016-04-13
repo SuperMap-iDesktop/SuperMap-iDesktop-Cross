@@ -5765,7 +5765,7 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.LINE, fileParentPath + "Image_DatasetLine_Normal.png");
 			datasetImage.put(DatasetType.LINE3D, fileParentPath + "Image_DatasetLine3D_Normal.png");
 			datasetImage.put(DatasetType.LINEM, fileParentPath + "Image_DatasetLineM_Normal.png");
-			datasetImage.put(DatasetType.LINKTABLE, fileParentPath + "Image_DatasetLineTable_Normal.png");
+			datasetImage.put(DatasetType.LINKTABLE, fileParentPath + "Image_DatasetLinkTable_Normal.png");
 			datasetImage.put(DatasetType.MODEL, fileParentPath + "Image_DatasetModel_Normal.png");
 			datasetImage.put(DatasetType.NETWORK, fileParentPath + "Image_DatasetNetwork_Normal.png");
 			datasetImage.put(DatasetType.NETWORK3D, fileParentPath + "Image_DatasetNetwork3D_Normal.png");
@@ -5781,6 +5781,7 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.WCS, fileParentPath + "Image_DatasetWCS_Normal.png");
 			datasetImage.put(DatasetType.WMS, fileParentPath + "Image_DatasetWMS_Normal.png");
 			datasetImage.put(DatasetType.TEXTURE, fileParentPath + "Image_DataseSimpleDataset_Normal.png");
+//			datasetImage.put(DatasetType.LINKTABLE)
 			String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
 			datasetImage.put(DatasetType.TOPOLOGY, filePathTopo);
 		}
