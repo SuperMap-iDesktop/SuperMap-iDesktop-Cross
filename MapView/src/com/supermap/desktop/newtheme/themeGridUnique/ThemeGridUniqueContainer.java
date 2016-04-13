@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
@@ -61,7 +62,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private transient Map map;
 	private ArrayList<ThemeGridUniqueItem> deleteItems = new ArrayList<ThemeGridUniqueItem>();
 	private boolean isRefreshAtOnce = true;
-	private boolean isNewTheme = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 
@@ -85,7 +85,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.datasetGrid = datasetGrid;
 		this.themeUnique = new ThemeGridUnique(themeUnique);
 		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -128,11 +127,13 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		this.comboboxColor.setSelectedIndex(21);
-		if (isNewTheme) {
-			refreshColor();
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboboxColor.setSelectedIndex(21);
+		} else {
+			this.comboboxColor.setSelectedIndex(14);
 		}
-
+		refreshColor();
+		refreshAtOnce();
 		initPanelProperty();
 	}
 

@@ -27,6 +27,7 @@ import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
@@ -93,8 +94,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private JLabel labelOffsetYUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetY = new JComboBox<String>();
 	private AddItemPanel addItemPanel;
-	private String[] nameStrings = {MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
-			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption")};
+	private String[] nameStrings = { MapViewProperties.getString("String_Title_Visible"), MapViewProperties.getString("String_Title_Sytle"),
+			MapViewProperties.getString("String_ThemeGraphItemManager_UniqueValue"), MapViewProperties.getString("String_ThemeGraphTextFormat_Caption") };
 	private transient ThemeUnique themeUnique;
 	private transient DatasetVector datasetVector;
 	private transient Layer themeUniqueLayer;
@@ -102,7 +103,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<ThemeUniqueItem> deleteItems = new ArrayList<ThemeUniqueItem>();
 	private boolean isRefreshAtOnce = true;
 	private String expression;
-	private boolean isNewTheme = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
@@ -137,7 +137,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.datasetVector = datasetVector;
 		this.themeUnique = new ThemeUnique(themeUnique);
 		this.map = initCurrentTheme(datasetVector, layer);
-		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -182,11 +181,15 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
-		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		this.comboboxColor.setSelectedIndex(21);
-		if (isNewTheme) {
-			refreshColor();
+		this.add(tabbedPaneInfo,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboboxColor.setSelectedIndex(21);
+		} else {
+			this.comboboxColor.setSelectedIndex(14);
 		}
+		refreshColor();
+		refreshAtOnce();
 		initPanelProperty();
 		initPanelAdvance();
 	}
@@ -204,8 +207,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonAscend.setToolTipText(MapViewProperties.getString("String_Title_Ascend"));
 		this.buttonDescend.setToolTipText(MapViewProperties.getString("String_Title_Descend"));
 		this.buttonAntitone.setToolTipText(MapViewProperties.getString("String_Title_Antitone"));
-		this.panelOffsetSet.setBorder(new TitledBorder(null, MapViewProperties.getString("String_GroupBoxOffset"), TitledBorder.LEADING, TitledBorder.TOP,
-				null, null));
+		this.panelOffsetSet
+				.setBorder(new TitledBorder(null, MapViewProperties.getString("String_GroupBoxOffset"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		this.labelOffsetUnity.setText(MapViewProperties.getString("String_LabelOffsetUnit"));
 		this.labelOffsetX.setText(MapViewProperties.getString("String_LabelOffsetX"));
 		this.labelOffsetY.setText(MapViewProperties.getString("String_LabelOffsetY"));
@@ -331,8 +334,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
 		if (this.themeUnique.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -378,8 +381,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			this.buttonGeoStyle.setIcon(InternalImageIconFactory.POINT_STYLE);
 		}
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
-		this.buttonDelete.setIcon(new ImageIcon(ThemeUniqueContainer.class
-				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+		this.buttonDelete
+				.setIcon(new ImageIcon(ThemeUniqueContainer.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonAntitone.setIcon(InternalImageIconFactory.Rever);
 	}
 
@@ -421,7 +424,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[uniqueCount + 1][4], nameStrings) {
 			private static final long serialVersionUID = 1L;
 
-			@SuppressWarnings({"unchecked", "rawtypes"})
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Class getColumnClass(int column) {// 要这样定义table，要重写这个方法0，0的意思就是别的格子的类型都跟0,0的一样。
 				if (TABLE_COLUMN_VISIBLE == column || TABLE_COLUMN_GEOSTYLE == column) {
@@ -594,8 +597,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 根据当前数据集类型设置颜色方案
 	 *
-	 * @param geoStyle 需要设置的风格
-	 * @param color    设置的颜色
+	 * @param geoStyle
+	 *            需要设置的风格
+	 * @param color
+	 *            设置的颜色
 	 */
 	private void setGeoStyleColor(GeoStyle geoStyle, Color color) {
 		DatasetType datasetType = datasetVector.getType();
@@ -714,8 +719,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
 				resetThemeItem();
 			} else {
-				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter()
-						.getJoinItems());
+				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET,
+						themeUniqueLayer.getDisplayFilter().getJoinItems());
 
 				if (null != theme) {
 					boolean isOffsetFixed = themeUnique.isOffsetFixed();
@@ -1020,7 +1025,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
@@ -1060,14 +1066,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 		final int[] selectedRow = this.tableUniqueInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-//		String name = this.tableUniqueInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-//		int width = this.tableUniqueInfo.getColumn(name).getWidth();
-//		int height = this.tableUniqueInfo.getTableHeader().getHeight();
-//		int x = this.tableUniqueInfo.getLocationOnScreen().x + width;
-//		int y = this.tableUniqueInfo.getLocationOnScreen().y - height;
-//		textStyleDialog.setLocation(x, y);
+		// String name = this.tableUniqueInfo.getColumnName(TABLE_COLUMN_VISIBLE);
+		// int width = this.tableUniqueInfo.getColumn(name).getWidth();
+		// int height = this.tableUniqueInfo.getTableHeader().getHeight();
+		// int x = this.tableUniqueInfo.getLocationOnScreen().x + width;
+		// int y = this.tableUniqueInfo.getLocationOnScreen().y - height;
+		// textStyleDialog.setLocation(x, y);
 		GeoStyle geoStyle;
-
 
 		if (selectedRow.length == 1) {
 			if (selectedRow[0] != this.tableUniqueInfo.getRowCount() - 1) {
@@ -1113,8 +1118,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 重置文本风格
 	 *
-	 * @param selectRow   要重置文本风格的行
-	 * @param nowGeoStyle 新的文本风格
+	 * @param selectRow
+	 *            要重置文本风格的行
+	 * @param nowGeoStyle
+	 *            新的文本风格
 	 */
 	private void resetGeoSytle(int selectRow, GeoStyle nowGeoStyle) {
 		ThemeUniqueItem item = this.themeUnique.getItem(selectRow);

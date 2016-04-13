@@ -29,6 +29,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.RangeMode;
@@ -113,7 +114,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private boolean isCustom = false;
 	private double precision;
-	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
@@ -143,7 +143,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.themeRange = new ThemeRange(themeRange);
 		this.map = initCurrentTheme(datasetVector, layer);
 		this.precision = themeRange.getPrecision();
-		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -193,10 +192,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
-		this.comboBoxColorStyle.setSelectedIndex(21);
-		if (this.isNewTheme) {
-			refreshColor();
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboBoxColorStyle.setSelectedIndex(21);
+		} else {
+			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
+		refreshColor();
+		refreshAtOnce();
 	}
 
 	/**
@@ -856,6 +858,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					buttonMerge.setEnabled(false);
 				}
 			}
+			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
+				isMergeOrSplit = false;
+			}
 		}
 
 		@Override
@@ -879,9 +884,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
-			}
-			if (e.getSource() == comboBoxRangeCount.getComponent(0)) {
-				isMergeOrSplit = false;
 			}
 			if (e.getSource() == comboBoxExpression.getComponent(0) || e.getSource() == comboBoxRangeMethod) {
 				isResetComboBox = false;
@@ -988,6 +990,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		 */
 		private void setRangeMethod() {
 			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
+			rangeExpression = comboBoxExpression.getSelectedItem().toString();
 			switch (rangeMethod) {
 			case 0:
 				// 等距分段
@@ -1125,6 +1128,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (isResetComboBox) {
 				return;
 			}
+			rangeExpression = comboBoxExpression.getSelectedItem().toString();
 			if (rangeExpression.isEmpty()) {
 				comboBoxExpression.setSelectedIndex(0);
 			} else if (rangeCount < 2 || rangeCount > 32) {

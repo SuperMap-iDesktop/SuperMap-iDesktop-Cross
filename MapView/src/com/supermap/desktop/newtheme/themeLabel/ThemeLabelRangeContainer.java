@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.RangeMode;
@@ -96,7 +97,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private String captiontype = "<=X<";
 	private boolean isRefreshAtOnce = true;
 	private boolean isCustom = false;
-	private boolean isNewTheme = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
 	private boolean isResetLayerProperty = false;
@@ -129,7 +129,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.datasetVector = datasetVector;
 		this.themeLabel = new ThemeLabel(themeLabel);
 		this.map = initCurrentTheme(datasetVector, layer);
-		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -186,10 +185,13 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
 				.setWeight(1, 1));
 		initPanelStyle();
-		this.comboBoxColorStyle.setSelectedIndex(21);
-		if (this.isNewTheme) {
-			refreshColor();
+		if (SystemPropertyUtilties.isWindows()) {
+			this.comboBoxColorStyle.setSelectedIndex(21);
+		} else {
+			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
+		refreshColor();
+		refreshAtOnce();
 	}
 
 	/**
