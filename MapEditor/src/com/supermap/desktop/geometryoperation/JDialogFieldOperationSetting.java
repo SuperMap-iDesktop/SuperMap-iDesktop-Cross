@@ -18,6 +18,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxItemT;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.RecordsetUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
@@ -155,7 +156,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				recordset.moveNext();
 			}
 		} else {
-			result = recordset.statistic(fieldName, StatisticMode.SUM);
+			result = RecordsetUtilties.sum(recordset, fieldName, fieldType);
 		}
 		return result;
 	}

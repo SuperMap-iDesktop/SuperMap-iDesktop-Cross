@@ -52,7 +52,7 @@ import com.supermap.data.Recordset;
 public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener {
 
 	private IFormMap formMap;
-	private GeometryEditProperties properties = new GeometryEditProperties();
+	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
 
 	private MouseListener mouseListener = new MouseListener() {
@@ -162,7 +162,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		return this.formMap.getMapControl().getActiveEditableLayer();
 	}
 
-	public GeometryEditProperties getEditProperties() {
+	public EditProperties getEditProperties() {
 		return this.properties;
 	}
 
