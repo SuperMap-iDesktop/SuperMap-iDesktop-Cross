@@ -2,14 +2,17 @@ package com.supermap.desktop.geometry.Implements;
 
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 
-public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, IRegionFeature, IRegionConvertor, ILineConvertor {
+public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, IRegionFeature, IRegionConvertor, ILineConvertor {
 
 	private GeoRegion geoRegion;
 
@@ -30,6 +33,7 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, I
 
 	/**
 	 * 返回自己
+	 * 
 	 * @param segment
 	 *            本类本参数无效
 	 * @return
@@ -47,5 +51,34 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature, I
 	@Override
 	public Point2Ds getPart(int index) {
 		return this.geoRegion == null ? null : this.geoRegion.getPart(index);
+	}
+
+	@Override
+	public void addPart(Point2Ds part) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addPart(Geometry geometry) {
+		IGeometry dGeometry = DGeometryFactory.create(geometry);
+
+		try {
+			if (this.geoRegion != null && dGeometry instanceof IRegionConvertor) {
+				GeoRegion geoRegion = ((IRegionConvertor) dGeometry).convertToRegion(60);
+
+				if (geoRegion != null) {
+					for (int i = 0; i < geoRegion.getPartCount(); i++) {
+						this.geoRegion.addPart(geoRegion.getPart(i));
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (dGeometry != null) {
+				dGeometry.dispose();
+			}
+		}
 	}
 }

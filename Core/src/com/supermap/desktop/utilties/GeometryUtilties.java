@@ -10,6 +10,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
@@ -307,5 +308,44 @@ public class GeometryUtilties {
 				geometry2.dispose();
 			}
 		}
+	}
+
+	/**
+	 * 将指定图层选中的几何对象组合到 geometry 中
+	 * 
+	 * @param target
+	 * @param layer
+	 * @return
+	 */
+	public static IGeometry combination(IGeometry target, Layer layer) {
+		Recordset recordset = null;
+
+		try {
+			if (target instanceof IMultiPartFeature<?> && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+				recordset = layer.getSelection().toRecordset();
+				recordset.moveFirst();
+
+				while (!recordset.isEOF()) {
+					Geometry geometry = recordset.getGeometry();
+
+					try {
+						((IMultiPartFeature<?>) target).addPart(geometry);
+					} finally {
+						if (geometry != null) {
+							geometry.dispose();
+						}
+					}
+					recordset.moveNext();
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
+		}
+		return target;
 	}
 }

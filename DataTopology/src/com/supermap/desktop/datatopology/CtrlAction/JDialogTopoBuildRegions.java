@@ -466,21 +466,6 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		cancelButtonClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButtonClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			cancelButtonClicked();
-		}
-	}
-
 	private void okButtonClicked() {
 		boolean isTopoprogress = checkBoxtopologyPropress.isSelected();
 		if (isTopoprogress) {

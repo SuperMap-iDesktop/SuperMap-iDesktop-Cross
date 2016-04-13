@@ -139,6 +139,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			this.componentList.add(this.buttonOk);
 			this.componentList.add(this.buttonCancel);
 			this.setFocusTraversalPolicy(policy);
+			this.getRootPane().setDefaultButton(this.buttonCancel);
 		}
 
 		private void initComponents() {
@@ -155,16 +156,6 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		}
 
 		private void initListeners() {
-			this.textFieldText.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyPressed(KeyEvent e) {
-					if (e.getKeyChar() == KeyEvent.VK_ENTER && buttonOk.isEnabled()) {
-						buttonOkClicked();
-					} else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-						dispose();
-					}
-				}
-			});
 			this.textFieldText.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void insertUpdate(DocumentEvent e) {
@@ -208,6 +199,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				removeTrackingObject();
 			} else {
 				buttonOk.setEnabled(true);
+				this.getRootPane().setDefaultButton(buttonOk);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
 				geoText.getTextStyle().setFontName("");
 				geoText.getTextStyle().setSizeFixed(false);
@@ -285,21 +277,5 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			refreshTrackingLayer();
 		}
 
-		@Override
-		public void escapePressed() {
-			dialogResult = DialogResult.CANCEL;
-			dispose();
-		}
-
-		@Override
-		public void enterPressed() {
-			if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-				buttonOkClicked();
-			}
-			if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		}
 	}
 }

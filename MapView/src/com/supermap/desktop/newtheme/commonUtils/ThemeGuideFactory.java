@@ -5,6 +5,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Point2D;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -366,6 +367,7 @@ public class ThemeGuideFactory {
 			themeGraph.setGraphType(ThemeGraphType.PIE3D);
 			// 默认设置一个坐标轴风格，避免显示异常
 			themeGraph.getAxesTextStyle().setFontHeight(6);
+			//通过地图实际大小来计算最佳的专题图最大值
 			Point pointStart = new Point(0, 0);
 			Point pointEnd = new Point(0, (int) (getMapControl().getSize().getWidth() / 4));
 			Point2D point2DStart = getMapControl().getMap().pixelToMap(pointStart);

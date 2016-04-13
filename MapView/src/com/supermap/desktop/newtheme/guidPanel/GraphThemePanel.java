@@ -17,14 +17,13 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class GraphThemePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel labelGraphTheme = new JLabel("");
+	private ThemeLabelDecorator labelGraphTheme;
 	private transient ThemeGuidDialog themeGuidDialog;
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 
 	public GraphThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
-		initResources();
 		registListener();
 	}
 
@@ -33,9 +32,10 @@ public class GraphThemePanel extends JPanel {
 	 */
 	private void initComponents() {
 		// @formatter:off
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-
+		this.labelGraphTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_GRAPH, MapViewProperties.getString("String_ThemeDefaultItem"));
+		this.labelGraphTheme.selected(true);
+		this.setBackground(Color.WHITE);
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
@@ -52,21 +52,7 @@ public class GraphThemePanel extends JPanel {
 								.addContainerGap(223, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
 		// @formatter:on
-	}
-
-	/**
-	 * 资源化
-	 */
-	private void initResources() {
-		this.labelGraphTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_GRAPH);
-		this.labelGraphTheme.setText(MapViewProperties.getString("String_ThemeDefaultItem"));
-		this.labelGraphTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelGraphTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelGraphTheme.setOpaque(true);
-		this.labelGraphTheme.setBackground(Color.gray);
 	}
 
 	/**

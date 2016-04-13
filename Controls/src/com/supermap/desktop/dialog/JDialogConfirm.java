@@ -115,21 +115,4 @@ public class JDialogConfirm extends SmDialog {
 		// @formatter:on
 	}
 
-	@Override
-	public void escapePressed() {
-		JDialogConfirm.this.dialogResult = DialogResult.CANCEL;
-		JDialogConfirm.this.dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			JDialogConfirm.this.dialogResult = DialogResult.OK;
-			JDialogConfirm.this.dispose();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			JDialogConfirm.this.dialogResult = DialogResult.CANCEL;
-			JDialogConfirm.this.dispose();
-		}
-	}
 }

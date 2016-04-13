@@ -1,11 +1,11 @@
 package com.supermap.desktop.geometry.Implements;
 
 import com.supermap.data.GeoCompound;
-import com.supermap.data.Point2Ds;
+import com.supermap.data.Geometry;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 
-public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature {
+public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<Geometry> {
 
 	private GeoCompound geoCompound;
 
@@ -21,9 +21,15 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature 
 	}
 
 	@Override
-	public Point2Ds getPart(int index) {
+	public Geometry getPart(int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public void addPart(Geometry part) {
+		if (this.geoCompound != null) {
+			this.geoCompound.addPart(part);
+		}
+	}
 }

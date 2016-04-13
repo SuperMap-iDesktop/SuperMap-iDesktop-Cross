@@ -157,20 +157,20 @@ public class JDialogSetAll extends SmDialog {
 		Panel centerPanel = new Panel();
 		centerPanel.setLayout(new GridBagLayout());
 
-		centerPanel.add(checkBoxTargetDatasource, new GridBagConstraintsHelper(0, 0).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-		centerPanel.add(comboboxTargetDatasource, new GridBagConstraintsHelper(1, 0).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
+		centerPanel.add(checkBoxTargetDatasource, new GridBagConstraintsHelper(0, 0).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
+		centerPanel.add(comboboxTargetDatasource, new GridBagConstraintsHelper(1, 0).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
-		centerPanel.add(checkBoxDatasetType, new GridBagConstraintsHelper(0, 1).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-		centerPanel.add(comboboxDatasetType, new GridBagConstraintsHelper(1, 1).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
+		centerPanel.add(checkBoxDatasetType, new GridBagConstraintsHelper(0, 1).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
+		centerPanel.add(comboboxDatasetType, new GridBagConstraintsHelper(1, 1).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
-		centerPanel.add(checkBoxEncodingType, new GridBagConstraintsHelper(0, 2).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-		centerPanel.add(comboboxEncodingType, new GridBagConstraintsHelper(1, 2).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
+		centerPanel.add(checkBoxEncodingType, new GridBagConstraintsHelper(0, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
+		centerPanel.add(comboboxEncodingType, new GridBagConstraintsHelper(1, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
-		centerPanel.add(checkBoxCharest, new GridBagConstraintsHelper(0, 3).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-		centerPanel.add(comboboxCharest, new GridBagConstraintsHelper(1, 3).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
+		centerPanel.add(checkBoxCharest, new GridBagConstraintsHelper(0, 3).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
+		centerPanel.add(comboboxCharest, new GridBagConstraintsHelper(1, 3).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
-		centerPanel.add(checkBoxAddToNewMap, new GridBagConstraintsHelper(0, 4).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-		centerPanel.add(comboboxAddToNewMap, new GridBagConstraintsHelper(1, 4).setInsets(1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
+		centerPanel.add(checkBoxAddToNewMap, new GridBagConstraintsHelper(0, 4).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
+		centerPanel.add(comboboxAddToNewMap, new GridBagConstraintsHelper(1, 4).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
 		// 按钮面板
 		Panel buttonPanel = new Panel();
@@ -313,21 +313,6 @@ public class JDialogSetAll extends SmDialog {
 				JDialogSetAll.this.buttonCancel_Clicked();
 				return;
 			}
-		}
-	}
-
-	@Override
-	public void escapePressed() {
-		buttonCancel_Clicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOk_Clicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			buttonCancel_Clicked();
 		}
 	}
 

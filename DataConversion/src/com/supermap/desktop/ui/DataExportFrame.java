@@ -118,6 +118,7 @@ public class DataExportFrame extends SmDialog {
 		this.componentList.add(this.buttonExport);
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(this.policy);
+		this.getRootPane().setDefaultButton(this.buttonClose);
 	}
 
 	private void registActionListener() {
@@ -474,7 +475,6 @@ public class DataExportFrame extends SmDialog {
 			this.buttonExport.setEnabled(true);
 			this.buttonInvertSelect.setEnabled(true);
 			this.buttonSelectAll.setEnabled(true);
-			getRootPane().setDefaultButton(this.buttonExport);
 		} else {
 			this.buttonDelete.setEnabled(false);
 			this.buttonExport.setEnabled(false);
@@ -898,21 +898,6 @@ public class DataExportFrame extends SmDialog {
 
 	public JComboBox<String> getComboBoxFileType() {
 		return comboBoxFileType;
-	}
-
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton()==this.buttonExport) {
-			export();
-		}
-		if (this.getRootPane().getDefaultButton()==this.buttonClose) {
-			dispose();
-		}
 	}
 
 }

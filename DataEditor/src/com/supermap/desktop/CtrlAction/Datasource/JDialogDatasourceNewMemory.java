@@ -196,19 +196,4 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		cancelButton_Click();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButton_Click();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			cancelButton_Click();
-		}
-	}
-
 }

@@ -203,7 +203,7 @@ public class SmOptionPane extends SmDialog {
 	}
 
 	private void initTravelPolicy() {
-		if (this.componentList.size()>0) {
+		if (this.componentList.size() > 0) {
 			this.componentList.clear();
 		}
 		if (this.buttonYes.isVisible()) {
@@ -216,28 +216,6 @@ public class SmOptionPane extends SmDialog {
 			this.componentList.add(this.buttonCancel);
 		}
 		this.setFocusTraversalPolicy(policy);
-	}
-
-	@Override
-	public void escapePressed() {
-		result = JOptionPane.CANCEL_OPTION;
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonYes) {
-			result = JOptionPane.OK_OPTION;
-			dispose();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonNo) {
-			result = JOptionPane.NO_OPTION;
-			setVisible(false);
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			result = JOptionPane.CANCEL_OPTION;
-			dispose();
-		}
 	}
 
 }

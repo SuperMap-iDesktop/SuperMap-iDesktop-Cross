@@ -1611,6 +1611,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		}
 
 		private void setPanelEnableAndRefresh(boolean enable) {
+			checkBoxAxis.setSelected(enable);
 			checkBoxAxis.setEnabled(enable);
 			resetMapSize();
 			refreshMapAtOnce();

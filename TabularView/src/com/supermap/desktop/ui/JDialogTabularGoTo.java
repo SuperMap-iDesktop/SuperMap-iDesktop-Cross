@@ -244,19 +244,4 @@ public class JDialogTabularGoTo extends SmDialog {
 		}
 	}
 
-	@Override
-	public void escapePressed() {
-		dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.jButtonGoTo) {
-			goToRow();
-		}
-		if (this.getRootPane().getDefaultButton() == this.jButtonClose) {
-			dispose();
-		}
-	}
-
 }

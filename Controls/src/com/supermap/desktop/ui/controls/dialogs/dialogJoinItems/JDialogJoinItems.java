@@ -663,21 +663,4 @@ public class JDialogJoinItems extends SmDialog {
 		super.dispose();
 	}
 
-	@Override
-	public void escapePressed() {
-		JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
-		JDialogJoinItems.this.dispose();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			JDialogJoinItems.this.setDialogResult(DialogResult.OK);
-			JDialogJoinItems.this.dispose();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			JDialogJoinItems.this.setDialogResult(DialogResult.CANCEL);
-			JDialogJoinItems.this.dispose();
-		}
-	}
 }

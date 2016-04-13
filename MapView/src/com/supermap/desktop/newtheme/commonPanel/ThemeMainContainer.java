@@ -119,8 +119,10 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				//删除图层时销毁已有地图
-				panel.unregistActionListener();
-				setLayerPropertyChanged(false);
+				if (null!=panel) {
+					panel.unregistActionListener();
+					setLayerPropertyChanged(false);
+				}
 			}
 		};
 		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);

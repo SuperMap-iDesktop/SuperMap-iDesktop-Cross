@@ -14,46 +14,38 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
-public class GridUniqueThemePanel extends JPanel{
+public class GridUniqueThemePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private transient ThemeGuidDialog themeGuidDialog;
-	private JLabel labelGridUniqueTheme = new JLabel();
+	private ThemeLabelDecorator labelGridUniqueTheme;
 	private LocalMouseListener localMouseListener = new LocalMouseListener();
-	
+
 	public GridUniqueThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
-		initResources();
 		registListener();
 	}
+
 	private void initComponents() {
 		// @formatter:off
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
-		setBackground(Color.WHITE);
-
+		this.labelGridUniqueTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE, MapViewProperties.getString("String_Default"));
+		this.labelGridUniqueTheme.selected(true);
+		this.setBackground(Color.WHITE);
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(20).addComponent(labelGridUniqueTheme).addContainerGap(368, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addGap(20).addComponent(labelGridUniqueTheme).addContainerGap(358, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGap(24).addComponent(labelGridUniqueTheme).addContainerGap(223, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on
 	}
 
-	private void initResources() {
-		this.labelGridUniqueTheme.setIcon(InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE);
-		this.labelGridUniqueTheme.setText(MapViewProperties.getString("String_Default"));
-		this.labelGridUniqueTheme.setVerticalTextPosition(JLabel.BOTTOM);
-		this.labelGridUniqueTheme.setHorizontalTextPosition(JLabel.CENTER);
-		this.labelGridUniqueTheme.setOpaque(true);
-		this.labelGridUniqueTheme.setBackground(Color.gray);
-	}
-
 	/**
 	 * 注册事件
 	 */
 	private void registListener() {
-		this.labelGridUniqueTheme.addMouseListener(this.localMouseListener );
+		this.labelGridUniqueTheme.addMouseListener(this.localMouseListener);
 	}
 
 	public void unregistListener() {

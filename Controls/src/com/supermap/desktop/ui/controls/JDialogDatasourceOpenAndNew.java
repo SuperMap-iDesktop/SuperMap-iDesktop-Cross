@@ -431,19 +431,4 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		this.dispose();
 	}
 
-	@Override
-	public void escapePressed() {
-		cancelButtonClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			okButtonClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			cancelButtonClicked();
-		}
-	}
-
 }

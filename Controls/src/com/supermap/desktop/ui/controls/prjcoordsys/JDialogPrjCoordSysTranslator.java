@@ -93,9 +93,11 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		registerEvents();
 		setSize(600, 350);
 		setLocationRelativeTo(null);
+		this.componentList.add(buttonSetPrj);
 		this.componentList.add(buttonOk);
 		this.componentList.add(buttonCancel);
 		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(this.buttonCancel);
 	}
 
 	public CoordSysTransMethod getMethod() {
@@ -367,18 +369,4 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 		setVisible(false);
 	}
 
-	@Override
-	public void escapePressed() {
-		buttonCancelClicked();
-	}
-
-	@Override
-	public void enterPressed() {
-		if (this.getRootPane().getDefaultButton() == this.buttonOk) {
-			buttonOKClicked();
-		}
-		if (this.getRootPane().getDefaultButton() == this.buttonCancel) {
-			buttonCancelClicked();
-		}
-	}
 }
