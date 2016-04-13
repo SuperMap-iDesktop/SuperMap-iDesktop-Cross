@@ -76,6 +76,11 @@ public class FieldInfoTable extends JTable {
 		fieldInfoTableModel.setJoinItems(joinItems);
 	}
 
+	public String getSqlValueAt(int row, int column) {
+		return fieldInfoTableModel.getSqlValueAt(row, column);
+
+	}
+
 	/**
 	 * tableModel类
 	 */
@@ -104,7 +109,7 @@ public class FieldInfoTable extends JTable {
 			int count = 0;
 			if (this.dataset != null) {
 				// 全部字段和关联字段 所以+2
-				count = this.dataset.getFieldCount() + 2;
+				count = this.dataset.getFieldCount() + 1;
 				if (joinItems != null && joinItems.getCount() > 0) {
 					for (int i = 0; i < joinItems.getCount(); i++) {
 						FieldInfos fieldInfos = ((DatasetVector) dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable())).getFieldInfos();
@@ -141,19 +146,20 @@ public class FieldInfoTable extends JTable {
 				if (column == 0) {
 					return "*";
 				} else if (column == 1) {
-					return formatString(dataset.getName(), "*");
+//					return formatString(dataset.getName(), "*");
+					return "*";
 				} else {
 					return "All";
 				}
 			}
 			//region 设置关联字段
-			else if (row == getRowCount() - 1) {
-				if (column == 0) {
-					return DataViewProperties.getString("String_SQLQueryRelated");
-				} else {
-					return "";
-				}
-			}
+//			else if (row == getRowCount() - 1) {
+//				if (column == 0) {
+//					return DataViewProperties.getString("String_SQLQueryRelated");
+//				} else {
+//					return "";
+//				}
+//			}
 			//endregion
 			else {
 				Object result = null;
@@ -163,7 +169,8 @@ public class FieldInfoTable extends JTable {
 					if (column == 0) {
 						result = datasetFieldInfos.get(row - 1).getCaption();
 					} else if (column == 1) {
-						result = formatString(this.dataset.getName(), datasetFieldInfos.get(row - 1).getName());
+//						result = formatString(this.dataset.getName(), datasetFieldInfos.get(row - 1).getName());
+						result = datasetFieldInfos.get(row - 1).getName();
 					} else {
 						result = FieldTypeUtilties.getFieldTypeName(datasetFieldInfos.get(row - 1).getType());
 					}
@@ -259,6 +266,14 @@ public class FieldInfoTable extends JTable {
 			this.joinItems = joinItems;
 			initRowCount();
 			fireTableDataChanged();
+		}
+
+		public String getSqlValueAt(int row, int column) {
+			String s = String.valueOf(this.getValueAt(row, column));
+			if (s.indexOf('.') == -1) {
+				s = formatString(dataset.getName(), s);
+			}
+			return s;
 		}
 	}
 }
