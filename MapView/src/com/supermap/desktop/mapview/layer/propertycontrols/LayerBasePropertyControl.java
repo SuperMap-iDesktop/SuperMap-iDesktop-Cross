@@ -1,25 +1,5 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.ScaleModel;
@@ -32,6 +12,20 @@ import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.utilties.StringUtilties;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * 有3点需要在结构中考虑。 1：及时刷新 2：多图层批量编辑 3：属性状态改变事件 本想让结构简单化，但是要处理以上三点，就不得不再做一个 Model 类了
@@ -110,8 +104,8 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		this.textFieldLayerName.setEditable(false);
 		this.textFieldLayerCaption = new JTextField();
 		this.spinnerTransparence = new SMSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-		this.comboBoxMinVisibleScale = new JComboBox<Object>();
-		this.comboBoxMaxVisibleScale = new JComboBox<Object>();
+		this.comboBoxMinVisibleScale = new JComboBox<>();
+		this.comboBoxMaxVisibleScale = new JComboBox<>();
 
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);
