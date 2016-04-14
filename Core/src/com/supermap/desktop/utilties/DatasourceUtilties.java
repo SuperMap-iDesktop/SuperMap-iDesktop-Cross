@@ -86,7 +86,7 @@ public class DatasourceUtilties {
 
 	}
 
-	public static final Dataset getDataset(String datasetName, Datasource datasource) {
+	public static Dataset getDataset(String datasetName, Datasource datasource) {
 		Dataset result = null;
 
 		try {
