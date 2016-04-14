@@ -16,7 +16,6 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure.IMeasureAble;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IProperty;
@@ -76,7 +75,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -126,10 +124,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private AreaUnit areaUnit = AreaUnit.METER;
 	private AngleUnit angleUnit = AngleUnit.DEGREE;
 
-	/**
-	 * 量算接口
-	 */
-	private IMeasureAble iMeasureAble = null;
 
 	private Layer[] rememberActiveLayers = null;
 
@@ -186,7 +180,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			if (buttonType == MouseEvent.BUTTON3 && clickCount == 1
 					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2
-							|| getMapControl().getAction() == Action.SELECTCIRCLE)
+					|| getMapControl().getAction() == Action.SELECTCIRCLE)
 					&& getMapControl().getTrackMode() == TrackMode.EDIT && isShowPopupMenu <= 0) {
 				showPopupMenu(e);
 			}
@@ -200,7 +194,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			// 绘制几何对象时，如果地图是地理坐标，进行超范围提示
 			if ((e.getButton() == MouseEvent.BUTTON1 && MapControlUtilties.isCreateGeometry(FormMap.this.mapControl))
 					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null
-							&& FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
+					&& FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
 				Point2D mousePosition = FormMap.this.mapControl.getMap().pixelToMap(e.getPoint());
 
 				if (mousePosition.getX() > 180 || mousePosition.getX() < -180 || mousePosition.getY() > 90 || mousePosition.getY() < -90) {
@@ -766,7 +760,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@Override
 	public void clean() {
 		unRegisterEvents();
-		this.layersTree.setMap(null);
+		if (layersTree.getMap() == this.getMapControl().getMap()) {
+			this.layersTree.setMap(null);
+		}
 		this.mapControl.getMap().close();
 		this.mapControl.delete();
 		this.mapControl.dispose();
@@ -1132,8 +1128,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
+								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1244,7 +1240,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
@@ -1258,13 +1254,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	public IMeasureAble getiMeasureAble() {
-		return iMeasureAble;
-	}
-
-	public void setiMeasureAble(IMeasureAble iMeasureAble) {
-		this.iMeasureAble = iMeasureAble;
-	}
 
 	private class LayersTreeSelectionListener implements TreeSelectionListener {
 
