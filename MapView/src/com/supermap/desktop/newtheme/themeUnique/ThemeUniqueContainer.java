@@ -109,6 +109,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 	private boolean isResetLayerProperty = false;
+	private boolean isNewTheme = false;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -137,6 +138,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.datasetVector = datasetVector;
 		this.themeUnique = new ThemeUnique(themeUnique);
 		this.map = initCurrentTheme(datasetVector, layer);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -188,8 +190,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		} else {
 			this.comboboxColor.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 		initPanelProperty();
 		initPanelAdvance();
 	}
@@ -1066,12 +1070,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 		final int[] selectedRow = this.tableUniqueInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-		// String name = this.tableUniqueInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-		// int width = this.tableUniqueInfo.getColumn(name).getWidth();
-		// int height = this.tableUniqueInfo.getTableHeader().getHeight();
-		// int x = this.tableUniqueInfo.getLocationOnScreen().x + width;
-		// int y = this.tableUniqueInfo.getLocationOnScreen().y - height;
-		// textStyleDialog.setLocation(x, y);
 		GeoStyle geoStyle;
 
 		if (selectedRow.length == 1) {

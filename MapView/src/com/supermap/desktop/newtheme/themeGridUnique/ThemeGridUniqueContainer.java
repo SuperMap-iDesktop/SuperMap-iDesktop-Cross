@@ -64,6 +64,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private boolean isRefreshAtOnce = true;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
+	private boolean isNewTheme;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -85,6 +86,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		this.datasetGrid = datasetGrid;
 		this.themeUnique = new ThemeGridUnique(themeUnique);
 		this.map = initCurrentTheme(datasetGrid);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -132,8 +134,10 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		} else {
 			this.comboboxColor.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 		initPanelProperty();
 	}
 
@@ -715,7 +719,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		/**
 		 * 重置可见选项
 		 *
-		 * @param selectRow 要重置的行
+		 * @param selectRow
+		 *            要重置的行
 		 */
 		private void resetVisible(int selectRow) {
 			if (selectRow != tableUniqueInfo.getRowCount() - 1) {
@@ -749,12 +754,12 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				if (selectRows.length > 0) {
 					for (int i = 0; i < selectRows.length; i++) {
 						int selectRow = selectRows[i];
+						// 重置选择项颜色
 						if (selectRow != tableUniqueInfo.getRowCount() - 1) {
-							resetColor(selectRow, color);
+							ThemeGridUniqueItem item = themeUnique.getItem(selectRow);
+							item.setColor(color);
 						} else {
 							themeUnique.setDefaultColor(color);
-							ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildColorIcon(datasetGrid, color);
-							tableUniqueInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 						}
 					}
 					getTable();
@@ -765,19 +770,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				popupMenu.setVisible(false);
 			}
 		});
-	}
-
-	/**
-	 * 重置选择项颜色
-	 *
-	 * @param selectRow 要重置颜色的行
-	 * @param nowColor 新的颜色
-	 */
-	private void resetColor(int selectRow, Color nowColor) {
-		ThemeGridUniqueItem item = this.themeUnique.getItem(selectRow);
-		item.setColor(nowColor);
-		ImageIcon nowGeoStyleIcon = ThemeItemLabelDecorator.buildColorIcon(this.datasetGrid, nowColor);
-		this.tableUniqueInfo.setValueAt(nowGeoStyleIcon, selectRow, TABLE_COLUMN_GEOSTYLE);
 	}
 
 	/**
@@ -829,10 +821,13 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	@Override
 	public void refreshMapAndLayer() {
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
-		((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
-		this.themeUniqueLayer.getTheme().fromXML(this.themeUnique.toXML());
-		this.map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme().getType() == ThemeType.GRIDUNIQUE) {
+			((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
+			this.themeUniqueLayer.getTheme().fromXML(this.themeUnique.toXML());
+			this.map.refresh();
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+		}
 	}
 
 	@Override

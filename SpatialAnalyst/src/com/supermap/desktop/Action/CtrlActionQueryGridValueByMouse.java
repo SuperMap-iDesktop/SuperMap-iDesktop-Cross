@@ -1,7 +1,6 @@
 package com.supermap.desktop.Action;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;

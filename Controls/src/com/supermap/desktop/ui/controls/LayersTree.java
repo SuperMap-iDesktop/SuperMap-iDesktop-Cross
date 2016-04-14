@@ -604,11 +604,12 @@ public class LayersTree extends JTree {
 		return result;
 	}
 
-	private void removeLayersControlNode() {
+	private String removeLayersControlNode() {
+		String layerName = "";
 		try {
 			TreePath[] paths = this.getSelectionPaths();
 			if (null == paths || paths.length <= 0) {
-				return;
+				return layerName;
 			}
 			String message = null;
 			if (paths.length == 1 && (((TreeNodeData) ((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject()).getData() instanceof Layer)) {
@@ -619,7 +620,7 @@ public class LayersTree extends JTree {
 				message = MessageFormat.format(ControlsProperties.getString("String_RemoveLayersInfo"), paths.length);
 			}
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(message)) {
-				return;
+				return layerName;
 			}
 			for (int i = 0; i < paths.length; i++) {
 				TreePath path = paths[i];
@@ -630,6 +631,7 @@ public class LayersTree extends JTree {
 				Object itemObj = controlNodeData.getData();
 				if (itemObj instanceof Layer) {
 					Layer layer = (Layer) itemObj;
+					layerName = layer.getName();
 					LayerGroup parentGroup = layer.getParentGroup();
 					if (parentGroup != null) {
 						parentGroup.remove(layer);
@@ -659,6 +661,7 @@ public class LayersTree extends JTree {
 			Application.getActiveApplication().getOutput().output(e);
 			// do nothing
 		}
+		return layerName;
 	}
 
 	/**
@@ -803,9 +806,9 @@ public class LayersTree extends JTree {
 			int keyCode = e.getKeyChar();
 			switch (keyCode) {
 			case KeyEvent.VK_DELETE:
-				removeLayersControlNode();
+				String layerName = removeLayersControlNode();
 				setSelectionRow(0);
-				layerRemoved();
+				layerRemoved(layerName);
 				break;
 			default:
 				break;
@@ -830,8 +833,8 @@ public class LayersTree extends JTree {
 	/**
 	 * 删除图层事件
 	 */
-	public void layerRemoved() {
-		firePropertyChange("LayerRemoved", null, null);
+	public void layerRemoved(String layerName) {
+		firePropertyChange("LayerRemoved", null, layerName);
 	}
 
 	MouseAdapter getMouseListener() {

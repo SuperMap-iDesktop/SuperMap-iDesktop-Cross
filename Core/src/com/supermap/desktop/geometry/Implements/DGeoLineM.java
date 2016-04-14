@@ -7,7 +7,6 @@ import com.supermap.data.Geometry;
 import com.supermap.data.PointMs;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
@@ -74,5 +73,19 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 				geometry.dispose();
 			}
 		}
+	}
+
+	@Override
+	public Geometry[] divide() {
+		if (this.geoLineM != null) {
+			Geometry[] geometries = new Geometry[this.geoLineM.getPartCount()];
+
+			for (int i = 0; i < this.geoLineM.getPartCount(); i++) {
+				geometries[i] = new GeoLineM(this.geoLineM.getPart(i));
+			}
+			return geometries;
+		}
+
+		return null;
 	}
 }

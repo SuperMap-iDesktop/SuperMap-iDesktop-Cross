@@ -1,6 +1,10 @@
 package com.supermap.desktop.utilties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
@@ -59,5 +63,25 @@ public class RecordsetUtilties {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
+	}
+
+	/**
+	 * 获取指定 recordset 当前记录的字段值（不含系统字段）
+	 * 
+	 * @param recordset
+	 * @return
+	 */
+	public static Map<String, Object> getFieldValues(Recordset recordset) {
+		Map<String, Object> fieldValues = new HashMap<>();
+		FieldInfos fieldInfos = recordset.getFieldInfos();
+
+		for (int i = 0; i < fieldInfos.getCount(); i++) {
+			FieldInfo fieldInfo = fieldInfos.get(i);
+
+			if (!fieldInfo.isSystemField()) {
+				fieldValues.put(fieldInfo.getName(), recordset.getFieldValue(fieldInfo.getName()));
+			}
+		}
+		return fieldValues;
 	}
 }
