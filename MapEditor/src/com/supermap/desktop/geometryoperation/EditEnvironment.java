@@ -198,6 +198,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 	@Override
 	public void editableChanged(LayerEditableChangedEvent arg0) {
+		geometryStatusChange();
 		layersStatusChange();
 	}
 
