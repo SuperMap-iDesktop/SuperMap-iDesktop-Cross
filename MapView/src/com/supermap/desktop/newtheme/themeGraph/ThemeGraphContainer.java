@@ -163,6 +163,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private int graphCount;
 	private transient SteppedComboBox fieldComboBox;
 	private transient LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+	private boolean isNewTheme;
 
 	private MouseListener localMouseListener = new LocalMouseListener();
 	private ItemListener graphTypeChangeListener = new GraphTypeChangeListener();
@@ -202,6 +203,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.datasetVector = datasetVector;
 		this.themeGraph = new ThemeGraph(themeGraph);
 		this.map = initCurrentTheme(datasetVector, layer);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -580,8 +582,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		} else {
 			this.comboBoxColor.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshMapAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshMapAndLayer();
+		}
 		getTable();
 		this.scollPane.setViewportView(this.tableGraphInfo);
 		// @formatter:on
@@ -1700,13 +1704,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		SymbolType symbolType = SymbolType.FILL;
 		final int[] selectedRow = this.tableGraphInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-//		String name = this.tableGraphInfo.getColumnName(TABLE_COLUMN_EXPRESSION);
-//		int width = this.tableGraphInfo.getColumn(name).getWidth();
-//		int height = this.tableGraphInfo.getTableHeader().getHeight();
-//		int x = this.tableGraphInfo.getLocationOnScreen().x + width;
-//		int y = this.tableGraphInfo.getLocationOnScreen().y - height;
-//		textStyleDialog.setLocation(x, y);
-
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeGraph.getItem(selectedRow[0]).getUniformStyle();
 			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {

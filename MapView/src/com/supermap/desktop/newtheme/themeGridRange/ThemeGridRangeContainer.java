@@ -24,6 +24,8 @@ import com.supermap.mapping.RangeMode;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeGridRange;
 import com.supermap.mapping.ThemeGridRangeItem;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -33,6 +35,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,6 +89,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private boolean isCustom = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
+	private boolean isNewTheme;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
@@ -103,6 +107,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.datasetGrid = datasetGrid;
 		this.themeGridRange = new ThemeGridRange(themeGridRange);
 		this.map = initCurrentTheme(datasetGrid);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -150,8 +155,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		} else {
 			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 	}
 
 	/**
@@ -993,10 +1000,13 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	@Override
 	public void refreshMapAndLayer() {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-		((ThemeGridRange) this.themeRangeLayer.getTheme()).clear();
-		this.themeRangeLayer.getTheme().fromXML(this.themeGridRange.toXML());
-		this.map.refresh();
-		UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
+		this.map = ThemeGuideFactory.getMapControl().getMap();
+		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.GRIDRANGE) {
+			((ThemeGridUnique) this.themeRangeLayer.getTheme()).clear();
+			this.themeRangeLayer.getTheme().fromXML(this.themeGridRange.toXML());
+			this.map.refresh();
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
+		}
 	}
 
 	@Override

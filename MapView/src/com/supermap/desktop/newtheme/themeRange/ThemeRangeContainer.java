@@ -116,6 +116,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private double precision;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
+	private boolean isNewTheme = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
@@ -143,6 +144,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.themeRange = new ThemeRange(themeRange);
 		this.map = initCurrentTheme(datasetVector, layer);
 		this.precision = themeRange.getPrecision();
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -197,8 +199,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		} else {
 			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 	}
 
 	/**
@@ -605,15 +609,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		final int[] selectedRow = this.tableRangeInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-//		String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-//		int width = this.tableRangeInfo.getColumn(name).getWidth();
-//		int height = this.tableRangeInfo.getTableHeader().getHeight();
-//		int x = this.tableRangeInfo.getLocationOnScreen().x + width;
-//		int y = this.tableRangeInfo.getLocationOnScreen().y - height;
-//		textStyleDialog.setLocation(x, y);
+		// String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
+		// int width = this.tableRangeInfo.getColumn(name).getWidth();
+		// int height = this.tableRangeInfo.getTableHeader().getHeight();
+		// int x = this.tableRangeInfo.getLocationOnScreen().x + width;
+		// int y = this.tableRangeInfo.getLocationOnScreen().y - height;
+		// textStyleDialog.setLocation(x, y);
 		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-
-
 
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeRange.getItem(selectedRow[0]).getStyle();
