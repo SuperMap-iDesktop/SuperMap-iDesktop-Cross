@@ -81,4 +81,27 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 			}
 		}
 	}
+
+	@Override
+	public Geometry[] divide() {
+		if (this.geoRegion != null) {
+			Geometry[] geometries = new Geometry[this.geoRegion.getPartCount()];
+
+			for (int i = 0; i < this.geoRegion.getPartCount(); i++) {
+				geometries[i] = new GeoRegion(this.geoRegion.getPart(i));
+			}
+			return geometries;
+		}
+
+		return null;
+	}
+
+	/**
+	 * 保护性分解，维持岛洞关系
+	 * 
+	 * @return
+	 */
+	public Geometry[] protectedDivide() {
+		return this.geoRegion == null ? null : this.geoRegion.protectedDecompose();
+	}
 }

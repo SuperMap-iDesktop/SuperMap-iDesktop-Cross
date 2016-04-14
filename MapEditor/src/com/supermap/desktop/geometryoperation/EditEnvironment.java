@@ -16,6 +16,7 @@ import com.supermap.desktop.core.MouseButtons;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
@@ -52,7 +53,7 @@ import com.supermap.data.Recordset;
 public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener {
 
 	private IFormMap formMap;
-	private GeometryEditProperties properties = new GeometryEditProperties();
+	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
 
 	private MouseListener mouseListener = new MouseListener() {
@@ -162,7 +163,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		return this.formMap.getMapControl().getActiveEditableLayer();
 	}
 
-	public GeometryEditProperties getEditProperties() {
+	public EditProperties getEditProperties() {
 		return this.properties;
 	}
 
@@ -238,6 +239,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		try {
 			ArrayList<Class<?>> features = new ArrayList<>();
 			ArrayList<GeometryType> types = new ArrayList<>();
+			int editableSelectedMaxPartCount = 0;
 
 			Selection selection = layer.getSelection();
 			recordset = selection.toRecordset();
@@ -268,6 +270,10 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 					} else if (dGeometry instanceof ICompoundFeature && !features.contains(ICompoundFeature.class)) {
 						features.add(ICompoundFeature.class);
 					}
+
+					if (dGeometry instanceof IMultiPartFeature<?>) {
+						editableSelectedMaxPartCount = Math.max(editableSelectedMaxPartCount, ((IMultiPartFeature<?>) dGeometry).getPartCount());
+					}
 				} finally {
 					if (geometry != null) {
 						geometry.dispose();
@@ -281,6 +287,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
+				this.properties.setEditableSelectedMaxPartCount(Math.max(this.properties.getEditableSelectedMaxPartCount(), editableSelectedMaxPartCount));
 				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryFeatures(), features.toArray(new Class<?>[features.size()]));
 				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
@@ -298,6 +305,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		// 选中对象数目
 		this.properties.setSelectedGeometryCount(0);
 		this.properties.setEditableSelectedGeometryCount(0);
+		this.properties.setEditableSelectedMaxPartCount(0);
 		this.properties.getSelectedDatasetTypes().clear();
 		this.properties.getSelectedLayers().clear();
 		this.properties.getSelectedGeometryTypes().clear();

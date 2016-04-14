@@ -1,14 +1,13 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
+import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.EditType;
+import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
-import com.supermap.data.GeoCompound;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLine3D;
 import com.supermap.data.GeoLineM;
@@ -20,121 +19,109 @@ import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.core.recordset.RecordsetAddNew;
+import com.supermap.desktop.core.recordset.RecordsetDelete;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
+import com.supermap.desktop.utilties.RecordsetUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Selection;
 
 public class DecomposeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
+		decompose(environment);
+	}
+
+	private void decompose(EditEnvironment environment) {
 		Recordset recordset = null;
-		Geometry geometry = null;
+		environment.getMapControl().getEditHistory().batchBegin();
+
 		try {
-			Layer layer = environment.getActiveEditableLayer();
-			List<Integer> resultIDs = new ArrayList<Integer>();
-			recordset = layer.getSelection().toRecordset();
-			environment.getMapControl().getEditHistory().batchBegin();
-			recordset.getBatch().setMaxRecordCount(200);
-			recordset.getBatch().begin();
-			recordset.moveLast();
-			while (!recordset.isBOF()) {
-				geometry = recordset.getGeometry();
-				Geometry[] geometrys = null;
+			Layer editLayer = environment.getActiveEditableLayer();
 
-				if (geometry.getType() == GeometryType.GEOCOMPOUND) {
-					geometrys = ((GeoCompound) geometry).divide(false);
-					// CAD上的组合对象都是复杂对象，通过Divide能够分解到最简单对象
-					// 只有一种情况，CAD上的岛洞数据是面对象需要再次分解，所以对CAD复杂对象深度分解的结果存在岛洞数据的情况需要单独再处理
-					// 如果每一个对象不一次性分解完成，操作历史记录的时候会出现回退的时候多了一个中间对象
-					List<Geometry> tempgeometrys = new ArrayList<Geometry>();
-					Geometry[] tempgeometry = null;
-					for (Geometry currentgeomentry : geometrys) {
-						if (currentgeomentry.getType() == GeometryType.GEOREGION && ((GeoRegion) currentgeomentry).getPartCount() > 1) {
-							tempgeometry = new Geometry[((GeoRegion) currentgeomentry).getPartCount()];
-							for (int i = 0; i < ((GeoRegion) currentgeomentry).getPartCount(); i++) {
-								tempgeometry[i] = new GeoRegion(((GeoRegion) currentgeomentry).getPart(i));
-								tempgeometrys.add(tempgeometry[i]);
+			if (editLayer != null && editLayer.getDataset() instanceof DatasetVector) {
+				recordset = ((DatasetVector) editLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
+				Selection selection = editLayer.getSelection();
+				RecordsetDelete delete = new RecordsetDelete(recordset.getDataset(), environment.getMapControl().getEditHistory());
+				RecordsetAddNew addNew = new RecordsetAddNew(recordset, environment.getMapControl().getEditHistory());
+				delete.begin();
+				addNew.begin();
+
+				if (selection != null) {
+
+					// 分解
+					for (int i = 0; i < selection.getCount(); i++) {
+						int id = selection.get(i);
+						recordset.seekID(id);
+						IGeometry geometry = DGeometryFactory.create(recordset.getGeometry());
+						Geometry[] geometries = null;
+
+						try {
+							if (geometry instanceof IMultiPartFeature<?>) {
+								IMultiPartFeature<?> multiPartFeature = (IMultiPartFeature<?>) geometry;
+
+								// 该分解的才分解，仅当子对象个数大于1才分解，然后删除原对象
+								if (multiPartFeature.getPartCount() > 1) {
+
+									// 获取字段值
+									Map<String, Object> fieldValues = RecordsetUtilties.getFieldValues(recordset);
+
+									// 删除字段
+									delete.delete(id);
+
+									// 分解并添加对象
+									geometries = divide((IMultiPartFeature<?>) geometry);
+
+									for (int j = 0; j < geometries.length; j++) {
+										addNew.addNew(geometries[j], fieldValues);
+									}
+								}
 							}
-						} else {
-							tempgeometrys.add(currentgeomentry);
+						} finally {
+							if (geometry != null) {
+								geometry.dispose();
+							}
+
+							if (geometries != null && geometries.length > 0) {
+								for (int j = 0; j < geometries.length; j++) {
+									geometries[j].dispose();
+								}
+							}
 						}
 					}
-					geometrys = tempgeometrys.toArray(new Geometry[tempgeometrys.size()]);
-				} else if (geometry.getType() == GeometryType.GEOLINE && ((GeoLine) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoLine) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoLine) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoLine(((GeoLine) geometry).getPart(i));
-					}
-				} else if (geometry.getType() == GeometryType.GEOLINE3D && ((GeoLine3D) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoLine3D) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoLine3D) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoLine3D(((GeoLine3D) geometry).getPart(i));
-					}
-				} else if (geometry.getType() == GeometryType.GEOREGION && ((GeoRegion) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoRegion) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoRegion) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoRegion(((GeoRegion) geometry).getPart(i));
-					}
-				} else if (geometry.getType() == GeometryType.GEOREGION3D && ((GeoRegion3D) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoRegion3D) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoRegion3D) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoRegion3D(((GeoRegion3D) geometry).getPart(i));
-					}
-				} else if (geometry.getType() == GeometryType.GEOLINEM && ((GeoLineM) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoLineM) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoLineM) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoLineM(((GeoLineM) geometry).getPart(i));
-					}
-				} else if (geometry.getType() == GeometryType.GEOTEXT && ((GeoText) geometry).getPartCount() > 1) {
-					geometrys = new Geometry[((GeoText) geometry).getPartCount()];
-					for (int i = 0; i < ((GeoText) geometry).getPartCount(); i++) {
-						geometrys[i] = new GeoText(((GeoText) geometry).getPart(i), ((GeoText) geometry).getTextStyle());
-						((GeoText) geometrys[i]).getPart(0).setRotation(((GeoText) geometry).getPart(i).getRotation());
+
+					// 提交删除操作
+					delete.update();
+
+					// 提交添加操作
+					addNew.update();
+
+					// 清空选择集，选中新增对象
+					editLayer.getSelection().clear();
+					if (addNew.getAddHistoryIDs().size() > 0) {
+						int[] ids = ArrayUtilties.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()]));
+						editLayer.getSelection().addRange(ids);
+						TabularUtilties.refreshTabularForm((DatasetVector) editLayer.getDataset());
+						Application
+								.getActiveApplication()
+								.getOutput()
+								.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_DecomposeSuccess"), addNew.getAddHistoryIDs()
+										.size()));
 					}
 				}
-
-				if (geometrys != null && geometrys.length > 1) {
-					HashMap<String, Object> values = new HashMap<String, Object>();
-					FieldInfos fieldInfos = recordset.getFieldInfos();
-					Object[] fieldValues = recordset.getValues();
-
-					environment.getMapControl().getEditHistory().add(EditType.DELETE, recordset, true);
-					recordset.delete();
-					for (int i = 0; i < fieldValues.length; i++) {
-						if (!fieldInfos.get(i).isSystemField()) {
-							values.put(fieldInfos.get(i).getName(), fieldValues[i]);
-						}
-					}
-					for (int j = 0; j < geometrys.length; j++) {
-						recordset.addNew(geometrys[j], values);
-						resultIDs.add(recordset.getID());
-						environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
-					}
-				}
-				recordset.movePrev();
 			}
-			recordset.getBatch().update();
-			environment.getMapControl().getEditHistory().batchEnd();
-			layer.getSelection().clear();
-			if (resultIDs.size() > 0) {
-				int[] ids = ArrayUtilties.convertToInt(resultIDs.toArray(new Integer[resultIDs.size()]));
-				layer.getSelection().addRange(ids);
-				TabularUtilties.refreshTabularForm((DatasetVector) layer.getDataset());
-				// _Toolkit.InvokeGeometrySelectedEvent(formMap.MapControl, new GeometrySelectedEventArgs(resultIDs.Count));
-				Application.getActiveApplication().getOutput()
-						.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_DecomposeSuccess"), resultIDs.size()));
-			}
-			environment.getMapControl().getMap().refresh();
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			recordset.getBatch().update();
-			if (geometry != null) {
-				geometry.dispose();
-			}
+			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMapControl().getMap().refresh();
 
 			if (recordset != null) {
 				recordset.close();
@@ -143,83 +130,13 @@ public class DecomposeEditor extends AbstractEditor {
 		}
 	}
 
+	// 保护性分解重写这个
+	protected Geometry[] divide(IMultiPartFeature<?> geometry) {
+		return geometry.divide();
+	}
+
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		boolean bEnable = false;
-		Recordset recordset = null;
-		Geometry geometry = null;
-		IFormMap formMap = environment.getFormMap();
-		try {
-			if (formMap != null && formMap.getMapControl().getActiveEditableLayer() != null) {
-
-				Layer layer = formMap.getMapControl().getActiveEditableLayer();
-				if (layer.getSelection().getCount() >= 1) {
-					recordset = layer.getSelection().toRecordset();
-					recordset.moveFirst();
-
-					while (!recordset.isEOF()) {
-						geometry = recordset.getGeometry();
-
-						try {
-							if (geometry == null) {
-								break;
-							} else if (geometry.getType() == GeometryType.GEOCOMPOUND) {
-								bEnable = true;
-								break;
-							} else if (geometry.getType() == GeometryType.GEOLINE) {
-								bEnable = ((GeoLine) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							} else if (geometry.getType() == GeometryType.GEOLINE3D) {
-								bEnable = ((GeoLine3D) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							} else if (geometry.getType() == GeometryType.GEOREGION) {
-								bEnable = ((GeoRegion) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							} else if (geometry.getType() == GeometryType.GEOREGION3D) {
-								bEnable = ((GeoRegion3D) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							} else if (geometry.getType() == GeometryType.GEOLINEM) {
-								bEnable = ((GeoLineM) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							} else if (geometry.getType() == GeometryType.GEOTEXT) {
-								bEnable = ((GeoText) geometry).getPartCount() > 1;
-								if (bEnable) {
-									break;
-								}
-							}
-
-							recordset.moveNext();
-						} finally {
-							if (geometry != null) {
-								geometry.dispose();
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		} finally {
-			if (geometry != null) {
-				geometry.dispose();
-			}
-
-			if (recordset != null) {
-				recordset.close();
-				recordset.dispose();
-			}
-		}
-
-		return bEnable;
+		return environment.getEditProperties().getEditableSelectedMaxPartCount() > 1;
 	}
 }

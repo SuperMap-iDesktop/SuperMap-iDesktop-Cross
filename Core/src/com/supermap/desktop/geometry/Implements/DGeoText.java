@@ -1,6 +1,5 @@
 package com.supermap.desktop.geometry.Implements;
 
-import com.supermap.data.GeoLineM;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
 import com.supermap.data.TextPart;
@@ -21,13 +20,12 @@ public class DGeoText extends AbstractGeometry implements ITextFeature, IMultiPa
 
 	@Override
 	public int getPartCount() {
-		return this.geoText.getPartCount();
+		return this.geoText == null ? -1 : this.geoText.getPartCount();
 	}
 
 	@Override
 	public TextPart getPart(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.geoText == null ? null : this.geoText.getPart(index);
 	}
 
 	@Override
@@ -55,5 +53,20 @@ public class DGeoText extends AbstractGeometry implements ITextFeature, IMultiPa
 				geometry.dispose();
 			}
 		}
+	}
+
+	@Override
+	public Geometry[] divide() {
+		if (this.geoText != null) {
+			TextStyle textStyle = this.geoText.getTextStyle();
+			Geometry[] geometries = new Geometry[this.geoText.getPartCount()];
+
+			for (int i = 0; i < this.geoText.getPartCount(); i++) {
+				geometries[i] = new GeoText(this.geoText.getPart(i), textStyle.clone());
+			}
+			return geometries;
+		}
+
+		return null;
 	}
 }

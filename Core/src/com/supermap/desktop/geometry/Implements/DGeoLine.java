@@ -81,4 +81,18 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 			}
 		}
 	}
+
+	@Override
+	public Geometry[] divide() {
+		if (this.geoLine != null) {
+			Geometry[] geometries = new Geometry[this.geoLine.getPartCount()];
+
+			for (int i = 0; i < this.geoLine.getPartCount(); i++) {
+				geometries[i] = new GeoLine(this.geoLine.getPart(i));
+			}
+			return geometries;
+		}
+
+		return null;
+	}
 }

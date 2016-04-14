@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeometryType;
+import com.supermap.desktop.geometry.Abstract.IGeometryFeature;
 import com.supermap.mapping.Layer;
 
 /**
@@ -13,9 +14,10 @@ import com.supermap.mapping.Layer;
  * @author highsad
  *
  */
-public class GeometryEditProperties {
+public class EditProperties {
 	private int selectedGeometryCount = 0; // 当前选中对象的数目
 	private int editableSelectedGeometryCount = 0; // 获取在可编辑图层上选中的几何对象个数
+	private int editableSelectedMaxPartCount = 0; // 当前选中对象的最大子对象个数
 
 	private List<DatasetType> selectedDatasetTypes = new ArrayList<>(); // 选中对象所在的数据集类型集合
 	private List<DatasetType> editableDatasetTypes = new ArrayList<>(); // 可编辑的数据集类型集合
@@ -61,6 +63,24 @@ public class GeometryEditProperties {
 	 */
 	void setEditableSelectedGeometryCount(int editableSelectedGeometryCount) {
 		this.editableSelectedGeometryCount = editableSelectedGeometryCount;
+	}
+
+	/**
+	 * 获取当前选中对象的最大子对象个数
+	 * 
+	 * @return
+	 */
+	public int getEditableSelectedMaxPartCount() {
+		return editableSelectedMaxPartCount;
+	}
+
+	/**
+	 * 设置当前选中对象的最大子对象个数（不开放）
+	 * 
+	 * @param selectedMaxPartCount
+	 */
+	void setEditableSelectedMaxPartCount(int selectedMaxPartCount) {
+		this.editableSelectedMaxPartCount = selectedMaxPartCount;
 	}
 
 	/**

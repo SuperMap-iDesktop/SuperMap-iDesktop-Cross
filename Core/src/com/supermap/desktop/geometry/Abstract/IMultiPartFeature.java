@@ -18,4 +18,6 @@ public interface IMultiPartFeature<T> extends IGeometryFeature {
 	public void addPart(T part);
 
 	public void addPart(Geometry geometry);
+
+	public Geometry[] divide();
 }
