@@ -167,6 +167,10 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		return this.properties;
 	}
 
+	public IEditor getEditor() {
+		return this.editor;
+	}
+
 	public void activateEditor(IEditor editor) {
 		this.editor.deactivate(this);
 		this.editor = editor;
