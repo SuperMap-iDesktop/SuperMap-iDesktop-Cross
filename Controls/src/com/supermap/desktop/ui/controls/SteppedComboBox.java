@@ -8,7 +8,11 @@ import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.plaf.metal.MetalComboBoxUI;
 import javax.swing.plaf.synth.SynthComboBoxUI;
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Vector;
 
 /**
@@ -46,6 +50,15 @@ public class SteppedComboBox extends JComboBox {
 			this.setUI(new SteppedComboBoxMetalUI());
 		}
 		popupWidth = 0;
+		this.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (2==e.getClickCount()) {
+					showPopup();
+				}
+			}
+		});
 	}
 
 	public void setPopupWidth(int width) {
@@ -116,6 +129,5 @@ public class SteppedComboBox extends JComboBox {
 		popup.getAccessibleContext().setAccessibleParent(comboBox);
 		return popup;
 	}
-
 
 }
