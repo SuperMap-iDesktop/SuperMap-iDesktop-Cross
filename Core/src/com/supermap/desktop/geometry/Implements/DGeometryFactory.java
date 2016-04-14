@@ -71,6 +71,9 @@ public class DGeometryFactory {
 			if (type == GeometryType.GEOCHORD) {
 				return new DGeoChord((GeoChord) geometry);
 			}
+			if (type == GeometryType.GEOCOMPOUND) {
+				return new DGeoCompound((GeoCompound) geometry);
+			}
 		}
 		return null;
 	}
@@ -120,6 +123,9 @@ public class DGeometryFactory {
 		}
 		if (type == GeometryType.GEOCHORD) {
 			return new DGeoChord(new GeoChord());
+		}
+		if (type == GeometryType.GEOCOMPOUND) {
+			return new DGeoCompound(new GeoCompound());
 		}
 		return null;
 	}
