@@ -71,7 +71,7 @@ public class ThemeGuideFactory {
 	private ThemeGuideFactory() {
 		// 工具类不提供构造函数
 	}
-
+	
 	public static IDockbar getDockbarThemeContainer() {
 		try {
 			if (null == dockbarThemeContainer) {

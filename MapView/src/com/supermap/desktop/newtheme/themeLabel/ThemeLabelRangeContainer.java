@@ -29,6 +29,7 @@ import com.supermap.mapping.RangeMode;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
 import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -102,6 +103,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isResetLayerProperty = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
+	private boolean isNewTheme;
 
 	private static final int TABLE_COLUMN_VISIBLE = 0;
 	private static final int TABLE_COLUMN_RANGEVALUE = 1;
@@ -129,6 +131,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.datasetVector = datasetVector;
 		this.themeLabel = new ThemeLabel(themeLabel);
 		this.map = initCurrentTheme(datasetVector, layer);
+		this.isNewTheme = true;
 		initComponents();
 		initResources();
 		registActionListener();
@@ -190,8 +193,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		} else {
 			this.comboBoxColorStyle.setSelectedIndex(14);
 		}
-		refreshColor();
-		refreshAtOnce();
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 	}
 
 	/**
@@ -1149,7 +1154,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.panelProperty.refreshMapAndLayer();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
-		if (null != themeLabelLayer && null != themeLabelLayer.getTheme()) {
+		if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme().getType() == ThemeType.LABEL) {
 			ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());
 			nowThemeLabel.clear();
 			if (0 < this.themeLabel.getCount()) {

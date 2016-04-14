@@ -17,7 +17,6 @@ import java.net.URL;
 public class DataCell extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel imageLabel;
-	private JLabel textLabel;
 	private String dataName;
 	private Object data;
 	private final Color selectColor = new Color(185, 214, 255);
@@ -30,15 +29,11 @@ public class DataCell extends JPanel {
 		if (isSelected) {
 			this.setBackground(Color.WHITE);
 			this.imageLabel.setOpaque(true);
-			this.textLabel.setOpaque(true);
-			this.imageLabel.setBackground(Color.WHITE);
-			this.textLabel.setBackground(selectColor);
+			this.imageLabel.setBackground(selectColor);
 		} else {
 			this.setBackground(Color.WHITE);
 			this.imageLabel.setOpaque(true);
-			this.textLabel.setOpaque(true);
 			this.imageLabel.setBackground(Color.WHITE);
-			this.textLabel.setBackground(Color.WHITE);
 		}
 	}
 
@@ -123,8 +118,7 @@ public class DataCell extends JPanel {
 
 	private void init(ImageIcon icon, String name) {
 		this.dataName = name;
-		this.imageLabel = new JLabel(icon);
-		this.textLabel = new JLabel(dataName);
+		this.imageLabel = new JLabel(dataName,icon,JLabel.LEADING);
 		initComponents();
 	}
 
@@ -132,19 +126,17 @@ public class DataCell extends JPanel {
 		ImageIcon tempIcon = null;
 		if (null != url) {
 			tempIcon = new ImageIcon(url);
-			this.imageLabel = new JLabel(tempIcon);
+			this.imageLabel = new JLabel(dataName,tempIcon,JLabel.LEADING);
 		} else {
 			this.imageLabel = new JLabel();
 		}
-		this.textLabel = new JLabel(dataName);
 		initComponents();
 	}
 
 	private void initComponents() {
 		this.setSize(300, 15);
-		setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-		add(this.imageLabel);
-		add(this.textLabel);
+		this.setLayout(new FlowLayout(FlowLayout.LEFT,2,0));
+		this.add(this.imageLabel);
 	}
 
 	/**

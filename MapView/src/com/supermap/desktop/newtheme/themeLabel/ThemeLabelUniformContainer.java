@@ -13,6 +13,7 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -84,7 +85,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
 			// 复制关联表信息到新图层中
 			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
-			
+
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
@@ -135,9 +136,11 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.textStyleContainer.refreshMapAndLayer();
-		this.panelProperty.refreshMapAndLayer();
-		this.panelAdvance.refreshMapAndLayer();
+		if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme().getType() == ThemeType.LABEL) {
+			this.textStyleContainer.refreshMapAndLayer();
+			this.panelProperty.refreshMapAndLayer();
+			this.panelAdvance.refreshMapAndLayer();
+		}
 	}
 
 	class LocalPropertyChangeListener implements PropertyChangeListener {
