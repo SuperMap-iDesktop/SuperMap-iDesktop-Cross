@@ -222,17 +222,23 @@ public class TabularTableModel extends AbstractTableModel {
 				// bool类型先处理
 
 				Object value = aValue;
-				if (FieldType.BOOLEAN.equals(fieldInfos.get(getColumnName(columnIndex)).getType())) {
+				if (FieldType.BOOLEAN == fieldInfos.get(getColumnName(columnIndex)).getType()) {
 					if (!isDataNull) {
 						value = "True".equals(aValue);
 					} else {
 						value = null;
 					}
 				}
-				if (recordset.setFieldValue(getColumnName(columnIndex), value)) {
-					recordset.update();
-//					tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
+				if (isDataNull) {
+					recordset.setFieldValueNull(getColumnName(columnIndex));
+				} else if (FieldType.BYTE == fieldInfos.get(getColumnName(columnIndex)).getType()) {
+					recordset.setByte(getColumnName(columnIndex), Short.parseShort(String.valueOf(value)));
+				} else {
+					recordset.setFieldValue(getColumnName(columnIndex), value);
 				}
+				// tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
+				recordset.update();
+
 			}
 		} catch (Exception e) {
 			deadException(e);
