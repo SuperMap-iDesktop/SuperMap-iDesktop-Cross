@@ -532,13 +532,13 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			FieldData fieldData = this.fieldDataInfos.get(rowIndex);
 			FieldType fieldType = fieldData.getType();
 			try {
-				if (fieldType == FieldType.BOOLEAN) {
-					if (aValue != null) {
-						if ("true".equalsIgnoreCase(aValue.toString()) || "false".equalsIgnoreCase(aValue.toString())) {
-							fieldData.setFieldValue(aValue.toString());
-						}
-					} else {
+				if (aValue == null || StringUtilties.isNullOrEmpty(aValue.toString())) {
+					if (!fieldData.getFieldInfo().isRequired()) {
 						fieldData.setFieldValue(null);
+					}
+				} else if (fieldType == FieldType.BOOLEAN) {
+					if ("true".equalsIgnoreCase(aValue.toString()) || "false".equalsIgnoreCase(aValue.toString())) {
+						fieldData.setFieldValue(aValue.toString());
 					}
 					fieldData.setFieldValue(Boolean.parseBoolean(aValue.toString()));
 				} else if (fieldType == FieldType.INT64) {
@@ -833,8 +833,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 						if (!this.getFieldInfo().isRequired()) {
 							this.recordset.setFieldValueNull(this.getName());
 						}
-					}
-					if (this.getType() == FieldType.BYTE) {
+					} else if (this.getType() == FieldType.BYTE) {
 						this.recordset.setByte(this.getName(), (Short) this.getFieldValue());
 					} else if (this.getType() == FieldType.DATETIME) {
 						SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
