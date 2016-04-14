@@ -27,8 +27,13 @@ public class SortableTableModel extends DefaultTableModel {
 		super.setValueAt(value, rowIndex, col);
 	}
 
+	/**
+	 * 显示的行数->实际的行数
+	 *
+	 * @param rows 显示行数
+	 * @return 实际行数
+	 */
 	protected int[] getIndexRow(int... rows) {
-
 		if (indexes != null) {
 			for (int i = 0; i < rows.length; i++) {
 				int row = rows[i];

@@ -10,10 +10,12 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.SortTable.SortTable;
+import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
+import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -24,15 +26,16 @@ import java.util.LinkedHashMap;
  *
  * @author xiajt
  */
-public class FieldInfoTable extends JTable {
+public class FieldInfoTable extends SortTable {
 
 
-	private Dataset dataset = null;
-	private FieldInfoTableModel fieldInfoTableModel = new FieldInfoTableModel();
+	private Dataset dataset;
+	private FieldInfoTableModel fieldInfoTableModel;
 
 
 	public FieldInfoTable() {
 		super();
+		fieldInfoTableModel = new FieldInfoTableModel();
 		this.setModel(fieldInfoTableModel);
 		initTable();
 	}
@@ -59,13 +62,13 @@ public class FieldInfoTable extends JTable {
 	private void initTable() {
 		this.setRowHeight(23);
 		this.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		this.getColumnModel().getColumn(0).setPreferredWidth(300);
-		this.getColumnModel().getColumn(1).setPreferredWidth(50);
+//		this.getColumnModel().getColumn(0).setPreferredWidth(300);
+//		this.getColumnModel().getColumn(1).setPreferredWidth(50);
 	}
 
 	public String[] getAllValue() {
 		int selectedRow = this.getSelectedRow();
-		if (selectedRow == -1 || selectedRow == 0 || selectedRow == this.getRowCount()) {
+		if (selectedRow == -1 || selectedRow == 0) {
 			return null;
 		} else {
 			return ((FieldInfoTableModel) this.getModel()).getAllValue(selectedRow);
@@ -84,7 +87,7 @@ public class FieldInfoTable extends JTable {
 	/**
 	 * tableModel类
 	 */
-	private class FieldInfoTableModel extends DefaultTableModel {
+	private class FieldInfoTableModel extends SortableTableModel {
 		private DatasetVector dataset = null;
 		private String[] columnNames;
 		private JoinItems joinItems;
@@ -102,18 +105,22 @@ public class FieldInfoTable extends JTable {
 				this.dataset = null;
 			}
 			initRowCount();
-			fireTableStructureChanged();
+			fireTableDataChanged();
 		}
 
 		private void initRowCount() {
+			indexes = null;
 			int count = 0;
 			if (this.dataset != null) {
-				// 全部字段和关联字段 所以+2
+				// 全部字段 所以+1
 				count = this.dataset.getFieldCount() + 1;
 				if (joinItems != null && joinItems.getCount() > 0) {
 					for (int i = 0; i < joinItems.getCount(); i++) {
-						FieldInfos fieldInfos = ((DatasetVector) dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable())).getFieldInfos();
-						count += fieldInfos.getCount();
+						DatasetVector dataset = (DatasetVector) DatasourceUtilties.getDataset(joinItems.get(i).getForeignTable(), this.dataset.getDatasource());
+						if (dataset != null) {
+							FieldInfos fieldInfos = dataset.getFieldInfos();
+							count += fieldInfos.getCount();
+						}
 					}
 				}
 			}
@@ -142,6 +149,7 @@ public class FieldInfoTable extends JTable {
 
 		@Override
 		public Object getValueAt(int row, int column) {
+			row = getIndexRow(row)[0];
 			if (row == 0) {
 				if (column == 0) {
 					return "*";
@@ -177,7 +185,10 @@ public class FieldInfoTable extends JTable {
 				} else {
 					row -= datasetFieldInfos.getCount();
 					for (int i = 0; i < joinItems.getCount(); i++) {
-						DatasetVector datasetVector = (DatasetVector) dataset.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
+						DatasetVector datasetVector = (DatasetVector) DatasourceUtilties.getDataset(joinItems.get(i).getForeignTable(), dataset.getDatasource());
+						if (datasetVector == null) {
+							continue;
+						}
 						FieldInfos fieldInfos = datasetVector.getFieldInfos();
 						if (row <= fieldInfos.getCount()) {
 							if (column == 0) {
@@ -201,6 +212,7 @@ public class FieldInfoTable extends JTable {
 		}
 
 		public String[] getAllValue(int row) {
+			row = getIndexRow(row)[0];
 			if (row == -1 || row == 0 || row == getRowCount() - 1 || dataset == null) {
 				return null;
 			} else {
@@ -264,6 +276,7 @@ public class FieldInfoTable extends JTable {
 
 		public void setJoinItems(JoinItems joinItems) {
 			this.joinItems = joinItems;
+			indexes = null;
 			initRowCount();
 			fireTableDataChanged();
 		}
