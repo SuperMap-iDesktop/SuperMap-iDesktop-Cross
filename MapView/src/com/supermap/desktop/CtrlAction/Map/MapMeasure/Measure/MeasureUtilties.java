@@ -80,6 +80,16 @@ public class MeasureUtilties {
 
 	}
 
+	public static void endMeasure(FormMap formMap) {
+		MapControl mapControl = formMap.getMapControl();
+		for (IMeasureAble measureAbleList : measureAbleLists) {
+			if (measureAbleList.getMapControl() == mapControl) {
+				measureAbleList.stopMeasure();
+				measureAbleList.setMapControl(null);
+			}
+		}
+	}
+
 	private static void addListener(FormMap formMap) {
 		formMap.removeListener(dockingWindowAdapter);
 		formMap.addListener(dockingWindowAdapter);

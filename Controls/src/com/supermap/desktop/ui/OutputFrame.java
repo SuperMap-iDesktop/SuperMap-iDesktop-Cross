@@ -196,12 +196,11 @@ public class OutputFrame extends JScrollPane implements IOutput {
 				messageTemp = "[" + df.format(new Date()) + "] " + messageTemp;
 			}
 
-			final String oldMessage = this.textArea.getText();
-			if (oldMessage.length() > 0) {
-				OutputFrame.this.textArea.setText(oldMessage + System.lineSeparator() + messageTemp);
-			} else {
-				OutputFrame.this.textArea.setText(messageTemp);
+			if (this.textArea.getText().length() > 0) {
+				textArea.append(System.lineSeparator());
 			}
+			textArea.append(messageTemp);
+			textArea.setCaretPosition(textArea.getDocument().getLength());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

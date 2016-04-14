@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.Map.MapMeasure;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure.MeasureUtilties;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -22,10 +23,7 @@ public class CtrlActionMeasureClear extends CtrlAction {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormMap) {
 			FormMap formMap = (FormMap) activeForm;
-			if (formMap.getiMeasureAble() != null) {
-				formMap.getiMeasureAble().stopMeasure();
-				formMap.setiMeasureAble(null);
-			}
+			MeasureUtilties.endMeasure(formMap);
 			formMap.getMapControl().setTrackMode(TrackMode.TRACK);
 			formMap.getMapControl().getMap().getTrackingLayer().clear();
 			formMap.getMapControl().setAction(Action.SELECT2);
