@@ -138,7 +138,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			} else if (button == buttonSetVisibleScales && buttonSetVisibleScales.isEnabled()) {
 				ScaleEnabledContainer container = new ScaleEnabledContainer(scale);
 				try {
-					container.setScales(getMap().getVisibleScales());
+					container.setScales(visibleScales);
 				} catch (InvalidScaleException e1) {
 					e1.printStackTrace();
 				}
@@ -147,6 +147,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 					operationType = OperationType.SCALES;
 					checkBoxIsVisibleScalesEnabled.setSelected(true);
 					isVisibleScalesEnabled = true;
+					visibleScales = container.getScales();
 					verify();
 				}
 			}

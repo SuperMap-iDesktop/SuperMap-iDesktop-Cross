@@ -337,7 +337,6 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void initScrollPane() {
-		this.scaleDisplays = new ArrayList<ScaleEnabledContainer.ScaleDisplay>();
 		this.scrollPane = new JScrollPane();
 		this.table = new JTable(new ScaleDisplayModel());
 		this.table.getColumn(MapViewProperties.getString("String_Index")).setPreferredWidth(20);
@@ -616,6 +615,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	public void setScales(double[] scales) throws InvalidScaleException {
+		this.scaleDisplays = new ArrayList<ScaleEnabledContainer.ScaleDisplay>();
 		this.scales = scales;
 		for (int i = 0; i < scales.length; i++) {
 			ScaleDisplay tempdDisplay = new ScaleDisplay(i+1, new ScaleModel(scales[i]).getScaleCaption());
