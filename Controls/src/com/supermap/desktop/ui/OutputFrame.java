@@ -5,8 +5,6 @@ import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
 import com.supermap.desktop.utilties.LogUtilties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class OutputFrame extends JScrollPane implements IOutput {
-	private static final Log log = LogFactory.getLog(OutputFrame.class);
 
 	private static final long serialVersionUID = 1L;
 	private transient boolean isShowTime = true;

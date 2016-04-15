@@ -9,6 +9,7 @@ import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerCaptionChangedEvent;
@@ -25,7 +26,7 @@ import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -186,24 +187,30 @@ public class LayerPropertyContainer extends JPanel {
 		this.checkBoxIsAutoApply = new JCheckBox("IsAutoApply");
 		this.buttonApply = new SmButton("Apply");
 
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		this.setLayout(gl_mainContent);
+		this.setLayout(new GridBagLayout());
+		this.add(scrollPaneContainer, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10));
+		this.add(this.checkBoxIsAutoApply, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0));
+		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 10, 5, 10));
+
+
+//		GroupLayout gl_mainContent = new GroupLayout(this);
+//		gl_mainContent.setAutoCreateContainerGaps(true);
+//		gl_mainContent.setAutoCreateGaps(true);
+//		this.setLayout(gl_mainContent);
 
 		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-				.addComponent(scrollPaneContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addComponent(this.checkBoxIsAutoApply)
-						.addGap(GroupLayout.PREFERRED_SIZE, 15, Short.MAX_VALUE)
-						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-		
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addComponent(scrollPaneContainer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.checkBoxIsAutoApply)
-						.addComponent(this.buttonApply)));
+//		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
+//				.addComponent(scrollPaneContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(gl_mainContent.createSequentialGroup()
+//						.addComponent(this.checkBoxIsAutoApply)
+//						.addGap(GroupLayout.PREFERRED_SIZE, 15, Short.MAX_VALUE)
+//						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+//
+//		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
+//				.addComponent(scrollPaneContainer, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.checkBoxIsAutoApply)
+//						.addComponent(this.buttonApply)));
 		// @formatter:on
 	}
 

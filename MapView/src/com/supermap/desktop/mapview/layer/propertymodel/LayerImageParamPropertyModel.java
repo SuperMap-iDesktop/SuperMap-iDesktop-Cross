@@ -241,8 +241,9 @@ public class LayerImageParamPropertyModel extends LayerPropertyModel {
 						enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
 
 					} else if (layer.getDataset() instanceof DatasetImageCollection) {
-						DatasetImageCollection dataset = (DatasetImageCollection) layer.getDataset();
-						enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
+//						DatasetImageCollection dataset = (DatasetImageCollection) layer.getDataset();
+//						enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
+						enabled = false;
 					}
 					hashMapTmp.put(DISPLAY_COLOR_SPACE, enabled);
 				}

@@ -8,6 +8,7 @@ import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedEvent;
 import com.supermap.desktop.mapview.layer.propertycontrols.ChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
@@ -16,7 +17,6 @@ import com.supermap.mapping.MapOpenedEvent;
 import com.supermap.mapping.MapOpenedListener;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,7 +101,7 @@ public class MapPropertyContainer extends JPanel {
 			propertyControls.add(new MapBoundsPropertyControl());
 			propertyControls.add(new MapPrjCoordSysControl());
 			for (AbstractPropertyControl abstractPropertyControl : propertyControls) {
-				this.tabbledPane.addTab(abstractPropertyControl.getPropertyTitle(), abstractPropertyControl);
+				this.tabbledPane.addTab(abstractPropertyControl.getPropertyTitle(), new JScrollPane(abstractPropertyControl));
 				abstractPropertyControl.addChangedListener(this.propertyChangedListener);
 			}
 		}
@@ -148,24 +148,30 @@ public class MapPropertyContainer extends JPanel {
 		panelTabContainer.setLayout(new BorderLayout());
 		panelTabContainer.add(this.tabbledPane, BorderLayout.CENTER);
 
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
-		this.setLayout(groupLayout);
 
-		// @formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelTabContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.checkBoxAutoApply)
-						.addGap(10, 20, Short.MAX_VALUE)
-						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-		
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addComponent(panelTabContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.checkBoxAutoApply)
-						.addComponent(this.buttonApply)));
+		this.setLayout(new GridBagLayout());
+		this.add(panelTabContainer, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10));
+		this.add(this.checkBoxAutoApply, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0));
+		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 10, 5, 10));
+
+//		GroupLayout groupLayout = new GroupLayout(this);
+//		groupLayout.setAutoCreateContainerGaps(true);
+//		groupLayout.setAutoCreateGaps(true);
+//		this.setLayout(groupLayout);
+//
+//		// @formatter:off
+//		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addComponent(panelTabContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(groupLayout.createSequentialGroup()
+//						.addComponent(this.checkBoxAutoApply)
+//						.addGap(10, 20, Short.MAX_VALUE)
+//						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+//
+//		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+//				.addComponent(panelTabContainer, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.checkBoxAutoApply)
+//						.addComponent(this.buttonApply)));
 		// @formatter:on
 	}
 
