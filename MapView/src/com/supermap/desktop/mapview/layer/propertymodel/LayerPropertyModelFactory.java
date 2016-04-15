@@ -4,6 +4,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSettingImage;
 import com.supermap.mapping.LayerSettingType;
 
 import java.util.ArrayList;
@@ -58,7 +59,9 @@ public class LayerPropertyModelFactory {
 			models.add(new LayerBasePropertyModel(layers, formMap));
 			models.add(new LayerRelocateDatasetPropertyModel(layers, formMap));
 			models.add(new LayerImageParamPropertyModel(layers, formMap));
-			models.add(new LayerStretchOptionPropertyModel(layers, formMap));
+			if (isContainDatasetImageCollection(layers)) {
+				models.add(new LayerStretchOptionPropertyModel(layers, formMap));
+			}
 		} else if (layerType == LAYER_GRID) {
 			models.add(new LayerBasePropertyModel(layers, formMap));
 			models.add(new LayerRelocateDatasetPropertyModel(layers, formMap));
@@ -70,5 +73,21 @@ public class LayerPropertyModelFactory {
 			models.add(new LayerRelocateDatasetPropertyModel(layers, formMap));
 		}
 		return models.toArray(new LayerPropertyModel[models.size()]);
+	}
+
+	/**
+	 * 组件不支持影像数据集集合图层拉伸，暂时在这里处理一下
+	 *
+	 * @param layers 影像数据集图层集合
+	 * @return 时候包含影像数据集集合
+	 */
+	// FIXME: 2016/4/14  组件不支持影像数据集集合图层拉伸，暂时在这里处理一下
+	private static boolean isContainDatasetImageCollection(Layer[] layers) {
+		for (Layer layer : layers) {
+			if (((LayerSettingImage) layer.getAdditionalSetting()).getImageStretchOption() == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

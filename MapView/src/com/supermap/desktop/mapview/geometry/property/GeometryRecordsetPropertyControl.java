@@ -15,6 +15,7 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -336,7 +337,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 
 		/**
 		 * @param fieldInfos
-		 * @param recordset 初始化Model数据时
+		 * @param recordset  初始化Model数据时
 		 */
 		public void intializeModelData(FieldInfos fieldInfos, Recordset recordset) {
 			this.fieldInfos = fieldInfos;
@@ -528,47 +529,47 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		}
 
 		private void handleFieldValueType(Object aValue, int rowIndex) {
-			FieldType fieldType = this.fieldDataInfos.get(rowIndex).getType();
+			FieldData fieldData = this.fieldDataInfos.get(rowIndex);
+			FieldType fieldType = fieldData.getType();
 			try {
-				if (fieldType == FieldType.BOOLEAN) {
-					if (aValue != null) {
-						if ("true".equalsIgnoreCase(aValue.toString()) || "false".equalsIgnoreCase(aValue.toString())) {
-							this.fieldDataInfos.get(rowIndex).setFieldValue(aValue.toString());
-						}
-					} else {
-						this.fieldDataInfos.get(rowIndex).setFieldValue(null);
+				if (aValue == null || StringUtilties.isNullOrEmpty(aValue.toString())) {
+					if (!fieldData.getFieldInfo().isRequired()) {
+						fieldData.setFieldValue(null);
 					}
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Boolean.parseBoolean(aValue.toString()));
+				} else if (fieldType == FieldType.BOOLEAN) {
+					if ("true".equalsIgnoreCase(aValue.toString()) || "false".equalsIgnoreCase(aValue.toString())) {
+						fieldData.setFieldValue(aValue.toString());
+					}
+					fieldData.setFieldValue(Boolean.parseBoolean(aValue.toString()));
 				} else if (fieldType == FieldType.INT64) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Long.parseLong(aValue.toString()));
+					fieldData.setFieldValue(Long.parseLong(aValue.toString()));
 				} else if (fieldType == FieldType.INT32) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Integer.parseInt(aValue.toString()));
+					fieldData.setFieldValue(Integer.parseInt(aValue.toString()));
 				} else if (fieldType == FieldType.INT16) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Short.parseShort(aValue.toString()));
+					fieldData.setFieldValue(Short.parseShort(aValue.toString()));
 				} else if (fieldType == FieldType.DOUBLE) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Double.parseDouble(aValue.toString()));
+					fieldData.setFieldValue(Double.parseDouble(aValue.toString()));
 				} else if (fieldType == FieldType.SINGLE) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Float.parseFloat(aValue.toString()));
+					fieldData.setFieldValue(Float.parseFloat(aValue.toString()));
 				} else if (fieldType == FieldType.BYTE) {
-					/* UGDJ-306 组件底层也用的Byte，设不进去  xiajt
-					int value = Integer.parseInt(aValue.toString());
+					short value = Short.valueOf(aValue.toString());
 					if (value >= 0 && value <= 255) {
-						this.fieldDataInfos.get(rowIndex).setFieldValue(value);
-					}*/
-					this.fieldDataInfos.get(rowIndex).setFieldValue(Byte.parseByte(aValue.toString()));
+						fieldData.setFieldValue(value);
+					}
+//					this.fieldDataInfos.get(rowIndex).setFieldValue(Byte.parseByte(aValue.toString()));
 
 				} else if (fieldType == FieldType.DATETIME) {
 					SimpleDateFormat dateformat = new SimpleDateFormat(DATE_STYLE);
 					if (null != dateformat.parse(aValue.toString())) {
-						this.fieldDataInfos.get(rowIndex).setFieldValue(dateformat.format(dateformat.parse(aValue.toString())));
+						fieldData.setFieldValue(dateformat.format(dateformat.parse(aValue.toString())));
 					}
 				} else if (fieldType == FieldType.CHAR || fieldType == FieldType.TEXT || fieldType == FieldType.WTEXT) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(aValue);
+					fieldData.setFieldValue(aValue);
 				} else if (fieldType == FieldType.LONGBINARY) {
-					this.fieldDataInfos.get(rowIndex).setFieldValue(aValue);
+					fieldData.setFieldValue(aValue);
 				}
 			} catch (Exception e) {
-				this.fieldDataInfos.get(rowIndex).setFieldValue(fieldDataInfos.get(rowIndex).getFieldValue());
+				fieldData.setFieldValue(fieldDataInfos.get(rowIndex).getFieldValue());
 			}
 
 		}
@@ -695,14 +696,14 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			// 字段值为布尔类型时，设置单元格为JComboBox类型
 			if (propertyTableModel.getRowData(row).getType() == FieldType.BOOLEAN) {
 				if (!propertyTableModel.getRowData(row).isRequired) {
-					comboBox = new JComboBox<Object>(new String[] { "", "true", "false" });
+					comboBox = new JComboBox<Object>(new String[]{"", "true", "false"});
 					if (value != null && !"".equalsIgnoreCase(value.toString())) {
 						this.comboBox.setSelectedItem(value);
 					} else {
 						this.comboBox.setSelectedItem("");
 					}
 				} else {
-					this.comboBox = new JComboBox<Object>(new String[] { "true", "false" });
+					this.comboBox = new JComboBox<Object>(new String[]{"true", "false"});
 					this.comboBox.setSelectedItem(value);
 				}
 				return this.comboBox;
@@ -827,13 +828,22 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			try {
 				// 二进制字段当做系统字段处理
 				if (!this.isSystemField && this.getType() != FieldType.LONGBINARY) {
-					SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
-					Object resultValue = null;
-					if (this.getFieldValue() != null) {
-						resultValue = this.getType() == FieldType.DATETIME ? dateFormat.parse(String.valueOf(this.getFieldValue())) : this.getFieldValue();
-					}
 					this.recordset.edit();
-					this.recordset.setFieldValue(this.getName(), resultValue);
+					if (this.getFieldValue() == null || StringUtilties.isNullOrEmpty(this.getFieldValue().toString())) {
+						if (!this.getFieldInfo().isRequired()) {
+							this.recordset.setFieldValueNull(this.getName());
+						}
+					} else if (this.getType() == FieldType.BYTE) {
+						this.recordset.setByte(this.getName(), (Short) this.getFieldValue());
+					} else if (this.getType() == FieldType.DATETIME) {
+						SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
+						Object resultValue = null;
+						if (this.getFieldValue() != null) {
+							resultValue = dateFormat.parse(String.valueOf(this.getFieldValue()));
+						}
+						this.recordset.setFieldValue(this.getName(), resultValue);
+
+					}
 					this.recordset.update();
 				}
 				MapViewUtilties.refreshCurrentMap();

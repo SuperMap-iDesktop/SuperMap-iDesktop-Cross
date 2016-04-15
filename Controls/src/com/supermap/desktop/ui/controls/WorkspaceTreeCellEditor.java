@@ -1,17 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.data.Layouts;
-import com.supermap.data.Maps;
-import com.supermap.data.Resources;
-import com.supermap.data.Scenes;
-import com.supermap.data.SymbolFillLibrary;
-import com.supermap.data.SymbolLineLibrary;
-import com.supermap.data.SymbolMarkerLibrary;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit.DatasetWrap;
@@ -41,9 +31,8 @@ import java.util.EventObject;
 
 /**
  * 工作空间树单元格编辑器
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 	private boolean isCommitting = false;
@@ -61,12 +50,13 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 	protected void determineOffset(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 
 		// 计算基类的图片偏移量
-		if (editingIcon != null)
+		drawEditingIcon(tree.getCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, expanded));
+		if (editingIcon != null) {
 			offset = renderer.getIconTextGap() + editingIcon.getIconWidth();
-		else
+		} else {
 			offset = renderer.getIconTextGap();
+		}
 
-		drawEditingIcon(value);
 
 	}
 
@@ -259,7 +249,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 
 	/**
 	 * Returns the value currently being edited.
-	 * 
+	 *
 	 * @return the value currently being edited
 	 */
 	@Override
@@ -270,7 +260,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 
 	/**
 	 * This is invoked if a <code>TreeCellEditor</code> is not supplied in the constructor. It returns a <code>TextField</code> editor.
-	 * 
+	 *
 	 * @return a new <code>TextField</code> editor
 	 */
 	@SuppressWarnings("serial")
@@ -360,111 +350,124 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 	}
 
 	private void drawEditingIcon(Object value) {
-		DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) value;
+		if (value instanceof JLabel) {
+			editingIcon = ((JLabel) value).getIcon();
+			stringTextField = ((JLabel) value).getText();
+		} else if (value instanceof JPanel) {
+			for (int i = 0; i < ((JPanel) value).getComponentCount(); i++) {
+				if (((JPanel) value).getComponent(i) instanceof JLabel) {
+					stringTextField = ((JLabel) ((JPanel) value).getComponent(i)).getText();
+					if (((JLabel) ((JPanel) value).getComponent(i)).getIcon() != null) {
+						editingIcon = ((JLabel) ((JPanel) value).getComponent(i)).getIcon();
+						return;
+					}
+				}
+			}
+		}
+/*		DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) value;
 		TreeNodeData tempNodeData = (TreeNodeData) defaultMutableTreeNode.getUserObject();
 		Object data = tempNodeData.getData();
 		if (data instanceof Workspace) {
-			editingIcon = InternalImageIconFactory.WORKSPACE;
+//			editingIcon = InternalImageIconFactory.WORKSPACE;
 			if ("UntitledWorkspace".equals(currentWorkspace.getCaption())) {
 				stringTextField = ControlsProperties.getString(ControlsProperties.WorkspaceNodeDefaultName);
 			} else {
 				stringTextField = currentWorkspace.getCaption();
 			}
 		} else if (data instanceof Datasources) {
-			editingIcon = InternalImageIconFactory.DATASOURCES;
+//			editingIcon = InternalImageIconFactory.DATASOURCES;
 			stringTextField = ControlsProperties.getString(ControlsProperties.DatasourcesNodeName);
 		} else if (data instanceof Datasource) {
 			Datasource tempDatasource = (Datasource) tempNodeData.getData();
 			EngineType engineType = tempDatasource.getEngineType();
 			if (engineType.equals(EngineType.SQLPLUS)) {
-				editingIcon = InternalImageIconFactory.DATASOURCE_SQL;
+//				editingIcon = InternalImageIconFactory.DATASOURCE_SQL;
 			} else if (engineType.equals(EngineType.IMAGEPLUGINS)) {
-				editingIcon = InternalImageIconFactory.DATASOURCE_IMAGEPLUGINS;
+//				editingIcon = InternalImageIconFactory.DATASOURCE_IMAGEPLUGINS;
 			} else if (engineType.equals(EngineType.OGC)) {
-				editingIcon = InternalImageIconFactory.DATASOURCE_OGC;
+//				editingIcon = InternalImageIconFactory.DATASOURCE_OGC;
 			} else if (engineType.equals(EngineType.ORACLEPLUS)) {
-				editingIcon = InternalImageIconFactory.DATASOURCE_ORACLE;
+//				editingIcon = InternalImageIconFactory.DATASOURCE_ORACLE;
 			} else if (engineType.equals(EngineType.UDB)) {
-				editingIcon = InternalImageIconFactory.DATASOURCE_UDB;
+//				editingIcon = InternalImageIconFactory.DATASOURCE_UDB;
 			}
 			stringTextField = tempDatasource.getAlias();
 		} else if (data instanceof Dataset) {
 			Dataset tempDataset = (Dataset) tempNodeData.getData();
 			DatasetType instanceDatasetType = tempDataset.getType();
 			if (instanceDatasetType.equals(DatasetType.POINT)) {
-				editingIcon = InternalImageIconFactory.DT_POINT;
+//				editingIcon = InternalImageIconFactory.DT_POINT;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.LINE)) {
-				editingIcon = InternalImageIconFactory.DT_LINE;
+//				editingIcon = InternalImageIconFactory.DT_LINE;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.LINEM)) {
-				editingIcon = InternalImageIconFactory.DT_LINEM;
+//				editingIcon = InternalImageIconFactory.DT_LINEM;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.REGION)) {
-				editingIcon = InternalImageIconFactory.DT_REGION;
+				//			editingIcon = InternalImageIconFactory.DT_REGION;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.CAD)) {
-				editingIcon = InternalImageIconFactory.DT_CAD;
+//				editingIcon = InternalImageIconFactory.DT_CAD;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.GRID)) {
-				editingIcon = InternalImageIconFactory.DT_GRID;
+//				editingIcon = InternalImageIconFactory.DT_GRID;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.IMAGE)) {
-				editingIcon = InternalImageIconFactory.DT_IMAGE;
+//				editingIcon = InternalImageIconFactory.DT_IMAGE;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.LINKTABLE)) {
-				editingIcon = InternalImageIconFactory.DT_LINKTABLE;
+//				editingIcon = InternalImageIconFactory.DT_LINKTABLE;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.NETWORK)) {
-				editingIcon = InternalImageIconFactory.DT_NETWORK;
+//				editingIcon = InternalImageIconFactory.DT_NETWORK;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.TABULAR)) {
-				editingIcon = InternalImageIconFactory.DT_TABULAR;
+//				editingIcon = InternalImageIconFactory.DT_TABULAR;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.TEXT)) {
-				editingIcon = InternalImageIconFactory.DT_TEXT;
+//				editingIcon = InternalImageIconFactory.DT_TEXT;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.TOPOLOGY)) {
-				editingIcon = InternalImageIconFactory.DT_TOPOLOGY;
+//				editingIcon = InternalImageIconFactory.DT_TOPOLOGY;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.WCS)) {
-				editingIcon = InternalImageIconFactory.DT_WCS;
+//				editingIcon = InternalImageIconFactory.DT_WCS;
 				stringTextField = tempDataset.getName();
 			} else if (instanceDatasetType.equals(DatasetType.WMS)) {
-				editingIcon = InternalImageIconFactory.DT_WMS;
+//				editingIcon = InternalImageIconFactory.DT_WMS;
 				stringTextField = tempDataset.getName();
 			}
 		} else if (data instanceof Maps) {
-			editingIcon = InternalImageIconFactory.MAPS;
+//			editingIcon = InternalImageIconFactory.MAPS;
 			stringTextField = ControlsProperties.getString(ControlsProperties.MapsNodeName);
 		} else if (tempNodeData.getType().equals(NodeDataType.MAP_NAME)) {
-			editingIcon = InternalImageIconFactory.MAP;
+//			editingIcon = InternalImageIconFactory.MAP;
 			stringTextField = tempNodeData.getData().toString().trim();
 		} else if (data instanceof Scenes) {
-			editingIcon = InternalImageIconFactory.SCENES;
+//			editingIcon = InternalImageIconFactory.SCENES;
 			stringTextField = ControlsProperties.getString(ControlsProperties.ScenesNodeName);
 		} else if (tempNodeData.getType().equals(NodeDataType.SCENE_NAME)) {
-			editingIcon = InternalImageIconFactory.SCENE;
+//			editingIcon = InternalImageIconFactory.SCENE;
 			stringTextField = tempNodeData.getData().toString().trim();
 		} else if (data instanceof Layouts) {
-			editingIcon = InternalImageIconFactory.LAYOUTS;
+//			editingIcon = InternalImageIconFactory.LAYOUTS;
 			stringTextField = ControlsProperties.getString(ControlsProperties.LayoutsNodeName);
 		} else if (tempNodeData.getType().equals(NodeDataType.LAYOUT_NAME)) {
-			editingIcon = InternalImageIconFactory.LAYOUT;
+//			editingIcon = InternalImageIconFactory.LAYOUT;
 			stringTextField = tempNodeData.getData().toString().trim();
 		} else if (data instanceof Resources) {
-			editingIcon = InternalImageIconFactory.RESOURCES;
+//			editingIcon = InternalImageIconFactory.RESOURCES;
 			stringTextField = ControlsProperties.getString(ControlsProperties.ResourcesNodeName);
 		} else if (data instanceof SymbolMarkerLibrary) {
-			editingIcon = InternalImageIconFactory.SYMBOLMARKERLIB;
+//			editingIcon = InternalImageIconFactory.SYMBOLMARKERLIB;
 			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolMarkerLibNodeName);
 		} else if (data instanceof SymbolLineLibrary) {
-			editingIcon = InternalImageIconFactory.SYMBOLLINELIB;
+//			editingIcon = InternalImageIconFactory.SYMBOLLINELIB;
 			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolLineLibNodeName);
 		} else if (data instanceof SymbolFillLibrary) {
-			editingIcon = InternalImageIconFactory.SYMBOLFillLIB;
+//			editingIcon = InternalImageIconFactory.SYMBOLFillLIB;
 			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolFillLibNodeName);
-		}
+		}*/
 	}
-
 }

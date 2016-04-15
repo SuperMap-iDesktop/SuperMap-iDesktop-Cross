@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 
 import com.supermap.data.ColorSpaceType;
 import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
@@ -234,9 +235,16 @@ public class LayerImageParamPropertyModel extends LayerPropertyModel {
 						break;
 					}
 
-					DatasetImage dataset = (DatasetImage) layer.getDataset();
-					// 颜色模式，波段大于1时可用
-					enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
+					if (layer.getDataset() instanceof DatasetImage) {
+						DatasetImage dataset = (DatasetImage) layer.getDataset();
+						// 颜色模式，波段大于1时可用
+						enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
+
+					} else if (layer.getDataset() instanceof DatasetImageCollection) {
+//						DatasetImageCollection dataset = (DatasetImageCollection) layer.getDataset();
+//						enabled = hashMapTmp.get(DISPLAY_COLOR_SPACE) && dataset.getBandCount() > 1;
+						enabled = false;
+					}
 					hashMapTmp.put(DISPLAY_COLOR_SPACE, enabled);
 				}
 			}

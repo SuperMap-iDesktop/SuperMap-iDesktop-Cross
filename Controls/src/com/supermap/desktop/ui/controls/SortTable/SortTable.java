@@ -9,19 +9,23 @@ import java.awt.event.MouseEvent;
 
 public class SortTable extends JTable {
 
-	private SortButtonRenderer sortButtonRenderer = new SortButtonRenderer();
-	private HeaderListener headerListener = new HeaderListener();
+	private SortButtonRenderer sortButtonRenderer;
+	private HeaderListener headerListener;
 
 	public SortTable() {
+		sortButtonRenderer = new SortButtonRenderer();
+		headerListener = new HeaderListener();
 		headerListener.setRenderer(sortButtonRenderer);
 
 		JTableHeader header = this.getTableHeader();
 		headerListener.setHeader(header);
 		header.addMouseListener(headerListener);
+
 	}
 
 	@Override
 	public void setModel(TableModel dataModel) {
+
 		JTableHeader header = this.getTableHeader();
 		if (header != null) {
 			header.removeMouseListener(headerListener);
@@ -42,6 +46,17 @@ public class SortTable extends JTable {
 			header.setReorderingAllowed(false);
 		}
 		this.setRowHeight(23);
+//		this.getModel().addTableModelListener(new TableModelListener() {
+//			@Override
+//			public void tableChanged(TableModelEvent e) {
+//				TableColumnModel model = SortTable.this.getColumnModel();
+//				int n = model.getColumnCount();
+//				for (int i = 0; i < n; i++) {
+//					model.getColumn(i).setHeaderRenderer(sortButtonRenderer);
+//				}
+//				SortTable.this.updateUI();
+//			}
+//		});
 	}
 
 	class HeaderListener extends MouseAdapter {
@@ -68,7 +83,8 @@ public class SortTable extends JTable {
 			this.renderer = renderer;
 		}
 
-		public void mousePressed(MouseEvent e) {
+		@Override
+		public void mouseClicked(MouseEvent e) {
 			int col = header.columnAtPoint(e.getPoint());
 			int sortCol = header.getTable().convertColumnIndexToModel(col);
 			renderer.setPressedColumn(col);

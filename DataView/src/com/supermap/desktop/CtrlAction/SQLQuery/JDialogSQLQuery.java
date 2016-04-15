@@ -798,7 +798,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 	private void checkButtonGetAllValueState() {
 		int row = tableFieldInfo.getSelectedRow();
-		buttonGetAllValue.setEnabled(row != 0 && row != -1 && row != tableFieldInfo.getRowCount() - 1);
+		buttonGetAllValue.setEnabled(row != 0 && row != -1);
 		clearScrollpaneallvalue();
 	}
 
