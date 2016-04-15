@@ -55,6 +55,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	private IFormMap formMap;
 	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
+	private boolean isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
+	private Action oldMapControlAction = Action.NULL;
 
 	private MouseListener mouseListener = new MouseListener() {
 
@@ -114,7 +116,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 		@Override
 		public void actionChanged(ActionChangedEvent arg0) {
-			if (MouseInfo.getNumberOfButtons() != MouseButtons.MIDDLE_BUTTON && arg0.getOldAction() != Action.PAN) {
+			if (!EditEnvironment.this.isInitialAction && MouseInfo.getNumberOfButtons() != MouseButtons.MIDDLE_BUTTON && arg0.getOldAction() != Action.PAN) {
 				activateEditor(NullEditor.INSTANCE);
 			}
 		}
@@ -172,9 +174,23 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	}
 
 	public void activateEditor(IEditor editor) {
-		this.editor.deactivate(this);
-		this.editor = editor;
-		this.editor.activate(this);
+		try {
+			this.isInitialAction = true;
+			this.editor.deactivate(this);
+			if (this.oldMapControlAction != Action.NULL) {
+				this.getMapControl().setAction(this.oldMapControlAction);
+			}
+
+			this.editor = editor;
+			this.editor.activate(this);
+
+			if (this.editor.getMapControlAction() != Action.NULL) {
+				this.oldMapControlAction = this.getMapControl().getAction();
+				this.getMapControl().setAction(this.editor.getMapControlAction());
+			}
+		} finally {
+			this.isInitialAction = false;
+		}
 	}
 
 	/**

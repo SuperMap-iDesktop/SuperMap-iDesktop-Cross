@@ -1,24 +1,13 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoLine3D;
-import com.supermap.data.GeoLineM;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoRegion3D;
-import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetAddNew;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;

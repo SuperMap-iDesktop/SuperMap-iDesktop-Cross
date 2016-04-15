@@ -1,6 +1,7 @@
 package com.supermap.desktop.utilties;
 
 import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.GeoText3D;
@@ -14,6 +15,7 @@ import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
+import com.supermap.desktop.geometry.Implements.DGeoCompound;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.mapping.Layer;
 
@@ -347,5 +349,31 @@ public class GeometryUtilties {
 			}
 		}
 		return target;
+	}
+
+	// @formatter:off
+	/**
+	 * 将 geometry 完全添加到 IMultiPartFeature 的子项中。
+	 * 如果 geometry 是 GeoCompound，就把 geometry 完全分解，然后选取可以添加的部分添加为feature 的子项。
+	 * 
+	 * @param feature
+	 * @param geometry
+	 */
+	// @formatter:on
+	public static void addPartCompletely(IMultiPartFeature<?> feature, Geometry geometry) {
+		if (feature != null && geometry != null) {
+			if (geometry instanceof GeoCompound) {
+				DGeoCompound compound = (DGeoCompound) DGeometryFactory.create(geometry);
+
+				// 完全拆分 GeoCompound
+				Geometry[] divideGeometries = compound.divide();
+
+				for (int i = 0; i < divideGeometries.length; i++) {
+					feature.addPart(divideGeometries[i]);
+				}
+			} else {
+				feature.addPart(geometry);
+			}
+		}
 	}
 }

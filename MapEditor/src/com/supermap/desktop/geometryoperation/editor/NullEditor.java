@@ -1,6 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.ui.Action;
 
 /**
  * 在对象编辑体系中，表示什么都不做，直白的说，它就是 IEditor版 null
@@ -14,6 +15,11 @@ public class NullEditor implements IEditor {
 
 	private NullEditor() {
 		// 不开放构造方法
+	}
+
+	@Override
+	public Action getMapControlAction() {
+		return Action.NULL;
 	}
 
 	@Override

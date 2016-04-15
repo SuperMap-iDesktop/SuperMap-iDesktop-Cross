@@ -1,8 +1,14 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.ui.Action;
 
 public abstract class AbstractEditor implements IEditor {
+
+	@Override
+	public Action getMapControlAction() {
+		return Action.NULL;
+	}
 
 	@Override
 	public void activate(EditEnvironment environment) {
