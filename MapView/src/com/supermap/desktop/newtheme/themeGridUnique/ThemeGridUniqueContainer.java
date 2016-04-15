@@ -129,11 +129,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (SystemPropertyUtilties.isWindows()) {
-			this.comboboxColor.setSelectedIndex(21);
-		} else {
-			this.comboboxColor.setSelectedIndex(14);
-		}
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();
@@ -367,7 +362,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				int selectRow = tableUniqueInfo.getSelectedRow();
 				setItemColor(e.getX(), e.getY());
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
-				refreshAtOnce();
 			}
 			// 包含最后一行不能做删除操作
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
@@ -535,22 +529,26 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			if (e.getSource() == buttonVisble) {
 				// 批量修改单值段的可见状态
 				setItemVisble();
+				refreshAtOnce();
 			} else if (e.getSource() == buttonForeGroundColor) {
 				// 批量修改单值段的颜色
-				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight() - 60);
+				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight());
 			} else if (e.getSource() == buttonAdd) {
 				// 添加单值段
 				addThemeItem();
+				refreshAtOnce();
 			} else if (e.getSource() == buttonDelete) {
 				// 删除单值段
 				deleteItem();
+				refreshAtOnce();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			} else if (e.getSource() == buttonAntitone) {
 				// 颜色方案反序
 				setGeoStyleAntitone();
+				refreshAtOnce();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
-			refreshAtOnce();
+			
 		}
 
 		/**
@@ -744,7 +742,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		final JPopupMenu popupMenu = new JPopupMenu();
 		ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
 		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-		colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+		colorSelectionPanel.setPreferredSize(new Dimension(170, 155));
 		popupMenu.show(this.tableUniqueInfo, x, y);
 		final int[] selectRows = tableUniqueInfo.getSelectedRows();
 		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
@@ -763,6 +761,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 						}
 					}
 					getTable();
+					refreshAtOnce();
 					for (int i = 0; i < selectRows.length; i++) {
 						tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 					}

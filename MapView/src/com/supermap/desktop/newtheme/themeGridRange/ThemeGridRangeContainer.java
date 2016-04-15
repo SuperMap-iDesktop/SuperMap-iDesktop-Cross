@@ -150,11 +150,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
-		if (SystemPropertyUtilties.isWindows()) {
-			this.comboBoxColorStyle.setSelectedIndex(21);
-		} else {
-			this.comboBoxColorStyle.setSelectedIndex(14);
-		}
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();
@@ -1002,7 +997,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.GRIDRANGE) {
-			((ThemeGridUnique) this.themeRangeLayer.getTheme()).clear();
+			((ThemeGridRange) this.themeRangeLayer.getTheme()).clear();
 			this.themeRangeLayer.getTheme().fromXML(this.themeGridRange.toXML());
 			this.map.refresh();
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);

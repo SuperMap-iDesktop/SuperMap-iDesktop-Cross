@@ -44,7 +44,7 @@ public class LabelThemePanel extends JPanel {
 						.addGap(20)
 						.addComponent(labelUniformTheme)
 						.addComponent(labelRangeTheme)
-						.addContainerGap(115, Short.MAX_VALUE)));
+						.addContainerGap(120, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)

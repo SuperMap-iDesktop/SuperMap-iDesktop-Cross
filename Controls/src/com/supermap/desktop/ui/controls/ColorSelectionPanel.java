@@ -88,7 +88,6 @@ public class ColorSelectionPanel extends JPanel {
 		if (fileTargetPath.charAt(fileTargetPath.length() - 1) != File.separatorChar) {
 			fileTargetPath += Character.toString(File.separatorChar);
 		}
-		setSize(170, 205);
 		setLayout(null);
 		setBackground(new Color(226, 231, 238));
 		add(getButtonScreen());

@@ -1,11 +1,5 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultMutableTreeNode;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
@@ -14,8 +8,19 @@ import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeCustom;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeUnique;
 import com.supermap.realspace.Scene;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.event.MouseEvent;
 
 public class LayersComponentManager extends JComponent {
 	/**
@@ -179,9 +184,9 @@ public class LayersComponentManager extends JComponent {
 						popupMenu = this.layerTextPopupMenu;
 					} else if (layer.getDataset() instanceof DatasetVector) {
 						popupMenu = this.layerVectorPopupMenu;
-					} else if (layer.getDataset().getType() == DatasetType.IMAGE) {
+					} else if (layer.getDataset().getType() == DatasetType.IMAGE || layer.getDataset().getType() == DatasetType.IMAGECOLLECTION) {
 						popupMenu = this.layerImagePopupMenu;
-					} else if (layer.getDataset().getType() == DatasetType.GRID) {
+					} else if (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.GRIDCOLLECTION) {
 						popupMenu = this.layerGridPopupMenu;
 					} else {
 						popupMenu = this.layerPopupMenu;

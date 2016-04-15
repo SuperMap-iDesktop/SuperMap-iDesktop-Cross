@@ -67,7 +67,7 @@ public class ThemeMainContainer extends JPanel {
 	// 标记位，用于标记当前
 	private boolean layerPropertyChanged = false;
 	public Layer oldLayer;
-
+	
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -130,7 +130,7 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				// 删除图层时销毁已有地图
-				if (null != panel && panel.getCurrentLayer().getName().equals(evt.getNewValue())) {
+				if (null != panel && !panel.getCurrentLayer().isDisposed() && panel.getCurrentLayer().getName().equals(evt.getNewValue())) {
 					panel.unregistActionListener();
 					setLayerPropertyChanged(false);
 				}
@@ -220,10 +220,12 @@ public class ThemeMainContainer extends JPanel {
 			try {
 				IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				if (null==dockbarThemeContainer) {
+				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				// 专题图dockbar不存在是不做处理
+				if (null == dockbarThemeContainer.getComponent()) {
 					return;
 				}
-				if (null != e.getOldLeadSelectionPath() && isLayerPath(e.getNewLeadSelectionPath())) {
+				if (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer)) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
 				if (null != newLayer && null != newLayer.getTheme()) {
@@ -264,13 +266,15 @@ public class ThemeMainContainer extends JPanel {
 		// 新线程解决关闭数据集是lay对象释放问题
 		if (null == oldLayer || oldLayer.isDisposed()) {
 			setLayerPropertyChanged(false);
+		} else {
+			panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
 		}
-		if (null != panel && null != oldLayer && !oldLayer.isDisposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+
+		if (null != panel && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
-				if (null != panel) {
-					panel.unregistActionListener();
-				}
+				panel.unregistActionListener();
+				ThemeGuideFactory.themeTypeContainer.remove(ThemeGuideFactory.getThemeTypeString(oldLayer));
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新

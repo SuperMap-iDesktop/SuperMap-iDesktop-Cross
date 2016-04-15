@@ -863,19 +863,24 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
-		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
-		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
-		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
-		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
-		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
-		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
-		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
-		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
-		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
-		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
-		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
-		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
-		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
+//		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
+//		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
+//		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
+//		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
+//		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
+//		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
+//		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
+//		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
+//		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
+//		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
+//		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
+//		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
+//		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
+//		themeLabelTemp.setSplitSeparator(this.themeLabel.getSplitSeparator());
+//		themeLabelTemp.setUniformStyle(themeLabel.getUniformStyle());
+//		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
+		themeLabelTemp.fromXML(this.themeLabel.toXML());
+		
 		this.map.refresh();
 	}
 

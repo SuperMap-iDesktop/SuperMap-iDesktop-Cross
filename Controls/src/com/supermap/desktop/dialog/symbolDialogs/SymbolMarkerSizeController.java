@@ -186,8 +186,8 @@ public class SymbolMarkerSizeController {
 	private double getSymbolSizeByShowSize(double showSize) {
 		if (showSize <= 0) {
 			return showSize;
-		}//currentGeoStyle.getMarkerSymbolID()
-		Symbol symbol = resources.getMarkerLibrary().findSymbol(1110);
+		}
+		Symbol symbol = resources.getMarkerLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
 		int value = ((SymbolMarker) symbol).computeSymbolSize((int) showSize);
 		if (value > 500) {
 			return 500;
