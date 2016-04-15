@@ -424,7 +424,6 @@ public class DataImportFrame extends SmDialog {
 				int y = buttonAddDir.getHeight();
 				AddDirDialog addDirDialog = new AddDirDialog();
 				addDirDialog.show(buttonAddDir, x, y);
-				addDirDialog.setVisible(true);
 				initComboBoxColumns();
 				return;
 			}

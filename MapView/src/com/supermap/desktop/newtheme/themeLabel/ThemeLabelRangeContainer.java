@@ -161,13 +161,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
 			// 复制关联表信息到新图层中
 			this.layerName = this.themeLabelLayer.getName();
-			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(0);
-			if (fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32 || fieldInfo.getType() == FieldType.INT64
-					|| fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.SINGLE) {
-				String item = fieldInfo.getName();
-				((ThemeLabel) this.themeLabelLayer.getTheme()).setLabelExpression(item);
-				this.themeLabel.setNumericPrecision(1);
-			}
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
 			mapControl.getMap().refresh();
 		}
@@ -776,25 +769,23 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 * 设置分段方法
 		 */
 		private void setRangeMethod() {
-			String rangeMethod = comboBoxRangeMethod.getSelectedItem().toString();
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_EqualInterval"))) {
+			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
+			rangeExpression = comboBoxExpression.getSelectedItem().toString();
+			switch (rangeMethod) {
+			case 0:
 				// 等距分段
 				rangeMode = RangeMode.EQUALINTERVAL;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
 				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_SquareRoot"))) {
+				break;
+			case 1:
 				// 平方根分度
 				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为平方根分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_SquareRoot")));
-					// JOptionPane.showMessageDialog(
-					// null,
-					// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-					// MapViewProperties.getString("String_RangeMode_SquareRoot")), CommonProperties.getString("String_Error"),
-					// JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -805,24 +796,21 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_StdDeviation"))) {
+				break;
+			case 2:
 				// 标准差分段
 				rangeMode = RangeMode.STDDEVIATION;
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
 				resetThemeInfo();
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Logarithm"))) {
+				break;
+			case 3:
 				// 对数分段
 				if (ThemeUtil.hasNegative(datasetVector, rangeExpression)) {
 					// 有负数且为对数分段
 					UICommonToolkit.showErrorMessageDialog(MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
 							MapViewProperties.getString("String_RangeMode_Logarithm")));
-					// JOptionPane.showMessageDialog(
-					// null,
-					// MessageFormat.format(MapViewProperties.getString("String_MakeTheme_Error1"), rangeExpression,
-					// MapViewProperties.getString("String_RangeMode_Logarithm")), CommonProperties.getString("String_Error"),
-					// JOptionPane.ERROR_MESSAGE);
 					isResetComboBox = true;
 					resetComboBoxRangeMode();
 					return;
@@ -833,15 +821,16 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					isCustom = false;
 					resetThemeInfo();
 				}
-			} else if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_Quantile"))) {
+				break;
+			case 4:
 				// 等计数分段
 				rangeMode = RangeMode.QUANTILE;
 				comboBoxRangeCount.setEnabled(true);
 				spinnerRangeLength.setEnabled(false);
 				isCustom = false;
 				resetThemeInfo();
-			}
-			if (rangeMethod.equals(MapViewProperties.getString("String_RangeMode_CustomInterval"))) {
+				break;
+			case 5:
 				// 自定义分段
 				rangeMode = RangeMode.CUSTOMINTERVAL;
 				double defaultRangeCount = 0;
@@ -854,6 +843,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				comboBoxRangeCount.setEnabled(false);
 				spinnerRangeLength.setEnabled(true);
 				makeDefaultAsCustom();
+				break;
+			default:
+				break;
 			}
 		}
 

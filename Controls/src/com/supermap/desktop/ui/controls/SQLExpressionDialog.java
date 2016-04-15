@@ -120,12 +120,12 @@ public class SQLExpressionDialog extends SmDialog {
 		//@formatter:on
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
-		this.jTextAreaSQLSentence.select(0, expression.length());
 		intializeForm();
 		initialFieldTypeMap();
 		initResources();
 		registActionListener();
-		initTraversalPolicy();
+//		initTraversalPolicy();
+		this.jTextAreaSQLSentence.select(0, expression.length());
 	}
 
 	/**

@@ -130,7 +130,7 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				// 删除图层时销毁已有地图
-				if (null != panel && panel.getCurrentLayer().getName().equals(evt.getNewValue())) {
+				if (null != panel && !panel.getCurrentLayer().isDisposed() && panel.getCurrentLayer().getName().equals(evt.getNewValue())) {
 					panel.unregistActionListener();
 					setLayerPropertyChanged(false);
 				}
@@ -220,7 +220,8 @@ public class ThemeMainContainer extends JPanel {
 			try {
 				IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				if (null==dockbarThemeContainer) {
+				//专题图dockbar不存在是不做处理
+				if (null == dockbarThemeContainer) {
 					return;
 				}
 				if (null != e.getOldLeadSelectionPath() && isLayerPath(e.getNewLeadSelectionPath())) {
@@ -264,13 +265,13 @@ public class ThemeMainContainer extends JPanel {
 		// 新线程解决关闭数据集是lay对象释放问题
 		if (null == oldLayer || oldLayer.isDisposed()) {
 			setLayerPropertyChanged(false);
+		} else {
+			panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
 		}
-		if (null != panel && null != oldLayer && !oldLayer.isDisposed() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+
+		if (null != panel && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
-				if (null != panel) {
-					panel.unregistActionListener();
-				}
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新

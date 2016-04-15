@@ -514,6 +514,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			geoStyle.setLineColor(color);
 		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetType)) {
 			geoStyle.setFillForeColor(color);
+			geoStyle.setLineColor(Color.GRAY);
 		}
 	}
 
