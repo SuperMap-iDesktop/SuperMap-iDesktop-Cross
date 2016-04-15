@@ -68,7 +68,7 @@ public class EraseEditor extends AbstractEditor {
 	private KeyListener keyListener = new KeyAdapter() {
 
 		@Override
-		public void keyPressed(KeyEvent e) {
+		public void keyReleased(KeyEvent e) {
 			EraseEditor.this.keyPressed(e);
 		}
 	};
@@ -96,6 +96,8 @@ public class EraseEditor extends AbstractEditor {
 	public void activate(EditEnvironment environment) {
 		registerEvents(environment);
 		getSrRegion(environment);
+		setIsEraseExternal(false);
+		Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));
 	}
 
 	@Override
@@ -204,16 +206,13 @@ public class EraseEditor extends AbstractEditor {
 		try {
 			recordset.moveFirst();
 			geometry = DGeometryFactory.create(recordset.getGeometry());
-
-			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				result = Geometrist.erase(this.srRegion, geometry.getGeometry());
-			} else if (geometry instanceof DGeoCompound) {
-
+			if (isEraseExternal) {
+				result = eraseExternal(editHistory, recordset, geometry);
 			} else {
-				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
+				result = eraseInside(editHistory, recordset, geometry);
 			}
 
-			if (recordset != null) {
+			if (result != null) {
 				editHistory.add(EditType.MODIFY, recordset, true);
 				recordset.edit();
 				recordset.setGeometry(result);
@@ -227,13 +226,113 @@ public class EraseEditor extends AbstractEditor {
 		return result;
 	}
 
-//	private Geometry erase
+	/**
+	 * 擦除内部
+	 * 
+	 * @param editHistory
+	 * @param recordset
+	 * @param geometry
+	 *            被擦除对象
+	 * @return
+	 */
+	private Geometry eraseInside(EditHistory editHistory, Recordset recordset, IGeometry geometry) {
+		Geometry eraseResult = null;
+
+		try {
+			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
+				eraseResult = Geometrist.erase(this.srRegion, geometry.getGeometry());
+
+				// 没有擦除结果，删除被擦除对象
+				if (eraseResult == null) {
+					editHistory.add(EditType.DELETE, recordset, true);
+					recordset.delete();
+					recordset.update();
+				}
+			} else if (geometry instanceof DGeoCompound) {
+				eraseCompound((DGeoCompound) geometry);
+			} else {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return eraseResult;
+	}
+
+	/**
+	 * 擦除外部
+	 * 
+	 * @param editHistory
+	 * @param recordset
+	 * @param geometry
+	 *            被擦除对象
+	 * @return
+	 */
+	private Geometry eraseExternal(EditHistory editHistory, Recordset recordset, IGeometry geometry) {
+		Geometry eraseResult = null;
+
+		try {
+			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
+				eraseResult = Geometrist.clip(this.srRegion, geometry.getGeometry());
+
+				// 没有擦除结果，删除被擦除对象
+				if (eraseResult == null) {
+					editHistory.add(EditType.DELETE, recordset, true);
+					recordset.delete();
+					recordset.update();
+				}
+			} else if (geometry instanceof DGeoCompound) {
+				eraseCompound((DGeoCompound) geometry);
+			} else {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return eraseResult;
+	}
+
+	/**
+	 * 擦除复合对象
+	 * 
+	 * @param geoCompound
+	 * @return
+	 */
+	private Geometry eraseCompound(DGeoCompound geoCompound) {
+		Geometry eraseResult = null;
+
+		for (int i = geoCompound.getPartCount() - 1; i >= 0; i--) {
+			IGeometry part = DGeometryFactory.create(geoCompound.getPart(i));
+			Geometry partEraseResult = null; // 子对象擦除结果
+
+			if (part instanceof DGeoCompound) {
+				partEraseResult = eraseCompound(geoCompound);
+			} else if (part instanceof IRegionFeature || part instanceof ILineFeature) {
+				if (isEraseExternal) {
+					partEraseResult = Geometrist.clip(this.srRegion, part.getGeometry());
+				} else {
+					partEraseResult = Geometrist.erase(this.srRegion, part.getGeometry());
+				}
+			}
+
+			if (partEraseResult == null) {
+
+				// 擦除结果为空，移除该子项
+				geoCompound.removePart(i);
+			} else {
+				geoCompound.setPart(i, partEraseResult);
+			}
+		}
+		return eraseResult;
+	}
 
 	private void setIsEraseExternal(boolean isEraseExternal) {
 		this.isEraseExternal = isEraseExternal;
 
 		if (isEraseExternal) {
-
+			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseTipExternal"));
+		} else {
+			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseTipInside"));
 		}
 	}
 
@@ -268,7 +367,7 @@ public class EraseEditor extends AbstractEditor {
 
 		for (int i = 0; i < selectedLayers.size(); i++) {
 			Geometry unionLayer = GeometryUtilties.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
-			srRegion = GeometryUtilties.union(srRegion, unionLayer, true);
+			this.srRegion = GeometryUtilties.union(this.srRegion, unionLayer, true);
 		}
 	}
 
@@ -276,8 +375,9 @@ public class EraseEditor extends AbstractEditor {
 	 * 编辑结束清理资源
 	 */
 	private void clear(EditEnvironment environment) {
-		if (srRegion != null) {
-			srRegion.dispose();
+		if (this.srRegion != null) {
+			this.srRegion.dispose();
+			this.srRegion = null;
 		}
 
 		clearResultTracking(environment.getMapControl());

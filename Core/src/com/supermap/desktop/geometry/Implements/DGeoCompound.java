@@ -36,6 +36,27 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 		}
 	}
 
+	public boolean setPart(int index, Geometry geometry) {
+		if (this.geoCompound != null) {
+			return this.geoCompound.setPart(index, geometry);
+		}
+		return false;
+	}
+
+	public boolean insertPart(int index, Geometry geometry) {
+		if (this.geoCompound != null) {
+			return this.geoCompound.insertPart(index, geometry);
+		}
+		return false;
+	}
+
+	public boolean removePart(int index) {
+		if (this.geoCompound != null) {
+			return this.geoCompound.removePart(index);
+		}
+		return false;
+	}
+
 	// @formatter:off
 	/*
 	 * CAD上的组合对象都是复杂对象，通过Divide能够分解到最简单对象
