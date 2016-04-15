@@ -131,7 +131,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
 			isResetLayerProperty = false;
 		}
 	};
@@ -194,11 +194,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
-		if (SystemPropertyUtilties.isWindows()) {
-			this.comboBoxColorStyle.setSelectedIndex(21);
-		} else {
-			this.comboBoxColorStyle.setSelectedIndex(14);
-		}
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();

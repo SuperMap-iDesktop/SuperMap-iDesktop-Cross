@@ -101,7 +101,7 @@ public class ThemeItemLabelDecorator {
 			GeoLine geoLine = new GeoLine(ds);
 			return geoLine;
 		}
-		if (type.equals(DatasetType.REGION) || type.equals(DatasetType.GRID)) {
+		if (type.equals(DatasetType.REGION) || type.equals(DatasetType.REGION3D)||type.equals(DatasetType.GRID)) {
 			Point2D[] points = { new Point2D(0, 0), new Point2D(0, 20), new Point2D(100, 20), new Point2D(100, 0) };
 			Point2Ds ds = new Point2Ds(points);
 			GeoRegion geoRegion = new GeoRegion(ds);

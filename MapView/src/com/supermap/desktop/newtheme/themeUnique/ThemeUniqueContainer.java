@@ -126,7 +126,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
-		public void mouseClicked(MouseEvent arg0) {
+		public void mousePressed(MouseEvent arg0) {
 			isResetLayerProperty = false;
 		}
 	};
@@ -185,11 +185,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.add(tabbedPaneInfo,
 				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (SystemPropertyUtilties.isWindows()) {
-			this.comboboxColor.setSelectedIndex(21);
-		} else {
-			this.comboboxColor.setSelectedIndex(14);
-		}
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();

@@ -349,11 +349,12 @@ public class ThemeGuideFactory {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				success = false;
 				Application
 						.getActiveApplication()
 						.getOutput()
-						.output(MessageFormat.format(MapViewProperties.getString("String_ThemeGridUnique_MessagePixelFormat"), datasetGrid.getName() + "@"
+						.output(MessageFormat.format(MapViewProperties.getString("String_ThemeGridRange_MessagePixelFormat"), datasetGrid.getName() + "@"
 								+ datasetGrid.getDatasource().getAlias()));
 			}
 		}

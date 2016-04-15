@@ -55,6 +55,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	private MouseAdapter localMouseAdapter;
 	private ScaleModel scaleModel;
 	private ActionListener panelButtonAction;
+	private double[] scales;
 
 	public ScaleEnabledContainer(Double scale) {
 		this.scale = scale;
@@ -63,13 +64,16 @@ public class ScaleEnabledContainer extends SmDialog {
 		} catch (InvalidScaleException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+		
+	}
+
+	public void init(){
 		initComponents();
 		initResources();
 		registEvents();
 		checkButtonState();
 		addFocusTraversalPolicyList();
 	}
-
 	private void addFocusTraversalPolicyList() {
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);
@@ -118,7 +122,11 @@ public class ScaleEnabledContainer extends SmDialog {
 					dialogResult = DialogResult.OK;
 					if (scaleDisplays.size()>0) {
 						try {
-							scale = new ScaleModel(scaleDisplays.get(0).getScale()).getScale();
+							scales = new double[scaleDisplays.size()];
+							for (int i = 0; i < scales.length; i++) {
+								scales[i] = new ScaleModel(scaleDisplays.get(i).getScale()).getScale();
+							}
+							
 						} catch (InvalidScaleException ex) {
 							ex.printStackTrace();
 						}
@@ -603,12 +611,16 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	}
 
-	public double getScale() {
-		return scale;
+	public double[] getScales() {
+		return scales;
 	}
 
-	public void setScale(double scale) {
-		this.scale = scale;
+	public void setScales(double[] scales) throws InvalidScaleException {
+		this.scales = scales;
+		for (int i = 0; i < scales.length; i++) {
+			ScaleDisplay tempdDisplay = new ScaleDisplay(i+1, new ScaleModel(scales[i]).getScaleCaption());
+			scaleDisplays.add(tempdDisplay);
+		}
 	}
 
 	public List<ScaleDisplay> getScaleDisplays() {

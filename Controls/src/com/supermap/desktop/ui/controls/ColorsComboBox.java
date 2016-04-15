@@ -8,12 +8,14 @@ import com.supermap.desktop.utilties.PathUtilties;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 颜色下拉选择器
@@ -31,6 +33,11 @@ public class ColorsComboBox extends JComboBox {
 	private transient ActionListener customColorsListener;
 
 	private transient Colors customColors;
+	
+	private final String defaultColorName = "DefaultGrid.scs";
+	
+	private int selectCount;
+	
 
 	/**
 	 * 构造函数
@@ -61,7 +68,7 @@ public class ColorsComboBox extends JComboBox {
 
 		initComboBox();
 		this.setMaximumRowCount(20);
-		this.setSelectedIndex(21);
+		this.setSelectedIndex(selectCount);
 	}
 
 	/**
@@ -100,7 +107,8 @@ public class ColorsComboBox extends JComboBox {
 		colorsCount = count;
 		customColors = Colors.makeGradient(count, ColorGradientType.RAINBOW, false);
 	}
-
+	
+	
 	/**
 	 * 根据xml配置文件来初始化JComboBox
 	 */
@@ -113,7 +121,11 @@ public class ColorsComboBox extends JComboBox {
 			String[] fileNames = file.list();
 			ColorScheme colorScheme = new ColorScheme();
 			for (int i = 0; i < fileNames.length; i++) {
+				if (fileNames[i].equals(defaultColorName)) {
+					selectCount = i;
+				}
 				File temp = new File(path + fileNames[i]);
+				Colors colors = null;
 				boolean b = colorScheme.fromXML(temp);
 				if (b) {
 					ArrayList<Color> list = colorScheme.getColors();
@@ -123,7 +135,6 @@ public class ColorsComboBox extends JComboBox {
 					if (intervalColorCount < 2) {
 						intervalColorCount = 16;
 					}
-					Colors colors = null;
 					ColorScheme.IntervalColorBuildMethod method = colorScheme.getIntervalColorBuildMethod();
 					if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT)) {
 						colors = Colors.makeGradient(intervalColorCount + colorScheme.getKeyColorCount(), gradientColors);

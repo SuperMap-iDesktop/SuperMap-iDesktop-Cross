@@ -137,9 +137,14 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 				popupMenuCustomBounds.show(button, 0, button.getHeight());
 			} else if (button == buttonSetVisibleScales && buttonSetVisibleScales.isEnabled()) {
 				ScaleEnabledContainer container = new ScaleEnabledContainer(scale);
+				try {
+					container.setScales(getMap().getVisibleScales());
+				} catch (InvalidScaleException e1) {
+					e1.printStackTrace();
+				}
+				container.init();
 				if (container.showDialog()==DialogResult.OK) {
-					operationType = OperationType.SCALE;
-					scale = container.getScale();
+					operationType = OperationType.SCALES;
 					checkBoxIsVisibleScalesEnabled.setSelected(true);
 					isVisibleScalesEnabled = true;
 					verify();
@@ -250,6 +255,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			activeMap.setCenter(new Point2D(this.centerX, this.centerY));
 		} else if (operationType == OperationType.CURRENTVIEW) {
 			activeMap.setViewBounds(new Rectangle2D(this.currentViewL, this.currentViewB, this.currentViewR, this.currentViewT));
+		}else if (operationType==OperationType.SCALES) {
+			activeMap.setVisibleScales(visibleScales);
 		}
 
 		activeMap.refresh();
@@ -794,6 +801,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	}
 
 	private enum OperationType {
-		NONE, SCALE, CENTERPOINT, CURRENTVIEW
+		SCALES, NONE, SCALE, CENTERPOINT, CURRENTVIEW
 	}
 }
