@@ -1,20 +1,14 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+import com.supermap.data.Workspace;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
-import com.supermap.data.Workspace;
 
 /**
  * 工作空间树单元格渲染器
@@ -55,6 +49,8 @@ class WorkspaceTreeCellRenderer extends DefaultTreeCellRenderer {
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		TreeNodeData data = (TreeNodeData) node.getUserObject();
+		// 目前cellEditor中编辑时图标用的是CellRender中的图标，
+		// 所以在修改返回的Component类型时要同步修改CellEditor中的获取方式，不然可能获取不到图标
 		Component component = getPanel(data);
 		if (sel) {
 			component.setBackground(new Color(150, 185, 255));
