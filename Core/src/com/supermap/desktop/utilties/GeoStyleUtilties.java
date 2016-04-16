@@ -3,6 +3,11 @@ package com.supermap.desktop.utilties;
 import java.awt.Color;
 import java.util.Random;
 
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
 import com.supermap.desktop.Application;
 
 public class GeoStyleUtilties {
@@ -79,5 +84,29 @@ public class GeoStyleUtilties {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
+	}
+
+	/**
+	 * 设置指定几何对象的风格
+	 * 
+	 * @param geometry
+	 * @param geoStyle
+	 */
+	public static void setGeometryStyle(Geometry geometry, GeoStyle geoStyle) {
+		try {
+			if (!(geometry instanceof GeoText) && !(geometry instanceof GeoText3D)) {
+				geometry.setStyle(geoStyle);
+
+				if (geometry instanceof GeoCompound) {
+					GeoCompound compound = (GeoCompound) geometry;
+
+					for (int i = 0; i < compound.getPartCount(); i++) {
+						setGeometryStyle(compound.getPart(i), geoStyle);
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 	}
 }

@@ -41,7 +41,7 @@ public class SmMenu extends JMenu implements IMenu {
 			this.index = this.xmlMenu.getIndex();
 
 			if (xmlMenu instanceof XMLMenuButtonDropdown) {
-				if (xmlMenu.getImageFile() == null || xmlMenu.getImageFile() == "") {
+				if (xmlMenu.getImageFile() == null || "".equals(xmlMenu.getImageFile())) {
 					xmlMenu.setImageFile("../Resources/MenuHeight16.png");
 				}
 

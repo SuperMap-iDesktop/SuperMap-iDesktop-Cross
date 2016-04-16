@@ -835,15 +835,19 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 						}
 					} else if (this.getType() == FieldType.BYTE) {
 						this.recordset.setByte(this.getName(), (Short) this.getFieldValue());
-					} else if (this.getType() == FieldType.DATETIME) {
-						SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
-						Object resultValue = null;
-						if (this.getFieldValue() != null) {
-							resultValue = dateFormat.parse(String.valueOf(this.getFieldValue()));
+					} else {
+						Object resultValue = this.getFieldValue();
+						if (this.getType() == FieldType.DATETIME) {
+							SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
+
+							if (this.getFieldValue() != null) {
+								resultValue = dateFormat.parse(String.valueOf(this.getFieldValue()));
+							}
+
 						}
 						this.recordset.setFieldValue(this.getName(), resultValue);
-
 					}
+
 					this.recordset.update();
 				}
 				MapViewUtilties.refreshCurrentMap();

@@ -146,4 +146,10 @@ public class ButtonColorSelector extends JPanel {
 		this.buttonArrow.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
+
+	@Override
+	public void setToolTipText(String text) {
+		this.buttonColorDisplay.setToolTipText(text);
+		this.buttonArrow.setToolTipText(text);
+	}
 }

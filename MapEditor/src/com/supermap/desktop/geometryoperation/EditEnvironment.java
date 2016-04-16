@@ -37,6 +37,7 @@ import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
@@ -55,19 +56,25 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	private IFormMap formMap;
 	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
+	private boolean isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
+	private Action oldMapControlAction = Action.NULL;
+	private TrackMode oldTrackMode = TrackMode.EDIT;
+	private boolean isMiddleMousePressed = false;
 
 	private MouseListener mouseListener = new MouseListener() {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
+				EditEnvironment.this.isMiddleMousePressed = false;
+			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
+				EditEnvironment.this.isMiddleMousePressed = true;
+			}
 		}
 
 		@Override
@@ -114,7 +121,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 		@Override
 		public void actionChanged(ActionChangedEvent arg0) {
-			if (MouseInfo.getNumberOfButtons() != MouseButtons.MIDDLE_BUTTON && arg0.getOldAction() != Action.PAN) {
+			if (!EditEnvironment.this.isInitialAction && isMiddleMousePressed && arg0.getOldAction() != Action.PAN) {
 				activateEditor(NullEditor.INSTANCE);
 			}
 		}
@@ -124,7 +131,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		this.formMap = formMap;
 
 		if (this.formMap != null) {
-
+			this.oldMapControlAction = formMap.getMapControl().getAction();
+			this.oldTrackMode = formMap.getMapControl().getTrackMode();
 			this.formMap.getMapControl().addMouseListener(this.mouseListener);
 			this.formMap.getMapControl().addKeyListener(this.keyListener);
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
@@ -172,9 +180,26 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	}
 
 	public void activateEditor(IEditor editor) {
-		this.editor.deactivate(this);
-		this.editor = editor;
-		this.editor.activate(this);
+		try {
+			this.isInitialAction = true;
+			this.editor.deactivate(this);
+
+			this.editor = editor;
+
+//			if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
+//				this.formMap.getMapControl().setAction(oldMapControlAction);
+//				this.formMap.getMapControl().setTrackMode(oldTrackMode);
+//			} else {
+//				this.oldMapControlAction = this.formMap.getMapControl().getAction();
+//				this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
+//				this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
+//				this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
+//			}
+
+			this.editor.activate(this);
+		} finally {
+			this.isInitialAction = false;
+		}
 	}
 
 	/**

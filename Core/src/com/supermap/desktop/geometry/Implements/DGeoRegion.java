@@ -82,7 +82,6 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 		}
 	}
 
-	@Override
 	public Geometry[] divide() {
 		if (this.geoRegion != null) {
 			Geometry[] geometries = new Geometry[this.geoRegion.getPartCount()];
