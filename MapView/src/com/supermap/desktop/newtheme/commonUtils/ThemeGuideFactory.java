@@ -4,6 +4,7 @@ import com.supermap.data.ColorGradientType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
@@ -237,6 +238,10 @@ public class ThemeGuideFactory {
 			if (null != themeRange) {
 				success = true;
 				themeRange.setPrecision(0.1);
+				for (int i = 0; i < themeRange.getCount(); i++) {
+					GeoStyle textStyle = themeRange.getItem(i).getStyle();
+					textStyle.setLineColor(Color.GRAY);
+				}
 				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange, layer);
 				themeTypeContainer.put(themeRangeContainer.getThemeRangeLayer().getName() + "@" + THEMETYPE_RANGE, themeRangeContainer);
 				addPanelToThemeMainContainer(themeRangeContainer);

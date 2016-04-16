@@ -921,7 +921,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 专题图为空，提示专题图更新失败
 					UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 					resetComboBoxRangeExpression(themeLabel.getRangeExpression());
-					isResetComboBox = true;
 				} else {
 					refreshThemeLabel(theme);
 				}
@@ -947,7 +946,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		}
 		if (2 <= this.themeLabel.getCount()) {
 			this.labelCount = this.themeLabel.getCount();
-			this.comboBoxRangeCount.setSelectedItem(String.valueOf(labelRangeCount));
+			this.comboBoxRangeCount.setSelectedItem(String.valueOf(labelCount));
 		}
 	}
 
@@ -999,7 +998,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				// 专题图为空，提示专题图更新失败
 				UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 				resetComboBoxRangeExpression(themeLabel.getLabelExpression());
-				isResetComboBox = true;
 			} else {
 				this.isCustom = true;
 				refreshThemeLabel(theme);

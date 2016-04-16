@@ -18,6 +18,8 @@ import com.supermap.mapping.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -48,7 +50,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JLabel labelAlignmentStyle = new JLabel();
 	private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();
 	private JLabel labelSplitSeparator = new JLabel();
-	private JComboBox<String> comboBoxSplitSeparator = new JComboBox<String>();
+	private JComboBox<Character> comboBoxSplitSeparator = new JComboBox<Character>();
 	private JCheckBox checkBoxOptimizeMutilineAlignment = new JCheckBox();
 	// panelFontHeight
 	private JLabel labelMaxFontHeight = new JLabel();
@@ -387,7 +389,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		JPanel panelTemp = new JPanel();
 		// @formatter:off
 		panelTemp.setLayout(new GridBagLayout());
-//		panelRotateLabel.setLayout(new GridBagLayout());
 		this.checkBoxFixedFontAngl.setSelected(true);
 		this.textFieldRepeatInterval.setPreferredSize(textFieldDimension);
 		initComboBoxLineDirection();
@@ -417,19 +418,21 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NONE) {
 			this.comboBoxOverLength.setSelectedIndex(0);
 			resetPanelTextFontStation(false);
+			this.comboBoxSplitSeparator.setEnabled(false);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NEWLINE) {
 			this.comboBoxOverLength.setSelectedIndex(1);
 			resetPanelTextFontStation(true);
+			this.comboBoxSplitSeparator.setEnabled(true);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.OMIT) {
 			this.comboBoxOverLength.setSelectedIndex(2);
-			resetCheckBoxState(true);
+			resetPanelTextFontStation(true);
+			this.comboBoxSplitSeparator.setEnabled(false);
 		}
 	}
 
 	private void resetPanelTextFontStation(boolean flag) {
 		this.spinnerFontCount.setEnabled(flag);
 		this.comboBoxAlignmentStyle.setEnabled(flag);
-		this.comboBoxSplitSeparator.setEnabled(flag);
 		this.checkBoxOptimizeMutilineAlignment.setEnabled(flag);
 	}
 
@@ -461,8 +464,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	private void initComboBoxSplitSeparator() {
-		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<String>(new String[] {" ","/","\\","、",";"}));
+		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[] { '\0', '/', '\\', ';' }));
 		this.comboBoxSplitSeparator.setEnabled(false);
+		this.comboBoxSplitSeparator.setEditable(true);
 	}
 
 	private void initComboBoxAlignmentStyle() {
@@ -501,7 +505,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 					refreshAtOnce();
 					return;
 				}
-				if (e.getSource()==comboBoxSplitSeparator) {
+				if (e.getSource() == comboBoxSplitSeparator) {
 					setSplitSeparator();
 					refreshAtOnce();
 					return;
@@ -510,8 +514,16 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		}
 
 		private void setSplitSeparator() {
-			String split = comboBoxSplitSeparator.getSelectedItem().toString();
-			themeLabel.setSplitSeparator(split.toCharArray()[0]);
+			Character split = '\0';
+			Object object = comboBoxSplitSeparator.getSelectedItem();
+			if (object instanceof Character) {
+				split =(Character)object;
+				themeLabel.setSplitSeparator(split);
+			}
+			if (object instanceof String &&object.toString().length()==1) {
+				split = object.toString().toCharArray()[0];
+				themeLabel.setSplitSeparator(split);
+			}
 		}
 
 		private void setTextAlignment() {
@@ -543,12 +555,15 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			if (0 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NONE);
 				resetPanelTextFontStation(false);
+				comboBoxSplitSeparator.setEnabled(false);
 			} else if (1 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
 				resetPanelTextFontStation(true);
+				comboBoxSplitSeparator.setEnabled(true);
 			} else {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
 				resetPanelTextFontStation(true);
+				comboBoxSplitSeparator.setEnabled(false);
 			}
 		}
 
@@ -597,7 +612,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			} else if (e.getSource() == checkBoxRotateLabel) {
 				// 设置沿线标注项可设置
 				setRotateLabel();
-			}else if (e.getSource()==checkBoxOptimizeMutilineAlignment) {
+			} else if (e.getSource() == checkBoxOptimizeMutilineAlignment) {
 				setAlignment();
 			}
 			refreshAtOnce();
@@ -643,6 +658,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setRotateLabel() {
 			boolean isRotate = checkBoxRotateLabel.isSelected();
 			resetCheckBoxState(isRotate);
+			themeLabel.setAlongLine(isRotate);
 		}
 
 	}
@@ -863,24 +879,24 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
-//		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
-//		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
-//		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
-//		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
-//		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
-//		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
-//		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
-//		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
-//		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
-//		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
-//		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
-//		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
-//		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
-//		themeLabelTemp.setSplitSeparator(this.themeLabel.getSplitSeparator());
-//		themeLabelTemp.setUniformStyle(themeLabel.getUniformStyle());
-//		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
-		themeLabelTemp.fromXML(this.themeLabel.toXML());
-		
+		themeLabelTemp.setAlongLine(this.themeLabel.isAlongLine());
+		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());
+		themeLabelTemp.setRepeatedLabelAvoided(this.themeLabel.isRepeatedLabelAvoided());
+		themeLabelTemp.setAlongLineDirection(this.themeLabel.getAlongLineDirection());
+		themeLabelTemp.setAlongLineSpaceRatio(this.themeLabel.getAlongLineSpaceRatio());
+		themeLabelTemp.setLabelRepeatInterval(this.themeLabel.getLabelRepeatInterval());
+		themeLabelTemp.setRepeatIntervalFixed(this.themeLabel.isRepeatIntervalFixed());
+		themeLabelTemp.setOverLengthMode(this.themeLabel.getOverLengthMode());
+		themeLabelTemp.setSplitSeparator(this.themeLabel.getSplitSeparator());
+		themeLabelTemp.setMaxLabelLength(this.themeLabel.getMaxLabelLength());
+		themeLabelTemp.setMaxTextHeight(this.themeLabel.getMaxTextHeight());
+		themeLabelTemp.setMinTextHeight(this.themeLabel.getMinTextHeight());
+		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
+		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
+		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
+		themeLabelTemp.setUniformStyle(themeLabel.getUniformStyle());
+		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
+
 		this.map.refresh();
 	}
 

@@ -509,7 +509,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			geoStyle.setLineColor(color);
 		} else if (CommonToolkit.DatasetTypeWrap.isRegion(datasetType)) {
 			geoStyle.setFillForeColor(color);
-			geoStyle.setLineColor(Color.GRAY);
 		}
 	}
 
@@ -605,13 +604,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		final int[] selectedRow = this.tableRangeInfo.getSelectedRows();
 		SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-		// String name = this.tableRangeInfo.getColumnName(TABLE_COLUMN_VISIBLE);
-		// int width = this.tableRangeInfo.getColumn(name).getWidth();
-		// int height = this.tableRangeInfo.getTableHeader().getHeight();
-		// int x = this.tableRangeInfo.getLocationOnScreen().x + width;
-		// int y = this.tableRangeInfo.getLocationOnScreen().y - height;
-		// textStyleDialog.setLocation(x, y);
-		Resources resources = Application.getActiveApplication().getWorkspace().getResources();
 
 		if (selectedRow.length == 1) {
 			GeoStyle geoStyle = this.themeRange.getItem(selectedRow[0]).getStyle();

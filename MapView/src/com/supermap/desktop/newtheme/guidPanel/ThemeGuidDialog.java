@@ -90,8 +90,8 @@ public class ThemeGuidDialog extends SmDialog {
 
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
-		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5));
+		panelButton.add(this.buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5,0,10,10));
+		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5,0,10,10));
 		getContentPane().setLayout(new GridBagLayout());
 
 		this.contentPanel.setLayout(new GridBagLayout());
