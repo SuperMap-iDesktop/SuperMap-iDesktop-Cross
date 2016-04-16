@@ -244,9 +244,9 @@ public class SymbolDialogPoint extends SymbolDialog {
 					spinnerShowHeight.setEnabled(true);
 					checkBoxLockWidthHeightRate.setSelected(true);
 					checkBoxLockWidthHeightRate.setEnabled(false);
+					buttonSymbolColor.setToolTipText("");
 					buttonSymbolColor.setEnabled(true);
 					spinnerSymbolAngle.setEnabled(false);
-
 					spinnerOpaqueRate.setToolTipText(ControlsProperties.getString("String_vectorSymbolCantSetOpaque"));
 					spinnerOpaqueRate.setEnabled(false);
 				} else if (symbol instanceof SymbolMarker3D) {
@@ -256,6 +256,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 					buttonSymbolColor.setToolTipText(CoreProperties.getString("String_Label_ColorSettingTip"));
 					buttonSymbolColor.setEnabled(false);
 					spinnerSymbolAngle.setEnabled(true);
+					spinnerOpaqueRate.setToolTipText("");
 					spinnerOpaqueRate.setEnabled(true);
 				} else {
 					SymbolMarkerType markerType = SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol));
@@ -263,9 +264,11 @@ public class SymbolDialogPoint extends SymbolDialog {
 						spinnerShowWidth.setEnabled(true);
 						spinnerShowHeight.setEnabled(true);
 						checkBoxLockWidthHeightRate.setEnabled(true);
+						buttonSymbolColor.setToolTipText("");
 						buttonSymbolColor.setEnabled(true);
 						spinnerSymbolAngle.setEnabled(true);
 						//spinnerOpaqueRate.setToolTipText(ControlsProperties.getString("String_vectorSymbolCantSetOpaque"));
+						spinnerOpaqueRate.setToolTipText("");
 						spinnerOpaqueRate.setEnabled(true);
 					} else if (markerType == SymbolMarkerType.Raster) {
 						spinnerShowWidth.setEnabled(true);
@@ -274,6 +277,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 						buttonSymbolColor.setToolTipText(CoreProperties.getString("String_Label_ColorSettingTip"));
 						buttonSymbolColor.setEnabled(false);
 						spinnerSymbolAngle.setEnabled(true);
+						spinnerOpaqueRate.setToolTipText("");
 						spinnerOpaqueRate.setEnabled(true);
 					}
 				}
