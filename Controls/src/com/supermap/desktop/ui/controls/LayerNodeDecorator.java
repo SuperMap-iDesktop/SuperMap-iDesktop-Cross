@@ -171,7 +171,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 			return geoPoint;
 		}
 		if (type.equals(DatasetType.LINE)) {
-			Point2D[] pts = { new Point2D(0, 16), new Point2D(4, 0), new Point2D(12, 16), new Point2D(16, 0) };
+			Point2D[] pts = {new Point2D(0, 0), new Point2D(16, 16)};//, new Point2D(12, 16), new Point2D(16, 0)
 			Point2Ds ds = new Point2Ds(pts);
 			GeoLine geoLine = new GeoLine(ds);
 			return geoLine;
