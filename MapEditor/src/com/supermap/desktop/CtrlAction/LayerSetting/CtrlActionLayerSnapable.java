@@ -67,7 +67,8 @@ public class CtrlActionLayerSnapable extends CtrlAction {
 					break;
 				}
 
-				if (layer.getDataset() != null && (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.IMAGE)
+				DatasetType type = layer.getDataset().getType();
+				if (layer.getDataset() != null && (type == DatasetType.GRID || type == DatasetType.IMAGE || type == DatasetType.IMAGECOLLECTION || type == DatasetType.GRIDCOLLECTION)
 						|| layer instanceof LayerGroup) {
 					enable = false;
 					break;
