@@ -37,7 +37,8 @@ public class CtrlActionNewMap extends CtrlAction {
 				DatasetType[] datasetTypes = new DatasetType[]{
 						DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD, DatasetType.NETWORK,
 						DatasetType.LINEM, DatasetType.GRID, DatasetType.IMAGE, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D,
-						DatasetType.GRIDCOLLECTION, DatasetType.IMAGECOLLECTION, DatasetType.PARAMETRICLINE, DatasetType.PARAMETRICREGION
+						DatasetType.GRIDCOLLECTION, DatasetType.IMAGECOLLECTION, DatasetType.PARAMETRICLINE, DatasetType.PARAMETRICREGION,
+						DatasetType.NETWORK3D
 				};
 				DatasetChooserNewMap datasetChooser = new DatasetChooserNewMap(frame, formMap, datasetTypes);
 				datasetChooser = null;

@@ -17,6 +17,7 @@ import com.supermap.data.Symbol;
 import com.supermap.data.SymbolMarker;
 import com.supermap.data.SymbolMarkerLibrary;
 import com.supermap.data.Toolkit;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingVector;
 
@@ -59,7 +60,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 					Graphics graphics = bufferedImage.getGraphics();
 					DatasetType type = datasetVector.getType();
 					GeoStyle geoStyle;
-					if (type.equals(DatasetType.POINT)) {
+					if (type == DatasetType.POINT || type == DatasetType.POINT3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -99,7 +100,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 						}
 						icon.setImage(bufferedImage);
 					}
-					if (type.equals(DatasetType.LINE)) {
+					if (type == DatasetType.LINE || type == DatasetType.LINE3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -114,7 +115,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 						Toolkit.draw(geometry, resources, graphics);
 						icon.setImage(bufferedImage);
 					}
-					if (type.equals(DatasetType.REGION)) {
+					if (type == DatasetType.REGION || type == DatasetType.REGION3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -129,21 +130,21 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 						Toolkit.draw(geometry, resources, graphics);
 						icon.setImage(bufferedImage);
 					} else if (type.equals(DatasetType.CAD)) {
-						graphics.drawImage(InternalImageIconFactory.DT_CAD.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.CAD), 0, 0, label);
 					} else if (type.equals(DatasetType.LINEM)) {
-						graphics.drawImage(InternalImageIconFactory.DT_LINEM.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.LINEM), 0, 0, label);
 					} else if (type.equals(DatasetType.LINKTABLE)) {
-						graphics.drawImage(InternalImageIconFactory.DT_LINKTABLE.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.LINKTABLE), 0, 0, label);
 					} else if (type.equals(DatasetType.NETWORK)) {
-						graphics.drawImage(InternalImageIconFactory.DT_NETWORK.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
 					} else if (type.equals(DatasetType.TABULAR)) {
-						graphics.drawImage(InternalImageIconFactory.DT_TABULAR.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.TABULAR), 0, 0, label);
 					} else if (type.equals(DatasetType.TEXT)) {
-						graphics.drawImage(InternalImageIconFactory.DT_TEXT.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.TEXT), 0, 0, label);
 					} else if (type.equals(DatasetType.PARAMETRICLINE)) {
-						graphics.drawImage(InternalImageIconFactory.DT_PARAMETRICLINE.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.PARAMETRICLINE), 0, 0, label);
 					} else if (type.equals(DatasetType.PARAMETRICREGION)) {
-						graphics.drawImage(InternalImageIconFactory.DT_PARAMETRICREGION.getImage(), 0, 0, label);
+						graphics.drawImage(getImage(DatasetType.PARAMETRICREGION), 0, 0, label);
 					}
 					icon.setImage(bufferedImage);
 				}
@@ -158,6 +159,10 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 			}
 		}
 
+	}
+
+	private Image getImage(DatasetType cad) {
+		return new ImageIcon(LayerNodeDecorator.class.getResource(CommonToolkit.DatasetImageWrap.getImageIconPath(cad))).getImage();
 	}
 
 	private Geometry getGeometryByDatasetType(DatasetType type) {

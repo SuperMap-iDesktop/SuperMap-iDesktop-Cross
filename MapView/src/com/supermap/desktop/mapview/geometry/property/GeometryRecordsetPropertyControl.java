@@ -148,6 +148,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	private void initializeComponents() {
 
 		this.propertyTable = new PropertyTable();
+		propertyTable.setSurrendersFocusOnKeystroke(true);
 		this.propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.propertyTable.setRowHeight(ROW_HEIGHT);
 		JScrollPane scrollPane = new JScrollPane(this.propertyTable);
@@ -714,6 +715,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				} else {
 					this.textField.setText("");
 				}
+				this.textField.selectAll();
 				return this.textField;
 			}
 		}

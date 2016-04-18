@@ -164,8 +164,10 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		super(title, icon, component);
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
-		// 设置行高
+
+		// 输入时直接开始编辑
 		jTableTabular.setSurrendersFocusOnKeystroke(true);
+		// 设置行高
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		jScrollPaneChildWindow = new JScrollPane(jTableTabular);
 		jScrollPaneChildWindow.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -434,9 +436,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.setModel(this.tabularTableModel);
 
 		// 编辑时保存
+		// TODO: 2016/4/18
 		TableCellEditor tableCellEditor = jTableTabular.getDefaultEditor(JTable.class);
 		tableCellEditor.addCellEditorListener(new CellEditorListener() {
-
 			@Override
 			public void editingStopped(ChangeEvent e) {
 				int column = jTableTabular.getSelectedColumn();
@@ -488,7 +490,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.setDefaultRenderer(Time.class, new DataTabelCellRender());
 		JTextField objectEditorControl = new JTextField();
 		objectEditorControl.setHorizontalAlignment(JTextField.CENTER);
-		DefaultCellEditor objectCellEditor = new DefaultCellEditor(objectEditorControl);
+		DefaultCellEditor objectCellEditor = new TableDefaultCellEditor(objectEditorControl);
 		this.jTableTabular.setDefaultEditor(Object.class, objectCellEditor);
 		// 设置列宽
 		setColumnsWidth();
@@ -672,5 +674,22 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
+	}
+
+	class TableDefaultCellEditor extends DefaultCellEditor {
+
+		public TableDefaultCellEditor(JTextField textField) {
+			super(textField);
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			Component tableCellEditorComponent = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+			if (tableCellEditorComponent instanceof JTextField) {
+				((JTextField) tableCellEditorComponent).selectAll();
+				((JTextField) tableCellEditorComponent).setHorizontalAlignment(JTextField.CENTER);
+			}
+			return tableCellEditorComponent;
+		}
 	}
 }
