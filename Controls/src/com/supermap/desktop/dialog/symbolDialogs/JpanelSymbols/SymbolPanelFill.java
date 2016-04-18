@@ -18,7 +18,7 @@ public class SymbolPanelFill extends SymbolPanel {
 		super(symbol, resources);
 
 		Geometry paintGeometry = getPaintGeometry();
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bufferedImage = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		paintGeometry.getStyle().setFillSymbolID(symbolID);
 		InternalToolkitControl.internalDraw(paintGeometry, resources, bufferedImage.getGraphics());
 		init(bufferedImage);
@@ -29,7 +29,7 @@ public class SymbolPanelFill extends SymbolPanel {
 		this.symbolName = "System " + id;
 
 		Geometry paintGeometry = getPaintGeometry();
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bufferedImage = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		paintGeometry.getStyle().setFillSymbolID(symbolID);
 		InternalToolkitControl.internalDraw(paintGeometry, resources, bufferedImage.getGraphics());
 		if (symbolID == 1) {
@@ -37,7 +37,7 @@ public class SymbolPanelFill extends SymbolPanel {
 			Font font = new Font("Dialog", 0, 14);
 			graphics.setFont(font);
 			graphics.setColor(new Color(13, 80, 143));
-			graphics.drawString("NULL", (width - FontUtilties.getStringWidth("NULL", font)) / 2, (height + FontUtilties.getStringHeight("NULL", font)) / 2);
+			graphics.drawString("NULL", (getIconWidth() - FontUtilties.getStringWidth("NULL", font)) / 2, (getIconHeight() + FontUtilties.getStringHeight("NULL", font)) / 2);
 		}
 		init(bufferedImage);
 	}

@@ -44,6 +44,7 @@ public class SymbolGroupTree extends JTree {
 		cellRenderer.setOpenIcon(InternalImageIconFactory.RESOURCE_NODE_VISIBLE);
 		cellRenderer.setClosedIcon(InternalImageIconFactory.RESOURCE_NODE_VISIBLE);
 		this.setCellEditor(new SymbolGroupTreeCellEditor(this, cellRenderer));
+		this.updateUI();
 	}
 
 	@Override

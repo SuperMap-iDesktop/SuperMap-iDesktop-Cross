@@ -44,15 +44,15 @@ public class SymbolDialogPoint extends SymbolDialog {
 	private JSpinner spinnerShowHeight;
 	private JLabel labelShowHeightUnit;
 
-	// 符号大小
-	private JPanel panelSymbolSize;
-	private JLabel labelSymbolWidth;
-	private JSpinner spinnerSymbolWidth;
-	private JLabel labelSymbolWidthUnit;
-
-	private JLabel labelSymbolHeight;
-	private JSpinner spinnerSymbolHeight;
-	private JLabel labelSymbolHeightUnit;
+//	// 符号大小
+//	private JPanel panelSymbolSize;
+//	private JLabel labelSymbolWidth;
+//	private JSpinner spinnerSymbolWidth;
+//	private JLabel labelSymbolWidthUnit;
+//
+//	private JLabel labelSymbolHeight;
+//	private JSpinner spinnerSymbolHeight;
+//	private JLabel labelSymbolHeightUnit;
 
 	// 锁定宽高比例
 	private JCheckBox checkBoxLockWidthHeightRate;
@@ -115,13 +115,13 @@ public class SymbolDialogPoint extends SymbolDialog {
 		labelShowHeight = new JLabel();
 		spinnerShowHeight = new JSpinner();
 		labelShowHeightUnit = new JLabel();
-		panelSymbolSize = new JPanel();
-		labelSymbolWidth = new JLabel();
-		spinnerSymbolWidth = new JSpinner();
-		labelSymbolWidthUnit = new JLabel();
-		labelSymbolHeight = new JLabel();
-		spinnerSymbolHeight = new JSpinner();
-		labelSymbolHeightUnit = new JLabel();
+//		panelSymbolSize = new JPanel();
+//		labelSymbolWidth = new JLabel();
+//		spinnerSymbolWidth = new JSpinner();
+//		labelSymbolWidthUnit = new JLabel();
+//		labelSymbolHeight = new JLabel();
+//		spinnerSymbolHeight = new JSpinner();
+//		labelSymbolHeightUnit = new JLabel();
 		checkBoxLockWidthHeightRate = new JCheckBox();
 		labelSymbolColor = new JLabel();
 		labelSymbolAngle = new JLabel();
@@ -150,7 +150,7 @@ public class SymbolDialogPoint extends SymbolDialog {
 			}
 		};
 
-		SymbolSpinnerUtilties.initSpinners(-1, 500, 1, "##0.0", spinnerShowHeight, spinnerShowWidth, spinnerSymbolHeight, spinnerSymbolWidth);
+		SymbolSpinnerUtilties.initSpinners(-1, 500, 1, "##0.0", spinnerShowHeight, spinnerShowWidth);// , spinnerSymbolHeight, spinnerSymbolWidth
 		SymbolSpinnerUtilties.initSpinners(0, 360, 1, "##0", spinnerSymbolAngle);
 		SymbolSpinnerUtilties.initSpinners(0, 100, 1, "##0", spinnerOpaqueRate);
 
@@ -161,11 +161,12 @@ public class SymbolDialogPoint extends SymbolDialog {
 			symbolMarkerSizeController.setSymbolShowHeight(value);
 		} else if (source == ((JSpinner.NumberEditor) spinnerShowWidth.getEditor()).getTextField()) {
 			symbolMarkerSizeController.setSymbolShowWidth(value);
-		} else if (source == ((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField()) {
-			symbolMarkerSizeController.setSymbolWidth(value);
-		} else if (source == ((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField()) {
-			symbolMarkerSizeController.setSymbolHeight(value);
 		}
+//		else if (source == ((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField()) {
+//			symbolMarkerSizeController.setSymbolWidth(value);
+//		} else if (source == ((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField()) {
+//			symbolMarkerSizeController.setSymbolHeight(value);
+//		}
 		loadSizeFormSymbolMarkerSizeController(source);
 	}
 
@@ -176,11 +177,11 @@ public class SymbolDialogPoint extends SymbolDialog {
 		final JFormattedTextField textFieldShowWidth = ((JSpinner.NumberEditor) spinnerShowWidth.getEditor()).getTextField();
 		textFieldShowWidth.addCaretListener(caretListener);
 
-		final JFormattedTextField textFieldSymbolHeight = ((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField();
-		textFieldSymbolHeight.addCaretListener(caretListener);
-
-		final JFormattedTextField textFieldSymbolWidth = ((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField();
-		textFieldSymbolWidth.addCaretListener(caretListener);
+//		final JFormattedTextField textFieldSymbolHeight = ((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField();
+//		textFieldSymbolHeight.addCaretListener(caretListener);
+//
+//		final JFormattedTextField textFieldSymbolWidth = ((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField();
+//		textFieldSymbolWidth.addCaretListener(caretListener);
 
 		final JFormattedTextField textFieldSymbolAngle = ((JSpinner.NumberEditor) spinnerSymbolAngle.getEditor()).getTextField();
 		textFieldSymbolAngle.addCaretListener(new CaretListener() {
@@ -301,12 +302,12 @@ public class SymbolDialogPoint extends SymbolDialog {
 			if (((JSpinner.NumberEditor) spinnerShowWidth.getEditor()).getTextField() != source) {
 				spinnerShowWidth.setValue(symbolMarkerSizeController.getSymbolShowWidth());
 			}
-			if (((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField() != source) {
-				spinnerSymbolWidth.setValue(symbolMarkerSizeController.getSymbolWidth());
-			}
-			if (((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField() != source) {
-				spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
-			}
+//			if (((JSpinner.NumberEditor) spinnerSymbolWidth.getEditor()).getTextField() != source) {
+//				spinnerSymbolWidth.setValue(symbolMarkerSizeController.getSymbolWidth());
+//			}
+//			if (((JSpinner.NumberEditor) spinnerSymbolHeight.getEditor()).getTextField() != source) {
+//				spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
+//			}
 			geoStylePropertyChange.propertyChange();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -327,8 +328,8 @@ public class SymbolDialogPoint extends SymbolDialog {
 			isSizeListenersEnable = false;
 			spinnerShowHeight.setValue(symbolMarkerSizeController.getSymbolShowHeight());
 			spinnerShowWidth.setValue(symbolMarkerSizeController.getSymbolShowWidth());
-			spinnerSymbolWidth.setValue(symbolMarkerSizeController.getSymbolWidth());
-			spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
+//			spinnerSymbolWidth.setValue(symbolMarkerSizeController.getSymbolWidth());
+//			spinnerSymbolHeight.setValue(symbolMarkerSizeController.getSymbolHeight());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -338,11 +339,11 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	private void pointInitLayout() {
 		initPanelShowSize();
-		initPanelSymbolSize();
+//		initPanelSymbolSize();
 
 		panelMain.setLayout(new GridBagLayout());
 		panelMain.add(panelShowSize, new GridBagConstraintsHelper(0, 0, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panelMain.add(panelSymbolSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
+//		panelMain.add(panelSymbolSize, new GridBagConstraintsHelper(0, 1, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
 		panelMain.add(checkBoxLockWidthHeightRate, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
 
 		panelMain.add(labelSymbolColor, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 0, 0));
@@ -376,21 +377,21 @@ public class SymbolDialogPoint extends SymbolDialog {
 
 	}
 
-	private void initPanelSymbolSize() {
-		panelSymbolSize.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(Color.gray, 1),
-				ControlsProperties.getString("String_SymbolShowSize"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-		//@formatter:off
-
-		panelSymbolSize.setLayout(new GridBagLayout());
-		panelSymbolSize.add(labelSymbolWidth, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
-		panelSymbolSize.add(spinnerSymbolWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 5, 0, 5));
-		panelSymbolSize.add(labelSymbolWidthUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
-
-		panelSymbolSize.add(labelSymbolHeight, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
-		panelSymbolSize.add(spinnerSymbolHeight, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 5, 0, 5));
-		panelSymbolSize.add(labelSymbolHeightUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
-		//@formatter:on
-	}
+//	private void initPanelSymbolSize() {
+//		panelSymbolSize.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(Color.gray, 1),
+//				ControlsProperties.getString("String_SymbolShowSize"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+//		//@formatter:off
+//
+//		panelSymbolSize.setLayout(new GridBagLayout());
+//		panelSymbolSize.add(labelSymbolWidth, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+//		panelSymbolSize.add(spinnerSymbolWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 5, 0, 5));
+//		panelSymbolSize.add(labelSymbolWidthUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+//
+//		panelSymbolSize.add(labelSymbolHeight, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+//		panelSymbolSize.add(spinnerSymbolHeight, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(0, 5, 0, 5));
+//		panelSymbolSize.add(labelSymbolHeightUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+//		//@formatter:on
+//	}
 
 	@Override
 	protected void prepareForShowDialogHook() {
@@ -410,11 +411,11 @@ public class SymbolDialogPoint extends SymbolDialog {
 		labelShowHeight.setText(ControlsProperties.getString("String_ShowHeight"));
 		labelShowHeightUnit.setText(ControlsProperties.getString("String_mm"));
 
-		labelSymbolWidth.setText(ControlsProperties.getString("String_SymbolWidth"));
-		labelSymbolWidthUnit.setText(ControlsProperties.getString("String_mm"));
-
-		labelSymbolHeight.setText(ControlsProperties.getString("String_SymbolHeight"));
-		labelSymbolHeightUnit.setText(ControlsProperties.getString("String_mm"));
+//		labelSymbolWidth.setText(ControlsProperties.getString("String_SymbolWidth"));
+//		labelSymbolWidthUnit.setText(ControlsProperties.getString("String_mm"));
+//
+//		labelSymbolHeight.setText(ControlsProperties.getString("String_SymbolHeight"));
+//		labelSymbolHeightUnit.setText(ControlsProperties.getString("String_mm"));
 
 		checkBoxLockWidthHeightRate.setText(ControlsProperties.getString("String_LockMarkerWidthAndHeight"));
 

@@ -847,7 +847,6 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 						}
 						this.recordset.setFieldValue(this.getName(), resultValue);
 					}
-
 					this.recordset.update();
 				}
 				MapViewUtilties.refreshCurrentMap();
