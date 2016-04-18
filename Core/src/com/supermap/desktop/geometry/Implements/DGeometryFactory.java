@@ -13,6 +13,7 @@ import com.supermap.data.GeoEllipticArc;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLineM;
 import com.supermap.data.GeoPie;
+import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRectangle;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoRoundRectangle;
@@ -74,6 +75,12 @@ public class DGeometryFactory {
 			if (type == GeometryType.GEOCOMPOUND) {
 				return new DGeoCompound((GeoCompound) geometry);
 			}
+			if (type == GeometryType.GEOPOINT) {
+				return new DGeoPoint((GeoPoint) geometry);
+			}
+			if (type == GeometryType.GEOPOINT3D) {
+				// 暂留
+			}
 		}
 		return null;
 	}
@@ -127,6 +134,9 @@ public class DGeometryFactory {
 		if (type == GeometryType.GEOCOMPOUND) {
 			return new DGeoCompound(new GeoCompound());
 		}
+		if (type == GeometryType.GEOPOINT) {
+			return new DGeoPoint(new GeoPoint());
+		}
 		return null;
 	}
 
@@ -151,6 +161,9 @@ public class DGeometryFactory {
 		}
 		if (datasetType == DatasetType.LINEM) {
 			return new DGeoLineM(new GeoLineM());
+		}
+		if (datasetType == DatasetType.POINT) {
+			return new DGeoPoint(new GeoPoint());
 		}
 		return null;
 	}
