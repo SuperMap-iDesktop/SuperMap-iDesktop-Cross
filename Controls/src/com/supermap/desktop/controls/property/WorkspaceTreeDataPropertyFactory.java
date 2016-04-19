@@ -1,28 +1,30 @@
 package com.supermap.desktop.controls.property;
 
-import java.util.ArrayList;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.controls.utilties.NodeDataTypeUtilties;
 import com.supermap.desktop.controls.property.dataset.DatasetPrjCoordSysHandle;
 import com.supermap.desktop.controls.property.dataset.DatasetPropertyControl;
 import com.supermap.desktop.controls.property.dataset.GridPropertyControl;
+import com.supermap.desktop.controls.property.dataset.ImageCollectionPropertyControl;
 import com.supermap.desktop.controls.property.dataset.ImagePropertyControl;
 import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
 import com.supermap.desktop.controls.property.dataset.VectorPropertyControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
 import com.supermap.desktop.controls.property.workspace.WorkspacePropertyControl;
+import com.supermap.desktop.controls.utilties.NodeDataTypeUtilties;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+
+import java.util.ArrayList;
 
 public class WorkspaceTreeDataPropertyFactory {
 	private static WorkspacePropertyControl workspacePropertyControl;
@@ -32,6 +34,7 @@ public class WorkspaceTreeDataPropertyFactory {
 	private static VectorPropertyControl vectorPropertyControl;
 	private static GridPropertyControl gridPropertyControl;
 	private static ImagePropertyControl imagePropertyControl;
+	private static ImageCollectionPropertyControl imageCollectionPropertyControl;
 	private static RecordsetPropertyControl recordsetPropertyControl;
 
 	private WorkspaceTreeDataPropertyFactory() {
@@ -57,6 +60,8 @@ public class WorkspaceTreeDataPropertyFactory {
 						properties.add(getRecordsetPropertyControl((DatasetVector) data.getData()));
 					} else if (data.getType() == NodeDataType.DATASET_GRID) {
 						properties.add(getGridPropertyControl((DatasetGrid) data.getData()));
+					} else if (data.getType() == NodeDataType.DATASET_IMAGE_COLLECTION) {
+						properties.add(getImageCollectionPropertyControl((DatasetImageCollection) data.getData()));
 					} else if (data.getType() == NodeDataType.DATASET_IMAGE) {
 						Dataset dataset = (Dataset) data.getData();
 
@@ -76,6 +81,7 @@ public class WorkspaceTreeDataPropertyFactory {
 		}
 		return properties.toArray(new AbstractPropertyControl[properties.size()]);
 	}
+
 
 	private static WorkspacePropertyControl getWorkspacePropertyControl(Workspace workspace) {
 		if (workspacePropertyControl == null) {
@@ -146,6 +152,17 @@ public class WorkspaceTreeDataPropertyFactory {
 
 		return imagePropertyControl;
 	}
+
+	private static ImageCollectionPropertyControl getImageCollectionPropertyControl(DatasetImageCollection datasetImageCollection) {
+		if (imageCollectionPropertyControl == null) {
+			imageCollectionPropertyControl = new ImageCollectionPropertyControl(datasetImageCollection);
+		} else {
+			imageCollectionPropertyControl.setDatasetImageCollection(datasetImageCollection);
+		}
+
+		return imageCollectionPropertyControl;
+	}
+
 
 	private static RecordsetPropertyControl getRecordsetPropertyControl(DatasetVector datasetVector) {
 		if (recordsetPropertyControl == null) {

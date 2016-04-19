@@ -228,10 +228,10 @@ public class SymbolDialogFill extends SymbolDialog {
 			@Override
 			public void SymbolSelectedChangedEvent(Symbol symbol) {
 				if (symbol != null) {
-					spinnerOpaque.setToolTipText(null);
+					spinnerOpaque.setToolTipText(CommonProperties.getString(CommonProperties.UnSupport));
 					spinnerOpaque.setEnabled(false);
 				} else {
-					spinnerOpaque.setToolTipText(CommonProperties.getString(CommonProperties.UnSupport));
+					spinnerOpaque.setToolTipText(null);
 					spinnerOpaque.setEnabled(true);
 				}
 				geoStylePropertyChange.propertyChange();
