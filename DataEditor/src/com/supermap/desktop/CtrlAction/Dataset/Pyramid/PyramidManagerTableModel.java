@@ -172,8 +172,8 @@ public class PyramidManagerTableModel extends SortableTableModel {
 	 *
 	 * @return 是否创建
 	 */
-	public boolean bulidPyramid() {
-		List<Dataset> datasets = new ArrayList();
+	public boolean buildPyramid() {
+		List<Dataset> datasets = new ArrayList<>();
 		for (Dataset currentDataset : currentDatasets) {
 			if (!isDatasetHasPyramid(currentDataset)) {
 				datasets.add(currentDataset);
