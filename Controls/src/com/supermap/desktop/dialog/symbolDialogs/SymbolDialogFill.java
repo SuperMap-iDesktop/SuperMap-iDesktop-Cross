@@ -11,6 +11,7 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsFill;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -226,6 +227,13 @@ public class SymbolDialogFill extends SymbolDialog {
 		panelSymbols.addSymbolSelectedChangedListener(new SymbolSelectedChangedListener() {
 			@Override
 			public void SymbolSelectedChangedEvent(Symbol symbol) {
+				if (symbol != null) {
+					spinnerOpaque.setToolTipText(null);
+					spinnerOpaque.setEnabled(false);
+				} else {
+					spinnerOpaque.setToolTipText(CommonProperties.getString(CommonProperties.UnSupport));
+					spinnerOpaque.setEnabled(true);
+				}
 				geoStylePropertyChange.propertyChange();
 			}
 
