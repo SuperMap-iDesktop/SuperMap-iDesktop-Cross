@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.utilties.ListUtilties;

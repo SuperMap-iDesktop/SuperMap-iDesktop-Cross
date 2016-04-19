@@ -3,7 +3,7 @@ package com.supermap.desktop.geometry.Abstract;
 import com.supermap.data.GeoRegion;
 
 /**
- * 面对象转换
+ * 面对象转换，转换为 {@link}GeoRegion。
  * 
  * @author highsad
  *

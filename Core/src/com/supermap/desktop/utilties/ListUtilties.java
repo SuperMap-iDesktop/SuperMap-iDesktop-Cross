@@ -51,6 +51,27 @@ public class ListUtilties {
 	}
 
 	/**
+	 * 判断 List 是否包含指定参数列表中所有的值，是则返回 true，否则返回 false
+	 * 
+	 * @param list
+	 * @param checkItems
+	 * @return
+	 */
+	public static <T> boolean isListContainAll(List<T> list, T... checkItems) {
+		boolean result = true;
+
+		if (list.size() > 0 && checkItems.length > 0) {
+			for (T t : checkItems) {
+				if (!list.contains(t)) {
+					result = false;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * 将数组添加到指定集合
 	 * 
 	 * @param list

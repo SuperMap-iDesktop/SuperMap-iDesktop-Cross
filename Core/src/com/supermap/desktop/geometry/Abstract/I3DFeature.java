@@ -1,11 +1,11 @@
 package com.supermap.desktop.geometry.Abstract;
 
 /**
- * 表示点特性
+ * 表示三维特性
  * 
  * @author highsad
  *
  */
-public interface IPointFeature extends ITypeFeature, IFlatFeature {
+public interface I3DFeature extends IGeometryFeature {
 
 }

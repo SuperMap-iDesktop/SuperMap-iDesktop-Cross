@@ -24,14 +24,26 @@ public class EditProperties {
 	private List<GeometryType> selectedGeometryTypes = new ArrayList<>(); // 选中的几何对象类型集合
 	private List<GeometryType> editableSelectedGeometryTypes = new ArrayList<>(); // 选中的可编辑图层集合对象类型集合
 	private List<Layer> selectedLayers = new ArrayList<>(); // 选中对象所在的图层
+
 	/**
-	 * 选中的几何对象特征 {@link}IGeometryFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 * 选中的几何对象特征 {@link}IGeometryFeature 集合，Class<{@link}I3DFeature>/Class<{@link}ILineFeature>等。
 	 */
 	private List<Class<?>> selectedGeometryFeatures = new ArrayList<>();
+
 	/**
-	 * 选中的可编辑图层几何对象 Feature集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 * 选中的可编辑图层几何对象特征 {@link}IGeometryFeature 集合，Class<{@link}I3DFeature>/Class<{@link}ILineFeature>等。
 	 */
 	private List<Class<?>> editableSelectedGeometryFeatures = new ArrayList<>();
+
+	/**
+	 * 选中的几何对象类型特征 {@link}ITypeFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	private List<Class<?>> selectedGeometryTypeFeatures = new ArrayList<>();
+
+	/**
+	 * 选中的可编辑图层几何对象类型特征 {@link}ITypeFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	private List<Class<?>> editableSelectedGeometryTypeFeatures = new ArrayList<>();
 
 	/**
 	 * 获取选中对象的数目
@@ -119,16 +131,30 @@ public class EditProperties {
 	}
 
 	/**
-	 * 获取选中的几何对象特征 {@link}IGeometryFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 * 获取选中的几何对象特征 {@link}IGeometryFeature 集合，Class<{@link}I3DFeature>/Class<{@link}ILineFeature>等。
 	 */
 	public List<Class<?>> getSelectedGeometryFeatures() {
-		return this.selectedGeometryFeatures;
+		return selectedGeometryFeatures;
 	}
 
 	/**
-	 * 获取选中的可编辑图层几何对象 Feature集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 * 获取选中的可编辑图层几何对象特征 {@link}IGeometryFeature 集合，Class<{@link}I3DFeature>/Class<{@link}ILineFeature>等。
 	 */
 	public List<Class<?>> getEditableSelectedGeometryFeatures() {
-		return this.editableSelectedGeometryFeatures;
+		return editableSelectedGeometryFeatures;
+	}
+
+	/**
+	 * 获取选中的几何对象类型特征 {@link}IGeometryFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	public List<Class<?>> getSelectedGeometryTypeFeatures() {
+		return this.selectedGeometryTypeFeatures;
+	}
+
+	/**
+	 * 获取选中的可编辑图层几何对象类型特征 {@link}IGeometryFeature 集合。Class<{@link}IPointFeature>/Class<{@link}ILineFeature>/Class<{@link}IRegionFeature>等。
+	 */
+	public List<Class<?>> getEditableSelectedGeometryTypeFeatures() {
+		return this.editableSelectedGeometryTypeFeatures;
 	}
 }

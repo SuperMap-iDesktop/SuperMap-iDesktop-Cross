@@ -6,6 +6,6 @@ package com.supermap.desktop.geometry.Abstract;
  * @author highsad
  *
  */
-public interface ILineFeature extends IGeometryFeature, ILineConvertor {
+public interface ILineFeature extends ITypeFeature, IFlatFeature, ILineConvertor {
 
 }

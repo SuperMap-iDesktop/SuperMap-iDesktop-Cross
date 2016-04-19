@@ -6,6 +6,6 @@ package com.supermap.desktop.geometry.Abstract;
  * @author highsad
  *
  */
-public interface IRegionFeature extends IGeometryFeature, IRegionConvertor {
+public interface IRegionFeature extends ITypeFeature, IFlatFeature, IRegionConvertor {
 
 }

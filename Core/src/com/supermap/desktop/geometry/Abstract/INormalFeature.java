@@ -1,11 +1,11 @@
 package com.supermap.desktop.geometry.Abstract;
 
 /**
- * 表示点特性
+ * 表明未知的几何类型特征
  * 
  * @author highsad
  *
  */
-public interface IPointFeature extends ITypeFeature, IFlatFeature {
+public interface INormalFeature extends ITypeFeature {
 
 }

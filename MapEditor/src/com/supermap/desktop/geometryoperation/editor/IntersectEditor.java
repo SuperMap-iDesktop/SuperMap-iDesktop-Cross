@@ -73,7 +73,7 @@ public class IntersectEditor extends AbstractEditor {
 		boolean enable = false;
 		if (environment.getEditProperties().getSelectedGeometryCount() > 1 && // 选中数至少2个
 				// (this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
-				ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryFeatures(), IRegionFeature.class)) {
+				ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)) {
 			// 是会否存在可编辑的“可操作保存”图层
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D

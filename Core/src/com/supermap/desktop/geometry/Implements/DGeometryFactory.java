@@ -11,11 +11,13 @@ import com.supermap.data.GeoCurve;
 import com.supermap.data.GeoEllipse;
 import com.supermap.data.GeoEllipticArc;
 import com.supermap.data.GeoLine;
+import com.supermap.data.GeoLine3D;
 import com.supermap.data.GeoLineM;
 import com.supermap.data.GeoPie;
 import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRectangle;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoRegion3D;
 import com.supermap.data.GeoRoundRectangle;
 import com.supermap.data.GeoText;
 import com.supermap.data.Geometry;
@@ -81,6 +83,12 @@ public class DGeometryFactory {
 			if (type == GeometryType.GEOPOINT3D) {
 				// 暂留
 			}
+			if (type == GeometryType.GEOLINE3D) {
+				return new DGeoLine3D((GeoLine3D) geometry);
+			}
+			if (type == GeometryType.GEOREGION3D) {
+				return new DGeoRegion3D((GeoRegion3D) geometry);
+			}
 		}
 		return null;
 	}
@@ -137,6 +145,12 @@ public class DGeometryFactory {
 		if (type == GeometryType.GEOPOINT) {
 			return new DGeoPoint(new GeoPoint());
 		}
+		if (type == GeometryType.GEOLINE3D) {
+			return new DGeoLine3D(new GeoLine3D());
+		}
+		if (type == GeometryType.GEOREGION3D) {
+			return new DGeoRegion3D(new GeoRegion3D());
+		}
 		return null;
 	}
 
@@ -164,6 +178,12 @@ public class DGeometryFactory {
 		}
 		if (datasetType == DatasetType.POINT) {
 			return new DGeoPoint(new GeoPoint());
+		}
+		if (datasetType == DatasetType.LINE3D) {
+			return new DGeoLine3D(new GeoLine3D());
+		}
+		if (datasetType == DatasetType.REGION3D) {
+			return new DGeoRegion3D(new GeoRegion3D());
 		}
 		return null;
 	}
