@@ -186,8 +186,8 @@ public abstract class SymbolDialog extends SmDialog {
 			int height = 650;
 			setSize(width, height);
 		} else {
-			int width = 1200;
-			int height = 780;
+			int width = 1000;
+			int height = 700;
 			setSize(width, height);
 		}
 	}

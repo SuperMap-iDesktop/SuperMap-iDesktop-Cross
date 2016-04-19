@@ -7,14 +7,14 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -22,11 +22,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -311,7 +309,7 @@ public class JDialogPyramidManager extends SmDialog {
 	}
 
 	private void bulidPyramid() {
-		if (this.pyramidManagerTableModel.bulidPyramid() && this.checkBoxAutoClose.isSelected()) {
+		if (this.pyramidManagerTableModel.buildPyramid() && this.checkBoxAutoClose.isSelected()) {
 			this.dispose();
 		}
 	}
