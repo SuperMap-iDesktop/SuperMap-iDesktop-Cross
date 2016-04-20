@@ -53,9 +53,7 @@ public class CtrlActionNewDataset extends CtrlAction {
 					}
 					if (dataset != null) {
 						dataset.setPrjCoordSys(dataset.getDatasource().getPrjCoordSys());
-						if (dataset instanceof DatasetVector) {
-							((DatasetVector) dataset).setCharset(newDatasetInfo.getCharset());
-						}
+						((DatasetVector) dataset).setCharset(newDatasetInfo.getCharset());
 						String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Success"), newDatasetInfo.getDatasetName(),
 								newDatasetInfo.getTargetDatasource().getAlias());
 						Application.getActiveApplication().getOutput().output(information);

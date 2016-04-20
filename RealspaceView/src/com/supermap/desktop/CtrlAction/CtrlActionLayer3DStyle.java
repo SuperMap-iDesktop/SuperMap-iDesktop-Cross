@@ -1,8 +1,5 @@
 package com.supermap.desktop.CtrlAction;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.FormScene;
@@ -13,6 +10,9 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.realspace.Layer3DDataset;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public class CtrlActionLayer3DStyle extends CtrlAction {
 
@@ -59,6 +59,7 @@ public class CtrlActionLayer3DStyle extends CtrlAction {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+		enable = false;
 		return enable;
 	}
 

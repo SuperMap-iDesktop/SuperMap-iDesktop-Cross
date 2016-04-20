@@ -10,10 +10,10 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.LayoutUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.SceneUtilties;
 
 import javax.swing.*;
 import javax.swing.border.Border;

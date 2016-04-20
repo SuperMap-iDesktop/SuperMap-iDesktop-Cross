@@ -1,7 +1,5 @@
 package com.supermap.desktop.CtrlAction.LayerSetting;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -14,6 +12,8 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DType;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CtrlActionLayer3DSelectable extends CtrlAction {
 
@@ -82,10 +82,10 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
         //栅格/影像等不可选择
 		if (layer3D instanceof Layer3DDataset) {
 			Layer3DDataset layer3DDataset = (Layer3DDataset)layer3D;
-			if (layer3DDataset.getDataset().getType() != DatasetType.GRID
-					&& layer3DDataset.getDataset().getType() != DatasetType.GRIDCOLLECTION
-					&& layer3DDataset.getDataset().getType() != DatasetType.IMAGE
-					&& layer3DDataset.getDataset().getType() != DatasetType.IMAGECOLLECTION) {
+			if (layer3DDataset.getDataset().getType() == DatasetType.GRID
+					|| layer3DDataset.getDataset().getType() == DatasetType.GRIDCOLLECTION
+					|| layer3DDataset.getDataset().getType() == DatasetType.IMAGE
+					|| layer3DDataset.getDataset().getType() == DatasetType.IMAGECOLLECTION) {
 				result = false;
 			}
 		} else if (layer3D.getType() == Layer3DType.KML

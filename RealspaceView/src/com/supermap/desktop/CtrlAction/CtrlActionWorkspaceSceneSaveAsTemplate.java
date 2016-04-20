@@ -1,13 +1,15 @@
 package com.supermap.desktop.CtrlAction;
 
-import java.text.MessageFormat;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.realspaceview.utilties.SaveAsSceneTemplateUtilties;
+import com.supermap.desktop.ui.UICommonToolkit;
+
+import javax.swing.tree.TreePath;
+import java.text.MessageFormat;
 
 public class CtrlActionWorkspaceSceneSaveAsTemplate extends CtrlAction{
 
@@ -31,6 +33,7 @@ public class CtrlActionWorkspaceSceneSaveAsTemplate extends CtrlAction{
 	
 	@Override
 	public boolean enable(){
-		return true;
+		TreePath[] selectionPaths = UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getSelectionPaths();
+		return selectionPaths != null && selectionPaths.length == 1;
 	}
 }

@@ -1,23 +1,14 @@
 package com.supermap.desktop.CtrlAction;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.WorkspaceComponentManager;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.SceneUtilties;
-import com.supermap.realspace.Layer3D;
-import com.supermap.realspace.Layer3DSettingGrid;
-import com.supermap.realspace.Layer3DSettingImage;
-import com.supermap.realspace.Layer3DSettingVector;
 import com.supermap.realspace.Scene;
 
 public class CtrlActionDatasetAddToCurrentScene extends CtrlAction {
@@ -33,12 +24,9 @@ public class CtrlActionDatasetAddToCurrentScene extends CtrlAction {
 			IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 			Scene scene = formScene.getSceneControl().getScene();
 
-			for (Dataset dataset : datasets) {
-				SceneUtilties.addDatasetToScene(scene, dataset, true);
-			}
+			SceneUtilties.addDatasetToScene(scene, datasets);
 
 			scene.refresh();
-			UICommonToolkit.getLayersManager().setScene(scene);
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -47,17 +35,22 @@ public class CtrlActionDatasetAddToCurrentScene extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean enable = false;
-		try {
-			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			if ((Application.getActiveApplication().getActiveForm() instanceof IFormScene) && datasets != null && datasets.length > 0
-					&& datasets[0].getType() != DatasetType.TABULAR && datasets[0].getType() != DatasetType.TOPOLOGY) {
-				enable = true;
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+		if (!(Application.getActiveApplication().getActiveForm() instanceof IFormScene)) {
+			return false;
 		}
-		return enable;
+		Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+		if (datasets == null || datasets.length <= 0) {
+			return false;
+		}
+		for (Dataset dataset : datasets) {
+			if (dataset.getType() == DatasetType.TABULAR || dataset.getType() == DatasetType.TOPOLOGY) {
+				return false;
+			}
+			if (dataset.getPrjCoordSys().getType() == PrjCoordSysType.PCS_NON_EARTH) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

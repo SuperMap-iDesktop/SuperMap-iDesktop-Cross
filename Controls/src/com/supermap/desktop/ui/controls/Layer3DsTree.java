@@ -1,25 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.Beans;
-import java.text.MessageFormat;
-import java.util.Enumeration;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -56,11 +36,26 @@ import com.supermap.realspace.Theme3DType;
 import com.supermap.realspace.Theme3DUnique;
 import com.supermap.realspace.Theme3DUniqueItem;
 
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.Beans;
+import java.text.MessageFormat;
+import java.util.Enumeration;
+
 /**
  * 三维图层管理树控件
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 public class Layer3DsTree extends JTree {
 
@@ -217,7 +212,7 @@ public class Layer3DsTree extends JTree {
 				rootNode.remove(treeNodeScreenLayer);
 			} else {
 				rootNode.insert(treeNodeScreenLayer, 0);
-				for (; screenLayer3DTreePath != null && screenLayer3DTreePath.hasMoreElements();) {
+				for (; screenLayer3DTreePath != null && screenLayer3DTreePath.hasMoreElements(); ) {
 					this.setExpandedState(screenLayer3DTreePath.nextElement(), true);
 				}
 			}
@@ -243,7 +238,7 @@ public class Layer3DsTree extends JTree {
 				} else {
 					rootNode.insert(treeNodeLayer3Ds, 0);
 				}
-				for (; layersTreePath != null && layersTreePath.hasMoreElements();) {
+				for (; layersTreePath != null && layersTreePath.hasMoreElements(); ) {
 					this.setExpandedState(layersTreePath.nextElement(), true);
 				}
 			}
@@ -265,7 +260,7 @@ public class Layer3DsTree extends JTree {
 				rootNode.remove(treeNodeTerrainLayers);
 			} else {
 				rootNode.add(treeNodeTerrainLayers);
-				for (; terrainLayersTreePath != null && terrainLayersTreePath.hasMoreElements();) {
+				for (; terrainLayersTreePath != null && terrainLayersTreePath.hasMoreElements(); ) {
 					this.setExpandedState(terrainLayersTreePath.nextElement(), true);
 				}
 			}
@@ -360,16 +355,19 @@ public class Layer3DsTree extends JTree {
 				Layer3DDataset layer3DDataset = (Layer3DDataset) layer3D;
 				layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER3D_DATASET);
 			} else if (layer3D instanceof Layer3DImageFile) {
-				layer3DNodeData = new TreeNodeData((Layer3DImageFile) layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
 			} else if (layer3D instanceof Layer3DKML) {
-				layer3DNodeData = new TreeNodeData((Layer3DKML) layer3D, NodeDataType.LAYER3D_KML);
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_KML);
 			} else if (layer3D instanceof Layer3DModel) {
-				layer3DNodeData = new TreeNodeData((Layer3DModel) layer3D, NodeDataType.LAYER3D_MODEL);
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MODEL);
 			} else if (layer3D instanceof Layer3DMap) {
-				layer3DNodeData = new TreeNodeData((Layer3DMap) layer3D, NodeDataType.LAYER3D_MAP);
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MAP);
+			} else if (layer3D instanceof Layer3DVectorFile) {
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_VECTOR_FILE);
 			} else {
-				layer3DNodeData = new TreeNodeData((Layer3DVectorFile) layer3D, NodeDataType.LAYER3D_VECTOR_FILE);
+				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.UNKNOWN);
 			}
+
 			DefaultMutableTreeNode layer3DNode = new DefaultMutableTreeNode(layer3DNodeData);
 			treeNode.add(layer3DNode);
 			if (layer3D.getType().equals(Layer3DType.KML)) {
@@ -394,7 +392,7 @@ public class Layer3DsTree extends JTree {
 
 	/**
 	 * 将Layer3DMap以节点的形式加到树中
-	 * 
+	 *
 	 * @param treeNode
 	 * @param map
 	 */
@@ -472,14 +470,9 @@ public class Layer3DsTree extends JTree {
 			layer3DAddListener = new Layer3DAddedListener() {
 				@Override
 				public void layer3DAdded(Layer3DAddedEvent event) {
-					abstractLayer3DAdded(event);
-
-				}
-
-				private void abstractLayer3DAdded(Layer3DAddedEvent event) {
 					setAbstractLayer3DAdded(event);
-				}
 
+				}
 			};
 		}
 
@@ -503,11 +496,11 @@ public class Layer3DsTree extends JTree {
 				public void keyTyped(KeyEvent e) {
 					int keyCode = e.getKeyChar();
 					switch (keyCode) {
-					case KeyEvent.VK_DELETE:
-						removeLayer3DsControlNode();
-						break;
-					default:
-						break;
+						case KeyEvent.VK_DELETE:
+							removeLayer3DsControlNode();
+							break;
+						default:
+							break;
 					}
 				}
 			};
@@ -525,17 +518,17 @@ public class Layer3DsTree extends JTree {
 		DefaultTreeModel model = (DefaultTreeModel) getModel();
 		TreeNodeData layer3DNodeData;
 		if (layer3D instanceof Layer3DDataset) {
-			layer3DNodeData = new TreeNodeData((Layer3DDataset) layer3D, NodeDataType.LAYER3D_DATASET);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_DATASET);
 		} else if (layer3D instanceof Layer3DImageFile) {
-			layer3DNodeData = new TreeNodeData((Layer3DImageFile) layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
 		} else if (layer3D instanceof Layer3DKML) {
-			layer3DNodeData = new TreeNodeData((Layer3DKML) layer3D, NodeDataType.LAYER3D_KML);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_KML);
 		} else if (layer3D instanceof Layer3DModel) {
-			layer3DNodeData = new TreeNodeData((Layer3DModel) layer3D, NodeDataType.LAYER3D_MODEL);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MODEL);
 		} else if (layer3D instanceof Layer3DMap) {
-			layer3DNodeData = new TreeNodeData((Layer3DMap) layer3D, NodeDataType.LAYER3D_MAP);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MAP);
 		} else {
-			layer3DNodeData = new TreeNodeData((Layer3DVectorFile) layer3D, NodeDataType.LAYER3D_VECTOR_FILE);
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_VECTOR_FILE);
 		}
 		// 将节点插入到与图层索引一致处
 		DefaultMutableTreeNode itemNode = new DefaultMutableTreeNode(layer3DNodeData);
@@ -555,6 +548,29 @@ public class Layer3DsTree extends JTree {
 			Layer3DMap layer3DMap = (Layer3DMap) layer3D;
 			addLayer3DMapContent(itemNode, layer3DMap.getMap());
 		}
+		locateNode(itemNode);
+	}
+
+	/**
+	 * 定位到指定节点并选中
+	 *
+	 * @param node
+	 */
+	private void locateNode(DefaultMutableTreeNode node) {
+		if (node == null || node.getParent() == null || node.getRoot() == null) {
+			return;
+		}
+
+		// 获取新创建节点的 Path
+		TreePath treePath = new TreePath(node.getPath());
+		// 展开该节点的父节点
+		if (!isExpanded(treePath.getParentPath())) {
+			expandPath(treePath.getParentPath());
+		}
+		// 使新创建的节点可见
+		scrollPathToVisible(treePath);
+		// 选中新创建的节点
+		setSelectionPath(treePath);
 	}
 
 	private void removeLayer3DsControlNode() {

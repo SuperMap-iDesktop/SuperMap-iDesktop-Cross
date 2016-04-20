@@ -22,7 +22,7 @@ public class CtrlActionNewScene extends CtrlAction {
 			IFormScene formScene = (IFormScene)CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.SCENE);
 			if (formScene != null) {
 				Scene scene = formScene.getSceneControl().getScene();
-				scene.setWorkspace(Application.getActiveApplication().getWorkspace());
+				formScene.setWorkspace(Application.getActiveApplication().getWorkspace());
 				scene.refresh();
 				UICommonToolkit.getLayersManager().setScene(scene);
 			}

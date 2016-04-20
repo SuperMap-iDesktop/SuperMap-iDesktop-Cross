@@ -114,4 +114,5 @@ public class NodeDataType extends Enum {
 
 	// add by gouyu 2014-7-23
 	public static final NodeDataType LAYER_GROUP = new NodeDataType(3020, 3020);
+	public static final NodeDataType Layer3D_OSGBFile = new NodeDataType(3021, 3021);
 }

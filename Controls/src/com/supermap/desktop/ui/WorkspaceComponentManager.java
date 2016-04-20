@@ -10,6 +10,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
@@ -561,7 +562,21 @@ public class WorkspaceComponentManager extends JComponent {
 				} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {
+						boolean isExist = false;
 						nodeText = ((TreeNodeData) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject()).getData().toString();
+						for (int i1 = 0; i1 < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i1++) {
+							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+							if (formManager.get(i1).getText().equals(nodeText) && formManager.get(i1).getWindowType() == WindowType.SCENE) {
+								isExist = true;
+								if (i == selectedPaths.length - 1) {
+									formManager.setActiveForm(formManager.get(i1));
+								}
+								break;
+							}
+						}
+						if (isExist) {
+							continue;
+						}
 						IFormScene formScene = (IFormScene) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.SCENE, nodeText);
 						if (formScene != null) {
 							Scene scene = formScene.getSceneControl().getScene();
@@ -574,6 +589,7 @@ public class WorkspaceComponentManager extends JComponent {
 							UICommonToolkit.getLayersManager().setScene(scene);
 						}
 					}
+
 				} else if (selectedNodeData.getType() == NodeDataType.LAYOUT_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {

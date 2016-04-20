@@ -1,11 +1,5 @@
 package com.supermap.desktop.realspaceview.utilties;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
@@ -14,6 +8,12 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SaveAsSceneTemplateUtilties {
 	
@@ -34,6 +34,7 @@ public class SaveAsSceneTemplateUtilties {
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), RealspaceViewProperties.getString("String_Title_SavaAsTemplate"), moduleName, "SaveOne");
 		}
 		SmFileChoose smFileChoose= new SmFileChoose(moduleName);
+		smFileChoose.setSelectedFile(new File("SceneTemplate.xml"));
 		int state = smFileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			try {

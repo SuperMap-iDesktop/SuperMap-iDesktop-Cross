@@ -4,12 +4,15 @@ import com.supermap.data.Dataset;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Resources;
+import com.supermap.data.Size2D;
 import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.desktop.CtrlAction.Utilties.SceneJumpUtilties;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.DialogSaveAsScene;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -24,7 +27,6 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.SceneUtilties;
 import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DSettingVector;
@@ -43,18 +45,21 @@ import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClosingListener {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -91,12 +96,12 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private transient MouseListener sceneControl_MouseListener = new MouseAdapter() {
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
 			int buttonType = e.getButton();
 			int clickCount = e.getClickCount();
 
-			if (buttonType == MouseEvent.BUTTON3 && clickCount == 1 && getSceneControl().getAction() == Action3D.SELECT
-					|| getSceneControl().getAction() == Action3D.PAN || getSceneControl().getAction() == Action3D.PAN2) {
+			if (buttonType == MouseEvent.BUTTON3 && clickCount == 1 && (getSceneControl().getAction() == Action3D.SELECT
+					|| getSceneControl().getAction() == Action3D.PAN || getSceneControl().getAction() == Action3D.PAN2)) {
 				showPopupMenu(e);
 			}
 		}
@@ -140,12 +145,11 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		try {
 			this.title = title;
 			this.sceneControl = new SceneControl();
+
 			this.setComponent(this.sceneControl);
 
 			this.layer3DsTree = UICommonToolkit.getLayersManager().getLayer3DsTree();
-			this.layer3DsTree.addTreeSelectionListener(this.layer3DsSelectionListener);
-			this.sceneControl.addMouseListener(sceneControl_MouseListener);
-			this.sceneControl.addKeyListener(this.sceneControl_KeyListener);
+			addListeners();
 
 			if (Application.getActiveApplication().getMainFrame() != null) {
 				IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
@@ -157,6 +161,21 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		initDrag();
+	}
+
+	private void addListeners() {
+		removeListeners();
+		this.layer3DsTree.addTreeSelectionListener(this.layer3DsSelectionListener);
+		this.layer3DsTree.addMouseListener(this.layer3DsMouseListener);
+		this.sceneControl.addMouseListener(sceneControl_MouseListener);
+		this.sceneControl.addKeyListener(this.sceneControl_KeyListener);
+	}
+
+	private void removeListeners() {
+		this.layer3DsTree.removeTreeSelectionListener(this.layer3DsSelectionListener);
+		this.layer3DsTree.removeMouseListener(this.layer3DsMouseListener);
+		this.sceneControl.removeKeyListener(this.sceneControl_KeyListener);
+		this.sceneControl.removeMouseListener(sceneControl_MouseListener);
 	}
 
 	@Override
@@ -178,6 +197,8 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			// 再添加本次绑定
 			this.sceneControl.getScene().setWorkspace(workspace);
 			workspace.addClosingListener(this);
+			sceneControl.getScene().getLatLonGrid().setVisible(false);
+			sceneControl.getScene().getLatLonGrid().setTextVisible(false);
 		}
 	}
 
@@ -231,7 +252,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	@Override
 	public void setText(String text) {
-		this.title = text;
+		super.setTitle(text);
 	}
 
 	@Override
@@ -307,6 +328,46 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		}
 
 		return result;
+	}
+
+
+	@Override
+	public void clean() {
+		removeListeners();
+		removeSceneControlListener();
+
+//		sceneControl.dispose();
+	}
+
+	/**
+	 * sceneControl内部添加的事件没有删除，这里统一删除一次
+	 */
+	private void removeSceneControlListener() {
+		KeyListener[] keyListeners = sceneControl.getKeyListeners();
+		for (int i = keyListeners.length - 1; i >= 0; i--) {
+			sceneControl.removeKeyListener(keyListeners[i]);
+		}
+
+		MouseListener[] mouseListeners = sceneControl.getMouseListeners();
+		for (int i = mouseListeners.length - 1; i >= 0; i--) {
+			sceneControl.removeMouseListener(mouseListeners[i]);
+		}
+
+		MouseWheelListener[] mouseWheelListeners = sceneControl.getMouseWheelListeners();
+		for (int i = mouseWheelListeners.length - 1; i >= 0; i--) {
+			sceneControl.removeMouseWheelListener(mouseWheelListeners[i]);
+		}
+
+		MouseMotionListener[] mouseMotionListeners = sceneControl.getMouseMotionListeners();
+		for (int i = mouseMotionListeners.length - 1; i >= 0; i--) {
+			sceneControl.removeMouseMotionListener(mouseMotionListeners[i]);
+		}
+
+		FocusListener[] focusListeners = sceneControl.getFocusListeners();
+		for (int i = focusListeners.length - 1; i >= 0; i--) {
+			sceneControl.removeFocusListener(focusListeners[i]);
+		}
+
 	}
 
 	@Override
@@ -391,27 +452,14 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 					Object object = path.getLastPathComponent();
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
 					TreeNodeData data = (TreeNodeData) node.getUserObject();
-
-					// 为数据集图层时弹出图层管理器
-					if (data.getData() instanceof Layer3DDataset) {
-						Layer3DDataset layer3DDataset = (Layer3DDataset) data.getData();
-						if (layer3DDataset != null) {
-							if (layer3DDataset.getTheme() == null) {
-								// 设置图层属性
-								this.showStyleSetDialog();
-							} else {
-								// 修改专题图风格
-							}
-						} else {
-							// 暂时不支持设置矢量缓存图层的风格
-						}
-					}
+					SceneJumpUtilties.zoomToLayer(this, data);
 				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
+
 
 	@Override
 	public void actived() {
@@ -421,8 +469,8 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 				boolean exist = false;
 				for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
 					if (Application.getActiveApplication().getMainFrame().getFormManager().get(i) instanceof FormScene) {
-						FormScene formMap = (FormScene) Application.getActiveApplication().getMainFrame().getFormManager().get(i);
-						if (formMap != null && formMap.getText() == this.getText()) {
+						FormScene formScene = (FormScene) Application.getActiveApplication().getMainFrame().getFormManager().get(i);
+						if (formScene != null && formScene.getText().equals(this.getText())) {
 							exist = true;
 							break;
 						}
@@ -431,8 +479,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 				if (exist) {
 					layersComponentManager.setScene(this.getSceneControl().getScene());
-					this.layer3DsTree.addTreeSelectionListener(this.layer3DsSelectionListener);
-					this.layer3DsTree.addMouseListener(this.layer3DsMouseListener);
+					addListeners();
 					setActiveLayer3Ds(getActiveLayer3Ds());
 				} else {
 					layersComponentManager.setScene(null);
@@ -446,11 +493,9 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 	@Override
 	public void deactived() {
 		try {
-			this.layer3DsTree.removeTreeSelectionListener(this.layer3DsSelectionListener);
-			this.layer3DsTree.removeMouseListener(this.layer3DsMouseListener);
-			if (this.layer3DsTree != null) {
-				this.layer3DsTree.setScene(null);
-			}
+			removeListeners();
+			LayersComponentManager layersComponentManager = UICommonToolkit.getLayersManager();
+			layersComponentManager.setScene(null);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -469,11 +514,10 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 	 */
 	@Override
 	public void windowHidden() {
-		this.sceneControl.getScene().close();
+//		removeListeners();
 	}
 
 	/**
-	 * 
 	 * 弹出风格设置窗口，返回选中的新风格
 	 */
 	public void showStyleSetDialog() {
@@ -565,6 +609,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private GeoStyle getGeoStyle(GeoStyle3D style3D) {
 		GeoStyle style = new GeoStyle();
+		style.setMarkerSize(new Size2D(style3D.getMarkerSize(), style3D.getMarkerSize()));
 		style.setFillBackColor(style3D.getFillBackColor());
 		style.setFillForeColor(style3D.getFillForeColor());
 		style.setFillGradientAngle(style3D.getFillGradientAngle());
@@ -631,7 +676,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-	 * 
+	 *
 	 * @author xie
 	 */
 	private class WorkspaceTreeDropTargetAdapter extends DropTargetAdapter {
@@ -642,17 +687,13 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 				Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 				IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 				Scene scene = formScene.getSceneControl().getScene();
-
-				for (Dataset dataset : datasets) {
-					SceneUtilties.addDatasetToScene(scene, dataset, true);
-				}
-
+				SceneUtilties.addDatasetToScene(scene, datasets);
 				scene.refresh();
-				UICommonToolkit.getLayersManager().setScene(scene);
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
 
 		}
 	}
+
 }

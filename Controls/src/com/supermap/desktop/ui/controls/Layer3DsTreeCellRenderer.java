@@ -1,18 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * 三维图层树单元格渲染器
@@ -65,28 +59,33 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 
 	private void initDecoratorsMap() {
-		decoratorsMap = new HashMap<NodeDataType, ArrayList<ArrayList<TreeNodeDecorator>>>();
+		decoratorsMap = new HashMap<>();
 
 		ArrayList<ArrayList<TreeNodeDecorator>> vectorDecoratorList = prepareDecoratorListsForLayer3D();
-		ArrayList<TreeNodeDecorator> vectorList = new ArrayList<TreeNodeDecorator>();
+		ArrayList<TreeNodeDecorator> vectorList1 = new ArrayList<>();
+		vectorList1.add(new SelectableDecorator());
+		vectorDecoratorList.add(vectorList1);
+
+		ArrayList<TreeNodeDecorator> vectorList = new ArrayList<>();
 		vectorList.add(new Layer3DDatasetNodeDecorator());
 		vectorDecoratorList.add(vectorList);
+
 		decoratorsMap.put(NodeDataType.LAYER3D_DATASET, vectorDecoratorList);
 
 		ArrayList<ArrayList<TreeNodeDecorator>> imageDecoratorList = prepareDecoratorListsForLayer3D();
-		ArrayList<TreeNodeDecorator> imageList = new ArrayList<TreeNodeDecorator>();
+		ArrayList<TreeNodeDecorator> imageList = new ArrayList<>();
 		imageList.add(new Layer3DImageFileNodeDecorator());
 		imageDecoratorList.add(imageList);
 		decoratorsMap.put(NodeDataType.LAYER3D_IMAGE_FILE, imageDecoratorList);
 
 		ArrayList<ArrayList<TreeNodeDecorator>> kmlDecoratorList = prepareDecoratorListsForLayer3D();
-		ArrayList<TreeNodeDecorator> kmlList = new ArrayList<TreeNodeDecorator>();
+		ArrayList<TreeNodeDecorator> kmlList = new ArrayList<>();
 		kmlList.add(new Layer3DKMLNodeDecorator());
 		kmlDecoratorList.add(kmlList);
 		decoratorsMap.put(NodeDataType.LAYER3D_KML, kmlDecoratorList);
 
 		ArrayList<ArrayList<TreeNodeDecorator>> mapDecoratorList = prepareDecoratorListsForLayer3D();
-		ArrayList<TreeNodeDecorator> mapList = new ArrayList<TreeNodeDecorator>();
+		ArrayList<TreeNodeDecorator> mapList = new ArrayList<>();
 		mapList.add(new Layer3DMapNodeDecorator());
 		mapDecoratorList.add(mapList);
 		decoratorsMap.put(NodeDataType.LAYER3D_MAP, mapDecoratorList);
@@ -103,11 +102,11 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 		vectorFileDecoratorList.add(vectorFileList);
 		decoratorsMap.put(NodeDataType.LAYER3D_VECTOR_FILE, vectorFileDecoratorList);
 
-		ArrayList<ArrayList<TreeNodeDecorator>> themeDecoratorList = prepareDecoratorListsForLayer3D();
-		ArrayList<TreeNodeDecorator> themeList = new ArrayList<TreeNodeDecorator>();
-		themeList.add(new Layer3DDatasetNodeDecorator());
-		themeDecoratorList.add(themeList);
-		decoratorsMap.put(NodeDataType.LAYER3D_DATASET, themeDecoratorList);
+//		ArrayList<ArrayList<TreeNodeDecorator>> themeDecoratorList = prepareDecoratorListsForLayer3D();
+//		ArrayList<TreeNodeDecorator> themeList = new ArrayList<TreeNodeDecorator>();
+//		themeList.add(new Layer3DDatasetNodeDecorator());
+//		themeDecoratorList.add(themeList);
+//		decoratorsMap.put(NodeDataType.LAYER3D_DATASET, themeDecoratorList);
 
 		ArrayList<ArrayList<TreeNodeDecorator>> uniqueItemDecoratorList = prepareDecoratorListsForTheme3DItemGeneral();
 		ArrayList<TreeNodeDecorator> uniqueItemList = new ArrayList<TreeNodeDecorator>();
@@ -243,17 +242,17 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 	private ArrayList<ArrayList<TreeNodeDecorator>> prepareDecoratorListsForLayer3D() {
 		ArrayList<ArrayList<TreeNodeDecorator>> arrayList = new ArrayList<ArrayList<TreeNodeDecorator>>();
 
-		ArrayList<TreeNodeDecorator> firstDecoratorList = new ArrayList<TreeNodeDecorator>();
+		ArrayList<TreeNodeDecorator> firstDecoratorList = new ArrayList<>();
 		firstDecoratorList.add(new VisibleDecorator());
 		arrayList.add(firstDecoratorList);
 
-		ArrayList<TreeNodeDecorator> secondDecoratorList = new ArrayList<TreeNodeDecorator>();
-		secondDecoratorList.add(new SelectableDecorator());
-		arrayList.add(secondDecoratorList);
-		
-		ArrayList<TreeNodeDecorator> fourthDecoratorList = new ArrayList<TreeNodeDecorator>();
-		fourthDecoratorList.add(new AlwaysRenderDecorator());
-		arrayList.add(fourthDecoratorList);
+//		ArrayList<TreeNodeDecorator> secondDecoratorList = new ArrayList<TreeNodeDecorator>();
+//		secondDecoratorList.add(new SelectableDecorator());
+//		arrayList.add(secondDecoratorList);
+
+//		ArrayList<TreeNodeDecorator> fourthDecoratorList = new ArrayList<TreeNodeDecorator>();
+//		fourthDecoratorList.add(new AlwaysRenderDecorator());
+//		arrayList.add(fourthDecoratorList);
 
 		return arrayList;
 	}
