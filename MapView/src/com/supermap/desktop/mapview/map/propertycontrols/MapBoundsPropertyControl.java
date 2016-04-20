@@ -215,9 +215,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	public void apply() {
 		Map activeMap = getMap();
 
-		activeMap.setVisibleScalesEnabled(this.isVisibleScalesEnabled);
+		activeMap.setVisibleScalesEnabled(isVisibleScalesEnabled);
 		if (isVisibleScalesChanged()) {
-			activeMap.setVisibleScales(this.visibleScales);
+			activeMap.setVisibleScales(visibleScales);
 		}
 		activeMap.setClipRegionEnabled(this.isClipRegionEnabled);
 		if (activeMap.getClipRegion() != this.clipRegion) {

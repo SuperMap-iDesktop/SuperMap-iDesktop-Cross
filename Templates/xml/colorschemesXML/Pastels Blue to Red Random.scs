@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="gb2312"?>
+<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>60000</Version>
+    <Name>Pastels Blue to Red</Name>
+    <Author />
+    <Description />
+    <ColorSystem>4</ColorSystem>
+    <IntervalColorBuildMethod>1</IntervalColorBuildMethod>
+    <KeyColorCount>2</KeyColorCount>
+    <IntervalColorCount>0</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>4</ColorSystem>
+      <Hue>206</Hue>
+      <Saturation>15</Saturation>
+      <Value>80</Value>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>4</ColorSystem>
+      <Hue>35</Hue>
+      <Saturation>30</Saturation>
+      <Value>95</Value>
+    </KeyColor2>
+  </DataBlock>
+</ColorScheme>

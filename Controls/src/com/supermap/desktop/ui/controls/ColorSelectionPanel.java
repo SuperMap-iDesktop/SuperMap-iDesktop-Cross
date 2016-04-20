@@ -354,7 +354,7 @@ public class ColorSelectionPanel extends JPanel {
 			BufferedReader bufferReader = null;
 			try {
 
-				String xmlFile = "../Controls/src/com/supermap/desktop/ui/controls/xml/colorpicksXML/" + name;
+				String xmlFile = "../Templates/xml/colorpicksXML/" + name;
 //				if (UIEnvironment.getResourcePath() == null) {
 //					InputStream inputStream = this.getClass().getResourceAsStream("/com/supermap/desktop/ui/controls/xml/colorpicksXML/" + name);
 //					Reader reader = new InputStreamReader(inputStream);

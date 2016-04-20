@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="gb2312"?>
+<themeColor text = "第一行主题色" depth = "1">
+<color text="" r="255" g="255" b="255"/>
+  <color text ="" r = "0" g = "0" b = "0"/> 
+  <color text ="" r = "238" g = "236" b = "225"/> 
+  <color text ="" r = "31" g = "73" b = "125"/> 
+  <color text ="" r = "79" g = "129" b = "189"/> 
+  <color text ="" r = "192" g = "80" b = "77"/> 
+  <color text ="" r = "155" g = "187" b = "89"/> 
+  <color text ="" r = "128" g = "100" b = "162"/> 
+  <color text ="" r = "75" g = "172" b = "198"/> 
+  <color text ="" r = "247" g = "150" b = "70"/> 
+</themeColor>

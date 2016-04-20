@@ -30,7 +30,7 @@ public class FileChooserFilter {
 		FileNameExtensionFilter filterByteMap = new FileNameExtensionFilter(
 				FileTypeLocale.getDescriptionnew()[6], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg");
 		FileNameExtensionFilter filterModel = new FileNameExtensionFilter(
-				FileTypeLocale.getDescriptionnew()[7], "scv", "osgb", "3ds", "dxf", "flt", "x");
+				FileTypeLocale.getDescriptionnew()[7], "scv", "osgb", "3ds", "dxf","x");
 		FileNameExtensionFilter filterGoogle = new FileNameExtensionFilter(
 				FileTypeLocale.getDescriptionnew()[8], "kml", "kmz");
 		FileNameExtensionFilter filterGride = new FileNameExtensionFilter(
