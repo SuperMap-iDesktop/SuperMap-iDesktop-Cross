@@ -170,7 +170,6 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
-		this.formManager.addActiveFormChangedListener(activeFormChangedListener);
 		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", layerChangeListener);
 		this.formManager.addActiveFormChangedListener(this.activeFormChangedListener);
@@ -184,7 +183,6 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
-		this.formManager.removeActiveFormChangedListener(activeFormChangedListener);
 		this.layersTree.removePropertyChangeListener("LayerRemoved", layerRemoveListener);
 		this.formManager.removeActiveFormChangedListener(this.activeFormChangedListener);
 	}
@@ -247,7 +245,6 @@ public class ThemeMainContainer extends JPanel {
 				if (null == dockbarThemeContainer.getComponent()) {
 					return;
 				}
-				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
 				if (null != panel && isLayerPath(e.getNewLeadSelectionPath())) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
@@ -282,7 +279,8 @@ public class ThemeMainContainer extends JPanel {
 
 	public void updateLayerProperty(final TreePath path) {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
-		if (tree.getRowForPath(path) < 0) {
+		oldLayer = getLayerByPath(path);
+		if (null != oldLayer && !oldLayer.isDisposed() && tree.getRowForPath(path) < 0) {
 			// 树的当前节点已经被删除，修改layerPropertyChanged
 			setLayerPropertyChanged(false);
 		}

@@ -64,7 +64,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private boolean isNewTheme;
-	private ThemeGridUnique themeGridTemp = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.BLACKWHITE);
+	private ThemeGridUnique themeGridTemp;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -585,6 +585,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		 * 删除单值段
 		 */
 		private void deleteItem() {
+			themeGridTemp = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.BLACKWHITE);
 			int[] selectedRow = tableUniqueInfo.getSelectedRows();
 			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[0]);
