@@ -199,7 +199,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldSpecialValue);
+		caretPositionListener.unRegisterComponent(textFieldSpecialValue);
 		this.spinnerBrightness.removeChangeListener(this.spinnerValueChangeListener);
 		this.spinnerContrast.removeChangeListener(this.spinnerValueChangeListener);
 		this.textFieldSpecialValue.removePropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);

@@ -359,7 +359,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void unregisterEvents() {
-		this.caretPositionListener.deregisterComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
+		this.caretPositionListener.unRegisterComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.removePropertyChangeListener(this.propertyChangeListener);
 		this.comboBoxColorMode.removeItemListener(this.itemListener);
 		this.textFieldMinVisibleTextSize.removePropertyChangeListener(this.propertyChangeListener);

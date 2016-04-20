@@ -287,7 +287,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		this.caretPositionListener.deregisterComponent(textFieldNoValue);
+		this.caretPositionListener.unRegisterComponent(textFieldNoValue);
 		this.textFieldNoValue.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.buttonSetClipRegion.removeActionListener(this.actionListener);
 		this.buttonClearClipRegion.removeActionListener(this.actionListener);

@@ -244,7 +244,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(intEditorControl);
+		caretPositionListener.unRegisterComponent(intEditorControl);
 		this.buttonAdd.removeActionListener(this.actionListener);
 		this.buttonDelete.removeActionListener(this.actionListener);
 		this.buttonReset.removeActionListener(this.actionListener);

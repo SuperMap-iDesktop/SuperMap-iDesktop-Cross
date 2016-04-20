@@ -48,7 +48,7 @@ public class CaretPositionListener implements MouseListener {
 	 *
 	 * @param components the component the listeners are removed from
 	 */
-	public void deregisterComponent(JFormattedTextField... components) {
+	public void unRegisterComponent(JFormattedTextField... components) {
 		for (JFormattedTextField component : components)
 			component.removeMouseListener(this);
 	}

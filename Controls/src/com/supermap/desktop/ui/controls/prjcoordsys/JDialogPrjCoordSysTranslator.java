@@ -14,12 +14,10 @@ import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
 public class JDialogPrjCoordSysTranslator extends SmDialog {
@@ -276,7 +274,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
+		caretPositionListener.unRegisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
 				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.removeItemListener(this.itemListener);
 		this.buttonSetPrj.removeActionListener(this.actionListener);
