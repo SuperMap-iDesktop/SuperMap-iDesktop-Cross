@@ -17,10 +17,11 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class JDialogSetClipRegion extends SmDialog {
 
@@ -74,7 +75,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		initializeComponents();
 		initializeResources();
 		setModal(true);
-		setResizable(false);
+//		setResizable(false);
 		setSize(new Dimension(355, 160));
 		registerEvents();
 		this.comboBoxDataset.setDatasets(this.comboBoxDatasource.getSelectedDatasource().getDatasets());
