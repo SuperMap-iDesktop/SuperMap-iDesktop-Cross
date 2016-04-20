@@ -30,7 +30,6 @@ import com.supermap.desktop.ui.controls.SteppedComboBox;
 import com.supermap.desktop.ui.controls.TableRowCellEditor;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.GraduatedMode;
 import com.supermap.mapping.GraphAxesTextDisplayMode;
 import com.supermap.mapping.Layer;
@@ -1769,6 +1768,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeGraphLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeGraphLayer = layer;
 	}
 
 }

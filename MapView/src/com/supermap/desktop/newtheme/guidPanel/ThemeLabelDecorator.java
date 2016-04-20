@@ -1,7 +1,6 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 

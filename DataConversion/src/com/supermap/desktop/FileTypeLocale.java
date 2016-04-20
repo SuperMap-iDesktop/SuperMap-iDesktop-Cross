@@ -39,7 +39,7 @@ public class FileTypeLocale {
 			"shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",
 			"csv", "bmp", "jpg", "jpeg", "png", "gif", "img", "raw", "sit",
 			"tif", "tiff", "b", "wor", "osgb", "bip", "bil", "bsq", "sid", "dem",
-			"flt", "e00", "3ds", "x", "vct", "dbf","gjb"};
+		 "e00", "3ds", "x", "vct", "dbf","gjb"};
 	// linux系统匹配的文件类型
 	private static final String[] extensionsNewForLinux = { "scv", "grd", "txt",
 			"shp", "tab", "mif", "kml", "kmz", "csv", "bmp", "jpg", "jpeg",
@@ -54,7 +54,7 @@ public class FileTypeLocale {
 	// 矢量文件
 	private static final String[] vectorValue = { ".wor", ".scv", ".dxf", ".shp",
 			".e00", ".mif", ".tab", ".wal", ".wan", ".wat", ".wap", ".xlsx",
-			".osgb", ".3ds", ".flt", ".x", ".kml", ".kmz", ".dwg", ".vct", ".dbf",".gjb" };
+			".osgb", ".3ds", ".x", ".kml", ".kmz", ".dwg", ".vct", ".dbf",".gjb" };
 	// MapGIS类型文件
 	private static final String[] mapGisValue = { ".wal", ".wan", ".wat", ".wap" };
 	// grd类型文件
@@ -125,7 +125,6 @@ public class FileTypeLocale {
 	public static final String BSQ_STRING = ".bsq";
 	public static final String SID_STRING = ".sid";
 	public static final String DEM_STRING = ".dem";
-	public static final String FLT_STRING = ".flt";
 	public static final String E00_STRING = ".e00";
 	public static final String XLSX_STRING = ".xlsx";
 	public static final String XLS_STRING = ".xls";

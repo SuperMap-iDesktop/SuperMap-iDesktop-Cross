@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
-import javax.swing.JLabel;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -40,16 +39,16 @@ public class GraphThemePanel extends JPanel {
 		groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(20)
+								.addGap(16)
 								.addComponent(labelGraphTheme)
-								.addContainerGap(368, Short.MAX_VALUE))
+								.addContainerGap(300, Short.MAX_VALUE))
 				);
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(24)
+								.addGap(16)
 								.addComponent(labelGraphTheme)
-								.addContainerGap(223, Short.MAX_VALUE))
+								.addContainerGap(200, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
 		// @formatter:on

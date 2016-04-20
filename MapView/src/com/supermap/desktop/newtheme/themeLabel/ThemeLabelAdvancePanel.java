@@ -3,7 +3,6 @@ package com.supermap.desktop.newtheme.themeLabel;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Size2D;
 import com.supermap.data.StringAlignment;
-import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -16,10 +15,7 @@ import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -464,7 +460,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	private void initComboBoxSplitSeparator() {
-		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[] { '\0', '/', '\\', ';' }));
+		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[] { '\0', '/', '\\',',',';' }));
 		this.comboBoxSplitSeparator.setEnabled(false);
 		this.comboBoxSplitSeparator.setEditable(true);
 	}
@@ -522,6 +518,8 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			}
 			if (object instanceof String &&object.toString().length()==1) {
 				split = object.toString().toCharArray()[0];
+				themeLabel.setSplitSeparator(split);
+			}else {
 				themeLabel.setSplitSeparator(split);
 			}
 		}
@@ -903,5 +901,10 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeLabelLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeLabelLayer = layer;
 	}
 }

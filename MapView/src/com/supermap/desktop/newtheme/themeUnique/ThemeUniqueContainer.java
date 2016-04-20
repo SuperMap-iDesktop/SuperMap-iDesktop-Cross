@@ -27,7 +27,6 @@ import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Theme;
@@ -1184,5 +1183,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeUniqueLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeUniqueLayer = layer;
 	}
 }

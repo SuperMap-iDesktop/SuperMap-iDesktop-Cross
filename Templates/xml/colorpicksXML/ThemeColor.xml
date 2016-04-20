@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="gb2312"?>
+<themeColor text = "主题色" depth = "5">
+ <color text="" r="242" g="242" b="242"/>
+ <color text="" r="216" g="216" b="216"/>
+ <color text="" r="191" g="191" b="191"/>
+ <color text="" r="165" g="165" b="165"/>
+ <color text="" r="127" g="127" b="127"/>
+  
+  <color text ="" r = "127" g = "127" b = "127"/> 
+  <color text ="" r = "89" g = "89" b = "89"/> 
+  <color text ="" r = "63" g = "63" b = "63"/> 
+  <color text ="" r = "38" g = "38" b = "38"/> 
+  <color text ="" r = "12" g = "12" b = "12"/> 
+  
+  <color text ="" r = "221" g = "217" b = "195"/> 
+  <color text ="" r = "196" g = "189" b = "151"/> 
+  <color text ="" r = "147" g = "137" b = "83"/> 
+  <color text ="" r = "73" g = "68" b = "41"/> 
+  <color text ="" r = "29" g = "27" b = "16"/> 
+  
+  <color text ="" r = "198" g = "217" b = "240"/> 
+  <color text ="" r = "141" g = "179" b = "226"/> 
+  <color text ="" r = "84" g = "141" b = "212"/> 
+  <color text ="" r = "23" g = "54" b = "93"/> 
+  <color text ="" r = "15" g = "36" b = "62"/> 
+  
+  <color text ="" r = "219" g = "229" b = "241"/> 
+  <color text ="" r = "184" g = "204" b = "228"/> 
+  <color text ="" r = "149" g = "179" b = "215"/> 
+  <color text ="" r = "54" g = "96" b = "146"/> 
+  <color text ="" r = "36" g = "64" b = "97"/> 
+  
+  <color text ="" r = "242" g = "220" b = "219"/> 
+  <color text ="" r = "229" g = "185" b = "183"/> 
+  <color text ="" r = "217" g = "150" b = "148"/> 
+  <color text ="" r = "149" g = "55" b = "52"/> 
+  <color text ="" r = "99" g = "36" b = "35"/> 
+  
+  <color text ="" r = "235" g = "241" b = "221"/> 
+  <color text ="" r = "215" g = "227" b = "188"/> 
+  <color text ="" r = "195" g = "214" b = "155"/> 
+  <color text ="" r = "118" g = "146" b = "60"/> 
+  <color text ="" r = "79" g = "97" b = "40"/> 
+  
+  <color text ="" r = "229" g = "224" b = "236"/> 
+  <color text ="" r = "204" g = "193" b = "217"/> 
+  <color text ="" r = "178" g = "162" b = "199"/> 
+  <color text ="" r = "95" g = "73" b = "122"/> 
+  <color text ="" r = "63" g = "49" b = "81"/> 
+
+  <color text ="" r = "219" g = "238" b = "243"/> 
+  <color text ="" r = "183" g = "221" b = "232"/> 
+  <color text ="" r = "146" g = "205" b = "220"/> 
+  <color text ="" r = "49" g = "133" b = "155"/> 
+  <color text ="" r = "32" g = "88" b = "103"/> 
+  
+  <color text ="" r = "253" g = "234" b = "218"/> 
+  <color text ="" r = "251" g = "213" b = "181"/> 
+  <color text ="" r = "250" g = "192" b = "143"/> 
+  <color text ="" r = "227" g = "108" b = "9"/> 
+  <color text ="" r = "151" g = "72" b = "6"/> 
+  
+</themeColor>

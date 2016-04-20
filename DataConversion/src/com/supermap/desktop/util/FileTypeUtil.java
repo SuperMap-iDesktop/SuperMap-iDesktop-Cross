@@ -54,10 +54,10 @@ public class FileTypeUtil {
 			// 影像位图文件(*.sit,*.img,*.tif,*.tiff,*.bmp,*.png,*.gif,*.jpg,*.jpeg)
 		}
 		if (filePath.equalsIgnoreCase(FileTypeLocale.SCV_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.OSGB_STRING)
-				|| filePath.equalsIgnoreCase(FileTypeLocale.TDS_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.FLT_STRING)
+				|| filePath.equalsIgnoreCase(FileTypeLocale.TDS_STRING)
 				|| filePath.equalsIgnoreCase(FileTypeLocale.X_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_FilterModel");
-			// 三维模型文件(*.scv,*.osgb,*.3ds,*.flt,*.x)
+			// 三维模型文件(*.scv,*.osgb,*.3ds,*.x)
 		}
 		if (filePath.equalsIgnoreCase(FileTypeLocale.KML_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.KMZ_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_FilterGoogle");

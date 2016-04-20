@@ -870,4 +870,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 		return themeLayer;
 	}
 
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeLayer = layer;
+	}
+
 }

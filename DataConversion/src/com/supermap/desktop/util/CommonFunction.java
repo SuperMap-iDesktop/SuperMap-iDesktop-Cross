@@ -34,7 +34,6 @@ import com.supermap.data.conversion.ImportSettingMAPGIS;
 import com.supermap.data.conversion.ImportSettingMIF;
 import com.supermap.data.conversion.ImportSettingModel3DS;
 import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelFLT;
 import com.supermap.data.conversion.ImportSettingModelOSG;
 import com.supermap.data.conversion.ImportSettingModelX;
 import com.supermap.data.conversion.ImportSettingMrSID;
@@ -114,7 +113,7 @@ public class CommonFunction {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[4], "wat", "wan", "wal", "wap"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[5], "csv", "dbf"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[6], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[7], "scv", "osgb", "3ds", "dxf", "flt", "x"),
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[7], "scv", "osgb", "3ds", "dxf", "x"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[8], "kml", "kmz"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "sid", "b"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
@@ -505,11 +504,6 @@ public class CommonFunction {
 			fileInfo.setImportSetting(importSetting);
 			panel = new ImportPanelArcGIS(dataImportFrame, fileInfo);
 		}
-		if (fileType.equalsIgnoreCase(FileTypeLocale.FLT_STRING)) {
-			importSetting = new ImportSettingModelFLT();
-			fileInfo.setImportSetting(importSetting);
-			panel = new ImportPanelModel(dataImportFrame, fileInfo);
-		}
 		if (fileType.equalsIgnoreCase(FileTypeLocale.E00_STRING)) {
 			importSetting = new ImportSettingE00();
 			fileInfo.setImportSetting(importSetting);
@@ -672,15 +666,7 @@ public class CommonFunction {
 				}
 				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportIMG_Text"));
 			}
-			if (fileType.equalsIgnoreCase(FileTypeLocale.FLT_STRING)) {
-				// 将右边替换为放置flt文件类型的容器
-				if (1 != fileInfos.size()) {
-					dataPane = new ImportPanelModel(fileInfos, panels);
-				} else {
-					dataPane = getRightPanel(panels);
-				}
-				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportModelFLT_Text"));
-			}
+			
 			if (fileType.equalsIgnoreCase(FileTypeLocale.PNG_STRING)) {
 				// 将右边替换为放置png文件类型的容器
 				if (1 != fileInfos.size()) {

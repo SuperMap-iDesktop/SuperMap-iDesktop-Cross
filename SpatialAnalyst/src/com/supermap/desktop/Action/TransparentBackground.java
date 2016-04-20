@@ -1,13 +1,22 @@
 package com.supermap.desktop.Action;
 
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.mapping.Map;
 
 public class TransparentBackground extends JPopupMenu {
 	/**
@@ -22,11 +31,20 @@ public class TransparentBackground extends JPopupMenu {
 	private JLabel jLabelColumnOfGrid = new JLabel("lineOfGrid:");
 	private JLabel jLabelGridValue = new JLabel("gridValue:");
 	private final int gapWith = 10;
+	private static TransparentBackground transparent;
+	public static HashMap<String, Map> queryGridMap = new HashMap<String, Map>();
 
-	public TransparentBackground() {
+	private TransparentBackground() {
 		setBorder(new LineBorder(Color.LIGHT_GRAY));
 		initResources();
 		initComponents();
+	}
+
+	public static TransparentBackground getInstance() {
+		if (null == transparent) {
+			transparent = new TransparentBackground();
+		}
+		return transparent;
 	}
 
 	/**
@@ -46,42 +64,26 @@ public class TransparentBackground extends JPopupMenu {
 	 * 初始化界面信息
 	 */
 	private void initComponents() {
+		//@formatter:off
 		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-				groupLayout.createParallelGroup()
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelDatasource))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelDataset))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelPointX))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelPointY))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelRowOfGrid))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelColumnOfGrid))
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(gapWith)
-								.addComponent(jLabelGridValue))
-				);
-		groupLayout.setVerticalGroup(
-				groupLayout.createSequentialGroup()
-						.addComponent(jLabelDatasource)
-						.addComponent(jLabelDataset)
-						.addComponent(jLabelPointX)
-						.addComponent(jLabelPointY)
-						.addComponent(jLabelRowOfGrid)
-						.addComponent(jLabelColumnOfGrid)
-						.addComponent(jLabelGridValue)
-				);
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelDatasource))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelDataset))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelPointX))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelPointY))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelRowOfGrid))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelColumnOfGrid))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelGridValue)));
+		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+				.addComponent(jLabelDatasource)
+				.addComponent(jLabelDataset)
+				.addComponent(jLabelPointX)
+				.addComponent(jLabelPointY)
+				.addComponent(jLabelRowOfGrid)
+				.addComponent(jLabelColumnOfGrid)
+				.addComponent(jLabelGridValue));
 		setLayout(groupLayout);
+		//@formatter:on
 	}
 
 	public JLabel getjLabelDatasource() {

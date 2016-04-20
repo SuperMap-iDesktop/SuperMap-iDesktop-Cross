@@ -1,7 +1,6 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.DatasetVector;
-import com.supermap.data.JoinItems;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleContainer;
@@ -156,5 +155,10 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeLabelLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeLabelLayer = layer;
 	}
 }
