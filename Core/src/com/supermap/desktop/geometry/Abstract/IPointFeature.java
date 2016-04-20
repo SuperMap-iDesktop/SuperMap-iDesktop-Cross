@@ -6,6 +6,6 @@ package com.supermap.desktop.geometry.Abstract;
  * @author highsad
  *
  */
-public interface IPointFeature extends IGeometryFeature {
+public interface IPointFeature extends ITypeFeature, IFlatFeature {
 
 }

@@ -24,13 +24,10 @@ public abstract class SymbolPanel extends JPanel {
 	protected String symbolName;
 	protected Resources resources;
 
-	// 宽高修改之后要对应修改SymbolPanelGeometryFactory里面创建对象的值
-	protected int width = 60;
-	protected int height = 60;
 
-	private Dimension labelDimension = new Dimension(width + 12, height + 12);
+	private Dimension labelDimension;
 
-	private static final int fontSize = 100;
+	private int fontSize;
 	private JLabel labelIcon;
 	private JLabel labelName;
 
@@ -45,6 +42,8 @@ public abstract class SymbolPanel extends JPanel {
 		this.symbol = symbol;
 		this.symbolID = symbol.getID();
 		this.symbolName = symbol.getName();
+		labelDimension = new Dimension(getIconWidth() + 12, getIconHeight() + 12);
+		fontSize = getIconWidth() + 40;
 	}
 
 	/**
@@ -58,7 +57,8 @@ public abstract class SymbolPanel extends JPanel {
 		this.symbol = null;
 		this.symbolName = "System " + id;
 		this.resources = resources;
-
+		labelDimension = new Dimension(getIconWidth() + 12, getIconHeight() + 12);
+		fontSize = getIconWidth() + 40;
 	}
 
 
@@ -76,7 +76,7 @@ public abstract class SymbolPanel extends JPanel {
 		this.setBackground(Color.WHITE);
 		this.setLayout(new GridBagLayout());
 		this.add(labelIcon, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.NORTH));
-		this.add(labelName, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.NORTH));
+		this.add(labelName, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.NORTH).setIpad(0, 2));
 		this.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_SymbolPanelToolTips"), java.lang.String.valueOf(symbolID), symbolName));
 	}
 
@@ -106,7 +106,7 @@ public abstract class SymbolPanel extends JPanel {
 			builder.append("</html>");
 			result = builder.toString();
 		}
-		Dimension preferredSize = new Dimension(fontSize + 20, (int) (labelDimension.getHeight() + line * (FontUtilties.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 2)));
+		Dimension preferredSize = new Dimension(fontSize + 20, (int) (labelDimension.getHeight() + line * (FontUtilties.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 5)));
 		this.setMinimumSize(preferredSize);
 		this.setPreferredSize(preferredSize);
 		this.setMaximumSize(preferredSize);
@@ -130,23 +130,23 @@ public abstract class SymbolPanel extends JPanel {
 	}
 
 	public void setSelected() {
-		this.labelIcon.setBorder(BorderFactory.createLineBorder(new Color(52, 154, 255)));
+		this.labelIcon.setBorder(BorderFactory.createLineBorder(new Color(52, 154, 255), 3));
 //		this.labelIcon.setOpaque(true);
 //		this.labelIcon.setForeground(new Color(181, 255, 255));
 		this.labelName.setOpaque(true);
 		this.labelIcon.setOpaque(true);
 
-		this.labelIcon.setBackground(new Color(52, 154, 255));
+//		this.labelIcon.setBackground(new Color(52, 154, 255));
 		this.labelName.setBackground(new Color(52, 154, 255));
 		this.labelName.setForeground(Color.WHITE);
 
 	}
 
 	public void setUnselected() {
-		this.labelIcon.setBorder(BorderFactory.createLineBorder(Color.white));
+		this.labelIcon.setBorder(BorderFactory.createEmptyBorder());
 		this.labelName.setOpaque(false);
-		this.labelIcon.setOpaque(false);
-		this.labelIcon.setBackground(Color.white);
+//		this.labelIcon.setOpaque(false);
+//		this.labelIcon.setBackground(Color.white);
 		this.labelName.setBackground(Color.white);
 		this.labelName.setForeground(Color.BLACK);
 	}
@@ -161,5 +161,14 @@ public abstract class SymbolPanel extends JPanel {
 
 	public String getSymbolName() {
 		return symbolName;
+	}
+
+	// 宽高修改之后要对应修改SymbolPanelGeometryFactory里面创建对象的值
+	protected int getIconWidth() {
+		return 60;
+	}
+
+	protected int getIconHeight() {
+		return 60;
 	}
 }

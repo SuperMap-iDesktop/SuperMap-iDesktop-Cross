@@ -70,23 +70,22 @@ public class CombinationEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean result = false;
 		try {
+
+			// 多种数据集或者只选中了点数据集时，目标要为CAD
 			if (environment.getEditProperties().getSelectedGeometryCount() > 1) {
-				if (environment.getEditProperties().getSelectedDatasetTypes().size() > 1)// 多种数据集时，目标要为CAD
-				{
+				if (environment.getEditProperties().getSelectedDatasetTypes().size() > 1
+						|| environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT
+						|| environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT3D) {
 					if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)) {
 						result = true;
 					}
 				} else if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) // 只有一种时，目标相同或为CAD
 				{
-					if (!(environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT
-							|| environment.getEditProperties().getSelectedDatasetTypes().get(0) == DatasetType.POINT3D)) {
-						if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD) || environment.getEditProperties()
-								.getEditableDatasetTypes().contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
-							result = true;
-						}
+					if (environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD)
+							|| environment.getEditProperties().getEditableDatasetTypes()
+									.contains(environment.getEditProperties().getSelectedDatasetTypes().get(0))) {
+						result = true;
 					}
-				} else {
-					// 不做任何处理
 				}
 			}
 		} catch (Exception ex) {

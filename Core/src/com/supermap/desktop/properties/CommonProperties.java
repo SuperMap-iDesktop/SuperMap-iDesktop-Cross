@@ -66,5 +66,6 @@ public class CommonProperties extends Properties {
 	public static final String Operation = "String_Operation";
 	public static final String Edit = "String_Edit";
 	public static final String Property = "String_Property";
+	public static final String UnSupport = "String_UnSupport";
 
 }

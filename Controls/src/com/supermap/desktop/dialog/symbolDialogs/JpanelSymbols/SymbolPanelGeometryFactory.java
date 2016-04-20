@@ -34,9 +34,9 @@ public class SymbolPanelGeometryFactory {
 	 * @return
 	 */
 	private static GeoPoint getPaintPoint() {
-		GeoPoint paintPoint = new GeoPoint(30, 30);
+		GeoPoint paintPoint = new GeoPoint(20, 20);
 		GeoStyle markerGeoStyle = new GeoStyle();
-		markerGeoStyle.setMarkerSize(new Size2D(15, 15));
+		markerGeoStyle.setMarkerSize(new Size2D(10, 10));
 		markerGeoStyle.setLineColor(new Color(13, 80, 143));
 		paintPoint.setStyle(markerGeoStyle);
 		return paintPoint;

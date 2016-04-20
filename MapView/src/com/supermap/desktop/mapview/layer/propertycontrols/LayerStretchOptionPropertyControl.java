@@ -162,7 +162,7 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
+		caretPositionListener.unRegisterComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
 
 		this.comboBoxStretchType.removeItemListener(this.comboBoxItemListener);
 		this.textFieldSdDeviationStretchFactor.removeKeyListener(keyAdapter);

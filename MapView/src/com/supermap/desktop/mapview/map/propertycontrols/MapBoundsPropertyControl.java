@@ -18,7 +18,6 @@ import com.supermap.mapping.MapDrawnListener;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -523,7 +522,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void unregisterEvents() {
 		super.unregisterEvents();
-		this.caretPositionListener.deregisterComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
+		this.caretPositionListener.unRegisterComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
 				textFieldCurrentViewRight, textFieldCurrentViewBottom);
 		this.scaleEditor.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
 		this.checkBoxIsVisibleScalesEnabled.removeItemListener(this.checkBoxItemListener);

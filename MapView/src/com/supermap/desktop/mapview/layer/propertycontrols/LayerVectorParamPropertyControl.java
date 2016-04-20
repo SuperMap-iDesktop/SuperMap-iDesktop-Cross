@@ -326,7 +326,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldMinVisibleGeometrySize);
+		caretPositionListener.unRegisterComponent(textFieldMinVisibleGeometrySize);
 		this.checkBoxIsCompleteLineSymbolDisplayed.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsCrossroadOptimized.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsSymbolScalable.removeStateChangeListener(this.checkBoxStateChangeListener);

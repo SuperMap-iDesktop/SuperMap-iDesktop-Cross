@@ -1,15 +1,11 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Enum;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
-import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
@@ -31,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.NumberFormatter;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -190,9 +186,20 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 	private void initializeTable() {
 		this.tableRecordset = new JTable();
+		this.tableRecordset.setSurrendersFocusOnKeystroke(true);
 		this.tableRecordset.setModel(new RecordsetPropertyTableModel());
 		this.tableRecordset.getColumnModel().getColumn(0).setMaxWidth(COLUMN_INDEX_WIDTH);
 
+		this.tableRecordset.setDefaultEditor(Object.class, new DefaultCellEditor(new JTextField()) {
+			@Override
+			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+				Component tableCellEditorComponent = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+				if (tableCellEditorComponent instanceof JTextField) {
+					((JTextField) tableCellEditorComponent).selectAll();
+				}
+				return tableCellEditorComponent;
+			}
+		});
 		// ColumnClass Integer Editor
 		NumberFormatter formatter = new NumberFormatter(NumberFormat.getIntegerInstance());
 		formatter.setValueClass(Integer.class);
@@ -237,7 +244,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(intEditorControl);
+		caretPositionListener.unRegisterComponent(intEditorControl);
 		this.buttonAdd.removeActionListener(this.actionListener);
 		this.buttonDelete.removeActionListener(this.actionListener);
 		this.buttonReset.removeActionListener(this.actionListener);
@@ -525,10 +532,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		/**
 		 * Returns true regardless of parameter values.
 		 *
-		 * @param row
-		 *            the row whose value is to be queried
-		 * @param column
-		 *            the column whose value is to be queried
+		 * @param row    the row whose value is to be queried
+		 * @param column the column whose value is to be queried
 		 * @return true
 		 * @see #setValueAt
 		 */
@@ -632,6 +637,11 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilties.getFieldTypeMaxLength(FieldTypeUtilties.getFieldType((String) aValue)));
 					this.fireTableDataChanged();
 				} else if (columnIndex == MAX_LENGTH) {
+					try {
+						Integer.valueOf(aValue.toString());
+					} catch (NumberFormatException e) {
+						return;
+					}
 					this.fieldInfos.get(rowIndex).setMaxLength(Integer.valueOf(aValue.toString()));
 				} else if (columnIndex == DEFAULT_VALUE) {
 					FieldData fieldInfo = this.fieldInfos.get(rowIndex);
@@ -725,7 +735,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			String resultName = availableName;
 
 			int suffix = 0;
-			label: for (int i = 0; i < this.fieldInfos.size(); i++) {
+			label:
+			for (int i = 0; i < this.fieldInfos.size(); i++) {
 				if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName())) {
 					suffix++;
 					resultName = MessageFormat.format("{0}_{1}", availableName, suffix);

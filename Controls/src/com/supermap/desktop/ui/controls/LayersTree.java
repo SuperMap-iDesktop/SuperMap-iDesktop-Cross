@@ -1047,12 +1047,14 @@ public class LayersTree extends JTree {
 						LayerSettingVector layerSetting = (LayerSettingVector) finalLayer.getAdditionalSetting();
 						layerSetting.setStyle(geoStyle);
 						currentMap.refresh();
+						updateUI();
 					}
 				});
 				if (geostyle != null) {
 					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
 					layerSetting.setStyle(geostyle);
 					this.currentMap.refresh();
+					updateUI();
 				}
 			}
 		} catch (Exception ex) {

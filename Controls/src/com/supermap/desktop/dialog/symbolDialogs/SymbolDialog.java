@@ -137,7 +137,7 @@ public abstract class SymbolDialog extends SmDialog {
 		prepareForShowDialog();
 		textFieldSearch.setText("");
 		panelSymbols.requestFocus();
-		treeWorkspaceResources.updateUI();
+//		treeWorkspaceResources.updateUI();
 		this.setVisible(true);
 		return dialogResult;
 	}
@@ -182,12 +182,12 @@ public abstract class SymbolDialog extends SmDialog {
 
 	private void initSize() {
 		if (SystemPropertyUtilties.isWindows()) {
-			int width = (int) (1000 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
-			int height = (int) (650 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			int width = 880;
+			int height = 650;
 			setSize(width, height);
 		} else {
-			int width = (int) (1200 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
-			int height = (int) (780 / 1.25 * SystemPropertyUtilties.getSystemSizeRate());
+			int width = 1000;
+			int height = 700;
 			setSize(width, height);
 		}
 	}
@@ -302,10 +302,10 @@ public abstract class SymbolDialog extends SmDialog {
 
 //		this.menuFile.add(this.menuItemProperty);
 //		this.menuFile.add(new JMenu("asd"));
-		this.menuBar.add(this.menuFile, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
+//		this.menuBar.add(this.menuFile, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
 
 		// 编辑菜单
-		this.menuBar.add(this.menuEdit, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
+//		this.menuBar.add(this.menuEdit, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
 		this.menuBar.add(this.labelSearch, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5).setWeight(1, 1));
 		this.menuBar.add(this.textFieldSearch, new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(0, 1).setInsets(0, 0, 0, 10).setIpad(150, -2));
 	}
@@ -347,7 +347,8 @@ public abstract class SymbolDialog extends SmDialog {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == 38 || e.getKeyCode() == 40) {
 					panelSymbols.requestFocus();
-//					panelSymbols
+				} else if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					e.consume();
 				}
 			}
 		});
@@ -438,6 +439,8 @@ public abstract class SymbolDialog extends SmDialog {
 		Symbol symbol = getLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
 		if (symbol != null) {
 			treeWorkspaceResources.setSelectedSymbolGroup(findSymbolGroup(symbol.getID()));
+		} else {
+			treeWorkspaceResources.setSelectedSymbolGroup(getLibrary().getRootGroup());
 		}
 //		panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
 	}
@@ -445,7 +448,7 @@ public abstract class SymbolDialog extends SmDialog {
 	protected abstract SymbolLibrary getLibrary();
 
 	private SymbolGroup findSymbolGroup(int symbol) {
-		SymbolGroup symbolGroup = currentResources.getMarkerLibrary().getRootGroup();
+		SymbolGroup symbolGroup = getLibrary().getRootGroup();
 		return findSymbolGroup(symbolGroup, symbol);
 	}
 

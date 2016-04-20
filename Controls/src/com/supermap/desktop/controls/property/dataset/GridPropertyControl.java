@@ -372,7 +372,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldNoValue);
+		caretPositionListener.unRegisterComponent(textFieldNoValue);
 		this.textFieldNoValue.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldNoValue.getDocument().removeDocumentListener(this.documentListener);
 		this.buttonSetClipRegion.removeActionListener(this.actionListener);

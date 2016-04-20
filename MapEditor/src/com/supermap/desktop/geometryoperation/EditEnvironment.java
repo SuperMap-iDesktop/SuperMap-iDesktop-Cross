@@ -17,6 +17,7 @@ import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.INormalFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
@@ -186,15 +187,15 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			this.editor = editor;
 
-//			if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
-//				this.formMap.getMapControl().setAction(oldMapControlAction);
-//				this.formMap.getMapControl().setTrackMode(oldTrackMode);
-//			} else {
-//				this.oldMapControlAction = this.formMap.getMapControl().getAction();
-//				this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
-//				this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
-//				this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
-//			}
+			// if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
+			// this.formMap.getMapControl().setAction(oldMapControlAction);
+			// this.formMap.getMapControl().setTrackMode(oldTrackMode);
+			// } else {
+			// this.oldMapControlAction = this.formMap.getMapControl().getAction();
+			// this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
+			// this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
+			// this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
+			// }
 
 			this.editor.activate(this);
 		} finally {
@@ -313,12 +314,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			}
 
 			this.properties.setSelectedGeometryCount(this.properties.getSelectedGeometryCount() + selection.getCount());
-			ListUtilties.addArraySingle(this.properties.getSelectedGeometryFeatures(), features.toArray(new Class<?>[features.size()]));
+			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypeFeatures(), features.toArray(new Class<?>[features.size()]));
 			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
 				this.properties.setEditableSelectedMaxPartCount(Math.max(this.properties.getEditableSelectedMaxPartCount(), editableSelectedMaxPartCount));
-				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryFeatures(), features.toArray(new Class<?>[features.size()]));
+				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), features.toArray(new Class<?>[features.size()]));
 				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
 		} catch (Exception e) {
@@ -331,6 +332,23 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		}
 	}
 
+	private Class<?> getTypeFeature(Geometry geometry) {
+		IGeometry dGeometry = DGeometryFactory.create(geometry);
+
+		if (dGeometry instanceof IPointFeature) {
+			return IPointFeature.class;
+		} else if (dGeometry instanceof ILineFeature) {
+			return ILineFeature.class;
+		} else if (dGeometry instanceof IRegionFeature) {
+			return IRegionFeature.class;
+		} else if (dGeometry instanceof ITextFeature) {
+			return ITextFeature.class;
+		} else if (dGeometry instanceof ICompoundFeature) {
+			return ICompoundFeature.class;
+		}
+		return INormalFeature.class;
+	}
+
 	private void resetGeometryStatus() {
 		// 选中对象数目
 		this.properties.setSelectedGeometryCount(0);
@@ -340,8 +358,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		this.properties.getSelectedLayers().clear();
 		this.properties.getSelectedGeometryTypes().clear();
 		this.properties.getEditableSelectedGeometryTypes().clear();
-		this.properties.getSelectedGeometryFeatures().clear();
-		this.properties.getEditableSelectedGeometryFeatures().clear();
+		this.properties.getSelectedGeometryTypeFeatures().clear();
+		this.properties.getEditableSelectedGeometryTypeFeatures().clear();
 	}
 
 	private void layersStatusChange() {

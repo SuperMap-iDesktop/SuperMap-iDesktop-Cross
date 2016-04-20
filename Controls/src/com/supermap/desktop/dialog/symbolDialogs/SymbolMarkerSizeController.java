@@ -38,6 +38,8 @@ public class SymbolMarkerSizeController {
 		symbolHeight = getFormatDouble(markerSize.getHeight());
 		symbolShowWidth = getShowSizeBySymbolSize(symbolWidth);
 		symbolShowHeight = getShowSizeBySymbolSize(symbolHeight);
+		isLockSelected = true;
+		WidthHeightRate = 1;
 	}
 
 
@@ -103,43 +105,7 @@ public class SymbolMarkerSizeController {
 		write();
 	}
 
-	public double getSymbolWidth() {
-		return symbolWidth;
-	}
 
-	public void setSymbolWidth(double symbolWidth) {
-		double formatDouble = getFormatDouble(symbolWidth);
-		if (formatDouble == this.symbolWidth) {
-			// 相等直接返回
-			return;
-		}
-
-		this.symbolWidth = formatDouble;
-		if (isLockSelected) {
-			this.symbolHeight = getFormatDouble(this.symbolWidth / WidthHeightRate);
-			this.symbolShowHeight = getShowSizeBySymbolSize(symbolHeight);
-		}
-		this.symbolShowWidth = getShowSizeBySymbolSize(this.symbolWidth);
-		write();
-	}
-
-	public double getSymbolHeight() {
-		return symbolHeight;
-	}
-
-	public void setSymbolHeight(double symbolHeight) {
-		double formatDouble = getFormatDouble(symbolHeight);
-		if (formatDouble == this.symbolHeight) {
-			return;
-		}
-		this.symbolHeight = formatDouble;
-		if (isLockSelected) {
-			this.symbolWidth = getFormatDouble(this.symbolHeight * WidthHeightRate);
-			this.symbolShowWidth = getShowSizeBySymbolSize(symbolWidth);
-		}
-		this.symbolShowHeight = getShowSizeBySymbolSize(this.symbolHeight);
-		write();
-	}
 
 	public void setResources(Resources resources) {
 		this.resources = resources;
@@ -188,20 +154,63 @@ public class SymbolMarkerSizeController {
 			return showSize;
 		}
 		Symbol symbol = resources.getMarkerLibrary().findSymbol(currentGeoStyle.getMarkerSymbolID());
-		int value = ((SymbolMarker) symbol).computeSymbolSize((int) showSize);
-		if (value > 500) {
-			return 500;
+		if (symbol != null && symbol instanceof SymbolMarker) {
+
+//			if (value > 500) {
+//				return 500;
+//			} else {
+			return ((SymbolMarker) symbol).computeSymbolSize(500) / 500 * showSize;
+//			}
 		} else {
-			return value;
+			return showSize;
 		}
 	}
 
 
 	/**
-	 * 重新计算显示大小，用于符号改变后的重新计算
+	 * 重新计算符号大小，用于符号改变后的重新计算
 	 */
 	public void reCalculateShowSize() {
-		this.symbolShowHeight = getShowSizeBySymbolSize(symbolHeight);
-		this.symbolShowWidth = getShowSizeBySymbolSize(symbolWidth);
+		this.symbolHeight = getSymbolSizeByShowSize(symbolShowHeight);
+		this.symbolWidth = getSymbolSizeByShowSize(symbolShowWidth);
+		write();
 	}
+
+	//	public double getSymbolWidth() {
+//		return symbolWidth;
+//	}
+//
+//	public void setSymbolWidth(double symbolWidth) {
+//		double formatDouble = getFormatDouble(symbolWidth);
+//		if (formatDouble == this.symbolWidth) {
+//			// 相等直接返回
+//			return;
+//		}
+//
+//		this.symbolWidth = formatDouble;
+//		if (isLockSelected) {
+//			this.symbolHeight = getFormatDouble(this.symbolWidth / WidthHeightRate);
+//			this.symbolShowHeight = getShowSizeBySymbolSize(symbolHeight);
+//		}
+//		this.symbolShowWidth = getShowSizeBySymbolSize(this.symbolWidth);
+//		write();
+//	}
+
+//	public double getSymbolHeight() {
+//		return symbolHeight;
+//	}
+//
+//	public void setSymbolHeight(double symbolHeight) {
+//		double formatDouble = getFormatDouble(symbolHeight);
+//		if (formatDouble == this.symbolHeight) {
+//			return;
+//		}
+//		this.symbolHeight = formatDouble;
+//		if (isLockSelected) {
+//			this.symbolWidth = getFormatDouble(this.symbolHeight * WidthHeightRate);
+//			this.symbolShowWidth = getShowSizeBySymbolSize(symbolWidth);
+//		}
+//		this.symbolShowHeight = getShowSizeBySymbolSize(this.symbolHeight);
+//		write();
+//	}
 }

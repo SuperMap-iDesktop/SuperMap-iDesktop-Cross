@@ -354,7 +354,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.deregisterComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
+		caretPositionListener.unRegisterComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.removeItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.removeItemListener(this.itemListener);
 		this.checkBoxIsFileCache.removeItemListener(this.itemListener);

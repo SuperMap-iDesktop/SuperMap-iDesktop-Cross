@@ -7,7 +7,9 @@ import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Application;
@@ -36,11 +38,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -803,10 +802,17 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			recordset.seekID(id);
 			geometry = recordset.getGeometry();
 
-			GeoStyle geoStyle = new GeoStyle();
-			geoStyle.setLineColor(Color.RED);
-			geoStyle.setLineWidth(1);
-			geometry.setStyle(geoStyle);
+			if (geometry instanceof Geometry3D) {
+				GeoStyle3D geoStyle3D = new GeoStyle3D();
+				geoStyle3D.setLineColor(Color.RED);
+				geoStyle3D.setLineWidth(1);
+				((Geometry3D) geometry).setStyle3D(geoStyle3D);
+			} else {
+				GeoStyle geoStyle = new GeoStyle();
+				geoStyle.setLineColor(Color.RED);
+				geoStyle.setLineWidth(1);
+				geometry.setStyle(geoStyle);
+			}
 			trackingLayer.add(geometry, TrackingLayerTag);
 			this.map.refresh();
 		} catch (Exception e) {
