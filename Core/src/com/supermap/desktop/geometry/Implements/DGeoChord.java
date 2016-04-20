@@ -4,6 +4,7 @@ import com.supermap.data.GeoChord;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;

@@ -6,6 +6,7 @@ import com.supermap.data.TextPart;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 

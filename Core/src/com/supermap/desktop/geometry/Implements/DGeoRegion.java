@@ -6,6 +6,7 @@ import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
+import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
