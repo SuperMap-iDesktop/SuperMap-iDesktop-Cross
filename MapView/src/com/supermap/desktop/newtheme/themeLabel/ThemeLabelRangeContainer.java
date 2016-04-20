@@ -1178,4 +1178,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		return panelAdvance;
 	}
 
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeLabelLayer = layer;
+	}
+
 }

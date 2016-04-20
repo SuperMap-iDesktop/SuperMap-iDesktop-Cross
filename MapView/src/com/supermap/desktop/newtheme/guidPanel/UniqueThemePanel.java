@@ -1,13 +1,11 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -35,9 +33,9 @@ public class UniqueThemePanel extends JPanel {
 		this.labelUniqueTheme.selected(true);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(20).addComponent(labelUniqueTheme).addContainerGap(368, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addGap(16).addComponent(labelUniqueTheme).addContainerGap(300, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(24).addComponent(labelUniqueTheme).addContainerGap(223, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addGap(16).addComponent(labelUniqueTheme).addContainerGap(200, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 	}
 

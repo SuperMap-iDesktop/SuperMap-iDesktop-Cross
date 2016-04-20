@@ -131,9 +131,6 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				cancelButtonClicked();
 			}
 		});
-		this.componentList.add(this.buttonOk);
-		this.componentList.add(this.buttonCancel);
-		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	protected void listWorkspaceType_ItemSelectedChanged() {

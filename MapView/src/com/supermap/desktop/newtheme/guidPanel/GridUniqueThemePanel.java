@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.LineBorder;
@@ -34,9 +33,9 @@ public class GridUniqueThemePanel extends JPanel {
 		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(20).addComponent(labelGridUniqueTheme).addContainerGap(358, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addGap(16).addComponent(labelGridUniqueTheme).addContainerGap(300, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(24).addComponent(labelGridUniqueTheme).addContainerGap(223, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addGap(16).addComponent(labelGridUniqueTheme).addContainerGap(200, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on
 	}

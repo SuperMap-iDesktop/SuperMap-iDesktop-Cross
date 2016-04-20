@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -47,6 +48,7 @@ import org.xml.sax.SAXException;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.utilties.PathUtilties;
 
 /**
  * 颜色选择面板
@@ -352,22 +354,23 @@ public class ColorSelectionPanel extends JPanel {
 			BufferedReader bufferReader = null;
 			try {
 
-				String xmlFile = "";
-				if (UIEnvironment.getResourcePath() == null) {
-					InputStream inputStream = this.getClass().getResourceAsStream("/com/supermap/desktop/ui/controls/xml/colorpicksXML/" + name);
-					Reader reader = new InputStreamReader(inputStream);
-					bufferReader = new BufferedReader(reader);
-					StringBuilder  stringBuilder = new StringBuilder ("");
-					String string = "";
-					while ((string = bufferReader.readLine()) != null) {
-						stringBuilder = stringBuilder.append(string);
-					}
-					xmlFile = fileTargetPath + name;
-					fileOutputStream = new FileOutputStream(xmlFile);
-					fileOutputStream.write(stringBuilder.toString().getBytes());
-				} else {
-					xmlFile = UIEnvironment.getResourcePath() + "/xml/colorpicksXML/" + name;
-				}
+				String xmlFile = "../Controls/src/com/supermap/desktop/ui/controls/xml/colorpicksXML/" + name;
+//				if (UIEnvironment.getResourcePath() == null) {
+//					InputStream inputStream = this.getClass().getResourceAsStream("/com/supermap/desktop/ui/controls/xml/colorpicksXML/" + name);
+//					Reader reader = new InputStreamReader(inputStream);
+//					bufferReader = new BufferedReader(reader);
+//					StringBuilder  stringBuilder = new StringBuilder ("");
+//					String string = "";
+//					while ((string = bufferReader.readLine()) != null) {
+//						stringBuilder = stringBuilder.append(string);
+//					}
+//					xmlFile = fileTargetPath + name;
+//					fileOutputStream = new FileOutputStream(xmlFile);
+//					fileOutputStream.write(stringBuilder.toString().getBytes());
+//				} else {
+//					xmlFile = UIEnvironment.getResourcePath() + "/xml/colorpicksXML/" + name;
+//				}
+				xmlFile = PathUtilties.getFullPathName(xmlFile, true);
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document document = db.parse(xmlFile);
@@ -400,8 +403,8 @@ public class ColorSelectionPanel extends JPanel {
 						}
 					}
 				}
-				File file = new File(fileTargetPath + name + ".xml");
-				file.deleteOnExit();
+//				File file = new File(fileTargetPath + name + ".xml");
+//				file.deleteOnExit();
 			} catch (FileNotFoundException ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			} catch (ParserConfigurationException ex) {
@@ -411,16 +414,16 @@ public class ColorSelectionPanel extends JPanel {
 			} catch (IOException ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			} finally {
-				try {
-					if (bufferReader != null) {
-						bufferReader.close();
-					}
-					if (fileOutputStream != null) {
-						fileOutputStream.close();
-					}
-				} catch (IOException ex) {
-					Application.getActiveApplication().getOutput().output(ex);
-				}
+//				try {
+//					if (bufferReader != null) {
+//						bufferReader.close();
+//					}
+//					if (fileOutputStream != null) {
+//						fileOutputStream.close();
+//					}
+//				} catch (IOException ex) {
+//					Application.getActiveApplication().getOutput().output(ex);
+//				}
 			}
 
 		}

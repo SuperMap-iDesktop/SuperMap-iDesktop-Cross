@@ -7,11 +7,8 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.border.LineBorder;
-import javax.swing.JLabel;
-
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
@@ -41,15 +38,14 @@ public class LabelThemePanel extends JPanel {
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup()
-						.addGap(20)
 						.addComponent(labelUniformTheme)
 						.addComponent(labelRangeTheme)
-						.addContainerGap(120, Short.MAX_VALUE)));
+						.addContainerGap(220, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)
-										.addGroup(groupLayout.createSequentialGroup().addGap(20).addComponent(labelUniformTheme))
-										.addGroup(groupLayout.createSequentialGroup().addGap(21).addComponent(labelRangeTheme)))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(labelUniformTheme))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(labelRangeTheme)))
 						.addContainerGap(180, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on

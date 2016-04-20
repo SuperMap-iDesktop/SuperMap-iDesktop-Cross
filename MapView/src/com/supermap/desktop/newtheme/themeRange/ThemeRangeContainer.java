@@ -6,7 +6,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Resources;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -16,36 +15,20 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
+import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
-import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -194,10 +177,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
 		initPanelAdvance();
-		if (isNewTheme) {
-			refreshColor();
-			refreshAtOnce();
-		}
 	}
 
 	/**
@@ -230,11 +209,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,0).setWeight(100, 0).setIpad(40, 0));
 		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
-		
+		this.scrollPane.setViewportView(this.tableRangeInfo);
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
-		
-		this.scrollPane.setViewportView(this.tableRangeInfo);
 		//@formatter:on
 	}
 
@@ -1262,7 +1243,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			comboBoxExpression.setSelectedItem(expression.substring(expression.indexOf(".") + 1, expression.length()));
 		}
 	}
-
+	private void resetItemLineColor(){
+		for (int i = 0; i < this.themeRange.getCount(); i++) {
+			GeoStyle textStyle = themeRange.getItem(i).getStyle();
+			textStyle.setLineColor(Color.GRAY);
+		}
+	}
+	
 	/**
 	 * 刷新theme
 	 *
@@ -1273,6 +1260,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.themeRange = new ThemeRange(theme);
 			this.themeRange.setRangeExpression(rangeExpression);
 			refreshColor();
+			resetItemLineColor();
 			getTable();
 			if (2 <= themeRange.getCount()) {
 				this.rangeCount = this.themeRange.getCount();
@@ -1418,5 +1406,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeRangeLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeRangeLayer = layer;
 	}
 }

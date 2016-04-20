@@ -101,7 +101,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
-		public void mouseClicked(MouseEvent arg0) {
+		public void mouseReleased(MouseEvent arg0) {
 			isResetLayerProperty = false;
 		}
 	};
@@ -791,6 +791,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themelabelLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themelabelLayer = layer;
 	}
 
 }

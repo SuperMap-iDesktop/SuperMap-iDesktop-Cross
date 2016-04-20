@@ -1,11 +1,15 @@
 package com.supermap.desktop.Action;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
+
+import javax.swing.GroupLayout;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
@@ -24,6 +28,8 @@ import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -34,16 +40,14 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private final DecimalFormat format = new DecimalFormat("######0.000000");
 
 	private void hideTransparentBackground() {
-		transparentBackground.setVisible(false);
-		mapControl.removeKeyListener(keyAdapter);
-		mapControl.removeMouseListener(mouseAdapter);
 		// 允许弹出右键菜单
 		formMap.showPopupMenu();
+		TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
 	}
 
 	KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
-		public void keyPressed(KeyEvent e) {
+		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				hideTransparentBackground();
 			}
@@ -52,7 +56,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				hideTransparentBackground();
 			}
@@ -77,6 +81,8 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			if (null != formMap) {
 				mapControl = formMap.getMapControl();
+				TransparentBackground.queryGridMap.put(mapControl.getMap().getName(), mapControl.getMap());
+				transparentBackground = TransparentBackground.getInstance();
 				queryGridValue();
 			}
 			Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
@@ -86,8 +92,17 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 					if (null != e.getNewActiveForm()) {
 						formMap = (IFormMap) e.getNewActiveForm();
 						mapControl = formMap.getMapControl();
-						queryGridValue();
+						if (null != TransparentBackground.queryGridMap.get(mapControl.getMap().getName())) {
+							queryGridValue();
+						}
 					}
+				}
+			});
+			mapControl.getMap().addMapClosedListener(new MapClosedListener() {
+
+				@Override
+				public void mapClosed(MapClosedEvent arg0) {
+					TransparentBackground.queryGridMap.remove(arg0.getMap().getName());
 				}
 			});
 		} catch (Exception e) {
@@ -98,124 +113,127 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private void queryGridValue() {
 		mapControl.setAction(Action.SELECT);
 		mapControl.addMouseMotionListener(this.mapControlMouseMoved);
-		if (null == transparentBackground) {
-			transparentBackground = new TransparentBackground();
-			transparentBackground.setVisible(true);
-		} else if (false == transparentBackground.isVisible()) {
-			transparentBackground.setVisible(true);
-		}
 		// 不弹出菜单
 		formMap.dontShowPopupMenu();
 
 		// 添加监听事件
 		mapControl.addMouseListener(mouseAdapter);
 		mapControl.addKeyListener(keyAdapter);
-
 		mapControl.setLayout(null);
 	}
 
 	private void abstractMapcontrolMouseMoved(final DecimalFormat format, MouseEvent arg0) {
-		if (transparentBackground.isVisible()) {
+		try {
+			if (null == TransparentBackground.queryGridMap.get(mapControl.getMap().getName())) {
+				return;
+			}
 			Point point = arg0.getPoint();
 			Point2D point2D = mapControl.getMap().pixelToMap(point);
-			// Rectangle rectangle = mapControl.getBounds();
-			// if (arg0.getX()==rectangle.getMaxX()||arg0.getX()==rectangle.getMinX()
-			// ||arg0.getY()==rectangle.getMinY()||arg0.getY()==rectangle.getMaxY()) {
-			// transparentBackground.setVisible(false);
-			// } else {
-			transparentBackground.show(mapControl, arg0.getX(), arg0.getY());
-			Map map = mapControl.getMap();
-			Layers layers = map.getLayers();
-			String currentDatasource = transparentBackground.getjLabelDatasource().getText();
-			String currentDataset = transparentBackground.getjLabelDataset().getText();
-			String currentPointX = transparentBackground.getjLabelPointX().getText();
-			String currentPointY = transparentBackground.getjLabelPointY().getText();
-			String currentRow = "";
-			String currentColumn = "";
-			String currentValue = "";
-			Dataset dataset = null;
-			// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
-			for (int i = 0; i < layers.getCount(); i++) {
-				Layer layer = layers.get(i);
-				Dataset tempDataset = layer.getDataset();
-				if ((tempDataset instanceof DatasetGrid || tempDataset instanceof DatasetImage) && layer.getBounds().contains(point2D)) {
-					dataset = tempDataset;
-				}
+			Rectangle rectangle = mapControl.getBounds();
+			int count = 10;
+			if (count >= rectangle.getMaxX() - arg0.getX() || count >= arg0.getX() || arg0.getY() <= count || count >= rectangle.getMaxY() - arg0.getY()) {
+				transparentBackground.setVisible(false);
+			} else {
+				transparentBackground.show(mapControl, arg0.getX(), arg0.getY());
+				Map map = mapControl.getMap();
+				Layers layers = map.getLayers();
+				String currentDatasource = transparentBackground.getjLabelDatasource().getText();
+				String currentDataset = transparentBackground.getjLabelDataset().getText();
+				String currentPointX = transparentBackground.getjLabelPointX().getText();
+				String currentPointY = transparentBackground.getjLabelPointY().getText();
+				String currentRow = "";
+				String currentColumn = "";
+				String currentValue = "";
+				Dataset dataset = null;
+				// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
+				for (int i = 0; i < layers.getCount(); i++) {
+					Layer layer = layers.get(i);
+					Dataset tempDataset = layer.getDataset();
+					if ((tempDataset instanceof DatasetGrid || tempDataset instanceof DatasetImage) && layer.getBounds().contains(point2D)) {
+						dataset = tempDataset;
+					}
 
-			}
-			String pointX = format.format(point2D.getX());
-			String pointY = format.format(point2D.getY());
-			if (null != dataset) {
-				Datasource datasource = dataset.getDatasource();
-				currentDatasource = getTargetString(currentDatasource, datasource.getAlias());
-				currentDataset = getTargetString(currentDataset, dataset.getName());
-				currentPointX = getTargetString(currentPointX, pointX);
-				currentPointY = getTargetString(currentPointY, pointY);
-				if (dataset instanceof DatasetGrid) {
-					Point grid = ((DatasetGrid) dataset).xyToGrid(point2D);
-					int row = (int) grid.getX();
-					int column = (int) grid.getY();
-					currentRow = SpatialAnalystProperties.getString("String_QueryGridValue_Row").replace("{0}", String.valueOf(row));
-					currentColumn = SpatialAnalystProperties.getString("String_QueryGridValue_Collunm").replace("{0}", String.valueOf(column));
-					currentValue = SpatialAnalystProperties.getString("String_QueryGridValue_GridValue").replace("{0}",
-							String.valueOf((int) ((DatasetGrid) dataset).getValue(row, column)));
-				} else {
-					Point grid = ((DatasetImage) dataset).xyToImage(point2D);
-					int row = (int) grid.getY();
-					int column = (int) grid.getX();
-					currentRow = SpatialAnalystProperties.getString("String_QueryImageColor_Row").replace("{0}", String.valueOf(row));
-					currentColumn = SpatialAnalystProperties.getString("String_QueryImageColor_Column").replace("{0}", String.valueOf(column));
-					DatasetImage datasetImage = ((DatasetImage) dataset);
-					PixelFormat firstBandPixel = datasetImage.getPixelFormat(0);
-					if (firstBandPixel == PixelFormat.RGB || firstBandPixel == PixelFormat.RGBA) {
-						for (int i = 0; i < datasetImage.getBandCount(); i++) {
-							int argb = (int) datasetImage.getValue(column, row, 0);
-							int[] argbs = new int[4];
-							argbs[0] = argb >> 24 & 0xFF;
-							argbs[1] = argb >> 16 & 0xFF;
-							argbs[2] = argb >> 8 & 0xFF;
-							argbs[3] = argb & 0xFF;
-							currentValue = SpatialAnalystProperties.getString("String_QueryImageBandColor").replace("{0}",
-									"[A=" + argbs[0] + ", R=" + argbs[1] + ", G=" + argbs[2] + ", B=" + argbs[3] + "]");
-						}
+				}
+				String pointX = format.format(point2D.getX());
+				String pointY = format.format(point2D.getY());
+				if (null != dataset) {
+					Datasource datasource = dataset.getDatasource();
+					currentDatasource = getTargetString(currentDatasource, datasource.getAlias());
+					currentDataset = getTargetString(currentDataset, dataset.getName());
+					currentPointX = getTargetString(currentPointX, " " + pointX);
+					currentPointY = getTargetString(currentPointY, " " + pointY);
+					if (dataset instanceof DatasetGrid) {
+						Point grid = ((DatasetGrid) dataset).xyToGrid(point2D);
+						int row = (int) grid.getX();
+						int column = (int) grid.getY();
+						currentRow = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_Row"), row);
+						currentColumn = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_Collunm"), column);
+						currentValue = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_GridValue"),
+								((DatasetGrid) dataset).getValue(row, column));
+
 					} else {
-						for (int i = 0; i < datasetImage.getBandCount(); i++) {
-							currentValue = SpatialAnalystProperties.getString("String_QueryImageBandColor").replace("{0}",
-									String.valueOf((int) datasetImage.getValue(row, column, i)));
+						Point grid = ((DatasetImage) dataset).xyToImage(point2D);
+						int row = (int) grid.getY();
+						int column = (int) grid.getX();
+
+						currentRow = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryImageColor_Row"), row);
+						currentColumn = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryImageColor_Column"), column);
+
+						DatasetImage datasetImage = ((DatasetImage) dataset);
+						PixelFormat firstBandPixel = datasetImage.getPixelFormat(0);
+						if (firstBandPixel == PixelFormat.RGB || firstBandPixel == PixelFormat.RGBA) {
+							for (int i = 0; i < datasetImage.getBandCount(); i++) {
+								int argb = (int) datasetImage.getValue(column, row, 0);
+								int[] argbs = new int[4];
+								argbs[0] = argb >> 24 & 0xFF;
+								argbs[1] = argb >> 16 & 0xFF;
+								argbs[2] = argb >> 8 & 0xFF;
+								argbs[3] = argb & 0xFF;
+								currentValue = SpatialAnalystProperties.getString("String_QueryImageBandColor").replace("{0}",
+										"[A=" + argbs[0] + ", R=" + argbs[1] + ", G=" + argbs[2] + ", B=" + argbs[3] + "]");
+							}
+						} else {
+							currentValue = "<html>";
+							for (int i = 0; i < datasetImage.getBandCount(); i++) {
+								currentValue += MessageFormat.format(SpatialAnalystProperties.getString("String_QueryImageBandValue"), i,
+										datasetImage.getValue(row, column, i))
+										+ "<br>";
+							}
+							currentValue += "</html>";
 						}
 					}
+					transparentBackground.getjLabelDatasource().setText(currentDatasource);
+					transparentBackground.getjLabelDataset().setText(currentDataset);
+					transparentBackground.getjLabelPointX().setText(currentPointX);
+					transparentBackground.getjLabelPointY().setText(currentPointY);
+					transparentBackground.getjLabelRowOfGrid().setText(currentRow);
+					transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
+					transparentBackground.getjLabelGridValue().setText(currentValue);
+				} else {
+					currentDatasource = getTargetString(currentDatasource, "-");
+					currentDataset = getTargetString(currentDataset, "-");
+					currentPointX = getTargetString(currentPointX, pointX);
+					currentPointY = getTargetString(currentPointY, pointY);
+					currentRow = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_Row"), "-");
+					currentColumn = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_Collunm"), "-");
+					currentValue = MessageFormat.format(SpatialAnalystProperties.getString("String_QueryGridValue_GridValue"), "-");
+					transparentBackground.getjLabelDatasource().setText(currentDatasource);
+					transparentBackground.getjLabelDataset().setText(currentDataset);
+					transparentBackground.getjLabelPointX().setText(currentPointX);
+					transparentBackground.getjLabelPointY().setText(currentPointY);
+					transparentBackground.getjLabelRowOfGrid().setText(currentRow);
+					transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
+					transparentBackground.getjLabelGridValue().setText(currentValue);
+					transparentBackground.repaint();
 				}
-				transparentBackground.getjLabelDatasource().setText(currentDatasource);
-				transparentBackground.getjLabelDataset().setText(currentDataset);
-				transparentBackground.getjLabelPointX().setText(currentPointX);
-				transparentBackground.getjLabelPointY().setText(currentPointY);
-				transparentBackground.getjLabelRowOfGrid().setText(currentRow);
-				transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
-				transparentBackground.getjLabelGridValue().setText(currentValue);
-			} else {
-				currentDatasource = getTargetString(currentDatasource, "-");
-				currentDataset = getTargetString(currentDataset, "-");
-				currentPointX = getTargetString(currentPointX, pointX);
-				currentPointY = getTargetString(currentPointY, pointY);
-				currentRow = SpatialAnalystProperties.getString("String_QueryGridValue_Row").replace("{0}", "-");
-				currentColumn = SpatialAnalystProperties.getString("String_QueryGridValue_Collunm").replace("{0}", "-");
-				currentValue = SpatialAnalystProperties.getString("String_QueryGridValue_GridValue").replace("{0}", "-");
-				transparentBackground.getjLabelDatasource().setText(currentDatasource);
-				transparentBackground.getjLabelDataset().setText(currentDataset);
-				transparentBackground.getjLabelPointX().setText(currentPointX);
-				transparentBackground.getjLabelPointY().setText(currentPointY);
-				transparentBackground.getjLabelRowOfGrid().setText(currentRow);
-				transparentBackground.getjLabelColumnOfGrid().setText(currentColumn);
-				transparentBackground.getjLabelGridValue().setText(currentValue);
-				transparentBackground.repaint();
 			}
-			// }
+		} catch (Exception e) {
 		}
 
 	}
 
 	private String getTargetString(String targetString, String replaceInfo) {
-		return targetString.replace(targetString.substring(targetString.indexOf(":") + 1, targetString.length()), replaceInfo);
+		return targetString.replace(targetString.substring(targetString.indexOf(":") + 1, targetString.length()), " " + replaceInfo);
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
@@ -65,6 +64,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private boolean isNewTheme;
+	private ThemeGridUnique themeGridTemp = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.BLACKWHITE);
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -360,7 +360,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				}
 			} else if (2 == e.getClickCount() && tableUniqueInfo.getSelectedColumn() == TABLE_COLUMN_GEOSTYLE) {
 				int selectRow = tableUniqueInfo.getSelectedRow();
-				setItemColor(e.getX(), e.getY());
+				setItemColor(tableUniqueInfo, e.getX(), e.getY());
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 			}
 			// 包含最后一行不能做删除操作
@@ -532,7 +532,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				refreshAtOnce();
 			} else if (e.getSource() == buttonForeGroundColor) {
 				// 批量修改单值段的颜色
-				setItemColor(buttonForeGroundColor.getWidth(), buttonForeGroundColor.getHeight());
+				setItemColor(buttonForeGroundColor, 0, buttonForeGroundColor.getHeight());
 			} else if (e.getSource() == buttonAdd) {
 				// 添加单值段
 				addThemeItem();
@@ -548,7 +548,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				refreshAtOnce();
 				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			}
-			
+
 		}
 
 		/**
@@ -571,9 +571,8 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		 * @param deleteItem
 		 * @return
 		 */
-		private boolean isNeedAddToDeleteItems(ThemeGridUniqueItem deleteItem) {
+		private boolean isNeedAddToDeleteItems(ThemeGridUnique themeUniqueTemp, ThemeGridUniqueItem deleteItem) {
 			double deleteItemUnique = deleteItem.getUnique();
-			ThemeGridUnique themeUniqueTemp = ThemeGridUnique.makeDefault(datasetGrid, ColorGradientType.YELLOWGREEN);
 			for (int i = 0; i < themeUniqueTemp.getCount(); i++) {
 				if (themeUniqueTemp.getItem(i).getUnique() - deleteItemUnique == 0.0) {
 					return true;
@@ -590,7 +589,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1 && selectedRow.length == 1) {
 				ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[0]);
 
-				if (isNeedAddToDeleteItems(item)) {
+				if (isNeedAddToDeleteItems(themeGridTemp, item)) {
 					ThemeGridUniqueItem itemClone = new ThemeGridUniqueItem(item);
 					deleteItems.add(itemClone);
 				}
@@ -600,7 +599,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			} else if (selectedRow[selectedRow.length - 1] != tableUniqueInfo.getRowCount() - 1) {
 				for (int i = selectedRow.length - 1; i >= 0; i--) {
 					ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[i]);
-					if (isNeedAddToDeleteItems(item)) {
+					if (isNeedAddToDeleteItems(themeGridTemp, item)) {
 						ThemeGridUniqueItem itemClone = new ThemeGridUniqueItem(item);
 						deleteItems.add(itemClone);
 					}
@@ -609,7 +608,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			} else if (selectedRow[selectedRow.length - 1] == tableUniqueInfo.getRowCount() - 1) {
 				for (int i = selectedRow.length - 2; i >= 0; i--) {
 					ThemeGridUniqueItem item = themeUnique.getItem(selectedRow[i]);
-					if (isNeedAddToDeleteItems(item)) {
+					if (isNeedAddToDeleteItems(themeGridTemp, item)) {
 						ThemeGridUniqueItem itemClone = new ThemeGridUniqueItem(item);
 						deleteItems.add(itemClone);
 					}
@@ -738,12 +737,12 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	/**
 	 * 设置填充颜色
 	 */
-	private void setItemColor(int x, int y) {
+	private void setItemColor(JComponent component, int x, int y) {
 		final JPopupMenu popupMenu = new JPopupMenu();
 		ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
 		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
 		colorSelectionPanel.setPreferredSize(new Dimension(170, 155));
-		popupMenu.show(this.tableUniqueInfo, x, y);
+		popupMenu.show(component, x, y);
 		final int[] selectRows = tableUniqueInfo.getSelectedRows();
 		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
 			@Override
@@ -832,5 +831,10 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeUniqueLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeUniqueLayer = layer;
 	}
 }

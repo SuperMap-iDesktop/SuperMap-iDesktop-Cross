@@ -116,14 +116,17 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 
 	public void setList(JoinItems joinItems, ArrayList<String> list) {
 		int count = datasetVector.getFieldCount();
+		int itemCount = joinItems.getCount();
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (ThemeUtil.isDataType(fieldInfo.getType())) {
 				String item = fieldInfo.getName();
+				if (itemCount > 0) {
+					item = datasetVector.getName() + "." + item;
+				}
 				this.themeExpressionList.add(item);
 			}
 		}
-		int itemCount = joinItems.getCount();
 		for (int i = 0; i < itemCount; i++) {
 			DatasetVector tempDatasetVector = (DatasetVector) datasetVector.getDatasource().getDatasets().get(joinItems.get(i).getForeignTable());
 			int tempCount = tempDatasetVector.getFieldCount();
@@ -136,12 +139,7 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 			}
 		}
 		for (int i = 0; i < list.size(); i++) {
-			String tempString = list.get(i);
-			if (tempString.split("\\.").length == 2 && tempString.substring(0, tempString.indexOf(".")).equals(datasetVector.getName())) {
-				this.themeExpressionList.remove(tempString.substring(tempString.indexOf(".") + 1, tempString.length()));
-			} else {
-				this.themeExpressionList.remove(list.get(i));
-			}
+			this.themeExpressionList.remove(list.get(i));
 		}
 		initListExpressions();
 	}

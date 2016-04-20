@@ -17,14 +17,12 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.RangeMode;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeGridRange;
 import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeGridUnique;
 import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
@@ -1007,6 +1005,11 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	@Override
 	public Layer getCurrentLayer() {
 		return themeRangeLayer;
+	}
+
+	@Override
+	public void setCurrentLayer(Layer layer) {
+		this.themeRangeLayer = layer;
 	}
 
 }

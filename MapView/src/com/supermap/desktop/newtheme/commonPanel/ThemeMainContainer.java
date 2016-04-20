@@ -24,7 +24,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
@@ -62,12 +67,15 @@ public class ThemeMainContainer extends JPanel {
 	private LocalActionListener actionListener = new LocalActionListener();
 	private ActionListener refreshAtOnceListener = new RefreshAtOnceListener();
 	private PropertyChangeListener layerRemoveListener;
+	private IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 
 	private Layer newLayer;
 	// 标记位，用于标记当前
 	private boolean layerPropertyChanged = false;
 	public Layer oldLayer;
-	
+	private ActiveFormChangedListener activeFormChangedListener;
+	private PropertyChangeListener layerChangeListener;
+
 	public ThemeMainContainer() {
 		initComponents();
 		initResources();
@@ -122,10 +130,6 @@ public class ThemeMainContainer extends JPanel {
 	 * 注册事件
 	 */
 	private void registActionListener() {
-		this.layersTree.addMouseListener(this.localMouseListener);
-		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
-		this.buttonApply.addActionListener(this.actionListener);
-		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
 		this.layerRemoveListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -136,8 +140,7 @@ public class ThemeMainContainer extends JPanel {
 				}
 			}
 		};
-		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);
-		this.layersTree.addPropertyChangeListener("LayerChange", new PropertyChangeListener() {
+		this.layerChangeListener = new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -151,7 +154,26 @@ public class ThemeMainContainer extends JPanel {
 					}
 				}
 			}
-		});
+		};
+		this.activeFormChangedListener = new ActiveFormChangedListener() {
+
+			@Override
+			public void activeFormChanged(ActiveFormChangedEvent e) {
+				if (null != e.getOldActiveForm() && null != ((FormMap) e.getOldActiveForm()).getMapControl()) {
+					oldLayer = ((FormMap) e.getOldActiveForm()).getMapControl().getMap().getLayers().get(0);
+					updateProperty();
+				}
+			}
+		};
+		unregistActionListener();
+		this.layersTree.addMouseListener(this.localMouseListener);
+		this.layersTree.getSelectionModel().addTreeSelectionListener(this.treeSelectListener);
+		this.buttonApply.addActionListener(this.actionListener);
+		this.checkBoxRefreshAtOnce.addActionListener(this.refreshAtOnceListener);
+		this.formManager.addActiveFormChangedListener(activeFormChangedListener);
+		this.layersTree.addPropertyChangeListener("LayerRemoved", layerRemoveListener);
+		this.layersTree.addPropertyChangeListener("LayerChange", layerChangeListener);
+		this.formManager.addActiveFormChangedListener(this.activeFormChangedListener);
 	}
 
 	/**
@@ -162,7 +184,9 @@ public class ThemeMainContainer extends JPanel {
 		this.layersTree.getSelectionModel().removeTreeSelectionListener(this.treeSelectListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.checkBoxRefreshAtOnce.removeActionListener(this.refreshAtOnceListener);
+		this.formManager.removeActiveFormChangedListener(activeFormChangedListener);
 		this.layersTree.removePropertyChangeListener("LayerRemoved", layerRemoveListener);
+		this.formManager.removeActiveFormChangedListener(this.activeFormChangedListener);
 	}
 
 	class LocalActionListener implements ActionListener {
@@ -219,15 +243,15 @@ public class ThemeMainContainer extends JPanel {
 		public void valueChanged(TreeSelectionEvent e) {
 			try {
 				IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
-				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				// 专题图dockbar不存在是不做处理
+				// 专题图dockbar不存在时不做处理
 				if (null == dockbarThemeContainer.getComponent()) {
 					return;
 				}
-				if (null != newLayer && null != oldLayer && !newLayer.equals(oldLayer)) {
+				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				if (null != panel && isLayerPath(e.getNewLeadSelectionPath())) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
+				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
 				if (null != newLayer && null != newLayer.getTheme()) {
 					textFieldThemeLayer.setText(newLayer.getCaption());
 					ThemeGuideFactory.modifyTheme(newLayer);
@@ -262,16 +286,18 @@ public class ThemeMainContainer extends JPanel {
 			// 树的当前节点已经被删除，修改layerPropertyChanged
 			setLayerPropertyChanged(false);
 		}
-		oldLayer = getLayerByPath(path);
+		updateProperty();
+	}
+
+	private void updateProperty() {
 		// 新线程解决关闭数据集是lay对象释放问题
 		if (null == oldLayer || oldLayer.isDisposed()) {
 			setLayerPropertyChanged(false);
 		} else {
 			panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
 		}
-
-		if (null != panel && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
-			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
+		if (!checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+			if (null != panel && JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				panel.unregistActionListener();
 				ThemeGuideFactory.themeTypeContainer.remove(ThemeGuideFactory.getThemeTypeString(oldLayer));

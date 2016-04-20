@@ -233,7 +233,7 @@ public class ThemeUtil {
 				dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
 			} else {
 				dialogResult = sqlDialog.showDialog(expression, datasets);
-			}
+			} 
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 				if (!StringUtilties.isNullOrEmpty(filter)) {
@@ -270,11 +270,14 @@ public class ThemeUtil {
 	 * @return
 	 */
 	public static Dataset[] getDatasets(Layer layer, DatasetVector datasetVector) {
-		Dataset[] datasets = new Dataset[layer.getDisplayFilter().getJoinItems().getCount() + 1];
-		datasets[0] = datasetVector;
-		for (int i = 1; i < datasets.length; i++) {
-			String tableName = layer.getDisplayFilter().getJoinItems().get(i - 1).getForeignTable();
-			datasets[i] = datasetVector.getDatasource().getDatasets().get(tableName);
+		Dataset[] datasets = new Dataset[0];
+		if (null != layer && !layer.isDisposed()) {
+			datasets = new Dataset[layer.getDisplayFilter().getJoinItems().getCount() + 1];
+			datasets[0] = datasetVector;
+			for (int i = 1; i < datasets.length; i++) {
+				String tableName = layer.getDisplayFilter().getJoinItems().get(i - 1).getForeignTable();
+				datasets[i] = datasetVector.getDatasource().getDatasets().get(tableName);
+			}
 		}
 		return datasets;
 	}
