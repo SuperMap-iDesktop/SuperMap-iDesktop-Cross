@@ -10,8 +10,8 @@ import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.ProjectionType;
-import com.supermap.data.Rectangle2D;
 import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -85,7 +85,7 @@ public class CtrlActionSceneGeometryFlying extends CtrlAction {
 				if (flyingMode == DesktopFlyingMode.FLYINGTO) {
 					if (geometry.getBounds().isEmpty()) {
 						Camera flyCamera = formScene.getSceneControl().getScene().getCamera();
-						flyCamera.setLatitude(geometry.getInnerPoint().getX());
+						flyCamera.setLongitude(geometry.getInnerPoint().getX());
 						flyCamera.setLatitude(geometry.getInnerPoint().getY());
 						flyCamera.setAltitude(1000);
 						formScene.getSceneControl().getScene().fly(flyCamera, 0);
@@ -95,7 +95,7 @@ public class CtrlActionSceneGeometryFlying extends CtrlAction {
 				} else if (flyingMode == DesktopFlyingMode.FLYINGPLAY) {
 					if (geometry.getBounds().isEmpty()) {
 						Camera flyCamera = formScene.getSceneControl().getScene().getCamera();
-						flyCamera.setLatitude(geometry.getInnerPoint().getX());
+						flyCamera.setLongitude(geometry.getInnerPoint().getX());
 						flyCamera.setLatitude(geometry.getInnerPoint().getY());
 						flyCamera.setAltitude(1000);
 						formScene.getSceneControl().getScene().fly(flyCamera);
