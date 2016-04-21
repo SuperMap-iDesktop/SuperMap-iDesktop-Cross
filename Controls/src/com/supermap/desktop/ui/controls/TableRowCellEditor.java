@@ -1,11 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
+import java.util.Hashtable;
 
 /**
  * each row TableCellEditor
@@ -49,6 +50,9 @@ public class TableRowCellEditor implements TableCellEditor {
 
 	public boolean isCellEditable(EventObject anEvent) {
 		if (anEvent instanceof MouseEvent) {
+			if (((MouseEvent) anEvent).getClickCount() < 2) {
+				return false;
+			}
 			selectEditor((MouseEvent) anEvent);
 		}
 		return editor.isCellEditable(anEvent);
