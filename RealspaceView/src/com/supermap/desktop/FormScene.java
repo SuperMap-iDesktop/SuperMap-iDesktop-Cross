@@ -333,10 +333,11 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	@Override
 	public void clean() {
+		layer3DsTree.setScene(null);
+		this.sceneControl.getScene().getWorkspace().removeClosingListener(this);
 		removeListeners();
 		removeSceneControlListener();
-
-//		sceneControl.dispose();
+		sceneControl.dispose();
 	}
 
 	/**
