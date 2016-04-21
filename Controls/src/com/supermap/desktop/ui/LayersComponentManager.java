@@ -155,7 +155,7 @@ public class LayersComponentManager extends JComponent {
 				popupMenu = this.layer3DDatasetPopupMenu;
 			} else if (type == NodeDataType.LAYER3D_KML) {
 				popupMenu = this.layer3DKMLPopupMenu;
-			} else if (type == NodeDataType.LAYER3D_IMAGE_FILE) {
+			} else if (type == NodeDataType.LAYER_IMAGE || type == NodeDataType.LAYER_GRID) {
 				popupMenu = this.layer3DImagePopupMenu;
 			} else if (type == NodeDataType.SCREENLAYER3D_GEOMETRY_TAG) {
 				popupMenu = this.screenLayer3DPopupMenu;

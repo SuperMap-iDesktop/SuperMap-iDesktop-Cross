@@ -20,7 +20,7 @@ import com.supermap.realspace.TerrainLayer;
 public class SceneJumpUtilties {
 
 	public static void zoomToLayer(IFormScene formScene, TreeNodeData data) {
-		if (data.getType() == NodeDataType.LAYER3D_DATASET) {
+		if (data.getType() == NodeDataType.LAYER3D_DATASET || data.getType() == NodeDataType.LAYER_IMAGE || data.getType() == NodeDataType.LAYER_GRID) {
 			Layer3D layer = (Layer3D) data.getData();
 			Rectangle2D rectangle2D = layer.getBounds();
 			// 处理数据集的Bounds为一个点的情况
@@ -55,7 +55,7 @@ public class SceneJumpUtilties {
 	}
 
 	public static void jumpToLayer(IFormScene formScene, TreeNodeData data) {
-		if (data.getType() == NodeDataType.LAYER3D_DATASET) {
+		if (data.getType() == NodeDataType.LAYER3D_DATASET || data.getType() == NodeDataType.LAYER_IMAGE || data.getType() == NodeDataType.LAYER_GRID) {
 			Layer3D layer = (Layer3D) data.getData();
 			Rectangle2D rectangle2D = layer.getBounds();
 			// 处理数据集的Bounds为一个点的情况

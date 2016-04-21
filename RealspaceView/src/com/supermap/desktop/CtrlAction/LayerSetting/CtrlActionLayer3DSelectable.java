@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
@@ -28,16 +29,16 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
 			Object object = layer3DsTree.getSelectionPaths()[0].getLastPathComponent();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
 			TreeNodeData data = (TreeNodeData) node.getUserObject();
-            boolean isSelectable = !((Layer3D)data.getData()).isSelectable();
+			boolean isSelectable = !((Layer3D) data.getData()).isSelectable();
 
-            for (int i = 0; i < layer3DsTree.getSelectionCount(); i++) {
+			for (int i = 0; i < layer3DsTree.getSelectionCount(); i++) {
 				node = (DefaultMutableTreeNode) layer3DsTree.getSelectionPaths()[i].getLastPathComponent();
 				data = (TreeNodeData) node.getUserObject();
 				Layer3D layer3D = (Layer3D) data.getData();
 				if (this.isLayer3DSurpportSelect(layer3D)) {
 					layer3D.setSelectable(isSelectable);
-				}				
-            }
+				}
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -49,17 +50,17 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
 		IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 		if (formScene != null && formScene.getActiveLayer3Ds() != null && formScene.getActiveLayer3Ds().length > 0) {
 			Layer3DsTree layer3DsTree = UICommonToolkit.getLayersManager().getLayer3DsTree();
-			 if (layer3DsTree != null) {
-				 for (int i = 0; i < layer3DsTree.getSelectionCount(); i++) {
-					 DefaultMutableTreeNode node = (DefaultMutableTreeNode) layer3DsTree.getSelectionPaths()[i].getLastPathComponent();
-					 TreeNodeData data = (TreeNodeData) node.getUserObject();
-					 Layer3D layer3D = (Layer3D) data.getData();
-					 if (this.isLayer3DSurpportSelect(layer3D)) {
-						 enable = true;
-						 break;
-					 }
-				 }
-			 }
+			if (layer3DsTree != null) {
+				for (int i = 0; i < layer3DsTree.getSelectionCount(); i++) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) layer3DsTree.getSelectionPaths()[i].getLastPathComponent();
+					TreeNodeData data = (TreeNodeData) node.getUserObject();
+					Layer3D layer3D = (Layer3D) data.getData();
+					if (this.isLayer3DSurpportSelect(layer3D) && SceneUtilties.getObjectVisitble(data)) {
+						enable = true;
+						break;
+					}
+				}
+			}
 		}
 
 		return enable;
@@ -70,18 +71,17 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
 		boolean check = false;
 		IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 		// 不支持三态，这里先简单的设置两个状态了
-		if (formScene.getActiveLayer3Ds()[0].isSelectable()) {
+		if (formScene.getActiveLayer3Ds().length > 0 && formScene.getActiveLayer3Ds()[0].isSelectable()) {
 			check = true;
 		}
 		return check;
 	}
 
-	private boolean isLayer3DSurpportSelect(Layer3D layer3D)
-    {
+	private boolean isLayer3DSurpportSelect(Layer3D layer3D) {
 		boolean result = true;
-        //栅格/影像等不可选择
+		//栅格/影像等不可选择
 		if (layer3D instanceof Layer3DDataset) {
-			Layer3DDataset layer3DDataset = (Layer3DDataset)layer3D;
+			Layer3DDataset layer3DDataset = (Layer3DDataset) layer3D;
 			if (layer3DDataset.getDataset().getType() == DatasetType.GRID
 					|| layer3DDataset.getDataset().getType() == DatasetType.GRIDCOLLECTION
 					|| layer3DDataset.getDataset().getType() == DatasetType.IMAGE
@@ -96,6 +96,6 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
 			result = false;
 		}
 
-        return result;
-    }
+		return result;
+	}
 }

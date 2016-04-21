@@ -96,7 +96,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private transient MouseListener sceneControl_MouseListener = new MouseAdapter() {
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void mouseClicked(MouseEvent e) {
 			int buttonType = e.getButton();
 			int clickCount = e.getClickCount();
 
@@ -247,7 +247,8 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	@Override
 	public String getText() {
-		return this.title;
+		return super.getTitle();
+
 	}
 
 	@Override
@@ -267,7 +268,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			if (this.isNeedSave()) {
 				Workspace workspace = this.sceneControl.getScene().getWorkspace();
 				if (workspace != null) {
-					if (workspace.getScenes().indexOf(this.getText()) >= 0) {
+					if (workspace.getScenes().indexOf(this.getTitle()) >= 0) {
 						result = workspace.getScenes().setSceneXML(this.getText(), this.sceneControl.getScene().toXML());
 					} else {
 						result = save(true, true);
@@ -418,7 +419,8 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 	private boolean isNodeLayer3D(NodeDataType type) {
 		return type == NodeDataType.LAYER3D_DATASET || type == NodeDataType.LAYER3D_IMAGE_FILE || type == NodeDataType.LAYER3D_KML
-				|| type == NodeDataType.LAYER3D_MAP || type == NodeDataType.LAYER3D_MODEL || type == NodeDataType.LAYER3D_VECTOR_FILE;
+				|| type == NodeDataType.LAYER3D_MAP || type == NodeDataType.LAYER3D_MODEL || type == NodeDataType.LAYER3D_VECTOR_FILE
+				|| type == NodeDataType.LAYER_IMAGE || type == NodeDataType.LAYER_GRID;
 	}
 
 	private void layer3DsTreeSelectionChanged() {
