@@ -1,12 +1,11 @@
 package com.supermap.desktop;
 
+import com.supermap.desktop.exception.InvalidScaleException;
+import com.supermap.desktop.utilties.DoubleUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-
-import org.omg.PortableInterceptor.NON_EXISTENT;
-
-import com.supermap.desktop.exception.InvalidScaleException;
-import com.supermap.desktop.utilties.StringUtilties;
 
 public class ScaleModel {
 	public static final double INVALID_SCALE = -1;
@@ -26,6 +25,9 @@ public class ScaleModel {
 
 	private static final String NONE_SCALE_CAPTION = "NONE";
 	private static final String SCALECAPTION_FORMATTER = "1:{0}";
+
+	private static final double MAX_SCALE_VALUE = 1E10;
+	private static final double MIN_SCALE_VALUE = 1E-10;
 
 	private double scale = INVALID_SCALE; // 比例尺的小数表示 0.0001
 	private String scaleCaption = ""; // 比例尺的文本表示。 1:100000
@@ -48,7 +50,7 @@ public class ScaleModel {
 		}
 
 		String[] array = scale.split(SEPARATOR);
-		if (array == null || (array.length != 1 && array.length != 2)) {
+		if (array.length != 1 && array.length != 2) {
 			throw new InvalidScaleException();
 		}
 
@@ -72,8 +74,9 @@ public class ScaleModel {
 	}
 
 	private void parse(double scale) throws InvalidScaleException {
-		this.scaleDenominator = 1 / scale;
+		this.scaleDenominator = DoubleUtilties.div(1.0, scale, 10);
 		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
+//		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 30));
 	}
 
 	private void parse(String[] scaleCaption) throws InvalidScaleException {
@@ -156,7 +159,9 @@ public class ScaleModel {
 	public int hashCode() {
 		return super.hashCode();
 
-	};
+	}
+
+	;
 
 	@Override
 	public String toString() {
@@ -172,5 +177,28 @@ public class ScaleModel {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return model;
+	}
+
+	public static boolean isLegitScaleString(String scaleString) {
+		if (StringUtilties.isNullOrEmpty(scaleString) || scaleString.contains("d")) {
+			return false;
+		} else {
+			if (scaleString.startsWith("1:")) {
+				// 包含 1:
+				scaleString = scaleString.substring(2);
+			}
+			if (StringUtilties.isNullOrEmpty(scaleString)) {
+				return false;
+			}
+			try {
+				Double aDouble = Double.valueOf(scaleString);
+				if (aDouble > MAX_SCALE_VALUE || aDouble < MIN_SCALE_VALUE) {
+					return false;
+				}
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -21,13 +21,11 @@ import com.supermap.desktop.utilties.StringUtilties;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ import java.util.concurrent.CancellationException;
 public class JDialogServerRelease extends SmDialog implements ActionListener, ItemListener {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String LOCALHOST = "localhost";
@@ -359,7 +357,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		panelMain.add(this.buttonClose, new GridBagConstraints(1, 5, 1, 1, 0, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0,
 				0));
 
-		setSize(new Dimension(450, 650));
+		setSize(new Dimension(450, 750));
 		setLocationRelativeTo(null);
 	}
 

@@ -70,6 +70,8 @@ import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -99,8 +101,6 @@ import java.util.ArrayList;
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
-	private static final double MAX_SCALE_VALUE = 1E10;
-	private static final double MIN_SCALE_VALUE = 1E-10;
 	private MapControl mapControl = null;
 	JScrollPane jScrollPaneChildWindow = null;
 	private LayersTree layersTree = null;
@@ -129,6 +129,24 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	// 地图窗口右键菜单
 	private JPopupMenu formMapContextMenu;
+	private DocumentListener scaleBoxListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			scaleChanged();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			scaleChanged();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			scaleChanged();
+		}
+	};
+
+
 
 	public JPopupMenu getFormMapContextMenu() {
 		return this.formMapContextMenu;
@@ -224,7 +242,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private ItemListener itemListener = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			scaleBox_ItemChange();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				scaleBox_ItemChange();
+			}
 		}
 	};
 
@@ -233,7 +253,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			initCenter();
-			isResetComboBox = false;
 			initScaleComboBox();
 		}
 	};
@@ -488,7 +507,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.pointYField.addKeyListener(this.keyAdapter);
 			addDrag();
 			this.layersTree.addTreeSelectionListener(this.layersTreeSelectionListener);
-			// this.layersTree.addMouseListener(this.layersTreeMouseAdapter);
+
+			((JTextField) this.scaleBox.getEditor().getEditorComponent()).getDocument().addDocumentListener(scaleBoxListener);
 		}
 	}
 
@@ -520,6 +540,15 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			// this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
 		}
 
+	}
+
+	private void scaleChanged() {
+		JTextField textField = (JTextField) scaleBox.getEditor().getEditorComponent();
+		if (!ScaleModel.isLegitScaleString(textField.getText())) {
+			textField.setForeground(Color.red);
+		} else {
+			textField.setForeground(Color.black);
+		}
 	}
 
 	/**
@@ -630,12 +659,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 */
 	protected void scaleBox_ItemChange() {
 		String scaleString = (String) scaleBox.getSelectedItem();
-		int selectIndex = scaleBox.getSelectedIndex();
 		try {
-			if (-1 != selectIndex && !"0.0".equals(scaleString)) {
+			if (ScaleModel.isLegitScaleString(scaleString)) {
 				ScaleModel model = new ScaleModel(scaleString);
 				double value = model.getScale();
-				if (Double.compare(value, mapControl.getMap().getScale()) != 0 && value < MAX_SCALE_VALUE && value > MIN_SCALE_VALUE) {
+				if (Double.compare(value, mapControl.getMap().getScale()) != 0) {
 					isResetComboBox = true;
 					mapControl.getMap().setScale(model.getScale());
 					mapControl.getMap().refresh();
@@ -656,11 +684,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			if (!isResetComboBox) {
 				this.scaleBox.removeAllItems();
-				String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
-				if ("NONE".equals(scale)) {
-					scale = String.valueOf(mapControl.getMap().getScale());
-				}
-				this.scaleBox.addItem(scale);
+
 				this.scaleBox.addItem(ScaleModel.SCALE_5000);
 				this.scaleBox.addItem(ScaleModel.SCALE_10000);
 				this.scaleBox.addItem(ScaleModel.SCALE_25000);
@@ -670,6 +694,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				this.scaleBox.addItem(ScaleModel.SCALE_500000);
 				this.scaleBox.addItem(ScaleModel.SCALE_1000000);
 			}
+			String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
+			if ("NONE".equals(scale)) {
+				scale = String.valueOf(mapControl.getMap().getScale());
+			}
+			((JTextField) this.scaleBox.getEditor().getEditorComponent()).setText(scale);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
