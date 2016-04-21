@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 
 import com.supermap.desktop.*;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.*;
 import com.supermap.desktop.properties.CommonProperties;
@@ -60,11 +61,19 @@ public class ScaleEnabledContainer extends SmDialog {
 	private ActionListener panelButtonAction;
 	private double[] scales;
 	private MapBoundsPropertyControl control;
-	private TableModelListener tableModelListener =new TableModelListener() {
+	private String[] title = { MapViewProperties.getString("String_Index"), MapViewProperties.getString("String_Scales") };
+	private TableModelListener tableModelListener = new TableModelListener() {
 
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			tableModelListener(e);
+		}
+	};
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			checkButtonState();
 		}
 	};
 
@@ -97,30 +106,33 @@ public class ScaleEnabledContainer extends SmDialog {
 			public void mouseReleased(MouseEvent e) {
 				if (e.getSource() == buttonSelectAll) {
 					table.setRowSelectionInterval(0, table.getRowCount() - 1);
+					checkButtonState();
+					return;
 				}
 				if (e.getSource() == buttonInvertSelect) {
 					selectInvert(table);
+					checkButtonState();
+					return;
 				}
 				if (e.getSource() == buttonDelete) {
 					int[] selectRow = table.getSelectedRows();
-					if (selectRow.length < table.getRowCount()) {
-						((ScaleDisplayModel) table.getModel()).removeRows(selectRow);
-						table.addRowSelectionInterval(0, 0);
-					} else {
-						int[] tempRow = new int[table.getRowCount()];
-						for (int i = 0; i < table.getRowCount(); i++) {
-							tempRow[i] = i;
-						}
-						((ScaleDisplayModel) table.getModel()).removeRows(tempRow);
+					for (int i = selectRow.length - 1; i >= 0; i--) {
+						scaleDisplays.remove(selectRow[i]);
 					}
+					getTable();
+					checkButtonState();
+					return;
 				}
 				if (e.getSource() == buttonImport) {
 					importXml("ImportScales");
+					checkButtonState();
+					return;
 				}
 				if (e.getSource() == buttonExport) {
 					exportXml("ExportScales");
+					checkButtonState();
+					return;
 				}
-				checkButtonState();
 			}
 		};
 		this.panelButtonAction = new ActionListener() {
@@ -130,27 +142,25 @@ public class ScaleEnabledContainer extends SmDialog {
 				if (e.getSource() == buttonOk) {
 					dialogResult = DialogResult.OK;
 					if (scaleDisplays.size() > 0) {
-						try {
-							scales = new double[scaleDisplays.size()];
-							for (int i = 0; i < scales.length; i++) {
-								scales[i] = new ScaleModel(scaleDisplays.get(i).getScale()).getScale();
-							}
-
-						} catch (InvalidScaleException ex) {
-							ex.printStackTrace();
-						}
+						removeRepeatStr(scaleDisplays);
+						scales = sort(scaleDisplays);
+						setPropertyControlFlag(true);
 					} else {
 						scales = new double[0];
+						setPropertyControlFlag(false);
 					}
-					MapBoundsPropertyControl.isVisibleScalesEnabled = true;
 					MapBoundsPropertyControl.visibleScales = scales;
 					control.verify();
-					control.getCheckBoxIsVisibleScalesEnabled().setSelected(true);
 					dispose();
 				}
 				if (e.getSource() == buttonCancel) {
 					dispose();
 				}
+			}
+
+			private void setPropertyControlFlag(boolean flag) {
+				MapBoundsPropertyControl.isVisibleScalesEnabled = flag;
+				control.getCheckBoxIsVisibleScalesEnabled().setSelected(flag);
 			}
 		};
 		unRegistEvents();
@@ -161,15 +171,74 @@ public class ScaleEnabledContainer extends SmDialog {
 		this.buttonExport.addMouseListener(this.localMouseAdapter);
 		this.buttonOk.addActionListener(this.panelButtonAction);
 		this.buttonCancel.addActionListener(this.panelButtonAction);
+		this.table.addMouseListener(this.mouseAdapter);
 	}
 
-	protected void tableModelListener(TableModelEvent e) {
+	private void removeRepeatStr(List<ScaleDisplay> scaleDisplays) {
+		int count = scaleDisplays.size();
+		for (int i = 0; i < count; i++) {
+			for (int j = i + 1; j < count; j++) {
+				if (scaleDisplays.get(i).getScale().equals(scaleDisplays.get(j).getScale())) {
+					scaleDisplays.remove(i);
+					count--;
+				}
+			}
+		}
+	}
+
+	private double[] sort(List<ScaleDisplay> scaleDisplays) {
+		double[] needList = new double[scaleDisplays.size()];
+		for (int i = 0; i < scaleDisplays.size(); i++) {
+			try {
+				needList[i] = new ScaleModel(scaleDisplays.get(i).getScale()).getScale();
+			} catch (InvalidScaleException e) {
+				e.printStackTrace();
+			}
+		}
+		for (int i = 0; i < needList.length; i++) {
+			for (int j = i + 1; j < needList.length; j++) {
+				if (Double.compare(needList[i], needList[j]) > 0) {
+					double tempDouble = needList[i];
+					needList[i] = needList[j];
+					needList[j] = tempDouble;
+				}
+			}
+		}
+		scaleDisplays.clear();
+		for (int i = 0; i < needList.length; i++) {
+			try {
+				scaleDisplays.add(new ScaleDisplay(new ScaleModel(needList[i]).getScaleCaption()));
+			} catch (InvalidScaleException e) {
+				e.printStackTrace();
+			}
+		}
+		return needList;
+	}
+
+	private void tableModelListener(TableModelEvent e) {
+		checkButtonState();
 		int selectRow = e.getFirstRow();
+		if (selectRow > scaleDisplays.size()) {
+			return;
+		}
 		String oldScale = scaleDisplays.get(selectRow).getScale();
 		String selectScale = table.getValueAt(selectRow, 1).toString();
-		if (!scaleIsRight(selectScale)) {
-			table.setValueAt(oldScale, selectRow, 1);
+		if (scaleIsRight(selectScale) && selectScale.contains(":")) {
+			setTableCell(selectRow, selectScale);
 		}
+		if (scaleIsRight(selectScale) && !selectScale.contains(":")) {
+			setTableCell(selectRow, "1:" + selectScale);
+		}
+		if (!scaleIsRight(selectScale)) {
+			setTableCell(selectRow, oldScale);
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_ErrorInput"));
+		}
+	}
+
+	private void setTableCell(int selectRow, String selectScale) {
+		scaleDisplays.get(selectRow).setScale(selectScale);
+		getTable();
+		return;
 	}
 
 	private boolean scaleIsRight(String scale) {
@@ -179,7 +248,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		}
 		if (scale.contains(":")) {
 			String[] scaleList = scale.split(":");
-			if (scaleList[0].equals("1") && StringUtilties.isNumber(scale)) {
+			if (scaleList[0].equals("1") && StringUtilties.isNumber(scaleList[1])) {
 				scaleIsRight = true;
 			}
 		}
@@ -194,11 +263,12 @@ public class ScaleEnabledContainer extends SmDialog {
 		this.buttonExport.removeMouseListener(this.localMouseAdapter);
 		this.buttonOk.removeActionListener(this.panelButtonAction);
 		this.buttonCancel.removeActionListener(this.panelButtonAction);
+		this.table.removeMouseListener(this.mouseAdapter);
 	}
 
 	protected void importXml(String string) {
 		try {
-			String filePath = getFilePath(string);
+			String filePath = getFilePath(string, false);
 			File file = new File(filePath);
 			FileInputStream fis = new FileInputStream(file);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -206,21 +276,30 @@ public class ScaleEnabledContainer extends SmDialog {
 			while ((tempstr = br.readLine()) != null) {
 				if (tempstr.contains("<Scale>")) {
 					tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
-					int count = table.getRowCount() + 1;
-					if (count > 1) {
-						count = Integer.valueOf(table.getValueAt(count - 2, 0).toString()) + 1;
+					if (!haveScale(scaleDisplays, tempstr)) {
+						scaleDisplays.add(new ScaleDisplay(tempstr));
 					}
-					ScaleDisplay scaleDisplay = new ScaleDisplay(tempstr);
-					((ScaleDisplayModel) table.getModel()).addRow(scaleDisplay);
 				}
 			}
+			sort(scaleDisplays);
+			getTable();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	private String getFilePath(String module) {
+	private boolean haveScale(List<ScaleDisplay> tempScaleDisplays, String tempstr) {
+		boolean haveScale = false;
+		for (int i = 0; i < tempScaleDisplays.size(); i++) {
+			if (tempScaleDisplays.get(i).getScale().equals(tempstr)) {
+				haveScale = true;
+			}
+		}
+		return haveScale;
+	}
+
+	private String getFilePath(String module, boolean isOutport) {
 		String filePath = "";
 		if (!SmFileChoose.isModuleExist(module)) {
 			String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
@@ -228,7 +307,9 @@ public class ScaleEnabledContainer extends SmDialog {
 					"OpenMany");
 		}
 		SmFileChoose fileChoose = new SmFileChoose(module);
-		fileChoose.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
+		if (isOutport) {
+			fileChoose.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
+		}
 		int state = fileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = fileChoose.getFilePath();
@@ -237,7 +318,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	protected void exportXml(String module) {
-		createXml(getFilePath(module));
+		createXml(getFilePath(module, true));
 	}
 
 	private void createXml(String filename) {
@@ -249,9 +330,11 @@ public class ScaleEnabledContainer extends SmDialog {
 			scales.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
 			scales.setAttribute("version", "8.0.x");
 			document.appendChild(scales);
-			for (int i = 0; i < table.getRowCount(); i++) {
+			removeRepeatStr(scaleDisplays);
+			sort(scaleDisplays);
+			for (int i = 0; i < scaleDisplays.size(); i++) {
 				Element scale = document.createElement("Scale");
-				String scaleCaption = table.getValueAt(i, 1).toString();
+				String scaleCaption = scaleDisplays.get(i).getScale();
 				scale.appendChild(document.createTextNode(scaleCaption));
 				scale.setNodeValue(scaleCaption);
 				scales.appendChild(scale);
@@ -261,13 +344,16 @@ public class ScaleEnabledContainer extends SmDialog {
 			DOMSource source = new DOMSource(document);
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			if (StringUtilties.isNullOrEmpty(filename)) {
+				return;
+			}
 			File file = new File(filename);
 			if (!file.exists()) {
 				file.createNewFile();
+				parseFileToXML(transformer, source, file);
+			} else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_RenameFile_Message"))) {
+				parseFileToXML(transformer, source, file);
 			}
-			PrintWriter pw = new PrintWriter(file);
-			StreamResult streamResult = new StreamResult(pw);
-			transformer.transform(source, streamResult);
 		} catch (DOMException e) {
 			e.printStackTrace();
 		} catch (TransformerConfigurationException e) {
@@ -281,6 +367,12 @@ public class ScaleEnabledContainer extends SmDialog {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void parseFileToXML(Transformer transformer, DOMSource source, File file) throws FileNotFoundException, TransformerException {
+		PrintWriter pw = new PrintWriter(file);
+		StreamResult streamResult = new StreamResult(pw);
+		transformer.transform(source, streamResult);
 	}
 
 	/**
@@ -314,12 +406,16 @@ public class ScaleEnabledContainer extends SmDialog {
 		} else {
 			resetButtonState(false);
 		}
+		if (this.table.getSelectedRow() >= 0) {
+			this.buttonDelete.setEnabled(true);
+		} else {
+			this.buttonDelete.setEnabled(false);
+		}
 	}
 
 	private void resetButtonState(boolean enable) {
 		this.buttonSelectAll.setEnabled(enable);
 		this.buttonInvertSelect.setEnabled(enable);
-		this.buttonDelete.setEnabled(enable);
 		this.buttonExport.setEnabled(enable);
 	}
 
@@ -377,10 +473,8 @@ public class ScaleEnabledContainer extends SmDialog {
 	private void initScrollPane() {
 		this.scaleDisplays = new ArrayList<ScaleEnabledContainer.ScaleDisplay>();
 		this.scrollPane = new JScrollPane();
-		this.table = new JTable(new ScaleDisplayModel(scaleDisplays));
-		this.table.getModel().addTableModelListener(this.tableModelListener);
-		this.table.getColumn(MapViewProperties.getString("String_Index")).setPreferredWidth(20);
-		this.table.repaint();
+		this.table = new JTable();
+		getTable();
 		this.scrollPane.setViewportView(this.table);
 	}
 
@@ -412,23 +506,33 @@ public class ScaleEnabledContainer extends SmDialog {
 			double scaleBeforeD = Double.parseDouble(scaleBefore.split(":")[1]);
 			double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
 			ScaleDisplay scaleInsert = new ScaleDisplay("1:" + String.valueOf((scaleBeforeD + scaleNowD) / 2));
-			((ScaleDisplayModel) table.getModel()).insertRow(selectRow, scaleInsert);
-			table.addRowSelectionInterval(selectRow, selectRow);
-		} else {
-			// 没有选中项，或者选中项为0
-			int index = table.getRowCount() + 1;
+			this.scaleDisplays.add(selectRow, scaleInsert);
+			getTable();
+			this.table.addRowSelectionInterval(selectRow, selectRow);
+			checkButtonState();
+			return;
+		}
+		if (table.getRowCount() == 0) {
+			// 表中没有数据时
 			double scale = map.getScale();
 			String scaleCaption = new ScaleModel(scale).getScaleCaption();
-			try {
-				double tempScale = scale * Math.pow(2, index - 1);
-				scaleCaption = new ScaleModel(tempScale).getScaleCaption();
-			} catch (InvalidScaleException e1) {
-				e1.printStackTrace();
-			}
 			ScaleDisplay scaleDisplay = new ScaleDisplay(scaleCaption);
-			((ScaleDisplayModel) table.getModel()).addRow(scaleDisplay);
+			this.scaleDisplays.add(scaleDisplay);
+			getTable();
+			checkButtonState();
+			return;
 		}
-		checkButtonState();
+
+		if (table.getRowCount() > 0 && selectRow < 0) {
+			// 没有选中项，但是表中有数据时
+			String scaleEnd = table.getValueAt(table.getRowCount() - 1, 1).toString();
+			double scaleEndD = Double.parseDouble(scaleEnd.split(":")[1]);
+			ScaleDisplay scaleLast = new ScaleDisplay("1:" + String.valueOf(scaleEndD / 2));
+			this.scaleDisplays.add(scaleLast);
+			getTable();
+			checkButtonState();
+			return;
+		}
 	}
 
 	class AddScalePanel extends JPanel {
@@ -523,6 +627,7 @@ public class ScaleEnabledContainer extends SmDialog {
 						} catch (InvalidScaleException e1) {
 							e1.printStackTrace();
 						}
+						ToolBarPopuMenu.this.setVisible(false);
 					} else {
 						try {
 							if (scaleExist()) {
@@ -530,8 +635,8 @@ public class ScaleEnabledContainer extends SmDialog {
 							} else {
 								try {
 									ScaleDisplay scaleDisplay = new ScaleDisplay(new ScaleModel(map.getScale()).getScaleCaption());
-									((ScaleDisplayModel) table.getModel()).addRow(scaleDisplay);
-
+									scaleDisplays.add(scaleDisplay);
+									getTable();
 								} catch (InvalidScaleException e1) {
 									e1.printStackTrace();
 								}
@@ -540,6 +645,7 @@ public class ScaleEnabledContainer extends SmDialog {
 							e1.printStackTrace();
 						}
 						checkButtonState();
+						ToolBarPopuMenu.this.setVisible(false);
 					}
 				}
 
@@ -589,101 +695,17 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	}
 
-	class ScaleDisplayModel extends AbstractTableModel {
+	class LocalDefualTableModel extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
-		private String[] title = { MapViewProperties.getString("String_Index"), MapViewProperties.getString("String_Scales") };
-		private List<ScaleDisplay> scaleDisplays = new ArrayList<ScaleEnabledContainer.ScaleDisplay>();
 
-		public ScaleDisplayModel(List<ScaleDisplay> scaleDisplays) {
-			this.scaleDisplays = scaleDisplays;
-		}
-
-		@Override
-		public int getRowCount() {
-			return this.scaleDisplays.size();
-		}
-
-		@Override
-		public int getColumnCount() {
-			return title.length;
-		}
-
-		public void insertRow(int index, ScaleDisplay scaleDisplay) {
-			this.scaleDisplays.add(index, scaleDisplay);
-			fireTableRowsInserted(0, getRowCount());
-		}
-
-		public void addRow(ScaleDisplay scaleDisplay) {
-			this.scaleDisplays.add(scaleDisplay);
-			fireTableRowsInserted(0, getRowCount());
-		}
-
-		public void removeRow(int i) {
-			this.scaleDisplays.remove(i);
-			fireTableRowsDeleted(0, getRowCount());
-		}
-
-		public void removeRows(int[] rows) {
-			ArrayList<ScaleDisplay> removeInfo = new ArrayList<ScaleDisplay>();
-			if (rows.length > 0) {
-				for (int i = 0; i < rows.length; i++) {
-					removeInfo.add(this.scaleDisplays.get(rows[i]));
-				}
-				this.scaleDisplays.removeAll(removeInfo);
-				fireTableRowsDeleted(0, getRowCount());
-			}
-		}
-
-		public void updateRows(List<ScaleDisplay> tempScaleDisplay) {
-			this.scaleDisplays = (ArrayList<ScaleDisplay>) tempScaleDisplay;
-			fireTableRowsUpdated(0, getRowCount());
-		}
-
-		@Override
-		public String getColumnName(int columnIndex) {
-			return title[columnIndex];
-		}
-
-		@Override
-		public Class<?> getColumnClass(int columnIndex) {
-			return String.class;
+		public LocalDefualTableModel(Object[][] obj, String[] name) {
+			super(obj, title);
 		}
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex == 1) {
-				return true;
-			}
-			return false;
+			return columnIndex == 1;
 		}
-
-		// 得到某行的数据
-		public ScaleDisplay getTagValueAt(int tag) {
-			return scaleDisplays.get(tag);
-		}
-
-		// 得到选中的所有行的数据
-		public List<ScaleDisplay> getTagValueAt(int[] tag) {
-			ArrayList<ScaleDisplay> result = new ArrayList<ScaleDisplay>();
-			for (int i = 0; i < tag.length; i++) {
-				result.add(scaleDisplays.get(i));
-			}
-			return result;
-		}
-
-		// 在表格中填充数据
-		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			ScaleDisplay scaleDisplay = scaleDisplays.get(rowIndex);
-			if (0 == columnIndex) {
-				return rowIndex + 1;
-			}
-			if (1 == columnIndex) {
-				return scaleDisplay.getScale();
-			}
-			return "";
-		}
-
 	}
 
 	public double[] getScales() {
@@ -699,7 +721,18 @@ public class ScaleEnabledContainer extends SmDialog {
 				scaleDisplays.add(tempdDisplay);
 			}
 		}
-		table.setModel(new ScaleDisplayModel(scaleDisplays));
+		getTable();
+	}
+
+	private void getTable() {
+		int row = scaleDisplays.size();
+		this.table.setModel(new LocalDefualTableModel(new Object[row][2], title));
+		for (int i = 0; i < row; i++) {
+			this.table.setValueAt(i + 1, i, 0);
+			this.table.setValueAt(scaleDisplays.get(i).getScale(), i, 1);
+		}
+		this.table.getColumn(MapViewProperties.getString("String_Index")).setPreferredWidth(40);
+		this.table.getModel().removeTableModelListener(this.tableModelListener);
 		this.table.getModel().addTableModelListener(this.tableModelListener);
 	}
 

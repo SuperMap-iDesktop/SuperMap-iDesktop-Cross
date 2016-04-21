@@ -1,24 +1,15 @@
 package com.supermap.desktop.Action;
 
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashMap;
-
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
-import javax.swing.JPopupMenu;
+import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.mapping.Map;
 
-public class TransparentBackground extends JPopupMenu {
+public class TransparentBackground extends JPanel {
 	/**
 	 * 
 	 */
@@ -35,7 +26,8 @@ public class TransparentBackground extends JPopupMenu {
 	public static HashMap<String, Map> queryGridMap = new HashMap<String, Map>();
 
 	private TransparentBackground() {
-		setBorder(new LineBorder(Color.LIGHT_GRAY));
+		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		this.setBackground(new Color(255, 255, 255, 220));
 		initResources();
 		initComponents();
 	}
@@ -43,6 +35,7 @@ public class TransparentBackground extends JPopupMenu {
 	public static TransparentBackground getInstance() {
 		if (null == transparent) {
 			transparent = new TransparentBackground();
+			transparent.setSize(220, 200);
 		}
 		return transparent;
 	}

@@ -119,8 +119,8 @@ public class CommonFunction {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "vct"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "dbf"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_FileType"),
-						"CommonFunction", "OpenMany");
+				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			} else {
 				String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[0],
 						FileTypeLocale.getExtensionsnewforlinux()), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[1], "shp", "grd",
@@ -132,8 +132,8 @@ public class CommonFunction {
 						FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"), SmFileChoose.createFileFilter(
 						FileTypeLocale.getDescriptionnewforlinux()[8], "vct"), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[9],
 						"dbf"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_FileType"),
-						"CommonFunction", "OpenMany");
+				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			}
 
 		}
@@ -666,7 +666,7 @@ public class CommonFunction {
 				}
 				lblDataimportType.setText(DataConversionProperties.getString("String_FormImportIMG_Text"));
 			}
-			
+
 			if (fileType.equalsIgnoreCase(FileTypeLocale.PNG_STRING)) {
 				// 将右边替换为放置png文件类型的容器
 				if (1 != fileInfos.size()) {
@@ -925,12 +925,12 @@ public class CommonFunction {
 	public static void replace(JPanel parentPanel, JPanel newPanel) {
 		for (int i = 0; i < parentPanel.getComponentCount(); i++) {
 			if (parentPanel.getComponent(i) instanceof JScrollPane) {
-				((JScrollPane)parentPanel.getComponent(i)).setViewportView(newPanel);
+				((JScrollPane) parentPanel.getComponent(i)).setViewportView(newPanel);
 			}
 		}
-//		parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
-//				.setWeight(1, 3));
-//		newPanel.setPreferredSize(new Dimension(483,300));
+		// parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
+		// .setWeight(1, 3));
+		// newPanel.setPreferredSize(new Dimension(483,300));
 		parentPanel.updateUI();
 	}
 
@@ -995,6 +995,7 @@ public class CommonFunction {
 	 * @param fileInfos
 	 */
 	public static void importData(JTable table, List<ImportFileInfo> fileInfos) {
+		try{
 		int[] selected = table.getSelectedRows();
 		final JTable jTable = table;
 		final List<ImportFileInfo> fileInfosTemp = fileInfos;
@@ -1007,6 +1008,9 @@ public class CommonFunction {
 			}
 		} else {
 			UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ImportSettingPanel_Cue_AddFiles"));
+		}
+		}catch(Exception e){
+			
 		}
 	}
 

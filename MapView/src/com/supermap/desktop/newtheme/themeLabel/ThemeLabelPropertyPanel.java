@@ -767,7 +767,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themelabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themelabelLayer.getTheme();
 		themeLabelTemp.setLabelExpression(this.themeLabel.getLabelExpression());
