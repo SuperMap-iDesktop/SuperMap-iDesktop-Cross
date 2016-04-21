@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 class LayerNodeDecorator implements TreeNodeDecorator {
 	@Override
 	public void decorate(JLabel label, TreeNodeData data) {
-		if (data.getType().equals(NodeDataType.LAYER) && !((Layer) data.getData()).isDisposed()) {
+		if (data.getType() == NodeDataType.LAYER && !((Layer) data.getData()).isDisposed()) {
 			Layer layer = (Layer) data.getData();
 			try {
 				label.setText(layer.getCaption());
@@ -60,7 +60,13 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 					Graphics graphics = bufferedImage.getGraphics();
 					DatasetType type = datasetVector.getType();
 					GeoStyle geoStyle;
-					if (type == DatasetType.POINT || type == DatasetType.POINT3D) {
+					if (((DatasetVector) dataset).getParentDataset() != null) {
+						if (dataset.getType() == DatasetType.POINT) {
+							graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
+						} else if (dataset.getType() == DatasetType.POINT3D) {
+							graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
+						}
+					} else if (type == DatasetType.POINT || type == DatasetType.POINT3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -99,8 +105,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 
 						}
 						icon.setImage(bufferedImage);
-					}
-					if (type == DatasetType.LINE || type == DatasetType.LINE3D) {
+					} else if (type == DatasetType.LINE || type == DatasetType.LINE3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -114,8 +119,7 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 						geometry.setStyle(geoStyle2);
 						Toolkit.draw(geometry, resources, graphics);
 						icon.setImage(bufferedImage);
-					}
-					if (type == DatasetType.REGION || type == DatasetType.REGION3D) {
+					} else if (type == DatasetType.REGION || type == DatasetType.REGION3D) {
 						LayerSettingVector layerSettingVector = (LayerSettingVector) layer.getAdditionalSetting();
 						if (layerSettingVector == null) {
 							layerSettingVector = new LayerSettingVector();
@@ -145,6 +149,8 @@ class LayerNodeDecorator implements TreeNodeDecorator {
 						graphics.drawImage(getImage(DatasetType.PARAMETRICLINE), 0, 0, label);
 					} else if (type.equals(DatasetType.PARAMETRICREGION)) {
 						graphics.drawImage(getImage(DatasetType.PARAMETRICREGION), 0, 0, label);
+					} else if (type == DatasetType.NETWORK3D) {
+						graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
 					}
 					icon.setImage(bufferedImage);
 				}

@@ -102,12 +102,6 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 		vectorFileDecoratorList.add(vectorFileList);
 		decoratorsMap.put(NodeDataType.LAYER3D_VECTOR_FILE, vectorFileDecoratorList);
 
-//		ArrayList<ArrayList<TreeNodeDecorator>> themeDecoratorList = prepareDecoratorListsForLayer3D();
-//		ArrayList<TreeNodeDecorator> themeList = new ArrayList<TreeNodeDecorator>();
-//		themeList.add(new Layer3DDatasetNodeDecorator());
-//		themeDecoratorList.add(themeList);
-//		decoratorsMap.put(NodeDataType.LAYER3D_DATASET, themeDecoratorList);
-
 		ArrayList<ArrayList<TreeNodeDecorator>> uniqueItemDecoratorList = prepareDecoratorListsForTheme3DItemGeneral();
 		ArrayList<TreeNodeDecorator> uniqueItemList = new ArrayList<TreeNodeDecorator>();
 		uniqueItemList.add(new Theme3DItemGeneralNodeDecorator());
@@ -163,6 +157,9 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 		decoratorsMap.put(NodeDataType.LAYER3DS, layer3DsDecoratorList);
 
 		ArrayList<ArrayList<TreeNodeDecorator>> nullDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
+		ArrayList<TreeNodeDecorator> vector2DList1 = new ArrayList<TreeNodeDecorator>();
+		vector2DList1.add(new Layer3DDatasetNodeDecorator());
+		nullDecoratorList.add(vector2DList1);
 		decoratorsMap.put(NodeDataType.UNKNOWN, nullDecoratorList);
 
 		// add by xuzw 2010-07-19 Layer3DMap需要的地图相关的一些装饰器
@@ -186,7 +183,7 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		ArrayList<ArrayList<TreeNodeDecorator>> topologyDecoratorList = prepareDecoratorListsForLayer();
 		ArrayList<TreeNodeDecorator> topologyList = new ArrayList<TreeNodeDecorator>();
-		topologyList.add(new LayerNodeDecorator());
+		topologyList.add(new Layer3DDatasetNodeDecorator());
 		topologyDecoratorList.add(topologyList);
 		decoratorsMap.put(NodeDataType.LAYER, topologyDecoratorList);
 
