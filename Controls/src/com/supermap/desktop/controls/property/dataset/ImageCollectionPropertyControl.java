@@ -16,11 +16,10 @@ import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.PixelFormatUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,22 +53,6 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 
 	private double noValue = 0;
 
-	private DocumentListener noValueListener = new DocumentListener() {
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			noValueChanged();
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			noValueChanged();
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			noValueChanged();
-		}
-	};
 	private ActionListener showBoundsListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -112,6 +95,9 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				String currentNoValue = smTextFieldNoValue.getText();
+				if (StringUtilties.isNullOrEmpty(currentNoValue)) {
+					return false;
+				}
 				if (currentNoValue.contains("d")) {
 					return false;
 				} else
@@ -120,6 +106,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 					} catch (Exception e) {
 						return false;
 					}
+				noValueChanged();
 				return true;
 			}
 
@@ -206,7 +193,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 
 	private void fillComponents() {
 		this.smTextFieldBandCount.setText(Integer.toString(this.datasetImageCollection.getBandCount()));
-		this.smTextFieldNoValue.setText(DoubleUtilties.toString(noValue));
+		this.smTextFieldNoValue.setText(DoubleUtilties.toString(noValue, 6));
 		this.smTextFieldHasPyramid.setText(CommonProperties.getString(this.datasetImageCollection.getHasPyramid() ? CommonProperties.True : CommonProperties.False));
 		this.smTextFieldDatasetCount.setText(String.valueOf(datasetImageCollection.getCount()));
 		this.smTextFieldPixelType.setText(PixelFormatUtilties.toString(datasetImageCollection.getPixelFormat()));
@@ -221,7 +208,6 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
-		smTextFieldNoValue.getDocument().addDocumentListener(noValueListener);
 		smButtonSetShowBounds.addActionListener(showBoundsListener);
 		smButtonClear.addActionListener(buttonClearListener);
 		smButtonReset.addActionListener(buttonResetListener);
@@ -230,7 +216,6 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 
 
 	private void unregisterEvents() {
-		smTextFieldNoValue.getDocument().removeDocumentListener(noValueListener);
 		smButtonSetShowBounds.removeActionListener(showBoundsListener);
 		smButtonClear.removeActionListener(buttonClearListener);
 		smButtonReset.removeActionListener(buttonResetListener);
@@ -267,6 +252,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 		if (dialog.showDialog() == DialogResult.OK) {
 			this.datasetImageCollection.setClipRegion(dialog.getRegion());
 			dialog.disposeRegion();
+			dialog.dispose();
 			refreshMap();
 			Application.getActiveApplication().getOutput()
 					.output(MessageFormat.format(ControlsProperties.getString("String_Message_SetClipRegionSuccess"), this.datasetImageCollection.getName()));

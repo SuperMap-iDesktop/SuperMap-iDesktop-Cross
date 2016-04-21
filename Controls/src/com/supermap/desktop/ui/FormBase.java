@@ -12,6 +12,7 @@ import com.supermap.desktop.Interface.IDockbarManager;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IFrameMenuManager;
 import com.supermap.desktop.Interface.IPropertyManager;
@@ -312,7 +313,9 @@ public class FormBase extends JFrame implements IFormMain {
 						if (null != dataFlavors[i] && null != transferable.getTransferData(dataFlavors[i])) {
 							Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 							if (0 < datasets.length) {
-								MapViewUtilties.addDatasetsToNewWindow(datasets, true);
+								if (Application.getActiveApplication().getActiveForm() == null || Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+									MapViewUtilties.addDatasetsToNewWindow(datasets, true);
+								}
 							} else {
 								WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 								DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
