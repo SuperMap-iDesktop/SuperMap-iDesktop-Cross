@@ -109,7 +109,7 @@ public class LayerPropertyContainer extends JPanel {
 
 		@Override
 		public void selectableChanged(LayerSelectableChangedEvent arg0) {
-			if (!arg0.getLayer().isSelectable()) {
+			if (!arg0.getLayer().isSelectable() && null != arg0.getLayer().getSelection()) {
 				arg0.getLayer().getSelection().clear();
 			}
 			layerPropertyChange();
@@ -181,22 +181,28 @@ public class LayerPropertyContainer extends JPanel {
 		this.panelContainer = new JPanel();
 		this.panelContainer.setLayout(new BoxLayout(this.panelContainer, BoxLayout.Y_AXIS));
 		JScrollPane scrollPaneContainer = new JScrollPane(this.panelContainer);
-//		scrollPaneContainer.setVerticalScrollBar(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+		// scrollPaneContainer.setVerticalScrollBar(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 		scrollPaneContainer.setBorder(null);
 
 		this.checkBoxIsAutoApply = new JCheckBox("IsAutoApply");
 		this.buttonApply = new SmButton("Apply");
 
 		this.setLayout(new GridBagLayout());
-		this.add(scrollPaneContainer, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10));
-		this.add(this.checkBoxIsAutoApply, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0));
-		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 10, 5, 10));
+		this.add(
+				scrollPaneContainer,
+				new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER)
+						.setInsets(10, 10, 5, 10));
+		this.add(
+				this.checkBoxIsAutoApply,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST)
+						.setInsets(0, 10, 5, 0));
+		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST)
+				.setInsets(0, 10, 5, 10));
 
-
-//		GroupLayout gl_mainContent = new GroupLayout(this);
-//		gl_mainContent.setAutoCreateContainerGaps(true);
-//		gl_mainContent.setAutoCreateGaps(true);
-//		this.setLayout(gl_mainContent);
+		// GroupLayout gl_mainContent = new GroupLayout(this);
+		// gl_mainContent.setAutoCreateContainerGaps(true);
+		// gl_mainContent.setAutoCreateGaps(true);
+		// this.setLayout(gl_mainContent);
 
 		// @formatter:off
 //		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)

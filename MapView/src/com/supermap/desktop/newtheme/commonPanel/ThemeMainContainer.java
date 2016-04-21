@@ -159,9 +159,10 @@ public class ThemeMainContainer extends JPanel {
 
 			@Override
 			public void activeFormChanged(ActiveFormChangedEvent e) {
-				if (null != e.getOldActiveForm() && null != ((FormMap) e.getOldActiveForm()).getMapControl()) {
-					oldLayer = ((FormMap) e.getOldActiveForm()).getMapControl().getMap().getLayers().get(0);
-					updateProperty();
+				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()) {
+					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
+					panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(tempLayer));
+					updateProperty(tempLayer);
 				}
 			}
 		};
@@ -245,6 +246,8 @@ public class ThemeMainContainer extends JPanel {
 				if (null == dockbarThemeContainer.getComponent()) {
 					return;
 				}
+				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
 				if (null != panel && isLayerPath(e.getNewLeadSelectionPath())) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
@@ -279,23 +282,16 @@ public class ThemeMainContainer extends JPanel {
 
 	public void updateLayerProperty(final TreePath path) {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
-		oldLayer = getLayerByPath(path);
-		if (null != oldLayer && !oldLayer.isDisposed() && tree.getRowForPath(path) < 0) {
+		if (null != path && tree.getRowForPath(path) < 0) {
 			// 树的当前节点已经被删除，修改layerPropertyChanged
 			setLayerPropertyChanged(false);
 		}
-		updateProperty();
+		updateProperty(oldLayer);
 	}
 
-	private void updateProperty() {
-		// 新线程解决关闭数据集是lay对象释放问题
-		if (null == oldLayer || oldLayer.isDisposed()) {
-			setLayerPropertyChanged(false);
-		} else {
-			panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
-		}
-		if (!checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
-			if (null != panel && JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
+	private void updateProperty(Layer oldLayer) {
+		if (null != oldLayer && null != oldLayer.getTheme() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				panel.unregistActionListener();
 				ThemeGuideFactory.themeTypeContainer.remove(ThemeGuideFactory.getThemeTypeString(oldLayer));

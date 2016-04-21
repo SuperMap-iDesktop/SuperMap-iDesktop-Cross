@@ -43,6 +43,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -729,6 +730,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					themeUnique.setOffsetX(offsetX);
 					themeUnique.setOffsetY(offsetY);
 					refreshColor();
+					for (int i = 0; i < themeUnique.getCount(); i++) {
+						GeoStyle textStyle = themeUnique.getItem(i).getStyle();
+						textStyle.setLineColor(Color.GRAY);
+					}
 					getTable();
 				} else {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));

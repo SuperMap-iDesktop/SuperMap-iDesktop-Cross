@@ -209,6 +209,10 @@ public class ThemeGuideFactory {
 			expression = hasJoinItems(layer, expression);
 			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
 			if (null != themeUnique) {
+				for (int i = 0; i < themeUnique.getCount(); i++) {
+					GeoStyle textStyle = themeUnique.getItem(i).getStyle();
+					textStyle.setLineColor(Color.GRAY);
+				}
 				success = true;
 				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique, layer);
 				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getName() + "@" + THEMETYPE_UNIQUE, themeUniqueContainer);
