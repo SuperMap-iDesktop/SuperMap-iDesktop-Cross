@@ -667,11 +667,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	protected void scaleBox_ItemChange() {
 		String scaleString = (String) scaleBox.getSelectedItem();
 		try {
-			if (ScaleModel.isLegitScaleString(scaleString)) {
+			if (isResetComboBox && ScaleModel.isLegitScaleString(scaleString)) {
 				ScaleModel model = new ScaleModel(scaleString);
 				double value = model.getScale();
 				if (Double.compare(value, mapControl.getMap().getScale()) != 0) {
-					isResetComboBox = true;
 					mapControl.getMap().setScale(model.getScale());
 					mapControl.getMap().refresh();
 				}
@@ -700,6 +699,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				this.scaleBox.addItem(ScaleModel.SCALE_250000);
 				this.scaleBox.addItem(ScaleModel.SCALE_500000);
 				this.scaleBox.addItem(ScaleModel.SCALE_1000000);
+				isResetComboBox = true;
 			}
 			String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
 			if ("NONE".equals(scale)) {
