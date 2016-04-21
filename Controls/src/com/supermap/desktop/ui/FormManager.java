@@ -702,4 +702,9 @@ public class FormManager implements IFormManager {
 	public void setMainForm(IFormMain mainForm) {
 		this.mainForm = mainForm;
 	}
+
+	@Override
+	public boolean isContain(IFormMap formMap) {
+		return childForms.contains(formMap);
+	}
 }

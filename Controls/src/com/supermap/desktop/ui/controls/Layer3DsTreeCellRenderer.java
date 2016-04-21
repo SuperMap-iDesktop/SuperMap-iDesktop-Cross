@@ -158,7 +158,7 @@ public class Layer3DsTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		ArrayList<ArrayList<TreeNodeDecorator>> nullDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
 		ArrayList<TreeNodeDecorator> vector2DList1 = new ArrayList<TreeNodeDecorator>();
-		vector2DList1.add(new Layer3DDatasetNodeDecorator());
+		vector2DList1.add(new LayerUnknowDecorator());
 		nullDecoratorList.add(vector2DList1);
 		decoratorsMap.put(NodeDataType.UNKNOWN, nullDecoratorList);
 

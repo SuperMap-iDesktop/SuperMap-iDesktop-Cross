@@ -24,6 +24,7 @@ import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.controls.DockbarManager;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
@@ -79,7 +80,8 @@ public class FormBase extends JFrame implements IFormMain {
 
 		JMenu menu = new JMenu("loading");
 		this.jMenuBarMain.add(menu);
-		this.setJMenuBar(this.jMenuBarMain);
+		jMenuBarMain.setMinimumSize(new Dimension(20, 23));
+//		this.setJMenuBar(this.jMenuBarMain);
 
 		this.addWindowListener(new FormBaseListener());
 		initDrag();
@@ -142,7 +144,7 @@ public class FormBase extends JFrame implements IFormMain {
 			WorkspaceUtilties.initRecentFileMenu();
 			DatasourceUtilties.initRecentFileMenu();
 
-			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
+//			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
 			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
 
 			this.toolbarManager.setToolbarContainer(this.toolbarManager.getToolbarsContainer());
@@ -152,17 +154,18 @@ public class FormBase extends JFrame implements IFormMain {
 
 			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
 			dockbar.load(workEnvironment);
-			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
+//			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
 			this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
-			SwingUtilities.invokeLater(new Runnable() {
+//			SwingUtilities.invokeLater(new Runnable() {
 
-				@Override
-				public void run() {
-					FormBase.this.setVisible(true);
-				}
-			});
+//				@Override
+//				public void run() {
+//			FormBase.this.setVisible(true);
+
+//				}
+//			});
 			this.formManager.setRootContainer(dockbar.getRootWindow());
 			this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
 
@@ -171,9 +174,21 @@ public class FormBase extends JFrame implements IFormMain {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getComponent());
 			}
 			ToolbarUtilties.updataToolbarsState();
+
+			initLayout(dockbar);
+			FormBase.this.setVisible(true);
+
+
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	private void initLayout(DockbarManager dockbar) {
+		this.setLayout(new GridBagLayout());
+		this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+		this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	@Override
@@ -193,7 +208,7 @@ public class FormBase extends JFrame implements IFormMain {
 			}
 			// end
 
-			this.setJMenuBar(this.jMenuBarMain);
+//			this.setJMenuBar(this.jMenuBarMain);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

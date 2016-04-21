@@ -7,6 +7,7 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -298,6 +299,7 @@ public class LayerPropertyContainer extends JPanel {
 	}
 
 	private void setActiveLayers(Layer[] layers, IFormMap formMap) {
+		queryIsApply();
 		clearPropertyControls();
 
 		if (layers != null && layers.length > 0) {
@@ -308,6 +310,19 @@ public class LayerPropertyContainer extends JPanel {
 			}
 		}
 		panelContainer.updateUI();
+	}
+
+	private void queryIsApply() {
+		if (buttonApply.isEnabled() && Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+			int result = UICommonToolkit.showConfirmDialogYesNo(MapViewProperties.getString("String_LayerProperty_Message"));
+			if (result == JOptionPane.OK_OPTION) {
+				for (AbstractLayerPropertyControl propertyControl : propertyControls) {
+					propertyControl.apply();
+
+				}
+			}
+		}
+		buttonApply.setEnabled(false);
 	}
 
 	private void clearPropertyControls() {

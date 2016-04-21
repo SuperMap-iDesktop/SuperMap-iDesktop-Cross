@@ -141,7 +141,6 @@ public class SmOptionPane extends SmDialog {
 	public int showMessageDialog(String message) {
 		this.buttonNo.setVisible(false);
 		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
-		initTravelPolicy();
 		return showDialog(message);
 	}
 
@@ -154,7 +153,6 @@ public class SmOptionPane extends SmDialog {
 	 */
 	public int showConfirmDialog(String message) {
 		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
-		initTravelPolicy();
 		return showDialog(message);
 	}
 
@@ -163,7 +161,6 @@ public class SmOptionPane extends SmDialog {
 		this.buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
 		this.buttonNo.setText(CommonProperties.getString(CommonProperties.no));
 		this.buttonCancel.setVisible(true);
-		initTravelPolicy();
 		return showDialog(message);
 	}
 
@@ -177,13 +174,18 @@ public class SmOptionPane extends SmDialog {
 	public int showErrorDialog(String message) {
 		this.buttonNo.setVisible(false);
 		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
-		initTravelPolicy();
 		return showDialog(message);
 	}
 
 	public int showWarningDialog(String message) {
 		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
-		initTravelPolicy();
+		return showDialog(message);
+	}
+
+
+	public int showConfirmDialogYesNo(String message) {
+		this.buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
+		this.buttonNo.setText(CommonProperties.getString(CommonProperties.no));
 		return showDialog(message);
 	}
 
@@ -191,6 +193,7 @@ public class SmOptionPane extends SmDialog {
 		this.result = JOptionPane.CLOSED_OPTION;
 		this.textAreaMessage.setText(message);
 		this.buttonYes.requestFocus();
+		initTravelPolicy();
 		this.setVisible(true);
 
 		// 还原修改
@@ -198,7 +201,6 @@ public class SmOptionPane extends SmDialog {
 		this.buttonNo.setText(CommonProperties.getString(CommonProperties.Cancel));
 		this.buttonNo.setVisible(true);
 		this.buttonCancel.setVisible(false);
-		initTravelPolicy();
 		return result;
 	}
 

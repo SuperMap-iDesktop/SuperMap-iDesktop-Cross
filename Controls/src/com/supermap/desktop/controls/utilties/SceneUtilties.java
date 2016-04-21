@@ -17,17 +17,26 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.NodeDataType;
+import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.GeoStyleUtilties;
 import com.supermap.desktop.utilties.ImagePyramidUtilties;
 import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.realspace.Camera;
+import com.supermap.realspace.Feature3D;
+import com.supermap.realspace.Feature3Ds;
+import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DSetting;
 import com.supermap.realspace.Layer3DSettingGrid;
 import com.supermap.realspace.Layer3DSettingImage;
 import com.supermap.realspace.Layer3DSettingVector;
 import com.supermap.realspace.Scene;
+import com.supermap.realspace.ScreenLayer3D;
+import com.supermap.realspace.TerrainLayer;
+import com.supermap.realspace.Theme3DRangeItem;
+import com.supermap.realspace.Theme3DUniqueItem;
 
 import javax.swing.*;
 import java.text.MessageFormat;
@@ -70,7 +79,7 @@ public class SceneUtilties {
 			}
 			if (dataset instanceof DatasetImage || dataset instanceof DatasetGrid) {
 				if (ImagePyramidUtilties.isNeedBuildPyramid(dataset)) {
-					dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_IsBuildPyramid"), dataset.getName()));
+					dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_MustBuildPyramid"), dataset.getName()));
 					if (!isUsedAsDefault) {
 						dialogConfirm.showDialog();
 						isUsedAsDefault = dialogConfirm.isUsedAsDefault();
@@ -263,5 +272,31 @@ public class SceneUtilties {
 				scene.ensureVisible(geometry.getBounds());
 			}
 		}
+	}
+
+	public static boolean getObjectVisitble(TreeNodeData treeNode) {
+		boolean visible = true;
+		try {
+			if (treeNode.getType() == NodeDataType.UNKNOWN || treeNode.getType() == NodeDataType.LAYER3DS || treeNode.getType() == NodeDataType.TERRAIN_LAYERS) {
+				visible = false;
+			} else if (treeNode.getType() == NodeDataType.SCREEN_LAYER3D) {
+				visible = ((ScreenLayer3D) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.LAYER3D_DATASET || treeNode.getType() == NodeDataType.LAYER_IMAGE || treeNode.getType() == NodeDataType.LAYER_GRID) {
+				visible = ((Layer3D) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.TERRAIN_LAYER) {
+				visible = ((TerrainLayer) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.FEATURE3DS) {
+				visible = ((Feature3Ds) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.FEATURE3D) {
+				visible = ((Feature3D) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.THEME3D_UNIQUE_ITEM) {
+				visible = ((Theme3DUniqueItem) treeNode.getData()).isVisible();
+			} else if (treeNode.getType() == NodeDataType.THEME3D_RANGE_ITEM) {
+				visible = ((Theme3DRangeItem) treeNode.getData()).isVisible();
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return visible;
 	}
 }

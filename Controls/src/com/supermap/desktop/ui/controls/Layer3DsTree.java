@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -353,7 +354,13 @@ public class Layer3DsTree extends JTree {
 			TreeNodeData layer3DNodeData;
 			if (layer3D instanceof Layer3DDataset) {
 				Layer3DDataset layer3DDataset = (Layer3DDataset) layer3D;
-				layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER3D_DATASET);
+				if (((Layer3DDataset) layer3D).getDataset().getType() == DatasetType.IMAGE) {
+					layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER_IMAGE);
+				} else if (((Layer3DDataset) layer3D).getDataset().getType() == DatasetType.GRID) {
+					layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER_GRID);
+				} else {
+					layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER3D_DATASET);
+				}
 			} else if (layer3D instanceof Layer3DImageFile) {
 				layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
 			} else if (layer3D instanceof Layer3DKML) {
@@ -518,7 +525,14 @@ public class Layer3DsTree extends JTree {
 		DefaultTreeModel model = (DefaultTreeModel) getModel();
 		TreeNodeData layer3DNodeData;
 		if (layer3D instanceof Layer3DDataset) {
-			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_DATASET);
+			Layer3DDataset layer3DDataset = (Layer3DDataset) layer3D;
+			if (((Layer3DDataset) layer3D).getDataset().getType() == DatasetType.IMAGE) {
+				layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER_IMAGE);
+			} else if (((Layer3DDataset) layer3D).getDataset().getType() == DatasetType.GRID) {
+				layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER_GRID);
+			} else {
+				layer3DNodeData = new TreeNodeData(layer3DDataset, NodeDataType.LAYER3D_DATASET);
+			}
 		} else if (layer3D instanceof Layer3DImageFile) {
 			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_IMAGE_FILE);
 		} else if (layer3D instanceof Layer3DKML) {
@@ -527,8 +541,10 @@ public class Layer3DsTree extends JTree {
 			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MODEL);
 		} else if (layer3D instanceof Layer3DMap) {
 			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_MAP);
-		} else {
+		} else if (layer3D instanceof Layer3DVectorFile) {
 			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.LAYER3D_VECTOR_FILE);
+		} else {
+			layer3DNodeData = new TreeNodeData(layer3D, NodeDataType.UNKNOWN);
 		}
 		// 将节点插入到与图层索引一致处
 		DefaultMutableTreeNode itemNode = new DefaultMutableTreeNode(layer3DNodeData);

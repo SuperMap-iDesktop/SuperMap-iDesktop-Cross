@@ -275,6 +275,19 @@ public class UICommonToolkit {
 		return result;
 	}
 
+	public static int showConfirmDialogYesNo(String message) {
+		int result = 0;
+		try {
+			result = getSmOptionPane().showConfirmDialogYesNo(message);
+//			Component parent = (Component) Application.getActiveApplication().getMainFrame();
+//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return result;
+	}
+
 	private static SmOptionPane getSmOptionPane() {
 //		return new SmOptionPane();
 		if (smOptionPane == null) {

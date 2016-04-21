@@ -24,7 +24,7 @@ import java.awt.event.MouseEvent;
 
 public class LayersComponentManager extends JComponent {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private javax.swing.JScrollPane jScrollPane = null;
@@ -32,6 +32,7 @@ public class LayersComponentManager extends JComponent {
 	private transient Layer3DsTree layer3DsTree = null;
 	// 临时的变量，现在还没有自动加载Dockbar，所以暂时用这个变量测试
 	private Boolean isContextMenuBuilded = false;
+	private JPopupMenu layerWMSPopupMenu;
 
 	/**
 	 * Create the panel.
@@ -154,7 +155,7 @@ public class LayersComponentManager extends JComponent {
 				popupMenu = this.layer3DDatasetPopupMenu;
 			} else if (type == NodeDataType.LAYER3D_KML) {
 				popupMenu = this.layer3DKMLPopupMenu;
-			} else if (type == NodeDataType.LAYER3D_IMAGE_FILE) {
+			} else if (type == NodeDataType.LAYER_IMAGE || type == NodeDataType.LAYER_GRID) {
 				popupMenu = this.layer3DImagePopupMenu;
 			} else if (type == NodeDataType.SCREENLAYER3D_GEOMETRY_TAG) {
 				popupMenu = this.screenLayer3DPopupMenu;
@@ -188,6 +189,8 @@ public class LayersComponentManager extends JComponent {
 						popupMenu = this.layerImagePopupMenu;
 					} else if (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.GRIDCOLLECTION) {
 						popupMenu = this.layerGridPopupMenu;
+					} else if (layer.getDataset().getType() == DatasetType.WMS) {
+						popupMenu = layerWMSPopupMenu;
 					} else {
 						popupMenu = this.layerPopupMenu;
 					}
@@ -234,7 +237,7 @@ public class LayersComponentManager extends JComponent {
 			this.layersTree.setMap(null);
 		}
 		this.layersTree.setMap(map);
-		if (map!=null && map.getLayers() != null && map.getLayers().getCount() > 0) {
+		if (map != null && map.getLayers() != null && map.getLayers().getCount() > 0) {
 			layersTree.setSelectionRow(0);
 		}
 		this.layersTree.updateUI();
@@ -259,7 +262,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中矢量图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerVectorPopupMenu() {
@@ -270,7 +273,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中CAD图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerVectorCADPopupMenu() {
@@ -281,7 +284,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中文本图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerTextPopupMenu() {
@@ -292,7 +295,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中栅格图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerGridPopupMenu() {
@@ -303,7 +306,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中矢量图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerImagePopupMenu() {
@@ -314,7 +317,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中矢量单值、分段专题图图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerVectorThemeUniqueAndRangePopupMenu() {
@@ -325,7 +328,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中栅格单值、分段专题图图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerGridThemePopupMenu() {
@@ -336,7 +339,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维图层管理器中矢量点密度、统计、等级符号、标签、自定义专题图图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerVectorThemeOtherPopupMenu() {
@@ -347,7 +350,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取选中二维图层管理器中多个图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerPopupMenu() {
@@ -358,7 +361,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取图层分组右键菜单
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayerGroupPopupMenu() {
@@ -369,7 +372,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维矢量、栅格，单值、分段专题图子项右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getThemeItemUniqueAndRangePopupMenu() {
@@ -380,7 +383,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取二维矢量统计专题图子项右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getThemeItemVectorStatPopupMenu() {
@@ -391,7 +394,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维要素对象的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getFeature3DPopupMenu() {
@@ -402,7 +405,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维要素集合的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getFeature3DsPopupMenu() {
@@ -413,7 +416,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中普通图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getGeneralLayersPopupMenu() {
@@ -424,7 +427,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取选中对象的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getGeometryPopupMenu() {
@@ -435,7 +438,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维数据集图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DDatasetPopupMenu() {
@@ -446,7 +449,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中KML图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DKMLPopupMenu() {
@@ -457,7 +460,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维影像图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DImagePopupMenu() {
@@ -468,7 +471,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维SCM模型缓存的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DSCMPopupMenu() {
@@ -479,7 +482,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维矢量缓存的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DVectorCachePopupMenu() {
@@ -490,7 +493,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中屏幕图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getScreenLayer3DPopupMenu() {
@@ -501,7 +504,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中地形图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getTerrainLayerPopupMenu() {
@@ -512,7 +515,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中地形图层集合的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getTerrainLayersPopupMenu() {
@@ -523,7 +526,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维专题图图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DThemePopupMenu() {
@@ -534,7 +537,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中跟踪图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getTrackingLayerPopupMenu() {
@@ -545,7 +548,7 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DPopupMenu() {
@@ -556,11 +559,16 @@ public class LayersComponentManager extends JComponent {
 
 	/**
 	 * 获取三维图层管理器中三维地图图层的右键菜单。
-	 * 
+	 *
 	 * @return
 	 */
 	public JPopupMenu getLayer3DMapPopupMenu() {
 		return this.layer3DMapPopupMenu;
+	}
+
+
+	public JPopupMenu getLayerWMSPopupMenu() {
+		return layerWMSPopupMenu;
 	}
 
 	/**
@@ -599,7 +607,7 @@ public class LayersComponentManager extends JComponent {
 				this.trackingLayerPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuTrackingLayer");
 				this.layer3DPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayer3D");
 				this.layer3DMapPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayer3DMap");
-
+				this.layerWMSPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayerWMS");
 				this.isContextMenuBuilded = true;
 			}
 		} catch (Exception ex) {
