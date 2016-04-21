@@ -413,8 +413,8 @@ public class LayersTree extends JTree {
 				} else if (dataset.getType().equals(DatasetType.IMAGECOLLECTION)) {
 					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_IMAGE_COLLECTION));
 				} else {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
 					if (dataset.getType().equals(DatasetType.WMS)) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_WMS));
 						LayerSettingImage layerSettingImage = (LayerSettingImage) layer.getAdditionalSetting();
 						String[] visibleSubLayers = layerSettingImage.getVisibleSubLayers();
 						for (int i = 0; i < visibleSubLayers.length; i++) {
@@ -422,6 +422,10 @@ public class LayersTree extends JTree {
 							result.add(childNode);
 						}
 					}
+					if (result == null) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
+					}
+
 				}
 			} else {
 				int type = theme.getType().value();

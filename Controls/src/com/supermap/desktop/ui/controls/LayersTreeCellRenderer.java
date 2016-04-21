@@ -1,21 +1,15 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+import com.supermap.desktop.Application;
+import com.supermap.mapping.Layer;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeCellRenderer;
-
-import com.supermap.desktop.Application;
-import com.supermap.mapping.Layer;
 
 /**
  * 图层管理树单元格渲染器
@@ -135,6 +129,7 @@ public class LayersTreeCellRenderer implements TreeCellRenderer {
 		vectorList.add(new LayerNodeDecorator());
 		vectorDecoratorList.add(vectorList);
 		decoratorsMap.put(NodeDataType.LAYER, vectorDecoratorList);
+
 
 		/*
 		 * 影像图层
@@ -273,14 +268,35 @@ public class LayersTreeCellRenderer implements TreeCellRenderer {
 		graphItemDecoratorList.add(graphItemList);
 		decoratorsMap.put(NodeDataType.THEME_GRAPH_ITEM, graphItemDecoratorList);
 
+		/**
+		 * wms
+		 */
+		ArrayList<ArrayList<TreeNodeDecorator>> wmsLayersDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
+
+		ArrayList<TreeNodeDecorator> firstDecoratorList = new ArrayList<TreeNodeDecorator>();
+		firstDecoratorList.add(new VisibleDecorator());
+		wmsLayersDecoratorList.add(firstDecoratorList);
+
+		ArrayList<TreeNodeDecorator> wmsLayersList = new ArrayList<TreeNodeDecorator>();
+		wmsLayersList.add(new LayerNodeWMSDecorator());
+		wmsLayersDecoratorList.add(wmsLayersList);
+		decoratorsMap.put(NodeDataType.LAYER_WMS, wmsLayersDecoratorList);
+
+
 		/*
 		 * WMS数据图层子项
 		 */
 		ArrayList<ArrayList<TreeNodeDecorator>> wmsSubLayersDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
+		// // TODO: 2016/4/21 可见
+//		ArrayList<TreeNodeDecorator> firstDecoratorList = new ArrayList<TreeNodeDecorator>();
+//		firstDecoratorList.add(new VisibleDecorator());
+//		wmsLayersDecoratorList.add(firstDecoratorList);
+
 		ArrayList<TreeNodeDecorator> subLayersList = new ArrayList<TreeNodeDecorator>();
 		subLayersList.add(new WMSSubLayerDecorator());
 		wmsSubLayersDecoratorList.add(subLayersList);
 		decoratorsMap.put(NodeDataType.WMSSUB_LAYER, wmsSubLayersDecoratorList);
+
 
 		/*
 		 * 分组图层子项
