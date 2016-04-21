@@ -249,7 +249,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 		initPanelButton();
 		initMenuBar();
-		this.setJMenuBar(this.menuBar);
+//		this.setJMenuBar(this.menuBar);
 		Dimension minimumSize = new Dimension(200, 200);
 		panelPreview.setMinimumSize(minimumSize);
 		panelPreview.setPreferredSize(minimumSize);
@@ -257,17 +257,18 @@ public abstract class SymbolDialog extends SmDialog {
 
 		JPanel panelParent = new JPanel();
 		panelParent.setLayout(new GridBagLayout());
-		panelParent.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 10, 0));
+		panelParent.add(menuBar, new GridBagConstraintsHelper(0, 0, 3, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(tabbedPane, new GridBagConstraintsHelper(0, 1, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 10, 0));
 
-		panelParent.add(getPanelSymbols(), new GridBagConstraintsHelper(1, 0, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(getPanelSymbols(), new GridBagConstraintsHelper(1, 1, 1, 2).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 
-		panelParent.add(panelPreview, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 0, 0));
-		panelParent.add(getPanelMain(), new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.NORTH).setInsets(10, 0, 0, 0));
+		panelParent.add(panelPreview, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 0, 0, 10));
+		panelParent.add(getPanelMain(), new GridBagConstraintsHelper(2, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.NORTH).setInsets(10, 0, 0, 10));
 
-		panelParent.add(panelButton, new GridBagConstraintsHelper(0, 2, 3, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+		panelParent.add(panelButton, new GridBagConstraintsHelper(0, 3, 3, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 10));
 
 		this.setLayout(new GridBagLayout());
-		this.add(panelParent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 10, 10).setFill(GridBagConstraints.BOTH));
+		this.add(panelParent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 10, 0).setFill(GridBagConstraints.BOTH));
 	}
 
 	private JPanel getPanelSymbols() {
