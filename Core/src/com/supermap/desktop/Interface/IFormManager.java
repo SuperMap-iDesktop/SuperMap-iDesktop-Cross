@@ -69,4 +69,5 @@ public interface IFormManager {
 	 */
 	boolean saveAll(boolean notify);
 
+	boolean isContain(IFormMap formMap);
 }

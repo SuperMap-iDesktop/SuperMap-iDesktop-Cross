@@ -158,13 +158,14 @@ public class FormBase extends JFrame implements IFormMain {
 			this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
-			SwingUtilities.invokeLater(new Runnable() {
+//			SwingUtilities.invokeLater(new Runnable() {
 
-				@Override
-				public void run() {
-					FormBase.this.setVisible(true);
-				}
-			});
+//				@Override
+//				public void run() {
+//			FormBase.this.setVisible(true);
+
+//				}
+//			});
 			this.formManager.setRootContainer(dockbar.getRootWindow());
 			this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
 
@@ -175,6 +176,8 @@ public class FormBase extends JFrame implements IFormMain {
 			ToolbarUtilties.updataToolbarsState();
 
 			initLayout(dockbar);
+			FormBase.this.setVisible(true);
+
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
