@@ -147,7 +147,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	};
 
 
-
 	public JPopupMenu getFormMapContextMenu() {
 		return this.formMapContextMenu;
 	}
@@ -252,8 +251,17 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			initCenter();
-			initScaleComboBox();
+			try {
+				double scale = mapControl.getMap().getScale();
+				if (!ScaleModel.isLegitScaleString((new ScaleModel(scale).toString()))) {
+					String text = ((JTextField) scaleBox.getEditor().getEditorComponent()).getText();
+					mapControl.getMap().setScale(new ScaleModel(text).getScale());
+				}
+				initCenter();
+				initScaleComboBox();
+			} catch (Exception e1) {
+				Application.getActiveApplication().getOutput().output(e1);
+			}
 		}
 	};
 	private MouseMotionListener motionListener = new MouseMotionListener() {
@@ -643,7 +651,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		int angles = (int) pointTemp;
 		pointTemp = Math.abs(pointTemp);
 
-		// %1是求余操作
 		pointTemp = (pointTemp - Math.abs(angles)) * 60;
 		// 分
 		int min = (int) pointTemp;

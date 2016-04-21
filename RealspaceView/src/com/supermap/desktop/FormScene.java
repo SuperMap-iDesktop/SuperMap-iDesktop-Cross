@@ -337,6 +337,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		this.sceneControl.getScene().getWorkspace().removeClosingListener(this);
 		removeListeners();
 		removeSceneControlListener();
+		sceneControl.getScene().close();
 		sceneControl.dispose();
 	}
 

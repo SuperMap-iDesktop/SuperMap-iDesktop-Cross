@@ -4,7 +4,6 @@ import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
-import java.math.BigDecimal;
 import java.text.MessageFormat;
 
 public class ScaleModel {
@@ -75,8 +74,8 @@ public class ScaleModel {
 
 	private void parse(double scale) throws InvalidScaleException {
 		this.scaleDenominator = DoubleUtilties.div(1.0, scale, 10);
-		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
-//		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 30));
+//		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
+		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 8));
 	}
 
 	private void parse(String[] scaleCaption) throws InvalidScaleException {
