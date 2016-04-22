@@ -27,7 +27,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -160,9 +159,12 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void activeFormChanged(ActiveFormChangedEvent e) {
 				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()
-						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0) {
+						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0
+						&& null != ((FormMap) e.getOldActiveForm()).getActiveLayers()[0].getTheme()) {
 					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
-					panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(tempLayer));
+					if (null != tempLayer && null != tempLayer.getTheme()) {
+						panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(tempLayer));
+					}
 					updateProperty(tempLayer);
 				}
 			}
@@ -324,6 +326,7 @@ public class ThemeMainContainer extends JPanel {
 				setLayerPropertyChanged(false);
 				layersTree.reload();
 				layersTree.setSelectionRow(row);
+				buttonApply.setEnabled(false);
 			}
 		}
 	}
