@@ -12,6 +12,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.LayerUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerCaptionChangedEvent;
 import com.supermap.mapping.LayerCaptionChangedListener;
@@ -46,6 +47,7 @@ public class LayerPropertyContainer extends JPanel {
 	private SmButton buttonApply;
 	private transient IFormMap formMap;
 
+	private Layer[] activedLayers;
 	// @formatter:off
 	// 在面板之外修改图层属性，需要联动更新图层属性的显示。
 	// 然而点击应用、与面板上的控件交互都会导致图层属性的修改，
@@ -168,6 +170,11 @@ public class LayerPropertyContainer extends JPanel {
 		if (this.formMap != null && this.formMap.getMapControl() != null) {
 			unregisterEvents();
 		}
+		if (Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+			queryIsApply();
+		}
+		// 屏蔽掉下面的查询方法
+		buttonApply.setEnabled(false);
 		this.formMap = formMap;
 		if (this.formMap != null) {
 			setActiveLayers(this.formMap.getActiveLayers(), this.formMap);
@@ -299,7 +306,9 @@ public class LayerPropertyContainer extends JPanel {
 	}
 
 	private void setActiveLayers(Layer[] layers, IFormMap formMap) {
-		queryIsApply();
+		queryIsApply();// 注:窗体改变时单独处理
+		activedLayers = layers;
+		buttonApply.setEnabled(false);
 		clearPropertyControls();
 
 		if (layers != null && layers.length > 0) {
@@ -313,7 +322,7 @@ public class LayerPropertyContainer extends JPanel {
 	}
 
 	private void queryIsApply() {
-		if (buttonApply.isEnabled() && Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+		if (buttonApply.isEnabled() && isActiveLayersContain()) {
 			int result = UICommonToolkit.showConfirmDialogYesNo(MapViewProperties.getString("String_LayerProperty_Message"));
 			if (result == JOptionPane.OK_OPTION) {
 				for (AbstractLayerPropertyControl propertyControl : propertyControls) {
@@ -322,7 +331,15 @@ public class LayerPropertyContainer extends JPanel {
 				}
 			}
 		}
-		buttonApply.setEnabled(false);
+	}
+
+	private boolean isActiveLayersContain() {
+		for (Layer activedLayer : activedLayers) {
+			if (LayerUtilties.isContainLayer(formMap.getMapControl().getMap().getLayers(), activedLayer)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void clearPropertyControls() {
