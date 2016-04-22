@@ -867,13 +867,13 @@ public class LayersTree extends JTree {
 						refresh();
 					} else if (type == 2 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseTwo(obj);
-						refresh();
+						updateUI();
 					} else if (type == 3 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseThree(obj);
-						refresh();
+						updateUI();
 					} else if (type == 4 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseFour(obj);
-						refresh();
+						updateUI();
 					}
 				}
 			}

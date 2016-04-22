@@ -41,9 +41,12 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
-		formMap.showPopupMenu();
-		transparentBackground.setVisible(false);
-		TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
+		if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
+			TransparentBackground.queryGridMap.get(avtiveFormMap).setAction(Action.SELECT);
+			formMap.showPopupMenu();
+			transparentBackground.setVisible(false);
+			TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
+		}
 	}
 
 	KeyAdapter keyAdapter = new KeyAdapter() {
@@ -59,7 +62,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
-				mapControl.setAction(Action.SELECT);
 				hideTransparentBackground();
 			}
 		}
@@ -87,7 +89,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
 					hideTransparentBackground();
 				} else {
-					TransparentBackground.queryGridMap.put(avtiveFormMap, mapControl.getMap());
+					TransparentBackground.queryGridMap.put(avtiveFormMap, mapControl);
 					transparentBackground = TransparentBackground.getInstance();
 					queryGridValue();
 				}
@@ -96,7 +98,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 				@Override
 				public void activeFormChanged(ActiveFormChangedEvent e) {
-					if (null != e.getNewActiveForm()) {
+					if (null != e.getNewActiveForm() && e.getNewActiveForm() instanceof IFormMap) {
 						formMap = (IFormMap) e.getNewActiveForm();
 						mapControl = formMap.getMapControl();
 						avtiveFormMap = mapControl.getMap().getName();

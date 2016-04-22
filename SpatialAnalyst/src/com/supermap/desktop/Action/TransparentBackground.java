@@ -11,6 +11,7 @@ import javax.swing.border.LineBorder;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Map;
+import com.supermap.ui.MapControl;
 
 public class TransparentBackground extends JPanel {
 	/**
@@ -26,7 +27,7 @@ public class TransparentBackground extends JPanel {
 	private JLabel jLabelGridValue = new JLabel("gridValue:");
 	private final int gapWith = 10;
 	private static TransparentBackground transparent;
-	public static HashMap<String, Map> queryGridMap = new HashMap<String, Map>();
+	public static HashMap<String, MapControl> queryGridMap = new HashMap<String, MapControl>();
 
 	private TransparentBackground() {
 		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
@@ -41,7 +42,7 @@ public class TransparentBackground extends JPanel {
 			if (SystemPropertyUtilties.isWindows()) {
 				transparent.setSize(230, 200);
 			}else {
-				transparent.setSize(260,220);
+				transparent.setSize(268,220);
 			}
 		}
 		return transparent;

@@ -2069,7 +2069,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					if (formMap != null) {
 						Map map = formMap.getMapControl().getMap();
 						MapUtilties.addDatasetToMap(map, dataset, true);
-						map.refresh();
+//						map.refresh();
 						UICommonToolkit.getLayersManager().setMap(map);
 						// 新建的地图窗口，修改默认的Action为漫游
 
