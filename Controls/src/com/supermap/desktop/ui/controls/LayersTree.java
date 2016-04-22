@@ -864,18 +864,25 @@ public class LayersTree extends JTree {
 
 					if (type == 1) {
 						setCaseOne(obj);
+						refresh();
 					} else if (type == 2 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseTwo(obj);
+						refresh();
 					} else if (type == 3 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseThree(obj);
+						refresh();
 					} else if (type == 4 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseFour(obj);
+						refresh();
 					}
-					firePropertyChangeWithLayerSelect();
 				}
-				updateUI();
-				currentMap.refresh();
 			}
+		}
+
+		private void refresh() {
+			updateUI();
+			currentMap.refresh();
+			firePropertyChangeWithLayerSelect();
 		}
 
 		private void setCaseFour(Object obj) {

@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 
@@ -30,6 +31,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,7 +79,11 @@ public class WorkspaceComponentManager extends JComponent {
 		this.workspaceTree.setShowsRootHandles(true);
 		this.workspaceTree.setTransferHandler(new WorkspaceTreeTransferHandler());
 		this.workspaceTree.setLayoutsNodeVisible(false);
-		this.workspaceTree.setScenesNodeVisible(true);
+		if (SystemPropertyUtilties.isWindows()) {
+			this.workspaceTree.setScenesNodeVisible(true);
+		} else {
+			this.workspaceTree.setScenesNodeVisible(false);
+		}
 
 		this.jScrollPane.setViewportView(this.workspaceTree);
 
@@ -457,7 +463,7 @@ public class WorkspaceComponentManager extends JComponent {
 
 				if (activeDatasets != null && !activeDatasets.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(activeDatasets.toArray(new Dataset[activeDatasets.size()]));
-					Application.getActiveApplication().setActiveDatasources(new Datasource[]{activeDatasets.get(0).getDatasource()});
+					Application.getActiveApplication().setActiveDatasources(new Datasource[] { activeDatasets.get(0).getDatasource() });
 				} else if (activeDatasources != null && !activeDatasources.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(null);
 					Application.getActiveApplication().setActiveDatasources(activeDatasources.toArray(new Datasource[activeDatasources.size()]));
@@ -552,7 +558,7 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					MapViewUtilties.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedNodeData.getData()}, true);
+					MapViewUtilties.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
 				} else if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {

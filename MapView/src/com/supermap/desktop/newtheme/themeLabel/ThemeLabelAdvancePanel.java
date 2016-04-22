@@ -414,20 +414,21 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NONE) {
 			this.comboBoxOverLength.setSelectedIndex(0);
 			resetPanelTextFontStation(false);
-			this.comboBoxSplitSeparator.setEnabled(false);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NEWLINE) {
 			this.comboBoxOverLength.setSelectedIndex(1);
 			resetPanelTextFontStation(true);
-			this.comboBoxSplitSeparator.setEnabled(true);
 		} else if (themeLabel.getOverLengthMode() == OverLengthLabelMode.OMIT) {
 			this.comboBoxOverLength.setSelectedIndex(2);
-			resetPanelTextFontStation(true);
+			this.spinnerFontCount.setEnabled(true);
 			this.comboBoxSplitSeparator.setEnabled(false);
+			this.comboBoxAlignmentStyle.setEnabled(false);
+			this.checkBoxOptimizeMutilineAlignment.setEnabled(false);
 		}
 	}
 
 	private void resetPanelTextFontStation(boolean flag) {
 		this.spinnerFontCount.setEnabled(flag);
+		this.comboBoxSplitSeparator.setEnabled(flag);
 		this.comboBoxAlignmentStyle.setEnabled(flag);
 		this.checkBoxOptimizeMutilineAlignment.setEnabled(flag);
 	}
@@ -460,7 +461,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	private void initComboBoxSplitSeparator() {
-		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[] { '\0', '/', '\\',',',';' }));
+		this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[] { '\0', '/', '\\', ',', ';' }));
 		this.comboBoxSplitSeparator.setEnabled(false);
 		this.comboBoxSplitSeparator.setEditable(true);
 	}
@@ -513,13 +514,13 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			Character split = '\0';
 			Object object = comboBoxSplitSeparator.getSelectedItem();
 			if (object instanceof Character) {
-				split =(Character)object;
+				split = (Character) object;
 				themeLabel.setSplitSeparator(split);
 			}
-			if (object instanceof String &&object.toString().length()==1) {
+			if (object instanceof String && object.toString().length() == 1) {
 				split = object.toString().toCharArray()[0];
 				themeLabel.setSplitSeparator(split);
-			}else {
+			} else {
 				themeLabel.setSplitSeparator(split);
 			}
 		}
@@ -553,15 +554,15 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			if (0 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NONE);
 				resetPanelTextFontStation(false);
-				comboBoxSplitSeparator.setEnabled(false);
 			} else if (1 == overLength) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
 				resetPanelTextFontStation(true);
-				comboBoxSplitSeparator.setEnabled(true);
 			} else {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
-				resetPanelTextFontStation(true);
+				spinnerFontCount.setEnabled(true);
 				comboBoxSplitSeparator.setEnabled(false);
+				comboBoxAlignmentStyle.setEnabled(false);
+				checkBoxOptimizeMutilineAlignment.setEnabled(false);
 			}
 		}
 
@@ -891,9 +892,8 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
 		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
 		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
-		themeLabelTemp.setUniformStyle(themeLabel.getUniformStyle());
+		themeLabelTemp.getUniformStyle().setStringAlignment(this.themeLabel.getUniformStyle().getStringAlignment());
 		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
-
 		this.map.refresh();
 	}
 

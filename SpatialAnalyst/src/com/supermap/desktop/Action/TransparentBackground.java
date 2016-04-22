@@ -2,11 +2,14 @@ package com.supermap.desktop.Action;
 
 import java.awt.Color;
 import java.util.HashMap;
+
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.mapping.Map;
 
 public class TransparentBackground extends JPanel {
@@ -35,7 +38,11 @@ public class TransparentBackground extends JPanel {
 	public static TransparentBackground getInstance() {
 		if (null == transparent) {
 			transparent = new TransparentBackground();
-			transparent.setSize(220, 200);
+			if (SystemPropertyUtilties.isWindows()) {
+				transparent.setSize(225, 200);
+			}else {
+				transparent.setSize(260,220);
+			}
 		}
 		return transparent;
 	}

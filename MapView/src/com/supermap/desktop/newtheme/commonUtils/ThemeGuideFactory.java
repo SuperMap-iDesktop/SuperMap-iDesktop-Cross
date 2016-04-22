@@ -6,7 +6,6 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
-import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -91,7 +90,7 @@ public class ThemeGuideFactory {
 				container = (ThemeMainContainer) dockbarThemeContainer.getComponent();
 				container.setPanel(panel);
 			}
-			if (panel.getCurrentLayer().isDisposed()) {
+			if (null != panel.getCurrentLayer() && panel.getCurrentLayer().isDisposed()) {
 				panel.setCurrentLayer(layer);
 			}
 			layerPropertyChange(panel);
@@ -436,7 +435,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetUniqueTheme(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_UNIQUE)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_UNIQUE), layer);
 		} else {
 			ThemeChangePanel themeUniqueContainer = new ThemeUniqueContainer(layer);
@@ -445,8 +444,8 @@ public class ThemeGuideFactory {
 		}
 	}
 
-	private static boolean hasThemeContainer(Layer layer, String themeType) {
-		return null != themeTypeContainer.get(layer.getName() + "@" + themeType);
+	private static boolean hasThemeContainer(Layer layer) {
+		return null != themeTypeContainer.get(getThemeTypeString(layer));
 	}
 
 	/**
@@ -455,7 +454,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetRangeTheme(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_RANGE)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_RANGE), layer);
 		} else {
 			ThemeChangePanel themeRangeContainer = new ThemeRangeContainer(layer);
@@ -470,7 +469,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelUniform(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_LABEL_UNIFORM)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_LABEL_UNIFORM), layer);
 		} else {
 			ThemeChangePanel themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
@@ -485,7 +484,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetLabelRange(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_LABEL_RANGE)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_LABEL_RANGE), layer);
 		} else {
 			ThemeChangePanel themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
@@ -500,7 +499,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetGridUnique(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_GRID_UNIQUE)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRID_UNIQUE), layer);
 		} else {
 			ThemeChangePanel themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
@@ -515,7 +514,7 @@ public class ThemeGuideFactory {
 	 * @returnff
 	 */
 	public static void resetGridRange(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_GRID_RANGE)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRID_RANGE), layer);
 		} else {
 			ThemeChangePanel themeGridRangeContainer = new ThemeGridRangeContainer(layer);
@@ -530,7 +529,7 @@ public class ThemeGuideFactory {
 	 * @param layer
 	 */
 	public static void resetGraph(Layer layer) {
-		if (hasThemeContainer(layer, THEMETYPE_GRAPH)) {
+		if (hasThemeContainer(layer)) {
 			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRAPH), layer);
 		} else {
 			ThemeChangePanel themeGraphContainer = new ThemeGraphContainer(layer);

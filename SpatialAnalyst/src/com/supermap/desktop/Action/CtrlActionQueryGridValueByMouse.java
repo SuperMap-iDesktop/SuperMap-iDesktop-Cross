@@ -59,6 +59,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
+				mapControl.setAction(Action.SELECT);
 				hideTransparentBackground();
 			}
 		}
@@ -83,9 +84,13 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			if (null != formMap) {
 				mapControl = formMap.getMapControl();
 				avtiveFormMap = mapControl.getMap().getName();
-				TransparentBackground.queryGridMap.put(avtiveFormMap, mapControl.getMap());
-				transparentBackground = TransparentBackground.getInstance();
-				queryGridValue();
+				if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
+					hideTransparentBackground();
+				} else {
+					TransparentBackground.queryGridMap.put(avtiveFormMap, mapControl.getMap());
+					transparentBackground = TransparentBackground.getInstance();
+					queryGridValue();
+				}
 			}
 			Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
 

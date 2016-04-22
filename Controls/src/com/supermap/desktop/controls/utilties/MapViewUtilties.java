@@ -251,7 +251,7 @@ public class MapViewUtilties {
 				Map map = formMap.getMapControl().getMap();
 				map.open(mapName);
 				Application.getActiveApplication().resetActiveForm();
-				map.refresh();
+//				map.refresh();
 				UICommonToolkit.getLayersManager().setMap(map);
 				return true;
 			}

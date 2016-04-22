@@ -118,7 +118,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient ThemeLabel themeLabel;
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
-		this.textStyle = textStyle;
+		this.textStyle = textStyle.clone();
 		this.map = map;
 		this.themeLayer = themeLabelLayer;
 		this.layerName = themeLabelLayer.getName();
@@ -136,7 +136,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.themeLayer = themeLabelLayer;
 		this.layerName = themeLabelLayer.getName();
 		this.themeLabel = themeLabel;
-		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle();
+		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle().clone();
 		initComponent();
 		initResources();
 		registActionListener();
@@ -515,11 +515,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 		firePropertyChange("ThemeChange", null, null);
 		if (isRefreshAtOnce && null != map) {
 			refreshMapAndLayer();
-		}
-		if (!isRefreshAtOnce && null != map && null != themeLabel) {
-			for (int i = 0; i < this.selectRow.length; i++) {
-				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
-			}
 		}
 		return;
 	}
