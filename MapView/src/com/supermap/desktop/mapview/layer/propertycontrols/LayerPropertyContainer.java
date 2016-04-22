@@ -334,10 +334,14 @@ public class LayerPropertyContainer extends JPanel {
 	}
 
 	private boolean isActiveLayersContain() {
-		for (Layer activedLayer : activedLayers) {
-			if (LayerUtilties.isContainLayer(formMap.getMapControl().getMap().getLayers(), activedLayer)) {
-				return true;
+		try {
+			for (Layer activedLayer : activedLayers) {
+				if (LayerUtilties.isContainLayer(formMap.getMapControl().getMap().getLayers(), activedLayer)) {
+					return true;
+				}
 			}
+		} catch (Exception e) {
+			return false;
 		}
 		return false;
 	}
