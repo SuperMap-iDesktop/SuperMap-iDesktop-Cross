@@ -155,13 +155,20 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				String currentColumn = "";
 				String currentValue = "";
 				Dataset dataset = null;
-				// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
+
 				if (haveSameBounds(layers, point2D)) {
-					dataset = layers.get(0).getDataset();
+					for (int i = 0; i < layers.getCount(); i++) {
+						if ((layers.get(i).getDataset() instanceof DatasetGrid || layers.get(i).getDataset() instanceof DatasetImage)
+								&& layers.get(i).isVisible()) {
+							dataset = layers.get(i).getDataset();
+							break;
+						}
+					}
 				} else {
 					for (int i = 0; i < layers.getCount(); i++) {
 						Layer layer = layers.get(i);
 						Dataset tempDataset = layer.getDataset();
+						// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
 						if ((tempDataset instanceof DatasetGrid || tempDataset instanceof DatasetImage) && layer.getBounds().contains(point2D)) {
 							dataset = tempDataset;
 						}

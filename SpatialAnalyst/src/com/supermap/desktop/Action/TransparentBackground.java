@@ -39,7 +39,7 @@ public class TransparentBackground extends JPanel {
 		if (null == transparent) {
 			transparent = new TransparentBackground();
 			if (SystemPropertyUtilties.isWindows()) {
-				transparent.setSize(225, 200);
+				transparent.setSize(230, 200);
 			}else {
 				transparent.setSize(260,220);
 			}
