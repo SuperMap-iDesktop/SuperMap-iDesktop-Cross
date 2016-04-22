@@ -43,10 +43,12 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		// 允许弹出右键菜单
 		if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
 			TransparentBackground.queryGridMap.get(avtiveFormMap).setAction(Action.SELECT);
-			formMap.showPopupMenu();
-			transparentBackground.setVisible(false);
-			TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
+		}else{
+			((IFormMap)Application.getActiveApplication().getActiveForm()).getMapControl().setAction(Action.SELECT);
 		}
+		formMap.showPopupMenu();
+		transparentBackground.setVisible(false);
+		TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
 	}
 
 	KeyAdapter keyAdapter = new KeyAdapter() {
