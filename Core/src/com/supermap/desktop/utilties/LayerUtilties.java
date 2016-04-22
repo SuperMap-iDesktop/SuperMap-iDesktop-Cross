@@ -12,6 +12,7 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 
 public class LayerUtilties {
@@ -119,5 +120,31 @@ public class LayerUtilties {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return size;
+	}
+
+	public static boolean isContainLayer(Layers layers, Layer layer) {
+		for (int i = 0; i < layers.getCount(); i++) {
+			if (layers.get(i) instanceof LayerGroup) {
+				if (isContainLayer(((LayerGroup) layers.get(i)), layer)) {
+					return true;
+				}
+			} else if (layers.get(i) == layer) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isContainLayer(LayerGroup layerGroup, Layer layer) {
+		for (int i = 0; i < layerGroup.getCount(); i++) {
+			if (layerGroup.get(i) instanceof LayerGroup) {
+				if (isContainLayer((LayerGroup) layerGroup.get(i), layer)) {
+					return true;
+				}
+			} else if (layerGroup.get(i) == layer) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

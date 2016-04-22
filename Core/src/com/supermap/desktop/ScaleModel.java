@@ -75,7 +75,7 @@ public class ScaleModel {
 	private void parse(double scale) throws InvalidScaleException {
 		this.scaleDenominator = DoubleUtilties.div(1.0, scale, 10);
 //		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
-		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 8));
+		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 9));
 	}
 
 	private void parse(String[] scaleCaption) throws InvalidScaleException {
@@ -101,7 +101,7 @@ public class ScaleModel {
 			throw new InvalidScaleException();
 		}
 
-		if (this.scaleDenominator > 1) {
+		if (this.scaleDenominator > 0) {
 			this.scale = 1 / this.scaleDenominator;
 			this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, scaleDenominatorCaption);
 		} else if (this.scaleDenominator <= 0) {
@@ -123,7 +123,7 @@ public class ScaleModel {
 			throw new InvalidScaleException();
 		}
 
-		if (this.scaleDenominator > 1) {
+		if (this.scaleDenominator > 0) {
 			this.scale = 1 / this.scaleDenominator;
 			this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, scaleDenominatorCaption);
 		} else if (this.scaleDenominator <= 0) {
@@ -191,7 +191,7 @@ public class ScaleModel {
 			}
 			try {
 				Double aDouble = Double.valueOf(scaleString);
-				if (aDouble > MAX_SCALE_VALUE || aDouble < MIN_SCALE_VALUE) {
+				if (aDouble >= MAX_SCALE_VALUE || aDouble <= MIN_SCALE_VALUE) {
 					return false;
 				}
 			} catch (NumberFormatException e) {
@@ -199,5 +199,9 @@ public class ScaleModel {
 			}
 		}
 		return true;
+	}
+
+	public static boolean isLegitScaleString(double scale) {
+		return !(scale >= MAX_SCALE_VALUE || scale <= MIN_SCALE_VALUE);
 	}
 }

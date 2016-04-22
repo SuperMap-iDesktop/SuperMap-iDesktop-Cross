@@ -253,8 +253,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			try {
 				double scale = mapControl.getMap().getScale();
-				if (!ScaleModel.isLegitScaleString((new ScaleModel(scale).toString()))) {
-					String text = ((JTextField) scaleBox.getEditor().getEditorComponent()).getText();
+				String text = ((JTextField) scaleBox.getEditor().getEditorComponent()).getText();
+				if (!ScaleModel.isLegitScaleString(scale) && ScaleModel.isLegitScaleString(text)) {
 					mapControl.getMap().setScale(new ScaleModel(text).getScale());
 				}
 				initCenter();
@@ -673,6 +673,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				if (Double.compare(value, mapControl.getMap().getScale()) != 0) {
 					mapControl.getMap().setScale(model.getScale());
 					mapControl.getMap().refresh();
+				}
+			} else {
+				if (ScaleModel.isLegitScaleString(mapControl.getMap().getScale())) {
+					((JTextField) scaleBox.getEditor().getEditorComponent()).setText(new ScaleModel(mapControl.getMap().getScale()).toString());
 				}
 			}
 		} catch (InvalidScaleException ex) {
