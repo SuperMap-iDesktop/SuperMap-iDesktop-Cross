@@ -874,7 +874,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLabelLayer = MapUtilties.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
 		themeLabelTemp.setAlongLine(this.themeLabel.isAlongLine());

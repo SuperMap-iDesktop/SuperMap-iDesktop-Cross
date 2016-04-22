@@ -729,11 +729,11 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					themeUnique.setOffsetFixed(isOffsetFixed);
 					themeUnique.setOffsetX(offsetX);
 					themeUnique.setOffsetY(offsetY);
-					refreshColor();
 					for (int i = 0; i < themeUnique.getCount(); i++) {
 						GeoStyle textStyle = themeUnique.getItem(i).getStyle();
 						textStyle.setLineColor(Color.GRAY);
 					}
+					refreshColor();
 					getTable();
 				} else {
 					UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));

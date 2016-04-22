@@ -843,7 +843,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.themeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(this.textStyle);
