@@ -9,15 +9,17 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
-import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -97,11 +99,20 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private transient CaretPositionListener caretPositionListener;
 
 	public OperationType operationType = OperationType.NONE;
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			if (container.isVisible()) {
+				container.setVisible(false);
+			}
+		}
+	};
 
 	private JPopupMenuBounds popupMenuClipRegion = new JPopupMenuBounds(JPopupMenuBounds.CLIP_REGION, Rectangle2D.getEMPTY());
 	private JPopupMenuBounds popupMenuLockedViewBounds = new JPopupMenuBounds(JPopupMenuBounds.VIEW_BOUNDS_LOCKED, Rectangle2D.getEMPTY());
 	private JPopupMenuBounds popupMenuCustomBounds = new JPopupMenuBounds(JPopupMenuBounds.CUSTOM_BOUNDS, Rectangle2D.getEMPTY());
-	
+
 	private ScaleEnabledContainer container = new ScaleEnabledContainer();
 
 	private transient PropertyChangeListener boundsPropertyChangeListener = new PropertyChangeListener() {
@@ -142,7 +153,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 				} catch (InvalidScaleException e1) {
 					e1.printStackTrace();
 				}
-				container.init(MapBoundsPropertyControl.this,getMap());
+				container.init(MapBoundsPropertyControl.this, getMap());
 			}
 		}
 
@@ -470,8 +481,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void initializePropertyValues(Map map) {
 		this.scale = map.getScale();
-		this.isVisibleScalesEnabled = map.isVisibleScalesEnabled();
-		this.visibleScales = map.getVisibleScales();
+		isVisibleScalesEnabled = map.isVisibleScalesEnabled();
+		visibleScales = map.getVisibleScales();
 		this.isClipRegionEnabled = map.isClipRegionEnabled();
 		this.clipRegion = map.getClipRegion();
 		this.isViewBoundsLocked = map.isViewBoundsLocked();
@@ -510,6 +521,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.textFieldCurrentViewRight.addPropertyChangeListener(this.textFieldPropertyChangeListener);
 		this.textFieldCurrentViewBottom.addPropertyChangeListener(this.textFieldPropertyChangeListener);
 		getMap().addDrawnListener(this.mapDrawnListener);
+		getMap().addMapClosedListener(mapClosedListener);
 		this.buttonClipRegion.addMouseListener(setMouseListener);
 		this.buttonSetLockedViewBounds.addMouseListener(setMouseListener);
 		this.buttonSetCustomBounds.addMouseListener(setMouseListener);
@@ -537,6 +549,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.textFieldCurrentViewBottom.removePropertyChangeListener(this.textFieldPropertyChangeListener);
 		if (getMap() != null) {
 			getMap().removeDrawnListener(this.mapDrawnListener);
+			getMap().removeMapClosedListener(mapClosedListener);
 		}
 		this.buttonClipRegion.removeMouseListener(setMouseListener);
 		this.buttonSetLockedViewBounds.removeMouseListener(setMouseListener);
@@ -551,7 +564,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	protected void fillComponents() {
 		try {
 			this.scaleEditor.setScale(this.scale);
-			this.checkBoxIsVisibleScalesEnabled.setSelected(this.isVisibleScalesEnabled);
+			this.checkBoxIsVisibleScalesEnabled.setSelected(isVisibleScalesEnabled);
 			this.checkBoxIsClipRegionEnabled.setSelected(this.isClipRegionEnabled);
 			this.checkBoxIsViewBoundsLocked.setSelected(this.isViewBoundsLocked);
 			this.checkBoxIsCustomBoundsEnabled.setSelected(this.isCustomBoundsEnabled);
@@ -584,8 +597,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected boolean verifyChange() {
-		return Double.compare(this.scale, getMap().getScale()) != 0 || this.isVisibleScalesEnabled != getMap().isVisibleScalesEnabled()
-				|| !isVisibleScalesChanged() || this.isClipRegionEnabled != getMap().isClipRegionEnabled() || this.clipRegion != getMap().getClipRegion()
+		return Double.compare(this.scale, getMap().getScale()) != 0 || isVisibleScalesEnabled != getMap().isVisibleScalesEnabled() || !isVisibleScalesChanged()
+				|| this.isClipRegionEnabled != getMap().isClipRegionEnabled() || this.clipRegion != getMap().getClipRegion()
 				|| this.isViewBoundsLocked != getMap().isViewBoundsLocked() || this.lockedViewBounds != getMap().getLockedViewBounds()
 				|| this.isCustomBoundsEnabled != getMap().isCustomBoundsEnabled() || this.customBounds != getMap().getCustomBounds()
 				|| Double.compare(this.centerX, getMap().getCenter().getX()) != 0 || Double.compare(this.centerY, getMap().getCenter().getY()) != 0
@@ -604,23 +617,23 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private boolean isVisibleScalesChanged() {
 		boolean result = false;
 
-		if (this.visibleScales == null && getMap().getVisibleScales() != null) {
+		if (visibleScales == null && getMap().getVisibleScales() != null) {
 			return true;
 		}
 
-		if (this.visibleScales != null && getMap().getVisibleScales() == null) {
+		if (visibleScales != null && getMap().getVisibleScales() == null) {
 			return true;
 		}
 
-		if (this.visibleScales == null && getMap().getVisibleScales() == null) {
+		if (visibleScales == null && getMap().getVisibleScales() == null) {
 			return false;
 		}
 
-		if (this.visibleScales.length != getMap().getVisibleScales().length) {
+		if (visibleScales.length != getMap().getVisibleScales().length) {
 			return true;
 		}
 
-		for (double visibleScale : this.visibleScales) {
+		for (double visibleScale : visibleScales) {
 			boolean exist = false;
 
 			for (int j = 0; j < getMap().getVisibleScales().length; j++) {
@@ -641,7 +654,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	private void checkBoxIsVisibleScalesEnabledCheckedChange() {
 		try {
-			this.isVisibleScalesEnabled = this.checkBoxIsVisibleScalesEnabled.isSelected();
+			isVisibleScalesEnabled = this.checkBoxIsVisibleScalesEnabled.isSelected();
 			// this.buttonSetVisibleScales.setEnabled(this.isVisibleScalesEnabled);
 			verify();
 		} catch (Exception e2) {
@@ -802,5 +815,5 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	public void setCheckBoxIsVisibleScalesEnabled(JCheckBox checkBoxIsVisibleScalesEnabled) {
 		this.checkBoxIsVisibleScalesEnabled = checkBoxIsVisibleScalesEnabled;
 	}
-	
+
 }

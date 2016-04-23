@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -62,6 +63,8 @@ public class ScaleEnabledContainer extends SmDialog {
 	private double[] scales;
 	private MapBoundsPropertyControl control;
 	private String[] title = { MapViewProperties.getString("String_Index"), MapViewProperties.getString("String_Scales") };
+	private DecimalFormat format = new DecimalFormat("#.############");
+	
 	private TableModelListener tableModelListener = new TableModelListener() {
 
 		@Override
@@ -246,7 +249,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (StringUtilties.isNumber(scale)) {
 			scaleIsRight = true;
 		}
-		if (scale.contains(":")) {
+		if (scale.contains(":") && scale.split(":").length == 2) {
 			String[] scaleList = scale.split(":");
 			if (scaleList[0].equals("1") && StringUtilties.isNumber(scaleList[1])) {
 				scaleIsRight = true;
@@ -499,23 +502,23 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void addScaleCaption() throws InvalidScaleException {
 		int selectRow = table.getSelectedRow();
-		if (selectRow > 0) {
+		if (selectRow > 0 && selectRow + 1 != table.getRowCount()) {
 			// 有选中项或者选中项不是0
-			String scaleBefore = table.getValueAt(selectRow - 1, 1).toString();
+			String scaleNext = table.getValueAt(selectRow + 1, 1).toString();
 			String scaleNow = table.getValueAt(selectRow, 1).toString();
-			double scaleBeforeD = Double.parseDouble(scaleBefore.split(":")[1]);
+			double scaleNextD = Double.parseDouble(scaleNext.split(":")[1]);
 			double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
-			ScaleDisplay scaleInsert = new ScaleDisplay("1:" + String.valueOf((scaleBeforeD + scaleNowD) / 2));
-			this.scaleDisplays.add(selectRow, scaleInsert);
+			ScaleDisplay scaleInsert = new ScaleDisplay("1:" + String.valueOf(format.format((scaleNextD + scaleNowD) / 2)));
+			this.scaleDisplays.add(selectRow+1, scaleInsert);
 			getTable();
-			this.table.addRowSelectionInterval(selectRow, selectRow);
+			this.table.addRowSelectionInterval(selectRow+1, selectRow+1);
 			checkButtonState();
 			return;
 		}
 		if (table.getRowCount() == 0) {
 			// 表中没有数据时
 			double scale = map.getScale();
-			String scaleCaption = new ScaleModel(scale).getScaleCaption();
+			String scaleCaption = new ScaleModel(format.format(scale)).getScaleCaption();
 			ScaleDisplay scaleDisplay = new ScaleDisplay(scaleCaption);
 			this.scaleDisplays.add(scaleDisplay);
 			getTable();
@@ -523,11 +526,11 @@ public class ScaleEnabledContainer extends SmDialog {
 			return;
 		}
 
-		if (table.getRowCount() > 0 && selectRow < 0) {
+		if (selectRow == table.getRowCount() - 1 || table.getRowCount() > 0 && selectRow < 0) {
 			// 没有选中项，但是表中有数据时
 			String scaleEnd = table.getValueAt(table.getRowCount() - 1, 1).toString();
 			double scaleEndD = Double.parseDouble(scaleEnd.split(":")[1]);
-			ScaleDisplay scaleLast = new ScaleDisplay("1:" + String.valueOf(scaleEndD / 2));
+			ScaleDisplay scaleLast = new ScaleDisplay("1:" + String.valueOf(format.format(scaleEndD / 2)));
 			this.scaleDisplays.add(scaleLast);
 			getTable();
 			checkButtonState();
@@ -731,7 +734,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			this.table.setValueAt(i + 1, i, 0);
 			this.table.setValueAt(scaleDisplays.get(i).getScale(), i, 1);
 		}
-		this.table.getColumn(MapViewProperties.getString("String_Index")).setPreferredWidth(40);
+		this.table.getColumn(MapViewProperties.getString("String_Index")).setMaxWidth(40);
 		this.table.getModel().removeTableModelListener(this.tableModelListener);
 		this.table.getModel().addTableModelListener(this.tableModelListener);
 	}

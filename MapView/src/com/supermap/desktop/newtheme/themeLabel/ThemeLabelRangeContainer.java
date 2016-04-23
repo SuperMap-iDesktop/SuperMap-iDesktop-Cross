@@ -211,6 +211,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.panelSytle.add(this.toolBar,             new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 5).setWeight(100, 0).setIpad(50, 0));
 		this.panelSytle.add(this.scrollPane,          new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
 		getTable();
+		this.tableLabelInfo.addRowSelectionInterval(0, 0);
 		this.scrollPane.setViewportView(tableLabelInfo);
 		//@formatter:on
 	}
@@ -760,7 +761,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 */
 		private void setRangeMethod() {
 			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
-			rangeExpression = comboBoxExpression.getSelectedItem().toString();
 			switch (rangeMethod) {
 			case 0:
 				// 等距分段
@@ -900,6 +900,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		 * 重建专题图
 		 */
 		private void resetThemeInfo() {
+			rangeExpression = comboBoxExpression.getSelectedItem().toString();
 			if (isResetComboBox) {
 				return;
 			}

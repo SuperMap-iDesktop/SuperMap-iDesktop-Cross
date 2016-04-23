@@ -162,10 +162,9 @@ public class ThemeMainContainer extends JPanel {
 						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0
 						&& null != ((FormMap) e.getOldActiveForm()).getActiveLayers()[0].getTheme()) {
 					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
-					if (null != tempLayer && null != tempLayer.getTheme()) {
-						panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(tempLayer));
+					if (null != tempLayer) {
+						updateProperty(tempLayer);
 					}
-					updateProperty(tempLayer);
 				}
 			}
 		};
@@ -250,8 +249,8 @@ public class ThemeMainContainer extends JPanel {
 					return;
 				}
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
-				if (null != panel && isLayerPath(e.getNewLeadSelectionPath())) {
+				// panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
+				if (null != panel) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
@@ -269,31 +268,19 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
-	public boolean isLayerPath(TreePath path) {
-		boolean result = false;
-		if (null != path && null != path.getLastPathComponent()) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-			Object obj = node.getUserObject();
-			TreeNodeData controlNodeData = (TreeNodeData) obj;
-			Object itemObj = controlNodeData.getData();
-			if (itemObj instanceof Layer) {
-				result = true;
-			}
-		}
-		return result;
-	}
-
 	public void updateLayerProperty(final TreePath path) {
 		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
 		if (null != path && tree.getRowForPath(path) < 0) {
 			// 树的当前节点已经被删除，修改layerPropertyChanged
 			setLayerPropertyChanged(false);
 		}
-		updateProperty(oldLayer);
+		if (null != oldLayer && !oldLayer.isDisposed()) {
+			updateProperty(oldLayer);
+		}
 	}
 
 	private void updateProperty(Layer oldLayer) {
-		if (null != oldLayer && null != oldLayer.getTheme() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+		if (null != oldLayer.getTheme() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				panel.unregistActionListener();
