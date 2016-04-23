@@ -61,4 +61,32 @@ public class DoubleUtilties {
 		return bd1.divide
 				(bd2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
+
+	/**
+	 * 判断字符串是否为double
+	 *
+	 * @param s 需要判断的字符串
+	 * @return true->是double
+	 */
+	public static boolean isDouble(String s) {
+		if (StringUtilties.isNullOrEmpty(s)) {
+			return false;
+		}
+		try {
+			Double aDouble = Double.valueOf(s);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 判断字符串是否为double而且不以d结尾
+	 *
+	 * @param s 需要判断的字符串
+	 * @return true->是double
+	 */
+	public static boolean isDoubleWithoutD(String s) {
+		return !(s == null || s.contains("d")) && isDouble(s);
+	}
 }

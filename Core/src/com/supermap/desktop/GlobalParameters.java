@@ -1,5 +1,8 @@
 package com.supermap.desktop;
 
+import com.supermap.data.AltitudeMode;
+import com.supermap.desktop.utilties.AltitudeModeUtilties;
+import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
@@ -11,6 +14,7 @@ import org.w3c.dom.NodeList;
 import java.util.HashMap;
 
 public class GlobalParameters {
+
 
 	private GlobalParameters() {
 		// do nothing
@@ -542,14 +546,110 @@ public class GlobalParameters {
 			booleanValue = Boolean.valueOf(value);
 			setLogException(booleanValue);
 		}
+		initCamera();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
+	private static void initCamera() {
+		String value;
+		value = getValue("_startup_camera", "altitude");
+		if (value != null && DoubleUtilties.isDouble(value)) {
+			setCameraAltitude(Double.valueOf(value));
+		}
+		value = getValue("_startup_camera", "altitudeMode");
+		if (value != null) {
+			setCameraAltitudeMode(AltitudeModeUtilties.getAltitudeMode(value));
+		}
+		value = getValue("_startup_camera", "heading");
+		if (value != null) {
+			setCameraHeading(Double.valueOf(value));
+		}
+		value = getValue("_startup_camera", "latitude");
+		if (value != null && DoubleUtilties.isDouble(value)) {
+			setCameraLatitude(Double.valueOf(value));
+		}
+		value = getValue("_startup_camera", "longitude");
+		if (value != null && DoubleUtilties.isDouble(value)) {
+			setCameraLongitude(Double.valueOf(value));
+		}
 
+		value = getValue("_startup_camera", "tilt");
+		if (value != null && DoubleUtilties.isDouble(value)) {
+			setCameraTilt(Double.valueOf(value));
+		}
+	}
 
+	//region 相机高度模式
+	private static AltitudeMode cameraAltitudeMode = AltitudeMode.ABSOLUTE;
 
+	private static void setCameraAltitudeMode(AltitudeMode altitudeMode) {
+		cameraAltitudeMode = altitudeMode;
+	}
 
+	public static AltitudeMode getCameraAltitudeMode() {
+		return cameraAltitudeMode;
+	}
+	//endregion
 
+	//region 相机方位角
+	private static double cameraHeading = 0;
+
+	private static void setCameraHeading(Double aDouble) {
+		cameraHeading = aDouble;
+	}
+
+	public static double getCameraHeading() {
+		return cameraHeading;
+	}
+	//endregion
+
+	//region 相机倾斜角
+	private static double cameraTilt = 0;
+
+	private static void setCameraTilt(Double aDouble) {
+		cameraTilt = aDouble;
+	}
+
+	public static double getCameraTilt() {
+		return cameraTilt;
+	}
+	//endregion
+
+	//region 相机维度
+	private static double cameraLatitude = 0.0;
+
+	private static void setCameraLatitude(Double aDouble) {
+		cameraLatitude = aDouble;
+	}
+
+	public static double getCameraLatitude() {
+		return cameraLatitude;
+	}
+	//endregion
+
+	//region 相机经度
+	private static double cameraLongitude = 0;
+
+	private static void setCameraLongitude(Double aDouble) {
+		cameraLongitude = aDouble;
+	}
+
+	public static double getCameraLongitude() {
+		return cameraLongitude;
+	}
+	//endregion
+
+	//region 相机高度
+	private static double cameraAltitude = 10288740;
+
+	public static void setCameraAltitude(Double aDouble) {
+		cameraAltitude = aDouble;
+	}
+
+	public static double getCameraAltitude() {
+		return cameraAltitude;
+	}
+	//endregion
 
 	public static boolean isShowFormClosingInfo() {
 		boolean result = false;
