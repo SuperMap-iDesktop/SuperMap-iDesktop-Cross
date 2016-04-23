@@ -99,15 +99,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private transient CaretPositionListener caretPositionListener;
 
 	public OperationType operationType = OperationType.NONE;
-	private MapClosedListener mapClosedListener = new MapClosedListener() {
-
-		@Override
-		public void mapClosed(MapClosedEvent arg0) {
-			if (container.isVisible()) {
-				container.setVisible(false);
-			}
-		}
-	};
 
 	private JPopupMenuBounds popupMenuClipRegion = new JPopupMenuBounds(JPopupMenuBounds.CLIP_REGION, Rectangle2D.getEMPTY());
 	private JPopupMenuBounds popupMenuLockedViewBounds = new JPopupMenuBounds(JPopupMenuBounds.VIEW_BOUNDS_LOCKED, Rectangle2D.getEMPTY());
@@ -272,10 +263,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.scaleEditor = new ScaleEditor(ScaleModel.NONE_SCALE);
 		this.checkBoxIsVisibleScalesEnabled = new JCheckBox("IsVisibleScaleEnabled");
 		this.buttonSetVisibleScales = new SmButton("SetVisibleScales");
-		// TODO 固定比例尺先不支持 暂时屏蔽
-		// this.checkBoxIsVisibleScalesEnabled.setVisible(false);
-		// this.buttonSetVisibleScales.setVisible(false);
-
 		this.checkBoxIsClipRegionEnabled = new JCheckBox("IsClipRegionEnabled");
 		this.buttonClipRegion = new SmButton("SetClipRegion");
 		this.checkBoxIsViewBoundsLocked = new JCheckBox("IsViewBoundsLocked");
@@ -502,6 +489,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.popupMenuClipRegion.setGeoRegion(clipRegion);
 		this.popupMenuLockedViewBounds.setRectangle2D(lockedViewBounds);
 		this.popupMenuCustomBounds.setRectangle2D(customBounds);
+		this.container.setVisible(false);
 	}
 
 	@Override
@@ -521,7 +509,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.textFieldCurrentViewRight.addPropertyChangeListener(this.textFieldPropertyChangeListener);
 		this.textFieldCurrentViewBottom.addPropertyChangeListener(this.textFieldPropertyChangeListener);
 		getMap().addDrawnListener(this.mapDrawnListener);
-		getMap().addMapClosedListener(mapClosedListener);
 		this.buttonClipRegion.addMouseListener(setMouseListener);
 		this.buttonSetLockedViewBounds.addMouseListener(setMouseListener);
 		this.buttonSetCustomBounds.addMouseListener(setMouseListener);
@@ -549,7 +536,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.textFieldCurrentViewBottom.removePropertyChangeListener(this.textFieldPropertyChangeListener);
 		if (getMap() != null) {
 			getMap().removeDrawnListener(this.mapDrawnListener);
-			getMap().removeMapClosedListener(mapClosedListener);
 		}
 		this.buttonClipRegion.removeMouseListener(setMouseListener);
 		this.buttonSetLockedViewBounds.removeMouseListener(setMouseListener);

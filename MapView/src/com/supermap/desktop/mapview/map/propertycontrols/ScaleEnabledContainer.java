@@ -521,7 +521,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (table.getRowCount() == 0) {
 			// 表中没有数据时
 			double scale = map.getScale();
-			String scaleCaption = new ScaleModel(format.format(scale)).getScaleCaption();
+			String scaleCaption = new ScaleModel(scale).getScaleCaption();
 			ScaleDisplay scaleDisplay = new ScaleDisplay(scaleCaption);
 			this.scaleDisplays.add(scaleDisplay);
 			getTable();
