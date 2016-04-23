@@ -15,13 +15,14 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
+import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.GeoStyleUtilties;
-import com.supermap.desktop.utilties.ImagePyramidUtilties;
 import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.realspace.Camera;
 import com.supermap.realspace.Feature3D;
@@ -41,6 +42,7 @@ import com.supermap.realspace.Theme3DUniqueItem;
 import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 场景相关工具类
@@ -62,40 +64,9 @@ public class SceneUtilties {
 	 */
 	public static void addDatasetToScene(Scene scene, Dataset... datasets) {
 		Layer3DSetting layer3DSetting = null;
-		boolean isUsedAsDefault = false; // 是否将当前选择作为后续的默认设置，不再提示
-		JDialogConfirm dialogConfirm = new JDialogConfirm();
 
+		datasets = getLimitAddToSceneDataset(datasets);
 		for (Dataset dataset : datasets) {
-			if (dataset.getPrjCoordSys().getType() == PrjCoordSysType.PCS_NON_EARTH) {
-				String message = MessageFormat.format(ControlsProperties.getString("String_FormScene_SceneGlobleAddDatasetPrjError"), dataset.getName());
-				Application.getActiveApplication().getOutput().output(message);
-				continue;
-			}
-			if (dataset instanceof DatasetImageCollection || dataset instanceof DatasetGridCollection || dataset.getType() == DatasetType.TABULAR
-					|| dataset.getType() == DatasetType.LINKTABLE) {
-				String message = MessageFormat.format(ControlsProperties.getString("String_Scene_NotSuportedDatasetType"), DatasetTypeUtilties.toString(dataset.getType()));
-				Application.getActiveApplication().getOutput().output(message);
-				continue;
-			}
-			if (dataset instanceof DatasetImage || dataset instanceof DatasetGrid) {
-				if (ImagePyramidUtilties.isNeedBuildPyramid(dataset)) {
-					dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_MustBuildPyramid"), dataset.getName()));
-					if (!isUsedAsDefault) {
-						dialogConfirm.showDialog();
-						isUsedAsDefault = dialogConfirm.isUsedAsDefault();
-					}
-
-					if (dialogConfirm.getDialogResult() != DialogResult.OK) {
-						continue;
-					} else {
-						if (dataset instanceof DatasetImage) {
-							((DatasetImage) dataset).buildPyramid();
-						} else {
-							((DatasetGrid) dataset).buildPyramid();
-						}
-					}
-				}
-			}
 			if (dataset instanceof DatasetVector) {
 				layer3DSetting = new Layer3DSettingVector();
 			} else if (dataset instanceof DatasetImage) {
@@ -123,7 +94,7 @@ public class SceneUtilties {
 				setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
 			}
 			// 网络数据集和三维网络数据集添加到场景上，同时添加点图层
-			if (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D) {
+			if (dataset instanceof DatasetVector && (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D)) {
 				Layer3DSettingVector layer3DSettingVector = new Layer3DSettingVector();
 				Dataset datasetPoint = ((DatasetVector) dataset).getChildDataset();
 
@@ -134,6 +105,61 @@ public class SceneUtilties {
 				}
 			}
 		}
+	}
+
+	private static Dataset[] getLimitAddToSceneDataset(Dataset[] datasets) {
+		List<Dataset> datasetLimitList = new ArrayList<>();
+		List<Dataset> needBuildPyramidDatasetList = new ArrayList<>();
+		boolean isUsedAsDefault = false; // 是否将当前选择作为后续的默认设置，不再提示
+		JDialogConfirm dialogConfirm = new JDialogConfirm();
+		for (Dataset dataset : datasets) {
+			if (dataset.getPrjCoordSys().getType() == PrjCoordSysType.PCS_NON_EARTH) {
+				String message = MessageFormat.format(ControlsProperties.getString("String_FormScene_SceneGlobleAddDatasetPrjError"), dataset.getName());
+				Application.getActiveApplication().getOutput().output(message);
+				continue;
+			}
+			if (dataset instanceof DatasetImageCollection || dataset instanceof DatasetGridCollection || dataset.getType() == DatasetType.TABULAR
+					|| dataset.getType() == DatasetType.LINKTABLE) {
+				String message = MessageFormat.format(ControlsProperties.getString("String_Scene_NotSuportedDatasetType"), DatasetTypeUtilties.toString(dataset.getType()));
+				Application.getActiveApplication().getOutput().output(message);
+				continue;
+			}
+			if (dataset instanceof DatasetImage || dataset instanceof DatasetGrid) {
+				// 影像，栅格创建影像金字塔
+				if (!((dataset instanceof DatasetImage && ((DatasetImage) dataset).getHasPyramid()) || (dataset instanceof DatasetGrid && ((DatasetGrid) dataset).getHasPyramid()))) {
+					dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_MustBuildPyramid"), dataset.getName()));
+					if (!isUsedAsDefault) {
+						dialogConfirm.showDialog();
+						isUsedAsDefault = dialogConfirm.isUsedAsDefault();
+					}
+
+					if (dialogConfirm.getDialogResult() == DialogResult.OK) {
+						needBuildPyramidDatasetList.add(dataset);
+					}
+				} else {
+					datasetLimitList.add(dataset);
+				}
+			} else {
+				datasetLimitList.add(dataset);
+			}
+		}
+		if (needBuildPyramidDatasetList.size() > 0) {
+			FormProgressTotal formProgressTotal = new FormProgressTotal(ControlsProperties.getString("String_Form_BuildDatasetPyramid"));
+			formProgressTotal.doWork(new CreateImagePyramidCallable(needBuildPyramidDatasetList.toArray(new Dataset[needBuildPyramidDatasetList.size()])));
+
+		}
+		for (Dataset dataset : needBuildPyramidDatasetList) {
+			if (dataset instanceof DatasetImage) {
+				if (((DatasetImage) dataset).getHasPyramid()) {
+					datasetLimitList.add(dataset);
+				}
+			} else if (dataset instanceof DatasetGrid) {
+				if (((DatasetGrid) dataset).getHasPyramid()) {
+					datasetLimitList.add(dataset);
+				}
+			}
+		}
+		return datasetLimitList.toArray(new Dataset[datasetLimitList.size()]);
 	}
 
 	/**

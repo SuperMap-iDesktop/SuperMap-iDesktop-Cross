@@ -27,6 +27,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.realspace.Camera;
 import com.supermap.realspace.Layer3D;
 import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3DSettingVector;
@@ -145,7 +146,6 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		try {
 			this.title = title;
 			this.sceneControl = new SceneControl();
-
 			this.setComponent(this.sceneControl);
 
 			this.layer3DsTree = UICommonToolkit.getLayersManager().getLayer3DsTree();
@@ -197,6 +197,11 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			// 再添加本次绑定
 			this.sceneControl.getScene().setWorkspace(workspace);
 			workspace.addClosingListener(this);
+
+			// 重定位视角
+			Camera camera = new Camera(GlobalParameters.getCameraLongitude(), GlobalParameters.getCameraLatitude(), GlobalParameters.getCameraAltitude()
+					, GlobalParameters.getCameraAltitudeMode(), GlobalParameters.getCameraHeading(), GlobalParameters.getCameraTilt());
+			sceneControl.getScene().setCamera(camera);
 			sceneControl.getScene().getLatLonGrid().setVisible(false);
 			sceneControl.getScene().getLatLonGrid().setTextVisible(false);
 		}

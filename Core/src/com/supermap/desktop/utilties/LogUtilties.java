@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by Administrator on 2016/3/22.
+ * @author xiajt
  */
 public class LogUtilties {
 	private static final Log log = LogFactory.getLog(LogUtilties.class);

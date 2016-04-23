@@ -33,9 +33,9 @@ public class CtrlActionDatasetAddToNewScene extends CtrlAction {
 				// 这里必须要设置工作空间，否则不能显示出来。
 				// 而且不能在new SceneControl的时候就设置工作空间，必须等球显示出来的时候才能设置。
 				formScene.setWorkspace(Application.getActiveApplication().getWorkspace());
+				UICommonToolkit.getLayersManager().setScene(scene);
 				SceneUtilties.addDatasetToScene(scene, datasets);
 				scene.refresh();
-				UICommonToolkit.getLayersManager().setScene(scene);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

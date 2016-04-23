@@ -1,7 +1,9 @@
 package com.supermap.desktop.geometryoperation.CtrlAction;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.geometryoperation.editor.NullEditor;
 import com.supermap.desktop.implement.CtrlAction;
@@ -32,6 +34,9 @@ public class CtrlActionEditorBase extends CtrlAction {
 	@Override
 	public void run() {
 		PluginEnvironment.getGeometryEditManager().instance().activateEditor(getEditor());
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().requestFocus();
+		}
 	}
 
 	@Override
