@@ -159,10 +159,9 @@ public class ThemeMainContainer extends JPanel {
 			@Override
 			public void activeFormChanged(ActiveFormChangedEvent e) {
 				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()
-						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0
-						&& null != ((FormMap) e.getOldActiveForm()).getActiveLayers()[0].getTheme()) {
+						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0) {
 					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
-					if (null != tempLayer) {
+					if (null != tempLayer&&!tempLayer.isDisposed()) {
 						updateProperty(tempLayer);
 					}
 				}

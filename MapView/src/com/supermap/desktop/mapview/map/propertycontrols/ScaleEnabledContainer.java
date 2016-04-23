@@ -64,7 +64,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	private MapBoundsPropertyControl control;
 	private String[] title = { MapViewProperties.getString("String_Index"), MapViewProperties.getString("String_Scales") };
 	private DecimalFormat format = new DecimalFormat("#.############");
-	
+
 	private TableModelListener tableModelListener = new TableModelListener() {
 
 		@Override
@@ -304,10 +304,13 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private String getFilePath(String module, boolean isOutport) {
 		String filePath = "";
+		String title = CommonProperties.getString("String_ToolBar_Import");
+		if (isOutport) {
+			title = CommonProperties.getString("String_Button_Export");
+		}
 		if (!SmFileChoose.isModuleExist(module)) {
 			String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
-			SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), CommonProperties.getString("String_ToolBar_Import"), module,
-					"OpenMany");
+			SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), title, module, "OpenMany");
 		}
 		SmFileChoose fileChoose = new SmFileChoose(module);
 		if (isOutport) {
@@ -509,9 +512,9 @@ public class ScaleEnabledContainer extends SmDialog {
 			double scaleNextD = Double.parseDouble(scaleNext.split(":")[1]);
 			double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
 			ScaleDisplay scaleInsert = new ScaleDisplay("1:" + String.valueOf(format.format((scaleNextD + scaleNowD) / 2)));
-			this.scaleDisplays.add(selectRow+1, scaleInsert);
+			this.scaleDisplays.add(selectRow + 1, scaleInsert);
 			getTable();
-			this.table.addRowSelectionInterval(selectRow+1, selectRow+1);
+			this.table.addRowSelectionInterval(selectRow + 1, selectRow + 1);
 			checkButtonState();
 			return;
 		}

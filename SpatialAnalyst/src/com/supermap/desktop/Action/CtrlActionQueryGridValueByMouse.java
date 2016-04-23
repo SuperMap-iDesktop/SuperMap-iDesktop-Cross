@@ -31,6 +31,7 @@ import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
 
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
@@ -41,12 +42,13 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
+		formMap.showPopupMenu();
 		transparentBackground.setVisible(false);
 		TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
 		mapControl.removeMouseListener(this.mouseAdapter);
 		mapControl.removeMouseMotionListener(this.mouseMotionListener);
+		mapControl.removeKeyListener(this.keyAdapter);
 	}
-
 	KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -116,6 +118,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		mapControl.addMouseMotionListener(this.mouseMotionListener);
 		mapControl.add(transparentBackground);
 		// 添加监听事件
+		formMap.dontShowPopupMenu();
 		mapControl.addMouseListener(this.mouseAdapter);
 		mapControl.addKeyListener(keyAdapter);
 		mapControl.setLayout(null);
