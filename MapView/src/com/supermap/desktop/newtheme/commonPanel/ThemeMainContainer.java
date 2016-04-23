@@ -160,10 +160,11 @@ public class ThemeMainContainer extends JPanel {
 			public void activeFormChanged(ActiveFormChangedEvent e) {
 				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()
 						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0) {
-					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
-					if (null != tempLayer&&!tempLayer.isDisposed()) {
-						updateProperty(tempLayer);
-					}
+					((FormMap) e.getOldActiveForm()).getMapControl().getMap().close();
+//					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
+//					if (null != tempLayer&&!tempLayer.isDisposed()) {
+//						updateProperty(tempLayer);
+//					}
 				}
 			}
 		};
