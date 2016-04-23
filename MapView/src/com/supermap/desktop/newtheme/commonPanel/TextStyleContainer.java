@@ -516,6 +516,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 		if (isRefreshAtOnce && null != map) {
 			refreshMapAndLayer();
 		}
+		if (!isRefreshAtOnce && null != map && null != themeLabel) {
+			for (int i = 0; i < this.selectRow.length; i++) {
+				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
+			}
+		}
+		if (isRefreshAtOnce) {
+			
+		}
 		return;
 	}
 

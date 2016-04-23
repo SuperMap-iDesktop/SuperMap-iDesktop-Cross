@@ -881,8 +881,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					if (isItemChanged) {
 						// 修改表达式
 						setFieldInfo();
-						refreshColor();
-						getTable();
 					}
 				} else if (e.getSource() == comboBoxRangeCount && !isCustom && !isMergeOrSplit) {
 					// 修改段数
@@ -1260,8 +1258,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		try {
 			this.themeRange = new ThemeRange(theme);
 			this.themeRange.setRangeExpression(rangeExpression);
-			refreshColor();
 			resetItemLineColor();
+			refreshColor();
+			getTable();
 			if (2 <= themeRange.getCount()) {
 				this.rangeCount = this.themeRange.getCount();
 				this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
