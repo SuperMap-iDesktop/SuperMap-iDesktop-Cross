@@ -1,14 +1,5 @@
 package com.supermap.desktop.Action;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
@@ -31,25 +22,33 @@ import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackMode;
+
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
 
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
 	private transient MapControl mapControl;
 	private IFormMap formMap;
 	private final DecimalFormat format = new DecimalFormat("######0.000000");
-	private String avtiveFormMap = "";
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
 		formMap.showPopupMenu();
 		transparentBackground.setVisible(false);
-		TransparentBackground.queryGridMap.remove(mapControl.getMap().getName());
+		TransparentBackground.queryGridMap.remove(mapControl);
 		mapControl.removeMouseListener(this.mouseAdapter);
 		mapControl.removeMouseMotionListener(this.mouseMotionListener);
 		mapControl.removeKeyListener(this.keyAdapter);
+		mapControl.getMap().removeMapClosedListener(mapClosedListener);
 	}
-	KeyAdapter keyAdapter = new KeyAdapter() {
+
+	private KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
@@ -58,7 +57,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		}
 	};
 
-	MouseAdapter mouseAdapter = new MouseAdapter() {
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
@@ -67,10 +66,18 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		}
 	};
 
-	MouseAdapter mouseMotionListener = new MouseAdapter() {
+	private MouseAdapter mouseMotionListener = new MouseAdapter() {
 		@Override
 		public void mouseMoved(MouseEvent arg0) {
 			abstractMapcontrolMouseMoved(format, arg0);
+		}
+	};
+
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			hideTransparentBackground();
 		}
 	};
 
@@ -85,12 +92,12 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			if (null != formMap) {
 				mapControl = formMap.getMapControl();
-				avtiveFormMap = mapControl.getMap().getName();
-				if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
+//				avtiveFormMap = mapControl.getMap().getName();
+				if (null != TransparentBackground.queryGridMap.get(mapControl)) {
 					hideTransparentBackground();
 				} else {
-					TransparentBackground.queryGridMap.put(avtiveFormMap, mapControl);
-					transparentBackground = TransparentBackground.getInstance();
+					transparentBackground = new TransparentBackground();
+					TransparentBackground.queryGridMap.put(mapControl, transparentBackground);
 					queryGridValue();
 				}
 			}
@@ -101,8 +108,8 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 					if (null != e.getNewActiveForm() && e.getNewActiveForm() instanceof IFormMap) {
 						formMap = (IFormMap) e.getNewActiveForm();
 						mapControl = formMap.getMapControl();
-						avtiveFormMap = mapControl.getMap().getName();
-						if (null != TransparentBackground.queryGridMap.get(avtiveFormMap)) {
+						if (null != TransparentBackground.queryGridMap.get(mapControl)) {
+							formMap.showPopupMenu();
 							queryGridValue();
 						}
 					}
@@ -115,25 +122,32 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	private void queryGridValue() {
 		mapControl.setAction(Action.SELECT);
-		mapControl.addMouseMotionListener(this.mouseMotionListener);
 		mapControl.add(transparentBackground);
 		// 添加监听事件
 		formMap.dontShowPopupMenu();
-		mapControl.addMouseListener(this.mouseAdapter);
-		mapControl.addKeyListener(keyAdapter);
+		addListener();
 		mapControl.setLayout(null);
-		mapControl.getMap().addMapClosedListener(new MapClosedListener() {
 
-			@Override
-			public void mapClosed(MapClosedEvent arg0) {
-				TransparentBackground.queryGridMap.remove(avtiveFormMap);
-			}
-		});
+	}
+
+	private void removeListner() {
+		mapControl.removeMouseMotionListener(this.mouseMotionListener);
+		mapControl.removeMouseListener(this.mouseAdapter);
+		mapControl.removeKeyListener(this.keyAdapter);
+		mapControl.getMap().removeMapClosedListener(mapClosedListener);
+	}
+
+	private void addListener() {
+		removeListner();
+		mapControl.addMouseMotionListener(this.mouseMotionListener);
+		mapControl.addMouseListener(this.mouseAdapter);
+		mapControl.addKeyListener(this.keyAdapter);
+		mapControl.getMap().addMapClosedListener(mapClosedListener);
 	}
 
 	private void abstractMapcontrolMouseMoved(final DecimalFormat format, MouseEvent arg0) {
 		try {
-			if (null == TransparentBackground.queryGridMap.get(mapControl.getMap().getName())) {
+			if (null == TransparentBackground.queryGridMap.get(mapControl)) {
 				return;
 			}
 

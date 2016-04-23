@@ -103,7 +103,7 @@ public abstract class AbstractPropertyControl extends JPanel {
 
 	protected void registerEvents() {
 		if (getMap() != null) {
-			this.getMap().addMapClosedListener(mapClosedListener);
+			this.getMap().addMapClosedListener(this.mapClosedListener);
 		}
 	}
 
@@ -111,7 +111,7 @@ public abstract class AbstractPropertyControl extends JPanel {
 
 	protected void unregisterEvents() {
 		if (getMap() != null) {
-			this.getMap().removeMapClosedListener(mapClosedListener);
+			this.getMap().removeMapClosedListener(this.mapClosedListener);
 		}
 	}
 

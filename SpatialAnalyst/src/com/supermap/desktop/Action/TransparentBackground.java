@@ -1,17 +1,13 @@
 package com.supermap.desktop.Action;
 
-import java.awt.Color;
-import java.util.HashMap;
-
-import javax.swing.JLabel;
-import javax.swing.GroupLayout;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
-import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.util.HashMap;
 
 public class TransparentBackground extends JPanel {
 	/**
@@ -25,28 +21,29 @@ public class TransparentBackground extends JPanel {
 	private JLabel jLabelRowOfGrid = new JLabel("columnOfGrid:");
 	private JLabel jLabelColumnOfGrid = new JLabel("lineOfGrid:");
 	private JLabel jLabelGridValue = new JLabel("gridValue:");
-	private final int gapWith = 10;
-	private static TransparentBackground transparent;
-	public static HashMap<String, MapControl> queryGridMap = new HashMap<String, MapControl>();
+	private static final int gapWith = 10;
+	//	private static TransparentBackground transparent;
+	public static HashMap<MapControl, TransparentBackground> queryGridMap = new HashMap<>();
 
-	private TransparentBackground() {
+	public TransparentBackground() {
 		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		this.setBackground(new Color(255, 255, 255, 220));
 		initResources();
 		initComponents();
+		if (SystemPropertyUtilties.isWindows()) {
+			this.setSize(230, 200);
+		} else {
+			this.setSize(268, 220);
+		}
 	}
 
-	public static TransparentBackground getInstance() {
-		if (null == transparent) {
-			transparent = new TransparentBackground();
-			if (SystemPropertyUtilties.isWindows()) {
-				transparent.setSize(230, 200);
-			}else {
-				transparent.setSize(268,220);
-			}
-		}
-		return transparent;
-	}
+//	public static TransparentBackground getInstance() {
+//		if (null == transparent) {
+//			transparent = new TransparentBackground();
+//
+//		}
+//		return transparent;
+//	}
 
 	/**
 	 * 资源化

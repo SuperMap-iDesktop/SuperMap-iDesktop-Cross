@@ -57,6 +57,16 @@ public class MapPropertyContainer extends JPanel {
 			setMap(arg0.getMap());
 		}
 	};
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			if (null != MapPropertyContainer.this.formMap && null != MapPropertyContainer.this.formMap.getMapControl()) {
+				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapOpenedListener(mapOpenedListener);
+				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapClosedListener(this);
+			}
+		}
+	};
+	;
 
 	/**
 	 * Create the panel.
@@ -116,15 +126,8 @@ public class MapPropertyContainer extends JPanel {
 		} else {
 			setMap(this.formMap.getMapControl().getMap());
 			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
-			this.formMap.getMapControl().getMap().addMapClosedListener(new MapClosedListener() {
-				@Override
-				public void mapClosed(MapClosedEvent arg0) {
-					if (null != MapPropertyContainer.this.formMap && null != MapPropertyContainer.this.formMap.getMapControl()) {
-						MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapOpenedListener(mapOpenedListener);
-						MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapClosedListener(this);
-					}
-				}
-			});
+			this.formMap.getMapControl().getMap().removeMapClosedListener(mapClosedListener);
+			this.formMap.getMapControl().getMap().addMapClosedListener(mapClosedListener);
 		}
 	}
 
