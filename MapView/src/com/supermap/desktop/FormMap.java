@@ -398,7 +398,13 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			} else {
 				mapControl.setAction(Action.SELECT2);
 			}
-			ToolbarUtilties.updataToolbarsState();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// 先挂起，最后刷新工具条
+					ToolbarUtilties.updataToolbarsState();
+				}
+			});
 		}
 	};
 
