@@ -1242,13 +1242,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			comboBoxExpression.setSelectedItem(expression.substring(expression.indexOf(".") + 1, expression.length()));
 		}
 	}
-	private void resetItemLineColor(){
+
+	private void resetItemLineColor() {
 		for (int i = 0; i < this.themeRange.getCount(); i++) {
 			GeoStyle textStyle = themeRange.getItem(i).getStyle();
 			textStyle.setLineColor(Color.GRAY);
 		}
 	}
-	
+
 	/**
 	 * 刷新theme
 	 *
@@ -1385,7 +1386,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
+		if (null != ThemeGuideFactory.getMapControl()) {
+			this.map = ThemeGuideFactory.getMapControl().getMap();
+		}
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.RANGE) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();

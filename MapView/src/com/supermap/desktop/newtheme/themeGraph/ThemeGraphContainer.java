@@ -1751,7 +1751,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
+		if (null != ThemeGuideFactory.getMapControl()) {
+			this.map = ThemeGuideFactory.getMapControl().getMap();
+		}
 		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
 		if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme().getType() == ThemeType.GRAPH) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());

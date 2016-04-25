@@ -229,11 +229,11 @@ public class ScaleEnabledContainer extends SmDialog {
 		}
 		String oldScale = scaleDisplays.get(selectRow).getScale();
 		String selectScale = table.getValueAt(selectRow, 1).toString();
-		
+
 		if (!ScaleModel.isLegitScaleString(selectScale)) {
 			setTableCell(selectRow, oldScale);
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_ErrorInput"));
-		}else {
+		} else {
 			setTableCell(selectRow, selectScale);
 		}
 	}
@@ -258,20 +258,22 @@ public class ScaleEnabledContainer extends SmDialog {
 	protected void importXml(String string) {
 		try {
 			String filePath = getFilePath(string, false);
-			File file = new File(filePath);
-			FileInputStream fis = new FileInputStream(file);
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			String tempstr = "";
-			while ((tempstr = br.readLine()) != null) {
-				if (tempstr.contains("<Scale>")) {
-					tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
-					if (!haveScale(scaleDisplays, tempstr)) {
-						scaleDisplays.add(new ScaleDisplay(tempstr));
+			if (!StringUtilties.isNullOrEmpty(filePath)) {
+				File file = new File(filePath);
+				FileInputStream fis = new FileInputStream(file);
+				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+				String tempstr = "";
+				while ((tempstr = br.readLine()) != null) {
+					if (tempstr.contains("<Scale>")) {
+						tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
+						if (!haveScale(scaleDisplays, tempstr)) {
+							scaleDisplays.add(new ScaleDisplay(tempstr));
+						}
 					}
 				}
+				sort(scaleDisplays);
+				getTable();
 			}
-			sort(scaleDisplays);
-			getTable();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -302,7 +304,8 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (isOutport) {
 			fileChoose.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
 		}
-		int state = fileChoose.showDefaultDialog();
+		int state = -1;
+		state = fileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = fileChoose.getFilePath();
 		}
@@ -491,7 +494,7 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void addScaleCaption() throws InvalidScaleException {
 		int selectRow = table.getSelectedRow();
-		if (selectRow > 0 && selectRow + 1 != table.getRowCount()) {
+		if (selectRow >= 0 && selectRow + 1 != table.getRowCount()) {
 			// 有选中项或者选中项不是0
 			String scaleNext = table.getValueAt(selectRow + 1, 1).toString();
 			String scaleNow = table.getValueAt(selectRow, 1).toString();

@@ -183,8 +183,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
-		this.add(tabbedPaneInfo,
-				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();
@@ -206,8 +205,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonAscend.setToolTipText(MapViewProperties.getString("String_Title_Ascend"));
 		this.buttonDescend.setToolTipText(MapViewProperties.getString("String_Title_Descend"));
 		this.buttonAntitone.setToolTipText(MapViewProperties.getString("String_Title_Antitone"));
-		this.panelOffsetSet
-				.setBorder(new TitledBorder(null, MapViewProperties.getString("String_GroupBoxOffset"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		this.panelOffsetSet.setBorder(new TitledBorder(null, MapViewProperties.getString("String_GroupBoxOffset"), TitledBorder.LEADING, TitledBorder.TOP,
+				null, null));
 		this.labelOffsetUnity.setText(MapViewProperties.getString("String_LabelOffsetUnit"));
 		this.labelOffsetX.setText(MapViewProperties.getString("String_LabelOffsetX"));
 		this.labelOffsetY.setText(MapViewProperties.getString("String_LabelOffsetY"));
@@ -380,8 +379,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			this.buttonGeoStyle.setIcon(InternalImageIconFactory.POINT_STYLE);
 		}
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
-		this.buttonDelete
-				.setIcon(new ImageIcon(ThemeUniqueContainer.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+		this.buttonDelete.setIcon(new ImageIcon(ThemeUniqueContainer.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonAntitone.setIcon(InternalImageIconFactory.Rever);
 	}
 
@@ -718,8 +717,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_ThemeGridUnique_MessageBoxInfo"));
 				resetThemeItem();
 			} else {
-				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET,
-						themeUniqueLayer.getDisplayFilter().getJoinItems());
+				ThemeUnique theme = ThemeUnique.makeDefault(datasetVector, expression, ColorGradientType.GREENORANGEVIOLET, themeUniqueLayer.getDisplayFilter()
+						.getJoinItems());
 
 				if (null != theme) {
 					boolean isOffsetFixed = themeUnique.isOffsetFixed();
@@ -1164,7 +1163,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	public void refreshMapAndLayer() {
-		this.map = ThemeGuideFactory.getMapControl().getMap();
+		if (null != ThemeGuideFactory.getMapControl()) {
+			this.map = ThemeGuideFactory.getMapControl().getMap();
+		}
 		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme().getType() == ThemeType.UNIQUE) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());

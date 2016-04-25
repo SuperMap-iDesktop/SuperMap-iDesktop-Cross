@@ -161,7 +161,7 @@ public class ThemeMainContainer extends JPanel {
 				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()
 						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0) {
 					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
-					if (null != tempLayer&&!tempLayer.isDisposed()) {
+					if (null != tempLayer && !tempLayer.isDisposed()) {
 						updateProperty(tempLayer);
 					}
 				}
@@ -248,8 +248,7 @@ public class ThemeMainContainer extends JPanel {
 					return;
 				}
 				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				// panel = ThemeGuideFactory.themeTypeContainer.get(ThemeGuideFactory.getThemeTypeString(oldLayer));
-				if (null != panel) {
+				if (null != panel && null != e.getNewLeadSelectionPath()) {
 					updateLayerProperty(e.getOldLeadSelectionPath());
 				}
 				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
@@ -306,7 +305,6 @@ public class ThemeMainContainer extends JPanel {
 				} else {
 					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
 				}
-				ThemeGuideFactory.getMapControl().getMap().refresh();
 				TreePath treePath = layersTree.getSelectionPath();
 				int row = layersTree.getRowForPath(treePath);
 				setLayerPropertyChanged(false);
