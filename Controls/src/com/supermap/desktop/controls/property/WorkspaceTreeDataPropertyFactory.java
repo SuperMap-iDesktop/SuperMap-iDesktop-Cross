@@ -53,7 +53,7 @@ public class WorkspaceTreeDataPropertyFactory {
 					boolean covert = tempDatasource != null && !tempDatasource.isReadOnly();
 					properties.add(getDatasourcePropertyControl((Datasource) data.getData()));
 					properties.add(getPrjCoordSysPropertyControl(new DatasourcePrjCoordSysHandle((Datasource) data.getData()), covert));
-				} else if (NodeDataTypeUtilties.isNodeDataset(data.getType())) {
+				} else if (NodeDataTypeUtilties.isNodeDataset(data.getType()) && data.getData() instanceof Dataset) {
 					properties.add(getDatasetPropertyControl((Dataset) data.getData()));
 					if (data.getType() == NodeDataType.DATASET_VECTOR) {
 						properties.add(getVectorPropertyControl((DatasetVector) data.getData()));

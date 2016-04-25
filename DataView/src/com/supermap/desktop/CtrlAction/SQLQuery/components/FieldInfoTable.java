@@ -213,10 +213,10 @@ public class FieldInfoTable extends SortTable {
 
 		public String[] getAllValue(int row) {
 			row = getIndexRow(row)[0];
-			if (row == -1 || row == 0 || row == getRowCount() - 1 || dataset == null) {
+			if (row == -1 || row == 0 || dataset == null) {
 				return null;
 			} else {
-				String[] strings = ((String) getValueAt(row, 1)).split(".");
+				String[] strings = getSqlValueAt(row, 1).split("\\.");
 				String datasetName = strings[0];
 				String fieldName = strings[1];
 
@@ -232,7 +232,7 @@ public class FieldInfoTable extends SortTable {
 				try {
 					recordset.moveFirst();
 					for (; !recordset.isEOF(); recordset.moveNext()) {
-						String result = formatData(recordset.getFieldValue(row - 1), fieldType);
+						String result = formatData(recordset.getFieldValue(fieldName), fieldType);
 						if (result != null) {
 							map.put(result, "");
 						}

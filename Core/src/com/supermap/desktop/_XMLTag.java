@@ -177,7 +177,7 @@ public class _XMLTag {
 	public static final String g_AttributionForMessage = "forMessage";
 
 	public static final String g_ValueLargeImagePostfix = ".large";
-	public static final String g_NodeWorkEnvironment = "workEnvironment";
+//	public static final String g_NodeWorkEnvironment = "workEnvironment";
 	private static String g_strWorkEnvironment;
 
 	/**

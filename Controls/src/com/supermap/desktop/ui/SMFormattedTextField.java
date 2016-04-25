@@ -23,35 +23,38 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
+		// FIXME: 2016/4/25
+		// 使用invokeLater会导致导致 移除事件 -> 修改属性 -> 发送改变事件 -> 添加事件 变成
+		// 移除事件 -> 修改属性 ->添加事件 ->  发送改变事件 导致错误触发事件
+//		SwingUtilities.invokeLater(new Runnable() {
+//
+//			@Override
+//			public void run() {
 				updateEdit();
-			}
-		});
+//			}
+//		});
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
+//		SwingUtilities.invokeLater(new Runnable() {
+//
+//			@Override
+//			public void run() {
 				updateEdit();
-			}
-		});
+//			}
+//		});
 	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
+//		SwingUtilities.invokeLater(new Runnable() {
+//
+//			@Override
+//			public void run() {
 				updateEdit();
-			}
-		});
+//			}
+//		});
 	}
 
 

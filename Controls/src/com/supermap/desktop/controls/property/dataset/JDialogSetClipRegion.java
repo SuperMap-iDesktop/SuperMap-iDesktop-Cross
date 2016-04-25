@@ -11,6 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -26,9 +27,10 @@ import java.awt.event.ItemListener;
 public class JDialogSetClipRegion extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
 
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxDatasource;
@@ -70,6 +72,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		}
 	};
 
+
 	public JDialogSetClipRegion(JDialog owner) {
 		super(owner);
 		initializeComponents();
@@ -79,6 +82,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		setSize(new Dimension(355, 160));
 		registerEvents();
 		this.comboBoxDataset.setDatasets(this.comboBoxDatasource.getSelectedDatasource().getDatasets());
+		this.datasetVector = (DatasetVector) this.comboBoxDataset.getSelectedDataset();
 		setComponentEnabled();
 		setLocationRelativeTo(null);
 		this.componentList.add(this.buttonOk);
@@ -102,7 +106,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.comboBoxDatasource = new DatasourceComboBox();
 		this.labelDataset = new JLabel("Dataset:");
 		this.comboBoxDataset = new DatasetComboBox();
-		this.comboBoxDataset.setDatasetTypes(new DatasetType[] { DatasetType.REGION });
+		this.comboBoxDataset.setDatasetTypes(new DatasetType[]{DatasetType.REGION});
 		this.labelFilter = new JLabel("Filter:");
 		this.textFieldFilter = new JTextField();
 		this.buttonFilter = new JButton("...");
@@ -166,6 +170,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.comboBoxDataset.addItemListener(this.itemListener);
 		this.buttonOk.addActionListener(this.actionListener);
 		this.buttonCancel.addActionListener(this.actionListener);
+		this.buttonFilter.addActionListener(this.actionListener);
 	}
 
 	private void comboBoxDatasourceSelectedChange() {
@@ -194,15 +199,20 @@ public class JDialogSetClipRegion extends SmDialog {
 							for (int i = 0; i < recordsetGeometry.getPartCount(); i++) {
 								region.addPart(recordsetGeometry.getPart(i));
 							}
+							recordsetGeometry.dispose();
+							recordsetGeometry = null;
 						}
-						recordsetGeometry.dispose();
-						recordsetGeometry = null;
 						recordset.moveNext();
 					}
 				}
 			}
-			dialogResult = DialogResult.OK;
-			setVisible(false);
+			if (region != null && region.getArea() > 0) {
+				dialogResult = DialogResult.OK;
+				setVisible(false);
+			} else {
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_Message_SetClipRegionFailed"));
+			}
+
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -219,7 +229,16 @@ public class JDialogSetClipRegion extends SmDialog {
 	}
 
 	private void buttonFilterClicked() {
-		// TODO something
+		if (datasetVector != null) {
+			SQLExpressionDialog sqlExpressionDialog = new SQLExpressionDialog();
+			DialogResult dialogResult = sqlExpressionDialog.showDialog(textFieldFilter.getText(), datasetVector);
+			if (dialogResult == DialogResult.OK) {
+				String filter = sqlExpressionDialog.getQueryParameter().getAttributeFilter();
+				if (filter != null) {
+					textFieldFilter.setText(filter);
+				}
+			}
+		}
 	}
 
 	private void setComponentEnabled() {

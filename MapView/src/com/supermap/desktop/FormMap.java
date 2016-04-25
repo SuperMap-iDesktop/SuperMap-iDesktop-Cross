@@ -46,6 +46,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilties.ActionUtilties;
+import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
@@ -83,6 +84,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -101,6 +104,23 @@ import java.util.ArrayList;
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
+	private final DocumentListener pointDocumentListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			pointFieldValueChanged();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			pointFieldValueChanged();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			pointFieldValueChanged();
+		}
+	};
+
 	private MapControl mapControl = null;
 	JScrollPane jScrollPaneChildWindow = null;
 	private LayersTree layersTree = null;
@@ -248,10 +268,17 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			resetCenter(e, pointXField, pointYField);
+			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+				resetCenter();
+			}
 		}
 	};
-
+	private final FocusAdapter pointFocusListener = new FocusAdapter() {
+		@Override
+		public void focusLost(FocusEvent e) {
+			resetCenter();
+		}
+	};
 	private ItemListener itemListener = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
@@ -371,7 +398,13 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			} else {
 				mapControl.setAction(Action.SELECT2);
 			}
-			ToolbarUtilties.updataToolbarsState();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// 先挂起，最后刷新工具条
+					ToolbarUtilties.updataToolbarsState();
+				}
+			});
 		}
 	};
 
@@ -509,7 +542,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
 		this.scaleBox.setEditable(true);
 		this.pointXField = (SmTextField) getStatusbar().getComponent(CENTER_X);
+		Dimension size = new Dimension(70, 23);
+		this.pointXField.setPreferredSize(size);
+		this.pointXField.setMinimumSize(size);
+		this.pointXField.setMaximumSize(size);
 		this.pointYField = (SmTextField) getStatusbar().getComponent(CENTER_Y);
+		this.pointYField.setPreferredSize(size);
+		this.pointYField.setMinimumSize(size);
+		this.pointYField.setMaximumSize(size);
 	}
 
 	private void registerEvents() {
@@ -544,7 +584,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			this.scaleBox.addItemListener(this.itemListener);
 			this.pointXField.addKeyListener(this.keyAdapter);
+			this.pointXField.addFocusListener(this.pointFocusListener);
+			this.pointXField.getDocument().addDocumentListener(this.pointDocumentListener);
 			this.pointYField.addKeyListener(this.keyAdapter);
+			this.pointYField.addFocusListener(this.pointFocusListener);
+			this.pointYField.getDocument().addDocumentListener(this.pointDocumentListener);
+
 			addDrag();
 			this.layersTree.addTreeSelectionListener(this.layersTreeSelectionListener);
 
@@ -557,6 +602,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.scaleBox.removeItemListener(this.itemListener);
 		this.pointXField.removeKeyListener(this.keyAdapter);
 		this.pointYField.removeKeyListener(this.keyAdapter);
+		this.pointXField.removeFocusListener(this.pointFocusListener);
+		this.pointYField.removeFocusListener(this.pointFocusListener);
+		this.pointXField.getDocument().removeDocumentListener(this.pointDocumentListener);
+		this.pointYField.getDocument().removeDocumentListener(this.pointDocumentListener);
 		removeDrag();
 		if (this.mapControl != null) {
 			this.mapControl.removeKeyListener(this.mapKeyListener);
@@ -584,6 +633,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	}
 
+	private void pointFieldValueChanged() {
+		pointXField.setForeground(DoubleUtilties.isDoubleWithoutD(pointXField.getText()) ? Color.black : Color.RED);
+		pointYField.setForeground(DoubleUtilties.isDoubleWithoutD(pointYField.getText()) ? Color.black : Color.RED);
+	}
+
 	private void scaleChanged() {
 		JTextField textField = (JTextField) scaleBox.getEditor().getEditorComponent();
 		if (!ScaleModel.isLegitScaleString(textField.getText())) {
@@ -594,23 +648,25 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 初始化不可编辑的状态栏
-
 	 */
 	private void initUneditableStatus() {
 		((SmTextField) getStatusbar().getComponent(PRJCOORSYS)).setEditable(false);
 		((SmTextField) getStatusbar().getComponent(LOCATION)).setEditable(false);
 	}
 
-	protected void resetCenter(KeyEvent e, SmTextField pointXField, SmTextField pointYField) {
+	protected void resetCenter() {
 		try {
-			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-				double pointX = Double.parseDouble(pointXField.getText());
-				double pointY = Double.parseDouble(pointYField.getText());
+			String pointXFieldText = pointXField.getText();
+			String pointYFieldText = pointYField.getText();
+			if (DoubleUtilties.isDoubleWithoutD(pointXFieldText) && DoubleUtilties.isDoubleWithoutD(pointYFieldText)) {
+				double pointX = Double.parseDouble(pointXFieldText);
+				double pointY = Double.parseDouble(pointYFieldText);
 				Point2D point2d = new Point2D(pointX, pointY);
 				mapControl.getMap().setCenter(point2d);
 				mapControl.getMap().refresh();
+			} else {
+				initCenter();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -618,13 +674,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 监听地图控件鼠标移动事件，获得鼠标所在位置对应的经纬度
-
 	 *
-
 	 * @param e
-
 	 */
 	protected void mapControl_mouseMove(MouseEvent e) {
 		try {
@@ -722,9 +774,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * @param e
-
 	 */
 	protected void scaleBox_ItemChange() {
 		String scaleString = (String) scaleBox.getSelectedItem();
@@ -749,9 +799,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 初始化比例尺下拉菜单
-
 	 */
 	@SuppressWarnings("unchecked")
 	private void initScaleComboBox() {
@@ -781,7 +829,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	private void initCenter() {
-		DecimalFormat format = new DecimalFormat("######0.0000");
+		DecimalFormat format = new DecimalFormat("######0.####");
 		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber")
 				: format.format(mapControl.getMap().getCenter().getX());
 		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber")
@@ -1147,9 +1195,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 窗体被激活时候触发
-
 	 */
 	@Override
 	public void windowShown() {
@@ -1159,9 +1205,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 窗体被隐藏时候触发
-
 	 */
 	@Override
 	public void windowHidden() {
@@ -1288,18 +1332,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 全选
-
 	 */
 	public void selectAll() {
 		mapControlGeometrySelected(MapViewUtilties.selectAllGeometry(this));
 	}
 
 	/**
-
 	 * 反选
-
 	 */
 	public void reverseSelection() {
 		mapControlGeometrySelected(MapViewUtilties.reverseSelection(this));
@@ -1359,9 +1399,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 由于数据源/数据集/工作空间/对象等的属性面板结构上还不完善，目前这个方法开放为 public 供右键菜单属性的时候更新数据，优化方案正在思考中
-
 	 */
 	public void setSelectedGeometryProperty() {
 		// 取出所有有选择对象的图层的选择集
@@ -1400,9 +1438,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 拖动实现将数据集添加到当前地图图层
-
 	 */
 	private void addDrag() {
 		if (this.dropTargeted == null) {
@@ -1419,13 +1455,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-
 	 *
-
 	 * @author xie
-
 	 */
 	private class FormMapDropTargetAdapter extends DropTargetAdapter {
 

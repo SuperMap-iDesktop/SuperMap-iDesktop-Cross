@@ -78,7 +78,7 @@ public class MapViewUtilties {
 		}
 		// 更新地图属性面板
 		Application.getActiveApplication().resetActiveForm();
-//		map.refresh();
+		map.refresh();
 		UICommonToolkit.getLayersManager().setMap(map);
 	}
 

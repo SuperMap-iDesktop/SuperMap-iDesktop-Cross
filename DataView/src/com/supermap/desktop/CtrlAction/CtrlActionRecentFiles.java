@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.Datasource;
-import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -48,22 +47,13 @@ public class CtrlActionRecentFiles extends CtrlAction {
 								JDialogGetPassword dialogGetPassword = new JDialogGetPassword(CoreProperties.getString("String_WorkspacePasswordPrompt")) {
 									@Override
 									public boolean isRightPassword(String password) {
-										boolean result;
 										connectionInfo.setPassword(password);
-										try {
-											Workspace workspace = new Workspace();
-											result = workspace.open(connectionInfo);
-										} catch (Exception e) {
-											// 密码错误会抛异常
-											result = false;
-										}
-										return result;
+										return WorkspaceUtilties.openWorkspace(connectionInfo, false) != OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
 									}
 								};
 								if (dialogGetPassword.showDialog() == DialogResult.OK) {
 									// 按取消按钮不执行打开工作空间的操作。
-									connectionInfo.setPassword(dialogGetPassword.getPassword());
-									result = WorkspaceUtilties.openWorkspace(connectionInfo, false);
+									result = OpenWorkspaceResult.SUCCESSED;
 								} else {
 									result = OpenWorkspaceResult.FAILED_CANCEL;
 								}
@@ -74,8 +64,6 @@ public class CtrlActionRecentFiles extends CtrlAction {
 							String stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), filePath);
 							if (result != OpenWorkspaceResult.FAILED_CANCEL) {
 								Application.getActiveApplication().getWorkspace().close();
-							} else if (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
-								stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed_WrongPassword"), filePath);
 							}
 							Application.getActiveApplication().getOutput().output(stMsg);
 						}

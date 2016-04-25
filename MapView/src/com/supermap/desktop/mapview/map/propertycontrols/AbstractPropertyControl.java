@@ -107,15 +107,12 @@ public abstract class AbstractPropertyControl extends JPanel {
 		}
 	}
 
-	;
-
 	protected void unregisterEvents() {
 		if (getMap() != null) {
 			this.getMap().removeMapClosedListener(this.mapClosedListener);
 		}
 	}
 
-	;
 
 	protected abstract void fillComponents();
 
