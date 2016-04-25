@@ -233,8 +233,15 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (!ScaleModel.isLegitScaleString(selectScale)) {
 			setTableCell(selectRow, oldScale);
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_ErrorInput"));
-		} else {
+			return;
+		}
+		if (ScaleModel.isLegitScaleString(selectScale) && selectScale.contains(":")) {
 			setTableCell(selectRow, selectScale);
+			return;
+		}
+		if (!selectScale.contains(":") && ScaleModel.isLegitScaleString("1:" + selectScale)) {
+			setTableCell(selectRow, "1:" + selectScale);
+			return;
 		}
 	}
 
@@ -257,7 +264,7 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	protected void importXml(String string) {
 		try {
-			String filePath = getFilePath(string, false);
+			String filePath = getFilePathForImport();
 			if (!StringUtilties.isNullOrEmpty(filePath)) {
 				File file = new File(filePath);
 				FileInputStream fis = new FileInputStream(file);
@@ -290,30 +297,39 @@ public class ScaleEnabledContainer extends SmDialog {
 		return haveScale;
 	}
 
-	private String getFilePath(String module, boolean isOutport) {
+	private String getFilePathForImport() {
 		String filePath = "";
 		String title = CommonProperties.getString("String_ToolBar_Import");
-		if (isOutport) {
-			title = CommonProperties.getString("String_Button_Export");
-		}
-		if (!SmFileChoose.isModuleExist(module)) {
+		if (!SmFileChoose.isModuleExist("ImportScale")) {
 			String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
-			SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), title, module, "OpenMany");
+			SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), title, "ImportScale", "OpenOne");
 		}
-		SmFileChoose fileChoose = new SmFileChoose(module);
-		if (isOutport) {
-			fileChoose.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
-		}
-		int state = -1;
-		state = fileChoose.showDefaultDialog();
-		if (state == JFileChooser.APPROVE_OPTION) {
+		SmFileChoose fileChoose = new SmFileChoose("ImportScale");
+		int stateTemp = fileChoose.showDefaultDialog();
+		if (stateTemp == JFileChooser.APPROVE_OPTION) {
 			filePath = fileChoose.getFilePath();
 		}
 		return filePath;
 	}
 
+	private String getFilePathForExport() {
+		String filePath = "";
+		if (!SmFileChoose.isModuleExist("ExportScale")) {
+			String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
+			SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), CommonProperties.getString("String_ToolBar_Export"),
+					"ExportScale", "GetDirectories");
+		}
+		SmFileChoose tempfileChooser = new SmFileChoose("ExportScale");
+		tempfileChooser.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
+		int state = tempfileChooser.showSaveDialog(null);
+		if (state == JFileChooser.APPROVE_OPTION) {
+			filePath = tempfileChooser.getFilePath();
+		}
+		return filePath;
+	}
+
 	protected void exportXml(String module) {
-		createXml(getFilePath(module, true));
+		createXml(getFilePathForExport());
 	}
 
 	private void createXml(String filename) {
