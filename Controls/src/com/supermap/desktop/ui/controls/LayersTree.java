@@ -272,6 +272,9 @@ public class LayersTree extends JTree {
 	}
 
 	private void refreshNodeByTreeNode(Layer layer, DefaultMutableTreeNode lastselectDefaultMutableTreeNode) {
+		if (null==lastselectDefaultMutableTreeNode) {
+			return;
+		}
 		TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
 		DefaultMutableTreeNode layerNode = null;
 		if (treeNodeData.getData() instanceof Layer) {

@@ -491,7 +491,7 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void addScaleCaption() throws InvalidScaleException {
 		int selectRow = table.getSelectedRow();
-		if (selectRow > 0 && selectRow + 1 != table.getRowCount()) {
+		if (selectRow >= 0 && selectRow + 1 != table.getRowCount()) {
 			// 有选中项或者选中项不是0
 			String scaleNext = table.getValueAt(selectRow + 1, 1).toString();
 			String scaleNow = table.getValueAt(selectRow, 1).toString();

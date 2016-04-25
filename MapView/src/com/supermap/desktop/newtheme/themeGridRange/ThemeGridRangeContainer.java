@@ -992,8 +992,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
+		if (null != ThemeGuideFactory.getMapControl()) {
+			this.map = ThemeGuideFactory.getMapControl().getMap();
+		}
 		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-		this.map = ThemeGuideFactory.getMapControl().getMap();
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.GRIDRANGE) {
 			((ThemeGridRange) this.themeRangeLayer.getTheme()).clear();
 			this.themeRangeLayer.getTheme().fromXML(this.themeGridRange.toXML());

@@ -126,7 +126,12 @@ public class ScaleEditor extends JPanel {
 	private void valueChange(PropertyChangeEvent e) {
 		try {
 			ScaleModel oldModel = this.scaleModel;
-			this.scaleModel = new ScaleModel(1 / (Double) e.getNewValue());
+			if (ScaleModel.isLegitScaleString(1 / (Double) e.getNewValue())) {
+				//输入值判断
+				this.scaleModel = new ScaleModel(1 / (Double) e.getNewValue());
+			}else {
+				this.scaleModel = oldModel;
+			}
 			firePropertyChange(ControlDefaultValues.PROPERTYNAME_VALUE, oldModel, this.scaleModel);
 		} catch (Exception e1) {
 			Application.getActiveApplication().getOutput().output(e1);
