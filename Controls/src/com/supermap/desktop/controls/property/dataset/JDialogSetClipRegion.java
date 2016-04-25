@@ -82,6 +82,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		setSize(new Dimension(355, 160));
 		registerEvents();
 		this.comboBoxDataset.setDatasets(this.comboBoxDatasource.getSelectedDatasource().getDatasets());
+		this.datasetVector = (DatasetVector) this.comboBoxDataset.getSelectedDataset();
 		setComponentEnabled();
 		setLocationRelativeTo(null);
 		this.componentList.add(this.buttonOk);
@@ -169,6 +170,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.comboBoxDataset.addItemListener(this.itemListener);
 		this.buttonOk.addActionListener(this.actionListener);
 		this.buttonCancel.addActionListener(this.actionListener);
+		this.buttonFilter.addActionListener(this.actionListener);
 	}
 
 	private void comboBoxDatasourceSelectedChange() {
@@ -204,8 +206,13 @@ public class JDialogSetClipRegion extends SmDialog {
 					}
 				}
 			}
-			dialogResult = DialogResult.OK;
-			setVisible(false);
+			if (region != null && region.getArea() > 0) {
+				dialogResult = DialogResult.OK;
+				setVisible(false);
+			} else {
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_Message_SetClipRegionFailed"));
+			}
+
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -225,7 +232,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		if (datasetVector != null) {
 			SQLExpressionDialog sqlExpressionDialog = new SQLExpressionDialog();
 			DialogResult dialogResult = sqlExpressionDialog.showDialog(textFieldFilter.getText(), datasetVector);
-			if (sqlExpressionDialog.getDialogResult() == DialogResult.OK) {
+			if (dialogResult == DialogResult.OK) {
 				String filter = sqlExpressionDialog.getQueryParameter().getAttributeFilter();
 				if (filter != null) {
 					textFieldFilter.setText(filter);
