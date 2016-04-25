@@ -207,6 +207,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 		this.textFieldHasPyramid.setEditable(false);
 		this.labelClipRegion = new JLabel("ClipRegion:");
 		this.buttonSetClipRegion = new SmButton("Setting...");
+		this.buttonSetClipRegion.setUseDefaultSize(false);
 		this.buttonClearClipRegion = new SmButton("Clear");
 
 		JPanel panelOther = new JPanel();

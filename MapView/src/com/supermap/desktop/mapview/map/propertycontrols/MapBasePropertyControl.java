@@ -7,6 +7,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.MapColorModeUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapColorMode;
@@ -359,6 +360,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void unregisterEvents() {
+		super.unregisterEvents();
 		this.caretPositionListener.unRegisterComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.removePropertyChangeListener(this.propertyChangeListener);
 		this.comboBoxColorMode.removeItemListener(this.itemListener);
@@ -435,8 +437,11 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private void textFieldAngleValueChange(PropertyChangeEvent e) {
 		try {
 			if ("value".equalsIgnoreCase(e.getPropertyName())) {
-				this.angle = e.getNewValue() == null ? this.angle : Double.valueOf(e.getNewValue().toString());
-				verify();
+				Double newAngle = Double.valueOf(e.getNewValue().toString());
+				if (!DoubleUtilties.equals(newAngle, angle, 6)) {
+					this.angle = e.getNewValue() == null ? this.angle : newAngle;
+					verify();
+				}
 			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
