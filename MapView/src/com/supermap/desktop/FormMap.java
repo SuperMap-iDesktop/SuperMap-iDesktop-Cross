@@ -536,7 +536,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
 		this.scaleBox.setEditable(true);
 		this.pointXField = (SmTextField) getStatusbar().getComponent(CENTER_X);
+		Dimension size = new Dimension(70, 23);
+		this.pointXField.setPreferredSize(size);
+		this.pointXField.setMinimumSize(size);
+		this.pointXField.setMaximumSize(size);
 		this.pointYField = (SmTextField) getStatusbar().getComponent(CENTER_Y);
+		this.pointYField.setPreferredSize(size);
+		this.pointYField.setMinimumSize(size);
+		this.pointYField.setMaximumSize(size);
 	}
 
 	private void registerEvents() {
@@ -652,6 +659,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Point2D point2d = new Point2D(pointX, pointY);
 				mapControl.getMap().setCenter(point2d);
 				mapControl.getMap().refresh();
+			} else {
+				initCenter();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -814,7 +823,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	private void initCenter() {
-		DecimalFormat format = new DecimalFormat("######0.0000");
+		DecimalFormat format = new DecimalFormat("######0.####");
 		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber")
 				: format.format(mapControl.getMap().getCenter().getX());
 		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber")
