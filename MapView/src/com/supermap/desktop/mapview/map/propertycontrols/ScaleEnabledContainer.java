@@ -305,11 +305,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			fileChoose.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
 		}
 		int state = -1;
-		if (isOutport) {
-			state = fileChoose.showSaveDialog(null);
-		} else {
-			state = fileChoose.showDefaultDialog();
-		}
+		state = fileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = fileChoose.getFilePath();
 		}
