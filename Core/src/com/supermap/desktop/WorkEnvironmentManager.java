@@ -44,6 +44,11 @@ public class WorkEnvironmentManager {
 						Element pluginElement = XmlUtilties.getRootNode(configFile);
 						if (pluginElement != null) {
 							PluginInfo pluginInfo = new PluginInfo(pluginElement);
+							if (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.LBSClient") != -1)
+							{
+								int n = 0;
+								int m = n;
+							}
 							if (pluginInfo.IsValid()
 									&& (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.Frame") != -1 || pluginInfo.getBundleName().indexOf(
 											"SuperMap.Desktop.DataView") != -1)) {
