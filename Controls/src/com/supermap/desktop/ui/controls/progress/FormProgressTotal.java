@@ -130,10 +130,6 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 							});
 						}
 					}
-				} catch (InterruptedException e) {
-					Application.getActiveApplication().getOutput().output(e);
-				} catch (ExecutionException e) {
-					Application.getActiveApplication().getOutput().output(e);
 				} catch (Exception e) {
 					Application.getActiveApplication().getOutput().output(e);
 				} finally {
