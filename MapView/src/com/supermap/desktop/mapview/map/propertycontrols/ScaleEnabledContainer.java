@@ -123,10 +123,10 @@ public class ScaleEnabledContainer extends SmDialog {
 						scaleDisplays.remove(selectRow[i]);
 					}
 					getTable();
-					checkButtonState();
-					if (table.getRowCount() >= 0) {
+					if (table.getRowCount() > 0) {
 						table.addRowSelectionInterval(0, 0);
 					}
+					checkButtonState();
 					return;
 				}
 				if (e.getSource() == buttonImport) {
