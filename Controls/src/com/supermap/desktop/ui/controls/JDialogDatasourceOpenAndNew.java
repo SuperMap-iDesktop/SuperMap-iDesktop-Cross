@@ -1,46 +1,25 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import com.supermap.data.EngineType;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
-import com.supermap.data.EngineType;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	// Variables declaration
@@ -60,7 +39,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	/**
 	 * Create the dialog.
-	 * 
+	 *
 	 * @param type 数据源类型
 	 */
 	public JDialogDatasourceOpenAndNew(JFrame owner, DatasourceOperatorType type) {
@@ -150,28 +129,28 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	/**
 	 * 根据类型初始化面板
-	 * 
+	 *
 	 * @param type 类型（NEWDATABASE/OPENDATABASE/OPENWEB）
 	 */
 	private void initializeDatasourceType(DatasourceOperatorType type) {
 		try {
 			switch (type) {
-			case NEWDATABASE:
-				this.listDatasourceType.setModel(getListItemForOpenOrNew());
-				this.listDatasourceType.setCellRenderer(this.commonCellRender);
-				break;
-			case OPENDATABASE:
-				this.listDatasourceType.setModel(getListItemForOpenOrNew());
-				this.listDatasourceType.setCellRenderer(this.commonCellRender);
-				// 暂不支持ArcSDE数据源
-				break;
-			case OPENWEB:
-				this.listDatasourceType.setModel(getListItemForOpenWebDatasource());
-				this.listDatasourceType.setCellRenderer(this.commonCellRender);
-				// 暂不支持天地图
-				break;
-			default:
-				break;
+				case NEWDATABASE:
+					this.listDatasourceType.setModel(getListItemForOpenOrNew());
+					this.listDatasourceType.setCellRenderer(this.commonCellRender);
+					break;
+				case OPENDATABASE:
+					this.listDatasourceType.setModel(getListItemForOpenOrNew());
+					this.listDatasourceType.setCellRenderer(this.commonCellRender);
+					// 暂不支持ArcSDE数据源
+					break;
+				case OPENWEB:
+					this.listDatasourceType.setModel(getListItemForOpenWebDatasource());
+					this.listDatasourceType.setCellRenderer(this.commonCellRender);
+					// 暂不支持天地图
+					break;
+				default:
+					break;
 			}
 			this.listDatasourceType.setSelectedIndex(0);
 		} catch (Exception ex) {
@@ -211,7 +190,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell oracleSpatialDataCell = new DataCell();
 		oracleSpatialDataCell.initDatasourceType(EngineType.ORACLESPATIAL, ControlsProperties.getString("String_OracleSpatial"));
 		DataCell postgreSqlDataCell = new DataCell();
-		postgreSqlDataCell.initDatasourceType(EngineType.POSTGRESQL,ControlsProperties.getString("String_PostgreSQL"));
+		postgreSqlDataCell.initDatasourceType(EngineType.POSTGRESQL, ControlsProperties.getString("String_PostgreSQL"));
 		DataCell db2DataCell = new DataCell();
 		db2DataCell.initDatasourceType(EngineType.DB2, ControlsProperties.getString("String_DB2"));
 		DataCell dmDataCell = new DataCell();
@@ -247,17 +226,17 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			EngineType engineType = EngineType.SQLPLUS;
 			if (null != datasourceOperatorType) {
 				switch (datasourceOperatorType) {
-				case NEWDATABASE:
-					result = setCaseOpenDatabase(index);
-					break;
-				case OPENDATABASE:
-					result = setCaseOpenDatabase(index);
-					break;
-				case OPENWEB:
-					result = setCaseOpenWeb(index, engineType);
-					break;
-				default:
-					break;
+					case NEWDATABASE:
+						result = setCaseOpenDatabase(index);
+						break;
+					case OPENDATABASE:
+						result = setCaseOpenDatabase(index);
+						break;
+					case OPENWEB:
+						result = setCaseOpenWeb(index, engineType);
+						break;
+					default:
+						break;
 				}
 			}
 		} catch (Exception ex) {
@@ -287,26 +266,26 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			this.panelDatasourceInfoWeb = new JPanelDatasourceInfoWeb();
 		}
 		switch (index) {
-		case 0: // OGC
-			engineTypeTemp = EngineType.OGC;
-			break;
-		case 1: // iServerRest
-			engineTypeTemp = EngineType.ISERVERREST;
-			break;
-		case 2: // SuperMapCloud
-			engineTypeTemp = EngineType.SUPERMAPCLOUD;
-			break;
-		case 3: // GoogleMaps
-			engineTypeTemp = EngineType.GOOGLEMAPS;
-			break;
-		case 4: // BaiduMap
-			engineTypeTemp = EngineType.BAIDUMAPS;
-			break;
-		case 5: // OpenStreetMaps
-			engineTypeTemp = EngineType.OPENSTREETMAPS;
-			break;
-		default:
-			break;
+			case 0: // OGC
+				engineTypeTemp = EngineType.OGC;
+				break;
+			case 1: // iServerRest
+				engineTypeTemp = EngineType.ISERVERREST;
+				break;
+			case 2: // SuperMapCloud
+				engineTypeTemp = EngineType.SUPERMAPCLOUD;
+				break;
+			case 3: // GoogleMaps
+				engineTypeTemp = EngineType.GOOGLEMAPS;
+				break;
+			case 4: // BaiduMap
+				engineTypeTemp = EngineType.BAIDUMAPS;
+				break;
+			case 5: // OpenStreetMaps
+				engineTypeTemp = EngineType.OPENSTREETMAPS;
+				break;
+			default:
+				break;
 		}
 
 		this.panelDatasourceInfoWeb.setDatasourceType(engineTypeTemp);
@@ -318,58 +297,58 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		EngineType engineType = null;
 		if (SystemPropertyUtilties.isWindows()) {
 			switch (index) {
-			case 0: // SQL
-				engineType = EngineType.SQLPLUS;
-				break;
-			case 1: // Oracle
-				engineType = EngineType.ORACLEPLUS;
-				break;
-			case 2: // OracleSpatial
-				engineType = EngineType.ORACLESPATIAL;
-				break;
-			case 3: // PostgreSQL
-				engineType = EngineType.POSTGRESQL;
-				break;
-			case 4: // DB2
-				engineType = EngineType.DB2;
-				break;
-			case 5: // DM
-				engineType = EngineType.DM;
-				break;
-			case 6: // KingBase
-				engineType = EngineType.KINGBASE;
-				break;
-			case 7: // MySQL
-				engineType = EngineType.MYSQL;
-				break;
-			default:
-				break;
+				case 0: // SQL
+					engineType = EngineType.SQLPLUS;
+					break;
+				case 1: // Oracle
+					engineType = EngineType.ORACLEPLUS;
+					break;
+				case 2: // OracleSpatial
+					engineType = EngineType.ORACLESPATIAL;
+					break;
+				case 3: // PostgreSQL
+					engineType = EngineType.POSTGRESQL;
+					break;
+				case 4: // DB2
+					engineType = EngineType.DB2;
+					break;
+				case 5: // DM
+					engineType = EngineType.DM;
+					break;
+				case 6: // KingBase
+					engineType = EngineType.KINGBASE;
+					break;
+				case 7: // MySQL
+					engineType = EngineType.MYSQL;
+					break;
+				default:
+					break;
 			}
 		} else {
 			switch (index) {
-			case 0: // ORACLEPLUS
-				engineType = EngineType.ORACLEPLUS;
-				break;
-			case 1: // ORACLESPATIAL
-				engineType = EngineType.ORACLESPATIAL;
-				break;
-			case 2: // POSTGRESQL
-				engineType = EngineType.POSTGRESQL;
-				break;
-			case 3: // DB2
-				engineType = EngineType.DB2;
-				break;
-			case 4: // DM
-				engineType = EngineType.DM;
-				break;
-			case 5: // KINGBASE
-				engineType = EngineType.KINGBASE;
-				break;
-			case 6: // MYSQL
-				engineType = EngineType.MYSQL;
-				break;
-			default:
-				break;
+				case 0: // ORACLEPLUS
+					engineType = EngineType.ORACLEPLUS;
+					break;
+				case 1: // ORACLESPATIAL
+					engineType = EngineType.ORACLESPATIAL;
+					break;
+				case 2: // POSTGRESQL
+					engineType = EngineType.POSTGRESQL;
+					break;
+				case 3: // DB2
+					engineType = EngineType.DB2;
+					break;
+				case 4: // DM
+					engineType = EngineType.DM;
+					break;
+				case 5: // KINGBASE
+					engineType = EngineType.KINGBASE;
+					break;
+				case 6: // MYSQL
+					engineType = EngineType.MYSQL;
+					break;
+				default:
+					break;
 			}
 		}
 		return engineType;
@@ -387,34 +366,37 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	 */
 	private void okButtonClicked() {
 		int openFlag = -1;
-
-		if (DatasourceOperatorType.OPENDATABASE == this.datasourceOperatorType) {
-			// 打开数据库型数据源
+		try {
 			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-			openFlag = this.panelDatasourceInfoDatabase.loadDatasource();
-			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-			if (JPanelDatasourceInfoDatabase.LOAD_DATASOURCE_SUCCESSFUL == openFlag) {
-				this.CloseDialog();
-			}
-		} else if (DatasourceOperatorType.NEWDATABASE == this.datasourceOperatorType) {
-			// 新建数据库型数据源
-			openFlag = this.panelDatasourceInfoDatabase.createDatasource();
-			if (JPanelDatasourceInfoDatabase.CREATE_DATASOURCE_SUCCESSFUL == openFlag || JPanelDatasourceInfoDatabase.LOAD_DATASOURCE_EXCEPTION == openFlag) {
-				this.CloseDialog();
-			}
-		} else if (DatasourceOperatorType.OPENWEB == this.datasourceOperatorType) {
-			// 打开web型数据源
-			openFlag = this.panelDatasourceInfoWeb.loadDatasource();
-			if (JPanelDatasourceInfoWeb.LOAD_DATASOURCE_SUCCESSFUL == openFlag || JPanelDatasourceInfoWeb.LOAD_DATASOURCE_EXCEPTION == openFlag) {
-				this.CloseDialog();
-			}
-		}
+			if (DatasourceOperatorType.OPENDATABASE == this.datasourceOperatorType) {
+				// 打开数据库型数据源
 
+				openFlag = this.panelDatasourceInfoDatabase.loadDatasource();
+
+				if (JPanelDatasourceInfoDatabase.LOAD_DATASOURCE_SUCCESSFUL == openFlag) {
+					this.CloseDialog();
+				}
+			} else if (DatasourceOperatorType.NEWDATABASE == this.datasourceOperatorType) {
+				// 新建数据库型数据源
+				openFlag = this.panelDatasourceInfoDatabase.createDatasource();
+				if (JPanelDatasourceInfoDatabase.CREATE_DATASOURCE_SUCCESSFUL == openFlag) {
+					this.CloseDialog();
+				}
+			} else if (DatasourceOperatorType.OPENWEB == this.datasourceOperatorType) {
+				// 打开web型数据源
+				openFlag = this.panelDatasourceInfoWeb.loadDatasource();
+				if (JPanelDatasourceInfoWeb.LOAD_DATASOURCE_SUCCESSFUL == openFlag) {
+					this.CloseDialog();
+				}
+			}
+		} finally {
+			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
 	}
 
 	/**
 	 * 返回按钮点击事件， 点击时调用关闭函数。
-	 * 
+	 *
 	 * @see #CloseDialog()
 	 */
 	private void cancelButtonClicked() {

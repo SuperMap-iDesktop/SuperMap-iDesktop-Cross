@@ -22,11 +22,9 @@ import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class JDialogTopoAdvance extends SmDialog {
 
@@ -209,10 +207,10 @@ public class JDialogTopoAdvance extends SmDialog {
 			sqlExpressionDialog = new SQLExpressionDialog();
 			Dataset[] datasets = new Dataset[1];
 			datasets[0] = targetDataset;
-			DialogResult dialogResult = sqlExpressionDialog.showDialog("", datasets);
+			DialogResult dialogResult = sqlExpressionDialog.showDialog(textFieldFilterExpression.getText(), datasets);
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlExpressionDialog.getQueryParameter().getAttributeFilter();
-				if (filter != null && !"".equals(filter.trim())) {
+				if (filter != null) {
 					textFieldFilterExpression.setText(filter);
 				}
 			}
