@@ -75,7 +75,7 @@ public class CoreActivator implements BundleActivator {
 		if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Core") == null) {
 			this.serviceTracker = new CoreServiceTracker(context);
 			this.serviceTracker.open();
-			this.registration = context.registerService(Application.class.getName(), new Application(), null);
+//			this.registration = context.registerService(Application.class.getName(), new Application(), null);
 
 		}
 	}
@@ -90,6 +90,6 @@ public class CoreActivator implements BundleActivator {
 		System.out.println("Goodbye SuperMap === Core!!");
 
 		this.serviceTracker.close();
-		this.registration.unregister();
+//		this.registration.unregister();
 	}
 }

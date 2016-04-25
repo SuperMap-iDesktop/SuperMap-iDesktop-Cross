@@ -24,7 +24,7 @@ public class ControlsActivator implements BundleActivator {
 		if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Controls") == null) {
 			this.serviceTracker = new CoreServiceTracker(context);
 			this.serviceTracker.open();
-			this.registration = context.registerService(Application.class.getName(), new Application(), null);
+//			this.registration = context.registerService(Application.class.getName(), new Application(), null);
 
 			Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Controls", context.getBundle());
 		}
@@ -39,7 +39,7 @@ public class ControlsActivator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		System.out.println("Goodbye SuperMap === Control!!");
 		this.serviceTracker.close();
-		this.registration.unregister();
+//		this.registration.unregister();
 	}
 
 }

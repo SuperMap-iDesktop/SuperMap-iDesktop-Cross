@@ -26,6 +26,7 @@ import com.supermap.desktop.util.DataExportCallable;
 import com.supermap.desktop.util.DatasetUtil;
 import com.supermap.desktop.util.ExportFunction;
 import com.supermap.desktop.util.ExportModel;
+import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -35,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -571,11 +573,10 @@ public class DataExportFrame extends SmDialog {
 				}
 
 				SmFileChoose fileChooserc = new SmFileChoose("DataExportFrame");
-				fileChooserc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int state = fileChooserc.showDefaultDialog();
 				String tempfilePath = fileChooserc.getFilePath();
 				File file = null;
-				if (tempfilePath != null && tempfilePath.length() <= 0) {
+				if (StringUtilties.isNullOrEmpty(tempfilePath)) {
 					file = new File(fileChooserc.getFilePath());
 				}
 				if (state == JFileChooser.APPROVE_OPTION && null != file) {
@@ -659,7 +660,8 @@ public class DataExportFrame extends SmDialog {
 							"DataExportFrame_OutPutDirectories", "GetDirectories");
 				}
 				SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
-				int state = tempfileChooser.showDefaultDialog();
+				tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int state = tempfileChooser.showSaveDialog(null);
 				if (state == JFileChooser.APPROVE_OPTION) {
 					String directories = tempfileChooser.getFilePath();
 					filePath.getEditor().setText(directories);
