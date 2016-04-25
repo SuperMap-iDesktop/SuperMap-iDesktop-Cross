@@ -42,10 +42,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		formMap.showPopupMenu();
 		transparentBackground.setVisible(false);
 		TransparentBackground.queryGridMap.remove(mapControl);
-		mapControl.removeMouseListener(this.mouseAdapter);
-		mapControl.removeMouseMotionListener(this.mouseMotionListener);
-		mapControl.removeKeyListener(this.keyAdapter);
-		mapControl.getMap().removeMapClosedListener(mapClosedListener);
+		removeListner();
 	}
 
 	private KeyAdapter keyAdapter = new KeyAdapter() {
@@ -92,7 +89,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			if (null != formMap) {
 				mapControl = formMap.getMapControl();
-//				avtiveFormMap = mapControl.getMap().getName();
 				if (null != TransparentBackground.queryGridMap.get(mapControl)) {
 					hideTransparentBackground();
 				} else {

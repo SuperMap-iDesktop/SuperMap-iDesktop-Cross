@@ -123,6 +123,9 @@ public class ScaleEnabledContainer extends SmDialog {
 						scaleDisplays.remove(selectRow[i]);
 					}
 					getTable();
+					if (table.getRowCount() > 0) {
+						table.addRowSelectionInterval(0, 0);
+					}
 					checkButtonState();
 					return;
 				}
@@ -226,15 +229,12 @@ public class ScaleEnabledContainer extends SmDialog {
 		}
 		String oldScale = scaleDisplays.get(selectRow).getScale();
 		String selectScale = table.getValueAt(selectRow, 1).toString();
-		if (scaleIsRight(selectScale) && selectScale.contains(":")) {
-			setTableCell(selectRow, selectScale);
-		}
-		if (scaleIsRight(selectScale) && !selectScale.contains(":")) {
-			setTableCell(selectRow, "1:" + selectScale);
-		}
-		if (!scaleIsRight(selectScale)) {
+		
+		if (!ScaleModel.isLegitScaleString(selectScale)) {
 			setTableCell(selectRow, oldScale);
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_ErrorInput"));
+		}else {
+			setTableCell(selectRow, selectScale);
 		}
 	}
 
@@ -242,20 +242,6 @@ public class ScaleEnabledContainer extends SmDialog {
 		scaleDisplays.get(selectRow).setScale(selectScale);
 		getTable();
 		return;
-	}
-
-	private boolean scaleIsRight(String scale) {
-		boolean scaleIsRight = false;
-		if (StringUtilties.isNumber(scale)) {
-			scaleIsRight = true;
-		}
-		if (scale.contains(":") && scale.split(":").length == 2) {
-			String[] scaleList = scale.split(":");
-			if (scaleList[0].equals("1") && StringUtilties.isNumber(scaleList[1])) {
-				scaleIsRight = true;
-			}
-		}
-		return scaleIsRight;
 	}
 
 	private void unRegistEvents() {
@@ -505,7 +491,7 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void addScaleCaption() throws InvalidScaleException {
 		int selectRow = table.getSelectedRow();
-		if (selectRow > 0 && selectRow + 1 != table.getRowCount()) {
+		if (selectRow >= 0 && selectRow + 1 != table.getRowCount()) {
 			// 有选中项或者选中项不是0
 			String scaleNext = table.getValueAt(selectRow + 1, 1).toString();
 			String scaleNow = table.getValueAt(selectRow, 1).toString();
