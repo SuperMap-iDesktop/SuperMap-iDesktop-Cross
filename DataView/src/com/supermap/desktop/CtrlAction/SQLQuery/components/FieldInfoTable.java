@@ -8,6 +8,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.JoinItems;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilties.SortUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
@@ -66,7 +67,7 @@ public class FieldInfoTable extends SortTable {
 //		this.getColumnModel().getColumn(1).setPreferredWidth(50);
 	}
 
-	public String[] getAllValue() {
+	public Object[] getAllValue() {
 		int selectedRow = this.getSelectedRow();
 		if (selectedRow == -1 || selectedRow == 0) {
 			return null;
@@ -211,7 +212,7 @@ public class FieldInfoTable extends SortTable {
 			return MessageFormat.format("{0}.{1}", a, b);
 		}
 
-		public String[] getAllValue(int row) {
+		public Object[] getAllValue(int row) {
 			row = getIndexRow(row)[0];
 			if (row == -1 || row == 0 || dataset == null) {
 				return null;
@@ -220,7 +221,7 @@ public class FieldInfoTable extends SortTable {
 				String datasetName = strings[0];
 				String fieldName = strings[1];
 
-				LinkedHashMap<String, String> map = new LinkedHashMap<>();
+				LinkedHashMap<Object, String> map = new LinkedHashMap<>();
 				DatasetVector tempDataset = dataset;
 				if (!dataset.getName().equals(datasetName)) {
 					tempDataset = ((DatasetVector) dataset.getDatasource().getDatasets().get(datasetName));
@@ -232,7 +233,7 @@ public class FieldInfoTable extends SortTable {
 				try {
 					recordset.moveFirst();
 					for (; !recordset.isEOF(); recordset.moveNext()) {
-						String result = formatData(recordset.getFieldValue(fieldName), fieldType);
+						Object result = formatData(recordset.getFieldValue(fieldName), fieldType);
 						if (result != null) {
 							map.put(result, "");
 						}
@@ -242,22 +243,23 @@ public class FieldInfoTable extends SortTable {
 				} finally {
 					recordset.dispose();
 				}
-				String[] result = new String[map.size()];
-				Iterator<String> iterator = map.keySet().iterator();
+				Object[] result = new Object[map.size()];
+				Iterator<Object> iterator = map.keySet().iterator();
 				for (int i = 0; iterator.hasNext(); i++) {
 					result[i] = iterator.next();
 				}
+				SortUtilties.sortList(result);
 				return result;
 			}
 		}
 
 
-		private String formatData(Object fieldValue, FieldType fieldType) {
+		private Object formatData(Object fieldValue, FieldType fieldType) {
 			if (fieldValue == null) {
 				return null;
 			}
 			if (fieldType == FieldType.DATETIME) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				return dateFormat.format(fieldValue);
 			} else if (fieldType == FieldType.BOOLEAN) {
 				if (fieldValue.equals(true)) {
@@ -270,7 +272,7 @@ public class FieldInfoTable extends SortTable {
 			} else if (fieldType == FieldType.LONGBINARY) {
 				return "BinaryData";
 			} else {
-				return String.valueOf(fieldValue);
+				return fieldValue;
 			}
 		}
 

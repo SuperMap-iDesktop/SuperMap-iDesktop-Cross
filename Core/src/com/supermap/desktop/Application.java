@@ -13,7 +13,6 @@ import com.supermap.desktop.event.ActiveDatasetsChangeListener;
 import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
 import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
 import com.supermap.desktop.implement.Output;
-import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
@@ -222,9 +221,6 @@ public class Application {
 	public void initialize() {
 		try {
 			this.workspace = new Workspace();
-			this.workspace.getResources().getMarkerLibrary().getRootGroup().setName(CoreProperties.getString("String_RootNodeName"));
-			this.workspace.getResources().getLineLibrary().getRootGroup().setName(CoreProperties.getString("String_RootNodeName"));
-			this.workspace.getResources().getFillLibrary().getRootGroup().setName(CoreProperties.getString("String_RootNodeName"));
 			this.pluginManager = new PluginManager();
 			this.workEnvironmentManager = new WorkEnvironmentManager();
 		} catch (Exception e) {

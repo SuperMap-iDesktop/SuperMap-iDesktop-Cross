@@ -829,7 +829,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String[] allValue = tableFieldInfo.getAllValue();
+			Object[] allValue = tableFieldInfo.getAllValue();
 			listAllValue.removeAllElements();
 			if (allValue != null && allValue.length > 0) {
 				listAllValue.resetValue(allValue);
@@ -1354,11 +1354,11 @@ public class JDialogSQLQuery extends SmDialog {
 			((DefaultListModel) this.getModel()).removeAllElements();
 		}
 
-		public void resetValue(String[] allValue) {
+		public void resetValue(Object[] allValue) {
 			this.removeAllElements();
 			if (allValue != null && allValue.length > 0) {
-				for (String anAllValue : allValue) {
-					((DefaultListModel<String>) this.getModel()).addElement(anAllValue);
+				for (Object anAllValue : allValue) {
+					((DefaultListModel<Object>) this.getModel()).addElement(anAllValue);
 				}
 				this.setSelectedIndex(0);
 			}
