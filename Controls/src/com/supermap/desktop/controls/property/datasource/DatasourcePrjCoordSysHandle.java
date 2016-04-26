@@ -1,10 +1,5 @@
 package com.supermap.desktop.controls.property.datasource;
 
-import java.text.MessageFormat;
-import java.util.concurrent.CancellationException;
-
-import javax.swing.JOptionPane;
-
 import com.supermap.data.CoordSysTransMethod;
 import com.supermap.data.CoordSysTransParameter;
 import com.supermap.data.CoordSysTranslator;
@@ -24,6 +19,10 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilties.CursorUtilties;
+
+import javax.swing.*;
+import java.text.MessageFormat;
+import java.util.concurrent.CancellationException;
 
 public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 	private Datasource datasource;
@@ -87,7 +86,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 	}
 
 	private boolean isApplyToDatasets() {
-		return UICommonToolkit.showConfirmDialog(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), this.datasource.getAlias())) == 0;
+		return UICommonToolkit.showConfirmDialogYesNo(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), this.datasource.getAlias())) == 0;
 	}
 
 	private class ConvertProgressCallable extends UpdateProgressCallable {
