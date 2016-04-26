@@ -37,6 +37,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -333,8 +334,8 @@ public class DataExportFrame extends SmDialog {
 		this.comboBoxCAD.setEnabled(false);
 		this.comboBoxCAD.setModel(new DefaultComboBoxModel<Object>(new String[] {
 										"CAD12", "CAD13", "CAD14", "CAD2000", "CAD2004", "CAD2007" }));
-								this.comboBoxCAD.setSelectedIndex(5);
-								this.panelCommon.setLayout(gl_panelCommon);
+		this.comboBoxCAD.setSelectedIndex(5);
+		this.panelCommon.setLayout(gl_panelCommon);
 		GroupLayout gl_contentPane = new GroupLayout(this.contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -422,6 +423,7 @@ public class DataExportFrame extends SmDialog {
 			this.table.setRowSelectionInterval(0, 0);
 		}
 		ExportFunction.getRigthPanel(this, table);
+		this.contentPane.setLayout(new GridBagLayout());
 		this.table.getColumnModel().getColumn(1).setPreferredWidth(10);
 		this.table.getColumnModel().getColumn(2).setPreferredWidth(10);
 		this.table.getColumnModel().getColumn(0).setCellRenderer(new CommonListCellRenderer());
@@ -669,7 +671,10 @@ public class DataExportFrame extends SmDialog {
 					if (0 < rows.length) {
 						for (int i = 0; i < rows.length; i++) {
 							ExportFileInfo tempExport = model.getTagValueAt(rows[i]);
-							String filePathTemp = directories + File.separator;
+							String filePathTemp = directories;
+							if (!directories.endsWith(File.separator)) {
+								filePathTemp = directories + File.separator;
+							}
 							tempExport.setFilePath(filePathTemp);
 							tempExport.getExportSetting().setTargetFilePath(filePathTemp);
 						}
