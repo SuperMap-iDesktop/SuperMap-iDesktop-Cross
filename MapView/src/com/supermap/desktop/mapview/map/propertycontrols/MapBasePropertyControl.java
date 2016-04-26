@@ -38,6 +38,8 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private JLabel labelMinVisibleTextSize;
 	private JLabel labelMaxVisibleTextSize;
 	private JLabel labelMaxVisibleVertex;
+	private JLabel labelAngleTip;
+	private JLabel labelEmpty;
 
 	private JTextField textFieldMapName; // 地图名称
 	private SMFormattedTextField textFieldAngle; // 地图旋转角度
@@ -164,6 +166,8 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.labelMinVisibleTextSize = new JLabel("MinVisibleTextSize(mm):");
 		this.labelMaxVisibleTextSize = new JLabel("MaxVisibleTextSize(mm):");
 		this.labelMaxVisibleVertex = new JLabel("MaxVisibleVertex:");
+		this.labelAngleTip = new JLabel();
+		this.labelEmpty = new JLabel();
 
 		this.textFieldMapName = new JTextField();
 		this.textFieldMapName.setEditable(false);
@@ -245,24 +249,39 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 								.addComponent(this.labelColorMode)
 								.addComponent(this.labelBackgroundColor))
 						.addGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-								.addComponent(this.textFieldMapName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.textFieldAngle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.comboBoxColorMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.buttonBackgroundColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+								.addGroup(gl_mainContent.createSequentialGroup()
+										.addComponent(this.labelEmpty,10,10,10)
+										.addComponent(this.textFieldMapName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								)
+								.addGroup(gl_mainContent.createSequentialGroup()
+										.addComponent(this.labelAngleTip,10,10,10)
+										.addComponent(this.textFieldAngle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(gl_mainContent.createSequentialGroup()
+										.addComponent(this.labelEmpty,15,15,15)
+										.addComponent(this.comboBoxColorMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								)
+								.addGroup(gl_mainContent.createSequentialGroup()
+										.addComponent(this.labelEmpty,15,15,15)
+										.addComponent(this.buttonBackgroundColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								)))
 				.addComponent(panelDisplayedOptions, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 		
 		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
 				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelMapName)
+						.addComponent(this.labelEmpty)
 						.addComponent(this.textFieldMapName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelAngle)
+						.addComponent(this.labelAngleTip)
 						.addComponent(this.textFieldAngle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelColorMode)
+						.addComponent(this.labelEmpty)
 						.addComponent(this.comboBoxColorMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelBackgroundColor)
+						.addComponent(this.labelEmpty)
 						.addComponent(this.buttonBackgroundColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(panelDisplayedOptions));
 		// @formatter:on
@@ -304,7 +323,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsTextAntialias.setText(MapViewProperties.getString("String_CheckBox_IsTextAntialias"));
 		this.checkBoxIsTextOrientationFixed.setText(MapViewProperties.getString("String_CheckBox_IsTextOrientationFixed"));
 		this.buttonOverlapDisplayedOptions.setText(MapViewProperties.getString("String_FormOverlapSetting_Title"));
-
 	}
 
 	@Override
@@ -438,9 +456,14 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		try {
 			if ("value".equalsIgnoreCase(e.getPropertyName())) {
 				Double newAngle = Double.valueOf(e.getNewValue().toString());
-				if (!DoubleUtilties.equals(newAngle, angle, 6)) {
+				if (Double.compare(-360.0, newAngle) < 0 && Double.compare(newAngle, 360.0) < 0) {
 					this.angle = e.getNewValue() == null ? this.angle : newAngle;
 					verify();
+					this.labelAngleTip.setText("");
+					this.labelAngleTip.setToolTipText(null);
+				} else {
+					this.labelAngleTip.setText("<html><font color='red' style='font-weight:bold'>!</font></html>");
+					this.labelAngleTip.setToolTipText(MapViewProperties.getString("String_AngleTip"));
 				}
 			}
 		} catch (Exception e2) {

@@ -709,11 +709,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		private void setLineStyle() {
 			symbolType = SymbolType.LINE;
 			SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-			// int width = buttonDraftLine.getWidth();
-			// int height = buttonDraftLine.getHeight();
-			// int x = buttonDraftLine.getLocationOnScreen().x + width;
-			// int y = buttonDraftLine.getLocationOnScreen().y - height;
-			// textStyleDialog.setLocation(x, y);
 			GeoStyle geoStyle = new GeoStyle();
 			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
 				@Override

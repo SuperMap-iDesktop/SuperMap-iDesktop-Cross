@@ -9,11 +9,9 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class JDialogConfirm extends SmDialog {
 	/**
@@ -59,13 +57,11 @@ public class JDialogConfirm extends SmDialog {
 	public JDialogConfirm(String message) {
 		this();
 		this.textAreaMessage.setText(message);
-//		initTraversalPolicy();
 	}
 
 	public JDialogConfirm(String message, boolean isUsedAsDefault) {
 		this(message);
 		this.checkBoxConfirm.setSelected(isUsedAsDefault);
-//		initTraversalPolicy();
 	}
 
 	public boolean isUsedAsDefault() {
@@ -115,4 +111,9 @@ public class JDialogConfirm extends SmDialog {
 		// @formatter:on
 	}
 
+	public DialogResult showDialogWithYesNoOpition() {
+		this.buttonOk.setText(CommonProperties.yes);
+		this.buttonCancel.setText(CommonProperties.no);
+		return super.showDialog();
+	}
 }

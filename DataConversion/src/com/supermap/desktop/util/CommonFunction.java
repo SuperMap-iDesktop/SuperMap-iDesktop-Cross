@@ -1,7 +1,5 @@
 package com.supermap.desktop.util;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -995,22 +993,22 @@ public class CommonFunction {
 	 * @param fileInfos
 	 */
 	public static void importData(JTable table, List<ImportFileInfo> fileInfos) {
-		try{
-		int[] selected = table.getSelectedRows();
-		final JTable jTable = table;
-		final List<ImportFileInfo> fileInfosTemp = fileInfos;
-		// 导入表中数据
-		if (selected.length > 0) {
-			final FormProgressTotal formProgress = new FormProgressTotal();
-			formProgress.setTitle(DataConversionProperties.getString("String_FormImport_FormText"));
-			if (null != formProgress) {
-				formProgress.doWork(new DataImportCallable(fileInfosTemp, jTable));
+		try {
+			int[] selected = table.getSelectedRows();
+			final JTable jTable = table;
+			final List<ImportFileInfo> fileInfosTemp = fileInfos;
+			// 导入表中数据
+			if (selected.length > 0) {
+				final FormProgressTotal formProgress = new FormProgressTotal();
+				formProgress.setTitle(DataConversionProperties.getString("String_FormImport_FormText"));
+				if (null != formProgress) {
+					formProgress.doWork(new DataImportCallable(fileInfosTemp, jTable));
+				}
+			} else {
+				UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ImportSettingPanel_Cue_AddFiles"));
 			}
-		} else {
-			UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ImportSettingPanel_Cue_AddFiles"));
-		}
-		}catch(Exception e){
-			
+		} catch (Exception e) {
+
 		}
 	}
 
@@ -1091,7 +1089,11 @@ public class CommonFunction {
 			CommonFunction.replace(panelImportInfo, newPanel);
 		} else {
 			CommonFunction.refreshPanelSingal(panelImportInfo, fileInfos, panels, lblDataimportType);
-			table.setRowSelectionInterval(0, 0);
+			if (selectedRow[0] != table.getRowCount()) {
+				table.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
+			} else {
+				table.setRowSelectionInterval(selectedRow[0] - 1, selectedRow[0] - 1);
+			}
 		}
 	}
 

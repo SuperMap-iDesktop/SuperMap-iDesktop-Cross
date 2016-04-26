@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.utilties.StringUtilties;
 
 public class DatasetUtil {
 
@@ -26,7 +27,7 @@ public class DatasetUtil {
 			result_dataset = DataConversionProperties.getString(tempStr);
 
 		} else if (tempFileType.contains(result_fileType)) {
-			
+
 			result_fileType = DataConversionProperties.getString(tempFileType);
 		}
 		datasetMap.put(tempFileType, result_fileType);
@@ -34,6 +35,9 @@ public class DatasetUtil {
 	}
 
 	public static FileType getFileType(String datasetName) {
+		if (StringUtilties.isNullOrEmpty(datasetName)) {
+			return FileType.NONE;
+		}
 		FileType fileType = null;
 		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeDWG"))) {
 			fileType = FileType.DWG;
@@ -98,9 +102,9 @@ public class DatasetUtil {
 		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeVCT"))) {
 			fileType = FileType.VCT;
 		}
-//		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeCSV"))) {
-//			fileType = FileType.CSV;
-//		}
+		// if (datasetName.equals(DataConversionProperties.getString("String_FileTypeCSV"))) {
+		// fileType = FileType.CSV;
+		// }
 		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeDBF"))) {
 			fileType = FileType.DBF;
 		}

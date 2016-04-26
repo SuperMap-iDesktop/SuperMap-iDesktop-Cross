@@ -79,7 +79,7 @@ public class CreateTextAction {
 		public void mapClosed(MapClosedEvent mapClosedEvent) {
 			commitEditing();
 			endAction();
-			mapControl.getMap().removeMapClosedListener(this);
+			mapClosedEvent.getMap().removeMapClosedListener(this);
 		}
 	};
 

@@ -49,13 +49,15 @@ public class TableRowCellEditor implements TableCellEditor {
 	}
 
 	public boolean isCellEditable(EventObject anEvent) {
+		boolean isEditable =false;
 		if (anEvent instanceof MouseEvent) {
 			if (((MouseEvent) anEvent).getClickCount() < 2) {
 				return false;
 			}
 			selectEditor((MouseEvent) anEvent);
+			isEditable = editor.isCellEditable(anEvent);
 		}
-		return editor.isCellEditable(anEvent);
+		return isEditable;
 	}
 
 	public void addCellEditorListener(CellEditorListener l) {

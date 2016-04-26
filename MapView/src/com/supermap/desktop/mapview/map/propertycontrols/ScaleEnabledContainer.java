@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -53,7 +54,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	private JButton buttonCancel;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private List<ScaleDisplay> scaleDisplays;
+	private List<String> scaleDisplays;
 	private JPanel panelButton;
 	private final String urlStr = "/com/supermap/desktop/coreresources/ToolBar/";
 	private final Color selectColor = new Color(185, 214, 255);
@@ -119,9 +120,11 @@ public class ScaleEnabledContainer extends SmDialog {
 				}
 				if (e.getSource() == buttonDelete) {
 					int[] selectRow = table.getSelectedRows();
+					List<String> removeInfo = new ArrayList<String>();
 					for (int i = selectRow.length - 1; i >= 0; i--) {
-						scaleDisplays.remove(selectRow[i]);
+						removeInfo.add((String) table.getValueAt(selectRow[i], 1));
 					}
+					scaleDisplays.removeAll(removeInfo);
 					getTable();
 					if (table.getRowCount() > 0) {
 						table.addRowSelectionInterval(0, 0);
@@ -180,23 +183,24 @@ public class ScaleEnabledContainer extends SmDialog {
 		this.table.addMouseListener(this.mouseAdapter);
 	}
 
-	private void removeRepeatStr(List<ScaleDisplay> scaleDisplays) {
+	private void removeRepeatStr(List<String> scaleDisplays) {
 		int count = scaleDisplays.size();
+		List<String> tempList = new ArrayList<String>();
 		for (int i = 0; i < count; i++) {
 			for (int j = i + 1; j < count; j++) {
-				if (scaleDisplays.get(i).getScale().equals(scaleDisplays.get(j).getScale())) {
-					scaleDisplays.remove(i);
-					count--;
+				if (scaleDisplays.get(i).equals(scaleDisplays.get(j))) {
+					tempList.add(scaleDisplays.get(i));
 				}
 			}
 		}
+		scaleDisplays.removeAll(tempList);
 	}
 
-	private double[] sort(List<ScaleDisplay> scaleDisplays) {
+	private double[] sort(List<String> scaleDisplays) {
 		double[] needList = new double[scaleDisplays.size()];
 		for (int i = 0; i < scaleDisplays.size(); i++) {
 			try {
-				needList[i] = new ScaleModel(scaleDisplays.get(i).getScale()).getScale();
+				needList[i] = new ScaleModel(scaleDisplays.get(i)).getScale();
 			} catch (InvalidScaleException e) {
 				e.printStackTrace();
 			}
@@ -213,7 +217,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		scaleDisplays.clear();
 		for (int i = 0; i < needList.length; i++) {
 			try {
-				scaleDisplays.add(new ScaleDisplay(new ScaleModel(needList[i]).getScaleCaption()));
+				scaleDisplays.add(new ScaleModel(needList[i]).getScaleCaption());
 			} catch (InvalidScaleException e) {
 				e.printStackTrace();
 			}
@@ -227,7 +231,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (selectRow > scaleDisplays.size()) {
 			return;
 		}
-		String oldScale = scaleDisplays.get(selectRow).getScale();
+		String oldScale = scaleDisplays.get(selectRow);
 		String selectScale = table.getValueAt(selectRow, 1).toString();
 
 		if (!ScaleModel.isLegitScaleString(selectScale)) {
@@ -246,7 +250,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void setTableCell(int selectRow, String selectScale) {
-		scaleDisplays.get(selectRow).setScale(selectScale);
+		scaleDisplays.set(selectRow, selectScale);
 		getTable();
 		return;
 	}
@@ -274,7 +278,7 @@ public class ScaleEnabledContainer extends SmDialog {
 					if (tempstr.contains("<Scale>")) {
 						tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
 						if (!haveScale(scaleDisplays, tempstr)) {
-							scaleDisplays.add(new ScaleDisplay(tempstr));
+							scaleDisplays.add(tempstr);
 						}
 					}
 				}
@@ -287,10 +291,10 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	}
 
-	private boolean haveScale(List<ScaleDisplay> tempScaleDisplays, String tempstr) {
+	private boolean haveScale(List<String> tempScaleDisplays, String tempstr) {
 		boolean haveScale = false;
 		for (int i = 0; i < tempScaleDisplays.size(); i++) {
-			if (tempScaleDisplays.get(i).getScale().equals(tempstr)) {
+			if (tempScaleDisplays.get(i).equals(tempstr)) {
 				haveScale = true;
 			}
 		}
@@ -341,11 +345,12 @@ public class ScaleEnabledContainer extends SmDialog {
 			scales.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
 			scales.setAttribute("version", "8.0.x");
 			document.appendChild(scales);
-			removeRepeatStr(scaleDisplays);
-			sort(scaleDisplays);
-			for (int i = 0; i < scaleDisplays.size(); i++) {
+			List<String> tempList = new ArrayList<String>(scaleDisplays);
+			removeRepeatStr(tempList);
+			sort(tempList);
+			for (int i = 0; i < tempList.size(); i++) {
 				Element scale = document.createElement("Scale");
-				String scaleCaption = scaleDisplays.get(i).getScale();
+				String scaleCaption = tempList.get(i);
 				scale.appendChild(document.createTextNode(scaleCaption));
 				scale.setNodeValue(scaleCaption);
 				scales.appendChild(scale);
@@ -364,6 +369,10 @@ public class ScaleEnabledContainer extends SmDialog {
 				parseFileToXML(transformer, source, file);
 			} else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_RenameFile_Message"))) {
 				parseFileToXML(transformer, source, file);
+			}
+			if (file.exists() && file.length() > 0) {
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(MapViewProperties.getString("String_ExportScale_Scucess_Info"), file.getPath()));
 			}
 		} catch (DOMException e) {
 			e.printStackTrace();
@@ -482,7 +491,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void initScrollPane() {
-		this.scaleDisplays = new ArrayList<ScaleEnabledContainer.ScaleDisplay>();
+		this.scaleDisplays = new ArrayList<String>();
 		this.scrollPane = new JScrollPane();
 		this.table = new JTable();
 		getTable();
@@ -516,7 +525,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			String scaleNow = table.getValueAt(selectRow, 1).toString();
 			double scaleNextD = Double.parseDouble(scaleNext.split(":")[1]);
 			double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
-			ScaleDisplay scaleInsert = new ScaleDisplay("1:" + String.valueOf(format.format((scaleNextD + scaleNowD) / 2)));
+			String scaleInsert = new String("1:" + String.valueOf(format.format((scaleNextD + scaleNowD) / 2)));
 			this.scaleDisplays.add(selectRow + 1, scaleInsert);
 			getTable();
 			this.table.addRowSelectionInterval(selectRow + 1, selectRow + 1);
@@ -527,7 +536,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			// 表中没有数据时
 			double scale = map.getScale();
 			String scaleCaption = new ScaleModel(scale).getScaleCaption();
-			ScaleDisplay scaleDisplay = new ScaleDisplay(scaleCaption);
+			String scaleDisplay = new String(scaleCaption);
 			this.scaleDisplays.add(scaleDisplay);
 			getTable();
 			checkButtonState();
@@ -538,7 +547,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			// 没有选中项，但是表中有数据时
 			String scaleEnd = table.getValueAt(table.getRowCount() - 1, 1).toString();
 			double scaleEndD = Double.parseDouble(scaleEnd.split(":")[1]);
-			ScaleDisplay scaleLast = new ScaleDisplay("1:" + String.valueOf(format.format(scaleEndD / 2)));
+			String scaleLast = new String("1:" + String.valueOf(format.format(scaleEndD / 2)));
 			this.scaleDisplays.add(scaleLast);
 			getTable();
 			checkButtonState();
@@ -645,7 +654,7 @@ public class ScaleEnabledContainer extends SmDialog {
 								table.setRowSelectionInterval(0, 0);
 							} else {
 								try {
-									ScaleDisplay scaleDisplay = new ScaleDisplay(new ScaleModel(map.getScale()).getScaleCaption());
+									String scaleDisplay = new String(new ScaleModel(map.getScale()).getScaleCaption());
 									scaleDisplays.add(scaleDisplay);
 									getTable();
 								} catch (InvalidScaleException e1) {
@@ -669,7 +678,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			boolean exist = false;
 			if (scaleDisplays.size() > 0) {
 				for (int i = 0; i < scaleDisplays.size(); i++) {
-					if ((new ScaleModel(map.getScale()).getScaleCaption()).equals(scaleDisplays.get(i).getScale())) {
+					if ((new ScaleModel(map.getScale()).getScaleCaption()).equals(scaleDisplays.get(i))) {
 						exist = true;
 					}
 				}
@@ -685,23 +694,6 @@ public class ScaleEnabledContainer extends SmDialog {
 			this.setLayout(new GridBagLayout());
 			this.add(this.addScale, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST));
 			this.add(this.addDefaultScale, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST));
-		}
-
-	}
-
-	class ScaleDisplay {
-		String scale;
-
-		public ScaleDisplay(String scale) {
-			this.scale = scale;
-		}
-
-		public String getScale() {
-			return scale;
-		}
-
-		public void setScale(String scale) {
-			this.scale = scale;
 		}
 
 	}
@@ -728,7 +720,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		scaleDisplays.clear();
 		if (scales.length > 0) {
 			for (int i = 0; i < scales.length; i++) {
-				ScaleDisplay tempdDisplay = new ScaleDisplay(new ScaleModel(scales[i]).getScaleCaption());
+				String tempdDisplay = new String(new ScaleModel(scales[i]).getScaleCaption());
 				scaleDisplays.add(tempdDisplay);
 			}
 		}
@@ -740,7 +732,7 @@ public class ScaleEnabledContainer extends SmDialog {
 		this.table.setModel(new LocalDefualTableModel(new Object[row][2], title));
 		for (int i = 0; i < row; i++) {
 			this.table.setValueAt(i + 1, i, 0);
-			this.table.setValueAt(scaleDisplays.get(i).getScale(), i, 1);
+			this.table.setValueAt(scaleDisplays.get(i), i, 1);
 		}
 		this.table.getColumn(MapViewProperties.getString("String_Index")).setMaxWidth(40);
 		this.table.getModel().removeTableModelListener(this.tableModelListener);

@@ -449,6 +449,9 @@ public class ExportFunction {
 		} else {
 			comboBox.setModel(new DefaultComboBoxModel<String>());
 		}
+		if (comboBox.getItemCount()>0) {
+			comboBox.setSelectedIndex(0);
+		}
 	}
 
 }

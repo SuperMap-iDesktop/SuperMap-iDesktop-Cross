@@ -48,9 +48,7 @@ public class MapPropertyContainer extends JPanel {
 		/*
 		 * 打开的地图窗口，重新打开指定地图的时候，同时更新地图属性面板的内容
 		 * 
-		 * @see
-		 * com.supermap.mapping.MapOpenedListener#mapOpened(com.supermap.mapping
-		 * .MapOpenedEvent)
+		 * @see com.supermap.mapping.MapOpenedListener#mapOpened(com.supermap.mapping .MapOpenedEvent)
 		 */
 		@Override
 		public void mapOpened(MapOpenedEvent arg0) {
@@ -65,8 +63,7 @@ public class MapPropertyContainer extends JPanel {
 				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapClosedListener(this);
 			}
 		}
-	};
-	;
+	};;
 
 	/**
 	 * Create the panel.
@@ -99,6 +96,9 @@ public class MapPropertyContainer extends JPanel {
 					setFormMap((IFormMap) e.getNewActiveForm());
 				} else {
 					setFormMap(null);
+				}
+				if (null != e.getOldActiveForm() && null != e.getNewActiveForm() && !e.getNewActiveForm().equals(e.getOldActiveForm())) {
+					MapBoundsPropertyControl.container.setVisible(false);
 				}
 			}
 		});
@@ -134,7 +134,6 @@ public class MapPropertyContainer extends JPanel {
 	private void setMap(Map map) {
 		if (map == null) {
 			this.tabbledPane.setVisible(false);
-			MapBoundsPropertyControl.container.setVisible(false);
 		} else {
 			this.tabbledPane.setVisible(true);
 			for (AbstractPropertyControl abstractPropertyControl : propertyControls) {
@@ -152,17 +151,23 @@ public class MapPropertyContainer extends JPanel {
 		panelTabContainer.setLayout(new BorderLayout());
 		panelTabContainer.add(this.tabbledPane, BorderLayout.CENTER);
 
-
 		this.setLayout(new GridBagLayout());
-		this.add(panelTabContainer, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 5, 10));
-		this.add(this.checkBoxAutoApply, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0));
-		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 10, 5, 10));
+		this.add(
+				panelTabContainer,
+				new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER)
+						.setInsets(10, 10, 5, 10));
+		this.add(
+				this.checkBoxAutoApply,
+				new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST)
+						.setInsets(0, 10, 5, 0));
+		this.add(this.buttonApply, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST)
+				.setInsets(0, 10, 5, 10));
 
-//		GroupLayout groupLayout = new GroupLayout(this);
-//		groupLayout.setAutoCreateContainerGaps(true);
-//		groupLayout.setAutoCreateGaps(true);
-//		this.setLayout(groupLayout);
-//
+		// GroupLayout groupLayout = new GroupLayout(this);
+		// groupLayout.setAutoCreateContainerGaps(true);
+		// groupLayout.setAutoCreateGaps(true);
+		// this.setLayout(groupLayout);
+		//
 //		// @formatter:off
 //		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 //				.addComponent(panelTabContainer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
