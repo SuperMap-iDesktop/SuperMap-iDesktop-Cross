@@ -138,6 +138,7 @@ public abstract class SymbolDialog extends SmDialog {
 		textFieldSearch.setText("");
 		panelSymbols.requestFocus();
 //		treeWorkspaceResources.updateUI();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		return dialogResult;
 	}
