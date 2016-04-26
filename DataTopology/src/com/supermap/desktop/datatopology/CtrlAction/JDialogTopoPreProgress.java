@@ -19,6 +19,7 @@ import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -29,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class JDialogTopoPreProgress extends SmDialog {
@@ -243,8 +243,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 		table = new MutiTable();
 		scrollPane.setViewportView(table);
 		@SuppressWarnings("serial")
-		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "Count", "Dataset", "Datasource" }) {
-			boolean[] columnEditables = new boolean[] { false, false, false };
+		DDLExportTableModel tableModel = new DDLExportTableModel(new String[]{"Count", "Dataset", "Datasource"}) {
+			boolean[] columnEditables = new boolean[]{false, false, false};
 
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -338,22 +338,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 				}
 			} else if (c == buttonInvertSelect) {
 				// 反选
-				try {
-					int[] temp = table.getSelectedRows();
-					ArrayList<Integer> selectedRows = new ArrayList<Integer>();
-					for (int index = 0; index < temp.length; index++) {
-						selectedRows.add(temp[index]);
-					}
-					ListSelectionModel selectionModel = table.getSelectionModel();
-					selectionModel.clearSelection();
-					for (int index = 0; index < table.getRowCount(); index++) {
-						if (!selectedRows.contains(index)) {
-							selectionModel.addSelectionInterval(index, index);
-						}
-					}
-				} catch (Exception ex) {
-					Application.getActiveApplication().getOutput().output(ex);
-				}
+				TableUtilties.invertSelection(table);
 			} else if (c == buttonDelete) {
 				deleteFromTable();
 			} else if (c == buttonSure) {
@@ -454,7 +439,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		if (0 < Application.getActiveApplication().getActiveDatasources().length) {
 			datasource = Application.getActiveApplication().getActiveDatasources()[0];
 		}
-		DatasetType[] datasetTypes = new DatasetType[] { DatasetType.POINT, DatasetType.LINE, DatasetType.REGION };
+		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION};
 		String[] datasetType = new String[4];
 		datasetType[DatasetType_All] = CommonProperties.getString("String_DatasetType_All");
 		datasetType[DatasetType_Point] = CommonProperties.getString("String_DatasetType_Point");

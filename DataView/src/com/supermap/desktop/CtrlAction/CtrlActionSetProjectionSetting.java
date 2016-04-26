@@ -77,7 +77,7 @@ public class CtrlActionSetProjectionSetting extends CtrlAction {
 					if (!isDontAskSetToAllDatasets) {
 						// 提示是否设置到所有数据集
 						JDialogConfirm dialogConfirm = new JDialogConfirm(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), datasource.getAlias()), true);
-						dialogConfirm.showDialog();
+						dialogConfirm.showDialogWithYesNoOpition();
 						isDontAskSetToAllDatasets = dialogConfirm.isUsedAsDefault();
 						if (dialogConfirm.getDialogResult() == DialogResult.OK) {
 							isSetToAllDatasets = true;

@@ -205,6 +205,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		formatter.setValueClass(Integer.class);
 		formatter.setMinimum(0);
 		intEditorControl = new SMFormattedTextField(formatter);
+		intEditorControl.setHorizontalAlignment(SwingConstants.LEFT);
 		DefaultCellEditor integerEditor = new DefaultCellEditor(intEditorControl);
 		this.tableRecordset.setDefaultEditor(Integer.class, integerEditor);
 
@@ -267,6 +268,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		FieldData fieldData = tableModel.addRow();
 		if (fieldData != null) {
 			this.modifieds.add(new ModifiedData(fieldData, ModifiedData.ADD));
+			tableRecordset.scrollRectToVisible(tableRecordset.getCellRect(tableRecordset.getRowCount() - 1, 0, true));
 		}
 		setComponentsEnabled();
 	}
@@ -585,7 +587,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			} else if (columnIndex == FIELD_TYPE) {
 				return FieldTypeUtilties.getFieldTypeName(fieldInfo.getType());
 			} else if (columnIndex == MAX_LENGTH) {
-				return fieldInfo.getMaxLength();
+				return String.valueOf(fieldInfo.getMaxLength());
 			} else if (columnIndex == DEFAULT_VALUE) {
 				if (fieldInfo.getDefaultValue() == null) {
 					return CommonProperties.getString(CommonProperties.NULL);
@@ -702,7 +704,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			} else if (columnIndex == FIELD_TYPE) {
 				return FieldType.class;
 			} else if (columnIndex == MAX_LENGTH) {
-				return Integer.class;
+				return String.class;
 			} else if (columnIndex == DEFAULT_VALUE) {
 				return String.class;
 			} else if (columnIndex == IS_REQUIRED) {
