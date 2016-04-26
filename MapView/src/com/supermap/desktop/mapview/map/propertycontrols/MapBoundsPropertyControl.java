@@ -104,7 +104,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private JPopupMenuBounds popupMenuLockedViewBounds = new JPopupMenuBounds(JPopupMenuBounds.VIEW_BOUNDS_LOCKED, Rectangle2D.getEMPTY());
 	private JPopupMenuBounds popupMenuCustomBounds = new JPopupMenuBounds(JPopupMenuBounds.CUSTOM_BOUNDS, Rectangle2D.getEMPTY());
 
-	private ScaleEnabledContainer container = new ScaleEnabledContainer();
+	public static ScaleEnabledContainer container = new ScaleEnabledContainer();
 
 	private transient PropertyChangeListener boundsPropertyChangeListener = new PropertyChangeListener() {
 

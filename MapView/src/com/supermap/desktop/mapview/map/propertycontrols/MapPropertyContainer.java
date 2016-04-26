@@ -134,6 +134,7 @@ public class MapPropertyContainer extends JPanel {
 	private void setMap(Map map) {
 		if (map == null) {
 			this.tabbledPane.setVisible(false);
+			MapBoundsPropertyControl.container.setVisible(false);
 		} else {
 			this.tabbledPane.setVisible(true);
 			for (AbstractPropertyControl abstractPropertyControl : propertyControls) {
