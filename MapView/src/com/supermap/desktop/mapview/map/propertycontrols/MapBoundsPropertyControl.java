@@ -489,7 +489,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.popupMenuClipRegion.setGeoRegion(clipRegion);
 		this.popupMenuLockedViewBounds.setRectangle2D(lockedViewBounds);
 		this.popupMenuCustomBounds.setRectangle2D(customBounds);
-		this.container.setVisible(false);
 	}
 
 	@Override
