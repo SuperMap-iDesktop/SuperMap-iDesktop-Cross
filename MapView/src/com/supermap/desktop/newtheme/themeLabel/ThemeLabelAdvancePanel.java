@@ -513,15 +513,26 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setSplitSeparator() {
 			Character split = '\0';
 			Object object = comboBoxSplitSeparator.getSelectedItem();
-			if (object instanceof Character) {
+			if (object instanceof Character && object != split) {
 				split = (Character) object;
 				themeLabel.setSplitSeparator(split);
+				spinnerFontCount.setEnabled(false);
+				return;
+			}
+			if (object instanceof Character && object == split) {
+				themeLabel.setSplitSeparator(split);
+				spinnerFontCount.setEnabled(true);
+				return;
 			}
 			if (object instanceof String && object.toString().length() == 1) {
 				split = object.toString().toCharArray()[0];
 				themeLabel.setSplitSeparator(split);
+				spinnerFontCount.setEnabled(false);
+				return;
 			} else {
 				themeLabel.setSplitSeparator(split);
+				spinnerFontCount.setEnabled(true);
+				return;
 			}
 		}
 
