@@ -345,7 +345,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			scales.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
 			scales.setAttribute("version", "8.0.x");
 			document.appendChild(scales);
-			List<String> tempList = scaleDisplays;
+			List<String> tempList = new ArrayList<String>(scaleDisplays);
 			removeRepeatStr(tempList);
 			sort(tempList);
 			for (int i = 0; i < tempList.size(); i++) {
