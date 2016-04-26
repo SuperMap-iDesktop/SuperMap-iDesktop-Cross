@@ -323,8 +323,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsTextAntialias.setText(MapViewProperties.getString("String_CheckBox_IsTextAntialias"));
 		this.checkBoxIsTextOrientationFixed.setText(MapViewProperties.getString("String_CheckBox_IsTextOrientationFixed"));
 		this.buttonOverlapDisplayedOptions.setText(MapViewProperties.getString("String_FormOverlapSetting_Title"));
-		this.labelAngleTip.setToolTipText(MapViewProperties.getString("String_AngleTip"));
-
 	}
 
 	@Override
@@ -461,9 +459,11 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 				if (Double.compare(-360.0, newAngle) < 0 && Double.compare(newAngle, 360.0) < 0) {
 					this.angle = e.getNewValue() == null ? this.angle : newAngle;
 					verify();
-					labelAngleTip.setText("");
+					this.labelAngleTip.setText("");
+					this.labelAngleTip.setToolTipText(null);
 				} else {
-					labelAngleTip.setText("<html><font color='red' style='font-weight:bold'>!</font></html>");
+					this.labelAngleTip.setText("<html><font color='red' style='font-weight:bold'>!</font></html>");
+					this.labelAngleTip.setToolTipText(MapViewProperties.getString("String_AngleTip"));
 				}
 			}
 		} catch (Exception e2) {
