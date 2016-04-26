@@ -1,10 +1,5 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
-import javax.swing.JFrame;
-
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasources;
@@ -12,6 +7,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+
+import javax.swing.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * @author Administrator 拓扑预处理
@@ -30,7 +29,7 @@ public class CtrlActionDatasetsPreprocessing extends CtrlAction {
 	public boolean enable() {
 		boolean result = false;
 		HashSet<DatasetType> datasetTypes = new HashSet<DatasetType>();
-		HashSet<DatasetType> referenceDatasetTypes = new HashSet<DatasetType>();
+		HashSet<DatasetType> referenceDatasetTypes = new HashSet<>();
 		for (int i = 0; i < 4; i++) {
 			referenceDatasetTypes.add(DatasetType.LINE);
 			referenceDatasetTypes.add(DatasetType.POINT);
