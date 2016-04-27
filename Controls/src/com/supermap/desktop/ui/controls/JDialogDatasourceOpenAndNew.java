@@ -40,7 +40,8 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	/**
 	 * Create the dialog.
 	 *
-	 * @param type 数据源类型
+	 * @param type
+	 *            数据源类型
 	 */
 	public JDialogDatasourceOpenAndNew(JFrame owner, DatasourceOperatorType type) {
 		super(owner);
@@ -130,27 +131,28 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	/**
 	 * 根据类型初始化面板
 	 *
-	 * @param type 类型（NEWDATABASE/OPENDATABASE/OPENWEB）
+	 * @param type
+	 *            类型（NEWDATABASE/OPENDATABASE/OPENWEB）
 	 */
 	private void initializeDatasourceType(DatasourceOperatorType type) {
 		try {
 			switch (type) {
-				case NEWDATABASE:
-					this.listDatasourceType.setModel(getListItemForOpenOrNew());
-					this.listDatasourceType.setCellRenderer(this.commonCellRender);
-					break;
-				case OPENDATABASE:
-					this.listDatasourceType.setModel(getListItemForOpenOrNew());
-					this.listDatasourceType.setCellRenderer(this.commonCellRender);
-					// 暂不支持ArcSDE数据源
-					break;
-				case OPENWEB:
-					this.listDatasourceType.setModel(getListItemForOpenWebDatasource());
-					this.listDatasourceType.setCellRenderer(this.commonCellRender);
-					// 暂不支持天地图
-					break;
-				default:
-					break;
+			case NEWDATABASE:
+				this.listDatasourceType.setModel(getListItemForOpenOrNew());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
+				break;
+			case OPENDATABASE:
+				this.listDatasourceType.setModel(getListItemForOpenOrNew());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
+				// 暂不支持ArcSDE数据源
+				break;
+			case OPENWEB:
+				this.listDatasourceType.setModel(getListItemForOpenWebDatasource());
+				this.listDatasourceType.setCellRenderer(this.commonCellRender);
+				// 暂不支持天地图
+				break;
+			default:
+				break;
 			}
 			this.listDatasourceType.setSelectedIndex(0);
 		} catch (Exception ex) {
@@ -160,18 +162,12 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenWebDatasource() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		DataCell ogcDataCell = new DataCell();
-		ogcDataCell.initDatasourceType(EngineType.OGC, ControlsProperties.getString("String_OGC"));
-		DataCell iServerRestDataCell = new DataCell();
-		iServerRestDataCell.initDatasourceType(null, ControlsProperties.getString("String_iServerRest"));
-		DataCell superMapCloudDataCell = new DataCell();
-		superMapCloudDataCell.initDatasourceType(null, ControlsProperties.getString("String_SuperMapCloud"));
-		DataCell googleMapsDataCell = new DataCell();
-		googleMapsDataCell.initDatasourceType(null, ControlsProperties.getString("String_GoogleMaps"));
-		DataCell baiduMapDataCell = new DataCell();
-		baiduMapDataCell.initDatasourceType(null, ControlsProperties.getString("String_BaiduMap"));
-		DataCell openStreetMapsdCell = new DataCell();
-		openStreetMapsdCell.initDatasourceType(null, ControlsProperties.getString("String_OpenStreetMaps"));
+		DataCell ogcDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_OGC, ControlsProperties.getString("String_OGC"));
+		DataCell iServerRestDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_ISERVERREST, ControlsProperties.getString("String_iServerRest"));
+		DataCell superMapCloudDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_SUPERMAPCLOUD, ControlsProperties.getString("String_SuperMapCloud"));
+		DataCell googleMapsDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_GOOGLEMAPS, ControlsProperties.getString("String_GoogleMaps"));
+		DataCell baiduMapDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_BAIDUMAPS, ControlsProperties.getString("String_BaiduMap"));
+		DataCell openStreetMapsdCell = new DataCell(InternalImageIconFactory.DATASOURCE_DEFAULT, ControlsProperties.getString("String_OpenStreetMaps"));
 		listModel.addElement(ogcDataCell);
 		listModel.addElement(iServerRestDataCell);
 		listModel.addElement(superMapCloudDataCell);
@@ -226,17 +222,17 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			EngineType engineType = EngineType.SQLPLUS;
 			if (null != datasourceOperatorType) {
 				switch (datasourceOperatorType) {
-					case NEWDATABASE:
-						result = setCaseOpenDatabase(index);
-						break;
-					case OPENDATABASE:
-						result = setCaseOpenDatabase(index);
-						break;
-					case OPENWEB:
-						result = setCaseOpenWeb(index, engineType);
-						break;
-					default:
-						break;
+				case NEWDATABASE:
+					result = setCaseOpenDatabase(index);
+					break;
+				case OPENDATABASE:
+					result = setCaseOpenDatabase(index);
+					break;
+				case OPENWEB:
+					result = setCaseOpenWeb(index, engineType);
+					break;
+				default:
+					break;
 				}
 			}
 		} catch (Exception ex) {
@@ -266,26 +262,26 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			this.panelDatasourceInfoWeb = new JPanelDatasourceInfoWeb();
 		}
 		switch (index) {
-			case 0: // OGC
-				engineTypeTemp = EngineType.OGC;
-				break;
-			case 1: // iServerRest
-				engineTypeTemp = EngineType.ISERVERREST;
-				break;
-			case 2: // SuperMapCloud
-				engineTypeTemp = EngineType.SUPERMAPCLOUD;
-				break;
-			case 3: // GoogleMaps
-				engineTypeTemp = EngineType.GOOGLEMAPS;
-				break;
-			case 4: // BaiduMap
-				engineTypeTemp = EngineType.BAIDUMAPS;
-				break;
-			case 5: // OpenStreetMaps
-				engineTypeTemp = EngineType.OPENSTREETMAPS;
-				break;
-			default:
-				break;
+		case 0: // OGC
+			engineTypeTemp = EngineType.OGC;
+			break;
+		case 1: // iServerRest
+			engineTypeTemp = EngineType.ISERVERREST;
+			break;
+		case 2: // SuperMapCloud
+			engineTypeTemp = EngineType.SUPERMAPCLOUD;
+			break;
+		case 3: // GoogleMaps
+			engineTypeTemp = EngineType.GOOGLEMAPS;
+			break;
+		case 4: // BaiduMap
+			engineTypeTemp = EngineType.BAIDUMAPS;
+			break;
+		case 5: // OpenStreetMaps
+			engineTypeTemp = EngineType.OPENSTREETMAPS;
+			break;
+		default:
+			break;
 		}
 
 		this.panelDatasourceInfoWeb.setDatasourceType(engineTypeTemp);
@@ -297,58 +293,58 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		EngineType engineType = null;
 		if (SystemPropertyUtilties.isWindows()) {
 			switch (index) {
-				case 0: // SQL
-					engineType = EngineType.SQLPLUS;
-					break;
-				case 1: // Oracle
-					engineType = EngineType.ORACLEPLUS;
-					break;
-				case 2: // OracleSpatial
-					engineType = EngineType.ORACLESPATIAL;
-					break;
-				case 3: // PostgreSQL
-					engineType = EngineType.POSTGRESQL;
-					break;
-				case 4: // DB2
-					engineType = EngineType.DB2;
-					break;
-				case 5: // DM
-					engineType = EngineType.DM;
-					break;
-				case 6: // KingBase
-					engineType = EngineType.KINGBASE;
-					break;
-				case 7: // MySQL
-					engineType = EngineType.MYSQL;
-					break;
-				default:
-					break;
+			case 0: // SQL
+				engineType = EngineType.SQLPLUS;
+				break;
+			case 1: // Oracle
+				engineType = EngineType.ORACLEPLUS;
+				break;
+			case 2: // OracleSpatial
+				engineType = EngineType.ORACLESPATIAL;
+				break;
+			case 3: // PostgreSQL
+				engineType = EngineType.POSTGRESQL;
+				break;
+			case 4: // DB2
+				engineType = EngineType.DB2;
+				break;
+			case 5: // DM
+				engineType = EngineType.DM;
+				break;
+			case 6: // KingBase
+				engineType = EngineType.KINGBASE;
+				break;
+			case 7: // MySQL
+				engineType = EngineType.MYSQL;
+				break;
+			default:
+				break;
 			}
 		} else {
 			switch (index) {
-				case 0: // ORACLEPLUS
-					engineType = EngineType.ORACLEPLUS;
-					break;
-				case 1: // ORACLESPATIAL
-					engineType = EngineType.ORACLESPATIAL;
-					break;
-				case 2: // POSTGRESQL
-					engineType = EngineType.POSTGRESQL;
-					break;
-				case 3: // DB2
-					engineType = EngineType.DB2;
-					break;
-				case 4: // DM
-					engineType = EngineType.DM;
-					break;
-				case 5: // KINGBASE
-					engineType = EngineType.KINGBASE;
-					break;
-				case 6: // MYSQL
-					engineType = EngineType.MYSQL;
-					break;
-				default:
-					break;
+			case 0: // ORACLEPLUS
+				engineType = EngineType.ORACLEPLUS;
+				break;
+			case 1: // ORACLESPATIAL
+				engineType = EngineType.ORACLESPATIAL;
+				break;
+			case 2: // POSTGRESQL
+				engineType = EngineType.POSTGRESQL;
+				break;
+			case 3: // DB2
+				engineType = EngineType.DB2;
+				break;
+			case 4: // DM
+				engineType = EngineType.DM;
+				break;
+			case 5: // KINGBASE
+				engineType = EngineType.KINGBASE;
+				break;
+			case 6: // MYSQL
+				engineType = EngineType.MYSQL;
+				break;
+			default:
+				break;
 			}
 		}
 		return engineType;

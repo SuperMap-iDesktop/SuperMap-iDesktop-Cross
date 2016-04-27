@@ -5721,6 +5721,7 @@ public class CommonToolkit {
 			datasourceImage.put(EngineType.UDB, fileParentPath + "Image_DatasourceUDB_Normal.png");
 			datasourceImage.put(EngineType.DM, fileParentPath+"Image_Datasource_DMPlus_Normal.png");
 			datasourceImage.put(EngineType.KINGBASE, fileParentPath+"Image_Datasource_Kingbase_Normal.png");
+			datasourceImage.put(EngineType.MYSQL, fileParentPath+"Image_MySQL.png");
 			datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 		}
 
