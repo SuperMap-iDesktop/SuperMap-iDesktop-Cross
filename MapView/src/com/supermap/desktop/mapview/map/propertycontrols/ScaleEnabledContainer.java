@@ -185,11 +185,11 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void removeRepeatStr(List<String> scaleDisplays) {
 		int count = scaleDisplays.size();
-		for (int i = count - 1; i >= 0; i--) {
-			for (int j = i - 1; j >= 0; j--) {
+		for (int i = 0; i < count; i++) {
+			for (int j = i + 1; j < count; j++) {
 				if (scaleDisplays.get(i).equals(scaleDisplays.get(j))) {
 					scaleDisplays.remove(scaleDisplays.get(i));
-					count--;
+					count -= 1;
 				}
 			}
 		}

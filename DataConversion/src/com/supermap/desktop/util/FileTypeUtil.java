@@ -28,7 +28,7 @@ public class FileTypeUtil {
 				|| filePath.equalsIgnoreCase(FileTypeLocale.TXT_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.E00_STRING)
 				|| filePath.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
-			// ArcGIS 交换格式(*.shp,*.grd,*.txt,*.e00,*.dem)
+			// ArcGIS 交换格式(*.shp,*.grd,*.txt,*.e00,*.dem，*dbf)
 		}
 		if (filePath.equalsIgnoreCase(FileTypeLocale.TAB_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.MIF_STRING)
 				|| filePath.equalsIgnoreCase(FileTypeLocale.WOR_STRING)) {
@@ -83,10 +83,6 @@ public class FileTypeUtil {
 		if(fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_vct"))){
 			fileType = DataConversionProperties.getString("String_FormImport_VCT");
 			// vct文件
-		}
-		if(fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_dbf"))){
-			fileType = DataConversionProperties.getString("String_FormImport_DBF");
-			// dbf文件
 		}
 		return fileType;
 	}
