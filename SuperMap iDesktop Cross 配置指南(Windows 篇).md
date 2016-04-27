@@ -16,14 +16,16 @@ SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议
 SuperMap iDesktop Cross 产品是基于 SuperMap iObejcts Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可。
 > 注意：
 > 
-> 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品配置有一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
+> 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品可以配置一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
 > 2. 外部用户扩展开发，请使用 Tag 以及与之版本相对应的 SuperMap iObjects Java 产品。否则程序可能无法运行。
 
-请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。
+请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。这里下载 SuperMap iObjects Java 8C SP1 Rumtime for Windows。
 
 	后文以 **OBJECTS_HOME** 代指组件产品根目录，请根据您机器操作系统是 32位还是 64位来选择对应的 Java 组件。
 
 ## 许可配置 ##
+
+	如需完整部署 SuperMap iObjects Java 产品，或需要许可配置的更多详细信息，请参阅 OBJECTS_HOME 目录下的 InstallationGuide.pdf 文件。
 
 初次使用 SuperMap 产品，需要进行许可的配置安装。SuperMap 许可中心（SuperMap License Center）用来管理 SuperMap 相关产品的许可使用情况。SuperMap 许可中心以 zip包的形式提供，请前往 [SuperMap 技术资源中心](http://support.supermap.com.cn/DownloadCenter/ProductPlatform.aspx "SuperMap 许可中心下载") 获取许可中心。
 
@@ -64,7 +66,7 @@ SuperMap iDesktop Cross 分支说明：
 
 > 注意：
 >
-> 如果出现许可不可用等相关问题，请参见前文 **SuperMap iObjects Java - 许可配置** 部分内容。更多许可相关的详细信息，请查阅 SuperMap iObjects Java 产品包根目录下的 **InstallationGuide.pdf** 文件。
+> 如果出现许可不可用等相关问题，请参见前文 **SuperMap iObjects Java - 许可配置** 部分内容。
 
 # 扩展开发 #
 
