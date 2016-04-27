@@ -19,7 +19,7 @@ public class ControlsActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Hello SuperMap  ===  Control !!");
+		System.out.println("Hello SuperMap === Control!!");
 		JOptionPaneUtilties.setiOptionPane(new OptionPaneImpl());
 		if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Controls") == null) {
 			this.serviceTracker = new CoreServiceTracker(context);

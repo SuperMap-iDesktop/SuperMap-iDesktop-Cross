@@ -5,6 +5,10 @@ import org.osgi.framework.BundleContext;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.MainFrame;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.LogUtilties;
 
 public class DataEditorActivator implements BundleActivator {
 
@@ -28,6 +32,18 @@ public class DataEditorActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === DataEditor!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.DataEditor", bundleContext.getBundle());
+		
+//		System.out.println("Hello SuperMap === iDesktop!!");
+//		LogUtilties.outPut(CoreProperties.getString("String_DesktopStartFinished"));
+//
+//
+//		if (Application.getActiveApplication().getWorkspace() == null) {
+//			System.exit(0);
+//		} else {
+//			MainFrame mainFrame = new MainFrame();
+//			Application.getActiveApplication().setMainFrame(mainFrame);
+//			mainFrame.loadUI();
+//		}
 	}
 
 	/*
