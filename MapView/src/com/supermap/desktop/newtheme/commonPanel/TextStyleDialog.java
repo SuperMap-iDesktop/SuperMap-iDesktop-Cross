@@ -22,13 +22,13 @@ public class TextStyleDialog extends SmDialog {
 	private static final long serialVersionUID = 1L;
 	private transient TextStyleContainer textStyleContainer;
 
-	public TextStyleDialog(TextStyle textStyle, Map map, Layer themeLabelLayer) {
-		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
+	public TextStyleDialog(TextStyle textStyle, Map map, Layer themeLayer) {
+		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLayer);
 		initComponents();
 	}
 
-	public TextStyleDialog(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
-		this.textStyleContainer = new TextStyleContainer(themeLabel, selectRow, map, themeLabelLayer);
+	public TextStyleDialog(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLayer) {
+		this.textStyleContainer = new TextStyleContainer(themeLabel, selectRow, map, themeLayer);
 		initComponents();
 	}
 

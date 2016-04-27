@@ -185,15 +185,14 @@ public class ScaleEnabledContainer extends SmDialog {
 
 	private void removeRepeatStr(List<String> scaleDisplays) {
 		int count = scaleDisplays.size();
-		List<String> tempList = new ArrayList<String>();
-		for (int i = 0; i < count; i++) {
-			for (int j = i + 1; j < count; j++) {
+		for (int i = count - 1; i >= 0; i--) {
+			for (int j = i - 1; j >= 0; j--) {
 				if (scaleDisplays.get(i).equals(scaleDisplays.get(j))) {
-					tempList.add(scaleDisplays.get(i));
+					scaleDisplays.remove(scaleDisplays.get(i));
+					count--;
 				}
 			}
 		}
-		scaleDisplays.removeAll(tempList);
 	}
 
 	private double[] sort(List<String> scaleDisplays) {

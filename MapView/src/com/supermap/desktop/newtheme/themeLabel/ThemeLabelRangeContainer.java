@@ -503,6 +503,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			} else if (e.getSource() == buttonStyle) {
 				// 批量修文本风格
 				setItemTextSytle();
+				getTable();
 			}
 		}
 
