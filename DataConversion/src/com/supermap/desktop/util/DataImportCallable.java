@@ -84,6 +84,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
+			// fixme UGDJ-244
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
