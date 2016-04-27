@@ -15,7 +15,13 @@ import com.supermap.mapping.MapOverlapDisplayedOptions;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -59,6 +65,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	private String name = "";
 	private double angle = 0.0;
+	private boolean angleIsRight = false;
 	private transient MapColorMode colorMode = MapColorMode.DEFAULT;
 	private Color backgroundColor = Color.WHITE;
 	private double minVisibleTextSize = 0.0;
@@ -73,6 +80,16 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private transient MapOverlapDisplayedOptions mapOverlapDisplayedOptions = null;
 
 	private transient CaretPositionListener caretPositionListener;
+	private FocusAdapter focusAdapter = new FocusAdapter() {
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (!angleIsRight) {
+				textFieldAngle.setText(String.valueOf(angle));
+			}
+		}
+
+	};
 	private transient PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
 
 		@Override
@@ -361,6 +378,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		super.registerEvents();
 		this.caretPositionListener.registerComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.addPropertyChangeListener(this.propertyChangeListener);
+		this.textFieldAngle.addFocusListener(this.focusAdapter);
 		this.comboBoxColorMode.addItemListener(this.itemListener);
 		this.textFieldMinVisibleTextSize.addPropertyChangeListener(this.propertyChangeListener);
 		this.textFieldMaxVisibleTextSize.addPropertyChangeListener(this.propertyChangeListener);
@@ -381,6 +399,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		super.unregisterEvents();
 		this.caretPositionListener.unRegisterComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.removePropertyChangeListener(this.propertyChangeListener);
+		this.textFieldAngle.removeFocusListener(this.focusAdapter);
 		this.comboBoxColorMode.removeItemListener(this.itemListener);
 		this.textFieldMinVisibleTextSize.removePropertyChangeListener(this.propertyChangeListener);
 		this.textFieldMaxVisibleTextSize.removePropertyChangeListener(this.propertyChangeListener);
@@ -458,10 +477,12 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 				Double newAngle = Double.valueOf(e.getNewValue().toString());
 				if (Double.compare(-360.0, newAngle) < 0 && Double.compare(newAngle, 360.0) < 0) {
 					this.angle = e.getNewValue() == null ? this.angle : newAngle;
+					angleIsRight = true;
 					verify();
 					this.labelAngleTip.setText("");
 					this.labelAngleTip.setToolTipText(null);
 				} else {
+					angleIsRight = false;
 					this.labelAngleTip.setText("<html><font color='red' style='font-weight:bold'>!</font></html>");
 					this.labelAngleTip.setToolTipText(MapViewProperties.getString("String_AngleTip"));
 				}

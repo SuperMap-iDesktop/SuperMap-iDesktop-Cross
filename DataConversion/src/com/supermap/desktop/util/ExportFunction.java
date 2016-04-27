@@ -57,16 +57,20 @@ public class ExportFunction {
 		int[] count = table.getSelectedRows();
 		ExportModel model = (ExportModel) exportTable.getModel();
 		int selected = 0;
+		String targetFilePath = System.getProperty("user.dir") + File.separator;
 		if (0 < exportTable.getRowCount()) {
 			selected = exportTable.getRowCount() - 1;
+			//复制第一条记录的目录为新添加项的目标目录
+			targetFilePath=((ExportModel)exportTable.getModel()).getTagValueAt(0).getFilePath();
 		}
+		
 		for (int i = 0; i < count.length; i++) {
 			ExportFileInfo tempOut = ((ChildExportModel) table.getModel()).getTagValueAt(count[i]);
 			String datasetName = tempOut.getDatasetName();
 			String datasourceAlias = tempOut.getDatasource().getAlias();
 			ExportSetting exportSetting = new ExportSetting();
-			exportSetting.setTargetFilePath(System.getProperty("user.dir") + File.separator);
-			tempOut.setFilePath(exportSetting.getTargetFilePath());
+			exportSetting.setTargetFilePath(targetFilePath);
+			tempOut.setFilePath(targetFilePath);
 			tempOut.setExportSetting(exportSetting);
 			FileType fileType = null;
 			if (0 < tempOut.getFileTypes().length) {
@@ -92,17 +96,12 @@ public class ExportFunction {
 
 				// 刷新右边界面
 				ExportFileInfo tempOut = ((ChildExportModel) table.getModel()).getTagValueAt(count[count.length - 1]);
-				ArrayList<ExportFileInfo> exportFileInfos = (ArrayList<ExportFileInfo>) model.getExports();
-
 				ArrayList<String> fileTypeArray = new ArrayList<String>();
 				FileType[] fileTypes = tempOut.getFileTypes();
 				for (int j = 0; j < fileTypes.length; j++) {
 					fileTypeArray.add(fileTypes[j].name());
 				}
 				setComboBoxModel(fileTypeArray, frame.getComboBoxFileType());
-				if (!fileTypeArray.isEmpty()) {
-					refreshPanel(getRightPanelState(fileTypeArray.get(0)), frame, exportFileInfos);
-				}
 			}
 		}
 
@@ -134,11 +133,6 @@ public class ExportFunction {
 				fileTypeArray = (ArrayList<String>) getSameFileTypes(tempExportFileInfos);
 			}
 			setComboBoxModel(fileTypeArray, frame.getComboBoxFileType());
-			if (!fileTypeArray.isEmpty()) {
-				refreshPanel(getRightPanelState(fileTypeArray.get(0)), frame, tempExportFileInfos);
-			} else {
-				refreshPanel(getRightPanelState(""), frame, tempExportFileInfos);
-			}
 		}
 	}
 
@@ -368,21 +362,6 @@ public class ExportFunction {
 			frame.getTextFieldPassword().setEnabled(state.get(fileTypeChangedSIT));
 			frame.getTextFieldConfrim().setEnabled(state.get(fileTypeChangedSIT));
 		}
-	}
-
-	/**
-	 * 刷新右边界面
-	 * 
-	 * @param state
-	 * @param frame
-	 */
-	public static void refreshPanel(Map<String, Boolean> state, DataExportFrame frame, List<ExportFileInfo> fileInfos) {
-
-		frame.getFilePath().getEditor().setText(System.getProperty("user.dir"));
-		for (int i = 0; i < fileInfos.size(); i++) {
-			fileInfos.get(i).setFilePath(System.getProperty("user.dir") + File.separator);
-		}
-		refreshPanelForCombobox(state, frame);
 	}
 
 	/**

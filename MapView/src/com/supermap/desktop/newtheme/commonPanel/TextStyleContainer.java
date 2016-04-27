@@ -4,7 +4,6 @@ import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
@@ -516,7 +515,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		if (isRefreshAtOnce && null != map) {
 			refreshMapAndLayer();
 		}
-		if (!isRefreshAtOnce && null != map && null != themeLabel) {
+		if (null != map && null != themeLabel) {
 			for (int i = 0; i < this.selectRow.length; i++) {
 				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
