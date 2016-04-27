@@ -16,6 +16,7 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
@@ -41,11 +42,14 @@ public class UnionEditor extends AbstractEditor {
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
 					.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
+				CursorUtilties.setWaitCursor();
 				union(environment, form.getEditLayer(), form.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			CursorUtilties.setDefaultCursor();
 		}
 	}
 

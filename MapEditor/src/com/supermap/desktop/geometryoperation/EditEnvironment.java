@@ -29,8 +29,14 @@ import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
 import com.supermap.mapping.Selection;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -41,6 +47,8 @@ import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
+import com.supermap.data.MapClearedEvent;
+import com.supermap.data.MapClearedListener;
 import com.supermap.data.Recordset;
 
 // @formatter:off
@@ -52,7 +60,7 @@ import com.supermap.data.Recordset;
  *
  */
 // @formatter:on
-public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener {
+public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener, LayerRemovedListener, MapClosedListener, MapOpenedListener {
 
 	private IFormMap formMap;
 	private EditProperties properties = new EditProperties();
@@ -143,7 +151,9 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			// 图层可编辑状态改变
 			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this);
-
+			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this);
+			this.formMap.getMapControl().getMap().addMapClosedListener(this);
+			this.formMap.getMapControl().getMap().addMapOpenedListener(this);
 		}
 	}
 
@@ -224,6 +234,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 	@Override
 	public void editableChanged(LayerEditableChangedEvent arg0) {
+		geometryStatusChange();
+		layersStatusChange();
+	}
+
+	@Override
+	public void layerRemoved(LayerRemovedEvent arg0) {
 		geometryStatusChange();
 		layersStatusChange();
 	}
@@ -379,5 +395,21 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 	private void resetLayersStatus() {
 		this.properties.getEditableDatasetTypes().clear();
+	}
+
+	/**
+	 * 直接打开地图会导致 Layers 对象的改变，因此需要重新处理一下 Layers 相关事件的监听
+	 *
+	 */
+	@Override
+	public void mapOpened(MapOpenedEvent arg0) {
+		this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this);
+		this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this);
+	}
+
+	@Override
+	public void mapClosed(MapClosedEvent arg0) {
+		this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
+		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this);
 	}
 }

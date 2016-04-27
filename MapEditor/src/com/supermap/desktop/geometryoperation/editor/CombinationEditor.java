@@ -27,6 +27,7 @@ import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
@@ -58,11 +59,14 @@ public class CombinationEditor extends AbstractEditor {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
 					MapEditorProperties.getString("String_GeometryOperation_Combination"), geometryEdit.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
+				CursorUtilties.setWaitCursor();
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			CursorUtilties.setDefaultCursor();
 		}
 	}
 
