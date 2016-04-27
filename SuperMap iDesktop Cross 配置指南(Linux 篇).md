@@ -1,13 +1,49 @@
 # JDK #
 
-SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。
+    本文以 64位 Ubuntu 16.04 操作系统为例。
+
+## 获取 ##
+
+SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。请根据您操作系统来选择下载对应的包，本文 Ubuntu 操作系统为例，这里下载 **Linux x64 - jdk-7u80-linux-x64.tar.gz**。
+
+## 安装 ##
+
+1. 打开终端，将当前工作路径更改为您想要安装的路径，举例如下：
+
+	    $ cd Documents/java/
+
+2. 移动下载好的 tar.gz文件包至当前工作路径；
+3. 解压并安装，命令如下：
+
+		$ tar zxvf jdk-7u80-linux-x64.tar.gz
+
+4. 删除 tar.gz文件包。
+
+更多详情请参见 [官方 Linux 64位JDK 安装说明](http://www.java.com/en/download/help/linux_x64_install.xml "Linux 64位jdk 安装说明")。
+
+	后文以 JAVA_HOME 代指 JDK根目录。
+
 
 # Eclipse #
 
-SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议使用 **Eclipse for RCP and RAP Developers** 进行开发。请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse，然后解压至任意目录。
+## 获取 ##
+
+SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议使用 **Eclipse for RCP and RAP Developers** 进行开发。请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse Linux版本，然后安装至任意目录，举例说明，命令如下：
+
+	$ tar zxvf eclipse-rcp-mars-linux.tar.gz
+
 > 注意：
 > 
 >     最新版本 Eclipse 也许需要 JDK 1.8 及以上版本支持。如果需要最新版本 Eclipse，请同时安装 JDK 1.8 及以上版本。
+
+## 配置 ##
+
+查看当前目录，进入解压过后的 eclipse 目录，打开 **eclipse.ini** 文件。在文件头，添加如下指令：
+
+	-vm
+	JAVA_HOME/jre/bin
+	
+保存文件，关闭，然后启动 eclipse。
 
 # SuperMap iObjects Java #
 
@@ -16,10 +52,12 @@ SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议
 SuperMap iDesktop Cross 产品是基于 SuperMap iObejcts Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可。
 > 注意：
 > 
-> 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品可以配置一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
+> 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品可以一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
 > 2. 外部用户扩展开发，请使用 Tag 以及与之版本相对应的 SuperMap iObjects Java 产品。否则程序可能无法运行。
 
-请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。这里下载 SuperMap iObjects Java 8C SP1 Rumtime for Windows。
+请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。这里下载 SuperMap iObjects Java 8C SP1 Rumtime for Linux。安装命令如下：
+	
+	$ tar zxvf SMO_Java_801_RumTime_13228_53527_64_x64_linux_gcc_CHS.tar.gz
 
 	后文以 **OBJECTS_HOME** 代指组件产品根目录，请根据您机器操作系统是 32位还是 64位来选择对应的 Java 组件。
 
@@ -27,10 +65,36 @@ SuperMap iDesktop Cross 产品是基于 SuperMap iObejcts Java 的二次开发�
 
 	如需完整部署 SuperMap iObjects Java 产品，或需要许可配置的更多详细信息，请参阅 OBJECTS_HOME 目录下的 InstallationGuide.pdf 文件。
 
-初次使用 SuperMap 产品，需要进行许可的配置安装。SuperMap 许可中心（SuperMap License Center）用来管理 SuperMap 相关产品的许可使用情况。SuperMap 许可中心以 zip包的形式提供，请前往 [SuperMap 技术资源中心](http://support.supermap.com.cn/DownloadCenter/ProductPlatform.aspx "SuperMap 许可中心下载") 获取许可中心。
+初次使用 SuperMap 产品，需要进行许可的配置安装。Linux 环境下，要验证许可并运行产品，都必须安装许可驱动程序。安装完成即可获得 90天的 SuperMap GIS 系列产品的试用许可。
 
-- 将下载的许可中心解压至任意目录，双击运行 **许可中心根目录/Tools/Setup.bat** 批处理文件，安装许可服务。
-- 等待许可服务部署成功之后，即可运行 **许可中心根目录** 下的 **SuperMapLicenseCenter.exe** 启动许可中心，首次启动许可中心，默认安装一个90天的试用许可。
+许可驱动程序位于组件产品包 `OBJECTS_HOME/Support/` 目录下，名称为： `aksusbd-2.0.1-i386.tar`。
+
+安装许可驱动之前，需要以 root 身份进行。在 Ubuntu中，请参考以下步骤切换为 root用户。
+
+	1. 打开终端。
+	2. 设置 root 密码，已经设置则忽略，命令：$ sudo passwd root 
+	3. 切换为 root 用户，命令：$ sudo -s
+
+进入组件产品包 `OBJECTS_HOME/Support/` 目录，参考以下步骤安装驱动程序。
+
+	1. 解压驱动程序包，命令：$ tar -xvf aksusbd-2.0.1-i386.tar
+	2. 进入解压后的目录，命令：$ cd aksusbd-2.2.1-i386
+	3. 安装驱动程序，命令：$ sh dinst
+
+如果安装失败，终端输出以下信息
+
+	dpkg-query: no packages found matching aksusbd
+	The 32bit support is missing. Please install the x86 compatibility
+	packages required by your distribution and retry the installation.
+	See the installation guide for more details.
+	Aborting...
+
+按以下步骤，安装缺少的支持库。
+
+	1. $ apt-get install libc6-i386
+	2. $ apt-get install ia32-libs
+
+安装成功之后，再次执行驱动安装命令即可。
 
 # 获取代码 #
 
@@ -45,20 +109,24 @@ SuperMap iDesktop Cross 分支说明：
 - master：主分支，维护最近一次正式发布版本的代码；
 - tag：master 分支上各历史发布版本。
 
-在任意目录下，右键打开 **Git Bash**，使用以下命令抓取代码（以 OSChina 远程仓库为例），进入抓取的 SuperMap-iDesktop-Cross 目录，即可浏览整个项目的相关内容。
+打开终端，进入想要的目录，使用以下命令抓取代码（以 OSChina 远程仓库为例），进入抓取的 SuperMap-iDesktop-Cross 目录，即可浏览整个项目的相关内容。
 
     $ git clone https://git.oschina.net/supermap/SuperMap-iDesktop-Cross.git
 
 使用此命令将会抓取整个远程仓库，默认为 develop 分支，而外部用户扩展开发需要使用 tag版本，因此请参照以下步骤切换为您想要的 tag版本。
 
-	1. 进入抓取的 SuperMap-iDesktop-Cross 目录，右键打开 Git Bash；
+	1. 进入抓取的 SuperMap-iDesktop-Cross 目录，命令：$ cd SuperMap-iDesktop-Cross；
 	2. 查看仓库的所有 tag版本，命令：$ git tag -l;
 	3. 选择想要的 tag版本，命令：git checkout tags/<tag_name>
 	
 	注意：tag版本是当前仓库的快照版本，无法做修改提交，因此如果需要提交到当前仓库，请执行以下命令替代步骤3。
-		 命令：$ git checkout tags/<tag_name> -b <branch_name>
+		 命令：$ git checkout tags/<tag_name> -b <branch_name>	
 
 	后文以 **CROSS_HOME** 代指项目根目录。
+
+	如果 CROSS_HOME 右下角有锁，当前用户没有读写权限，请切换为 root 用户进行操作，
+	或打开终端，进入 CROSS_HOME 同级目录，使用以下命令更改读写权限：
+	$ sudo chmod -R 777 SuperMap-iDesktop-Cross/
 
 # 运行程序 #
 
