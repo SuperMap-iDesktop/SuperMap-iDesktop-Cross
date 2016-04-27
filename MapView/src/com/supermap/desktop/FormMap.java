@@ -49,6 +49,7 @@ import com.supermap.desktop.utilties.ActionUtilties;
 import com.supermap.desktop.utilties.DoubleUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -69,6 +70,7 @@ import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -78,6 +80,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -100,6 +103,7 @@ import java.awt.event.MouseWheelListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.EventObject;
 
 public class FormMap extends FormBaseChild implements IFormMap {
 
@@ -144,11 +148,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private AreaUnit areaUnit = AreaUnit.METER;
 	private AngleUnit angleUnit = AngleUnit.DEGREE;
 
-
 	private Layer[] rememberActiveLayers = null;
 
 	// 地图窗口右键菜单
-
 
 	private JPopupMenu formMapContextMenu;
 	private DocumentListener scaleBoxListener = new DocumentListener() {
@@ -168,13 +170,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	};
 
-
 	public JPopupMenu getFormMapContextMenu() {
 		return this.formMapContextMenu;
 	}
 
 	// 几何对象右键菜单
-
 
 	private JPopupMenu geometryContextMenu;
 
@@ -184,7 +184,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	// 文本对象右键菜单
 
-
 	private JPopupMenu geometryTextContextMenu;
 
 	public JPopupMenu getGeometryTextContextMenu() {
@@ -192,7 +191,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	// 参数化几何对象右键菜单
-
 
 	private JPopupMenu geometryParmaContextMenu;
 
@@ -223,9 +221,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 
-			if (buttonType == MouseEvent.BUTTON3 && clickCount == 1
-					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2
-					|| getMapControl().getAction() == Action.SELECTCIRCLE)
+			if (buttonType == MouseEvent.BUTTON3
+					&& clickCount == 1
+					&& (getMapControl().getAction() == Action.SELECT || getMapControl().getAction() == Action.SELECT2 || getMapControl().getAction() == Action.SELECTCIRCLE)
 					&& getMapControl().getTrackMode() == TrackMode.EDIT && isShowPopupMenu <= 0) {
 				showPopupMenu(e);
 			}
@@ -236,14 +234,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			// 地图点击判断
 
-
 			setMapcontrolMouseClick(e);
 			// 绘制几何对象时，如果地图是地理坐标，进行超范围提示
 
-
 			if ((e.getButton() == MouseEvent.BUTTON1 && MapControlUtilties.isCreateGeometry(FormMap.this.mapControl))
-					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null
-					&& FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
+					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null && FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
 				Point2D mousePosition = FormMap.this.mapControl.getMap().pixelToMap(e.getPoint());
 
 				if (mousePosition.getX() > 180 || mousePosition.getX() < -180 || mousePosition.getY() > 90 || mousePosition.getY() < -90) {
@@ -258,7 +253,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		public void mapDrawing(MapDrawingEvent arg0) {
 			initCenter();
 			// 初始化比例尺下拉框
-
 
 			initScaleComboBox();
 			((SmTextField) getStatusbar().getComponent(PRJCOORSYS)).setText(mapControl.getMap().getPrjCoordSys().getName());
@@ -333,9 +327,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private GeometryDeletedListener geometryDeletedListener = new GeometryDeletedListener() {
 
 		/*
-
+		 * 
 		 * 待组件改好缺陷 UGDJ-186 之后，就移除这个实现
-
 		 */
 		@Override
 		public void geometryDeleted(GeometryEvent arg0) {
@@ -348,9 +341,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private GeometryAddedListener geometryAddedListener = new GeometryAddedListener() {
 
 		/*
-
+		 * 
 		 * 待组件改好缺陷 UGDJ-186 之后，就移除这个实现
-
 		 */
 		@Override
 		public void geometryAdded(GeometryEvent arg0) {
@@ -423,7 +415,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (buttonType == MouseEvent.BUTTON1) {
 			// 重新计算选中值
 
-
 			Layers layers = mapControl.getMap().getLayers();
 			int count = 0;
 			for (int i = 0; i < layers.getCount(); i++) {
@@ -435,13 +426,28 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (clickCount == 2 && count > 0) {
 				// 双击显示对象属性
 
-
 				JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
 				dialogPropertyContainer.setVisible(true);
 				setSelectedGeometryProperty();
 			}
 		}
 	}
+
+	private UndoneListener undoneListener = new UndoneListener() {
+
+		@Override
+		public void undone(EventObject arg0) {
+			Layer[] activeLayers = getActiveLayers();
+
+			if (activeLayers != null && activeLayers.length > 0) {
+				for (int i = 0; i < activeLayers.length; i++) {
+					if (activeLayers[i].getDataset() instanceof DatasetVector) {
+						TabularUtilties.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
+					}
+				}
+			}
+		}
+	};
 
 	public FormMap() {
 		this("");
@@ -476,10 +482,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		registerEvents();
 		// 初始化中心点
 
-
 		initCenter();
 		// 坐标和投影 不可编辑
-
 
 		initUneditableStatus();
 	}
@@ -494,12 +498,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		statusbar.setLayout(new GridBagLayout());
 
 		if (list.get(0) != null) {
-			statusbar.add(list.get(0),
-					new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(0), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(1) != null) {
-			statusbar.add(list.get(1),
-					new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(1), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(2) != null) {
 			statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
@@ -507,30 +511,30 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 		if (list.get(3) != null) {
 			list.get(3).setMinimumSize(new Dimension(200, list.get(3).getHeight()));
-			statusbar.add(list.get(3),
-					new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(4) != null) {
-			statusbar.add(list.get(4),
-					new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(5) != null) {
 			list.get(5).setMinimumSize(new Dimension(60, list.get(5).getHeight()));
-			statusbar.add(list.get(5),
-					new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(6) != null) {
 			list.get(6).setMinimumSize(new Dimension(60, list.get(6).getHeight()));
-			statusbar.add(list.get(6),
-					new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(7) != null) {
-			statusbar.add(list.get(7),
-					new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 		if (list.get(8) != null) {
-			statusbar.add(list.get(8),
-					new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+					.setWeight(0, 1));
 		}
 	}
 
@@ -556,7 +560,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (!this.isRegisterEvents) {
 			// 防止多次注册
 
-
 			this.isRegisterEvents = true;
 			this.mapControl.addKeyListener(this.mapKeyListener);
 			this.mapControl.addGeometrySelectChangedListener(this.geometrySelectChangedListener);
@@ -564,12 +567,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.addGeometryDeletedListener(this.geometryDeletedListener);
 			this.mapControl.addGeometryModifiedListener(this.geometryModifiedListener);
 			this.mapControl.addMouseMotionListener(this.motionListener);
-
+			this.mapControl.addUndoneListener(this.undoneListener);
 			MouseListener[] mouseListeners = this.mapControl.getMouseListeners();
 			this.mapControl.addMouseListener(this.mouseAdapter);
 			for (MouseListener mouseListener : mouseListeners) {
 				// 确保最先触发
-
 
 				this.mapControl.removeMouseListener(mouseListener);
 				this.mapControl.addMouseListener(mouseListener);
@@ -580,7 +582,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.getMap().addDrawingListener(this.mapDrawingListener);
 			this.mapControl.getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
 			// 比例尺下拉框添加选择事件
-
 
 			this.scaleBox.addItemListener(this.itemListener);
 			this.pointXField.addKeyListener(this.keyAdapter);
@@ -614,6 +615,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.removeGeometryDeletedListener(this.geometryDeletedListener);
 			this.mapControl.removeGeometryModifiedListener(this.geometryModifiedListener);
 			this.mapControl.removeMouseMotionListener(this.motionListener);
+			this.mapControl.removeUndoneListener(this.undoneListener);
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeMouseWheelListener(this.localMouseWheelListener);
 
@@ -627,7 +629,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (null != layersTree) {
 			this.layersTree.removeTreeSelectionListener(this.layersTreeSelectionListener);
 			// this.layersTree.removeMouseListener(this.layersTreeMouseAdapter);
-
 
 		}
 
@@ -704,11 +705,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 			// XY坐标信息
 
-
 			String XYInfo = MessageFormat.format(MapViewProperties.getString("String_String_PrjCoordSys_XYInfo"), x, y);
 
 			// 经纬度信息
-
 
 			String latitudeInfo = MessageFormat.format(MapViewProperties.getString("String_PrjCoordSys_LongitudeLatitude"), getFormatCoordinates(point.getX()),
 					getFormatCoordinates(point.getY()));
@@ -716,16 +715,13 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (coordSysType == PrjCoordSysType.PCS_NON_EARTH) {
 				// 平面
 
-
 				((SmTextField) getStatusbar().getComponent(LOCATION)).setText(XYInfo);
 			} else if (coordSysType == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
 				// 地理
 
-
 				((SmTextField) getStatusbar().getComponent(LOCATION)).setText(latitudeInfo);
 			} else {
 				// 投影
-
 
 				Point2Ds point2Ds = new Point2Ds();
 				point2Ds.add(point);
@@ -737,10 +733,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			}
 			// 设置光标位置
 
-
 			((SmTextField) getStatusbar().getComponent(LOCATION)).setCaretPosition(0);
 			// 投影改变时更新一下
-
 
 			if (!coordSysType.equals(this.prjCoordSysType)) {
 				this.prjCoordSysType = coordSysType;
@@ -754,7 +748,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private String getFormatCoordinates(double point) {
 		// 度
 
-
 		double pointTemp = point;
 		int angles = (int) pointTemp;
 		pointTemp = Math.abs(pointTemp);
@@ -762,10 +755,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		pointTemp = (pointTemp - Math.abs(angles)) * 60;
 		// 分
 
-
 		int min = (int) pointTemp;
 		// 秒
-
 
 		pointTemp = (pointTemp - min) * 60;
 		DecimalFormat format = new DecimalFormat("######0.00");
@@ -830,10 +821,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void initCenter() {
 		DecimalFormat format = new DecimalFormat("######0.####");
-		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber")
-				: format.format(mapControl.getMap().getCenter().getX());
-		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber")
-				: format.format(mapControl.getMap().getCenter().getY());
+		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+				.getCenter().getX());
+		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+				.getCenter().getY());
 		this.pointXField.setText(x);
 		this.pointXField.setCaretPosition(0);
 		this.pointYField.setText(y);
@@ -879,7 +870,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					}
 				} catch (Exception e) {
 					// 有可能图层被删除但引用还存在，这种情况用layer==null判断不出来，用try catch做处理吧。
-
 
 					continue;
 				}
@@ -1201,7 +1191,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	public void windowShown() {
 		// do nothing
 
-
 	}
 
 	/**
@@ -1210,7 +1199,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@Override
 	public void windowHidden() {
 		// do nothing
-
 
 	}
 
@@ -1239,7 +1227,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 								} else {
 									// 有可能存在一个点的数据集，所以还是用记录集来判断吧
 
-
 									if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getRecordCount() > 0) {
 										break;
 									}
@@ -1254,10 +1241,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							} else {
 								// 有可能存在一个点的数据集，所以还是用记录集来判断吧
 
-
 								if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getRecordCount() > 0) {
 									// do nothing
-
 
 								}
 							}
@@ -1292,8 +1277,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
+								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1305,7 +1290,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 						}
 
 						// 直接用记录集的Bounds modified by zengwh 2012-1-6
-
 
 						if (rect.isEmpty()) {
 							rect = layerSelectionBounds;
@@ -1349,7 +1333,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			// 设置状态栏选中对象数
 
-
 			((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(selectGeometryCount));
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
@@ -1368,7 +1351,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void updataLayersTreeSelection() {
 		// 图上选择之后，选中图层管理器上对应图层的节点
-
 
 		if (this.mapControl.getMap() != null && this.mapControl.getMap().getLayers().getCount() > 0) {
 			ArrayList<TreePath> pathArray = new ArrayList<TreePath>();
@@ -1404,17 +1386,15 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	public void setSelectedGeometryProperty() {
 		// 取出所有有选择对象的图层的选择集
 
-
 		if (this.mapControl != null && this.mapControl.getMap() != null) {
 			Selection[] selections = this.mapControl.getMap().findSelection(true);
 			if (selections.length > 0) {
 				// 默认取第一个选择集的第一个选中对象
 
-
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
@@ -1427,7 +1407,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 		}
 	}
-
 
 	private class LayersTreeSelectionListener implements TreeSelectionListener {
 
@@ -1466,12 +1445,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			try {
 				// 将数据集添加到当前地图图层
 
-
 				Transferable transferable = dtde.getTransferable();
 				DataFlavor[] dataFlavors = dtde.getCurrentDataFlavors();
 				for (int i = 0; i < dataFlavors.length; i++) {
-					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor)
-							&& null != transferable.getTransferData(dataFlavors[i])) {
+					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 						Map map = formMap.getMapControl().getMap();
