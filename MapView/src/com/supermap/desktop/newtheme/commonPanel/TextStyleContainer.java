@@ -115,6 +115,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
 	private ChangeListener outLineWidthChangeListener = new OutLineChangeListener();
 	private transient ThemeLabel themeLabel;
+	private transient Theme theme;
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle.clone();
@@ -520,8 +521,11 @@ public class TextStyleContainer extends ThemeChangePanel {
 				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
 		}
-		if (isRefreshAtOnce) {
-			
+		if (null != theme && theme instanceof ThemeGraph && textStyleType == graphAxisText) {
+			((ThemeGraph)theme).setAxesTextStyle(textStyle);
+		}
+		if (null != theme && theme instanceof ThemeGraph && textStyleType == graphTextFormat) {
+			((ThemeGraph)theme).setGraphTextStyle(textStyle);
 		}
 		return;
 	}
@@ -874,6 +878,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 	@Override
 	public void setCurrentLayer(Layer layer) {
 		this.themeLayer = layer;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 
 }

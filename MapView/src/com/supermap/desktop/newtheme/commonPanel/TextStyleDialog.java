@@ -6,6 +6,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeLabel;
 
 import java.awt.*;
@@ -63,4 +64,7 @@ public class TextStyleDialog extends SmDialog {
 		textStyleContainer.refreshMapAndLayer();
 	}
 
+	public void setTheme(Theme theme) {
+		textStyleContainer.setTheme(theme);
+	}
 }

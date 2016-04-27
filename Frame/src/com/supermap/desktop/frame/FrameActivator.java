@@ -18,7 +18,7 @@ public class FrameActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		System.out.println("Hello SuperMap  ===  Frame !!");
+		System.out.println("Hello SuperMap === Frame!!");
 		
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());	
 		
