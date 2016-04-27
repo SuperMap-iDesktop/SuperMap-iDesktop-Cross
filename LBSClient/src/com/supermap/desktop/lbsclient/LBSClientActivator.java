@@ -47,14 +47,14 @@ public class LBSClientActivator implements BundleActivator {
 		LogUtilties.outPut(CoreProperties.getString("String_DesktopStartFinished"));
 
 		// 临时代码
-		if (Application.getActiveApplication().getWorkspace() == null) {
-			UICommonToolkit.showMessageDialog("许可不可用");
-			System.exit(0);
-		} else {
-			MainFrame mainFrame = new MainFrame();
-			Application.getActiveApplication().setMainFrame(mainFrame);
-			mainFrame.loadUI();
-		}
+//		if (Application.getActiveApplication().getWorkspace() == null) {
+//			UICommonToolkit.showMessageDialog("许可不可用");
+//			System.exit(0);
+//		} else {
+//			MainFrame mainFrame = new MainFrame();
+//			Application.getActiveApplication().setMainFrame(mainFrame);
+//			mainFrame.loadUI();
+//		}
 	}
 	
 	/*

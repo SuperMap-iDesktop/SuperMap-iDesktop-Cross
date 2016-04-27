@@ -697,9 +697,10 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 				// 如果 table 中选中单条记录，就用这个字段来初始化 ComboBoxGeometry 各子项的 FieldValue
 				if (this.selectedOperations.length == 1) {
-					refreshComboBoxGeometryItems(model.getFieldOperation(this.selectedOperations[0]).getFieldName());
+					refreshComboBoxGeometryItems(model.getFieldOperation(this.selectedOperations[0]).getFieldName(),
+							model.getFieldOperation(this.selectedOperations[0]).getFieldCaption());
 				} else {
-					refreshComboBoxGeometryItems(null);
+					refreshComboBoxGeometryItems(null, null);
 				}
 			} else {
 				this.comboBoxGeometry.setEnabled(false);
@@ -715,7 +716,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	 * 
 	 * @param fieldName
 	 */
-	private void refreshComboBoxGeometryItems(String fieldName) {
+	private void refreshComboBoxGeometryItems(String fieldName, String fieldCaption) {
 		Recordset recordset = null;
 
 		try {
@@ -725,7 +726,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				for (int i = 0; i < this.comboBoxGeometry.getItemCount(); i++) {
 					GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getItemAt(i);
 					// 设置字段名
-					data.setFieldName(fieldName);
+					data.setFieldName(fieldCaption);
 					// 设置字段值
 					if (!StringUtilties.isNullOrEmpty(fieldName)) {
 						recordset.seekID(data.getID());
