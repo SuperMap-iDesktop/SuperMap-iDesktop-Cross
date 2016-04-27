@@ -40,13 +40,7 @@ public class XOREditor extends AbstractEditor {
 			// 设置目标数据集类型
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedGeometryTypes().size() == 1) {
-				if (environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
-						|| environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
-						|| environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
-					datasetType = DatasetType.REGION3D;
-				} else {
-					datasetType = DatasetType.REGION;
-				}
+				datasetType = DatasetType.REGION;
 			}
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_XOR"), environment
 					.getMapControl().getMap(), datasetType);
@@ -65,23 +59,11 @@ public class XOREditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean enable = false;
-		if (environment.getEditProperties().getSelectedGeometryCount() > 1 && // 选中数至少2个
-				// (this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
-				ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)) {
-			// 是会否存在可编辑的“可操作保存”图层
-			DatasetType datasetType = DatasetType.CAD;
-			if (environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOCIRCLE3D
-					|| environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOPIE3D
-					|| environment.getEditProperties().getSelectedGeometryTypes().get(0) == GeometryType.GEOREGION3D) {
-				datasetType = DatasetType.REGION3D;
-			} else {
-				datasetType = DatasetType.REGION;
-			}
-
-			if (environment.getEditProperties().getEditableDatasetTypes().size() > 0
-					&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, datasetType)) {
-				enable = true;
-			}
+		if (environment.getEditProperties().getSelectedGeometryCount() > 1 // 选中数至少2个
+				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)
+				&& environment.getEditProperties().getEditableDatasetTypes().size() > 0
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)) {
+			enable = true;
 		}
 		return enable;
 	}

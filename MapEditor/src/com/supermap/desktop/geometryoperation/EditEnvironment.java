@@ -15,10 +15,12 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.INormalFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
+import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -285,6 +287,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 		try {
 			ArrayList<Class<?>> features = new ArrayList<>();
+			ArrayList<Class<?>> typeFeatures = new ArrayList<>();
 			ArrayList<GeometryType> types = new ArrayList<>();
 			int editableSelectedMaxPartCount = 0;
 
@@ -306,18 +309,11 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 					}
 
 					IGeometry dGeometry = DGeometryFactory.create(geometry);
-					if (dGeometry instanceof IPointFeature && !features.contains(IPointFeature.class)) {
-						features.add(IPointFeature.class);
-					} else if (dGeometry instanceof ILineFeature && !features.contains(ILineFeature.class)) {
-						features.add(ILineFeature.class);
-					} else if (dGeometry instanceof IRegionFeature && !features.contains(IRegionFeature.class)) {
-						features.add(IRegionFeature.class);
-					} else if (dGeometry instanceof ITextFeature && !features.contains(ITextFeature.class)) {
-						features.add(ITextFeature.class);
-					} else if (dGeometry instanceof ICompoundFeature && !features.contains(ICompoundFeature.class)) {
-						features.add(ICompoundFeature.class);
-					}
 
+					Class<?> typeFeature = getTypeFeature(dGeometry);
+					if (!typeFeatures.contains(typeFeature)) {
+						typeFeatures.add(typeFeature);
+					}
 					if (dGeometry instanceof IMultiPartFeature<?>) {
 						editableSelectedMaxPartCount = Math.max(editableSelectedMaxPartCount, ((IMultiPartFeature<?>) dGeometry).getPartCount());
 					}
@@ -330,12 +326,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			}
 
 			this.properties.setSelectedGeometryCount(this.properties.getSelectedGeometryCount() + selection.getCount());
-			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypeFeatures(), features.toArray(new Class<?>[features.size()]));
+			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
 			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
 				this.properties.setEditableSelectedMaxPartCount(Math.max(this.properties.getEditableSelectedMaxPartCount(), editableSelectedMaxPartCount));
-				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), features.toArray(new Class<?>[features.size()]));
+				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
 				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
 		} catch (Exception e) {
@@ -348,9 +344,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		}
 	}
 
-	private Class<?> getTypeFeature(Geometry geometry) {
-		IGeometry dGeometry = DGeometryFactory.create(geometry);
-
+	private Class<?> getTypeFeature(IGeometry dGeometry) {
 		if (dGeometry instanceof IPointFeature) {
 			return IPointFeature.class;
 		} else if (dGeometry instanceof ILineFeature) {
@@ -361,6 +355,10 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			return ITextFeature.class;
 		} else if (dGeometry instanceof ICompoundFeature) {
 			return ICompoundFeature.class;
+		} else if (dGeometry instanceof ILine3DFeature) {
+			return ILine3DFeature.class;
+		} else if (dGeometry instanceof IRegion3DFeature) {
+			return IRegion3DFeature.class;
 		}
 		return INormalFeature.class;
 	}
@@ -374,6 +372,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		this.properties.getSelectedLayers().clear();
 		this.properties.getSelectedGeometryTypes().clear();
 		this.properties.getEditableSelectedGeometryTypes().clear();
+		this.properties.getSelectedGeometryFeatures().clear();
+		this.properties.getEditableSelectedGeometryFeatures().clear();
 		this.properties.getSelectedGeometryTypeFeatures().clear();
 		this.properties.getEditableSelectedGeometryTypeFeatures().clear();
 	}
