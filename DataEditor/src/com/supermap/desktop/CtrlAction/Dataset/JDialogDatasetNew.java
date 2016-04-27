@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -82,13 +83,13 @@ public class JDialogDatasetNew extends SmDialog {
 		this.table = new MutiTable();
 		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		DDLExportTableModel tableModel = new DDLExportTableModel(new String[]{"Index", "TargetDatasource", "CreateType", "DatasetName", "EncodeType",
-				"Charset", "AddToMap"}) {
+		DDLExportTableModel tableModel = new DDLExportTableModel(new String[] { "Index", "TargetDatasource", "CreateType", "DatasetName", "EncodeType",
+				"Charset", "AddToMap" }) {
 			/**
 			 *
 			 */
 			private static final long serialVersionUID = 1L;
-			boolean[] columnEditables = new boolean[]{false, true, true, true, true, true, true};
+			boolean[] columnEditables = new boolean[] { false, true, true, true, true, true, true };
 
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -371,12 +372,7 @@ public class JDialogDatasetNew extends SmDialog {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								setAbstractComboBoxDatasetTypeLisenter(comboBoxDatasetType);
-							}
-						});
+						setAbstractComboBoxDatasetTypeLisenter(comboBoxDatasetType);
 					}
 				}
 
@@ -442,7 +438,7 @@ public class JDialogDatasetNew extends SmDialog {
 	/**
 	 * 复制一行记录
 	 *
-	 * @param rowIndex 上一行的索引，如果是-1，则会创建默认的一行
+	 * @param srcIndex 上一行的索引，如果是-1，则会创建默认的一行
 	 */
 	private void copyPreDatasetInfo(int rowIndex) {
 		try {
@@ -530,7 +526,7 @@ public class JDialogDatasetNew extends SmDialog {
 	 * 用数据集全名匹配默认数据集名
 	 *
 	 * @param wholeName 数据集名
-	 * @param typeName  默认数据集名
+	 * @param typeName 默认数据集名
 	 * @return 符合默认命名格式，返回true
 	 */
 	private boolean testDefaultName(String wholeName, String typeName) {
@@ -752,7 +748,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 					if (dialogTargetDatasource != null
 							&& (!((DataCell) table.getValueAt(i, COLUMN_INDEX_TARGETDATASOURCE)).getDataName().equals(
-							((DataCell) dialogTargetDatasource).getDataName()))) {
+									((DataCell) dialogTargetDatasource).getDataName()))) {
 						table.setValueAt(dialogTargetDatasource, i, COLUMN_INDEX_TARGETDATASOURCE);
 						isDatasourceChanged = true;
 					}

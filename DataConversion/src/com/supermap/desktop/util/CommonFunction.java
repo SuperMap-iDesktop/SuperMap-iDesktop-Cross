@@ -106,7 +106,7 @@ public class CommonFunction {
 				String fileFilters = SmFileChoose.bulidFileFilters(
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[0], FileTypeLocale.getExtensionsnew()),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[1], "dxf", "dwg"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[2], "shp", "grd", "txt", "e00", "dem"),
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[2], "shp", "grd", "txt", "e00", "dem","dbf"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[3], "tab", "mif", "wor"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[4], "wat", "wan", "wal", "wap"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[5], "csv", "dbf"),
@@ -115,22 +115,21 @@ public class CommonFunction {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[8], "kml", "kmz"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "sid", "b"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "vct"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "dbf"));
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "vct"));
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			} else {
-				String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[0],
-						FileTypeLocale.getExtensionsnewforlinux()), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[1], "shp", "grd",
-						"txt", "e00", "dem"), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[2], "tab", "mif", "wor"), SmFileChoose
-						.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[3], "csv"), SmFileChoose.createFileFilter(
-						FileTypeLocale.getDescriptionnewforlinux()[4], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg"), SmFileChoose
-						.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[5], "scv", "3ds"), SmFileChoose.createFileFilter(
-						FileTypeLocale.getDescriptionnewforlinux()[6], "kml", "kmz"), SmFileChoose.createFileFilter(
-						FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"), SmFileChoose.createFileFilter(
-						FileTypeLocale.getDescriptionnewforlinux()[8], "vct"), SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[9],
-						"dbf"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+				String fileFilters = SmFileChoose.bulidFileFilters(
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[0],FileTypeLocale.getExtensionsnewforlinux()), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[1], "shp", "grd","txt", "e00", "dem","dbf"),
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[2], "tab", "mif", "wor"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[3], "csv"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[4], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[5], "scv", "3ds"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[6], "kml", "kmz"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"), 
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[8], "vct"));
+						SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			}
 

@@ -32,18 +32,6 @@ public class DataEditorActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === DataEditor!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.DataEditor", bundleContext.getBundle());
-		
-//		System.out.println("Hello SuperMap === iDesktop!!");
-//		LogUtilties.outPut(CoreProperties.getString("String_DesktopStartFinished"));
-//
-//
-//		if (Application.getActiveApplication().getWorkspace() == null) {
-//			System.exit(0);
-//		} else {
-//			MainFrame mainFrame = new MainFrame();
-//			Application.getActiveApplication().setMainFrame(mainFrame);
-//			mainFrame.loadUI();
-//		}
 	}
 
 	/*
