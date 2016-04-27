@@ -871,7 +871,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				FieldOperation data = datas.get(rowIndex);
 
 				if (columnIndex == FIELD_NAME) {
-					return MessageFormat.format("{0}({1})", data.getFieldName(), data.getFieldCaption());
+					return data.getFieldCaption();
 				} else if (columnIndex == FIELD_TYPE) {
 					return FieldTypeUtilties.getFieldTypeName(data.getFieldType());
 				} else if (columnIndex == FIELD_OPERATION) {
@@ -1104,7 +1104,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			if (this.fieldInfo == null) {
 				return MapEditorProperties.getString("String_GeometryOperation_NoWeight");
 			} else {
-				return this.fieldInfo.getCaption() + ":" + this.fieldInfo.getName();
+				return this.fieldInfo.getCaption();
 			}
 		}
 
