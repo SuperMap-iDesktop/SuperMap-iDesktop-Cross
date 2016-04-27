@@ -113,9 +113,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				int operationType = fieldOperation.getOperationType();
 				String fieldName = fieldOperation.getFieldName();
 				FieldType fieldType = fieldOperation.getFieldType();
+				boolean isRequired = fieldOperation.isRequired();
 
 				if (operationType == OperationType.NULL) {
-					properties.put(fieldOperation.getFieldName(), null);
+					if (!isRequired) {
+						properties.put(fieldOperation.getFieldName(), null);
+					}
 				} else if (operationType == OperationType.SUM) {
 					properties.put(fieldName, getSumData(recordset, fieldName, fieldType));
 				} else if (operationType == OperationType.AVG) {
@@ -401,7 +404,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		FieldOperation result = null;
 
 		if (fieldInfo != null) {
-			result = new FieldOperation((DatasetVector) this.editLayer.getDataset(), fieldInfo.getName(), fieldInfo.getCaption(), fieldInfo.getType());
+			result = new FieldOperation((DatasetVector) this.editLayer.getDataset(), fieldInfo.getName(), fieldInfo.getCaption(), fieldInfo.getType(),
+					fieldInfo.isRequired());
 
 			if (this.comboBoxGeometry.getItemCount() > 0) {
 				result.setOperationData(this.comboBoxGeometry.getItemAt(0));
@@ -941,19 +945,26 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		private String fieldName;
 		private String fieldCaption;
 		private FieldType fieldType;
+		private boolean isRequired = false;
 		private int availableOperationType = OperationType.NULL | OperationType.SUM | OperationType.AVG | OperationType.GEOMETRY;
 		private IOperationData operationData = null;
 
-		public FieldOperation(DatasetVector datasetVector, String fieldName, String fieldCaption, FieldType fieldType) {
+		public FieldOperation(DatasetVector datasetVector, String fieldName, String fieldCaption, FieldType fieldType, boolean isRequired) {
 			this.datasetVector = datasetVector;
 			this.fieldName = fieldName;
 			this.fieldCaption = fieldCaption;
 			this.fieldType = fieldType;
+			this.isRequired = isRequired;
 
 			// 非数值型字段不支持加权平均
 			if (this.fieldType != FieldType.DOUBLE && this.fieldType != FieldType.SINGLE && this.fieldType != FieldType.INT16
 					&& this.fieldType != FieldType.INT32 && this.fieldType != FieldType.INT64) {
 				this.availableOperationType ^= OperationType.AVG;
+			}
+
+			// 必填字段不支持设置为 NULL
+			if (this.isRequired) {
+				this.availableOperationType ^= OperationType.NULL;
 			}
 		}
 
@@ -967,6 +978,10 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		public FieldType getFieldType() {
 			return this.fieldType;
+		}
+
+		public boolean isRequired() {
+			return this.isRequired;
 		}
 
 		/**

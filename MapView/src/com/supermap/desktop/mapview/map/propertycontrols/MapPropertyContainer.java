@@ -97,6 +97,10 @@ public class MapPropertyContainer extends JPanel {
 				} else {
 					setFormMap(null);
 				}
+				if (null == e.getNewActiveForm()) {
+					MapBoundsPropertyControl.container.setVisible(false);
+					return;
+				}
 				if (null != e.getOldActiveForm() && null != e.getNewActiveForm() && !e.getNewActiveForm().equals(e.getOldActiveForm())) {
 					MapBoundsPropertyControl.container.setVisible(false);
 				}
