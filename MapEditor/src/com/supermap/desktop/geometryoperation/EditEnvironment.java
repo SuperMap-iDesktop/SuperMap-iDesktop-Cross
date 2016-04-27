@@ -29,6 +29,8 @@ import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
@@ -52,7 +54,7 @@ import com.supermap.data.Recordset;
  *
  */
 // @formatter:on
-public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener {
+public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener, LayerRemovedListener {
 
 	private IFormMap formMap;
 	private EditProperties properties = new EditProperties();
@@ -143,7 +145,7 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			// 图层可编辑状态改变
 			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this);
-
+			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this);
 		}
 	}
 
@@ -224,6 +226,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 	@Override
 	public void editableChanged(LayerEditableChangedEvent arg0) {
+		geometryStatusChange();
+		layersStatusChange();
+	}
+
+	@Override
+	public void layerRemoved(LayerRemovedEvent arg0) {
 		geometryStatusChange();
 		layersStatusChange();
 	}
