@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.topology.TopologyPreprocessOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
@@ -33,9 +33,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 public class JDialogTopoPreProgress extends SmDialog {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	private MutiTable table;
 	private SmTextFieldLegit textFieldTolerance;
@@ -368,7 +365,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 					DataCell datasourceCell = (DataCell) tableModel.getTagValue(i).get(2);
 					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceCell.toString());
 					temp[COLUMN_INDEX_DATASET] = datasetCell;
-					Dataset dataset = CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetCell.toString(), datasource);
+					Dataset dataset = DatasetUtilties.getDatasetFromDatasource(datasetCell.toString(), datasource);
 					datasetTypes.add(dataset.getType());
 					temp[COLUMN_INDEX_DATASOURCE] = datasourceCell;
 					datas[i] = temp;

@@ -2,7 +2,10 @@ package com.supermap.desktop.controls.utilties;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfos;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.properties.CoreProperties;
@@ -85,5 +88,26 @@ public class DatasetUtilties {
 			}
 		}
 		return fieldNames.toArray(new String[fieldNames.size()]);
+	}
+
+	public static Dataset getDatasetFromDatasource(String datasetName, Datasource datasource) {
+		Dataset result = null;
+		try {
+			Datasets datasets = datasource.getDatasets();
+			for (int j = 0; j < datasets.getCount(); j++) {
+				Dataset dataset = datasets.get(j);
+				if (dataset.getName().equals(datasetName)) {
+					result = datasets.get(datasetName);
+					break;
+				} else if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getChildDataset() != null && ((DatasetVector) dataset).getChildDataset().getName().equals(datasetName)) {
+					result = ((DatasetVector) dataset).getChildDataset();
+					break;
+				}
+
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return result;
 	}
 }

@@ -1067,22 +1067,6 @@ public class CommonToolkit {
 			CloseDataset((Dataset[]) datasets.toArray(new Dataset[datasets.size()]));
 		}
 
-		public static Dataset getDatasetFromDatasource(String datasetName, Datasource datasource) {
-			Dataset result = null;
-			try {
-				Datasets datasets = datasource.getDatasets();
-				for (int j = 0; j < datasets.getCount(); j++) {
-					if (datasets.get(j).getName().equals(datasetName)) {
-						result = datasets.get(datasetName);
-					}
-
-				}
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
-			return result;
-		}
-
 		//
 
 		/**
