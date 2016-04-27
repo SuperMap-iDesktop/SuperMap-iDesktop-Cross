@@ -21,6 +21,10 @@ public class DesktopActivator implements BundleActivator {
 		return CONTEXT;
 	}
 
+	static void setContext(BundleContext context) {
+		CONTEXT = context;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -51,10 +55,6 @@ public class DesktopActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		DesktopActivator.setContext(null);
-	}
-
-	public static void setContext(BundleContext context) {
-		DesktopActivator.CONTEXT = context;
 	}
 
 }
