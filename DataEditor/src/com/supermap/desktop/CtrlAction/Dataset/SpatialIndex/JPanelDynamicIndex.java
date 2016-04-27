@@ -4,7 +4,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.DoubleUtilties;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,8 +56,6 @@ public class JPanelDynamicIndex extends JPanel {
 
 	private void addListeners() {
 		FocusAdapter focusAdapter = new FocusAdapter() {
-
-
 			@Override
 			public void focusLost(FocusEvent e) {
 				fireSpatialIndexPropertyChanged(getPropertyName(e.getSource()), getPropertyValue(e.getSource()));
@@ -123,16 +121,7 @@ public class JPanelDynamicIndex extends JPanel {
 		ISmTextFieldLegit smTextFieldLegitPoint = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
-					return true;
-				}
-				Double aDouble;
-				try {
-					aDouble = Double.valueOf(textFieldValue);
-				} catch (NumberFormatException e) {
-					return false;
-				}
-				return true;
+				return DoubleUtilties.isDoubleWithoutD(textFieldValue);
 			}
 
 			@Override

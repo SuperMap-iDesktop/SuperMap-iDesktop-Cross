@@ -17,6 +17,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxItemT;
 import com.supermap.desktop.utilties.FieldTypeUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -32,6 +33,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -61,8 +63,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private JRadioButton radioButtonGeometry;
 	private JComboBox<IOperationData> comboBoxWeight;
 	private JComboBox<IOperationData> comboBoxGeometry;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+	private SmButton buttonOK;
+	private SmButton buttonCancel;
 
 	private Map map;
 	private Layer editLayer;
@@ -266,6 +268,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		this.table = new JTable();
 		FieldOperationTableModel tableModel = new FieldOperationTableModel();
 		this.table.setModel(tableModel);
+		TableColumn fieldNameColumn = this.table.getColumnModel().getColumn(FieldOperationTableModel.FIELD_NAME);
+		fieldNameColumn.setPreferredWidth(160);
+		fieldNameColumn.setMaxWidth(160);
+		TableColumn fieldTypeColumn = this.table.getColumnModel().getColumn(FieldOperationTableModel.FIELD_TYPE);
+		fieldTypeColumn.setPreferredWidth(90);
+		fieldTypeColumn.setMaxWidth(90);
 		scrollPaneTable.setViewportView(this.table);
 		this.radioButtonNull = new JRadioButton("NULL");
 		this.radioButtonAVG = new JRadioButton("AVG");
@@ -278,8 +286,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		this.radioButtonGroup.add(this.radioButtonGeometry);
 		this.comboBoxWeight = new JComboBox<IOperationData>();
 		this.comboBoxGeometry = new JComboBox<IOperationData>();
-		this.buttonOK = new JButton("OK");
-		this.buttonCancel = new JButton("Cancel");
+		this.buttonOK = new SmButton("OK");
+		this.buttonCancel = new SmButton("Cancel");
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -871,7 +879,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				FieldOperation data = datas.get(rowIndex);
 
 				if (columnIndex == FIELD_NAME) {
-					return MessageFormat.format("{0}({1})", data.getFieldName(), data.getFieldCaption());
+					return data.getFieldCaption();
 				} else if (columnIndex == FIELD_TYPE) {
 					return FieldTypeUtilties.getFieldTypeName(data.getFieldType());
 				} else if (columnIndex == FIELD_OPERATION) {
@@ -1104,13 +1112,17 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			if (this.fieldInfo == null) {
 				return MapEditorProperties.getString("String_GeometryOperation_NoWeight");
 			} else {
-				return this.fieldInfo.getCaption() + ":" + this.fieldInfo.getName();
+				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_AVG_ListView"), this.fieldInfo.getCaption());
 			}
 		}
 
 		@Override
 		public String toString() {
-			return getDescription();
+			if (this.fieldInfo == null) {
+				return MapEditorProperties.getString("String_GeometryOperation_NoWeight");
+			} else {
+				return this.fieldInfo.getCaption();
+			}
 		}
 	}
 

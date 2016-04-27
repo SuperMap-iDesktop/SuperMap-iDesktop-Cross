@@ -8,7 +8,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Recordset;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -225,7 +225,7 @@ public class JDialogTopoAdvance extends SmDialog {
 			}
 			if (0 < this.comboBoxNotCutting.getItemCount()) {
 				String datasetName = this.comboBoxNotCutting.getSelectItem();
-				DatasetVector dataset = (DatasetVector) CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
+				DatasetVector dataset = (DatasetVector) DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
 				Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
 				this.topologyProcessingOptions.setVertexFilterRecordset(recordset);
 				recordset.dispose();

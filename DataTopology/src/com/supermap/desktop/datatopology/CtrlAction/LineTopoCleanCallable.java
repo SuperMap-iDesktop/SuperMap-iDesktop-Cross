@@ -7,7 +7,7 @@ import com.supermap.data.SteppedListener;
 import com.supermap.data.topology.TopologyProcessing;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
@@ -31,7 +31,7 @@ public class LineTopoCleanCallable extends UpdateProgressCallable {
 		boolean result = true;
 
 		try {
-			DatasetVector dataset = (DatasetVector) CommonToolkit.DatasetWrap.getDatasetFromDatasource(datasetName, datasource);
+			DatasetVector dataset = (DatasetVector) DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
 			String topoInfo = "";
 			percentListener = new PercentListener();
 			TopologyProcessing.addSteppedListener(percentListener);

@@ -1,7 +1,19 @@
 package com.supermap.desktop.util;
 
-import com.supermap.data.*;
-import com.supermap.data.conversion.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasources;
+import com.supermap.data.SpatialIndexInfo;
+import com.supermap.data.SpatialIndexType;
+import com.supermap.data.Workspace;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.FileType;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingWOR;
+import com.supermap.data.conversion.ImportSettings;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -10,9 +22,12 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 
 import javax.swing.*;
-
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CancellationException;
 
 public class DataImportCallable extends UpdateProgressCallable {
@@ -26,7 +41,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 
 	@Override
 	public Boolean call() {
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		final HashMap<String, Integer> map = new HashMap<String, Integer>();
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
 			map.put(datasources.get(i).getAlias(), 0);
@@ -69,11 +84,17 @@ public class DataImportCallable extends UpdateProgressCallable {
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
-			for (Map.Entry<String, Integer> entry : map.entrySet()) {
-				if (entry.getValue() > 0) {
-					UICommonToolkit.refreshSelectedDatasourceNode(entry.getKey());
+			// fixme UGDJ-244
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					for (Map.Entry<String, Integer> entry : map.entrySet()) {
+						if (entry.getValue() > 0) {
+							UICommonToolkit.refreshSelectedDatasourceNode(entry.getKey());
+						}
+					}
 				}
-			}
+			});
 		}
 		return true;
 	}
