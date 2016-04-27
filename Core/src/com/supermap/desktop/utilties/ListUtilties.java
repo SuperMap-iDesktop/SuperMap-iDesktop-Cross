@@ -46,6 +46,8 @@ public class ListUtilties {
 					break;
 				}
 			}
+		} else {
+			result = false;
 		}
 		return result;
 	}
@@ -67,6 +69,8 @@ public class ListUtilties {
 					break;
 				}
 			}
+		} else {
+			result = false;
 		}
 		return result;
 	}
