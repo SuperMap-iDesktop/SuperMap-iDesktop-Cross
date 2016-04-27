@@ -20,8 +20,7 @@ public class FileTypeLocale {
 			DataConversionProperties.getString("string_filetype_kml"),
 			DataConversionProperties.getString("string_filetype_grid"),
 			DataConversionProperties.getString("string_filetype_lidar"),
-			DataConversionProperties.getString("string_filetype_vct"),
-			DataConversionProperties.getString("string_filetype_dbf") };
+			DataConversionProperties.getString("string_filetype_vct")};
 	private static final String[] descriptionNewForLinux = {
 			DataConversionProperties.getString("string_filetypeForLinux_all"),
 			DataConversionProperties.getString("string_filetypeForLinux_arcgis"),
@@ -31,9 +30,7 @@ public class FileTypeLocale {
 			DataConversionProperties.getString("string_filetypeForLinux_3ds"),
 			DataConversionProperties.getString("string_filetypeForLinux_kml"),
 			DataConversionProperties.getString("string_filetypeForLinux_grid"),
-			DataConversionProperties.getString("string_filetypeForLinux_vct"),
-			DataConversionProperties.getString("string_filetypeForLinux_dbf")
-	};
+			DataConversionProperties.getString("string_filetypeForLinux_vct")};
 	// 文件类型匹配数组
 	private static final String[] extensionsNew = { "dxf", "dwg", "scv", "grd", "txt",
 			"shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",

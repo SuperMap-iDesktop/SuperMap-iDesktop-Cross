@@ -4,6 +4,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilties.LogUtilties;
 
 public class DataConversionActivator implements BundleActivator {
 
@@ -22,6 +24,7 @@ public class DataConversionActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		System.out.println("Hello SuperMap === DataConversion!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.DataConversion", bundleContext.getBundle());
 	}
