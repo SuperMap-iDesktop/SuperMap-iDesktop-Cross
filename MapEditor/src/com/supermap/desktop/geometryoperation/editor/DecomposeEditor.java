@@ -16,6 +16,7 @@ import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.RecordsetUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
@@ -25,7 +26,12 @@ public class DecomposeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		decompose(environment);
+		CursorUtilties.setWaitCursor();
+		try {
+			decompose(environment);
+		} finally {
+			CursorUtilties.setDefaultCursor();
+		}
 	}
 
 	private void decompose(EditEnvironment environment) {
