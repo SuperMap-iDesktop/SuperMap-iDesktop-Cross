@@ -152,14 +152,14 @@ public class SpatialIndexTableModelBean {
 		Application.getActiveApplication().getOutput().output(message);
 	}
 
-	public void updateValue(String propetName, Object value) {
+	public void updateValue(String propertyName, Object value) {
 		if (StringUtilties.isNullOrEmpty(String.valueOf(value))) {
 			value = "0";
 		}
 
 		if (this.getSpatialIndexInfo().getType() == SpatialIndexType.MULTI_LEVEL_GRID) {
 			Double doubleValue = Double.valueOf(String.valueOf(value));
-			switch (propetName) {
+			switch (propertyName) {
 				case SpatialIndexInfoPropertyListener.GRID_X:
 					this.getSpatialIndexInfo().setGridCenter(new Point2D(doubleValue, this.getSpatialIndexInfo().getGridCenter().getY()));
 					break;
@@ -173,13 +173,13 @@ public class SpatialIndexTableModelBean {
 					this.getSpatialIndexInfo().setGridSize0(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_1:
-					if (doubleValue < 0) {
+					if (doubleValue <= 0) {
 						return;
 					}
 					this.getSpatialIndexInfo().setGridSize1(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.GRID_SIZE_2:
-					if (doubleValue < 0) {
+					if (doubleValue <= 0) {
 						return;
 					}
 					this.getSpatialIndexInfo().setGridSize2(doubleValue);
@@ -187,7 +187,7 @@ public class SpatialIndexTableModelBean {
 			}
 		} else {
 			double doubleValue;
-			switch (propetName) {
+			switch (propertyName) {
 				case SpatialIndexInfoPropertyListener.TILE_FIELD:
 					this.getSpatialIndexInfo().setTileField(String.valueOf(value));
 					break;
@@ -196,6 +196,7 @@ public class SpatialIndexTableModelBean {
 					if (doubleValue <= 0) {
 						return;
 					}
+					this.getSpatialIndexInfo().setTileField("");
 					this.getSpatialIndexInfo().setTileWidth(doubleValue);
 					break;
 				case SpatialIndexInfoPropertyListener.TILE_HEIGHT:
@@ -204,6 +205,7 @@ public class SpatialIndexTableModelBean {
 					if (doubleValue <= 0) {
 						return;
 					}
+					this.getSpatialIndexInfo().setTileField("");
 					this.getSpatialIndexInfo().setTileHeight(doubleValue);
 					break;
 			}
