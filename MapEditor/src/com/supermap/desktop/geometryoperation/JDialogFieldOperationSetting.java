@@ -8,6 +8,8 @@ import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
 import com.supermap.data.Recordset;
@@ -816,15 +818,19 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			geometry = recordset.getGeometry();
 
 			if (geometry instanceof Geometry3D) {
-				GeoStyle3D geoStyle3D = new GeoStyle3D();
-				geoStyle3D.setLineColor(Color.RED);
-				geoStyle3D.setLineWidth(1);
-				((Geometry3D) geometry).setStyle3D(geoStyle3D);
+				if (!(geometry instanceof GeoText3D)) {
+					GeoStyle3D geoStyle3D = new GeoStyle3D();
+					geoStyle3D.setLineColor(Color.RED);
+					geoStyle3D.setLineWidth(1);
+					((Geometry3D) geometry).setStyle3D(geoStyle3D);
+				}
 			} else {
-				GeoStyle geoStyle = new GeoStyle();
-				geoStyle.setLineColor(Color.RED);
-				geoStyle.setLineWidth(1);
-				geometry.setStyle(geoStyle);
+				if (!(geometry instanceof GeoText)) {
+					GeoStyle geoStyle = new GeoStyle();
+					geoStyle.setLineColor(Color.RED);
+					geoStyle.setLineWidth(1);
+					geometry.setStyle(geoStyle);
+				}
 			}
 			trackingLayer.add(geometry, TrackingLayerTag);
 			this.map.refresh();
@@ -1022,7 +1028,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 						int id = ((GeometryOperationData) this.operationData).getID();
 						recordset.seekID(id);
 						Object fieldValue = recordset.getFieldValue(this.fieldName);
-						return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(id), this.fieldName,
+						return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometryDescription"), String.valueOf(id), this.fieldName,
 								fieldValue == null ? "NULL" : fieldValue.toString());
 					}
 				} else {
@@ -1180,7 +1186,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		@Override
 		public String getDescription() {
 			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
-				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(this.id), this.fieldName,
+				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometryDescription"), String.valueOf(this.id), this.fieldName,
 						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
 			} else {
 				return MessageFormat.format("SmID:{0}", this.id);
@@ -1189,7 +1195,12 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		@Override
 		public String toString() {
-			return getDescription();
+			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
+				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(this.id), this.fieldName,
+						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
+			} else {
+				return MessageFormat.format("SmID:{0}", this.id);
+			}
 		}
 	}
 

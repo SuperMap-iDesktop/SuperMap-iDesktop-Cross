@@ -72,7 +72,7 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 			List<Geometry> geometries = new ArrayList<>();
 
 			// 这个分解方法的参数，仅对复合对象生效，就是说子对象不是复合对象就不会对子对象进行深度分解
-			Geometry[] temp = this.geoCompound.divide(false);
+			Geometry[] temp = this.geoCompound.divide(true);
 
 			for (int i = 0; i < temp.length; i++) {
 				IGeometry geometry = DGeometryFactory.create(temp[i]);
@@ -97,7 +97,7 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 	public Geometry[] protectedDivide() {
 		if (this.geoCompound != null) {
 			List<Geometry> geometries = new ArrayList<>();
-			Geometry[] temp = this.geoCompound.divide(false);
+			Geometry[] temp = this.geoCompound.divide(true);
 
 			for (int i = 0; i < temp.length; i++) {
 				IGeometry geometry = DGeometryFactory.create(temp[i]);
