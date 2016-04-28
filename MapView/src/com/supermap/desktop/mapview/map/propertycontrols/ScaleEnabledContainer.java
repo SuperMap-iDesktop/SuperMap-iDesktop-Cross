@@ -59,7 +59,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	private final String urlStr = "/com/supermap/desktop/coreresources/ToolBar/";
 	private final Color selectColor = new Color(185, 214, 255);
 	private Map map;
-	private MouseAdapter localMouseAdapter;
+	private ActionListener localActionListener;
 	private ActionListener panelButtonAction;
 	private double[] scales;
 	private MapBoundsPropertyControl control;
@@ -76,7 +76,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
 			checkButtonState();
 		}
 	};
@@ -104,10 +104,10 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void registEvents() {
-		this.localMouseAdapter = new MouseAdapter() {
-
+		this.localActionListener = new ActionListener() {
+			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == buttonSelectAll) {
 					table.setRowSelectionInterval(0, table.getRowCount() - 1);
 					checkButtonState();
@@ -173,11 +173,11 @@ public class ScaleEnabledContainer extends SmDialog {
 			}
 		};
 		unRegistEvents();
-		this.buttonSelectAll.addMouseListener(this.localMouseAdapter);
-		this.buttonInvertSelect.addMouseListener(this.localMouseAdapter);
-		this.buttonDelete.addMouseListener(this.localMouseAdapter);
-		this.buttonImport.addMouseListener(this.localMouseAdapter);
-		this.buttonExport.addMouseListener(this.localMouseAdapter);
+		this.buttonSelectAll.addActionListener(this.localActionListener);
+		this.buttonInvertSelect.addActionListener(this.localActionListener);
+		this.buttonDelete.addActionListener(this.localActionListener);
+		this.buttonImport.addActionListener(this.localActionListener);
+		this.buttonExport.addActionListener(this.localActionListener);
 		this.buttonOk.addActionListener(this.panelButtonAction);
 		this.buttonCancel.addActionListener(this.panelButtonAction);
 		this.table.addMouseListener(this.mouseAdapter);
@@ -255,11 +255,11 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void unRegistEvents() {
-		this.buttonSelectAll.removeMouseListener(this.localMouseAdapter);
-		this.buttonInvertSelect.removeMouseListener(this.localMouseAdapter);
-		this.buttonDelete.removeMouseListener(this.localMouseAdapter);
-		this.buttonImport.removeMouseListener(this.localMouseAdapter);
-		this.buttonExport.removeMouseListener(this.localMouseAdapter);
+		this.buttonSelectAll.removeActionListener(this.localActionListener);
+		this.buttonInvertSelect.removeActionListener(this.localActionListener);
+		this.buttonDelete.removeActionListener(this.localActionListener);
+		this.buttonImport.removeActionListener(this.localActionListener);
+		this.buttonExport.removeActionListener(this.localActionListener);
 		this.buttonOk.removeActionListener(this.panelButtonAction);
 		this.buttonCancel.removeActionListener(this.panelButtonAction);
 		this.table.removeMouseListener(this.mouseAdapter);

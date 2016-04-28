@@ -856,8 +856,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				for (int i = 0; i < selectRows.length; i++) {
 					tableUniqueInfo.addRowSelectionInterval(selectRows[i], selectRows[i]);
 				}
-			} else {
-				tableUniqueInfo.addRowSelectionInterval(0, 0);
+				return;
 			}
 		}
 
@@ -935,6 +934,14 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				buttonDelete.setEnabled(false);
 			} else {
 				buttonDelete.setEnabled(true);
+			}
+			if (selectedRow[0] != tableUniqueInfo.getRowCount() - 1) {
+				tableUniqueInfo.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
+				return;
+			}
+			if (selectedRow[0] == tableUniqueInfo.getRowCount() - 1 && selectedRow[0] > 0) {
+				tableUniqueInfo.setRowSelectionInterval(selectedRow[0] - 1, selectedRow[0] - 1);
+				return;
 			}
 		}
 
