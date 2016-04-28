@@ -25,16 +25,11 @@ sidebar:
     SuperMapDataStructure: 数据组织结构
     Pyramid: 影像金字塔
     DataConversion: 数据转换
-    Proximity: 邻近分析
-    ProximityAnalyst: 邻近分析概述
-    Proximity_Cases: 邻近分析解决方案
+    DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
-    BufferAnalyst_Example: 缓冲区应用实例
-    Bufferanalyst: Bufferanalyst
-    Buffer3D: 三维缓冲区分析
-    HowBufferWork: 缓冲区分析概述
-    MutilBuffer: 多重缓冲区分析
     SingleBuffer: 单重缓冲区分析
+    BufferAnalyst_Example: 缓冲区应用实例
+
   api:
     core: Core
     overview: Overview

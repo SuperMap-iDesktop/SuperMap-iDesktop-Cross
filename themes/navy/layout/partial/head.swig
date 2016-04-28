@@ -37,10 +37,10 @@
   <!-- RSS -->
   {{ feed_tag('atom.xml') }}
   <!-- Open Graph -->
-  {{ open_graph({
+   <!--{{ open_graph({
     fb_admins: config.fb_admins,
-    twitter_site: config.twitter
-  }) }}
+   twitter_site: config.twitter
+  }) }}-->
   <!-- Google Analytics -->
   {{ partial('google_analytics') }}
 </head>

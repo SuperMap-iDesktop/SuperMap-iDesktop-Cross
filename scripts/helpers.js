@@ -97,7 +97,7 @@ hexo.extend.helper.register('url_for_lang', function(path){
 });
 
 hexo.extend.helper.register('raw_link', function(path){
-  return 'https://github.com/qinlj/iDesktop-Cross-Docs/edit/master/source/' + path;
+  return 'http://git.oschina.net/supermap/SuperMap-iDesktop-Cross-Docs/blob/master/source/' + path;
 });
 
 hexo.extend.helper.register('page_anchor', function(str){
