@@ -87,7 +87,7 @@ public class XOREditor extends AbstractEditor {
 			}
 			result = GeometryUtilties.xor(intersectObj, unionObj, true);
 
-			if (editLayer != null && result != null) {
+			if (editLayer != null) {
 				Selection selection = editLayer.getSelection();
 				targetRecordset = ((DatasetVector) editLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
 
@@ -101,10 +101,12 @@ public class XOREditor extends AbstractEditor {
 				}
 				targetRecordset.getBatch().update();
 
-				// 添加结果几何对象
-				targetRecordset.addNew(result, propertyData);
-				targetRecordset.update();
-				environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
+				if (result != null) {
+					// 添加结果几何对象
+					targetRecordset.addNew(result, propertyData);
+					targetRecordset.update();
+					environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
+				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
