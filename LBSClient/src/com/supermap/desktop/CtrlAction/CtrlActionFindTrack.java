@@ -7,6 +7,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import javax.swing.JFrame;
 
 public class CtrlActionFindTrack extends CtrlAction {
 
@@ -17,7 +18,9 @@ public class CtrlActionFindTrack extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			UICommonToolkit.showMessageDialog(LBSClientProperties.getString("UnImplement"));
+			JFrame parent = (JFrame)Application.getActiveApplication().getMainFrame();
+			JDialogFindTrack dialog = new JDialogFindTrack(parent, true);
+			dialog.setVisible(true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
