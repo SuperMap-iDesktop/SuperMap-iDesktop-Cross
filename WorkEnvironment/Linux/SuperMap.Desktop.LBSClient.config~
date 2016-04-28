@@ -6,7 +6,7 @@
       <group id="LBS" index="10" label="LBS" visible="true">
         <button checkState="false" customProperty="" helpURL="" image="../Resources/LBSClient/Menu/HeatMap.png" index="1" label="计算热度图" onAction="CtrlActionHeatMap" screenTip="" screenTipImage="" shortcutKey="" visible="true"/>
         <button checkState="false" customProperty="" helpURL="" image="../Resources/LBSClient/Menu/FindTrack.png" index="1" label="轨迹查询" onAction="CtrlActionFindTrack" screenTip="" screenTipImage="" shortcutKey="" visible="true"/>
-	<button checkState="false" customProperty="" helpURL="" image="../Resources/LBSClient/Menu/BoundsQuery.png" index="1" label="范围查询" onAction="CtrlActionBoundsQuery" screenTip="" screenTipImage="" shortcutKey="" visible="true"/>
+	<button checkState="false" customProperty="" helpURL="" image="../Resources/LBSClient/Menu/OverlayAnalyst.png" index="1" label="范围查询" onAction="CtrlActionBoundsQuery" screenTip="" screenTipImage="" shortcutKey="" visible="true"/>
       </group>
       <group id="manager" index="12" label="manager" visible="true">
         <button checkState="false" customProperty="" helpURL="" image="" index="1" label="Spark Overview" onAction="CtrlActionSparkOverview" screenTip="" screenTipImage="" shortcutKey="" visible="true"/>
