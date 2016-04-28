@@ -1,0 +1,39 @@
+docs:
+  welcome:
+    SuperMap Cross: index.html
+  getting_started:
+    SuperMapDataStructure: /iDesktop-Cross-Docs/docs/Basic/SuperMapDataStructure.html
+    Pyramid: /iDesktop-Cross-Docs/docs/Basic/Pyramid.html
+    DataConversion: /iDesktop-Cross-Docs/docs/Basic/GeoFormates.html
+  Proximity:
+    ProximityAnalyst: /iDesktop-Cross-Docs/docs/ProximityAnalyst/ProximityAnalyst.html
+    Proximity_Cases: /iDesktop-Cross-Docs/docs/ProximityAnalyst/Proximity_Cases.html
+    BufferTheory: /iDesktop-Cross-Docs/docs/ProximityAnalyst/BufferTheory.html
+    BufferAnalyst_Example: /iDesktop-Cross-Docs/docs/ProximityAnalyst/BufferAnalyst_Example.html
+  Bufferanalyst: 
+    Buffer3D: /iDesktop-Cross-Docs/docs/buffer/Buffer3D.html
+    HowBufferWork: /iDesktop-Cross-Docs/docs/buffer/HowBufferWork.html
+    MutilBuffer: /iDesktop-Cross-Docs/docs/buffer/MutilBuffer.html
+    SingleBuffer: /iDesktop-Cross-Docs/docs/buffer/SingleBuffer.html
+
+api:
+  core:
+    overview: index.html
+    events: events.html
+    locals: locals.html
+    router: router.html
+    box: box.html
+    rendering: rendering.html
+    posts: posts.html
+    scaffolds: scaffolds.html
+    themes: themes.html
+  extensions:
+    console: console.html
+    deployer: deployer.html
+    filter: filter.html
+    generator: generator.html
+    helper: helper.html
+    migrator: migrator.html
+    processor: processor.html
+    renderer: renderer.html
+    tag: tag.html
