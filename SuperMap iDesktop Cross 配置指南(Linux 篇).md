@@ -137,7 +137,7 @@ SuperMap iDesktop Cross 分支说明：
 5. 配置 Installed JREs。依次选择 **Window - Preferences - Java - Installed JREs**，点击界面右侧 **Add**，弹出向导界面，依次点击 **Standard VM - Next - Directory**，选中 `JDK 1.7.0_80` 安装目录根目录，点击 **Finish**，勾选刚添加的 **JDK 1.7.0_80**，点击 OK 完成配置。
 6. 编辑 OSGI 运行配置文件并运行。
 	- 展开 `iDesktop` 工程；
-	- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - Run Configurations**，在弹出的配置界面左侧，选中 **OSGI Framework - iDesktop Frame Configuration**，在右侧详细配置界面上，选择 **Environment** 选项卡，点击 **New** 按钮新建启动环境变量，**Name** 填写 `path`，**Value** 填写 `CROSS_HOME/Bin`，配置完毕点击 **Apply**，关闭界面；
+	- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - Run Configurations**，在弹出的配置界面左侧，选中 **OSGI Framework - iDesktop Frame Configuration**，在右侧详细配置界面上，选择 **Environment** 选项卡，点击 **New** 按钮新建启动环境变量，**Name** 填写 `LD_LIBRARY_PATH`，**Value** 填写 `CROSS_HOME/Bin`，配置完毕点击 **Apply**，关闭界面；
 	- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - iDesktop Frame Configuration**，程序即可运行。
 
 > 注意：
