@@ -81,8 +81,8 @@ public class XOREditor extends AbstractEditor {
 
 			for (Layer layer : selectedLayers) {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
-					intersectObj = GeometryUtilties.intersetct(result, GeometryUtilties.intersect(layer), true);
-					unionObj = GeometryUtilties.union(result, GeometryUtilties.union(layer), true);
+					intersectObj = GeometryUtilties.intersetct(intersectObj, GeometryUtilties.intersect(layer), true);
+					unionObj = GeometryUtilties.union(unionObj, GeometryUtilties.union(layer), true);
 				}
 			}
 			result = GeometryUtilties.xor(intersectObj, unionObj, true);
