@@ -579,7 +579,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			}
 			getTable();
 			for (int i = 0; i < selectedRow.length; i++) {
-				tableLabelInfo.setRowSelectionInterval(selectedRow[i], selectedRow[i]);
+				tableLabelInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}
 		}
 

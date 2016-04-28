@@ -71,6 +71,10 @@ public class JDialogDatasetNew extends SmDialog {
 	 * Create the dialog.
 	 */
 	public JDialogDatasetNew() {
+
+	}
+
+	public void init() {
 		this.setModal(true);
 		setTitle("Template");
 		setBounds(100, 100, 677, 405);
@@ -139,8 +143,8 @@ public class JDialogDatasetNew extends SmDialog {
 		// @formatter:on
 
 		this.buttonSelectAll = new JButton();
-		this.buttonSelectAll
-				.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+		this.buttonSelectAll.setIcon(new ImageIcon(JDialogDatasetNew.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
 		this.buttonSelectAll.addActionListener(new ActionListener() {
 
 			@Override
@@ -178,7 +182,8 @@ public class JDialogDatasetNew extends SmDialog {
 		this.toolBar.add(createSeparator());
 
 		this.buttonSetting = new JButton();
-		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
+		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetNew.class
+				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
 		this.buttonSetting.addActionListener(new ActionListener() {
 
 			@Override
@@ -244,6 +249,12 @@ public class JDialogDatasetNew extends SmDialog {
 		this.setFocusTraversalPolicy(this.policy);
 	}
 
+	public DialogResult showDialog() {
+		init();
+		this.setVisible(true);
+		return this.dialogResult;
+	}
+
 	public boolean isAutoClose() {
 		return this.checkboxAutoClose.isSelected();
 	}
@@ -255,12 +266,14 @@ public class JDialogDatasetNew extends SmDialog {
 			this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
 
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_INDEX).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_TARGETDATASOURCE).setHeaderValue(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_TARGETDATASOURCE)
+					.setHeaderValue(CommonProperties.getString("String_ColumnHeader_TargetDatasource"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_DatasetType).setHeaderValue(DataEditorProperties.getString("String_CreateType"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_DatasetName).setHeaderValue(DataEditorProperties.getString("String_ColumnTitle_DtName"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_EncodeType).setHeaderValue(CommonProperties.getString("String_ColumnHeader_EncodeType"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_Charset).setHeaderValue(DataEditorProperties.getString("String_Charset"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_WindowMode).setHeaderValue(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
+			this.table.getColumnModel().getColumn(COLUMN_INDEX_WindowMode)
+					.setHeaderValue(DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name"));
 
 			this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
 			this.buttonSelectInvert.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
@@ -338,7 +351,11 @@ public class JDialogDatasetNew extends SmDialog {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						setAbstractDatasourceComboBox(datasourceComboBox);
+						try {
+							setAbstractDatasourceComboBox(datasourceComboBox);
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
 					}
 				}
 
@@ -438,7 +455,8 @@ public class JDialogDatasetNew extends SmDialog {
 	/**
 	 * 复制一行记录
 	 *
-	 * @param srcIndex 上一行的索引，如果是-1，则会创建默认的一行
+	 * @param srcIndex
+	 *            上一行的索引，如果是-1，则会创建默认的一行
 	 */
 	private void copyPreDatasetInfo(int rowIndex) {
 		try {
@@ -525,8 +543,10 @@ public class JDialogDatasetNew extends SmDialog {
 	/**
 	 * 用数据集全名匹配默认数据集名
 	 *
-	 * @param wholeName 数据集名
-	 * @param typeName 默认数据集名
+	 * @param wholeName
+	 *            数据集名
+	 * @param typeName
+	 *            默认数据集名
 	 * @return 符合默认命名格式，返回true
 	 */
 	private boolean testDefaultName(String wholeName, String typeName) {
@@ -551,7 +571,8 @@ public class JDialogDatasetNew extends SmDialog {
 	/**
 	 * 检索是否是默认指定的名字
 	 *
-	 * @param datasetName 被检索的数据集名
+	 * @param datasetName
+	 *            被检索的数据集名
 	 * @return 符合默认命名格式，返回true
 	 */
 	private boolean isDefaultName(String datasetName) {

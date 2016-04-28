@@ -409,7 +409,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	 * 初始化超长处理方式下拉框
 	 */
 	private void initComboBoxOverLength() {
-		this.comboBoxOverLength.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_Default"),
+		this.comboBoxOverLength.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_OverLengthLabelMode_NONE"),
 				MapViewProperties.getString("String_OverLengthLabelMode_NewLine"), MapViewProperties.getString("String_OverLengthLabelMode_Omit") }));
 		if (themeLabel.getOverLengthMode() == OverLengthLabelMode.NONE) {
 			this.comboBoxOverLength.setSelectedIndex(0);
@@ -562,18 +562,24 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		 */
 		private void setOverLength() {
 			int overLength = comboBoxOverLength.getSelectedIndex();
-			if (0 == overLength) {
+			switch (overLength) {
+			case 0:
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NONE);
 				resetPanelTextFontStation(false);
-			} else if (1 == overLength) {
+				break;
+			case 1:
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
 				resetPanelTextFontStation(true);
-			} else {
+				break;
+			case 2:
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
 				spinnerFontCount.setEnabled(true);
 				comboBoxSplitSeparator.setEnabled(false);
 				comboBoxAlignmentStyle.setEnabled(false);
 				checkBoxOptimizeMutilineAlignment.setEnabled(false);
+				break;
+			default:
+				break;
 			}
 		}
 
