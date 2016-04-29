@@ -143,9 +143,9 @@ public class DatasetChooserDataEditor {
 				temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
 				temp[COLUMN_INDEX_CODINGTYPE] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
 				if (dataset instanceof DatasetVector) {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.getCharsetName(((DatasetVector) dataset).getCharset());
+					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.toString(((DatasetVector) dataset).getCharset());
 				} else {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.getCharsetName(null);
+					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.toString(null);
 				}
 				datasetCopyTable.addRow(temp);
 			}

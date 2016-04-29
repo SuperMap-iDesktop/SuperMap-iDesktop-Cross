@@ -56,6 +56,9 @@ public class CtrlActionLayerSelectable extends CtrlAction {
 
 			// 实现多选的可用控制
 			for (Layer layer : formMap.getActiveLayers()) {
+				if (layer.getDataset() == null) {
+					continue;
+				}
 				DatasetType type = layer.getDataset().getType();
 				if (layer.getDataset() != null && (type == DatasetType.GRID || type == DatasetType.IMAGE || type == DatasetType.GRIDCOLLECTION || type == DatasetType.IMAGECOLLECTION)
 						|| layer instanceof LayerGroup) {

@@ -90,6 +90,13 @@ public class DatasetUtilties {
 		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 
+	/**
+	 * 获取数据源下的数据集，包括网络数据集的子数据集
+	 *
+	 * @param datasetName 数据集名称
+	 * @param datasource  数据源
+	 * @return 找到的数据集，如果不存在则返回null
+	 */
 	public static Dataset getDatasetFromDatasource(String datasetName, Datasource datasource) {
 		Dataset result = null;
 		try {
