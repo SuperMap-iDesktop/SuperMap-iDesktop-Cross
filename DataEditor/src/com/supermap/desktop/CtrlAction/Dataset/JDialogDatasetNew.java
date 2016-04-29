@@ -7,8 +7,10 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.CtrlAction.Dataset.createNewDataset.JDialogSetAll;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -35,7 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -55,7 +56,6 @@ public class JDialogDatasetNew extends SmDialog {
 	private static final int COLUMN_INDEX_WindowMode = 6;
 
 	final JPanel contentPanel = new JPanel();
-	private JToolBar toolBar;
 	private JButton buttonSelectAll;
 	private JButton buttonSelectInvert;
 	private JButton buttonDelete;
@@ -64,21 +64,20 @@ public class JDialogDatasetNew extends SmDialog {
 	private JCheckBox checkboxAutoClose;
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
-	private String defaultDatasetName = "";
-	private transient Datasource targetDatasource;
 
 	/**
 	 * Create the dialog.
 	 */
 	public JDialogDatasetNew() {
+		CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP);
 		this.setModal(true);
 		setTitle("Template");
 		setBounds(100, 100, 677, 405);
 		getContentPane().setLayout(new BorderLayout());
 		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		this.toolBar = new JToolBar();
-		this.toolBar.setFloatable(false);
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
 
 		this.table = new MutiTable();
 		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -148,7 +147,7 @@ public class JDialogDatasetNew extends SmDialog {
 				buttonSelectAll_Click();
 			}
 		});
-		this.toolBar.add(buttonSelectAll);
+		toolBar.add(buttonSelectAll);
 		this.buttonSelectInvert = new JButton();
 		this.buttonSelectInvert.setIcon(new ImageIcon(JDialogDatasetNew.class
 				.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
@@ -159,8 +158,8 @@ public class JDialogDatasetNew extends SmDialog {
 				buttonSelectInvert_Click();
 			}
 		});
-		this.toolBar.add(buttonSelectInvert);
-		this.toolBar.add(createSeparator());
+		toolBar.add(buttonSelectInvert);
+		toolBar.add(createSeparator());
 
 		this.buttonDelete = new JButton();
 		this.buttonDelete
@@ -174,8 +173,8 @@ public class JDialogDatasetNew extends SmDialog {
 		});
 		this.buttonDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		this.buttonDelete.setEnabled(false);
-		this.toolBar.add(buttonDelete);
-		this.toolBar.add(createSeparator());
+		toolBar.add(buttonDelete);
+		toolBar.add(createSeparator());
 
 		this.buttonSetting = new JButton();
 		this.buttonSetting.setIcon(new ImageIcon(JDialogDatasetNew.class.getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Setting.PNG")));
@@ -187,7 +186,7 @@ public class JDialogDatasetNew extends SmDialog {
 			}
 		});
 		this.buttonSetting.setEnabled(false);
-		this.toolBar.add(buttonSetting);
+		toolBar.add(buttonSetting);
 		this.contentPanel.setLayout(gl_contentPanel);
 
 		JPanel buttonPane = new JPanel();
@@ -438,7 +437,7 @@ public class JDialogDatasetNew extends SmDialog {
 	/**
 	 * 复制一行记录
 	 *
-	 * @param srcIndex 上一行的索引，如果是-1，则会创建默认的一行
+	 * @param rowIndex 上一行的索引，如果是-1，则会创建默认的一行
 	 */
 	private void copyPreDatasetInfo(int rowIndex) {
 		try {
@@ -446,12 +445,12 @@ public class JDialogDatasetNew extends SmDialog {
 			if (rowIndex == -1) {
 				datas[COLUMN_INDEX_INDEX] = "1";
 				if (0 < Application.getActiveApplication().getActiveDatasources().length) {
-					this.targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+					Datasource targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
 					DataCell datasourceCell = new DataCell();
 					datasourceCell.initDatasourceType(targetDatasource);
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = datasourceCell;
 					String datasetName = this.getDefaultDatasetName(DatasetType.POINT);
-					this.defaultDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
+					String defaultDatasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
 					datas[COLUMN_INDEX_DatasetName] = defaultDatasetName;
 				} else {
 					datas[COLUMN_INDEX_TARGETDATASOURCE] = "";
@@ -463,7 +462,7 @@ public class JDialogDatasetNew extends SmDialog {
 				datas[COLUMN_INDEX_DatasetType] = datasetTypeCell;
 
 				datas[COLUMN_INDEX_EncodeType] = CommonProperties.getString("String_EncodeType_None");
-				datas[COLUMN_INDEX_Charset] = CharsetUtilties.getCharsetName(Charset.UTF8);
+				datas[COLUMN_INDEX_Charset] = CharsetUtilties.toString(Charset.UTF8);
 				datas[COLUMN_INDEX_WindowMode] = AddToWindowMode.toString(AddToWindowMode.NONEWINDOW);
 			} else {
 				datas[COLUMN_INDEX_INDEX] = this.table.getRowCount() + 1;
@@ -844,35 +843,35 @@ public class JDialogDatasetNew extends SmDialog {
 			comboboxCharsetType.removeAll();
 
 			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.OEM));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.EASTEUROPE));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.THAI));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.RUSSIAN));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.BALTIC));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.ARABIC));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.HEBREW));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.VIETNAMESE));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.TURKISH));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.GREEK));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.CHINESEBIG5));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.JOHAB));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.HANGEUL));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.SHIFTJIS));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.MAC));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.SYMBOL));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.DEFAULT));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.ANSI));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UTF8));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UTF7));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.WINDOWS1252));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.KOREAN));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UNICODE));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.CYRILLIC));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5GERMAN));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5SWEDISH));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5NORWEGIAN));
-			tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.GB18030));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.OEM));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.THAI));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.RUSSIAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.BALTIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ARABIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HEBREW));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.VIETNAMESE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.TURKISH));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GREEK));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CHINESEBIG5));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.JOHAB));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HANGEUL));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SHIFTJIS));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.MAC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SYMBOL));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.DEFAULT));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ANSI));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF8));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF7));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.WINDOWS1252));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.KOREAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UNICODE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CYRILLIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5GERMAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5SWEDISH));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5NORWEGIAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GB18030));
 			comboboxCharsetType.setModel(new DefaultComboBoxModel<String>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
 			comboboxCharsetType.setSelectedItem(value);
 			return comboboxCharsetType;

@@ -9,6 +9,7 @@ import com.supermap.data.JoinItem;
 import com.supermap.data.JoinItems;
 import com.supermap.data.JoinType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -554,7 +555,7 @@ public class JDialogJoinItems extends SmDialog {
 						return joinItems.get(row).getName();
 					case 2:
 						// 外接表
-						return currentDataset.getDatasource().getDatasets().get(joinItems.get(row).getForeignTable());
+						return DatasetUtilties.getDatasetFromDatasource(joinItems.get(row).getForeignTable(), currentDataset.getDatasource());
 					case 3:
 						// 本表字段
 						return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0]

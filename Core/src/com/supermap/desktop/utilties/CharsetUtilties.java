@@ -9,7 +9,7 @@ public class CharsetUtilties {
 		// 工具类不提供构造函数
 	}
 
-	public static String getCharsetName(Charset data) {
+	public static String toString(Charset data) {
 		String result = "";
 
 		try {

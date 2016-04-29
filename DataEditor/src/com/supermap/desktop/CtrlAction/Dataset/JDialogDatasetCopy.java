@@ -451,9 +451,9 @@ public class JDialogDatasetCopy extends SmDialog {
 				datas[COLUMN_INDEX_TargetDataset] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
 				datas[COLUMN_INDEX_EncodeType] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
 				if (dataset instanceof DatasetVector) {
-					datas[COLUMN_INDEX_Charset] = CharsetUtilties.getCharsetName(((DatasetVector) dataset).getCharset());
+					datas[COLUMN_INDEX_Charset] = CharsetUtilties.toString(((DatasetVector) dataset).getCharset());
 				} else {
-					datas[COLUMN_INDEX_Charset] = CharsetUtilties.getCharsetName(null);
+					datas[COLUMN_INDEX_Charset] = CharsetUtilties.toString(null);
 				}
 
 				this.table.addRow(datas);
@@ -712,37 +712,37 @@ public class JDialogDatasetCopy extends SmDialog {
 
 			ArrayList<String> tempcharsharsetes = new ArrayList<>();
 			if (dataset instanceof DatasetVector) {
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.OEM));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.EASTEUROPE));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.THAI));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.RUSSIAN));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.BALTIC));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.ARABIC));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.HEBREW));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.VIETNAMESE));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.TURKISH));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.GREEK));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.CHINESEBIG5));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.JOHAB));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.HANGEUL));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.SHIFTJIS));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.MAC));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.SYMBOL));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.DEFAULT));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.ANSI));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UTF8));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UTF7));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.WINDOWS1252));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.KOREAN));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.UNICODE));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.CYRILLIC));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5GERMAN));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5SWEDISH));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.XIA5NORWEGIAN));
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(Charset.GB18030));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.OEM));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.THAI));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.RUSSIAN));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.BALTIC));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.ARABIC));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.HEBREW));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.VIETNAMESE));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.TURKISH));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.GREEK));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.CHINESEBIG5));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.JOHAB));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.HANGEUL));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.SHIFTJIS));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.MAC));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.SYMBOL));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.DEFAULT));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.ANSI));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF8));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF7));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.WINDOWS1252));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.KOREAN));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.UNICODE));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.CYRILLIC));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5GERMAN));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5SWEDISH));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5NORWEGIAN));
+				tempcharsharsetes.add(CharsetUtilties.toString(Charset.GB18030));
 			} else {
-				tempcharsharsetes.add(CharsetUtilties.getCharsetName(null));
+				tempcharsharsetes.add(CharsetUtilties.toString(null));
 			}
 			comboboxCharsetType.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
 			comboboxCharsetType.setSelectedItem(value);
