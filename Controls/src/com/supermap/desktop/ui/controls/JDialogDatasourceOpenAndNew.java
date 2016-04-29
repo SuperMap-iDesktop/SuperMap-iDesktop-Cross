@@ -66,6 +66,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		});
 
 		this.buttonOk = new JButton();
+		this.getRootPane().setDefaultButton(this.buttonOk);
 		this.buttonOk.setPreferredSize(new Dimension(75, 23));
 		if (DatasourceOperatorType.OPENDATABASE == type) {
 			this.setTitle(ControlsProperties.getString("String_Title_OpenDatabaseDataSourse"));

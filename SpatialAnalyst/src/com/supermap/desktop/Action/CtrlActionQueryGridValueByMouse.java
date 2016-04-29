@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.data.Datasource;
+import com.supermap.data.EngineType;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Point2D;
 import com.supermap.data.Rectangle2D;
@@ -11,10 +12,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.utilties.DatasourceUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -30,6 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
@@ -40,7 +45,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
 		formMap.showPopupMenu();
-		transparentBackground.setVisible(false);
+		mapControl.remove(transparentBackground);
 		TransparentBackground.queryGridMap.remove(mapControl);
 		removeListner();
 	}
@@ -105,6 +110,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 						formMap = (IFormMap) e.getNewActiveForm();
 						mapControl = formMap.getMapControl();
 						if (null != TransparentBackground.queryGridMap.get(mapControl)) {
+							transparentBackground = TransparentBackground.queryGridMap.get(mapControl);
 							formMap.showPopupMenu();
 							queryGridValue();
 						}
@@ -157,7 +163,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				transparentBackground.setLocation(arg0.getX() + 15, arg0.getY());
 				transparentBackground.setVisible(true);
 				Map map = mapControl.getMap();
-				Layers layers = map.getLayers();
+				ArrayList<Layer> layers = MapUtilties.getLayers(map);
 				String currentDatasource = transparentBackground.getjLabelDatasource().getText();
 				String currentDataset = transparentBackground.getjLabelDataset().getText();
 				String currentPointX = transparentBackground.getjLabelPointX().getText();
@@ -168,7 +174,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				Dataset dataset = null;
 
 				if (haveSameBounds(layers, point2D)) {
-					for (int i = 0; i < layers.getCount(); i++) {
+					for (int i = 0; i < layers.size(); i++) {
 						if ((layers.get(i).getDataset() instanceof DatasetGrid || layers.get(i).getDataset() instanceof DatasetImage)
 								&& layers.get(i).isVisible()) {
 							dataset = layers.get(i).getDataset();
@@ -176,12 +182,13 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 						}
 					}
 				} else {
-					for (int i = 0; i < layers.getCount(); i++) {
+					for (int i = 0; i < layers.size(); i++) {
 						Layer layer = layers.get(i);
 						Dataset tempDataset = layer.getDataset();
 						// 添加不同的栅格数据集到同一副地图时，通过栅格图层的边界来判断鼠标指向的是哪一个栅格数据集
 						if ((tempDataset instanceof DatasetGrid || tempDataset instanceof DatasetImage) && layer.getBounds().contains(point2D)) {
 							dataset = tempDataset;
+							break;
 						}
 					}
 				}
@@ -264,10 +271,10 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	}
 
-	private boolean haveSameBounds(Layers layers, Point2D point2D) {
+	private boolean haveSameBounds(ArrayList<Layer> layers, Point2D point2D) {
 		boolean haveSameBounds = false;
 		Rectangle2D rectangle = layers.get(0).getBounds();
-		for (int i = 0; i < layers.getCount(); i++) {
+		for (int i = 0; i < layers.size(); i++) {
 			Layer layer = layers.get(i);
 			if (layer.getBounds().equals(rectangle) && layer.getBounds().contains(point2D)) {
 				haveSameBounds = true;
@@ -287,12 +294,17 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		if (null != Application.getActiveApplication().getActiveForm() && (Application.getActiveApplication().getActiveForm() instanceof IFormMap)) {
 			formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
-			if (null != map.getLayers()) {
-				for (int i = 0; i < map.getLayers().getCount(); i++) {
-					Layer layer = map.getLayers().get(i);
-					Dataset dataset = layer.getDataset();
-					if (dataset instanceof DatasetGrid || dataset instanceof DatasetImage) {
-						enable = true;
+			if (null != MapUtilties.getLayers(map)) {
+				ArrayList<Layer> layers = MapUtilties.getLayers(map);
+				for (int i = 0; i < layers.size(); i++) {
+					Layer layer = layers.get(i);
+					if (null != layer && layer.isVisible() && null != layer.getDataset()) {
+						Dataset dataset = layer.getDataset();
+						if (null != layer.getDataset().getDatasource() && !DatasourceUtilties.isWebType(layer.getDataset().getDatasource())
+								&& (dataset instanceof DatasetGrid || dataset instanceof DatasetImage)) {
+							enable = true;
+							break;
+						}
 					}
 				}
 			}

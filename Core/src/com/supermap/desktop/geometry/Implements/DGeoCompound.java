@@ -70,13 +70,15 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 	public Geometry[] divide() {
 		if (this.geoCompound != null) {
 			List<Geometry> geometries = new ArrayList<>();
-			Geometry[] temp = this.geoCompound.divide(false);
+
+			// 这个分解方法的参数，仅对复合对象生效，就是说子对象不是复合对象就不会对子对象进行深度分解
+			Geometry[] temp = this.geoCompound.divide(true);
 
 			for (int i = 0; i < temp.length; i++) {
 				IGeometry geometry = DGeometryFactory.create(temp[i]);
 
-				if (geometry instanceof DGeoRegion) {
-					ListUtilties.addArray(geometries, ((DGeoRegion) geometry).divide());
+				if (geometry instanceof IMultiPartFeature<?>) {
+					ListUtilties.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
 				} else {
 					geometries.add(geometry.getGeometry());
 				}
@@ -94,7 +96,23 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 	 */
 	public Geometry[] protectedDivide() {
 		if (this.geoCompound != null) {
-			return this.geoCompound.divide(false);
+			List<Geometry> geometries = new ArrayList<>();
+			Geometry[] temp = this.geoCompound.divide(true);
+
+			for (int i = 0; i < temp.length; i++) {
+				IGeometry geometry = DGeometryFactory.create(temp[i]);
+
+				if (geometry instanceof IMultiPartFeature<?>) {
+					if (geometry instanceof DGeoRegion) {
+						ListUtilties.addArray(geometries, ((DGeoRegion) geometry).protectedDivide());
+					} else {
+						ListUtilties.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
+					}
+				} else {
+					geometries.add(geometry.getGeometry());
+				}
+			}
+			return geometries.toArray(new Geometry[geometries.size()]);
 		}
 
 		return null;

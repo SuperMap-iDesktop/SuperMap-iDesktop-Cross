@@ -437,10 +437,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.tableRangeInfo.setValueAt(ThemeItemLabelDecorator.buildGeoStyleIcon(datasetVector, geoStyle), i, TABLE_COLUMN_GEOSTYLE);
 			if (i == rangeCount - 1) {
 				this.tableRangeInfo.setValueAt("Max", i, TABLE_COLUMN_RANGEVALUE);
-			} else {
+			}
+			if (i != rangeCount - 1 && Double.compare(precision, 1)==0) {
+				this.tableRangeInfo.setValueAt((int)rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
+			}
+			if (i != rangeCount - 1 && Double.compare(precision, 1)!=0) {
 				this.tableRangeInfo.setValueAt(rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
 			}
-
 			String caption = rangeItem.getCaption();
 			if (this.captiontype.contains("-")) {
 				caption = caption.replaceAll("<= X <", "-");
@@ -637,6 +640,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			int[] selectRows = tableRangeInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetVector = (DatasetVector) themeRangeLayer.getDataset();
 			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeRange) {
 				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
 				getTable();

@@ -988,7 +988,6 @@ public class LayersTree extends JTree {
 							if (layer.getTheme() == null) {
 								// 设置图层属性
 								showStyleSetDialog();
-								firePropertyChangeWithLayerSelect();
 							}
 						} else {
 							// 修改专题图风格

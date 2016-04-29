@@ -323,6 +323,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetGrid = (DatasetGrid) themeUniqueLayer.getDataset();
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeGridUnique) {
 				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
 				getTable();
@@ -541,7 +542,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 				// 删除单值段
 				deleteItem();
 				refreshAtOnce();
-				tableUniqueInfo.setRowSelectionInterval(0, 0);
 			} else if (e.getSource() == buttonAntitone) {
 				// 颜色方案反序
 				setGeoStyleAntitone();
@@ -622,8 +622,16 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			} else {
 				buttonDelete.setEnabled(true);
 			}
+			if (selectedRow[0] != tableUniqueInfo.getRowCount() - 1) {
+				tableUniqueInfo.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
+				return;
+			}
+			if (selectedRow[0] == tableUniqueInfo.getRowCount() - 1 && selectedRow[0] > 0) {
+				tableUniqueInfo.setRowSelectionInterval(selectedRow[0] - 1, selectedRow[0] - 1);
+				return;
+			}
 		}
-
+		
 		/**
 		 * 设置颜色方案与当前颜色方案反序
 		 */
