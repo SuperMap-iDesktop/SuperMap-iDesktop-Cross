@@ -430,8 +430,8 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			int[] selectRows = tableRangeInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
-			datasetGrid = (DatasetGrid) themeRangeLayer.getDataset();
 			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeGridRange) {
+				datasetGrid = (DatasetGrid) themeRangeLayer.getDataset();
 				themeGridRange = new ThemeGridRange((ThemeGridRange) themeRangeLayer.getTheme());
 				getTable();
 				map.refresh();

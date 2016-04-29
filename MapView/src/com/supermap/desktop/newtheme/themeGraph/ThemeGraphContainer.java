@@ -1644,8 +1644,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int[] selectRows = tableGraphInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeGraphLayer = MapUtilties.findLayerByName(map, layerName);
-			datasetVector = (DatasetVector) themeGraphLayer.getDataset();
 			if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme() instanceof ThemeGraph) {
+				datasetVector = (DatasetVector) themeGraphLayer.getDataset();
 				themeGraph = new ThemeGraph((ThemeGraph) themeGraphLayer.getTheme());
 				getTable();
 				map.refresh();

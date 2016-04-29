@@ -102,6 +102,7 @@ public class ExportFunction {
 					fileTypeArray.add(fileTypes[j].name());
 				}
 				setComboBoxModel(fileTypeArray, frame.getComboBoxFileType());
+
 			}
 		}
 
@@ -133,8 +134,10 @@ public class ExportFunction {
 				fileTypeArray = (ArrayList<String>) getSameFileTypes(tempExportFileInfos);
 			}
 			setComboBoxModel(fileTypeArray, frame.getComboBoxFileType());
+
 		}
 	}
+
 
 	// 单独选中一条数据时刷新
 	public static void getRigthPanelAsSet(DataExportFrame frame, JTable table) {

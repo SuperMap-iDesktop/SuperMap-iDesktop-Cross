@@ -4,15 +4,16 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.data.Datasource;
-import com.supermap.data.EngineType;
+import com.supermap.data.GeoText;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Point2D;
 import com.supermap.data.Rectangle2D;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.CtrlAction;
@@ -20,10 +21,10 @@ import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -65,6 +66,9 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				hideTransparentBackground();
 			}
+			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+				getQueryInfo(e);
+			}
 		}
 	};
 
@@ -86,6 +90,36 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	public CtrlActionQueryGridValueByMouse(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 
+	}
+
+	protected void getQueryInfo(MouseEvent e) {
+		Point2D point2D = mapControl.getMap().pixelToMap(e.getPoint());
+		TextPart textPart = new TextPart();
+		textPart.setAnchorPoint(point2D);
+		textPart.setText(".");
+		GeoText geoText = new GeoText(textPart);
+		TextStyle textStyle = new TextStyle();
+		textStyle.setFontHeight(10);
+		textStyle.setForeColor(Color.RED);
+		geoText.setTextStyle(textStyle);
+
+		Point2D point2DNumber = mapControl.getMap().pixelToMap(e.getPoint());
+		TextPart textPartNumber = new TextPart();
+		textPartNumber.setAnchorPoint(point2DNumber);
+		GeoText geoTextNumber = new GeoText(textPartNumber);
+		TextStyle textStyleNumber = new TextStyle();
+		textStyleNumber.setBold(true);
+		geoTextNumber.setTextStyle(textStyleNumber);
+
+		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+		trackingLayer.add(geoText, "point");
+		Application
+				.getActiveApplication()
+				.getOutput()
+				.output(transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
+						+ transparentBackground.getjLabelPointX().getText() + "\n" + transparentBackground.getjLabelPointY().getText() + "\n"
+						+ transparentBackground.getjLabelRowOfGrid().getText() + "\n" + transparentBackground.getjLabelColumnOfGrid().getText() + "\n"
+						+ transparentBackground.getjLabelGridValue().getText() + "\n");
 	}
 
 	@Override
