@@ -323,6 +323,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetGrid = (DatasetGrid) themeUniqueLayer.getDataset();
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeGridUnique) {
 				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
 				getTable();

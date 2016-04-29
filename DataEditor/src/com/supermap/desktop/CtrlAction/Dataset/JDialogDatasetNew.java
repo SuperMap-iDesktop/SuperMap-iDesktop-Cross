@@ -351,11 +351,7 @@ public class JDialogDatasetNew extends SmDialog {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						try {
-							setAbstractDatasourceComboBox(datasourceComboBox);
-						} catch (Exception e2) {
-							e2.printStackTrace();
-						}
+						setAbstractDatasourceComboBox(datasourceComboBox);
 					}
 				}
 

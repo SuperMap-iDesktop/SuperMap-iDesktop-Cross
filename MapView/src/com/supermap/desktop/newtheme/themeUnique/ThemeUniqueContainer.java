@@ -219,6 +219,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetVector = (DatasetVector) themeUniqueLayer.getDataset();
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeUnique) {
 				themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 				getTable();

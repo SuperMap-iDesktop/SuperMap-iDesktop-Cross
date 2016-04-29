@@ -1642,9 +1642,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			int[] selectRows = tableGraphInfo.getSelectedRows();
-			// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeGraphLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetVector = (DatasetVector) themeGraphLayer.getDataset();
 			if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme() instanceof ThemeGraph) {
 				themeGraph = new ThemeGraph((ThemeGraph) themeGraphLayer.getTheme());
 				getTable();

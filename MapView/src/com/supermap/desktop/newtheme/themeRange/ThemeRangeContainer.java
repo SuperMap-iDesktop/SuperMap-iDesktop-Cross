@@ -640,6 +640,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			int[] selectRows = tableRangeInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
 			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+			datasetVector = (DatasetVector) themeRangeLayer.getDataset();
 			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeRange) {
 				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
 				getTable();
