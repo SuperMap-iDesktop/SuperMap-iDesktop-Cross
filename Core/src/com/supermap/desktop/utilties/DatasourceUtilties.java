@@ -513,4 +513,34 @@ public class DatasourceUtilties {
 		return datasource;
 	}
 
+	private static EngineType[] WEB_TYPE = new EngineType[] { EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
+			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD };
+
+	/**
+	 * 根据引擎类型判断是否为web类型的数据源
+	 * 
+	 * @param engineType
+	 * @return
+	 */
+	public static boolean isWebType(EngineType engineType) {
+		boolean result = false;
+
+		for (EngineType type : WEB_TYPE) {
+			if (engineType == type) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 根据数据源判断是否为web类型的数据源
+	 * 
+	 * @param datasource
+	 * @return
+	 */
+	public static boolean isWebType(Datasource datasource) {
+		return isWebType(datasource.getEngineType());
+	}
 }
