@@ -1,18 +1,17 @@
 package com.supermap.desktop.CtrlAction;
 
 
-import javax.swing.JFrame;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import javax.swing.JFrame;
 
-public class CtrlActionHeatMap extends CtrlAction {
+public class CtrlActionBoundsQuery extends CtrlAction {
 
-	public CtrlActionHeatMap(IBaseItem caller, IForm formClass) {
+	public CtrlActionBoundsQuery(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
@@ -20,7 +19,7 @@ public class CtrlActionHeatMap extends CtrlAction {
 	public void run() {
 		try {
 			JFrame parent = (JFrame)Application.getActiveApplication().getMainFrame();
-			JDialogHeatMap dialog = new JDialogHeatMap(parent, true);
+			JDialogBoundsQuery dialog = new JDialogBoundsQuery(parent, true);
 			dialog.setVisible(true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

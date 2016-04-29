@@ -178,7 +178,7 @@ public class GeometryUtilties {
 
 						// 表明是面特性对象
 						if (dGeometry instanceof IRegionFeature) {
-							result = GeometryUtilties.intersetct(result, ((IRegionFeature) dGeometry).convertToRegion(0), true);
+							result = GeometryUtilties.intersetct(result, ((IRegionFeature) dGeometry).convertToRegion(60), true);
 						}
 						recordset.moveNext();
 					} finally {
@@ -257,7 +257,7 @@ public class GeometryUtilties {
 
 						// 表明是面特性对象
 						if (dGeometry instanceof IRegionFeature) {
-							result = GeometryUtilties.union(result, ((IRegionFeature) dGeometry).convertToRegion(0), true);
+							result = GeometryUtilties.union(result, ((IRegionFeature) dGeometry).convertToRegion(60), true);
 						}
 						recordset.moveNext();
 					} finally {
