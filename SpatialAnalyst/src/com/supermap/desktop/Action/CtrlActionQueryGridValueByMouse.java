@@ -99,7 +99,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		textPart.setText(".");
 		GeoText geoText = new GeoText(textPart);
 		TextStyle textStyle = new TextStyle();
-		textStyle.setFontHeight(10);
 		textStyle.setForeColor(Color.RED);
 		geoText.setTextStyle(textStyle);
 
