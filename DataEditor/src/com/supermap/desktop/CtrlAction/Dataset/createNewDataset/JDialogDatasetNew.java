@@ -1,20 +1,30 @@
 package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
+import com.supermap.data.Charset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.EncodeType;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
+import com.supermap.desktop.utilties.CharsetUtilties;
+import com.supermap.desktop.utilties.DatasetTypeUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -68,6 +78,62 @@ public class JDialogDatasetNew extends SmDialog {
 		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		this.newDatasetTableModel = new NewDatasetTableModel();
 		this.table.setModel(newDatasetTableModel);
+
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
+
+		int count = Application.getActiveApplication().getWorkspace().getDatasources().getCount();
+		String[] datasources = new String[count];
+		int selectedIndex = -1;
+		String activeDatasource = "";
+		if (0 < Application.getActiveApplication().getActiveDatasources().length) {
+			activeDatasource = Application.getActiveApplication().getActiveDatasources()[0].getAlias();
+		}
+
+		for (int index = 0; index < count; index++) {
+			datasources[index] = Application.getActiveApplication().getWorkspace().getDatasources().get(index).getAlias();
+			if (datasources[index].equals(activeDatasource)) {
+				selectedIndex = index;
+			}
+		}
+		final DatasourceComboBox datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
+		datasourceComboBox.setSelectedIndex(selectedIndex);
+
+		DefaultCellEditor targetDatasourceCellEditor = new DefaultCellEditor(datasourceComboBox);
+		TableColumn targetDatasourceColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE);
+		targetDatasourceColumn.setCellEditor(targetDatasourceCellEditor);
+		// 设置渲染
+		CommonListCellRenderer renderer = new CommonListCellRenderer();
+		targetDatasourceColumn.setCellRenderer(renderer);
+		// 可创建的数据集类型
+		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
+		datasetTypes.add(DatasetType.POINT);
+		datasetTypes.add(DatasetType.LINE);
+		datasetTypes.add(DatasetType.REGION);
+		datasetTypes.add(DatasetType.TEXT);
+		datasetTypes.add(DatasetType.CAD);
+		datasetTypes.add(DatasetType.TABULAR);
+		datasetTypes.add(DatasetType.POINT3D);
+		datasetTypes.add(DatasetType.LINE3D);
+		datasetTypes.add(DatasetType.REGION3D);
+		final DatasetComboBox comboBoxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
+		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+		datasetTypeColumn.setCellEditor(datasetTypeCellEditor);
+		datasetTypeColumn.setPreferredWidth(100);
+		datasetTypeColumn.setCellRenderer(renderer);
+
+		ArrayList<String> addTos = new ArrayList<String>();
+		addTos.add(AddToWindowMode.toString(AddToWindowMode.NONEWINDOW));
+		addTos.add(AddToWindowMode.toString(AddToWindowMode.NEWWINDOW));
+		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			addTos.add(AddToWindowMode.toString(AddToWindowMode.CURRENTWINDOW));
+		}
+
+		ComboBoxCellEditor addToCellEditor = new ComboBoxCellEditor();
+		addToCellEditor.getComboBox().setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
+		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+		addToColumn.setCellEditor(addToCellEditor);
 	}
 
 	private void initLayout() {
@@ -208,11 +274,96 @@ public class JDialogDatasetNew extends SmDialog {
 	}
 
 	private void createDataset() {
-		// TODO: 2016/4/28 新建数据集
+		newDatasetTableModel.createDatasets();
 	}
 
 	private void initComponentStates() {
 		checkboxAutoClose.setSelected(true);
 		newDatasetTableModel.addEmptyRow();
+	}
+
+	public class CharsetTypeCellEditor extends DefaultCellEditor {
+
+		private JComboBox<String> comboboxCharsetType = new JComboBox<>();
+
+		public CharsetTypeCellEditor() {
+			super(new JComboBox());
+			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.OEM));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.THAI));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.RUSSIAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.BALTIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ARABIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HEBREW));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.VIETNAMESE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.TURKISH));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GREEK));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CHINESEBIG5));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.JOHAB));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HANGEUL));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SHIFTJIS));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.MAC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SYMBOL));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.DEFAULT));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ANSI));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF8));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF7));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.WINDOWS1252));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.KOREAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UNICODE));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CYRILLIC));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5GERMAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5SWEDISH));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5NORWEGIAN));
+			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GB18030));
+			comboboxCharsetType.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			comboboxCharsetType.removeAll();
+			comboboxCharsetType.setSelectedItem(value);
+			return comboboxCharsetType;
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			return comboboxCharsetType.getSelectedItem();
+		}
+	}
+
+	public class EncodingTypeCellEditor extends DefaultCellEditor {
+
+		private JComboBox<String> comboboxEncodingType = new JComboBox<>();
+
+		public EncodingTypeCellEditor() {
+			super(new JComboBox());
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			comboboxEncodingType.removeAll();
+
+			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DatasetType).toString();
+			ArrayList<String> tempEncodeType = new ArrayList<>();
+			tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.NONE));
+			if (DatasetTypeUtilties.toString(DatasetType.LINE).equals(datasetType)
+					|| DatasetTypeUtilties.toString(DatasetType.REGION).equals(datasetType)) {
+				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.BYTE));
+				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT16));
+				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT24));
+				tempEncodeType.add(CommonToolkit.EncodeTypeWrap.findName(EncodeType.INT32));
+			}
+			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
+			comboboxEncodingType.setSelectedItem(value);
+			return comboboxEncodingType;
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			return comboboxEncodingType.getSelectedItem();
+		}
 	}
 }

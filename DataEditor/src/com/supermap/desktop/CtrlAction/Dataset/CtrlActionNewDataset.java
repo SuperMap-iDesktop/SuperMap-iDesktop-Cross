@@ -1,10 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -19,6 +15,7 @@ import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class CtrlActionNewDataset extends CtrlAction {
@@ -54,7 +51,7 @@ public class CtrlActionNewDataset extends CtrlAction {
 					if (dataset != null) {
 						dataset.setPrjCoordSys(dataset.getDatasource().getPrjCoordSys());
 						((DatasetVector) dataset).setCharset(newDatasetInfo.getCharset());
-						String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Success"), newDatasetInfo.getDatasetName(),
+						String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Success"), newDatasetInfo.getDatasetName(),
 								newDatasetInfo.getTargetDatasource().getAlias());
 						Application.getActiveApplication().getOutput().output(information);
 						count++;
@@ -67,12 +64,12 @@ public class CtrlActionNewDataset extends CtrlAction {
 						// 刷新数据集对应的数据源节点并选中数据集
 						UICommonToolkit.refreshSelectedDatasetNode(dataset);
 					} else {
-						String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), newDatasetInfo.getDatasetName(),
+						String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), newDatasetInfo.getDatasetName(),
 								newDatasetInfo.getTargetDatasource().getAlias());
 						Application.getActiveApplication().getOutput().output(information);
 					}
 				}
-				String information = String.format(DataEditorProperties.getString("String_CreateNewDT_Message"), datasets.length, count,
+				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Message"), datasets.length, count,
 						datasets.length - count);
 				Application.getActiveApplication().getOutput().output(information);
 
