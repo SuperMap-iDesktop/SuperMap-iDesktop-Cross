@@ -1,6 +1,11 @@
 package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -25,7 +30,7 @@ public class NewDatasetBean {
 		datasetName = "";
 		datasetType = DatasetType.POINT;
 		encodeType = EncodeType.NONE;
-		charset = Charset.DEFAULT;
+		charset = Charset.UTF8;
 		addToWindowMode = AddToWindowMode.NONEWINDOW;
 	}
 
@@ -69,7 +74,11 @@ public class NewDatasetBean {
 	}
 
 	public void setEncodeType(EncodeType encodeType) {
-		this.encodeType = encodeType;
+		if (datasetType == DatasetType.LINE || datasetType == DatasetType.REGION) {
+			this.encodeType = encodeType;
+		} else {
+			this.encodeType = EncodeType.NONE;
+		}
 	}
 
 	public Charset getCharset() {

@@ -1,6 +1,8 @@
 package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
@@ -9,7 +11,11 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.utilties.CharsetUtilties;
+import com.supermap.desktop.utilties.EncodeTypeUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -32,6 +38,18 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			DataEditorProperties.getString("String_Charset"),
 			DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name")
 	};
+	private final DatasetType[] supportDatasetTypes = new DatasetType[]{
+			DatasetType.POINT,
+			DatasetType.LINE,
+			DatasetType.REGION,
+			DatasetType.TEXT,
+			DatasetType.CAD,
+			DatasetType.TABULAR,
+			DatasetType.POINT3D,
+			DatasetType.LINE3D,
+			DatasetType.REGION3D
+	};
+
 	private final boolean[] isColumnEditable = new boolean[]{
 			false, true, true, true, true, true, true
 	};
@@ -44,7 +62,12 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	public static final int COLUMN_INDEX_Charset = 5;
 	public static final int COLUMN_INDEX_WindowMode = 6;
 
-	private ArrayList<NewDatasetBean> datasetBeans = new ArrayList<>();
+	private ArrayList<NewDatasetBean> datasetBeans;
+
+	public NewDatasetTableModel() {
+		super();
+		datasetBeans = new ArrayList<>();
+	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
@@ -53,7 +76,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		} else if (columnIndex == COLUMN_INDEX_TARGET_DATASOURCE) {
 			return Datasource.class;
 		} else if (columnIndex == COLUMN_INDEX_DatasetType) {
-			return String.class;
+			return DatasetType.class;
 		} else if (columnIndex == COLUMN_INDEX_DatasetName) {
 			return String.class;
 		} else if (columnIndex == COLUMN_INDEX_EncodeType) {
@@ -73,7 +96,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		} else if (column == COLUMN_INDEX_TARGET_DATASOURCE) {
 			return datasetBeans.get(row).getDatasource();
 		} else if (column == COLUMN_INDEX_DatasetType) {
-			return DatasetTypeUtilties.toString(datasetBeans.get(row).getDatasetType());
+			return datasetBeans.get(row).getDatasetType();
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			return datasetBeans.get(row).getDatasetName();
 		} else if (column == COLUMN_INDEX_EncodeType) {
@@ -81,7 +104,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		} else if (column == COLUMN_INDEX_Charset) {
 			return CharsetUtilties.toString(datasetBeans.get(row).getCharset());
 		} else if (column == COLUMN_INDEX_WindowMode) {
-			return datasetBeans.get(row).getAddToWindowMode();
+			return AddToWindowMode.toString(datasetBeans.get(row).getAddToWindowMode());
 		}
 		throw new UnsupportedOperationException("column out of index");
 	}
@@ -96,36 +119,46 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		if (column == COLUMN_INDEX_INDEX) {
 			throw new UnsupportedOperationException("index can't change");
 		} else if (column == COLUMN_INDEX_TARGET_DATASOURCE) {
-			datasetBeans.get(row).setDatasource((Datasource) aValue);
+			datasetBeans.get(row).setDatasource((Datasource) ((DataCell) aValue).getData());
 			checkCurrentName(row);
 		} else if (column == COLUMN_INDEX_DatasetType) {
-			datasetBeans.get(row).setDatasetType((DatasetType) aValue);
+			datasetBeans.get(row).setDatasetType(((DatasetType) ((DataCell) aValue).getData()));
 			checkCurrentName(row);
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			setDatasetName(row, (String) aValue);
 		} else if (column == COLUMN_INDEX_EncodeType) {
-			datasetBeans.get(row).setEncodeType((EncodeType) aValue);
+			datasetBeans.get(row).setEncodeType(EncodeTypeUtilties.valueOf((String) aValue));
 		} else if (column == COLUMN_INDEX_Charset) {
-			datasetBeans.get(row).setCharset((Charset) aValue);
+			datasetBeans.get(row).setCharset(CharsetUtilties.valueOf((String) aValue));
 		} else if (column == COLUMN_INDEX_WindowMode) {
-			datasetBeans.get(row).setAddToWindowMode((AddToWindowMode) aValue);
+			datasetBeans.get(row).setAddToWindowMode(AddToWindowMode.getWindowMode((String) aValue));
 		}
+		fireTableDataChanged();
 	}
 
 	private void checkCurrentName(int row) {
 		String datasetName = datasetBeans.get(row).getDatasetName();
-		if (StringUtilties.isNullOrEmpty(datasetName) || datasetName.contains(getDefaultDatasetName(datasetBeans.get(row).getDatasetType()))) {
+		if (StringUtilties.isNullOrEmpty(datasetName) || isDefaultDatasetName(datasetName)) {
 			setValueAt("", row, COLUMN_INDEX_DatasetName);
 		} else {
 			setValueAt(datasetName, row, COLUMN_INDEX_DatasetName);
 		}
 	}
 
+	private boolean isDefaultDatasetName(String datasetName) {
+		for (DatasetType supportDatasetType : supportDatasetTypes) {
+			if (datasetName.contains(getDefaultDatasetName(supportDatasetType))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void setDatasetName(int row, String aValue) {
 		if (StringUtilties.isNullOrEmpty(aValue)) {
 			setDatasetName(row, getDefaultDatasetName(datasetBeans.get(row).getDatasetType()));
+			return;
 		}
-
 		List<String> datasetNames = new ArrayList<>();
 		for (int i = 0; i < datasetBeans.size(); i++) {
 			if (i != row) {
@@ -202,6 +235,9 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 	@Override
 	public int getRowCount() {
+		if (datasetBeans == null) {
+			return 0;
+		}
 		return datasetBeans.size();
 	}
 
@@ -233,7 +269,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		for (NewDatasetBean datasetBean : datasetBeans) {
 			if (datasetBean.createDataset()) {
 				successCount++;
-				if (datasetBean.getAddToWindowMode() != AddToWindowMode.NONEWINDOW) {
+				if (datasetBean.getAddToWindowMode() != AddToWindowMode.NONEWINDOW && datasetBean.getDatasetType() != DatasetType.TABULAR && datasetBean.getDatasetType() != DatasetType.TOPOLOGY) {
 					Dataset dataset = datasetBean.getDatasource().getDatasets().get(datasetBean.getDatasetName());
 					if (datasetBean.getAddToWindowMode() == AddToWindowMode.CURRENTWINDOW) {
 						addToCurrentWindow.add(dataset);
@@ -251,9 +287,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
 			for (Dataset dataset : addToCurrentWindow) {
-				if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-					map.getLayers().add(dataset, true);
-				}
+				map.getLayers().add(dataset, true);
 
 				map.refresh();
 				UICommonToolkit.getLayersManager().setMap(map);
@@ -261,16 +295,13 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		}
 
 		if (!addToNewWindow.isEmpty()) {
-			String name = MapUtilties
-					.getAvailableMapName(MessageFormat.format("{0}@{1}", addToNewWindow.get(0).getName(), addToNewWindow.get(0).getDatasource().getAlias()), true);
+			String name = MapUtilties.getAvailableMapName(MessageFormat.format("{0}@{1}", addToNewWindow.get(0).getName(), addToNewWindow.get(0).getDatasource().getAlias()), true);
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 
 			if (formMap != null) {
 				Map map = formMap.getMapControl().getMap();
 				for (Dataset dataset : addToNewWindow) {
-					if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-						map.getLayers().add(dataset, true);
-					}
+					map.getLayers().add(dataset, true);
 				}
 
 				map.refresh();
