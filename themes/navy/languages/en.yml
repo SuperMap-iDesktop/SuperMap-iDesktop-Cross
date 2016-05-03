@@ -25,29 +25,14 @@ sidebar:
     SuperMapDataStructure: 数据组织结构
     Pyramid: 影像金字塔
     DataConversion: 数据转换
+    DataProcess: 数据处理
+    TopoProcess: 拓扑处理规则
+    TopoPreprocess: 拓扑预处理
+    TopoProcessLine: 线拓扑处理
+    TopotoPolygon: 拓扑构面
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
     BufferAnalyst_Example: 缓冲区应用实例
-
-  api:
-    core: Core
-    overview: Overview
-    events: Events
-    locals: Locals
-    router: Router
-    box: Box
-    rendering: Rendering
-    posts: Posts
-    scaffolds: Scaffolds
-    themes: Themes
-    extensions: Extensions
-    console: Console
-    deployer: Deployer
-    filter: Filter
-    generator: Generator
-    helper: Helper
-    migrator: Migrator
-    processor: Processor
-    renderer: Renderer
-    tag: Tag
+#    Map: 地图制图
+#    ThematicMap: 专题图概述

@@ -4,8 +4,8 @@ description: "SuperMap iDesktop Cross 8C 是一款支持跨平台的桌面GIS应
 author: iDesktop
 language: en
 timezone: UTC
-url: http://qinlj.github.io/iDesktop-Cross-Docs
-root: /iDesktop-Cross-Docs/
+url: http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross
+root: /SuperMap-iDesktop-Cross/
 permalink: news/:year/:month/:day/:title/
 archive_dir: news
 code_dir: downloads/code
@@ -19,7 +19,7 @@ per_page: 0
 theme: navy
 deploy:
   type: git
-  repo: git@github.com:qinlj/iDesktop-Cross-Docs.git
+  repo: git@github.com:SuperMap-iDesktop/SuperMap-iDesktop-Cross.git
   branch: gh-pages
 
 duoshuo_shortname: qinlj
@@ -28,6 +28,7 @@ google_analytics: UA-4910098-10
 fb_admins: 100000247608790
 algolia:
   en:
+    appId: 5RHI0IBTOY
     api_key: 730aa5a5d7de138e76eb18d00beb37eb
     index_name: iDesktop-Cross-Docs
 # zh-tw:

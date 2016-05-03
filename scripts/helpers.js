@@ -15,7 +15,9 @@ function startsWith(str, start){
 hexo.extend.helper.register('page_nav', function(){
   var type = this.page.canonical_path.split('/')[0];
   var sidebar = this.site.data.sidebar[type];
-  var path = pathFn.basename(this.path);
+  // var path = pathFn.basename(this.path);
+  var path = this.url_for(this.path);
+//  console.log(path); 
   var list = {};
   var prefix = 'sidebar.' + type + '.';
 
@@ -38,7 +40,6 @@ hexo.extend.helper.register('page_nav', function(){
     result += '<a href="' + keys[index + 1] + '" class="article-footer-next" title="' + this.__(prefix + list[keys[index + 1]]) + '">' +
       '<span>' + this.__('page.next') + '</span><i class="fa fa-chevron-right"></i></a>';
   }
-
   return result;
 });
 

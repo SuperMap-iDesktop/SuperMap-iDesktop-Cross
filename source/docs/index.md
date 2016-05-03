@@ -1,21 +1,21 @@
 title: SuperMap iDesktop Cross 8C产品介绍
 ---
 
-SuperMap iDesktop Cross 8C是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在Windows和Linux系统上运行，是国内首款可在Linux操作系统上运行的桌面GIS系统，实现了GIS数据在跨平台环境下的展示。SuperMap iDesktop Cross 8C是一款跨平台、全开源、可扩展的桌面GIS产品，也是超图新一代的开源GIS桌面产品。
+　　SuperMap iDesktop Cross 8C是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在Windows和Linux系统上运行，是国内首款可在Linux操作系统上运行的桌面GIS系统，实现了GIS数据在跨平台环境下的展示。SuperMap iDesktop Cross 8C是一款跨平台、全开源、可扩展的桌面GIS产品，也是超图新一代的开源GIS桌面产品。
 
-SuperMap iDesktop Cross 8C是基于SuperMap iObjects Java 8C、Eclipse和OSGI等平台，通过Java语言开发的插件式、跨平台GIS应用软件，提供了地图制图、数据管理、数据处理、数据分析等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的开源库地址为：[*http://git.oschina.net/supermap/SuperMap-iDesktop-Cross*](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
+　　SuperMap iDesktop Cross 8C是基于SuperMap iObjects Java 8C、Eclipse和OSGI等平台，通过Java语言开发的插件式、跨平台GIS应用软件，提供了地图制图、数据管理、数据处理、数据分析等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的开源库地址为：[*http://git.oschina.net/supermap/SuperMap-iDesktop-Cross*](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
 
 ## 产品简介
 
-SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于SuperMap iObjects Java 8C、Eclipse和OSGI开发的跨平台GIS应用软件。SuperMap iDesktop Cross 8C提供了适用于不同平台的版本，分为Windows和Linux两个版本，其中，Windows版本包括32位和64位两个，分别提供了绿色包和安装包，Linux版本提供了64位的绿色包。
+　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于SuperMap iObjects Java 8C、Eclipse和OSGI开发的跨平台GIS应用软件。SuperMap iDesktop Cross 8C提供了适用于不同平台的版本，分为Windows和Linux两个版本，其中，Windows版本包括32位和64位两个，分别提供了绿色包和安装包，Linux版本提供了64位的绿色包。
 
-SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
+　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
 
 ## 提供功能
 
 ### 数据管理
 
-提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
+　　提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
 
 -   **数据引擎**：支持打开不同数据引擎，如Oracle、SQLPlus、DB2、DMPlus、KingBase、MySQL等数据库，其中，Linux版本不支持SQLPlus数据引擎；同时支持打开Web地图数据，即谷歌地图、百度地图、超图云服务、天地图服务、OGC服务、REST服务、OpenStreetMap等Web地图。
 
@@ -30,8 +30,7 @@ SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有SuperMap
 
 ### 数据转换
 
-SuperMap iDesktop Cross
-8C支持导入其他格式的数据，并将其他格式数据转为SuperMap可操作的数据格式，同时也可以将SuperMap格式的数据导出为其他数据格式。
+　　SuperMap iDesktop Cross　8C支持导入其他格式的数据，并将其他格式数据转为SuperMap可操作的数据格式，同时也可以将SuperMap格式的数据导出为其他数据格式。
 
 -   **数据导入**：支持将其他格式的数据导入到应用程序中，包括多种矢量、栅格、模型数据格式，如\*.dwg、\*.e00、\*.shp、\*.gdb、\*.mif、\*.xlsx、\*.tif、\*.img、\*.dem等。
 
@@ -39,7 +38,7 @@ SuperMap iDesktop Cross
 
 ### 数据处理
 
-数据处理是GIS的基础功能，SuperMap iDesktop Cross 8C 目前提供的数据处理功能有：投影设置、数据编辑、数据融合、拓扑处理、追加行、追加列等。
+　　数据处理是GIS的基础功能，SuperMap iDesktop Cross 8C 目前提供的数据处理功能有：投影设置、数据编辑、数据融合、拓扑处理、追加行、追加列等。
 -   **投影设置**：支持对矢量、栅格、模型等数据集进行投影转换。
 
 -   **数据编辑**：提供了丰富、全面的对象绘制和对象编辑功能，便于对数据进行编辑调整。
@@ -70,7 +69,7 @@ SuperMap iDesktop Cross
 
 ### 数据分析
 
-数据分析模块提供了缓冲区分析功能，可根据指定的缓冲半径对点、线、面数据集进行缓冲区分析。
+　　数据分析模块提供了缓冲区分析功能，可根据指定的缓冲半径对点、线、面数据集进行缓冲区分析。
 
 ## 主要特色
 

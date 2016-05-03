@@ -1,33 +1,19 @@
 docs:
   welcome:
-    SuperMap Cross: index.html
+    SuperMap Cross: /SuperMap-iDesktop-Cross/docs/index.html
   getting_started:
-    SuperMapDataStructure: /iDesktop-Cross-Docs/docs/Basic/SuperMapDataStructure.html
-    Pyramid: /iDesktop-Cross-Docs/docs/Basic/Pyramid.html
-    DataConversion: /iDesktop-Cross-Docs/docs/Basic/GeoFormates.html
+    SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
+    Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
+    DataConversion: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
+  DataProcess:
+    TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
+    TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
+    TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
+    TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
   DataAnalyst:
-    BufferTheory: /iDesktop-Cross-Docs/docs/BufferTheory.html
-    SingleBuffer: /iDesktop-Cross-Docs/docs/SingleBuffer.html
-    BufferAnalyst_Example: /iDesktop-Cross-Docs/docs/BufferAnalyst_Example.html
+    BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
+    SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html
+    BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
+#  Map:
+#    ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
 
-api:
-  core:
-    overview: index.html
-    events: events.html
-    locals: locals.html
-    router: router.html
-    box: box.html
-    rendering: rendering.html
-    posts: posts.html
-    scaffolds: scaffolds.html
-    themes: themes.html
-  extensions:
-    console: console.html
-    deployer: deployer.html
-    filter: filter.html
-    generator: generator.html
-    helper: helper.html
-    migrator: migrator.html
-    processor: processor.html
-    renderer: renderer.html
-    tag: tag.html
