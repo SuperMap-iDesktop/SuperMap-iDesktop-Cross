@@ -51,7 +51,7 @@ title: 缓冲区分析应用实例
 
 ### ![](img/seealso.png) 相关主题
 
-![](img/smalltitle.png) [缓冲区分析原理](BufferTheory.htmｌ)
+![](img/smalltitle.png) [缓冲区分析原理](BufferTheory.html)
 
-![](img/smalltitle.png) [生成单重缓冲区](SingleBuffer.htmｌ)
+![](img/smalltitle.png) [生成单重缓冲区](SingleBuffer.html)
 
