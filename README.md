@@ -8,7 +8,8 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 
 - [oschina 联机帮助源代码地址](https://git.oschina.net/supermap/SuperMap-iDesktop-Cross-Docs "oschina 联机帮助源代码地址")
 - [Gtihub pages 联机帮助主页](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross "Github 联机帮助主页")
-#使用指南
+
+# 使用指南 #
         配置好环境变量后在eclipse中导入工程即可直接启动。配置环境变量细节请参见《SuperMap iDesktop Cross 开发指南.md》第二章
 
 # 更新历史 #
