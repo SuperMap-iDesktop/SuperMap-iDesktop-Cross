@@ -8,12 +8,10 @@ import java.awt.*;
  */
 public class WrapLayout extends FlowLayout {
 
-	private int row;
 	/**
 	 * 一般没用，图层风格管理器中才用到
 	 */
 	private int column;
-	private Dimension preferredLayoutSize;
 
 	/**
 	 * Constructs a new <code>WrapLayout</code> with a left
@@ -75,7 +73,7 @@ public class WrapLayout extends FlowLayout {
 	 */
 	@Override
 	public Dimension minimumLayoutSize(Container target) {
-		Dimension minimum = layoutSize(target, false);
+		Dimension minimum = layoutSize(target, true);
 		minimum.width -= (getHgap() + 1);
 		return minimum;
 	}
