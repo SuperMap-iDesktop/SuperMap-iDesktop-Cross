@@ -1,7 +1,7 @@
 {% if page.comments && config.duoshuo_shortname %}
   <section id="comments">
 <!-- 多说评论框 start -->
-<div id="ds-thread" class="ds-thread" data-thread-key="<%= post.path %>" data-title="<%= post.title %>" data-url="<%= post.permalink %>"></div>
+<div id="ds-thread" class="ds-thread" data-thread-key="{{page.path}}" data-title="{{post.title}}" data-url="{{ post.permalink}}"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -18,7 +18,7 @@ var duoshuoQuery = {short_name:"qinlj"};
 <!-- 多说公共JS代码 end -->
 
   <!-- 分享框 -->
-<div class="ds-share" data-thread-key="<%= post.path %>" data-title="<%= post.title %>" data-url="<%= post.permalink %>">
+<div class="ds-share" data-thread-key="{{post.path}}" data-title="{{post.title}}" data-url="{{post.permalink}}">
     <div class="ds-share-inline">
       <ul  class="ds-share-icons-16">
       	

@@ -1,8 +1,8 @@
-# iDesktop-Cross-Documents
+# SuperMap iDesktop Cross Docs
 
 　　SuperMap iDesktop Cross 的帮助文档是基于 Hexo 生成的静态网站，文档的主要内容为 SuperMap iDesktop Cross 的产品介绍、功能描述、使用说明、新特性等，其源代码会实时更新至 OSChina 中，日常的文档更新会实时推送至 GitHub 的 gh-pages 服务上，可通过以下链接查看： [http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/)，同时，SuperMap iDesktop Cross 发布新版本时，相应的联机帮助也会更新部署到 SuperMap 官网的资源中心处，具体链接为 [http://support.supermap.com.cn/SuperMap-iDesktop-Cross/](http://support.supermap.com.cn/SuperMap-iDesktop-Cross/)。
 
-　　SuperMap iDesktop Cross 是一款开源的 GIS 产品，是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在Windows和Linux系统上运行，其源代码获取地址为：[http://git.oschina.net/supermap/SuperMap-iDesktop-Cross](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
+　　SuperMap iDesktop Cross 是一款开源的 GIS 产品，是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在 Windows 和 Linux 系统上运行，其源代码获取地址为：[http://git.oschina.net/supermap/SuperMap-iDesktop-Cross](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
 
 ## 简介
 
@@ -12,55 +12,60 @@
 
 - **配置 Node.js 环境**
 
-　　通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows 系统可选择安装相应的 Node.js 版本。
+通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows 系统可选择安装相应的 Node.js 版本。
 
-   - [Node.js 32位](https://nodejs.org/dist/v4.2.3/node-v4.2.3-x86.msi)
-   - [Node.js 64位](https://nodejs.org/dist/v4.2.3/node-v4.2.3-x64.msi)
+   - [Node.js](https://nodejs.org/en/)
 　　
 - **安装Git**
 
-   - Windows：下载安装[Git](https://git-scm.com/download/win)
-   - Linux (Ubuntu, Debian)：`sudo apt-get install git-core`
-   - Linux (Fedora, Red Hat, CentOS)：`sudo yum install git-core`
+    - Windows：下载安装[Git](https://git-scm.com/downloads)
+    - [Linux](https://git-scm.com/download/linux)
 
--  **配置 Hexo 环境**
+- **配置 Hexo 环境**
 
-　　抓取文档源代码之后，在源代码所在的文件夹中安装 Hexo，在文件夹处打开命令行窗口，在命令行中输入：
+安装 Hexo，打开命令行窗口，在命令行中执行：
 
      $ npm install -g hexo-cli
 
-　　再在命令行中输入：
+抓取文档源代码之后，在源代码所在的目录处的启动命令行窗口并执行：
 
      $ npm install hexo --save
 
-　　可在命令行中输入以下命令，检验Hexo 是否安装成功：
+可在命令行中输入以下命令，检验 Hexo 是否安装成功：
 
     $ hexo -v
 
+安装好 Hexo 之后，需再安装 Hexo 运行所需的依赖工具，在命令行中执行：
+
+    $ npm install
+
+
 ## 生成网站
 
-　　配置好环境之后可基于源代码编译生成静态网站，在命令行中输入：
+配置好环境之后可基于源代码编译生成静态网站，在命令行中输入：
 
     $ hexo g
 
-　　编译之后通过以下命令启动本地服务，可在 `http://localhost:4000` 网站预览生成的博客：
+编译之后通过以下命令启动本地服务，可在 `http://localhost:4000` 网站预览生成的博客：
 
     $ hexo s
 
-　　通过键盘中的 `Ctrl+C` 即可停止本地服务。
+通过键盘中的 `Ctrl+C` 即可停止本地服务。
 
 ## 部署网站
 
-　　Hexo 提供了快速方便的部署功能，部署之前，在_config.yml 文件中将 deploy 的配置参数设置为：
+Hexo 提供了快速方便的部署功能，部署之前需要先安装 `hexo-deployer-git`，通过命令行 `npm install hexo-deployer-git --save` 进行安装，并在_config.yml 文件中将 deploy 的配置参数设置为：
 
     deploy:
     type: git
-    repo: git@github.com:SuperMap-iDesktop/SuperMap-iDesktop-Cross.git
-    branch: gh-pages
+    repo: <repository url>
+    branch: [branch]
 
-　　再通过以下命令将编译结果可部署至 GitHub 的 gh-pages 分支中：
+再通过以下命令将编译结果可部署至 GitHub 的指定分支中：
 
     $ hexo d
+
+Hexo 的详细操作说明请参见[Hexo官方文档](https://hexo.io)。
 
 ## 目录结构
 
