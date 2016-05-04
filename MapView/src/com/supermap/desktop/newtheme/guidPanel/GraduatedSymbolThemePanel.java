@@ -10,6 +10,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.LineBorder;
 
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
 public class GraduatedSymbolThemePanel extends JPanel{
@@ -72,8 +74,7 @@ public class GraduatedSymbolThemePanel extends JPanel{
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 等级符号专题图
-				
-				
+				ThemeGuideFactory.buildGraduatedSymbolTheme(ThemeUtil.getActiveLayer());
 				themeGuidDialog.dispose();
 				unregistListener();
 			}

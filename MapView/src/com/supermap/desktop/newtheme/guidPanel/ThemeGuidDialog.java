@@ -1,5 +1,6 @@
 package com.supermap.desktop.newtheme.guidPanel;
 
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
@@ -38,6 +39,8 @@ public class ThemeGuidDialog extends SmDialog {
 	private boolean isRange = false;
 	private boolean isCadType = false;
 	private boolean isGridType = false;
+
+	private DatasetType activeDatasetType = ThemeUtil.getActiveLayer().getDataset().getType();
 
 	private transient LocalMouseListener localMouseListener = new LocalMouseListener();
 	private transient LocalActionListener actionListener = new LocalActionListener();
@@ -115,18 +118,24 @@ public class ThemeGuidDialog extends SmDialog {
 		DataCell gridUniqueCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Unique"), InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE);
 		DataCell gridRangeCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Range"), InternalImageIconFactory.THEMEGUIDE_GRIDRANGE);
 		DataCell graphCell = new DataCell(MapViewProperties.getString("String_Theme_Graph"), InternalImageIconFactory.THEMEGUIDE_GRAPH);
-		DataCell graduatedSymbolCell = new DataCell(MapViewProperties.getString("String_Theme_GraduatedSymbol"), InternalImageIconFactory.THEMEGUIDE_GRADUATEDSYMBOL);
-		if (this.isCadType) {
+		DataCell graduatedSymbolCell = new DataCell(MapViewProperties.getString("String_Theme_GraduatedSymbol"),
+				InternalImageIconFactory.THEMEGUIDE_GRADUATEDSYMBOL);
+		DataCell dotDensityCell = new DataCell(MapViewProperties.getString("String_Theme_DotDensity"), InternalImageIconFactory.THEMEGUIDE_DOTDENSITY);
+		if (isCadType) {
 			listModel.addElement(labelDataCell);
-		} else if (this.isGridType) {
+		}else if(isGridType) {
 			listModel.addElement(gridUniqueCell);
 			listModel.addElement(gridRangeCell);
-		} else {
+			return;
+		}else{
 			listModel.addElement(uniqueDataCell);
 			listModel.addElement(rangeDataCell);
 			listModel.addElement(labelDataCell);
 			listModel.addElement(graphCell);
 			listModel.addElement(graduatedSymbolCell);
+			if (activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D) {
+				listModel.addElement(dotDensityCell);
+			}
 		}
 		this.listContent.setModel(listModel);
 		this.listContent.setSelectedIndex(0);
@@ -190,6 +199,11 @@ public class ThemeGuidDialog extends SmDialog {
 		case 4:
 			if (null != getRightPanel()) {
 				replaceRightPanel(new GraduatedSymbolThemePanel(this));
+			}
+			break;
+		case 5:
+			if (null != getRightPanel()&&(activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D)) {
+				replaceRightPanel(new DotDensityThemePanel(this));
 			}
 			break;
 		default:
@@ -345,12 +359,25 @@ public class ThemeGuidDialog extends SmDialog {
 			}
 			break;
 		case 4:
-			//等级符号专题图
+			// 等级符号专题图
 			buildSuccessed = ThemeGuideFactory.buildGraduatedSymbolTheme(ThemeUtil.getActiveLayer());
 			if (buildSuccessed) {
 				ThemeGuidDialog.this.dispose();
 			}
 			break;
+		case 5:
+			if (activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D) {
+				// 点密度专题图
+				buildSuccessed = ThemeGuideFactory.buildDotDensityTheme(ThemeUtil.getActiveLayer());
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
+			} else {
+				// 自定义专题图
+			}
+			break;
+		case 6:
+
 		default:
 			break;
 		}

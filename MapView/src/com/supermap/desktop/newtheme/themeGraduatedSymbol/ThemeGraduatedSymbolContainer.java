@@ -1,4 +1,4 @@
-package com.supermap.desktop.newtheme.themeDotDensity;
+package com.supermap.desktop.newtheme.themeGraduatedSymbol;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -53,7 +53,7 @@ import com.supermap.ui.MapControl;
  * @author xie
  *
  */
-public class ThemeGraduatedContainer extends ThemeChangePanel {
+public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	/**
 	 * 
@@ -122,7 +122,7 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 		}
 	};
 
-	public ThemeGraduatedContainer(DatasetVector datasetVector, ThemeGraduatedSymbol themeGraduatedSymbol, Layer themeGraduatedLayer) {
+	public ThemeGraduatedSymbolContainer(DatasetVector datasetVector, ThemeGraduatedSymbol themeGraduatedSymbol, Layer themeGraduatedLayer) {
 		this.datasetVector = datasetVector;
 		this.themeGraduatedSymbol = new ThemeGraduatedSymbol(themeGraduatedSymbol);
 		this.map = initCurrentTheme(datasetVector, themeGraduatedLayer);
@@ -131,10 +131,10 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 		registActionListener();
 	}
 
-	public ThemeGraduatedContainer(Layer layer) {
+	public ThemeGraduatedSymbolContainer(Layer layer) {
 		this.themeGraduatedSymbolLayer = layer;
 		this.layerName = layer.getName();
-		this.themeGraduatedSymbol = (ThemeGraduatedSymbol) layer.getTheme();
+		this.themeGraduatedSymbol = new ThemeGraduatedSymbol((ThemeGraduatedSymbol) layer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		initComponents();
@@ -667,6 +667,7 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 			if (null != tempTheme) {
 				copyThemeInfo(tempTheme, themeGraduatedSymbol);
 				themeGraduatedSymbol.fromXML(tempTheme.toXML());
+				textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
 				refreshAtOnce();
 				tempTheme.dispose();
 			}
@@ -675,7 +676,6 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 	}
 
 	private void copyThemeInfo(ThemeGraduatedSymbol target, ThemeGraduatedSymbol resource) {
-		target.setBaseValue(resource.getBaseValue());
 		target.setPositiveStyle(resource.getPositiveStyle());
 		target.setZeroDisplayed(resource.isZeroDisplayed());
 		target.setZeroStyle(resource.getZeroStyle());
@@ -712,6 +712,7 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 					if (null != tempTheme) {
 						copyThemeInfo(tempTheme, themeGraduatedSymbol);
 						themeGraduatedSymbol.fromXML(tempTheme.toXML());
+						textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
 						refreshAtOnce();
 						tempTheme.dispose();
 					}

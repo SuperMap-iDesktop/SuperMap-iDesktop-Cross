@@ -12,7 +12,8 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer;
-import com.supermap.desktop.newtheme.themeDotDensity.ThemeGraduatedContainer;
+import com.supermap.desktop.newtheme.themeDotDensity.ThemeDotDensityContainer;
+import com.supermap.desktop.newtheme.themeGraduatedSymbol.ThemeGraduatedSymbolContainer;
 import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
 import com.supermap.desktop.newtheme.themeGridRange.ThemeGridRangeContainer;
 import com.supermap.desktop.newtheme.themeGridUnique.ThemeGridUniqueContainer;
@@ -23,10 +24,12 @@ import com.supermap.desktop.newtheme.themeUnique.ThemeUniqueContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.mapping.GraduatedMode;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.ThemeDotDensity;
 import com.supermap.mapping.ThemeGraduatedSymbol;
 import com.supermap.mapping.ThemeGraph;
 import com.supermap.mapping.ThemeGraphItem;
@@ -64,6 +67,7 @@ public class ThemeGuideFactory {
 	private static final String THEMETYPE_GRID_UNIQUE = "ThemeType_Grid_Unique";
 	private static final String THEMETYPE_GRID_RANGE = "ThemeType_Grid_Range";
 	private static final String THEMETYPE_GRADUATEDSYMBOL = "ThemeType_GraduatedSymbol";
+	private static final String THEMETYPE_DOTDENSITY = "ThemeType_DotDensity";
 
 	/**
 	 * 界面替换
@@ -130,13 +134,17 @@ public class ThemeGuideFactory {
 	 * @return
 	 */
 	public static String getThemeTypeString(Layer layer) {
+		return layer.getName() + "@" + getThemeType(layer);
+	}
+
+	private static String getThemeType(Layer layer) {
 		String name = "";
 		if (null != layer && !layer.isDisposed() && null != layer.getTheme()) {
 			int count = -1;
 			if (layer.getTheme() instanceof ThemeLabel) {
 				count = ((ThemeLabel) layer.getTheme()).getCount();
 			}
-			name = layer.getName() + "@" + getThemeTypeString(layer.getTheme().getType(), count);
+			name = getThemeTypeString(layer.getTheme().getType(), count);
 		}
 		return name;
 	}
@@ -166,6 +174,9 @@ public class ThemeGuideFactory {
 		}
 		if (themetype == ThemeType.GRADUATEDSYMBOL) {
 			result = THEMETYPE_GRADUATEDSYMBOL;
+		}
+		if (themetype == ThemeType.DOTDENSITY) {
+			result = THEMETYPE_DOTDENSITY;
 		}
 		return result;
 	}
@@ -381,6 +392,9 @@ public class ThemeGuideFactory {
 
 	/**
 	 * 新建统计专题图
+	 * 
+	 * @param layer
+	 * @return
 	 */
 	public static boolean buildGraphTheme(Layer layer) {
 		boolean success = false;
@@ -415,17 +429,47 @@ public class ThemeGuideFactory {
 		return success;
 	}
 
+	/**
+	 * 新建等级符号专题图
+	 * 
+	 * @param layer
+	 * @return
+	 */
 	public static boolean buildGraduatedSymbolTheme(Layer layer) {
 		boolean successed = false;
 		if (null != getDataset()) {
-			ThemeGraduatedSymbol themeGraduated = new ThemeGraduatedSymbol();
+			String expression = "SmID";
+			expression = hasJoinItems(layer, expression);
+			ThemeGraduatedSymbol themeGraduated = ThemeGraduatedSymbol.makeDefault((DatasetVector) getDataset(), expression, GraduatedMode.CONSTANT);
+			if (null != themeGraduated) {
+				successed = true;
+				themeGraduated.setExpression(expression);
+				ThemeGraduatedSymbolContainer themeGraduatedContainer = new ThemeGraduatedSymbolContainer((DatasetVector) getDataset(), themeGraduated, layer);
+				themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
+				addPanelToThemeMainContainer(themeGraduatedContainer, null);
+				getDockbarThemeContainer().setVisible(true);
+			}
+		}
+		return successed;
+	}
+
+	/**
+	 * 新建点密度专题图
+	 * 
+	 * @param layer
+	 * @return
+	 */
+	public static boolean buildDotDensityTheme(Layer layer) {
+		boolean successed = false;
+		if (null != getDataset()) {
+			ThemeDotDensity themeDotDensity = new ThemeDotDensity();
 			successed = true;
 			String expression = "SmID";
 			expression = hasJoinItems(layer, expression);
-			themeGraduated.setExpression(expression);
-			ThemeGraduatedContainer themeGraduatedContainer = new ThemeGraduatedContainer((DatasetVector) getDataset(), themeGraduated, layer);
-			themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
-			addPanelToThemeMainContainer(themeGraduatedContainer, null);
+			themeDotDensity.setDotExpression(expression);
+			ThemeDotDensityContainer themeDotDensityContainer = new ThemeDotDensityContainer((DatasetVector) getDataset(), themeDotDensity, layer);
+			themeTypeContainer.put(themeDotDensityContainer.getCurrentLayer().getName() + "" + THEMETYPE_DOTDENSITY, themeDotDensityContainer);
+			addPanelToThemeMainContainer(themeDotDensityContainer, null);
 			getDockbarThemeContainer().setVisible(true);
 		}
 		return successed;
@@ -452,133 +496,81 @@ public class ThemeGuideFactory {
 	}
 
 	/**
-	 * 修改单值专题图
-	 *
-	 * @param layer
+	 * 修改专题图
 	 */
-	public static void resetUniqueTheme(Layer layer) {
+	public static void resetTheme(Layer layer, String themeType) {
 		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_UNIQUE), layer);
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + themeType), layer);
 		} else {
-			ThemeChangePanel themeUniqueContainer = new ThemeUniqueContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_UNIQUE, themeUniqueContainer);
-			initThemePanel(themeUniqueContainer);
+			ThemeChangePanel themeContainer = null;
+			if (THEMETYPE_UNIQUE.equals(themeType)) {
+				// 单值专题图
+				themeContainer = new ThemeUniqueContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_RANGE.equals(themeType)) {
+				// 分段专题图
+				themeContainer = new ThemeRangeContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_LABEL_UNIFORM.equals(themeType)) {
+				// 统一风格标签专题图
+				themeContainer = new ThemeLabelUniformContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_LABEL_RANGE.equals(themeType)) {
+				// 分段风格标签专题图
+				themeContainer = new ThemeLabelRangeContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_GRID_UNIQUE.equals(themeType)) {
+				// 栅格单值专题图
+				themeContainer = new ThemeGridUniqueContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_GRID_RANGE.equals(themeType)) {
+				// 栅格分段专题图
+				themeContainer = new ThemeGridRangeContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_GRAPH.equals(themeType)) {
+				// 统计专题图
+				themeContainer = new ThemeGraphContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_GRADUATEDSYMBOL.equals(themeType)) {
+				// 等级符号专题图
+				themeContainer = new ThemeGraduatedSymbolContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_DOTDENSITY.equals(themeType)) {
+				// 点密度专题图
+				themeContainer = new ThemeDotDensityContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
 		}
-	}
-
-	/**
-	 * 修改分段专题图
-	 *
-	 * @param layer
-	 */
-	public static void resetRangeTheme(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_RANGE), layer);
-		} else {
-			ThemeChangePanel themeRangeContainer = new ThemeRangeContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_RANGE, themeRangeContainer);
-			initThemePanel(themeRangeContainer);
-		}
-	}
-
-	/**
-	 * 修改标签统一风格专题图
-	 *
-	 * @param layer
-	 */
-	public static void resetLabelUniform(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_LABEL_UNIFORM), layer);
-		} else {
-			ThemeChangePanel themeLabelUniformContainer = new ThemeLabelUniformContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_LABEL_UNIFORM, themeLabelUniformContainer);
-			initThemePanel(themeLabelUniformContainer);
-		}
-	}
-
-	/**
-	 * 修改标签分段风格专题图
-	 *
-	 * @param layer
-	 */
-	public static void resetLabelRange(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_LABEL_RANGE), layer);
-		} else {
-			ThemeChangePanel themeLabelRangeContainer = new ThemeLabelRangeContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_LABEL_RANGE, themeLabelRangeContainer);
-			initThemePanel(themeLabelRangeContainer);
-		}
-	}
-
-	/**
-	 * 修改栅格单值专题图
-	 *
-	 * @param layer
-	 */
-	public static void resetGridUnique(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRID_UNIQUE), layer);
-		} else {
-			ThemeChangePanel themeGridUniqueContainer = new ThemeGridUniqueContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_GRID_UNIQUE, themeGridUniqueContainer);
-			initThemePanel(themeGridUniqueContainer);
-		}
-	}
-
-	/**
-	 * 修改栅格分段专题图
-	 *
-	 * @returnff
-	 */
-	public static void resetGridRange(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRID_RANGE), layer);
-		} else {
-			ThemeChangePanel themeGridRangeContainer = new ThemeGridRangeContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_GRID_RANGE, themeGridRangeContainer);
-			initThemePanel(themeGridRangeContainer);
-		}
-	}
-
-	/**
-	 * 修改统计专题图
-	 * 
-	 * @param layer
-	 */
-	public static void resetGraph(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRAPH), layer);
-		} else {
-			ThemeChangePanel themeGraphContainer = new ThemeGraphContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_GRAPH, themeGraphContainer);
-			initThemePanel(themeGraphContainer);
-		}
-	}
-
-	/**
-	 * 修改等级符号专题图
-	 */
-	public static void resetGraduatedSymbol(Layer layer) {
-		if (hasThemeContainer(layer)) {
-			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRADUATEDSYMBOL), layer);
-		} else {
-			ThemeChangePanel themeGraduatedContainer = new ThemeGraduatedContainer(layer);
-			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
-			initThemePanel(themeGraduatedContainer);
-		}
-	}
-
-	private static void initThemePanel(ThemeChangePanel themeGraphContainer) {
-		if (null == container) {
-			container = (ThemeMainContainer) getDockbarThemeContainer().getComponent();
-		}
-		container.setPanel(themeGraphContainer);
-		layerPropertyChange(themeGraphContainer);
 	}
 
 	private static boolean hasThemeContainer(Layer layer) {
 		return null != themeTypeContainer.get(getThemeTypeString(layer));
+	}
+
+	private static void initThemePanel(Layer layer, String themeType, ThemeChangePanel themeContainer) {
+		themeTypeContainer.put(layer.getName() + "@" + themeType, themeContainer);
+		if (null == container) {
+			container = (ThemeMainContainer) getDockbarThemeContainer().getComponent();
+		}
+		container.setPanel(themeContainer);
+		layerPropertyChange(themeContainer);
 	}
 
 	private static Dataset getDataset() {
@@ -601,38 +593,7 @@ public class ThemeGuideFactory {
 	 */
 	public static void modifyTheme(Layer layer) {
 		if (null != layer && null != layer.getDataset()) {
-			if (layer.getTheme() instanceof ThemeUnique) {
-				resetUniqueTheme(layer);
-				return;
-			}
-			if (layer.getTheme() instanceof ThemeRange) {
-				resetRangeTheme(layer);
-				return;
-			}
-			if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() > 0) {
-				resetLabelRange(layer);
-				return;
-			}
-			if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() == 0) {
-				resetLabelUniform(layer);
-				return;
-			}
-			if ((layer.getTheme() instanceof ThemeGridUnique)) {
-				resetGridUnique(layer);
-				return;
-			}
-			if (layer.getTheme() instanceof ThemeGridRange) {
-				resetGridRange(layer);
-				return;
-			}
-			if (layer.getTheme() instanceof ThemeGraph) {
-				resetGraph(layer);
-				return;
-			}
-			if (layer.getTheme() instanceof ThemeGraduatedSymbol) {
-				resetGraduatedSymbol(layer);
-				return;
-			}
+			resetTheme(layer, getThemeType(layer));
 		}
 	}
 }
