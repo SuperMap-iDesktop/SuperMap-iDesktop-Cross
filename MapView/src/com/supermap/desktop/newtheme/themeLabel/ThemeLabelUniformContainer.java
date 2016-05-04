@@ -87,7 +87,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

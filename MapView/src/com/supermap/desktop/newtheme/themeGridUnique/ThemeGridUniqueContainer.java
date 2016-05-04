@@ -115,7 +115,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			this.themeUniqueLayer = mapControl.getMap().getLayers().add(datasetGrid, themeUnique, true);
 			this.layerName = this.themeUniqueLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

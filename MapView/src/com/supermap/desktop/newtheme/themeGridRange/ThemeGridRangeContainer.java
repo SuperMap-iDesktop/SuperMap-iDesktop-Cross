@@ -134,7 +134,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			this.themeRangeLayer = mapControl.getMap().getLayers().add(datasetGrid, themeGridRange, true);
 			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

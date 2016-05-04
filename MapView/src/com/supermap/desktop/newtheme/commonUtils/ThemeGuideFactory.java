@@ -12,6 +12,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer;
+import com.supermap.desktop.newtheme.themeDotDensity.ThemeGraduatedContainer;
 import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
 import com.supermap.desktop.newtheme.themeGridRange.ThemeGridRangeContainer;
 import com.supermap.desktop.newtheme.themeGridUnique.ThemeGridUniqueContainer;
@@ -26,6 +27,7 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.ThemeGraduatedSymbol;
 import com.supermap.mapping.ThemeGraph;
 import com.supermap.mapping.ThemeGraphItem;
 import com.supermap.mapping.ThemeGraphType;
@@ -61,6 +63,7 @@ public class ThemeGuideFactory {
 	private static final String THEMETYPE_GRAPH = "ThemeType_Graph";
 	private static final String THEMETYPE_GRID_UNIQUE = "ThemeType_Grid_Unique";
 	private static final String THEMETYPE_GRID_RANGE = "ThemeType_Grid_Range";
+	private static final String THEMETYPE_GRADUATEDSYMBOL = "ThemeType_GraduatedSymbol";
 
 	/**
 	 * 界面替换
@@ -160,6 +163,9 @@ public class ThemeGuideFactory {
 		}
 		if (themetype == ThemeType.GRAPH) {
 			result = THEMETYPE_GRAPH;
+		}
+		if (themetype == ThemeType.GRADUATEDSYMBOL) {
+			result = THEMETYPE_GRADUATEDSYMBOL;
 		}
 		return result;
 	}
@@ -409,6 +415,22 @@ public class ThemeGuideFactory {
 		return success;
 	}
 
+	public static boolean buildGraduatedSymbolTheme(Layer layer) {
+		boolean successed = false;
+		if (null != getDataset()) {
+			ThemeGraduatedSymbol themeGraduated = new ThemeGraduatedSymbol();
+			successed = true;
+			String expression = "SmID";
+			expression = hasJoinItems(layer, expression);
+			themeGraduated.setExpression(expression);
+			ThemeGraduatedContainer themeGraduatedContainer = new ThemeGraduatedContainer((DatasetVector) getDataset(), themeGraduated, layer);
+			themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
+			addPanelToThemeMainContainer(themeGraduatedContainer, null);
+			getDockbarThemeContainer().setVisible(true);
+		}
+		return successed;
+	}
+
 	/**
 	 * 根据图层名称获得展开的节点
 	 *
@@ -442,10 +464,6 @@ public class ThemeGuideFactory {
 			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_UNIQUE, themeUniqueContainer);
 			initThemePanel(themeUniqueContainer);
 		}
-	}
-
-	private static boolean hasThemeContainer(Layer layer) {
-		return null != themeTypeContainer.get(getThemeTypeString(layer));
 	}
 
 	/**
@@ -538,12 +556,29 @@ public class ThemeGuideFactory {
 		}
 	}
 
+	/**
+	 * 修改等级符号专题图
+	 */
+	public static void resetGraduatedSymbol(Layer layer) {
+		if (hasThemeContainer(layer)) {
+			addPanelToThemeMainContainer(themeTypeContainer.get(layer.getName() + "@" + THEMETYPE_GRADUATEDSYMBOL), layer);
+		} else {
+			ThemeChangePanel themeGraduatedContainer = new ThemeGraduatedContainer(layer);
+			themeTypeContainer.put(layer.getName() + "@" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
+			initThemePanel(themeGraduatedContainer);
+		}
+	}
+
 	private static void initThemePanel(ThemeChangePanel themeGraphContainer) {
 		if (null == container) {
 			container = (ThemeMainContainer) getDockbarThemeContainer().getComponent();
 		}
 		container.setPanel(themeGraphContainer);
 		layerPropertyChange(themeGraphContainer);
+	}
+
+	private static boolean hasThemeContainer(Layer layer) {
+		return null != themeTypeContainer.get(getThemeTypeString(layer));
 	}
 
 	private static Dataset getDataset() {
@@ -568,18 +603,35 @@ public class ThemeGuideFactory {
 		if (null != layer && null != layer.getDataset()) {
 			if (layer.getTheme() instanceof ThemeUnique) {
 				resetUniqueTheme(layer);
-			} else if (layer.getTheme() instanceof ThemeRange) {
+				return;
+			}
+			if (layer.getTheme() instanceof ThemeRange) {
 				resetRangeTheme(layer);
-			} else if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() > 0) {
+				return;
+			}
+			if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() > 0) {
 				resetLabelRange(layer);
-			} else if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() == 0) {
+				return;
+			}
+			if ((layer.getTheme() instanceof ThemeLabel) && ((ThemeLabel) layer.getTheme()).getCount() == 0) {
 				resetLabelUniform(layer);
-			} else if ((layer.getTheme() instanceof ThemeGridUnique)) {
+				return;
+			}
+			if ((layer.getTheme() instanceof ThemeGridUnique)) {
 				resetGridUnique(layer);
-			} else if (layer.getTheme() instanceof ThemeGridRange) {
+				return;
+			}
+			if (layer.getTheme() instanceof ThemeGridRange) {
 				resetGridRange(layer);
-			} else if (layer.getTheme() instanceof ThemeGraph) {
+				return;
+			}
+			if (layer.getTheme() instanceof ThemeGraph) {
 				resetGraph(layer);
+				return;
+			}
+			if (layer.getTheme() instanceof ThemeGraduatedSymbol) {
+				resetGraduatedSymbol(layer);
+				return;
 			}
 		}
 	}

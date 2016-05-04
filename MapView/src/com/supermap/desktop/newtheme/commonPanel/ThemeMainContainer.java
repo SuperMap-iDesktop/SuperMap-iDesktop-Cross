@@ -113,19 +113,6 @@ public class ThemeMainContainer extends JPanel {
 	}
 
 	/**
-	 * 得到中间界面
-	 *
-	 * @return
-	 */
-	public JPanel getPanelThemeInfo() {
-		return panelThemeInfo;
-	}
-
-	public void setPanelThemeInfo(JPanel panelThemeInfo) {
-		this.panelThemeInfo = panelThemeInfo;
-	}
-
-	/**
 	 * 注册事件
 	 */
 	private void registActionListener() {
@@ -134,6 +121,7 @@ public class ThemeMainContainer extends JPanel {
 			public void propertyChange(PropertyChangeEvent evt) {
 				// 删除图层时销毁已有地图
 				if (null != panel && !panel.getCurrentLayer().isDisposed() && panel.getCurrentLayer().getName().equals(evt.getNewValue())) {
+					panel.getCurrentTheme().dispose();
 					panel.unregistActionListener();
 					setLayerPropertyChanged(false);
 				}
@@ -189,32 +177,6 @@ public class ThemeMainContainer extends JPanel {
 		this.formManager.removeActiveFormChangedListener(this.activeFormChangedListener);
 	}
 
-	class LocalActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (null != panel) {
-				panel.refreshMapAndLayer();
-				buttonApply.setEnabled(false);
-				setLayerPropertyChanged(false);
-			}
-		}
-	}
-
-	class RefreshAtOnceListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			boolean selected = checkBoxRefreshAtOnce.isSelected();
-			if (null != panel && selected) {
-				panel.setRefreshAtOnce(selected);
-				panel.refreshMapAndLayer();
-				buttonApply.setEnabled(false);
-			} else if (null != panel && false == selected) {
-				panel.setRefreshAtOnce(selected);
-			}
-		}
-	}
-
 	/**
 	 * 移除所有的控件
 	 */
@@ -224,46 +186,6 @@ public class ThemeMainContainer extends JPanel {
 		}
 		scrollPane.setViewportView(panelThemeInfo);
 		ThemeMainContainer.this.repaint();
-	}
-
-	class LocalTreeMouseListener extends MouseAdapter {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
-				ThemeGuideFactory.modifyTheme(newLayer);
-				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
-			}
-		}
-
-	}
-
-	class LocalTreeSelectListener implements TreeSelectionListener {
-		@Override
-		public void valueChanged(TreeSelectionEvent e) {
-			try {
-				IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
-				// 专题图dockbar不存在时不做处理
-				if (null == dockbarThemeContainer.getComponent()) {
-					return;
-				}
-				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
-				if (null != panel && null != e.getNewLeadSelectionPath()) {
-					updateLayerProperty(e.getOldLeadSelectionPath());
-				}
-				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
-				if (null != newLayer && null != newLayer.getTheme()) {
-					textFieldThemeLayer.setText(newLayer.getCaption());
-					ThemeGuideFactory.modifyTheme(newLayer);
-				} else {
-					textFieldThemeLayer.setText("");
-					updateThemeMainContainer();
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			}
-
-		}
 	}
 
 	public void updateLayerProperty(final TreePath path) {
@@ -366,6 +288,19 @@ public class ThemeMainContainer extends JPanel {
 		}
 	}
 
+	/**
+	 * 得到中间界面
+	 *
+	 * @return
+	 */
+	public JPanel getPanelThemeInfo() {
+		return panelThemeInfo;
+	}
+
+	public void setPanelThemeInfo(JPanel panelThemeInfo) {
+		this.panelThemeInfo = panelThemeInfo;
+	}
+
 	public Map getMap() {
 		return map;
 	}
@@ -394,4 +329,69 @@ public class ThemeMainContainer extends JPanel {
 		this.scrollPane = scrollPane;
 	}
 
+	class LocalTreeMouseListener extends MouseAdapter {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (2 == e.getClickCount() && null != newLayer && null != newLayer.getTheme()) {
+				ThemeGuideFactory.modifyTheme(newLayer);
+				ThemeGuideFactory.getDockbarThemeContainer().setVisible(true);
+			}
+		}
+
+	}
+
+	class LocalTreeSelectListener implements TreeSelectionListener {
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			try {
+				IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
+				// 专题图dockbar不存在时不做处理
+				if (null == dockbarThemeContainer.getComponent()) {
+					return;
+				}
+				oldLayer = getLayerByPath(e.getOldLeadSelectionPath());
+				if (null != panel && null != e.getNewLeadSelectionPath()) {
+					updateLayerProperty(e.getOldLeadSelectionPath());
+				}
+				newLayer = getLayerByPath(e.getNewLeadSelectionPath());
+				if (null != newLayer && null != newLayer.getTheme()) {
+					textFieldThemeLayer.setText(newLayer.getCaption());
+					ThemeGuideFactory.modifyTheme(newLayer);
+				} else {
+					textFieldThemeLayer.setText("");
+					updateThemeMainContainer();
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+
+		}
+	}
+
+	class LocalActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (null != panel) {
+				panel.refreshMapAndLayer();
+				buttonApply.setEnabled(false);
+				setLayerPropertyChanged(false);
+			}
+		}
+	}
+
+	class RefreshAtOnceListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			boolean selected = checkBoxRefreshAtOnce.isSelected();
+			if (null != panel && selected) {
+				panel.setRefreshAtOnce(selected);
+				panel.refreshMapAndLayer();
+				buttonApply.setEnabled(false);
+			} else if (null != panel && false == selected) {
+				panel.setRefreshAtOnce(selected);
+			}
+		}
+	}
 }

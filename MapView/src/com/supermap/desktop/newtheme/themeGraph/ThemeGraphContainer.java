@@ -226,7 +226,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			this.themeGraphLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeGraphLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

@@ -159,7 +159,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.themeRangeLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeRangeLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

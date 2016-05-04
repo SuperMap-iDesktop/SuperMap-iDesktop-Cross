@@ -157,7 +157,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			// 复制关联表信息到新图层中
 			this.layerName = this.themeLabelLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

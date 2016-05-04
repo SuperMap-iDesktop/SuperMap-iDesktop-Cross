@@ -115,6 +115,7 @@ public class ThemeGuidDialog extends SmDialog {
 		DataCell gridUniqueCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Unique"), InternalImageIconFactory.THEMEGUIDE_GRIDUNIQUE);
 		DataCell gridRangeCell = new DataCell(MapViewProperties.getString("String_ThemeGrid_Range"), InternalImageIconFactory.THEMEGUIDE_GRIDRANGE);
 		DataCell graphCell = new DataCell(MapViewProperties.getString("String_Theme_Graph"), InternalImageIconFactory.THEMEGUIDE_GRAPH);
+		DataCell graduatedSymbolCell = new DataCell(MapViewProperties.getString("String_Theme_GraduatedSymbol"), InternalImageIconFactory.THEMEGUIDE_GRADUATEDSYMBOL);
 		if (this.isCadType) {
 			listModel.addElement(labelDataCell);
 		} else if (this.isGridType) {
@@ -125,6 +126,7 @@ public class ThemeGuidDialog extends SmDialog {
 			listModel.addElement(rangeDataCell);
 			listModel.addElement(labelDataCell);
 			listModel.addElement(graphCell);
+			listModel.addElement(graduatedSymbolCell);
 		}
 		this.listContent.setModel(listModel);
 		this.listContent.setSelectedIndex(0);
@@ -184,6 +186,12 @@ public class ThemeGuidDialog extends SmDialog {
 			if (null != getRightPanel()) {
 				replaceRightPanel(new GraphThemePanel(this));
 			}
+			break;
+		case 4:
+			if (null != getRightPanel()) {
+				replaceRightPanel(new GraduatedSymbolThemePanel(this));
+			}
+			break;
 		default:
 			break;
 		}
@@ -237,7 +245,6 @@ public class ThemeGuidDialog extends SmDialog {
 		case 0:
 			if (null != getRightPanel()) {
 				replaceRightPanel(new GridUniqueThemePanel(this));
-				;
 			}
 			break;
 		case 1:
@@ -333,6 +340,13 @@ public class ThemeGuidDialog extends SmDialog {
 		case 3:
 			// 统计专题图
 			buildSuccessed = ThemeGuideFactory.buildGraphTheme(ThemeUtil.getActiveLayer());
+			if (buildSuccessed) {
+				ThemeGuidDialog.this.dispose();
+			}
+			break;
+		case 4:
+			//等级符号专题图
+			buildSuccessed = ThemeGuideFactory.buildGraduatedSymbolTheme(ThemeUtil.getActiveLayer());
 			if (buildSuccessed) {
 				ThemeGuidDialog.this.dispose();
 			}
