@@ -19,7 +19,7 @@ per_page: 0
 theme: navy
 deploy:
   type: git
-  repo: git@github.com:SuperMap-iDesktop/SuperMap-iDesktop-Cross.git
+  repo: https://github.com/SuperMap-iDesktop/SuperMap-iDesktop-Cross.git
   branch: gh-pages
 
 duoshuo_shortname: qinlj
@@ -28,9 +28,8 @@ google_analytics: UA-4910098-10
 fb_admins: 100000247608790
 algolia:
   en:
-    appId: 5RHI0IBTOY
-    api_key: 730aa5a5d7de138e76eb18d00beb37eb
-    index_name: iDesktop-Cross-Docs
+    api_key: 87c625ea3b3f57f243d590e3c59b0748
+    index_name: supermap-idesktop
 # zh-tw:
 #   api_key: c83d2ec3440f40aec6d0e695ecec7ef3
 #   index_name: hexo_zh-tw
