@@ -619,7 +619,7 @@ public class ThemeGraduatedContainer extends ThemeChangePanel {
 
 		private void resetBaseValue() {
 			String strBaseValue = textFieldBaseValue.getText();
-			if (!StringUtilties.isNullOrEmpty(strBaseValue)) {
+			if (!StringUtilties.isNullOrEmpty(strBaseValue) && StringUtilties.isNumber(strBaseValue)) {
 				double newBaseValue = Double.parseDouble(strBaseValue);
 
 				if (Double.compare(newBaseValue, 0.0) == 0) {
