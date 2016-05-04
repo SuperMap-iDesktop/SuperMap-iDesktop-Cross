@@ -5,16 +5,12 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.LogUtilties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class DesktopActivator implements BundleActivator {
 
 
-	private static final Log log = LogFactory.getLog(DesktopActivator.class);
-	
 	private static BundleContext CONTEXT;
 
 	static BundleContext getContext() {
@@ -41,7 +37,6 @@ public class DesktopActivator implements BundleActivator {
 			UICommonToolkit.showMessageDialog(DesktopProperties.getString("PermissionCheckFailed"));
 			System.exit(0);
 		} else {
-//			UICommonToolkit.showMessageDialog(DesktopProperties.getString("PermissionCheckFailed"));
 			MainFrame mainFrame = new MainFrame();
 			Application.getActiveApplication().setMainFrame(mainFrame);
 			mainFrame.loadUI();

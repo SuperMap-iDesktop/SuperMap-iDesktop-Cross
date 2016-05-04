@@ -1,12 +1,18 @@
-#产品介绍
+# 产品介绍 #
         SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在Windows和Linux系统上运行，是国内首款可在Linux操作系统上运行的桌面GIS系统，实现了GIS数据在跨平台环境下的展示。SuperMap iDesktop Cross 8C是一款跨平台、全开源、可扩展的桌面GIS产品，也是超图新一代的开源GIS桌面产品。
         SuperMap iDesktop Cross 8C是基于SuperMap iObjects Java 8C、Eclipse和OSGI等平台，通过Java语言开发的插件式、跨平台GIS 应用软件，提供了地图制图、数据管理、数据处理、数据分析等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
 详情请访问 [Supermap 官网](http://www.supermap.com)
 
-#使用指南
+# 联机帮助 #
+SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网站工具 hexo 生成部署，并在 oschina 上托管联机帮助源代码，您可以基于该项目轻松扩展自己的联机帮助内容。同时同步推送至 Github pages 生成联机帮助项目主页，您可以在这里浏览查看最新的联机帮助内容。相关地址如下：
+
+- [oschina 联机帮助源代码地址](https://git.oschina.net/supermap/SuperMap-iDesktop-Cross-Docs "oschina 联机帮助源代码地址")
+- [Gtihub pages 联机帮助主页](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross "Github 联机帮助主页")
+
+# 使用指南 #
         配置好环境变量后在eclipse中导入工程即可直接启动。配置环境变量细节请参见《SuperMap iDesktop Cross 开发指南.md》第二章
 
-#更新历史
+# 更新历史 #
 
 * SuperMap iDesktop Cross 8C SP1 
     * 地图制图
@@ -20,17 +26,17 @@
 * SuperMap iDesktop Cross 8C
     * 产品发布
 
-#Release版地址
+# Release版地址 #
 
 *  [Release版下载地址](http://support.supermap.com.cn/DownloadCenter/ProductPlatform.aspx)
 
-#源代码地址
+# 源代码地址 #
 
 * [OSChina地址](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)
 
 * [CSDN地址](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross)
 
-#目录结构
+# 目录结构 #
 * Assistant
     
     帮助相关插件，提供帮助支持。
@@ -140,13 +146,13 @@
     用于存放桌面界面的布局，其中Default文件夹下存放的是windows平台用的布局环境，Linux文件夹下存放的是Linux平台使用的布局环境。
 
 
-#二次开发说明
+# 二次开发说明 #
 详情请参见 《SuperMap iDesktop Cross 开发指南.md》。
 
-#许可声明
+# 许可声明 #
 详情请参见 《LICENSE》。
 
-#FAQ
+# FAQ #
 
 Q：代码运行时抛异常
 
@@ -154,11 +160,11 @@ A：git上代码分为2个分支：master和develop。其中master分支为主�
 
 Q：字体显示异常
 
-A：在地图可视化过程中，会使用到一些特殊的字体，比如 “微软雅黑”等，这部分字体在 Linux操作系统中可能没有，从而导致地图注记等文本要素显示异常。请查看附件 fonts_1.zip 以及 fonts_2.zip，其中包含了主流常见字体，在 Linux操作系统使用本程序或源码时，请下载并解压到"根目录\Support\fonts\"目录（如果没有，请自行创建）中，并将此目录对应的宏写入环境变量中例如：export SUPERMAP_ROOT=/root/Documents/Support，export PATH=$LD_LIBRARY_PATH:$JRE_PATH:$PATH。（其中SUPERMAP_ROOT不可更改，/root/Documents/Support为Support文件夹的位置，可自行设置）。然后参照《SuperMap iDesktop Cross 8C 扩展开发指南.doc》进行环境配置，即可正常显示文本要素。
+A：在地图可视化过程中，会使用到一些特殊的字体，比如 “微软雅黑”等，这部分字体在 Linux操作系统中可能没有，从而导致地图注记等文本要素显示异常。请查看附件 fonts_1.zip 以及 fonts_2.zip，其中包含了主流常见字体，在 Linux操作系统使用本程序或源码时，请下载并解压到"根目录/support/fonts/"目录（如果没有，请自行创建）中，并添加环境变量 SUPERMAP_ROOT,该环境变量值设置为"根目录/support/"。然后参照《SuperMap iDesktop Cross 8C 扩展开发指南.doc》进行环境配置，即可正常显示文本要素。
 
 Q：没有中文环境的Linux系统中发布带中文名称的地图服务，浏览器中地图预览图片显示异常。
 
 A：若Linux没有中文环境，则发布的地图名称建议改成英文名称；或在有中文环境的Linux系统中发布含中文名称的地图服务。
 
-#更多帮助信息
+# 更多帮助信息 #
 请访问[SuperMap 技术资源中心](http://support.supermap.com.cn/product/iDesktop.aspx)获取技术支持。

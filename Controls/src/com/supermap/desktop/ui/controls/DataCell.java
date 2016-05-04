@@ -5,9 +5,9 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.utilties.DatasetTypeUtilties;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.net.URL;
 
@@ -118,7 +118,7 @@ public class DataCell extends JPanel {
 
 	private void init(ImageIcon icon, String name) {
 		this.dataName = name;
-		this.imageLabel = new JLabel(dataName,icon,JLabel.LEADING);
+		this.imageLabel = new JLabel(dataName, icon, JLabel.LEADING);
 		initComponents();
 	}
 
@@ -126,7 +126,7 @@ public class DataCell extends JPanel {
 		ImageIcon tempIcon = null;
 		if (null != url) {
 			tempIcon = new ImageIcon(url);
-			this.imageLabel = new JLabel(dataName,tempIcon,JLabel.LEADING);
+			this.imageLabel = new JLabel(dataName, tempIcon, JLabel.LEADING);
 		} else {
 			this.imageLabel = new JLabel();
 		}
@@ -135,7 +135,7 @@ public class DataCell extends JPanel {
 
 	private void initComponents() {
 		this.setSize(300, 15);
-		this.setLayout(new FlowLayout(FlowLayout.LEFT,2,0));
+		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		this.add(this.imageLabel);
 	}
 
@@ -181,8 +181,7 @@ public class DataCell extends JPanel {
 	 * <p/>
 	 * 根据图片路径和数据文字请使用initDataType()
 	 *
-	 * @param objects
-	 *            传入的参数
+	 * @param objects 传入的参数
 	 * @see DataCell#initDataType(String imagePath, String dataName)
 	 */
 	public DataCell(Object... objects) {
@@ -236,6 +235,9 @@ public class DataCell extends JPanel {
 			} else {
 				break;
 			}
+		}
+		if (datasetType != null && name == null) {
+			initDatasetType(datasetType, DatasetTypeUtilties.toString(datasetType));
 		}
 	}
 	// endregion

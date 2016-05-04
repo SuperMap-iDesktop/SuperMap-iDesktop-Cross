@@ -34,6 +34,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	protected boolean initialize() {
 		boolean result = false;
 		if (this.xmlToolbar != null) {
+			this.setRollover(true);
 			this.setFloatable(false);
 			this.setToolTipText(this.xmlToolbar.getTooltip());
 			setVisible(this.xmlToolbar.getVisible());
