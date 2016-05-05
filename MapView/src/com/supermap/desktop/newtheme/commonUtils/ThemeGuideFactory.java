@@ -15,6 +15,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonPanel.ThemeMainContainer;
+import com.supermap.desktop.newtheme.themeCustom.ThemeCustomContainer;
 import com.supermap.desktop.newtheme.themeDotDensity.ThemeDotDensityContainer;
 import com.supermap.desktop.newtheme.themeGraduatedSymbol.ThemeGraduatedSymbolContainer;
 import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
@@ -32,6 +33,7 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.ThemeCustom;
 import com.supermap.mapping.ThemeDotDensity;
 import com.supermap.mapping.ThemeGraduatedSymbol;
 import com.supermap.mapping.ThemeGraph;
@@ -71,6 +73,7 @@ public class ThemeGuideFactory {
 	private static final String THEMETYPE_GRID_RANGE = "ThemeType_Grid_Range";
 	private static final String THEMETYPE_GRADUATEDSYMBOL = "ThemeType_GraduatedSymbol";
 	private static final String THEMETYPE_DOTDENSITY = "ThemeType_DotDensity";
+	private static final String THEMETYPE_CUSTOM = "ThemeType_Custom";
 
 	/**
 	 * 界面替换
@@ -180,6 +183,9 @@ public class ThemeGuideFactory {
 		}
 		if (themetype == ThemeType.DOTDENSITY) {
 			result = THEMETYPE_DOTDENSITY;
+		}
+		if (themetype == ThemeType.CUSTOM) {
+			result = THEMETYPE_CUSTOM;
 		}
 		return result;
 	}
@@ -472,6 +478,19 @@ public class ThemeGuideFactory {
 		}
 		return successed;
 	}
+	
+	public static boolean buildCustomTheme(Layer layer){
+		boolean successed = false;
+		if (null!=getDataset()) {
+			ThemeCustom themeCustom = new ThemeCustom();
+			successed = true;
+			ThemeCustomContainer themeCustomContainer = new ThemeCustomContainer((DatasetVector) getDataset(), themeCustom, layer);
+			themeTypeContainer.put(themeCustomContainer.getCurrentLayer().getName()+"@"+THEMETYPE_CUSTOM, themeCustomContainer);
+			addPanelToThemeMainContainer(themeCustomContainer, null);
+			getDockbarThemeContainer().setVisible(true);
+		}
+		return successed;
+	}
 
 	/**
 	 * 计算矢量数据集中某个字段的最大值
@@ -571,6 +590,12 @@ public class ThemeGuideFactory {
 			if (THEMETYPE_DOTDENSITY.equals(themeType)) {
 				// 点密度专题图
 				themeContainer = new ThemeDotDensityContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
+			if (THEMETYPE_CUSTOM.equals(themeType)) {
+				//自定义专题图
+				themeContainer = new ThemeCustomContainer(layer);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}

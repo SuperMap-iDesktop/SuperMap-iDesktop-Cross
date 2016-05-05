@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -164,22 +165,24 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	}
 
 	public void validateLayerCaption(String caption) {
-		if (this.currentData instanceof Layer) {
-			((Layer) this.currentData).setCaption(caption);
-		} else if (this.currentData instanceof ThemeUniqueItem) {
-			((ThemeUniqueItem) this.currentData).setCaption(caption);
-		} else if (this.currentData instanceof ThemeRangeItem) {
-			((ThemeRangeItem) this.currentData).setCaption(caption);
-		} else if (this.currentData instanceof ThemeLabelItem) {
-			((ThemeLabelItem) this.currentData).setCaption(caption);
-		} else if (this.currentData instanceof ThemeGridUniqueItem) {
-			((ThemeGridUniqueItem) this.currentData).setCaption(caption);
-		} else if (this.currentData instanceof ThemeGridRangeItem) {
-			((ThemeGridRangeItem) this.currentData).setCaption(caption);
+		if (!StringUtilties.isNullOrEmpty(caption)) {
+			if (this.currentData instanceof Layer) {
+				((Layer) this.currentData).setCaption(caption);
+			} else if (this.currentData instanceof ThemeUniqueItem) {
+				((ThemeUniqueItem) this.currentData).setCaption(caption);
+			} else if (this.currentData instanceof ThemeRangeItem) {
+				((ThemeRangeItem) this.currentData).setCaption(caption);
+			} else if (this.currentData instanceof ThemeLabelItem) {
+				((ThemeLabelItem) this.currentData).setCaption(caption);
+			} else if (this.currentData instanceof ThemeGridUniqueItem) {
+				((ThemeGridUniqueItem) this.currentData).setCaption(caption);
+			} else if (this.currentData instanceof ThemeGridRangeItem) {
+				((ThemeGridRangeItem) this.currentData).setCaption(caption);
+			}
+			LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
+			tree.firePropertyChangeWithLayerSelect();
+			updateUI();
 		}
-		LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
-		tree.firePropertyChangeWithLayerSelect();
-		updateUI();
 	}
 
 	@Override

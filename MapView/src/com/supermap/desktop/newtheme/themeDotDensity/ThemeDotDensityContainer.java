@@ -1,36 +1,16 @@
 package com.supermap.desktop.newtheme.themeDotDensity;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
@@ -52,6 +32,11 @@ import com.supermap.mapping.ThemeDotDensity;
 import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
+/**
+ * 点密度专题图
+ * @author xie
+ *
+ */
 public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
@@ -95,10 +80,10 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	};
 
 
-	public ThemeDotDensityContainer(DatasetVector datasetVector, ThemeDotDensity themeDotDensity, Layer themeDotDensityLayer) {
+	public ThemeDotDensityContainer(DatasetVector datasetVector, ThemeDotDensity themeDotDensity, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeDotDensity = new ThemeDotDensity(themeDotDensity);
-		this.map = initCurrentTheme(datasetVector, themeDotDensityLayer);
+		this.map = initCurrentTheme(datasetVector, layer);
 		initComponents();
 		initResources();
 		registActionListener();

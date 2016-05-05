@@ -46,7 +46,6 @@ public class GraphThemePanel extends JPanel {
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(16)
 								.addComponent(labelGraphTheme)
 								.addContainerGap(200, Short.MAX_VALUE))
 				);

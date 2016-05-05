@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
@@ -233,7 +234,7 @@ public class ThemeUtil {
 				dialogResult = sqlDialog.showDialog(datasets, fieldTypes, expression);
 			} else {
 				dialogResult = sqlDialog.showDialog(expression, datasets);
-			} 
+			}
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 				if (!StringUtilties.isNullOrEmpty(filter)) {
@@ -280,6 +281,52 @@ public class ThemeUtil {
 			}
 		}
 		return datasets;
+	}
+
+	/**
+	 * 判断数据集是否为线数据集
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	public static boolean isLine(Dataset dataset) {
+		DatasetType type = dataset.getType();
+		boolean isLine = false;
+		if (type.equals(DatasetType.LINE) || type.equals(DatasetType.LINE3D) || type.equals(DatasetType.LINEM) || type.equals(DatasetType.NETWORK)
+				|| type.equals(DatasetType.NETWORK3D)) {
+			isLine = true;
+		}
+		return isLine;
+	}
+
+	/**
+	 * 判断数据集是否为点数据集
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	public static boolean isPoint(Dataset dataset) {
+		DatasetType type = dataset.getType();
+		boolean isPoint = false;
+		if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
+			isPoint = true;
+		}
+		return isPoint;
+	}
+
+	/**
+	 * 判断数据集是否为面数据集
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	public static boolean isRegion(Dataset dataset) {
+		DatasetType type = dataset.getType();
+		boolean isRegion = false;
+		if (type.equals(DatasetType.REGION) || type.equals(DatasetType.REGION3D)) {
+			isRegion = true;
+		}
+		return isRegion;
 	}
 
 	private static void resetComboBoxInfo(JComboBox<String> jComboBoxField, ArrayList<String> comboBoxArray, String expression) {

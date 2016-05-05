@@ -39,6 +39,8 @@ public class ThemeGuidDialog extends SmDialog {
 	private boolean isRange = false;
 	private boolean isCadType = false;
 	private boolean isGridType = false;
+	private boolean hasDotDensityList = false;
+	
 
 	private DatasetType activeDatasetType = ThemeUtil.getActiveLayer().getDataset().getType();
 
@@ -121,12 +123,13 @@ public class ThemeGuidDialog extends SmDialog {
 		DataCell graduatedSymbolCell = new DataCell(MapViewProperties.getString("String_Theme_GraduatedSymbol"),
 				InternalImageIconFactory.THEMEGUIDE_GRADUATEDSYMBOL);
 		DataCell dotDensityCell = new DataCell(MapViewProperties.getString("String_Theme_DotDensity"), InternalImageIconFactory.THEMEGUIDE_DOTDENSITY);
+		DataCell customCell = new DataCell(MapViewProperties.getString("String_ThemeCustom"),InternalImageIconFactory.THEMEGUIDE_CUSTOM);
 		if (isCadType) {
 			listModel.addElement(labelDataCell);
-		}else if(isGridType) {
+		} else if (isGridType) {
 			listModel.addElement(gridUniqueCell);
 			listModel.addElement(gridRangeCell);
-		}else{
+		} else {
 			listModel.addElement(uniqueDataCell);
 			listModel.addElement(rangeDataCell);
 			listModel.addElement(labelDataCell);
@@ -134,7 +137,11 @@ public class ThemeGuidDialog extends SmDialog {
 			listModel.addElement(graduatedSymbolCell);
 			if (activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D) {
 				listModel.addElement(dotDensityCell);
+				hasDotDensityList = true;
+			}else {
+				hasDotDensityList = false;
 			}
+			listModel.addElement(customCell);
 		}
 		this.listContent.setModel(listModel);
 		this.listContent.setSelectedIndex(0);
@@ -201,8 +208,16 @@ public class ThemeGuidDialog extends SmDialog {
 			}
 			break;
 		case 5:
-			if (null != getRightPanel()&&(activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D)) {
+			if (null != getRightPanel() && hasDotDensityList) {
 				replaceRightPanel(new DotDensityThemePanel(this));
+			}
+			if (null!=getRightPanel() && !hasDotDensityList) {
+				replaceRightPanel(new CustomThemePanel(this));
+			}
+			break;
+		case 6:
+			if (null!=getRightPanel()) {
+				replaceRightPanel(new CustomThemePanel(this));
 			}
 			break;
 		default:
@@ -365,7 +380,7 @@ public class ThemeGuidDialog extends SmDialog {
 			}
 			break;
 		case 5:
-			if (activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D) {
+			if (hasDotDensityList) {
 				// 点密度专题图
 				buildSuccessed = ThemeGuideFactory.buildDotDensityTheme(ThemeUtil.getActiveLayer());
 				if (buildSuccessed) {
@@ -373,10 +388,18 @@ public class ThemeGuidDialog extends SmDialog {
 				}
 			} else {
 				// 自定义专题图
+				buildSuccessed = ThemeGuideFactory.buildCustomTheme(ThemeUtil.getActiveLayer());
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
 			}
 			break;
 		case 6:
-
+			// 自定义专题图
+			buildSuccessed = ThemeGuideFactory.buildCustomTheme(ThemeUtil.getActiveLayer());
+			if (buildSuccessed) {
+				ThemeGuidDialog.this.dispose();
+			}
 		default:
 			break;
 		}
