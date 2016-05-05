@@ -126,7 +126,6 @@ public class ThemeGuidDialog extends SmDialog {
 		}else if(isGridType) {
 			listModel.addElement(gridUniqueCell);
 			listModel.addElement(gridRangeCell);
-			return;
 		}else{
 			listModel.addElement(uniqueDataCell);
 			listModel.addElement(rangeDataCell);
