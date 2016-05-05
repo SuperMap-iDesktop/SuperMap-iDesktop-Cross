@@ -1,6 +1,5 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,7 +12,6 @@ import java.util.List;
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -58,6 +56,8 @@ public class EraseEditor extends AbstractEditor {
 	private Action oldMapControlAction = Action.SELECT2;
 	private TrackMode oldTrackMode = TrackMode.EDIT;
 
+	private int pressedKey = 0;
+
 	private MouseListener mouseListener = new MouseAdapter() {
 
 		@Override
@@ -71,11 +71,32 @@ public class EraseEditor extends AbstractEditor {
 		}
 	};
 
+	/**
+	 * 由于 Ctrl 是常用组合键功能，比如 Ctrl + Z 回退。因此按 Ctrl 切换的功能点需要过滤掉使用组合键的情况。
+	 */
 	private KeyListener keyListener = new KeyAdapter() {
+
+		public void keyTyped(KeyEvent e) {
+			EraseEditor.this.pressedKey = EraseEditor.this.pressedKey | e.getKeyCode();
+		}
+
+		/**
+		 * Invoked when a key has been pressed.
+		 */
+		public void keyPressed(KeyEvent e) {
+			EraseEditor.this.pressedKey = EraseEditor.this.pressedKey | e.getKeyCode();
+		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			EraseEditor.this.keyPressed(e);
+			try {
+				// 判断如果只按下了 Ctrl 键，则进行擦除模式的切换
+				if (EraseEditor.this.pressedKey == KeyEvent.VK_CONTROL) {
+					setIsEraseExternal(!EraseEditor.this.isEraseExternal);
+				}
+			} finally {
+				EraseEditor.this.pressedKey = 0;
+			}
 		}
 	};
 
@@ -167,12 +188,6 @@ public class EraseEditor extends AbstractEditor {
 
 	private void mouseExited() {
 
-	}
-
-	private void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-			setIsEraseExternal(!this.isEraseExternal);
-		}
 	}
 
 	private void geometrySelected(GeometrySelectedEvent e) {
