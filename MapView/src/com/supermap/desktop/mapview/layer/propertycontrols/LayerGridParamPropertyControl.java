@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.Colors;
 import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -11,7 +12,6 @@ import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
-import com.supermap.desktop.ui.controls.ColorsComboBox;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

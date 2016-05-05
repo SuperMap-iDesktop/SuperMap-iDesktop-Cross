@@ -165,6 +165,10 @@ public class NewDatasetTableModel extends DefaultTableModel {
 				datasetNames.add(datasetBeans.get(i).getDatasetName());
 			}
 		}
+		String datasetName = datasetBeans.get(row).getDatasource().getDatasets().getAvailableDatasetName(aValue);
+		if (datasetName.indexOf(aValue) != 0) {
+			aValue = getDefaultDatasetName(datasetBeans.get(row).getDatasetType());
+		}
 		datasetBeans.get(row).setDatasetName(getUsableDatasetName(aValue, datasetBeans.get(row).getDatasource(), datasetNames, 0));
 
 		if (row == datasetBeans.size() - 1) {
@@ -174,6 +178,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	}
 
 	private String getUsableDatasetName(String source, Datasource datasource, List<String> datasetNames, int i) {
+//		return CommonToolkit.DatasetWrap.getAvailableDatasetName(datasource, source,datasetNames.toArray(new String[datasetNames.size()]));
 		if (StringUtilties.isNullOrEmpty(source)) {
 			throw new UnsupportedOperationException("name should not null");
 		}
@@ -181,12 +186,15 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		if (i != 0) {
 			currentDataset = getComboDatasetName(currentDataset, i);
 		}
-		if (datasetNames.contains(currentDataset)) {
+		String tempDatasetName = datasource.getDatasets().getAvailableDatasetName(currentDataset);
+		if (tempDatasetName.indexOf(currentDataset) != 0) {
+			source = tempDatasetName;
+		}
+		if (!tempDatasetName.equals(currentDataset)) {
 			i++;
 			return getUsableDatasetName(source, datasource, datasetNames, i);
 		}
-		String tempDatasetName = datasource.getDatasets().getAvailableDatasetName(currentDataset);
-		if (!tempDatasetName.equals(currentDataset)) {
+		if (datasetNames.contains(currentDataset)) {
 			i++;
 			return getUsableDatasetName(source, datasource, datasetNames, i);
 		}
@@ -248,8 +256,10 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 	@Override
 	public void removeRow(int row) {
-		this.datasetBeans.remove(row);
-		fireTableRowsDeleted(row, row);
+		if (row != this.getRowCount() - 1) {
+			this.datasetBeans.remove(row);
+			fireTableRowsDeleted(row, row);
+		}
 	}
 
 	public void addEmptyRow() {

@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import org.w3c.dom.Attr;
@@ -15,8 +16,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 
 /**
@@ -86,11 +85,7 @@ public class SmFileChoose extends JFileChooser {
 		if (!file.exists()) {
 			try {
 				if (file.createNewFile()) {
-					FileOutputStream fOutputStream = new FileOutputStream(file.getPath());
-					OutputStreamWriter OutputStreamWriter = new OutputStreamWriter(fOutputStream, "UTF-8");
-					OutputStreamWriter.write(ControlsProperties.getString("String_InitRecntFileString"));
-					OutputStreamWriter.flush();
-					OutputStreamWriter.close();
+					FileUtilties.writeToFile(file, ControlsProperties.getString("String_InitRecntFileString"));
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
