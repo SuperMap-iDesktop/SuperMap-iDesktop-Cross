@@ -1,8 +1,8 @@
 # SuperMap iDesktop Cross Docs
 
-　　SuperMap iDesktop Cross 的帮助文档是基于 Hexo 生成的静态网站，文档的主要内容为 SuperMap iDesktop Cross 的产品介绍、功能描述、使用说明、新特性等，其源代码会实时更新至 OSChina 中，日常的文档更新会实时推送至 GitHub 的 gh-pages 服务上，可通过以下链接查看： [http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/)，同时，SuperMap iDesktop Cross 发布新版本时，相应的联机帮助也会更新部署到 SuperMap 官网的资源中心处，具体链接为 [http://support.supermap.com.cn/SuperMap-iDesktop-Cross/](http://support.supermap.com.cn/SuperMap-iDesktop-Cross/)。
-
 　　SuperMap iDesktop Cross 是一款开源的 GIS 产品，是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在 Windows 和 Linux 系统上运行，其源代码获取地址为：[http://git.oschina.net/supermap/SuperMap-iDesktop-Cross](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
+
+　　SuperMap iDesktop Cross 的帮助文档是基于 Hexo 生成的静态网站，文档的主要内容为 SuperMap iDesktop Cross 的产品介绍、功能描述、使用说明、新特性等。其源代码会实时更新至 OSChina 中，日常的文档更新会实时推送至 GitHub 的 gh-pages 服务上，可通过以下链接查看： [http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/)。同时，SuperMap iDesktop Cross 发布新版本时，相应的联机帮助也会更新部署到 SuperMap 官网的资源中心处，具体链接为 [http://support.supermap.com.cn/SuperMap-iDesktop-Cross/](http://support.supermap.com.cn/SuperMap-iDesktop-Cross/)。
 
 ## 简介
 
@@ -12,13 +12,14 @@
 
 * **配置 Node.js 环境**
 
-通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows 系统可选择安装相应的 [Node.js](https://nodejs.org/en/) 版本。
+通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows/Linux 系统可选择安装相应的 [Node.js](https://nodejs.org/en/) 版本。
 
 
 * **安装Git**
 
    - Windows：下载安装[Git](https://git-scm.com/downloads)
    - [Linux](https://git-scm.com/download/linux)
+
 
 * **配置 Hexo 环境**
 
