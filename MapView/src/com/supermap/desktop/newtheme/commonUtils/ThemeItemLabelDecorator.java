@@ -24,15 +24,17 @@ public class ThemeItemLabelDecorator {
 	/**
 	 * 通过给定的数据集和专题图项样式绘制图片
 	 *
-	 * @param dataset 给定的数据集
-	 * @param geoStyle 专题图项样式
+	 * @param dataset
+	 *            给定的数据集
+	 * @param geoStyle
+	 *            专题图项样式
 	 * @return 目标图片
 	 */
 	public static ImageIcon buildGeoStyleIcon(Dataset dataset, GeoStyle geoStyle) {
 		ImageIcon geoStyleIcon = new ImageIcon();
 		BufferedImage bufferedImage = new BufferedImage(100, 20, BufferedImage.TYPE_INT_ARGB);
 		Graphics graphics = bufferedImage.getGraphics();
-		Geometry geometry = getGeometryByDatasetType(dataset.getType());
+		Geometry geometry = getGeometryByDatasetType(dataset);
 		geometry.setStyle(geoStyle);
 		Resources resources = dataset.getDatasource().getWorkspace().getResources();
 		Toolkit.draw(geometry, resources, graphics);
@@ -63,14 +65,16 @@ public class ThemeItemLabelDecorator {
 	/**
 	 * 通过给定的数据集和专题图项样式绘制图片
 	 *
-	 * @param dataset 给定的数据集
-	 * @param color 指定颜色
+	 * @param dataset
+	 *            给定的数据集
+	 * @param color
+	 *            指定颜色
 	 * @return 目标图片
 	 */
 	public static ImageIcon buildColorIcon(Dataset dataset, Color color) {
 		ImageIcon colorIcon = new ImageIcon();
 		BufferedImage bufferedImage = new BufferedImage(100, 20, BufferedImage.TYPE_INT_ARGB);
-		Geometry geometry = getGeometryByDatasetType(dataset.getType());
+		Geometry geometry = getGeometryByDatasetType(dataset);
 		Graphics graphics = bufferedImage.getGraphics();
 		GeoStyle geoStyle = new GeoStyle();
 		geoStyle.setFillBackColor(color);
@@ -89,19 +93,18 @@ public class ThemeItemLabelDecorator {
 	 * @param type
 	 * @return
 	 */
-	public static Geometry getGeometryByDatasetType(DatasetType type) {
-		if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
+	public static Geometry getGeometryByDatasetType(Dataset dataset) {
+		if (ThemeUtil.isPoint(dataset)) {
 			GeoPoint geoPoint = new GeoPoint(50, 10);
 			return geoPoint;
 		}
-		if (type.equals(DatasetType.LINE) || type.equals(DatasetType.LINE3D) || type.equals(DatasetType.LINEM) || type.equals(DatasetType.NETWORK)
-				|| type.equals(DatasetType.NETWORK3D)) {
+		if (ThemeUtil.isLine(dataset)) {
 			Point2D[] pts = { new Point2D(0, 10), new Point2D(100, 10) };
 			Point2Ds ds = new Point2Ds(pts);
 			GeoLine geoLine = new GeoLine(ds);
 			return geoLine;
 		}
-		if (type.equals(DatasetType.REGION) || type.equals(DatasetType.REGION3D)||type.equals(DatasetType.GRID)) {
+		if (ThemeUtil.isRegion(dataset) || dataset.getType().equals(DatasetType.GRID)) {
 			Point2D[] points = { new Point2D(0, 0), new Point2D(0, 20), new Point2D(100, 20), new Point2D(100, 0) };
 			Point2Ds ds = new Point2Ds(points);
 			GeoRegion geoRegion = new GeoRegion(ds);

@@ -37,7 +37,7 @@ public class RangeThemePanel extends JPanel {
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGap(16).addComponent(labelRangeTheme).addContainerGap(300, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(16).addComponent(labelRangeTheme).addContainerGap(200, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addComponent(labelRangeTheme).addContainerGap(200, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 	}
 

@@ -14,13 +14,13 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
-public class DotDensityThemePanel extends JPanel{
+public class CustomThemePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
-	private ThemeLabelDecorator dotDensityTheme;
+	private ThemeLabelDecorator customTheme;
 	private transient ThemeGuidDialog themeGuidDialog;
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
 
-	public DotDensityThemePanel(ThemeGuidDialog themeGuidDialog) {
+	public CustomThemePanel(ThemeGuidDialog themeGuidDialog) {
 		this.themeGuidDialog = themeGuidDialog;
 		initComponents();
 		registListener();
@@ -31,8 +31,8 @@ public class DotDensityThemePanel extends JPanel{
 	 */
 	private void initComponents() {
 		// @formatter:off
-		this.dotDensityTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_DOTDENSITY, MapViewProperties.getString("String_ThemeDefaultItem"));
-		this.dotDensityTheme.selected(true);
+		this.customTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_CUSTOM, MapViewProperties.getString("String_ThemeDefaultItem"));
+		this.customTheme.selected(true);
 		this.setBackground(Color.WHITE);
 		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
@@ -40,13 +40,13 @@ public class DotDensityThemePanel extends JPanel{
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 								.addGap(16)
-								.addComponent(dotDensityTheme)
+								.addComponent(customTheme)
 								.addContainerGap(300, Short.MAX_VALUE))
 				);
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(dotDensityTheme)
+								.addComponent(customTheme)
 								.addContainerGap(200, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
@@ -57,14 +57,14 @@ public class DotDensityThemePanel extends JPanel{
 	 * 注册事件
 	 */
 	private void registListener() {
-		this.dotDensityTheme.addMouseListener(this.mouseListener);
+		this.customTheme.addMouseListener(this.mouseListener);
 	}
 
 	/**
 	 * 注销事件
 	 */
 	public void unregistListener() {
-		this.dotDensityTheme.removeMouseListener(this.mouseListener);
+		this.customTheme.removeMouseListener(this.mouseListener);
 	}
 
 	class LocalMouseListener extends MouseAdapter {
@@ -73,7 +73,7 @@ public class DotDensityThemePanel extends JPanel{
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				// 点密度专题图
-				ThemeGuideFactory.buildDotDensityTheme(ThemeUtil.getActiveLayer());
+				ThemeGuideFactory.buildCustomTheme(ThemeUtil.getActiveLayer());
 				themeGuidDialog.dispose();
 				unregistListener();
 			}
