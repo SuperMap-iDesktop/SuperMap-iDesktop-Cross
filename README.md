@@ -10,18 +10,17 @@
 
 ## 环境配置
 
-- **配置 Node.js 环境**
+* **配置 Node.js 环境**
 
-通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows 系统可选择安装相应的 Node.js 版本。
+通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows 系统可选择安装相应的 [Node.js](https://nodejs.org/en/) 版本。
 
-   - [Node.js](https://nodejs.org/en/)
-　　
-- **安装Git**
 
-    - Windows：下载安装[Git](https://git-scm.com/downloads)
-    - [Linux](https://git-scm.com/download/linux)
+* **安装Git**
 
-- **配置 Hexo 环境**
+   - Windows：下载安装[Git](https://git-scm.com/downloads)
+   - [Linux](https://git-scm.com/download/linux)
+
+* **配置 Hexo 环境**
 
 安装 Hexo，打开命令行窗口，在命令行中执行：
 
