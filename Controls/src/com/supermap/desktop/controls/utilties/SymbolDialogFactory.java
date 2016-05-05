@@ -24,7 +24,7 @@ public class SymbolDialogFactory {
 	}
 
 	private static SymbolDialog getSymbolMarkerDialog() {
-		if (symbolDialogPoint == null) {
+		if (symbolDialogPoint == null || symbolDialogPoint.isDisposed()) {
 			symbolDialogPoint = new SymbolDialogPoint();
 		} else if (symbolDialogPoint.getCurrentResources() != Application.getActiveApplication().getWorkspace().getResources()) {
 			symbolDialogPoint.dispose();
@@ -34,7 +34,7 @@ public class SymbolDialogFactory {
 	}
 
 	private static SymbolDialog getSymbolLineDialog() {
-		if (symbolDialogLine == null) {
+		if (symbolDialogLine == null || symbolDialogLine.isDisposed()) {
 			symbolDialogLine = new SymbolDialogLine();
 		} else if (symbolDialogLine.getCurrentResources() != Application.getActiveApplication().getWorkspace().getResources()) {
 			symbolDialogLine.dispose();
@@ -44,7 +44,7 @@ public class SymbolDialogFactory {
 	}
 
 	private static SymbolDialog getSymbolFillDialog() {
-		if (symbolDialogFill == null) {
+		if (symbolDialogFill == null || symbolDialogFill.isDisposed()) {
 			symbolDialogFill = new SymbolDialogFill();
 		} else if (symbolDialogFill.getCurrentResources() != Application.getActiveApplication().getWorkspace().getResources()) {
 			symbolDialogFill.dispose();

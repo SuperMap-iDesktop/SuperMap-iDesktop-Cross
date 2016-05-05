@@ -71,6 +71,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 	protected IGeoStylePropertyChange geoStylePropertyChange;
 
+	private boolean isDisposed = false;
 	/**
 	 * 精度
 	 */
@@ -473,7 +474,18 @@ public abstract class SymbolDialog extends SmDialog {
 		return 100 - value;
 	}
 
+	@Override
+	public void dispose() {
+		isDisposed = true;
+		super.dispose();
+		panelPreview.dispose();
+	}
+
 	public Resources getCurrentResources() {
 		return currentResources;
+	}
+
+	public boolean isDisposed() {
+		return isDisposed;
 	}
 }

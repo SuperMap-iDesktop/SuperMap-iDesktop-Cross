@@ -137,4 +137,8 @@ public class SymbolPreViewPanel extends JPanel {
 		map.refresh();
 	}
 
+	public void dispose() {
+		map.close();
+		preViewMapControl.dispose();
+	}
 }
