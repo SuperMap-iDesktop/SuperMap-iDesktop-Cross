@@ -46,7 +46,6 @@ public class GraduatedSymbolThemePanel extends JPanel{
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(16)
 								.addComponent(graduatedSymbolTheme)
 								.addContainerGap(200, Short.MAX_VALUE))
 				);

@@ -233,6 +233,7 @@ public class ThemeMainContainer extends JPanel {
 				layersTree.reload();
 				layersTree.setSelectionRow(row);
 				buttonApply.setEnabled(false);
+				ThemeGuideFactory.getMapControl().getMap().refresh();
 			}
 		}
 	}
