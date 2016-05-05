@@ -1,11 +1,14 @@
 package com.supermap.desktop.newtheme.commonUtils;
 
 import com.supermap.data.ColorGradientType;
+import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
+import com.supermap.data.Recordset;
+import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -242,13 +245,6 @@ public class ThemeGuideFactory {
 		return success;
 	}
 
-	private static String hasJoinItems(Layer layer, String expression) {
-		if (layer.getDisplayFilter().getJoinItems().getCount() > 0) {
-			expression = getDataset().getName() + "." + expression;
-		}
-		return expression;
-	}
-
 	/**
 	 * 新建分段专题图
 	 */
@@ -445,7 +441,7 @@ public class ThemeGuideFactory {
 				successed = true;
 				themeGraduated.setExpression(expression);
 				ThemeGraduatedSymbolContainer themeGraduatedContainer = new ThemeGraduatedSymbolContainer((DatasetVector) getDataset(), themeGraduated, layer);
-				themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
+				themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
 				addPanelToThemeMainContainer(themeGraduatedContainer, null);
 				getDockbarThemeContainer().setVisible(true);
 			}
@@ -467,12 +463,33 @@ public class ThemeGuideFactory {
 			String expression = "SmID";
 			expression = hasJoinItems(layer, expression);
 			themeDotDensity.setDotExpression(expression);
+			double maxValue = getMaxValue((DatasetVector) getDataset(), "SmID");
+			themeDotDensity.setValue(maxValue / 1000);
 			ThemeDotDensityContainer themeDotDensityContainer = new ThemeDotDensityContainer((DatasetVector) getDataset(), themeDotDensity, layer);
-			themeTypeContainer.put(themeDotDensityContainer.getCurrentLayer().getName() + "" + THEMETYPE_DOTDENSITY, themeDotDensityContainer);
+			themeTypeContainer.put(themeDotDensityContainer.getCurrentLayer().getName() + "@" + THEMETYPE_DOTDENSITY, themeDotDensityContainer);
 			addPanelToThemeMainContainer(themeDotDensityContainer, null);
 			getDockbarThemeContainer().setVisible(true);
 		}
 		return successed;
+	}
+
+	/**
+	 * 计算矢量数据集中某个字段的最大值
+	 * 
+	 * @param datasetVector
+	 * @return
+	 */
+	public static double getMaxValue(DatasetVector datasetVector, String expression) {
+		Recordset recordset = datasetVector.getRecordset(false, CursorType.STATIC);
+		double maxValue = recordset.statistic(expression, StatisticMode.MAX);
+		return maxValue;
+	}
+
+	private static String hasJoinItems(Layer layer, String expression) {
+		if (layer.getDisplayFilter().getJoinItems().getCount() > 0) {
+			expression = getDataset().getName() + "." + expression;
+		}
+		return expression;
 	}
 
 	/**

@@ -171,6 +171,9 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		this.comboBoxExpression = new JComboBox<String>();
 		this.comboBoxGraduatedMode = new JComboBox<String>();
 		this.textFieldBaseValue = new JTextField();
+		this.comboBoxExpression.setPreferredSize(new Dimension(100, 23));
+		this.comboBoxGraduatedMode.setPreferredSize(new Dimension(100, 23));
+		this.textFieldBaseValue.setPreferredSize(new Dimension(100, 23));
 		initTextFieldBaseValue();
 		initComboBoxGraduatedMode();
 		initComboboxExpression();
