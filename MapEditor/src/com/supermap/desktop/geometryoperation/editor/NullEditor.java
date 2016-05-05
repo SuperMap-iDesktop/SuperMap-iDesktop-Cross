@@ -18,11 +18,6 @@ public class NullEditor implements IEditor {
 	}
 
 	@Override
-	public Action getMapControlAction() {
-		return Action.NULL;
-	}
-
-	@Override
 	public void activate(EditEnvironment environment) {
 		// 什么都不做
 	}

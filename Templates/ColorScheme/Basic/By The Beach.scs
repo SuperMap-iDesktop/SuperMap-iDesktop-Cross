@@ -1,4 +1,4 @@
-﻿<ColorScheme>
+<ColorScheme>
   <FileHeader>
     <FileType>678370</FileType>
     <Version>60000</Version>
@@ -7,7 +7,7 @@
     <Description></Description>
     <ColorSystem>1</ColorSystem>
     <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>4</KeyColorCount>
+    <KeyColorCount>5</KeyColorCount>
     <IntervalColorCount>64</IntervalColorCount>
   </FileHeader>
   <DataBlock>
@@ -39,5 +39,12 @@
       <Green>195</Green>
       <Blue>42</Blue>
     </KeyColor4>
+    <KeyColor5>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>255</Red>
+      <Green>195</Green>
+      <Blue>42</Blue>
+    </KeyColor5>
   </DataBlock>
 </ColorScheme>

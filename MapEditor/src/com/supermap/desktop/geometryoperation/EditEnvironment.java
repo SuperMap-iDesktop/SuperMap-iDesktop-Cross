@@ -1,6 +1,5 @@
 package com.supermap.desktop.geometryoperation;
 
-import java.awt.MouseInfo;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -49,8 +48,6 @@ import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
-import com.supermap.data.MapClearedEvent;
-import com.supermap.data.MapClearedListener;
 import com.supermap.data.Recordset;
 
 // @formatter:off
@@ -199,20 +196,14 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			this.editor = editor;
 
-			// if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
-			// this.formMap.getMapControl().setAction(oldMapControlAction);
-			// this.formMap.getMapControl().setTrackMode(oldTrackMode);
-			// } else {
-			// this.oldMapControlAction = this.formMap.getMapControl().getAction();
-			// this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
-			// this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
-			// this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
-			// }
-
 			this.editor.activate(this);
 		} finally {
 			this.isInitialAction = false;
 		}
+	}
+
+	public void stopEditor() {
+		activateEditor(NullEditor.INSTANCE);
 	}
 
 	/**

@@ -3,6 +3,9 @@ package com.supermap.desktop.utilties;
 import com.supermap.desktop.Application;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class FileUtilties {
 
@@ -104,5 +107,28 @@ public class FileUtilties {
 	 */
 	public static boolean exists(String filePath) {
 		return new File(filePath).exists();
+	}
+
+	public static boolean writeToFile(String filePath, String value) {
+		return writeToFile(new File(filePath), value);
+	}
+
+	public static boolean writeToFile(File file, String value) {
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			if (file.exists()) {
+				FileOutputStream fOutputStream = new FileOutputStream(file.getPath());
+				OutputStreamWriter OutputStreamWriter = new OutputStreamWriter(fOutputStream, "UTF-8");
+				OutputStreamWriter.write(value);
+				OutputStreamWriter.flush();
+				OutputStreamWriter.close();
+			}
+		} catch (IOException e) {
+			Application.getActiveApplication().getOutput().output(e);
+			return false;
+		}
+		return true;
 	}
 }

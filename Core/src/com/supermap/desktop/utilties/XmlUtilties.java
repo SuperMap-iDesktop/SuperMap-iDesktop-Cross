@@ -31,8 +31,7 @@ public class XmlUtilties {
 	}
 
 	public static Document getDocument(String filePath) {
-		Document document = getDocument(filePath, 0);
-		return document;
+		return getDocument(filePath, 0);
 	}
 
 	private static Document getDocument(String filePath, int i) {

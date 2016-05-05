@@ -111,6 +111,7 @@ public class JDialogDatasetNew extends SmDialog {
 		datasourceComboBox.setSelectedIndex(selectedIndex);
 
 		DefaultCellEditor targetDatasourceCellEditor = new DefaultCellEditor(datasourceComboBox);
+		targetDatasourceCellEditor.setClickCountToStart(2);
 		TableColumn targetDatasourceColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE);
 		targetDatasourceColumn.setCellEditor(targetDatasourceCellEditor);
 		// 设置渲染
@@ -129,6 +130,7 @@ public class JDialogDatasetNew extends SmDialog {
 		datasetTypes.add(DatasetType.REGION3D);
 		final DatasetComboBox comboBoxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
+		datasetTypeCellEditor.setClickCountToStart(2);
 		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType);
 		datasetTypeColumn.setCellEditor(datasetTypeCellEditor);
 		datasetTypeColumn.setPreferredWidth(100);
@@ -144,6 +146,7 @@ public class JDialogDatasetNew extends SmDialog {
 		ComboBoxCellEditor addToCellEditor = new ComboBoxCellEditor();
 		addToCellEditor.getComboBox().setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
 		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+		addToCellEditor.setClickCountToStart(2);
 		addToColumn.setCellEditor(addToCellEditor);
 	}
 
@@ -299,6 +302,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		public CharsetTypeCellEditor() {
 			super(new JComboBox());
+			this.setClickCountToStart(2);
 			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
 			tempcharsharsetes.add(CharsetUtilties.toString(Charset.OEM));
 			tempcharsharsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
@@ -351,6 +355,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		public EncodingTypeCellEditor() {
 			super(new JComboBox());
+			this.setClickCountToStart(2);
 		}
 
 		@Override
