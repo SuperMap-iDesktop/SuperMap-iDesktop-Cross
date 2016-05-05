@@ -199,15 +199,15 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 			this.editor = editor;
 
-			// if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
-			// this.formMap.getMapControl().setAction(oldMapControlAction);
-			// this.formMap.getMapControl().setTrackMode(oldTrackMode);
-			// } else {
-			// this.oldMapControlAction = this.formMap.getMapControl().getAction();
-			// this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
-			// this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
-			// this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
-			// }
+			if (this.editor == NullEditor.INSTANCE || this.editor.getMapControlAction() == Action.NULL) {
+				this.formMap.getMapControl().setAction(oldMapControlAction);
+				this.formMap.getMapControl().setTrackMode(oldTrackMode);
+			} else {
+				this.oldMapControlAction = this.formMap.getMapControl().getAction();
+				this.oldTrackMode = this.formMap.getMapControl().getTrackMode();
+				this.formMap.getMapControl().setAction(this.editor.getMapControlAction());
+				this.formMap.getMapControl().setTrackMode(TrackMode.TRACK);
+			}
 
 			this.editor.activate(this);
 		} finally {
