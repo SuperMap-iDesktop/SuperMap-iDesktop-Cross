@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.EventObject;
 import java.util.List;
 
 import com.supermap.data.EditHistory;
@@ -33,7 +34,9 @@ import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.RedoneListener;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.UndoneListener;
 
 // @formatter:off
 /**
@@ -51,7 +54,6 @@ public class EraseEditor extends AbstractEditor {
 
 	private boolean isEraseExternal = false; // 是否擦除外部
 	private Geometry srRegion = new GeoRegion(); // 用来擦除的面对象
-	private GeoStyle trackingStyle = new GeoStyle(); // 用来在 trackingLayer 做展示的风格
 
 	private Action oldMapControlAction = Action.SELECT2;
 	private TrackMode oldTrackMode = TrackMode.EDIT;
@@ -85,10 +87,28 @@ public class EraseEditor extends AbstractEditor {
 		}
 	};
 
+	private UndoneListener undoneListener = new UndoneListener() {
+
+		@Override
+		public void undone(EventObject arg0) {
+
+			// undone 的时候清除 trackingLayer
+			clearResultTracking((MapControl) arg0.getSource());
+		}
+	};
+
+	private RedoneListener redoneListener = new RedoneListener() {
+
+		@Override
+		public void redone(EventObject arg0) {
+
+			// redone 的时候清除 trackingLayer
+			clearResultTracking((MapControl) arg0.getSource());
+		}
+	};
+
 	public EraseEditor() {
 		super();
-		this.trackingStyle.setLineColor(Color.RED);
-		this.trackingStyle.setLineWidth(1);
 	}
 
 	@Override
@@ -128,6 +148,8 @@ public class EraseEditor extends AbstractEditor {
 		mapControl.addMouseListener(this.mouseListener);
 		mapControl.addKeyListener(this.keyListener);
 		mapControl.addGeometrySelectedListener(this.geometrySelectedListener);
+		mapControl.addUndoneListener(this.undoneListener);
+		mapControl.addRedoneListener(this.redoneListener);
 	}
 
 	private void unregisterEvents(EditEnvironment environment) {
@@ -135,6 +157,8 @@ public class EraseEditor extends AbstractEditor {
 		mapControl.removeMouseListener(this.mouseListener);
 		mapControl.removeKeyListener(this.keyListener);
 		mapControl.removeGeometrySelectedListener(this.geometrySelectedListener);
+		mapControl.removeUndoneListener(this.undoneListener);
+		mapControl.removeRedoneListener(this.redoneListener);
 	}
 
 	private void mouseEntered() {
@@ -246,7 +270,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.erase(this.srRegion, geometry.getGeometry());
+				eraseResult = Geometrist.erase(geometry.getGeometry(), this.srRegion);
 
 				// 没有擦除结果，删除被擦除对象
 				if (eraseResult == null) {
@@ -279,7 +303,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.clip(this.srRegion, geometry.getGeometry());
+				eraseResult = Geometrist.clip(geometry.getGeometry(), this.srRegion);
 
 				// 没有擦除结果，删除被擦除对象
 				if (eraseResult == null) {
