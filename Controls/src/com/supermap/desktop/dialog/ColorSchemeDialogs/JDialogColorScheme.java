@@ -62,7 +62,7 @@ public class JDialogColorScheme extends SmDialog {
 
 	private void initLayout() {
 		initToolBarLayout();
-
+		
 	}
 
 	private void initToolBarLayout() {
