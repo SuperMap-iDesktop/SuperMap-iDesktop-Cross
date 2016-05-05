@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
-import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
@@ -34,6 +33,7 @@ import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
 
 // @formatter:off
 /**
@@ -47,10 +47,14 @@ public class EraseEditor extends AbstractEditor {
 
 	// 用于在 trackingLayer 中做结果展示的 id
 	private static final String TAG_ERASE = "Tag_EraseEditorResult";
+	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
-	private boolean isEraseExternal = false;
+	private boolean isEraseExternal = false; // 是否擦除外部
 	private Geometry srRegion = new GeoRegion(); // 用来擦除的面对象
 	private GeoStyle trackingStyle = new GeoStyle(); // 用来在 trackingLayer 做展示的风格
+
+	private Action oldMapControlAction = Action.SELECT2;
+	private TrackMode oldTrackMode = TrackMode.EDIT;
 
 	private MouseListener mouseListener = new MouseAdapter() {
 
@@ -88,12 +92,11 @@ public class EraseEditor extends AbstractEditor {
 	}
 
 	@Override
-	public Action getMapControlAction() {
-		return Action.SELECT;
-	}
-
-	@Override
 	public void activate(EditEnvironment environment) {
+		this.oldMapControlAction = environment.getMapControl().getAction();
+		this.oldTrackMode = environment.getMapControl().getTrackMode();
+		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
+		environment.getMapControl().setTrackMode(TrackMode.TRACK);
 		registerEvents(environment);
 		getSrRegion(environment);
 		setIsEraseExternal(false);
@@ -102,6 +105,8 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
+		environment.getMapControl().setAction(this.oldMapControlAction);
+		environment.getMapControl().setTrackMode(this.oldTrackMode);
 		unregisterEvents(environment);
 		clear(environment);
 	}
@@ -109,7 +114,8 @@ public class EraseEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ICompoundFeature.class);
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
+						ICompoundFeature.class);
 	}
 
 	@Override

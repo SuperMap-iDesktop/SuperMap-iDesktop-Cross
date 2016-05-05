@@ -69,6 +69,7 @@ import com.supermap.ui.GeometryModifiedListener;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.RedoneListener;
 import com.supermap.ui.TrackMode;
 import com.supermap.ui.UndoneListener;
 
@@ -437,15 +438,15 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void undone(EventObject arg0) {
-			Layer[] activeLayers = getActiveLayers();
+			refreshOpenedTabularForms();
+		}
+	};
 
-			if (activeLayers != null && activeLayers.length > 0) {
-				for (int i = 0; i < activeLayers.length; i++) {
-					if (activeLayers[i].getDataset() instanceof DatasetVector) {
-						TabularUtilties.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
-					}
-				}
-			}
+	private RedoneListener redoneListener = new RedoneListener() {
+
+		@Override
+		public void redone(EventObject arg0) {
+			refreshOpenedTabularForms();
 		}
 	};
 
@@ -568,6 +569,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.addGeometryModifiedListener(this.geometryModifiedListener);
 			this.mapControl.addMouseMotionListener(this.motionListener);
 			this.mapControl.addUndoneListener(this.undoneListener);
+			this.mapControl.addRedoneListener(this.redoneListener);
 			MouseListener[] mouseListeners = this.mapControl.getMouseListeners();
 			this.mapControl.addMouseListener(this.mouseAdapter);
 			for (MouseListener mouseListener : mouseListeners) {
@@ -616,6 +618,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.removeGeometryModifiedListener(this.geometryModifiedListener);
 			this.mapControl.removeMouseMotionListener(this.motionListener);
 			this.mapControl.removeUndoneListener(this.undoneListener);
+			this.mapControl.removeRedoneListener(this.redoneListener);
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeMouseWheelListener(this.localMouseWheelListener);
 
@@ -1413,6 +1416,21 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			LayersTreeSelectionChanged();
+		}
+	}
+
+	/**
+	 * Ctrl + Z / Ctrl + Y 等操作需要刷新操作数据已打开的属性表
+	 */
+	private void refreshOpenedTabularForms() {
+		Layer[] activeLayers = getActiveLayers();
+
+		if (activeLayers != null && activeLayers.length > 0) {
+			for (int i = 0; i < activeLayers.length; i++) {
+				if (activeLayers[i].getDataset() instanceof DatasetVector) {
+					TabularUtilties.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
+				}
+			}
 		}
 	}
 
