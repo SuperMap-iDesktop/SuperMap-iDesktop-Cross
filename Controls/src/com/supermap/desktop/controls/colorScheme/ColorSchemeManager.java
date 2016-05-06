@@ -1,6 +1,7 @@
 package com.supermap.desktop.controls.colorScheme;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import org.w3c.dom.Document;
@@ -26,12 +27,20 @@ public class ColorSchemeManager {
 		return colorSchemeList;
 	}
 
+	public void setColorSchemeList(List<ColorScheme> colorSchemeList) {
+		this.colorSchemeList = colorSchemeList;
+		save();
+	}
+
+	public List<ColorScheme> getDefaultColorSchemeList() {
+		return defaultColorSchemeList;
+	}
+
 	public static ColorSchemeManager getColorSchemeManager() {
 		if (colorSchemeManager == null) {
 			colorSchemeManager = new ColorSchemeManager();
 		}
-//		return colorSchemeManager;
-		return new ColorSchemeManager();
+		return colorSchemeManager;
 	}
 
 	private ColorSchemeManager() {
@@ -87,35 +96,43 @@ public class ColorSchemeManager {
 		}
 	}
 
+	public void save() {
+		FileUtilties.writeToFile(new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false)), toXML(colorSchemeList));
+	}
+
 	private String toXML(List<ColorScheme> colorSchemeList) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+		stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>").append(System.lineSeparator());
+		stringBuilder.append("<ColorSchemeManager>");
+
 		stringBuilder.append(System.lineSeparator());
 
-		stringBuilder.append("\\t<FileHeader>");
+		stringBuilder.append(" <FileHeader>");
 		stringBuilder.append(System.lineSeparator());
 
-		stringBuilder.append("\\t\\t<Version>");
+		stringBuilder.append("  <Version>");
 		stringBuilder.append(version);
 		stringBuilder.append("</Version>");
 		stringBuilder.append(System.lineSeparator());
 
-		stringBuilder.append("\\t\\t<ColorSchemeCount>");
+		stringBuilder.append("  <ColorSchemeCount>");
 		stringBuilder.append(colorSchemeList.size());
 		stringBuilder.append("</ColorSchemeCount>");
 		stringBuilder.append(System.lineSeparator());
 
-		stringBuilder.append("\\t</FileHeader>");
+		stringBuilder.append(" </FileHeader>");
 		stringBuilder.append(System.lineSeparator());
 
-		stringBuilder.append("\\t</DataBlock>");
+		stringBuilder.append(" <DataBlock>");
 		stringBuilder.append(System.lineSeparator());
 
 		for (int i = 0; i < colorSchemeList.size(); i++) {
-			stringBuilder.append("\\t<ColorScheme").append(i).append(">");
+			stringBuilder.append("  <ColorScheme").append(i).append(">");
 			stringBuilder.append(colorSchemeList.get(i).getColorSchemePath());
-			stringBuilder.append("\\t</ColorScheme").append(i).append(">").append(System.lineSeparator());
+			stringBuilder.append("</ColorScheme").append(i).append(">").append(System.lineSeparator());
 		}
+		stringBuilder.append(" </DataBlock>").append(System.lineSeparator());
+		stringBuilder.append("</ColorSchemeManager>");
 		return stringBuilder.toString();
 	}
 

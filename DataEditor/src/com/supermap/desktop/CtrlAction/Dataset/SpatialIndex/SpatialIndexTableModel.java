@@ -137,17 +137,11 @@ public class SpatialIndexTableModel extends SortableTableModel {
 	 *
 	 * @param selectedRows 选中行
 	 */
-	public void removeDatasets(int[] selectedRows) {
-		int realRows[] = new int[selectedRows.length];
-		for (int i = 0; i < selectedRows.length; i++) {
-			realRows[i] = getIndexRow(selectedRows[i])[0];
-		}
+	protected void removeRowsHook(int[] selectedRows) {
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
-			this.datas.get(realRows[i]).dispose();
-			this.datas.remove(realRows[i]);
+			this.datas.get(selectedRows[i]).dispose();
+			this.datas.remove(selectedRows[i]);
 		}
-		removeRows(selectedRows);
-		fireTableDataChanged();
 	}
 
 	/**

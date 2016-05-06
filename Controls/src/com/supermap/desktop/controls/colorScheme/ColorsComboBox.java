@@ -8,10 +8,12 @@ import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 /**
  * 颜色下拉选择器
@@ -39,7 +41,13 @@ public class ColorsComboBox extends JComboBox {
 	 */
 	public ColorsComboBox() {
 		super();
-		colorsCellRenderer = new ColorsCellRenderer();
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				((BasicComboBoxUI) ColorsComboBox.this.getUI()).paintCurrentValue(getGraphics(), getBounds(), true);
+			}
+		});
+		colorsCellRenderer = new ColorsCellRenderer(this);
 		this.setRenderer(colorsCellRenderer);
 		colorsCount = 32;
 		customColorsListener = new ActionListener() {
@@ -130,44 +138,30 @@ public class ColorsComboBox extends JComboBox {
 
 class ColorsCellRenderer extends JLabel implements ListCellRenderer {
 	private static final long serialVersionUID = 1L;
+	private final ColorsComboBox colorsComboBox;
 
-	public ColorsCellRenderer() {
-		setOpaque(true);
-		this.setPreferredSize(new Dimension(270, 20));
+	public ColorsCellRenderer(ColorsComboBox colorsComboBox) {
+		this.colorsComboBox = colorsComboBox;
 	}
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		Colors colors = (Colors) value;
-		int imageWidth = this.getPreferredSize().width;
+		int imageWidth = colorsComboBox.getWidth() - colorsComboBox.getComponent(0).getWidth();
 		int imageHeight = this.getPreferredSize().height;
-		BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
-
-		// 根据当前渲染单元格的宽度和颜色数计算出每个颜色应当渲染的步长
-		if (colors != null) {
-			int colorsCount = colors.getCount();
-			int step = imageWidth / colorsCount;
-			for (int i = 0; i < colorsCount; i++) {
-				graphics.setColor(colors.get(i));
-				graphics.fillRect(step * i, 0, step * (i + 1), imageHeight);
-			}
-		}
-		this.setIcon(new ImageIcon(bufferedImage));
-
-		// 最后一项为自定义颜色，其余的不需要文本标签
+		JLabel colorsLabel = ColorScheme.getColorsLabel(colors, imageWidth, imageHeight);
 		if (index == list.getModel().getSize() - 1) {
-			this.setText(ControlsProperties.getString("String_CustomColor"));
+			colorsLabel.setText(ControlsProperties.getString("String_CustomColor"));
 		} else {
-			this.setText("");
+			colorsLabel.setText("");
 		}
-		this.setHorizontalAlignment(SwingConstants.CENTER);
-		this.setHorizontalTextPosition(SwingConstants.CENTER);
 		if (isSelected) {
-			this.setBorder(new LineBorder(Color.black, 1, false));
+			colorsLabel.setBorder(new LineBorder(Color.black, 1, false));
 		} else {
-			this.setBorder(new LineBorder(Color.white, 1, false));
+			colorsLabel.setBorder(new LineBorder(Color.white, 1, false));
 		}
-		return this;
+
+
+		return colorsLabel;
 	}
 }

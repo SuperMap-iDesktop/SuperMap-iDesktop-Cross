@@ -16,7 +16,6 @@ import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -124,20 +123,13 @@ public class PyramidManagerTableModel extends SortableTableModel {
 		return false;
 	}
 
-	public void deleteRows(int[] selectedRows) {
-		if (indexes != null) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				int selectedRow = selectedRows[i];
-				selectedRows[i] = (int) indexes.get(selectedRow);
-			}
-		}
-		super.removeRows(selectedRows);
-		Arrays.sort(selectedRows);
+	@Override
+	protected void removeRowsHook(int... selectedRows) {
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
 			currentDatasets.remove(selectedRows[i]);
 		}
-		fireTableDataChanged();
 	}
+
 
 	/**
 	 * 是否存在可创建影像金字塔的数据集

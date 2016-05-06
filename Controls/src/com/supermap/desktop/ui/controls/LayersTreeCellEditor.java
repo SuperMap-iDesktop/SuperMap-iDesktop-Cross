@@ -165,7 +165,7 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	}
 
 	public void validateLayerCaption(String caption) {
-		if (!StringUtilties.isNullOrEmpty(caption)) {
+		if (!StringUtilties.isNullOrEmptyString(caption)) {
 			if (this.currentData instanceof Layer) {
 				((Layer) this.currentData).setCaption(caption);
 			} else if (this.currentData instanceof ThemeUniqueItem) {

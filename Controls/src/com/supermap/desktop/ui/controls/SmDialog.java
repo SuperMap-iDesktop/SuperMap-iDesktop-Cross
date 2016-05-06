@@ -1,7 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 
@@ -70,12 +69,8 @@ public abstract class SmDialog extends JDialog implements WindowListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// esc键默认实现componentList中最后一个控件的事件
-				if (componentList.size() > 0) {
-					((JButton) componentList.get(componentList.size() - 1)).doClick();
-				}else {
-					dispose();
-				}
+				// esc键默认实现关闭事件
+				dispose();
 			}
 		}, strokeForESC, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		KeyStroke strokForEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
