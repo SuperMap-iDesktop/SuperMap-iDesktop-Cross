@@ -1,13 +1,18 @@
 package com.supermap.desktop.dialog.ColorSchemeDialogs;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.controls.colorScheme.ColorSchemeManager;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -16,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * @author XiaJT
@@ -70,7 +76,9 @@ public class JDialogColorScheme extends SmDialog {
 		panelButton = new JPanel();
 		buttonOk = new SmButton();
 		buttonCancle = new SmButton();
-
+		this.componentList.add(buttonOk);
+		this.componentList.add(buttonCancle);
+		this.getRootPane().setDefaultButton(buttonOk);
 		this.setSize(new Dimension(800, 450));
 		this.setLocationRelativeTo(null);
 	}
@@ -185,14 +193,64 @@ public class JDialogColorScheme extends SmDialog {
 				checkButtonState();
 			}
 		});
+
+		this.buttonOk.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isModified) {
+					ColorSchemeManager.getColorSchemeManager().setColorSchemeList(tableColorScheme.getColorSchemeList());
+				}
+				dialogResult = DialogResult.OK;
+				dispose();
+			}
+		});
+
+		this.buttonCancle.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.CANCEL;
+				dispose();
+			}
+		});
 	}
 
 	private void buttonImportClicked() {
-		// TODO: 2016/5/6 导入
+		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
+			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs");
+			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+					CommonProperties.getString(CommonProperties.open), "ColorSchemeImport", "OpenMany");
+		}
+		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
+		int result = fileChooser.showDefaultDialog();
+		File[] selectFiles = fileChooser.getSelectFiles();
+		int rowCount = tableColorScheme.getRowCount();
+		if (result == JFileChooser.APPROVE_OPTION && selectFiles != null && selectFiles.length > 0) {
+			for (File selectFile : selectFiles) {
+				ColorScheme colorScheme = new ColorScheme();
+				colorScheme.fromXML(selectFile);
+				tableColorScheme.addColorScheme(colorScheme);
+			}
+		}
+		if (tableColorScheme.getRowCount() > rowCount) {
+			tableColorScheme.setRowSelectionInterval(rowCount, tableColorScheme.getRowCount() - 1);
+			tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(rowCount, 0, true));
+		}
 	}
 
 	private void buttonExportClicked() {
-// TODO: 2016/5/6 导出
+		if (!SmFileChoose.isModuleExist("ColorSchemeExport")) {
+			SmFileChoose.addNewNode("", PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+					CommonProperties.getString(CommonProperties.open), "ColorSchemeExport", "GetDirectories");
+		}
+		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExport");
+		int result = fileChooser.showDefaultDialog();
+		String directories = fileChooser.getFilePath();
+		if (result == JFileChooser.APPROVE_OPTION && !StringUtilties.isNullOrEmpty(directories)) {
+			for (int i : tableColorScheme.getSelectedRows()) {
+				ColorScheme colorScheme = tableColorScheme.getColorScheme(i);
+				colorScheme.saveAs(directories);
+			}
+		}
 	}
 
 	private void checkButtonState() {
@@ -232,8 +290,10 @@ public class JDialogColorScheme extends SmDialog {
 	}
 
 	private void initComponentState() {
-		// TODO: 2016/5/5 初始化
 		ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 		tableColorScheme.setColorSchemeList(ListUtilties.listDeepCopy(colorSchemeManager.getColorSchemeList()));
+		if (tableColorScheme.getRowCount() > 0) {
+			tableColorScheme.setRowSelectionInterval(0, 0);
+		}
 	}
 }

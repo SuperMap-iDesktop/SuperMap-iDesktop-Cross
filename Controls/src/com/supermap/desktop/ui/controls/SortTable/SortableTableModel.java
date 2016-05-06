@@ -98,25 +98,26 @@ public class SortableTableModel extends DefaultTableModel {
 	 */
 	public void removeRows(int... selectedRows) {
 		if (indexes == null) {
-			return;
-		}
-		HashMap currentIndex = new HashMap();
+			removeRowsHook(selectedRows);
+		} else {
+			HashMap currentIndex = new HashMap();
 
-		int[] realRows = new int[selectedRows.length];
-		for (int i = 0; i < selectedRows.length; i++) {
-			int selectedRow = selectedRows[i];
-			realRows[i] = (int) indexes.get(selectedRow);
-			indexes.remove(selectedRow);
-		}
+			int[] realRows = new int[selectedRows.length];
+			for (int i = 0; i < selectedRows.length; i++) {
+				int selectedRow = selectedRows[i];
+				realRows[i] = (int) indexes.get(selectedRow);
+				indexes.remove(selectedRow);
+			}
 
-		for (Object o : indexes.entrySet()) {
-			Map.Entry entry = (Map.Entry) o;
-			currentIndex.put(getCurrentRow((Integer) entry.getKey(), selectedRows), getCurrentRow((Integer) entry.getValue(), realRows));
+			for (Object o : indexes.entrySet()) {
+				Map.Entry entry = (Map.Entry) o;
+				currentIndex.put(getCurrentRow((Integer) entry.getKey(), selectedRows), getCurrentRow((Integer) entry.getValue(), realRows));
+			}
+			Arrays.sort(realRows);
+			removeRowsHook(realRows);
+			this.indexes.clear();
+			this.indexes = currentIndex;
 		}
-		Arrays.sort(realRows);
-		removeRowsHook(realRows);
-		this.indexes.clear();
-		this.indexes = currentIndex;
 		fireTableDataChanged();
 	}
 

@@ -332,7 +332,7 @@ public class ColorScheme implements ICloneable {
 
 	public String getColorSchemePath() {
 		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath();
+			colorSchemePath = getDefaultFilePath(ControlsProperties.getString("String_ColorSchemeCustomDirectory"));
 			save();
 		}
 		return colorSchemePath;
@@ -340,10 +340,19 @@ public class ColorScheme implements ICloneable {
 
 	public void save() {
 		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath();
+			colorSchemePath = getDefaultFilePath(ControlsProperties.getString("String_ColorSchemeCustomDirectory"));
 		}
+		save(colorSchemePath);
+	}
+
+	public void saveAs(String directories) {
+		String defaultFilePath = getDefaultFilePath(directories);
+		save(defaultFilePath);
+	}
+
+	private void save(String defaultFilePath) {
 		try {
-			File file = new File(colorSchemePath);
+			File file = new File(defaultFilePath);
 			FileUtilties.delete(file);
 			if (file.createNewFile()) {
 				FileUtilties.writeToFile(file, this.toXML());
@@ -353,8 +362,10 @@ public class ColorScheme implements ICloneable {
 		}
 	}
 
-	private String getDefaultFilePath() {
-		String customDirectory = ControlsProperties.getString("String_ColorSchemeCustomDirectory");
+	private String getDefaultFilePath(String customDirectory) {
+		if (!customDirectory.endsWith(File.separator)) {
+			customDirectory = customDirectory + File.separator;
+		}
 		if (!new File(PathUtilties.getFullPathName(customDirectory, true)).exists()) {
 			new File(PathUtilties.getFullPathName(customDirectory, true)).mkdirs();
 		}

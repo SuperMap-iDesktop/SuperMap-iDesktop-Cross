@@ -30,6 +30,7 @@ public class ColorSchemeTableModel extends SortableTableModel {
 
 	public void setColorSchemes(List<ColorScheme> colorSchemes) {
 		this.colorSchemes = colorSchemes;
+		indexes = null;
 		fireTableDataChanged();
 	}
 
@@ -133,6 +134,7 @@ public class ColorSchemeTableModel extends SortableTableModel {
 		}
 		this.colorSchemes.add(colorScheme);
 		addIndexRow(this.colorSchemes.size() - 1);
+		fireTableDataChanged();
 	}
 
 	public ColorScheme getColorScheme(int row) {

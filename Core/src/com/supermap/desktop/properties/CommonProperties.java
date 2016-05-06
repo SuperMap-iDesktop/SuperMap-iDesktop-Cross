@@ -4,7 +4,6 @@ import java.util.ResourceBundle;
 
 public class CommonProperties extends Properties {
 	public static final String COMMON = "resources.Common";
-
 	public static final String getString(String key) {
 		return getString(COMMON, key);
 	}
@@ -20,6 +19,7 @@ public class CommonProperties extends Properties {
 	}
 
 	public static final String Reset = "String_Button_Reset";
+
 	public static final String Apply = "String_Button_Apply";
 	public static final String Cancel = "String_Button_Cancel";
 	public static final String BeingCanceled = "String_Button_BeingCanceled";
@@ -71,5 +71,6 @@ public class CommonProperties extends Properties {
 	public static final String selectInverse = "String_ToolBar_SelectInverse";
 	public static final String IMPORT = "String_ToolBar_Import";
 	public static final String EXPORT = "String_ToolBar_Export";
+	public static final String open = "String_Button_Open";
 
 }
