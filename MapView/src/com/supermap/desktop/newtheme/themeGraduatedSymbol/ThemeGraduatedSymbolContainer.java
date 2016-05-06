@@ -1,38 +1,14 @@
 package com.supermap.desktop.newtheme.themeGraduatedSymbol;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
 import java.util.ArrayList;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -628,6 +604,11 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				}
 				themeGraduatedSymbol.setBaseValue(Math.abs(newBaseValue));
 				refreshAtOnce();
+				return;
+			}
+			if (!StringUtilties.isNullOrEmpty(strBaseValue) && !StringUtilties.isNumber(strBaseValue)) {
+				textFieldBaseValue.setForeground(Color.red);
+				return;
 			}
 		}
 	}
@@ -659,7 +640,11 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 		private void resetGraduatedMode() {
 			String tempExpression = comboBoxExpression.getSelectedItem().toString();
-			ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(datasetVector, tempExpression, graduatedMode);
+			DatasetVector dataset = datasetVector;
+			if (tempExpression.contains(".") && tempExpression.split("\\.").length == 2) {
+				dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(tempExpression.substring(0, tempExpression.indexOf(".")));
+			}
+			ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(dataset, tempExpression, graduatedMode);
 			if (null != tempTheme) {
 				copyThemeInfo(tempTheme, themeGraduatedSymbol);
 				themeGraduatedSymbol.fromXML(tempTheme.toXML());
@@ -702,13 +687,13 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				if (!comboBoxArray.contains(expression)) {
 					expression = expression.substring(expression.indexOf(".") + 1, expression.length());
 				}
-				boolean itemHasChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray, expression, false);
+				boolean itemHasChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray, expression, true);
 				// 修改表达式
 				if (itemHasChanged) {
 					// 如果sql表达式中修改了选项
 					expression = comboBoxExpression.getSelectedItem().toString();
 					DatasetVector dataset = datasetVector;
-					if (expression.contains(".")) {
+					if (expression.contains(".") && expression.split("\\.").length == 2) {
 						dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(expression.substring(0, expression.indexOf(".")));
 					}
 					ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(dataset, expression, graduatedMode);

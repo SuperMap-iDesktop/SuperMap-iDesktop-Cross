@@ -112,16 +112,17 @@ public class ThemeUtil {
 		comboBoxExpression.setEditable(true);
 		comboBoxExpression.removeAllItems();
 		getFieldComboBox(comboBoxExpression, datasetVector, joinItems, comboBoxArray, isDataType);
-		if (addZero) {
-			comboBoxExpression.addItem("0");
-		}
 		if (StringUtilties.isNullOrEmpty(tempExpression)) {
-			tempExpression = "0";
+			tempExpression = "";
 		}
 		comboBoxExpression.setSelectedItem(tempExpression);
 		if (!tempExpression.equals(comboBoxExpression.getSelectedItem())) {
 			comboBoxExpression.addItem(tempExpression);
 			comboBoxExpression.setSelectedItem(tempExpression);
+		}
+		if (addZero) {
+			comboBoxExpression.addItem("0");
+			comboBoxExpression.setSelectedItem("0");
 		}
 	}
 
