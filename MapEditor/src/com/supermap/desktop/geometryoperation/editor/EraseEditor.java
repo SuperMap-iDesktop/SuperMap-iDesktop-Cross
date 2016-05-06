@@ -1,18 +1,17 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.EventObject;
 import java.util.List;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -33,7 +32,9 @@ import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.RedoneListener;
 import com.supermap.ui.TrackMode;
+import com.supermap.ui.UndoneListener;
 
 // @formatter:off
 /**
@@ -51,10 +52,11 @@ public class EraseEditor extends AbstractEditor {
 
 	private boolean isEraseExternal = false; // 是否擦除外部
 	private Geometry srRegion = new GeoRegion(); // 用来擦除的面对象
-	private GeoStyle trackingStyle = new GeoStyle(); // 用来在 trackingLayer 做展示的风格
 
 	private Action oldMapControlAction = Action.SELECT2;
 	private TrackMode oldTrackMode = TrackMode.EDIT;
+
+	private int pressedKey = 0;
 
 	private MouseListener mouseListener = new MouseAdapter() {
 
@@ -69,11 +71,32 @@ public class EraseEditor extends AbstractEditor {
 		}
 	};
 
+	/**
+	 * 由于 Ctrl 是常用组合键功能，比如 Ctrl + Z 回退。因此按 Ctrl 切换的功能点需要过滤掉使用组合键的情况。
+	 */
 	private KeyListener keyListener = new KeyAdapter() {
+
+		public void keyTyped(KeyEvent e) {
+			EraseEditor.this.pressedKey = EraseEditor.this.pressedKey | e.getKeyCode();
+		}
+
+		/**
+		 * Invoked when a key has been pressed.
+		 */
+		public void keyPressed(KeyEvent e) {
+			EraseEditor.this.pressedKey = EraseEditor.this.pressedKey | e.getKeyCode();
+		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			EraseEditor.this.keyPressed(e);
+			try {
+				// 判断如果只按下了 Ctrl 键，则进行擦除模式的切换
+				if (EraseEditor.this.pressedKey == KeyEvent.VK_CONTROL) {
+					setIsEraseExternal(!EraseEditor.this.isEraseExternal);
+				}
+			} finally {
+				EraseEditor.this.pressedKey = 0;
+			}
 		}
 	};
 
@@ -85,10 +108,28 @@ public class EraseEditor extends AbstractEditor {
 		}
 	};
 
+	private UndoneListener undoneListener = new UndoneListener() {
+
+		@Override
+		public void undone(EventObject arg0) {
+
+			// undone 的时候清除 trackingLayer
+			clearResultTracking((MapControl) arg0.getSource());
+		}
+	};
+
+	private RedoneListener redoneListener = new RedoneListener() {
+
+		@Override
+		public void redone(EventObject arg0) {
+
+			// redone 的时候清除 trackingLayer
+			clearResultTracking((MapControl) arg0.getSource());
+		}
+	};
+
 	public EraseEditor() {
 		super();
-		this.trackingStyle.setLineColor(Color.RED);
-		this.trackingStyle.setLineWidth(1);
 	}
 
 	@Override
@@ -128,6 +169,8 @@ public class EraseEditor extends AbstractEditor {
 		mapControl.addMouseListener(this.mouseListener);
 		mapControl.addKeyListener(this.keyListener);
 		mapControl.addGeometrySelectedListener(this.geometrySelectedListener);
+		mapControl.addUndoneListener(this.undoneListener);
+		mapControl.addRedoneListener(this.redoneListener);
 	}
 
 	private void unregisterEvents(EditEnvironment environment) {
@@ -135,6 +178,8 @@ public class EraseEditor extends AbstractEditor {
 		mapControl.removeMouseListener(this.mouseListener);
 		mapControl.removeKeyListener(this.keyListener);
 		mapControl.removeGeometrySelectedListener(this.geometrySelectedListener);
+		mapControl.removeUndoneListener(this.undoneListener);
+		mapControl.removeRedoneListener(this.redoneListener);
 	}
 
 	private void mouseEntered() {
@@ -143,12 +188,6 @@ public class EraseEditor extends AbstractEditor {
 
 	private void mouseExited() {
 
-	}
-
-	private void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-			setIsEraseExternal(!this.isEraseExternal);
-		}
 	}
 
 	private void geometrySelected(GeometrySelectedEvent e) {
@@ -246,7 +285,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.erase(this.srRegion, geometry.getGeometry());
+				eraseResult = Geometrist.erase(geometry.getGeometry(), this.srRegion);
 
 				// 没有擦除结果，删除被擦除对象
 				if (eraseResult == null) {
@@ -279,7 +318,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.clip(this.srRegion, geometry.getGeometry());
+				eraseResult = Geometrist.clip(geometry.getGeometry(), this.srRegion);
 
 				// 没有擦除结果，删除被擦除对象
 				if (eraseResult == null) {

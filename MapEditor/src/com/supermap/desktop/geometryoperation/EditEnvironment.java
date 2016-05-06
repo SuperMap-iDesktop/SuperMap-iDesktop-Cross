@@ -65,8 +65,6 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
 	private boolean isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
-	private Action oldMapControlAction = Action.NULL;
-	private TrackMode oldTrackMode = TrackMode.EDIT;
 	private boolean isMiddleMousePressed = false;
 
 	private MouseListener mouseListener = new MouseListener() {
@@ -139,8 +137,6 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		this.formMap = formMap;
 
 		if (this.formMap != null) {
-			this.oldMapControlAction = formMap.getMapControl().getAction();
-			this.oldTrackMode = formMap.getMapControl().getTrackMode();
 			this.formMap.getMapControl().addMouseListener(this.mouseListener);
 			this.formMap.getMapControl().addKeyListener(this.keyListener);
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
