@@ -67,5 +67,9 @@ public class CommonProperties extends Properties {
 	public static final String Edit = "String_Edit";
 	public static final String Property = "String_Property";
 	public static final String UnSupport = "String_UnSupport";
+	public static final String selectAll = "String_ToolBar_SelectAll";
+	public static final String selectInverse = "String_ToolBar_SelectInverse";
+	public static final String IMPORT = "String_ToolBar_Import";
+	public static final String EXPORT = "String_ToolBar_Export";
 
 }

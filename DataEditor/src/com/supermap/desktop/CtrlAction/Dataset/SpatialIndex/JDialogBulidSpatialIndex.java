@@ -11,14 +11,14 @@ import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
 import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -29,7 +29,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -306,7 +305,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 				int[] selectedRows = tableDatasets.getSelectedRows();
 				// 先置空不然移除时会抛数组越界移除
 				tableDatasets.clearSelection();
-				spatialIndexTableModel.removeDatasets(selectedRows);
+				spatialIndexTableModel.removeRows(selectedRows);
 				if (tableDatasets.getRowCount() > selectedRow && selectedRow != -1) {
 					tableDatasets.setRowSelectionInterval(selectedRow, selectedRow);
 				} else if (tableDatasets.getRowCount() > 0) {

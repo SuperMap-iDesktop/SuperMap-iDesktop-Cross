@@ -2,6 +2,7 @@ package com.supermap.desktop.controls.colorScheme;
 
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
@@ -11,20 +12,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 颜色配置文件类
  *
  * @author xuzw
  */
-public class ColorScheme {
+public class ColorScheme implements ICloneable {
 
-	private ArrayList<Color> colors;
+	private List<Color> colors;
 
 	private int fileType;
 
@@ -55,8 +59,14 @@ public class ColorScheme {
 	}
 
 	@Override
-	protected ColorScheme clone() throws CloneNotSupportedException {
-		ColorScheme clone = new ColorScheme();
+	public ColorScheme clone() {
+		ColorScheme clone = null;
+		try {
+			clone = ((ColorScheme) super.clone());
+		} catch (CloneNotSupportedException e) {
+			Application.getActiveApplication().getOutput().output(e);
+			return null;
+		}
 		clone.setColors(this.colors);
 		clone.setFileType(this.fileType);
 		clone.setVersion(this.version);
@@ -71,7 +81,7 @@ public class ColorScheme {
 		return clone;
 	}
 
-	private void setColors(ArrayList<Color> colors) {
+	private void setColors(List<Color> colors) {
 		this.colors = colors;
 	}
 
@@ -80,14 +90,14 @@ public class ColorScheme {
 		this.fileType = version;
 	}
 
-//	/**
-//	 * 获取颜色数组
-//	 *
-//	 * @return
-//	 */
-//	public ArrayList<Color> getColors() {
-//		return colors;
-//	}
+	/**
+	 * 获取颜色数组
+	 *
+	 * @return
+	 */
+	public List<Color> getColorsList() {
+		return colors;
+	}
 
 	public Colors getColors() {
 		Colors colors = null;
@@ -198,7 +208,11 @@ public class ColorScheme {
 	 * @param name
 	 */
 	public void setName(String name) {
-		this.name = name;
+		if (name == null) {
+			this.name = "";
+		} else {
+			this.name = name;
+		}
 	}
 
 	/**
@@ -234,7 +248,11 @@ public class ColorScheme {
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		this.description = description;
+		if (description == null) {
+			this.description = "";
+		} else {
+			this.description = description;
+		}
 	}
 
 	/**
@@ -640,6 +658,10 @@ public class ColorScheme {
 		return result;
 	}
 
+	public void setColorList(List colorList) {
+		this.colors = colorList;
+	}
+
 	/*
 	 * 文件范例
 	 * 
@@ -725,8 +747,8 @@ public class ColorScheme {
 		}
 	}
 
-	protected enum IntervalColorBuildMethod // 两个关键色之间的中间色产生的方式
-	{
+	protected enum IntervalColorBuildMethod {
+		// 两个关键色之间的中间色产生的方式
 		ICBM_GRADIENT(0), // 渐变方式
 		ICBM_RANDOM(1); // 随即产生
 
@@ -740,4 +762,34 @@ public class ColorScheme {
 			return value;
 		}
 	}
+
+	public static JLabel getColorsLabel(Colors colors, int imageWidth, int imageHeight) {
+		JLabel label = new JLabel();
+		label.setOpaque(true);
+		if (imageWidth <= 0) {
+			imageWidth = 270;
+		}
+		if (imageHeight <= 0) {
+			imageHeight = 23;
+		}
+		label.setPreferredSize(new Dimension(imageWidth, imageHeight));
+		BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
+
+		// 根据当前渲染单元格的宽度和颜色数计算出每个颜色应当渲染的步长
+		if (colors != null) {
+			int colorsCount = colors.getCount();
+			int step = imageWidth / colorsCount;
+			for (int i = 0; i < colorsCount; i++) {
+				graphics.setColor(colors.get(i));
+				graphics.fillRect(step * i, 0, step * (i + 1), imageHeight);
+			}
+		}
+		label.setIcon(new ImageIcon(bufferedImage));
+
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setHorizontalTextPosition(SwingConstants.CENTER);
+		return label;
+	}
+
 }

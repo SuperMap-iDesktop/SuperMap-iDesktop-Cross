@@ -1,5 +1,8 @@
 package com.supermap.desktop.utilties;
 
+import com.supermap.desktop.Interface.ICloneable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListUtilties {
@@ -15,6 +18,7 @@ public class ListUtilties {
 	 * @param checkItems
 	 * @return
 	 */
+	@SafeVarargs
 	public static <T> boolean isListContainAny(List<T> list, T... checkItems) {
 		boolean result = false;
 		if (list.size() > 0 && checkItems.length > 0) {
@@ -37,6 +41,7 @@ public class ListUtilties {
 	 * @param checkItems
 	 * @return
 	 */
+	@SafeVarargs
 	public static <T> boolean isListOnlyContain(List<T> list, T... checkItems) {
 		boolean result = true;
 		if (list.size() > 0 && checkItems.length > 0) {
@@ -59,6 +64,7 @@ public class ListUtilties {
 	 * @param checkItems
 	 * @return
 	 */
+	@SafeVarargs
 	public static <T> boolean isListContainAll(List<T> list, T... checkItems) {
 		boolean result = true;
 
@@ -95,7 +101,7 @@ public class ListUtilties {
 	 * 将数组添加到指定集合，保持单值
 	 * 
 	 * @param list
-	 * @param items
+	 * @param array
 	 */
 	public static <T> void addArraySingle(List<T> list, T[] array) {
 		if (list == null || array == null || array.length == 0) {
@@ -107,5 +113,35 @@ public class ListUtilties {
 				list.add(array[i]);
 			}
 		}
+	}
+
+	public static <T> List<T> listCopy(List<T> list) {
+		if (list == null || list.size() <= 0) {
+			return new ArrayList<>();
+		}
+		if (list.get(0) instanceof ICloneable) {
+			return ListUtilties.listDeepCopy(list);
+		}
+		return ListUtilties.listShallowCopy(list);
+	}
+
+	public static <T> List<T> listShallowCopy(List<T> list) {
+		List<T> result = new ArrayList<>();
+		result.addAll(list);
+		return result;
+	}
+
+	public static <T> List<T> listDeepCopy(List<T> list) {
+		if (list == null || list.size() <= 0) {
+			return new ArrayList<>();
+		}
+		if (!(list.get(0) instanceof ICloneable)) {
+			return listShallowCopy(list);
+		}
+		List<T> result = new ArrayList<>(list.size());
+		for (T t : list) {
+			result.add((T) ((ICloneable) t).clone());
+		}
+		return result;
 	}
 }

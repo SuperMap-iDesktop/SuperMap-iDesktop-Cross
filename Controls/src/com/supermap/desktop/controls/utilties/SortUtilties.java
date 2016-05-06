@@ -1,9 +1,11 @@
 package com.supermap.desktop.controls.utilties;
 
+import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.ui.controls.DataCell;
 
+import java.awt.*;
 import java.util.Date;
 
 /**
@@ -67,8 +69,6 @@ public class SortUtilties {
 			return -1;
 		} else if (o2 == null) {
 			return 1;
-		} else if (o1.getClass() != o2.getClass()) {
-			throw new UnsupportedOperationException("different class can't compare");
 		} else {
 			if (o1 instanceof Number) {
 				return compare((Number) o1, (Number) o2);
@@ -84,10 +84,43 @@ public class SortUtilties {
 				return compare((Dataset) o1, (Dataset) o2);
 			} else if (o1 instanceof Datasource) {
 				return compare((Datasource) o1, (Datasource) o2);
+			} else if (o1 instanceof Colors) {
+				return compare((Colors) o1, (Colors) o2);
 			} else {
 				return String.valueOf(o1).compareTo(String.valueOf(o2));
 			}
 		}
+	}
+
+	private static int compare(Colors o1, Colors o2) {
+		for (int i = 0; i < o1.getCount() && i < o2.getCount(); i++) {
+			if (compare(o1.get(i), o2.get(i)) != 0) {
+				return compare(o1.get(i), o2.get(i));
+			}
+		}
+		if (o1.getCount() > o2.getCount()) {
+			return 1;
+		}
+		if (o1.getCount() < o2.getCount()) {
+			return -1;
+		}
+		return 0;
+	}
+
+	private static int compare(Color color, Color color1) {
+		if (color.getRed() != color1.getRed()) {
+			return color.getRed() - color1.getRed();
+		}
+		if (color.getGreen() != color1.getGreen()) {
+			return color.getGreen() - color1.getGreen();
+		}
+		if (color.getBlue() != color1.getBlue()) {
+			return color.getBlue() - color1.getBlue();
+		}
+		if (color.getAlpha() != color1.getAlpha()) {
+			return color.getAlpha() - color1.getAlpha();
+		}
+		return 0;
 	}
 
 	private static int compare(DataCell o1, DataCell o2) {

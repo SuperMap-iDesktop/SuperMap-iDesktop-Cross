@@ -26,12 +26,15 @@ public class ColorSchemeManager {
 		return colorSchemeList;
 	}
 
+	public List<ColorScheme> getDefaultColorSchemeList() {
+		return defaultColorSchemeList;
+	}
+
 	public static ColorSchemeManager getColorSchemeManager() {
 		if (colorSchemeManager == null) {
 			colorSchemeManager = new ColorSchemeManager();
 		}
-//		return colorSchemeManager;
-		return new ColorSchemeManager();
+		return colorSchemeManager;
 	}
 
 	private ColorSchemeManager() {

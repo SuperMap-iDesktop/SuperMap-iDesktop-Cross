@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,12 +86,17 @@ public class SortableTableModel extends DefaultTableModel {
 		return result;
 	}
 
+	@Override
+	public void removeRow(int row) {
+		removeRows(row);
+	}
+
 	/**
 	 * 删除行的时候从indexes删除
 	 *
 	 * @param selectedRows 选中需要删除的行
 	 */
-	protected void removeRows(int... selectedRows) {
+	public void removeRows(int... selectedRows) {
 		if (indexes == null) {
 			return;
 		}
@@ -107,8 +113,20 @@ public class SortableTableModel extends DefaultTableModel {
 			Map.Entry entry = (Map.Entry) o;
 			currentIndex.put(getCurrentRow((Integer) entry.getKey(), selectedRows), getCurrentRow((Integer) entry.getValue(), realRows));
 		}
+		Arrays.sort(realRows);
+		removeRowsHook(realRows);
 		this.indexes.clear();
 		this.indexes = currentIndex;
+		fireTableDataChanged();
+	}
+
+	/**
+	 * 提供给子类用于删除
+	 *
+	 * @param selectedRows 已排序的选中行
+	 */
+	protected void removeRowsHook(int... selectedRows) {
+
 	}
 
 	private int getCurrentRow(int value, int[] selectedRows) {
