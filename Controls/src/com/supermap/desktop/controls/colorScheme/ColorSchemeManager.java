@@ -29,6 +29,7 @@ public class ColorSchemeManager {
 
 	public void setColorSchemeList(List<ColorScheme> colorSchemeList) {
 		this.colorSchemeList = colorSchemeList;
+		fireColorSchemeManagerChanged();
 		save();
 	}
 
@@ -161,7 +162,9 @@ public class ColorSchemeManager {
 	}
 
 	public void addColorSchemeManagerChangedListener(ColorSchemeManagerChangedListener colorSchemeManagerChangedListener) {
-		colorSchemeManagerChangedListeners.add(colorSchemeManagerChangedListener);
+		if (!colorSchemeManagerChangedListeners.contains(colorSchemeManagerChangedListener)) {
+			colorSchemeManagerChangedListeners.add(colorSchemeManagerChangedListener);
+		}
 	}
 
 	public void removeColorSchemeManagerChangedListener(ColorSchemeManagerChangedListener colorSchemeManagerChangedListener) {
