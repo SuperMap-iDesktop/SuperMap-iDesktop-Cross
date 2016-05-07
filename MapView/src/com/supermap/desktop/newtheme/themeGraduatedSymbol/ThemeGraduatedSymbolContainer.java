@@ -130,6 +130,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 			this.themeGraduatedSymbolLayer.setDisplayFilter(themeGraduatedLayer.getDisplayFilter());
 			this.layerName = this.themeGraduatedSymbolLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
+			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

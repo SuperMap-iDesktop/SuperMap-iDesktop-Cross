@@ -59,7 +59,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
- * 单值专题图容器及属性设置接口类
+ * 单值专题图
  *
  * @author xie
  */

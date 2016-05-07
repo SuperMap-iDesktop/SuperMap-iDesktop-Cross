@@ -48,7 +48,11 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 标签分段风格专题图
+ * @author Administrator
+ *
+ */
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;

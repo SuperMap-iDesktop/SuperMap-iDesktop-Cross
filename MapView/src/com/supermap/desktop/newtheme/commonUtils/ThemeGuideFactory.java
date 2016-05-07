@@ -9,6 +9,7 @@ import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,6 +22,7 @@ import com.supermap.desktop.newtheme.themeGraduatedSymbol.ThemeGraduatedSymbolCo
 import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
 import com.supermap.desktop.newtheme.themeGridRange.ThemeGridRangeContainer;
 import com.supermap.desktop.newtheme.themeGridUnique.ThemeGridUniqueContainer;
+import com.supermap.desktop.newtheme.themeLabel.ThemeLabelComplicatedContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
 import com.supermap.desktop.newtheme.themeRange.ThemeRangeContainer;
@@ -32,6 +34,7 @@ import com.supermap.mapping.GraduatedMode;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.MixedTextStyle;
 import com.supermap.mapping.RangeMode;
 import com.supermap.mapping.ThemeCustom;
 import com.supermap.mapping.ThemeDotDensity;
@@ -68,6 +71,7 @@ public class ThemeGuideFactory {
 	private static final String THEMETYPE_RANGE = "ThemeType_Range";
 	private static final String THEMETYPE_LABEL_UNIFORM = "ThemeType_Label_Uniform";
 	private static final String THEMETYPE_LABEL_RANGE = "ThemeType_Label_Range";
+	private static final String THEMETYPE_LABEL_COMPLICATED = "ThemeType_Label_Complicated";
 	private static final String THEMETYPE_GRAPH = "ThemeType_Graph";
 	private static final String THEMETYPE_GRID_UNIQUE = "ThemeType_Grid_Unique";
 	private static final String THEMETYPE_GRID_RANGE = "ThemeType_Grid_Range";
@@ -145,17 +149,21 @@ public class ThemeGuideFactory {
 
 	private static String getThemeType(Layer layer) {
 		String name = "";
+		boolean isComplicated = false;
 		if (null != layer && !layer.isDisposed() && null != layer.getTheme()) {
 			int count = -1;
 			if (layer.getTheme() instanceof ThemeLabel) {
 				count = ((ThemeLabel) layer.getTheme()).getCount();
+				if (count == 0 && null != ((ThemeLabel) layer.getTheme()).getUniformMixedStyle()) {
+					isComplicated = true;
+				}
 			}
-			name = getThemeTypeString(layer.getTheme().getType(), count);
+			name = getThemeTypeString(layer.getTheme().getType(), count, isComplicated);
 		}
 		return name;
 	}
 
-	private static String getThemeTypeString(ThemeType themetype, int count) {
+	private static String getThemeTypeString(ThemeType themetype, int count, boolean isComplicated) {
 		String result = "";
 		if (themetype == ThemeType.UNIQUE) {
 			result = THEMETYPE_UNIQUE;
@@ -163,8 +171,11 @@ public class ThemeGuideFactory {
 		if (themetype == ThemeType.RANGE) {
 			result = THEMETYPE_RANGE;
 		}
-		if (themetype == ThemeType.LABEL && count == 0) {
+		if (themetype == ThemeType.LABEL && count == 0 && !isComplicated) {
 			result = THEMETYPE_LABEL_UNIFORM;
+		}
+		if (themetype == ThemeType.LABEL && count == 0 && isComplicated) {
+			result = THEMETYPE_LABEL_COMPLICATED;
 		}
 		if (themetype == ThemeType.LABEL && count > 0) {
 			result = THEMETYPE_LABEL_RANGE;
@@ -319,6 +330,31 @@ public class ThemeGuideFactory {
 				success = false;
 				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 			}
+		}
+		return success;
+	}
+
+	public static boolean buildLabelComplicatedTheme(Layer layer) {
+		boolean success = false;
+		if (null != getDataset()) {
+			String expression = "SmID";
+			ThemeLabel themeLabel = new ThemeLabel();
+			TextStyle[] textStyles = new TextStyle[4];
+			textStyles[0] = new TextStyle();
+			textStyles[0].setForeColor(Color.RED);
+			textStyles[1] = new TextStyle();
+			textStyles[1].setForeColor(Color.GREEN);
+			textStyles[2] = new TextStyle();
+			textStyles[2].setForeColor(Color.BLUE);
+			textStyles[3] = new TextStyle();
+			textStyles[3].setForeColor(Color.PINK);
+			int[] splitIndexes = { 1, 3, 4, 9 };
+			themeLabel.setUniformMixedStyle(new MixedTextStyle(textStyles, splitIndexes));
+			themeLabel.setLabelExpression(expression);
+			ThemeLabelComplicatedContainer themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer((DatasetVector) getDataset(), themeLabel, layer);
+			themeTypeContainer.put(themeLabelComplicatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_LABEL_COMPLICATED, themeLabelComplicatedContainer);
+			addPanelToThemeMainContainer(themeLabelComplicatedContainer, null);
+			getDockbarThemeContainer().setVisible(true);
 		}
 		return success;
 	}
@@ -478,14 +514,20 @@ public class ThemeGuideFactory {
 		}
 		return successed;
 	}
-	
-	public static boolean buildCustomTheme(Layer layer){
+
+	/**
+	 * 自定义专题图
+	 * 
+	 * @param layer
+	 * @return
+	 */
+	public static boolean buildCustomTheme(Layer layer) {
 		boolean successed = false;
-		if (null!=getDataset()) {
+		if (null != getDataset()) {
 			ThemeCustom themeCustom = new ThemeCustom();
 			successed = true;
 			ThemeCustomContainer themeCustomContainer = new ThemeCustomContainer((DatasetVector) getDataset(), themeCustom, layer);
-			themeTypeContainer.put(themeCustomContainer.getCurrentLayer().getName()+"@"+THEMETYPE_CUSTOM, themeCustomContainer);
+			themeTypeContainer.put(themeCustomContainer.getCurrentLayer().getName() + "@" + THEMETYPE_CUSTOM, themeCustomContainer);
 			addPanelToThemeMainContainer(themeCustomContainer, null);
 			getDockbarThemeContainer().setVisible(true);
 		}
@@ -594,7 +636,7 @@ public class ThemeGuideFactory {
 				return;
 			}
 			if (THEMETYPE_CUSTOM.equals(themeType)) {
-				//自定义专题图
+				// 自定义专题图
 				themeContainer = new ThemeCustomContainer(layer);
 				initThemePanel(layer, themeType, themeContainer);
 				return;

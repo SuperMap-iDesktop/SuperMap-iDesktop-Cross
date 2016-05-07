@@ -20,7 +20,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
+/**
+ * 标签统一风格专题图
+ * @author xie
+ *
+ */
 public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
@@ -87,6 +91,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 			this.textStyle = themeLabel.getUniformStyle();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
+			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}

@@ -34,6 +34,7 @@ import com.supermap.ui.MapControl;
 
 /**
  * 点密度专题图
+ * 
  * @author xie
  *
  */
@@ -66,6 +67,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArray;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private DecimalFormat format = new DecimalFormat("#.####");
+	private DecimalFormat formatZero = new DecimalFormat("#");
 
 	private ItemListener expressionListener = new ExpressionListener();
 	private ActionListener buttonActionListener = new ButtonActionListener();
@@ -79,7 +81,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		}
 	};
 
-
 	public ThemeDotDensityContainer(DatasetVector datasetVector, ThemeDotDensity themeDotDensity, Layer layer) {
 		this.datasetVector = datasetVector;
 		this.themeDotDensity = new ThemeDotDensity(themeDotDensity);
@@ -91,6 +92,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 	public ThemeDotDensityContainer(Layer layer) {
 		this.themeDotDensityLayer = layer;
+		this.layerName = layer.getName();
 		this.themeDotDensity = new ThemeDotDensity((ThemeDotDensity) layer.getTheme());
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.map = ThemeGuideFactory.getMapControl().getMap();
@@ -140,7 +142,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.spinnerDotDensityValue.setModel(new SpinnerNumberModel(1.0, 1.0, null, 1.0));
 		initComboBoxExpression();
 		initTextFieldValue();
-		Dimension dimension = new Dimension(120,23);
+		Dimension dimension = new Dimension(120, 23);
 		this.comboBoxExpression.setPreferredSize(dimension);
 		this.textFieldValue.setPreferredSize(dimension);
 		this.spinnerDotDensityValue.setPreferredSize(dimension);
@@ -226,7 +228,8 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			String strValue = textFieldValue.getText();
-			if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)) {
+			if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)
+					&& 0 != Double.compare(Double.parseDouble(strValue), Double.parseDouble(format.format(themeDotDensity.getValue())))) {
 				themeDotDensity.setValue(Double.parseDouble(strValue));
 				spinnerDotDensityValue.setValue((int) maxValue / Double.parseDouble(strValue));
 				refreshAtOnce();
@@ -256,12 +259,12 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 					tempExpression = comboBoxExpression.getSelectedItem().toString();
 					themeDotDensity.setDotExpression(tempExpression);
 					setThemeDotDensityInfo(tempExpression);
-					if (maxValue>0) {
+					if (maxValue > 0) {
 						themeDotDensity.setValue(maxValue / 1000);
-						textFieldValue.setText(String.valueOf(format.format(maxValue/1000)));
+						textFieldValue.setText(String.valueOf(format.format(maxValue / 1000)));
 						spinnerDotDensityValue.setValue(1000);
-						refreshAtOnce();	
-					}else {
+						refreshAtOnce();
+					} else {
 						SmOptionPane smOptionPane = new SmOptionPane();
 						smOptionPane.showMessageDialog(MapViewProperties.getString("String_MaxValue"));
 					}
@@ -294,7 +297,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 				GeoStyle nowGeoStyle = symbolStyle.getCurrentGeoStyle();
 				themeDotDensity.setStyle(nowGeoStyle);
 				refreshAtOnce();
-				symbolStyle.dispose();
+				symbolStyle = null;
 				return;
 			}
 		}

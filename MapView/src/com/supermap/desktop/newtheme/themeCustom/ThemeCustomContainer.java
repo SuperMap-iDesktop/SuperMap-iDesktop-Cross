@@ -521,6 +521,9 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	class PanelFillComboBoxListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxFillSymbol) {
 					String fillSymbolExpression = themeCustom.getFillSymbolIDExpression();
@@ -562,6 +565,9 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxLineSymbol) {
 					String lineSymbolExpression = themeCustom.getLineSymbolIDExpression();
@@ -583,6 +589,9 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	class PanelMarkerComboBoxLitener implements ItemListener{
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isResetLayerProperty) {
+				return;
+			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxMarkerSymbol) {
 					String markerSymbolExpression = themeCustom.getMarkerSymbolIDExpression();
