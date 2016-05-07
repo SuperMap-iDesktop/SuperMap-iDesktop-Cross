@@ -605,6 +605,12 @@ public class ThemeGuideFactory {
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
+			if (THEMETYPE_LABEL_COMPLICATED.equals(themeType)) {
+				// 分段风格标签专题图
+				themeContainer = new ThemeLabelComplicatedContainer(layer);
+				initThemePanel(layer, themeType, themeContainer);
+				return;
+			}
 			if (THEMETYPE_GRID_UNIQUE.equals(themeType)) {
 				// 栅格单值专题图
 				themeContainer = new ThemeGridUniqueContainer(layer);
