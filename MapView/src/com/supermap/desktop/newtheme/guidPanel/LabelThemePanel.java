@@ -17,6 +17,7 @@ public class LabelThemePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private ThemeLabelDecorator labelUniformTheme;
 	private ThemeLabelDecorator labelRangeTheme;
+	private ThemeLabelDecorator labelComplicated;
 	private MouseAdapter mouseAdapter;
 
 	public LabelThemePanel() {
@@ -35,17 +36,22 @@ public class LabelThemePanel extends JPanel {
 		this.labelUniformTheme.selected(true);
 		this.labelRangeTheme = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_RANGES, MapViewProperties.getString("String_ThemeLabelRangeItem"));
 		this.labelRangeTheme.selected(false);
+		this.labelComplicated = new ThemeLabelDecorator(InternalImageIconFactory.THEMEGUIDE_COMPLICATED, MapViewProperties.getString("String_ThemeLabelMixedItem"));
+		this.labelComplicated.selected(false);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup()
+						.addGap(16)
 						.addComponent(labelUniformTheme)
 						.addComponent(labelRangeTheme)
-						.addContainerGap(220, Short.MAX_VALUE)));
+						.addComponent(labelComplicated)
+						.addContainerGap(160, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)
 										.addGroup(groupLayout.createSequentialGroup().addComponent(labelUniformTheme))
-										.addGroup(groupLayout.createSequentialGroup().addComponent(labelRangeTheme)))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(labelRangeTheme))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(labelComplicated)))
 						.addContainerGap(180, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on
@@ -56,7 +62,7 @@ public class LabelThemePanel extends JPanel {
 	 */
 	private void registListener() {
 		this.mouseAdapter = new MouseAdapter() {
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				labelUniformTheme.selected(false);
@@ -88,5 +94,12 @@ public class LabelThemePanel extends JPanel {
 		this.labelRangeTheme = labelRangeTheme;
 	}
 
-	
+	public ThemeLabelDecorator getLabelComplicated() {
+		return labelComplicated;
+	}
+
+	public void setLabelComplicated(ThemeLabelDecorator labelComplicated) {
+		this.labelComplicated = labelComplicated;
+	}
+
 }

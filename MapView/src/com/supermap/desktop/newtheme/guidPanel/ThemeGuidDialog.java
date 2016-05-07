@@ -32,6 +32,7 @@ public class ThemeGuidDialog extends SmDialog {
 	private JList<Object> listContent = new JList<Object>();
 	private ThemeLabelDecorator labelUniform;
 	private ThemeLabelDecorator labelRange;
+	private ThemeLabelDecorator labelComplicated;
 	private JPanel panel;
 	private JPanel contentPanel = new JPanel();
 
@@ -39,8 +40,8 @@ public class ThemeGuidDialog extends SmDialog {
 	private boolean isRange = false;
 	private boolean isCadType = false;
 	private boolean isGridType = false;
+	private boolean isComplicated = false;
 	private boolean hasDotDensityList = false;
-	
 
 	private DatasetType activeDatasetType = ThemeUtil.getActiveLayer().getDataset().getType();
 
@@ -123,7 +124,7 @@ public class ThemeGuidDialog extends SmDialog {
 		DataCell graduatedSymbolCell = new DataCell(MapViewProperties.getString("String_Theme_GraduatedSymbol"),
 				InternalImageIconFactory.THEMEGUIDE_GRADUATEDSYMBOL);
 		DataCell dotDensityCell = new DataCell(MapViewProperties.getString("String_Theme_DotDensity"), InternalImageIconFactory.THEMEGUIDE_DOTDENSITY);
-		DataCell customCell = new DataCell(MapViewProperties.getString("String_ThemeCustom"),InternalImageIconFactory.THEMEGUIDE_CUSTOM);
+		DataCell customCell = new DataCell(MapViewProperties.getString("String_ThemeCustom"), InternalImageIconFactory.THEMEGUIDE_CUSTOM);
 		if (isCadType) {
 			listModel.addElement(labelDataCell);
 		} else if (isGridType) {
@@ -135,10 +136,10 @@ public class ThemeGuidDialog extends SmDialog {
 			listModel.addElement(labelDataCell);
 			listModel.addElement(graphCell);
 			listModel.addElement(graduatedSymbolCell);
-			if (activeDatasetType == DatasetType.REGION || activeDatasetType == DatasetType.REGION3D) {
+			if (activeDatasetType == DatasetType.REGION) {
 				listModel.addElement(dotDensityCell);
 				hasDotDensityList = true;
-			}else {
+			} else {
 				hasDotDensityList = false;
 			}
 			listModel.addElement(customCell);
@@ -211,12 +212,12 @@ public class ThemeGuidDialog extends SmDialog {
 			if (null != getRightPanel() && hasDotDensityList) {
 				replaceRightPanel(new DotDensityThemePanel(this));
 			}
-			if (null!=getRightPanel() && !hasDotDensityList) {
+			if (null != getRightPanel() && !hasDotDensityList) {
 				replaceRightPanel(new CustomThemePanel(this));
 			}
 			break;
 		case 6:
-			if (null!=getRightPanel()) {
+			if (null != getRightPanel()) {
 				replaceRightPanel(new CustomThemePanel(this));
 			}
 			break;
@@ -241,8 +242,10 @@ public class ThemeGuidDialog extends SmDialog {
 		LabelThemePanel labelThemePanel = new LabelThemePanel();
 		this.labelRange = labelThemePanel.getLabelRangeTheme();
 		this.labelUniform = labelThemePanel.getLabelUniformTheme();
+		this.labelComplicated = labelThemePanel.getLabelComplicated();
 		this.labelRange.addMouseListener(this.localMouseListener);
 		this.labelUniform.addMouseListener(this.localMouseListener);
+		this.labelComplicated.addMouseListener(this.localMouseListener);
 		return labelThemePanel;
 	}
 
@@ -326,8 +329,17 @@ public class ThemeGuidDialog extends SmDialog {
 			if (isUniform) {
 				ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 				ThemeGuidDialog.this.dispose();
-			} else if (isRange) {
+			} 
+			// 标签分段风格专题图
+			if (isRange) {
 				ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
+				if (success) {
+					ThemeGuidDialog.this.dispose();
+				}
+			}
+			// 标签复合风格专题图
+			if (isComplicated) {
+				ThemeGuideFactory.buildLabelComplicatedTheme(ThemeUtil.getActiveLayer());
 				if (success) {
 					ThemeGuidDialog.this.dispose();
 				}
@@ -354,12 +366,21 @@ public class ThemeGuidDialog extends SmDialog {
 			}
 			break;
 		case 2:
-			// 标签统一风格专题图
 			if (isUniform) {
+				// 标签统一风格专题图
 				ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 				ThemeGuidDialog.this.dispose();
-			} else if (isRange) {
+			}
+			if (isRange) {
+				// 标签分段风格专题图
 				buildSuccessed = ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
+				if (buildSuccessed) {
+					ThemeGuidDialog.this.dispose();
+				}
+			}
+			if (isComplicated) {
+				// 标签复合风格专题图
+				buildSuccessed = ThemeGuideFactory.buildLabelComplicatedTheme(ThemeUtil.getActiveLayer());
 				if (buildSuccessed) {
 					ThemeGuidDialog.this.dispose();
 				}
@@ -415,24 +436,45 @@ public class ThemeGuidDialog extends SmDialog {
 				if (1 == e.getClickCount()) {
 					labelUniform.selected(true);
 					labelRange.selected(false);
+					labelComplicated.selected(false);
 					isUniform = true;
 					isRange = false;
+					isComplicated = false;
 				} else if (2 == e.getClickCount()) {
 					// 新建标签统一风格专题图
 					ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}
-			} else {
+			}
+			if (e.getSource()==labelRange) {
 				// 分段风格标签专题图
 				if (1 == e.getClickCount()) {
 					labelUniform.selected(false);
 					labelRange.selected(true);
+					labelComplicated.selected(false);
 					isUniform = false;
 					isRange = true;
+					isComplicated = false;
 				} else if (2 == e.getClickCount()) {
 					// 新建分段风格标签专题图
 					ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
+					ThemeGuidDialog.this.dispose();
+					unregistListener();
+				}
+			}
+			if (e.getSource()==labelComplicated) {
+				// 复合风格标签专题图
+				if (1 == e.getClickCount()) {
+					labelUniform.selected(false);
+					labelRange.selected(false);
+					labelComplicated.selected(true);
+					isUniform = false;
+					isRange = false;
+					isComplicated = true;
+				} else if (2 == e.getClickCount()) {
+					// 新建复合风格标签专题图
+				
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}

@@ -126,6 +126,8 @@ public final class InternalImageIconFactory {
 	public final static ImageIcon THEME_UNIQUE = createIconFromFile("Image_Layer_ThemeUnique.png");
 
 	public final static ImageIcon THEME_GRAPH = createIconFromFile("Image_Layer_ThemeGraph.png");
+	
+	public final static ImageIcon THEME_LABEL_COMPLICATED = createIconFromFile("Image_Layer_complicatedOfLabelTheme.png");
 
 	public final static ImageIcon THEME_LABEL = createIconFromFile("Image_Layer_unifromStyleOfLabelTheme.png");
 
