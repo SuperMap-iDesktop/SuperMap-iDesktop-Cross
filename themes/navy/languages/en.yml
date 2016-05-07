@@ -34,5 +34,6 @@ sidebar:
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
     BufferAnalyst_Example: 缓冲区应用实例
-#    Map: 地图制图
-#    ThematicMap: 专题图概述
+    Map: 地图制图
+    ThematicMap: 专题图概述
+    Measuregroup: 地图量算
