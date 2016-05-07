@@ -22,6 +22,12 @@ import java.awt.event.ComponentEvent;
  */
 public class ColorsComboBox extends JComboBox {
 	private static final long serialVersionUID = 1L;
+	private final ColorSchemeManagerChangedListener colorSchemeManagerChangedListener = new ColorSchemeManagerChangedListener() {
+		@Override
+		public void colorSchemeManagerChanged(ColorSchemeManagerChangedEvent colorSchemeManagerChangedEvent) {
+			initComboBox();
+		}
+	};
 
 	private ColorsCellRenderer colorsCellRenderer;
 
@@ -53,7 +59,7 @@ public class ColorsComboBox extends JComboBox {
 		customColorsListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (getSelectedIndex() == getItemCount() - 1) {
+				if (getSelectedIndex() != -1 && getSelectedIndex() == getItemCount() - 1) {
 					final ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog(customColors);
 					dialog.setVisible(true);
 					DialogResult dialogResult = dialog.getResult();
@@ -69,6 +75,7 @@ public class ColorsComboBox extends JComboBox {
 
 		};
 
+		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
 		initComboBox();
 		this.setMaximumRowCount(20);
 		this.setSelectedIndex(selectCount);
@@ -117,6 +124,7 @@ public class ColorsComboBox extends JComboBox {
 	 */
 	private void initComboBox() {
 		try {
+			this.removeAllItems();
 			ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 			java.util.List<ColorScheme> colorSchemeList = colorSchemeManager.getColorSchemeList();
 			for (int i = 0; i < colorSchemeList.size(); i++) {
@@ -133,6 +141,9 @@ public class ColorsComboBox extends JComboBox {
 		}
 	}
 
+	public void dispose() {
+		ColorSchemeManager.getColorSchemeManager().removeColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
+	}
 
 }
 
