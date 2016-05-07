@@ -1,5 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -8,6 +10,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.EventObject;
 import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
@@ -58,18 +65,10 @@ public class EraseEditor extends AbstractEditor {
 
 	private int pressedKey = 0;
 
-	private MouseListener mouseListener = new MouseAdapter() {
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			EraseEditor.this.mouseEntered();
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			EraseEditor.this.mouseExited();
-		}
-	};
+	private MapControlTip tip;
+	private JPanel panelMessage = new JPanel();
+	private JLabel labelMsg = new JLabel(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));
+	private JLabel labelChangeMode = new JLabel();
 
 	/**
 	 * 由于 Ctrl 是常用组合键功能，比如 Ctrl + Z 回退。因此按 Ctrl 切换的功能点需要过滤掉使用组合键的情况。
@@ -130,6 +129,12 @@ public class EraseEditor extends AbstractEditor {
 
 	public EraseEditor() {
 		super();
+		this.panelMessage.setLayout(new BoxLayout(this.panelMessage, BoxLayout.Y_AXIS));
+		this.panelMessage.add(labelMsg);
+		this.panelMessage.add(labelChangeMode);
+		this.panelMessage.setSize(200, 35);
+		this.panelMessage.setBackground(new Color(255, 255, 255, 150));
+		tip = MapControlTip.instance(this.panelMessage);
 	}
 
 	@Override
@@ -138,6 +143,7 @@ public class EraseEditor extends AbstractEditor {
 		this.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
 		environment.getMapControl().setTrackMode(TrackMode.TRACK);
+		this.tip.bind(environment.getMapControl());
 		registerEvents(environment);
 		getSrRegion(environment);
 		setIsEraseExternal(false);
@@ -146,10 +152,14 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		environment.getMapControl().setAction(this.oldMapControlAction);
-		environment.getMapControl().setTrackMode(this.oldTrackMode);
-		unregisterEvents(environment);
-		clear(environment);
+		try {
+			environment.getMapControl().setAction(this.oldMapControlAction);
+			environment.getMapControl().setTrackMode(this.oldTrackMode);
+			unregisterEvents(environment);
+			clear(environment);
+		} finally {
+			this.tip.unbind();
+		}
 	}
 
 	@Override
@@ -166,7 +176,6 @@ public class EraseEditor extends AbstractEditor {
 
 	private void registerEvents(EditEnvironment environment) {
 		MapControl mapControl = environment.getMapControl();
-		mapControl.addMouseListener(this.mouseListener);
 		mapControl.addKeyListener(this.keyListener);
 		mapControl.addGeometrySelectedListener(this.geometrySelectedListener);
 		mapControl.addUndoneListener(this.undoneListener);
@@ -175,19 +184,10 @@ public class EraseEditor extends AbstractEditor {
 
 	private void unregisterEvents(EditEnvironment environment) {
 		MapControl mapControl = environment.getMapControl();
-		mapControl.removeMouseListener(this.mouseListener);
 		mapControl.removeKeyListener(this.keyListener);
 		mapControl.removeGeometrySelectedListener(this.geometrySelectedListener);
 		mapControl.removeUndoneListener(this.undoneListener);
 		mapControl.removeRedoneListener(this.redoneListener);
-	}
-
-	private void mouseEntered() {
-
-	}
-
-	private void mouseExited() {
-
 	}
 
 	private void geometrySelected(GeometrySelectedEvent e) {
@@ -371,14 +371,23 @@ public class EraseEditor extends AbstractEditor {
 		return eraseResult;
 	}
 
-	private void setIsEraseExternal(boolean isEraseExternal) {
+	private void setIsEraseExternal(final boolean isEraseExternal) {
 		this.isEraseExternal = isEraseExternal;
 
-		if (isEraseExternal) {
-			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseTipExternal"));
-		} else {
-			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseTipInside"));
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				if (isEraseExternal) {
+					labelChangeMode.setText(MapEditorProperties.getString("String_EraseEditor_EraseTipExternal"));
+				} else {
+					labelChangeMode.setText(MapEditorProperties.getString("String_EraseEditor_EraseTipInside"));
+				}
+
+				labelChangeMode.repaint();
+				panelMessage.repaint();
+			}
+		});
 	}
 
 	private void addResultTracking(MapControl mapControl, Geometry geometry) {

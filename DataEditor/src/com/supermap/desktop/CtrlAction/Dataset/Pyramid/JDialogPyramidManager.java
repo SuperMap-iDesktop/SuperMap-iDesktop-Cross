@@ -233,7 +233,7 @@ public class JDialogPyramidManager extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = tableDatasets.getSelectedRow();
-				pyramidManagerTableModel.deleteRows(tableDatasets.getSelectedRows());
+				pyramidManagerTableModel.removeRows(tableDatasets.getSelectedRows());
 				if (tableDatasets.getRowCount() > selectedRow) {
 					tableDatasets.setRowSelectionInterval(selectedRow, selectedRow);
 				} else if (tableDatasets.getRowCount() > 0) {
