@@ -16,6 +16,7 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.http.entity.FileEntity;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -76,8 +77,8 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	// 符号
 	private JLabel labelMarkerSymbol;
 	private JComboBox<String> comboBoxMarkerSymbol;// 符号风格
-	// private JLabel labelMarkerColor;
-	// private JComboBox<String> comboBoxMarkerColor;// 符号颜色
+	private JLabel labelMarkerColor;
+	private JComboBox<String> comboBoxMarkerColor;// 符号颜色
 	private JLabel labelMarkerSize;
 	private JComboBox<String> comboBoxMarkerSize;// 符号大小
 	private JLabel labelMarkerAngle;
@@ -96,14 +97,14 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	private final int LINECOLOR = 9;
 	private final int LINEWIDTH = 10;
 	private final int MARKERSYMBOLID = 11;
-	// private final int MARKERCOLOR =12;
-	private final int MARKERSIZE = 12;
-	private final int MARKERANGLE = 13;
+	private final int MARKERCOLOR = 12;
+	private final int MARKERSIZE = 13;
+	private final int MARKERANGLE = 14;
 
 	private boolean isRefreshAtOnce;
 	public boolean isResetLayerProperty = false;
 	private String layerName;
-	
+
 	private Dimension dimension = new Dimension(120, 23);
 	private ItemListener panelFillComboBoxListener = new PanelFillComboBoxListener();
 	private ItemListener panelLineComboBoxListener = new PanelLineComboBoxListener();
@@ -144,6 +145,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 			this.themeCustomLayer.setDisplayFilter(layer.getDisplayFilter());
 			this.layerName = this.themeCustomLayer.getName();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
+			mapControl.getMap().refresh();
 		}
 		return mapControl.getMap();
 	}
@@ -361,14 +363,15 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.panelMarker = new JPanel();
 		this.labelMarkerSymbol = new JLabel();
 		this.comboBoxMarkerSymbol = new JComboBox<String>();
-		// this.labelMarkerColor = new JLabel();
-		// this.comboBoxMarkerColor = new JComboBox<String>();
+		this.labelMarkerColor = new JLabel();
+		this.comboBoxMarkerColor = new JComboBox<String>();
 		this.labelMarkerSize = new JLabel();
 		this.comboBoxMarkerSize = new JComboBox<String>();
 		this.labelMarkerAngle = new JLabel();
 		this.comboBoxMarkerAngle = new JComboBox<String>();
 		initComboBoxMarkerSymbol();
 		initComboBoxMarkerColor();
+		initComboBoxMarkerSize();
 		initComboBoxMarkerAngle();
 		if (ThemeUtil.isPoint(datasetVector)) {
 			setPanelMarkerState(true);
@@ -379,22 +382,31 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.panelMarker.setLayout(new GridBagLayout());
 		this.panelMarker.add(labelMarkerSymbol,   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,10,5,10).setWeight(40, 1).setIpad(20, 0));
 		this.panelMarker.add(comboBoxMarkerSymbol,new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-//		this.panelMarker.add(labelMarkerColor,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
-//		this.panelMarker.add(comboBoxMarkerColor, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelMarker.add(labelMarkerSize,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
-		this.panelMarker.add(comboBoxMarkerSize,  new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelMarker.add(labelMarkerAngle,    new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
-		this.panelMarker.add(comboBoxMarkerAngle, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelMarker.add(labelMarkerColor,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
+		this.panelMarker.add(comboBoxMarkerColor, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelMarker.add(labelMarkerSize,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
+		this.panelMarker.add(comboBoxMarkerSize,  new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelMarker.add(labelMarkerAngle,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(40, 1).setIpad(20, 0));
+		this.panelMarker.add(comboBoxMarkerAngle, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 1).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
 	private void setPanelMarkerState(boolean isMarker) {
 		this.labelMarkerSymbol.setEnabled(isMarker);
 		this.comboBoxMarkerSymbol.setEnabled(isMarker);
+		this.labelMarkerColor.setEnabled(isMarker);
+		this.comboBoxMarkerColor.setEnabled(isMarker);
 		this.labelMarkerSize.setEnabled(isMarker);
 		this.comboBoxMarkerSize.setEnabled(isMarker);
 		this.labelMarkerAngle.setEnabled(isMarker);
 		this.comboBoxMarkerAngle.setEnabled(isMarker);
+	}
+
+	private void initComboBoxMarkerColor() {
+		comboBoxLists[MARKERCOLOR] = new ArrayList<String>();
+		this.comboBoxMarkerColor.setPreferredSize(dimension);
+		ThemeUtil.initComboBox(comboBoxMarkerColor, themeCustom.getLineColorExpression(), datasetVector, themeCustomLayer.getDisplayFilter().getJoinItems(),
+				comboBoxLists[MARKERCOLOR], true, false);
 	}
 
 	private void initComboBoxMarkerAngle() {
@@ -404,7 +416,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				comboBoxLists[MARKERANGLE], true, false);
 	}
 
-	private void initComboBoxMarkerColor() {
+	private void initComboBoxMarkerSize() {
 		comboBoxLists[MARKERSIZE] = new ArrayList<String>();
 		this.comboBoxMarkerSize.setPreferredSize(dimension);
 		ThemeUtil.initComboBox(comboBoxMarkerSize, themeCustom.getMarkerSizeExpression(), datasetVector, themeCustomLayer.getDisplayFilter().getJoinItems(),
@@ -431,7 +443,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.labelLineColor.setText(MapViewProperties.getString("String_ThemeCustom_LineColor"));
 		this.labelLineWidth.setText(MapViewProperties.getString("String_ThemeCustom_LineWidth"));
 		this.labelMarkerSymbol.setText(MapViewProperties.getString("String_ThemeCustom_MarkerSymbolID"));
-		// this.labelMarkerColor.setText(MapViewProperties.getString("String_ThemeCustom_MarkerColor"));
+		this.labelMarkerColor.setText(MapViewProperties.getString("String_ThemeCustom_MarkerColor"));
 		this.labelMarkerSize.setText(MapViewProperties.getString("String_ThemeCustom_MarkerSize"));
 		this.labelMarkerAngle.setText(MapViewProperties.getString("String_ThemeCustom_MarkerAngle"));
 		this.panelFill.setBorder(new TitledBorder(MapViewProperties.getString("String_ThemeCustom_Fill")));
@@ -464,7 +476,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxFillGradientAngle.addItemListener(this.panelFillComboBoxListener);
 		this.comboBoxFillGradientOffsetRatioX.addItemListener(this.panelFillComboBoxListener);
 		this.comboBoxFillGradientOffsetRatioY.addItemListener(this.panelFillComboBoxListener);
-		this.comboBoxLineSymbol.addItemListener(this.panelLineComboBoxListener );
+		this.comboBoxLineSymbol.addItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineColor.addItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineWidth.addItemListener(this.panelLineComboBoxListener);
 		this.comboBoxMarkerSymbol.addItemListener(this.panelMarkerComboBoxListener);
@@ -486,6 +498,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxMarkerAngle.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
+
 	@Override
 	public void unregistActionListener() {
 		this.comboBoxFillSymbol.removeItemListener(this.panelFillComboBoxListener);
@@ -496,7 +509,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxFillGradientAngle.removeItemListener(this.panelFillComboBoxListener);
 		this.comboBoxFillGradientOffsetRatioX.removeItemListener(this.panelFillComboBoxListener);
 		this.comboBoxFillGradientOffsetRatioY.removeItemListener(this.panelFillComboBoxListener);
-		this.comboBoxLineSymbol.removeItemListener(this.panelLineComboBoxListener );
+		this.comboBoxLineSymbol.removeItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineColor.removeItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineWidth.removeItemListener(this.panelLineComboBoxListener);
 		this.comboBoxMarkerSymbol.removeItemListener(this.panelMarkerComboBoxListener);
@@ -518,6 +531,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxMarkerAngle.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
+
 	class PanelFillComboBoxListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
@@ -529,31 +543,31 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 					String fillSymbolExpression = themeCustom.getFillSymbolIDExpression();
 					resetExpression(FILLSYMBOLID, fillSymbolExpression);
 				}
-				if (e.getSource()==comboBoxFillOpaque) {
+				if (e.getSource() == comboBoxFillOpaque) {
 					String fillOpaqueExpression = themeCustom.getFillOpaqueRateExpression();
 					resetExpression(FILLOPAQUE, fillOpaqueExpression);
 				}
-				if (e.getSource()== comboBoxFillForeColor) {
+				if (e.getSource() == comboBoxFillForeColor) {
 					String fillForeColorExpression = themeCustom.getFillForeColorExpression();
 					resetExpression(FILLFORECOLOR, fillForeColorExpression);
 				}
-				if (e.getSource()== comboBoxFillBackColor) {
+				if (e.getSource() == comboBoxFillBackColor) {
 					String fillBackColorExpression = themeCustom.getFillBackColorExpression();
 					resetExpression(FILLBACKCOLOR, fillBackColorExpression);
 				}
-				if (e.getSource()== comboBoxFillGradientMode) {
+				if (e.getSource() == comboBoxFillGradientMode) {
 					String fillGradientModeExpression = themeCustom.getFillGradientModeExpression();
 					resetExpression(FILLGRADIENTMODE, fillGradientModeExpression);
 				}
-				if (e.getSource()== comboBoxFillGradientAngle) {
+				if (e.getSource() == comboBoxFillGradientAngle) {
 					String fillGradientAngleExpression = themeCustom.getFillGradientAngleExpression();
 					resetExpression(FILLGRADIENTANGLE, fillGradientAngleExpression);
 				}
-				if (e.getSource()== comboBoxFillGradientOffsetRatioX) {
+				if (e.getSource() == comboBoxFillGradientOffsetRatioX) {
 					String fillGradientOffsetXExpression = themeCustom.getFillGradientOffsetRatioXExpression();
 					resetExpression(FILLGRADIENTOFFSETRATIOX, fillGradientOffsetXExpression);
 				}
-				if (e.getSource()== comboBoxFillGradientOffsetRatioY) {
+				if (e.getSource() == comboBoxFillGradientOffsetRatioY) {
 					String fillGradientOffsetYExpression = themeCustom.getFillGradientOffsetRatioYExpression();
 					resetExpression(FILLGRADIENTOFFSETRATIOY, fillGradientOffsetYExpression);
 				}
@@ -561,7 +575,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		}
 	}
 
-	class PanelLineComboBoxListener implements ItemListener{
+	class PanelLineComboBoxListener implements ItemListener {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
@@ -583,10 +597,10 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				}
 			}
 		}
-		
+
 	}
-	
-	class PanelMarkerComboBoxLitener implements ItemListener{
+
+	class PanelMarkerComboBoxLitener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (isResetLayerProperty) {
@@ -605,16 +619,20 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 					String markerAngleExpression = themeCustom.getMarkerAngleExpression();
 					resetExpression(MARKERANGLE, markerAngleExpression);
 				}
+				if (e.getSource() == comboBoxMarkerColor) {
+					String markerColorExpression = themeCustom.getLineColorExpression();
+					resetExpression(MARKERCOLOR, markerColorExpression);
+				}
 			}
 		}
 	}
-	
+
 	class LayerPropertyChangeListener implements PropertyChangeListener {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent e) {
 			if (null != themeCustomLayer && !themeCustomLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeCustomLayer)) {
-				isResetLayerProperty  = true;
+				isResetLayerProperty = true;
 				initComboBoxFillStyle();
 				initComboBoxFillOpaque();
 				initComboBoxFillForeColor();
@@ -627,14 +645,13 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				initComboBoxLineColor();
 				initComboBoxLineWidth();
 				initComboBoxMarkerSymbol();
-				initComboBoxMarkerColor();
+				initComboBoxMarkerSize();
 				initComboBoxMarkerAngle();
 			}
 		}
 
 	}
 
-	
 	public void resetExpression(int type, String expression) {
 		if (!comboBoxLists[type].contains(expression)) {
 			expression = expression.substring(expression.indexOf(".") + 1, expression.length());
@@ -700,6 +717,10 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 			resetThemeInfo(type, expression, comboBoxExpression);
 			return;
 		}
+		if (type == MARKERCOLOR) {
+			comboBoxExpression = this.comboBoxMarkerColor;
+			resetThemeInfo(type, expression, comboBoxExpression);
+		}
 		if (type == MARKERSIZE) {
 			comboBoxExpression = this.comboBoxMarkerSize;
 			resetThemeInfo(type, expression, comboBoxExpression);
@@ -721,59 +742,59 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 			expression = comboBoxExpression.getSelectedItem().toString();
 			switch (type) {
 			case FILLSYMBOLID:
-				themeCustom.setFillSymbolIDExpression(expression);//修改填充风格表达式
+				themeCustom.setFillSymbolIDExpression(expression);// 修改填充风格表达式
 				refreshAtOnce();
 				break;
 			case FILLOPAQUE:
-				themeCustom.setFillOpaqueRateExpression(expression);//修改透明度表达式
+				themeCustom.setFillOpaqueRateExpression(expression);// 修改透明度表达式
 				refreshAtOnce();
 				break;
 			case FILLFORECOLOR:
-				themeCustom.setFillForeColorExpression(expression);//修改前景色表达式
+				themeCustom.setFillForeColorExpression(expression);// 修改前景色表达式
 				refreshAtOnce();
 				break;
 			case FILLBACKCOLOR:
-				themeCustom.setFillBackColorExpression(expression);//修改背景色表达式
+				themeCustom.setFillBackColorExpression(expression);// 修改背景色表达式
 				refreshAtOnce();
 				break;
 			case FILLGRADIENTMODE:
-				themeCustom.setFillGradientModeExpression(expression);//修改渐变模式表达式
+				themeCustom.setFillGradientModeExpression(expression);// 修改渐变模式表达式
 				refreshAtOnce();
 				break;
 			case FILLGRADIENTANGLE:
-				themeCustom.setFillGradientAngleExpression(expression);//修改渐变角度表达式
+				themeCustom.setFillGradientAngleExpression(expression);// 修改渐变角度表达式
 				refreshAtOnce();
 				break;
 			case FILLGRADIENTOFFSETRATIOX:
-				themeCustom.setFillGradientOffsetRatioXExpression(expression);//修改渐变水平偏移量表达式
+				themeCustom.setFillGradientOffsetRatioXExpression(expression);// 修改渐变水平偏移量表达式
 				refreshAtOnce();
 				break;
 			case FILLGRADIENTOFFSETRATIOY:
-				themeCustom.setFillGradientOffsetRatioYExpression(expression);//修改渐变垂直偏移量表达式
+				themeCustom.setFillGradientOffsetRatioYExpression(expression);// 修改渐变垂直偏移量表达式
 				refreshAtOnce();
 				break;
 			case LINESYMBOLID:
-				themeCustom.setLineSymbolIDExpression(expression);//修改线风格表达式
+				themeCustom.setLineSymbolIDExpression(expression);// 修改线风格表达式
 				refreshAtOnce();
 				break;
 			case LINECOLOR:
-				themeCustom.setLineColorExpression(expression);//修改线颜色表达式
+				themeCustom.setLineColorExpression(expression);// 修改线颜色表达式
 				refreshAtOnce();
 				break;
 			case LINEWIDTH:
-				themeCustom.setLineWidthExpression(expression);//修改线宽表达式
+				themeCustom.setLineWidthExpression(expression);// 修改线宽表达式
 				refreshAtOnce();
 				break;
 			case MARKERSYMBOLID:
-				themeCustom.setMarkerSymbolIDExpression(expression);//修改符号风格表达式
+				themeCustom.setMarkerSymbolIDExpression(expression);// 修改符号风格表达式
 				refreshAtOnce();
 				break;
 			case MARKERSIZE:
-				themeCustom.setMarkerSizeExpression(expression);//修改符号大小表达式
+				themeCustom.setMarkerSizeExpression(expression);// 修改符号大小表达式
 				refreshAtOnce();
 				break;
 			case MARKERANGLE:
-				themeCustom.setMarkerAngleExpression(expression);//修改符号偏移角度表达式
+				themeCustom.setMarkerAngleExpression(expression);// 修改符号偏移角度表达式
 				refreshAtOnce();
 				break;
 			default:

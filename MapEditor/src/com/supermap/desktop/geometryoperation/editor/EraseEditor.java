@@ -33,6 +33,7 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
@@ -113,7 +114,7 @@ public class EraseEditor extends AbstractEditor {
 		public void undone(EventObject arg0) {
 
 			// undone 的时候清除 trackingLayer
-			clearResultTracking((MapControl) arg0.getSource());
+			MapControlUtilties.clearTrackingObjects((MapControl) arg0.getSource(), TAG_ERASE);
 		}
 	};
 
@@ -123,7 +124,7 @@ public class EraseEditor extends AbstractEditor {
 		public void redone(EventObject arg0) {
 
 			// redone 的时候清除 trackingLayer
-			clearResultTracking((MapControl) arg0.getSource());
+			MapControlUtilties.clearTrackingObjects((MapControl) arg0.getSource(), TAG_ERASE);
 		}
 	};
 
@@ -396,18 +397,6 @@ public class EraseEditor extends AbstractEditor {
 		}
 	}
 
-	private void clearResultTracking(MapControl mapControl) {
-		if (mapControl != null) {
-			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-
-			int index = trackingLayer.indexOf(TAG_ERASE);
-			while (index >= 0) {
-				trackingLayer.remove(index);
-				index = trackingLayer.indexOf(TAG_ERASE);
-			}
-		}
-	}
-
 	// @formatter:off
 	/**
 	 * 获取用来擦除的面对象，将所有选中的面对象合并。只要重叠，做擦除就可能产生岛洞关系与预期不一致。
@@ -434,6 +423,6 @@ public class EraseEditor extends AbstractEditor {
 			this.srRegion = null;
 		}
 
-		clearResultTracking(environment.getMapControl());
+		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_ERASE);
 	}
 }
