@@ -16,5 +16,6 @@ docs:
     BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
   Map:
     ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
+    Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
     Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
 
