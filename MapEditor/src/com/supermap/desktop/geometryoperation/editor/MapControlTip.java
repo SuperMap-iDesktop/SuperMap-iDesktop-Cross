@@ -32,16 +32,12 @@ public class MapControlTip {
 		}
 	};
 
-	private MapControlTip(JPanel contentPanel) {
-		this.contentPanel = contentPanel;
+	public MapControlTip() {
+		this.contentPanel = new JPanel();
 	}
 
-	public static MapControlTip instance(JPanel contentPanel) {
-		if (contentPanel != null) {
-			return new MapControlTip(contentPanel);
-		}
-
-		return null;
+	public JPanel getContentPanel() {
+		return this.contentPanel;
 	}
 
 	public void bind(MapControl mapControl) {

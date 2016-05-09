@@ -1,8 +1,14 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
+
+import javax.swing.JLabel;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -16,30 +22,69 @@ import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Selection;
+import com.supermap.ui.Action;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.GeometrySelectedListener;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
 
-public class LineExtendEditor extends AbstractEditor {
+public class LineExtendEditor extends AbstractEditor implements GeometrySelectedListener {
 
 	private static final String TAG_LINEEXTEND = "Tag_ExtendLineEditorBase";
+	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
-	private GeoLine m_baseLine;
-	private GeoLine m_desLine;
-	private DatasetVector m_desDataset;
+	private GeoLine baseLine;
+	private GeoLine desLine;
+	private DatasetVector desDataset;
+
+	private Action oldMapControlAction = Action.SELECT2;
+	private TrackMode oldTrackMode = TrackMode.EDIT;
+	private Point mouseClickedLocation;
+
+	private MapControlTip tip = new MapControlTip();
+	private JLabel labelTip = new JLabel(MapEditorProperties.getString("String_LineEditor_SelectBaseLine"));
+
+	private MouseListener mouseListener = new MouseAdapter() {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			LineExtendEditor.this.mouseClickedLocation = e.getPoint();
+		}
+	};
+
+	public LineExtendEditor() {
+		super();
+		this.tip.getContentPanel().setLayout(new BorderLayout());
+		this.tip.getContentPanel().add(this.labelTip, BorderLayout.CENTER);
+		this.tip.getContentPanel().setSize(200, 20);
+		this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+	}
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		// 按需重写
+		this.oldMapControlAction = environment.getMapControl().getAction();
+		this.oldTrackMode = environment.getMapControl().getTrackMode();
+		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
+		environment.getMapControl().setTrackMode(TrackMode.TRACK);
+		this.tip.bind(environment.getMapControl());
+		registerEvents(environment);
 	}
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		// 按需重写
+		try {
+			environment.getMapControl().setAction(this.oldMapControlAction);
+			environment.getMapControl().setTrackMode(this.oldTrackMode);
+			unregisterEvents(environment);
+			clear(environment);
+		} finally {
+			this.tip.unbind();
+		}
 	}
 
 	@Override
@@ -53,40 +98,48 @@ public class LineExtendEditor extends AbstractEditor {
 		return environment.getEditor() instanceof LineExtendEditor;
 	}
 
+	private void registerEvents(EditEnvironment environment) {
+		environment.getMapControl().addGeometrySelectedListener(this);
+	}
+
+	private void unregisterEvents(EditEnvironment environment) {
+		environment.getMapControl().removeGeometrySelectedListener(this);
+	}
+
 	// 延伸算法
-	private void extend(IFormMap formMap, Point point) {
+	private void extend(MapControl mapControl, Point mouseClickedLocation) {
 		Recordset recordset = null;
 		try {
-			if (this.m_baseLine == null) {
-				MapControlUtilties.clearTrackingObjects(formMap.getMapControl(), TAG_LINEEXTEND);
-				this.m_baseLine = updateBaseLine(formMap);
+			if (this.baseLine == null) {
+				MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
+				this.baseLine = updateBaseLine(mapControl);
 				return;
 			}
 
-			this.m_desLine = updateDesLine(formMap);
-			if (this.m_desLine == null) {
+			this.desLine = updateDesLine(mapControl);
+			if (this.desLine == null) {
 				return;
 			}
 
 			Point2Ds baseLinePoints = new Point2Ds();
 			Point2Ds desLinePoints = new Point2Ds();
 			int nBaseLinePntCount = 0;
-			for (int i = 0; i < this.m_baseLine.getPartCount(); i++) {
-				baseLinePoints.addRange(this.m_baseLine.getPart(i).toArray());
-				nBaseLinePntCount += this.m_baseLine.getPart(i).getCount();
+			for (int i = 0; i < this.baseLine.getPartCount(); i++) {
+				baseLinePoints.addRange(this.baseLine.getPart(i).toArray());
+				nBaseLinePntCount += this.baseLine.getPart(i).getCount();
 			}
 			int nDesLinePntCount = 0;
-			for (int i = 0; i < this.m_desLine.getPartCount(); i++) {
-				desLinePoints.addRange(this.m_desLine.getPart(i).toArray());
-				nDesLinePntCount += this.m_desLine.getPart(i).getCount();
+			for (int i = 0; i < this.desLine.getPartCount(); i++) {
+				desLinePoints.addRange(this.desLine.getPart(i).toArray());
+				nDesLinePntCount += this.desLine.getPart(i).getCount();
 			}
 
 			// 如果目标线是一段封闭的线，则不理
 			GeoPoint pointStart = new GeoPoint(desLinePoints.getItem(0));
 			GeoPoint pointEnd = new GeoPoint(desLinePoints.getItem(nDesLinePntCount - 1));
 			if (Geometrist.isIdentical(pointStart, pointEnd)) {
-				m_desLine.dispose();
-				m_desLine = null;
+				desLine.dispose();
+				desLine = null;
 
 				pointStart.dispose();
 				pointEnd.dispose();
@@ -95,14 +148,14 @@ public class LineExtendEditor extends AbstractEditor {
 			pointStart.dispose();
 			pointEnd.dispose();
 
-			Point2D pnt2D = formMap.getMapControl().getMap().pixelToMap(point);
+			Point2D pnt2D = mapControl.getMap().pixelToMap(mouseClickedLocation);
 			Point2D perpendicularFoot = Point2D.getEMPTY();
 			int segment = -1;
 
-			if (this.m_desDataset.getTolerance().getNodeSnap() == 0) {
-				this.m_desDataset.getTolerance().setDefault();
+			if (this.desDataset.getTolerance().getNodeSnap() == 0) {
+				this.desDataset.getTolerance().setDefault();
 			}
-			EditorUtilties.getMinDistance(pnt2D, desLinePoints, this.m_desDataset.getTolerance().getNodeSnap(), perpendicularFoot, segment);
+			EditorUtilties.getMinDistance(pnt2D, desLinePoints, this.desDataset.getTolerance().getNodeSnap(), perpendicularFoot, segment);
 
 			// 记录是延伸目标线段的前半段的第一段还是后半段的最后一段
 			boolean bExtendFirstPart = true;
@@ -111,7 +164,7 @@ public class LineExtendEditor extends AbstractEditor {
 				dForeLength += compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
 			}
 			dForeLength += compouteTwoPointDistance(desLinePoints.getItem(segment), perpendicularFoot);
-			double dTotalLength = m_desLine.getLength();
+			double dTotalLength = desLine.getLength();
 			if ((dForeLength >= (dTotalLength / 2.0))) {
 				// 记录后半段的最后一段线段的两个端点点号
 				bExtendFirstPart = false;
@@ -135,19 +188,19 @@ public class LineExtendEditor extends AbstractEditor {
 						desLinePoints.getItem(nEndPntNumber), true);
 				if (pntIntersection != Point2D.getEMPTY()) {
 					// 交点在基线的延长线上，不作为可用点
-					boolean bValid = EditorUtilties.isPointInLineRect(pntIntersection, baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), m_desDataset
-							.getTolerance().getNodeSnap());
+					boolean bValid = EditorUtilties.isPointInLineRect(pntIntersection, baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1),
+							desDataset.getTolerance().getNodeSnap());
 					// 交点是所要延伸的线上的点，不作为可用交点
-					if (bValid
-							&& !Geometrist.isPointOnLine(pntIntersection, desLinePoints.getItem(nStartPntNumber), desLinePoints.getItem(nEndPntNumber), false)) {
+					if (bValid && !Geometrist.isPointOnLine(pntIntersection, desLinePoints.getItem(nStartPntNumber), desLinePoints.getItem(nEndPntNumber),
+							false)) {
 						pntIntersections.add(pntIntersection);
 					}
 				}
 			}
 			if (pntIntersections.getCount() == 0)// 无交点，不理
 			{
-				this.m_desLine.dispose();
-				this.m_desLine = null;
+				this.desLine.dispose();
+				this.desLine = null;
 				return;
 			}
 			// 找到最合适的交点,因为可能有多个交点，但只有离合法端点最近的一个才是所求的
@@ -189,19 +242,19 @@ public class LineExtendEditor extends AbstractEditor {
 			if (nKey != -1) {
 				// 延伸线对象
 				GeoLine newLine = new GeoLine(desLinePoints);
-				recordset = this.m_desDataset.getRecordset(false, CursorType.DYNAMIC);
+				recordset = this.desDataset.getRecordset(false, CursorType.DYNAMIC);
 				recordset.moveFirst();
-				recordset.seekID(this.m_desLine.getID());
-				formMap.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
+				recordset.seekID(this.desLine.getID());
+				mapControl.getEditHistory().add(EditType.MODIFY, recordset, true);
 				recordset.edit();
 				recordset.setGeometry(newLine);
 				recordset.update();
 				newLine.dispose();
-				formMap.getMapControl().getMap().refresh();
+				mapControl.getMap().refresh();
 			}
 
-			m_desLine.dispose();
-			m_desLine = null;
+			desLine.dispose();
+			desLine = null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -222,11 +275,11 @@ public class LineExtendEditor extends AbstractEditor {
 	// 采用的思路为：将目标线与基线的所有交点都插入到目标线中，构造一个新的线。
 	// 取得包含选中点的那段线段的两个端点，以头和第一交点构造一段线，或尾与第二
 	// 交点构造一段线，或以上两段线都构造。将构造好的线加入，然后删除原来的目标线。
-	GeoLine updateBaseLine(IFormMap formMap) {
+	GeoLine updateBaseLine(MapControl mapControl) {
 		GeoLine baseLine = null;
 		Recordset recordset = null;
 		try {
-			List<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			List<Layer> layers = MapUtilties.getLayers(mapControl.getMap());
 			for (Layer layer : layers) {
 				if (layer.getSelection().getCount() > 0 && layer.getDataset() != null
 						&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.CAD)) {
@@ -252,9 +305,9 @@ public class LineExtendEditor extends AbstractEditor {
 				style.setLineWidth(0.6);
 				style.setLineColor(Color.RED);
 				baseLine.setStyle(style);
-				formMap.getMapControl().getMap().getTrackingLayer().add(baseLine, TAG_LINEEXTEND);
-				formMap.getMapControl().getMap().refreshTrackingLayer();
-				// UserTip.Text = Properties.MapEditorResources.String_LineEditor_SelectExtendLine;
+				mapControl.getMap().getTrackingLayer().add(baseLine, TAG_LINEEXTEND);
+				mapControl.getMap().refreshTrackingLayer();
+				this.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -268,22 +321,21 @@ public class LineExtendEditor extends AbstractEditor {
 		return baseLine;
 	}
 
-	private GeoLine updateDesLine(IFormMap formMap) {
+	private GeoLine updateDesLine(MapControl mapControl) {
 		GeoLine desLine = null;
 		Recordset recordset = null;
 		try {
 			// 获取目标线
-			Selection[] selection = formMap.getMapControl().getMap().findSelection(true);
-			recordset = formMap.getMapControl().getActiveEditableLayer().getSelection().toRecordset();
+			recordset = mapControl.getActiveEditableLayer().getSelection().toRecordset();
 			if (recordset != null) {
-				this.m_desDataset = recordset.getDataset();
+				this.desDataset = recordset.getDataset();
 				while (!recordset.isEOF() && desLine == null) {
 					desLine = (GeoLine) recordset.getGeometry();
 					recordset.moveNext();
 				}
 			}
 
-			if (desLine != null && desLine.getID() != m_baseLine.getID()) {
+			if (desLine != null && desLine.getID() != baseLine.getID()) {
 				if (desLine.getPartCount() > 1) {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 					if (desLine != null) {
@@ -305,5 +357,32 @@ public class LineExtendEditor extends AbstractEditor {
 		}
 
 		return desLine;
+	}
+
+	/**
+	 * 编辑结束清理资源
+	 */
+	private void clear(EditEnvironment environment) {
+		if (this.baseLine != null) {
+			this.baseLine.dispose();
+			this.baseLine = null;
+		}
+
+		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_LINEEXTEND);
+	}
+
+	@Override
+	public void geometrySelected(GeometrySelectedEvent arg0) {
+
+		MapControl mapControl = (MapControl) arg0.getSource();
+		mapControl.getEditHistory().batchBegin();
+
+		try {
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+
+		}
 	}
 }

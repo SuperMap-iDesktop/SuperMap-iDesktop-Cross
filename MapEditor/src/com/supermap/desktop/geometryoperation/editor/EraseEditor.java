@@ -1,19 +1,14 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.supermap.data.EditHistory;
@@ -35,7 +30,6 @@ import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
@@ -66,8 +60,7 @@ public class EraseEditor extends AbstractEditor {
 
 	private int pressedKey = 0;
 
-	private MapControlTip tip;
-	private JPanel panelMessage = new JPanel();
+	private MapControlTip tip = new MapControlTip();
 	private JLabel labelMsg = new JLabel(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));
 	private JLabel labelChangeMode = new JLabel();
 
@@ -130,12 +123,11 @@ public class EraseEditor extends AbstractEditor {
 
 	public EraseEditor() {
 		super();
-		this.panelMessage.setLayout(new BoxLayout(this.panelMessage, BoxLayout.Y_AXIS));
-		this.panelMessage.add(labelMsg);
-		this.panelMessage.add(labelChangeMode);
-		this.panelMessage.setSize(200, 35);
-		this.panelMessage.setBackground(new Color(255, 255, 255, 150));
-		tip = MapControlTip.instance(this.panelMessage);
+		this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
+		this.tip.getContentPanel().add(labelMsg);
+		this.tip.getContentPanel().add(labelChangeMode);
+		this.tip.getContentPanel().setSize(200, 35);
+		this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
 	}
 
 	@Override
@@ -165,9 +157,8 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getEditProperties().getSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
-						ICompoundFeature.class);
+		return environment.getEditProperties().getSelectedGeometryCount() > 0 && ListUtilties
+				.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	@Override
@@ -386,7 +377,6 @@ public class EraseEditor extends AbstractEditor {
 				}
 
 				labelChangeMode.repaint();
-				panelMessage.repaint();
 			}
 		});
 	}
