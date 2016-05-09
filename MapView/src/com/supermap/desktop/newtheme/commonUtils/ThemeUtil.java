@@ -16,6 +16,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
@@ -278,7 +279,7 @@ public class ThemeUtil {
 			datasets[0] = datasetVector;
 			for (int i = 1; i < datasets.length; i++) {
 				String tableName = layer.getDisplayFilter().getJoinItems().get(i - 1).getForeignTable();
-				datasets[i] = datasetVector.getDatasource().getDatasets().get(tableName);
+				datasets[i] = DatasetUtilties.getDatasetFromDatasource(tableName, datasetVector.getDatasource());
 			}
 		}
 		return datasets;
