@@ -50,6 +50,7 @@ public class JTableColorScheme extends SortTable {
 	public ColorScheme getColorScheme(int row) {
 		return colorSchemeTableModel.getColorScheme(row);
 	}
+
 	public void setColorSchemeList(List<ColorScheme> colorSchemeList) {
 		colorSchemeTableModel.setColorSchemes(colorSchemeList);
 	}
@@ -64,6 +65,10 @@ public class JTableColorScheme extends SortTable {
 
 	public void addColorScheme(ColorScheme colorScheme) {
 		colorSchemeTableModel.addColorScheme(colorScheme);
+	}
+
+	public void setColorSchemeAtRow(int row, ColorScheme colorScheme) {
+		colorSchemeTableModel.setColorSchemeAtRow(row, colorScheme);
 	}
 
 	class ColorSchemeListCellRender extends DefaultTableCellRenderer {

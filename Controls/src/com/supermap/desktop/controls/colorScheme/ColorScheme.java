@@ -4,8 +4,10 @@ import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.ColorsUtilties;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,6 +21,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -44,6 +47,9 @@ public class ColorScheme implements ICloneable {
 
 	private IntervalColorBuildMethod intervalColorBuildMethod;
 
+	/**
+	 * 这个变量好像没用到
+	 */
 	private int keyColorCount;
 
 	private int intervalColorCount;
@@ -55,7 +61,13 @@ public class ColorScheme implements ICloneable {
 	 * 构造函数
 	 */
 	public ColorScheme() {
-		colors = new ArrayList<Color>();
+		colors = new ArrayList<>();
+		name = "NewColorScheme";
+		author = "SuperMap";
+		description = "Custom";
+		intervalColorCount = 32;
+		colorSystem = ColorSystem.CS_RGB;
+		intervalColorBuildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
 	}
 
 	@Override
@@ -67,7 +79,9 @@ public class ColorScheme implements ICloneable {
 			Application.getActiveApplication().getOutput().output(e);
 			return null;
 		}
-		clone.setColors(this.colors);
+		List<Color> copy = new LinkedList<>();
+		copy.addAll(this.colors);
+		clone.setColors(copy);
 		clone.setFileType(this.fileType);
 		clone.setVersion(this.version);
 		clone.setName(this.name);
@@ -77,7 +91,6 @@ public class ColorScheme implements ICloneable {
 		clone.setIntervalColorBuildMethod(this.intervalColorBuildMethod);
 		clone.setKeyColorCount(keyColorCount);
 		clone.setIntervalColorCount(this.intervalColorCount);
-		clone.setColorSchemePath(this.colorSchemePath);
 		return clone;
 	}
 
@@ -104,49 +117,18 @@ public class ColorScheme implements ICloneable {
 		Color[] gradientColors = new Color[this.colors.size()];
 		this.colors.toArray(gradientColors);
 		int intervalColorCount = this.getIntervalColorCount();
-		if (intervalColorCount < 2) {
-			intervalColorCount = 16;
-		}
 		ColorScheme.IntervalColorBuildMethod method = this.getIntervalColorBuildMethod();
 		if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT)) {
 			colors = Colors.makeGradient(intervalColorCount + this.getKeyColorCount(), gradientColors);
 		} else if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM)) {
-			colors = buildRandom(intervalColorCount + this.getKeyColorCount(), gradientColors);
+			colors = ColorsUtilties.buildRandom(intervalColorCount + this.getKeyColorCount(), gradientColors);
 		}
 		return colors;
 	}
 
-	/**
-	 * 生成随机色
-	 *
-	 * @param colorCount 颜色总数
-	 * @param keyColors  关键色
-	 * @return
-	 */
-	private Colors buildRandom(int colorCount, Color[] keyColors) {
-		Colors colors = new Colors();
-		// 要产生的颜色比关键色还要少，太可怜了
-		// 就不再进行随机色生成了，直接将随机色扔出去算了
-		if (colorCount <= keyColors.length) {
-			for (int index = 0; index < colorCount; index++) {
-				colors.add(keyColors[index]);
-			}
-		} else {
-			// 按照关键色计算每段需要生成多少随机色
-			int colorCountPerSection = (int) (Math.floor(colorCount * 1.0 / (keyColors.length - 1)));
-			int colorCountLastSection = colorCount - colorCountPerSection * (keyColors.length - 1);
-			for (int index = 0; index < (keyColors.length - 1); index++) {
-				Color[] temp = {keyColors[index], keyColors[index + 1]};
-				colors.addRange(Colors.makeGradient(colorCountPerSection, temp).toArray());
-			}
-			if (colorCountLastSection > 0) {
-				Color[] temp = {keyColors[keyColors.length - 2], keyColors[keyColors.length - 1]};
-				colors.addRange(Colors.makeGradient(colorCountLastSection, temp).toArray());
-			}
-		}
 
-		return colors;
-	}
+
+
 
 //	/**
 //	 * 设置颜色数组
@@ -331,8 +313,8 @@ public class ColorScheme implements ICloneable {
 	}
 
 	public String getColorSchemePath() {
-		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath(ControlsProperties.getString("String_ColorSchemeCustomDirectory"));
+		if (StringUtilties.isNullOrEmpty(colorSchemePath)) {
+			colorSchemePath = getDefaultFilePath(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
 			save();
 		}
 		return colorSchemePath;
@@ -340,20 +322,22 @@ public class ColorScheme implements ICloneable {
 
 	public void save() {
 		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath(ControlsProperties.getString("String_ColorSchemeCustomDirectory"));
+			colorSchemePath = getDefaultFilePath(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
 		}
-		save(colorSchemePath);
+		saveAsFilePath(colorSchemePath);
 	}
 
-	public void saveAs(String directories) {
+	public void saveAsDirectories(String directories) {
 		String defaultFilePath = getDefaultFilePath(directories);
-		save(defaultFilePath);
+		saveAsFilePath(defaultFilePath);
 	}
 
-	private void save(String defaultFilePath) {
+	public void saveAsFilePath(String defaultFilePath) {
 		try {
 			File file = new File(defaultFilePath);
-			FileUtilties.delete(file);
+			if (file.exists()) {
+				FileUtilties.delete(file);
+			}
 			if (file.createNewFile()) {
 				FileUtilties.writeToFile(file, this.toXML());
 			}
@@ -363,11 +347,11 @@ public class ColorScheme implements ICloneable {
 	}
 
 	private String getDefaultFilePath(String customDirectory) {
-		if (!customDirectory.endsWith(File.separator)) {
+		if (!customDirectory.endsWith(File.separator) && !customDirectory.endsWith("//")) {
 			customDirectory = customDirectory + File.separator;
 		}
-		if (!new File(PathUtilties.getFullPathName(customDirectory, true)).exists()) {
-			new File(PathUtilties.getFullPathName(customDirectory, true)).mkdirs();
+		if (!new File(customDirectory).exists()) {
+			new File(customDirectory).mkdirs();
 		}
 		boolean isExist = true;
 		int i = -1;
@@ -758,7 +742,7 @@ public class ColorScheme implements ICloneable {
 		}
 	}
 
-	protected enum IntervalColorBuildMethod {
+	public enum IntervalColorBuildMethod {
 		// 两个关键色之间的中间色产生的方式
 		ICBM_GRADIENT(0), // 渐变方式
 		ICBM_RANDOM(1); // 随即产生
@@ -771,6 +755,23 @@ public class ColorScheme implements ICloneable {
 
 		public int getValue() {
 			return value;
+		}
+
+		@Override
+		public String toString() {
+			if (this == ICBM_RANDOM) {
+				return ControlsProperties.getString("String_ColorRandom");
+			} else if (this == ICBM_GRADIENT) {
+				return ControlsProperties.getString("String_ColorGradient");
+			}
+			return "";
+		}
+
+		public static IntervalColorBuildMethod getMethod(String string) {
+			if (string.equals(ControlsProperties.getString("String_ColorRandom"))) {
+				return ICBM_RANDOM;
+			}
+			return ICBM_GRADIENT;
 		}
 	}
 

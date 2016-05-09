@@ -762,7 +762,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		final JPopupMenu popupMenu = new JPopupMenu();
 		ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
 		popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-		colorSelectionPanel.setPreferredSize(new Dimension(170, 155));
+		colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
 		popupMenu.show(component, x, y);
 		final int[] selectRows = tableUniqueInfo.getSelectedRows();
 		colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {

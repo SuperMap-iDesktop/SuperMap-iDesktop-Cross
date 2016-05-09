@@ -70,6 +70,7 @@ public class MapViewUtilties {
 			formProgressTotal.doWork(new CreateImagePyramidCallable(needCreateImagePyramid.toArray(new Dataset[needCreateImagePyramid.size()])));
 		}
 
+		SortUtilties.sortList(datasets);
 		// 添加到地图
 		for (Dataset dataset : datasets) {
 			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {

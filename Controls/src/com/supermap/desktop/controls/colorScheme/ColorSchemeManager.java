@@ -30,7 +30,7 @@ public class ColorSchemeManager {
 	public void setColorSchemeList(List<ColorScheme> colorSchemeList) {
 		this.colorSchemeList = colorSchemeList;
 		fireColorSchemeManagerChanged();
-		save();
+
 	}
 
 	public List<ColorScheme> getDefaultColorSchemeList() {
@@ -155,6 +155,7 @@ public class ColorSchemeManager {
 	}
 
 	private void fireColorSchemeManagerChanged() {
+		save();
 		ColorSchemeManagerChangedEvent colorSchemeManagerChangedEvent = new ColorSchemeManagerChangedEvent(colorSchemeList);
 		for (int i = colorSchemeManagerChangedListeners.size() - 1; i >= 0; i--) {
 			colorSchemeManagerChangedListeners.get(i).colorSchemeManagerChanged(colorSchemeManagerChangedEvent);
@@ -174,4 +175,10 @@ public class ColorSchemeManager {
 
 	private final String TAG_FILE_HEADER = "FileHeader";
 	private final String TAG_DATA_BLOCK = "DataBlock";
+
+
+	public void addColorScheme(ColorScheme colorScheme) {
+		this.colorSchemeList.add(colorScheme.clone());
+		fireColorSchemeManagerChanged();
+	}
 }
