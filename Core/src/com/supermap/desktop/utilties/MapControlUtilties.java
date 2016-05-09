@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilties;
 
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -9,6 +10,12 @@ public class MapControlUtilties {
 		// 工具类，不提供构造方法
 	}
 
+	/**
+	 * 指定 mapControl 是否正在创建几何对象
+	 * 
+	 * @param mapControl
+	 * @return
+	 */
 	public static boolean isCreateGeometry(MapControl mapControl) {
 		return mapControl.getAction() == Action.CREATE_ALONG_LINE_TEXT || mapControl.getAction() == Action.CREATE_ARC_3P
 				|| mapControl.getAction() == Action.CREATE_CIRCLE_2P || mapControl.getAction() == Action.CREATE_CIRCLE_3P
@@ -26,5 +33,23 @@ public class MapControlUtilties {
 				|| mapControl.getAction() == Action.CREATEPOINT || mapControl.getAction() == Action.CREATEPOLYGON
 				|| mapControl.getAction() == Action.CREATEPOLYLINE || mapControl.getAction() == Action.CREATERECTANGLE
 				|| mapControl.getAction() == Action.CREATETEXT;
+	}
+
+	/**
+	 * 移除 mapControl 的 TrackingLayer 上指定 tag 的所有对象
+	 * 
+	 * @param mapControl
+	 * @param tag
+	 */
+	public static void clearTrackingObjects(MapControl mapControl, String tag) {
+		if (mapControl != null && !StringUtilties.isNullOrEmpty(tag)) {
+			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+
+			int index = trackingLayer.indexOf(tag);
+			while (index >= 0) {
+				trackingLayer.remove(index);
+				index = trackingLayer.indexOf(tag);
+			}
+		}
 	}
 }
