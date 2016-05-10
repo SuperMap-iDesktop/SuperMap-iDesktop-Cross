@@ -15,7 +15,6 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
 import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
@@ -77,7 +76,7 @@ public class JDialogColorScheme extends SmDialog {
 		this.componentList.add(buttonOk);
 		this.componentList.add(buttonCancle);
 		this.getRootPane().setDefaultButton(buttonOk);
-		this.setSize(new Dimension((int) (640 * SystemPropertyUtilties.getSystemSizeRate()), (int) (360 * SystemPropertyUtilties.getSystemSizeRate())));
+		this.setSize(new Dimension(800, 450));
 		this.setLocationRelativeTo(null);
 	}
 
@@ -231,6 +230,9 @@ public class JDialogColorScheme extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (isModified) {
+					for (ColorScheme colorScheme : tableColorScheme.getColorSchemeList()) {
+						colorScheme.save();
+					}
 					ColorSchemeManager.getColorSchemeManager().setColorSchemeList(tableColorScheme.getColorSchemeList());
 				}
 				dialogResult = DialogResult.OK;
@@ -299,6 +301,7 @@ public class JDialogColorScheme extends SmDialog {
 
 	private void buttonExportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExport")) {
+
 			SmFileChoose.addNewNode("", PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					CommonProperties.getString(CommonProperties.open), "ColorSchemeExport", "GetDirectories");
 		}
@@ -341,7 +344,7 @@ public class JDialogColorScheme extends SmDialog {
 		this.buttonImport.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Import.png")));
 		this.buttonImport.setToolTipText(CommonProperties.getString(CommonProperties.IMPORT));
 		this.buttonExport.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Export.png")));
-		this.buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.IMPORT));
+		this.buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.EXPORT));
 
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));

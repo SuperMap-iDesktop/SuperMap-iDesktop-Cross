@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,9 +126,6 @@ public class ColorScheme implements ICloneable {
 		}
 		return colors;
 	}
-
-
-
 
 
 //	/**
@@ -512,25 +510,35 @@ public class ColorScheme implements ICloneable {
 					Element childElement = (Element) child;
 					String childElementName = childElement.getNodeName();
 					Text textNode = (Text) childElement.getFirstChild();
+					// 调用trim会保证移除真实数据旁边的空白，比如说xml的作者将数据单独放在一行
+					String value = null;
 					if (textNode != null && textNode.getData() != null) {
-						// 调用trim会保证移除真实数据旁边的空白，比如说xml的作者将数据单独放在一行
-						String value = textNode.getData().trim();
-						if (childElementName.equals(ColorSchemeTags.FILE_TYPE)) {
+						value = textNode.getData().trim();
+					} else {
+						value = "";
+					}
+					switch (childElementName) {
+						case ColorSchemeTags.FILE_TYPE:
 							// 文件类型信息，FileType节点
 							this.setFileType(Integer.valueOf(value));
-						} else if (childElementName.equals(ColorSchemeTags.VERSION)) {
+							break;
+						case ColorSchemeTags.VERSION:
 							// 版本信息，Version节点
 							this.setVersion(Integer.valueOf(value));
-						} else if (childElementName.equals(ColorSchemeTags.NAME)) {
+							break;
+						case ColorSchemeTags.NAME:
 							// 名称，Name节点
 							this.setName(value);
-						} else if (childElementName.equals(ColorSchemeTags.AUTHOR)) {
+							break;
+						case ColorSchemeTags.AUTHOR:
 							// 作者，Author节点
 							this.setAuthor(value);
-						} else if (childElementName.equals(ColorSchemeTags.DESCRIPTION)) {
+							break;
+						case ColorSchemeTags.DESCRIPTION:
 							// 描述，Description节点
 							this.setDescription(value);
-						} else if (childElementName.equals(ColorSchemeTags.COLORSYSTEM)) {
+							break;
+						case ColorSchemeTags.COLORSYSTEM:
 							// 颜色系统，ColorSystem节点
 							int colorSystemValue = Integer.parseInt(value);
 							ColorSystem colorSystemTemp = null;
@@ -564,7 +572,8 @@ public class ColorScheme implements ICloneable {
 									break;
 							}
 							this.setColorSystem(colorSystemTemp);
-						} else if (childElementName.equals(ColorSchemeTags.INTERVAL_COLOR_BUILD_METHOD)) {
+							break;
+						case ColorSchemeTags.INTERVAL_COLOR_BUILD_METHOD:
 							// 差值方法，IntervalColorBuildMethod节点
 							int methodValue = Integer.parseInt(value);
 							IntervalColorBuildMethod buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
@@ -580,13 +589,15 @@ public class ColorScheme implements ICloneable {
 									break;
 							}
 							this.setIntervalColorBuildMethod(buildMethod);
-						} else if (childElementName.equals(ColorSchemeTags.KEY_COLOR_COUNT)) {
+							break;
+						case ColorSchemeTags.KEY_COLOR_COUNT:
 							// 关键色个数，KeyColorCount节点
 							this.setKeyColorCount(Integer.valueOf(value));
-						} else if (childElementName.equals(ColorSchemeTags.INTERVAL_COLOR_COUNT)) {
+							break;
+						case ColorSchemeTags.INTERVAL_COLOR_COUNT:
 							// 两个关键色直接插值颜色数目，IntervalColorCount节点
 							this.setIntervalColorCount(Integer.valueOf(value));
-						}
+							break;
 					}
 				}
 			}
@@ -624,7 +635,10 @@ public class ColorScheme implements ICloneable {
 				}
 			}
 		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+			if (!StringUtilties.isNullOrEmpty(this.colorSchemePath)) {
+				String message = MessageFormat.format(ControlsProperties.getString("String_ColorSchemeBreak"), this.colorSchemePath);
+				Application.getActiveApplication().getOutput().output(message);
+			}
 		}
 
 		if (!colorList.isEmpty()) {

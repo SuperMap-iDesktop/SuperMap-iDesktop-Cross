@@ -107,7 +107,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	 */
 	public ColorSchemeEditorDialog() {
 		this((ColorScheme) null);
-
 	}
 
 	public ColorSchemeEditorDialog(ColorScheme colorScheme) {
@@ -116,7 +115,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	}
 
 	private void init(ColorScheme colorScheme) {
-		setSize(new Dimension(600, 500));
+		setSize(new Dimension(700, 500));
 
 		if (colorScheme == null) {
 			this.colorScheme = new ColorScheme();
@@ -271,8 +270,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			jButtonMoveBottomButton.setFocusable(false);
 			buttonImport.setFocusable(false);
 			buttonExport.setFocusable(false);
-
-
 		}
 	}
 
@@ -303,17 +300,19 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	}
 
 	private void initResources() {
+		jButtonAddColorButton.setToolTipText(ControlsProperties.getString("String_AddColor"));
+		jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_RemoveColor"));
 		jButtonSelectAllButton.setToolTipText(ControlsProperties.getString("String_SelectAll"));
 		jButtonSelectInvert.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
-		jButtonAddColorButton.setToolTipText(ControlsProperties.getString("String_Add"));
-		jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_Remove"));
-		jButtonMoveTopButton.setToolTipText(ControlsProperties.getString("String_MoveFirst"));
-		jButtonMoveUpButton.setToolTipText(ControlsProperties.getString("String_MoveUp"));
-		jButtonMoveDownButton.setToolTipText(ControlsProperties.getString("String_MoveDown"));
-		jButtonMoveBottomButton.setToolTipText(ControlsProperties.getString("String_MoveLast"));
-		buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.IMPORT));
+		jButtonMoveTopButton.setToolTipText(ControlsProperties.getString("String_FirstColor"));
+		jButtonMoveUpButton.setToolTipText(ControlsProperties.getString("String_UpColor"));
+		jButtonMoveDownButton.setToolTipText(ControlsProperties.getString("String_DownColor"));
+		jButtonMoveBottomButton.setToolTipText(ControlsProperties.getString("String_LastColor"));
+		buttonImport.setToolTipText(CommonProperties.getString(CommonProperties.IMPORT));
+		buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.EXPORT));
 		jButtonConfirmButton.setText(CommonProperties.getString(CommonProperties.OK));
 		jButtonCancelButton.setText(CommonProperties.getString(CommonProperties.Cancel));
+		buttonInvertColors.setToolTipText(ControlsProperties.getString("String_ReverseColor"));
 		labelName.setText(ControlsProperties.getString("String_Label_Name"));
 		labelColorBuildMethod.setText(ControlsProperties.getString("String_labelColorChangeStyle"));
 		labelAuthor.setText(ControlsProperties.getString("String_labelAuthor"));
@@ -560,6 +559,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1
 						&& tableColorsTable.columnAtPoint(e.getPoint()) == 1 && tableColorsTable.rowAtPoint(e.getPoint()) != -1) {
 					final JPopupMenu popupMenu = new JPopupMenu();
+					final int selectedRow = tableColorsTable.getSelectedRow();
 					popupMenu.setBorderPainted(false);
 					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
 					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
@@ -569,10 +569,11 @@ public class ColorSchemeEditorDialog extends SmDialog {
 						@Override
 						public void propertyChange(PropertyChangeEvent evt) {
 							Color color = (Color) evt.getNewValue();
-							tableColorsTable.setValueAt(color, tableColorsTable.getSelectedRow(), 1);
+							tableColorsTable.setValueAt(color, selectedRow, 1);
 							popupMenu.setVisible(false);
 						}
 					});
+					tableColorsTable.setRowSelectionInterval(selectedRow, selectedRow);
 				}
 			}
 		});
@@ -601,7 +602,8 @@ public class ColorSchemeEditorDialog extends SmDialog {
 
 	private void buttonExportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExportSingle")) {
-			SmFileChoose.addNewNode("", PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
+			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					CommonProperties.getString(CommonProperties.open), "ColorSchemeExportSingle", "SaveOne");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExportSingle");
