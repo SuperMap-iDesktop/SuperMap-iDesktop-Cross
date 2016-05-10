@@ -10,7 +10,6 @@
     "deploy": "hexo deploy"
   },
   "dependencies": {
-    "algoliasearch": "^3.13.1",
     "cheerio": "^0.20.0",
     "hexo": "^3.2.0",
     "hexo-deployer-git": "^0.1.0",

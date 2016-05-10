@@ -155,9 +155,3 @@ hexo.extend.helper.register('disqus_lang', function(){
   return data.disqus_lang || lang;
 });
 
-var algoliasearch = require('algoliasearch');
-var client = algoliasearch('5RHI0IBTOY', '730aa5a5d7de138e76eb18d00beb37eb');
-var index = client.initIndex('iDesktop-Cross-Docs');
-index.search('something', function searchDone(err, content) {
-  console.log(err, content);
-});
