@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IToolbar;
 import com.supermap.desktop.Interface.IToolbarManager;
 import com.supermap.desktop.WorkEnvironment;
-import com.supermap.desktop.dialog.symbolDialogs.WrapLayout;
+import com.supermap.desktop.controls.utilties.ComponentUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmToolbar;
 
@@ -104,7 +104,7 @@ public class ToolbarManager implements IToolbarManager {
 
 	public void setToolbarContainer(Container container) {
 		this.toolbarContainer = container;
-		this.toolbarContainer.setLayout(new WrapLayout(FlowLayout.LEADING));
+		this.toolbarContainer.setLayout(new ToolBarLayout(FlowLayout.LEADING));
 		toolbarContainer.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -114,7 +114,6 @@ public class ToolbarManager implements IToolbarManager {
 	}
 
 	public boolean load(WorkEnvironment workEnvironment) {
-		boolean result = false;
 		// 查找有哪些 Toolbar
 		ArrayList<XMLToolbar> xmlToolbars = workEnvironment.getPluginInfos().getToolbars().getToolbars();
 		for (int i = 0; i < xmlToolbars.size(); i++) {
@@ -124,7 +123,7 @@ public class ToolbarManager implements IToolbarManager {
 			if ("".equals(xmlToolbar.getFormClassName())) {
 				this.listToolbars.add(toolbar);
 //				Component comp1 = MoreButton.wrapToolBar(toolbar);
-//				comp1.setMinimumSize(new Dimension(33,33));
+//				comp1.setMinimumSize(new Dimension(33, 33));
 				this.toolbarContainer.add(toolbar);
 			} else {
 				WindowType windowType = getWindowType(xmlToolbar.getFormClassName());
@@ -138,8 +137,7 @@ public class ToolbarManager implements IToolbarManager {
 				childToolbarsList.add(toolbar);
 			}
 		}
-		result = true;
-		return result;
+		return true;
 	}
 
 	public void saveChange() {
@@ -197,7 +195,13 @@ public class ToolbarManager implements IToolbarManager {
 		if (childToolbarsList != null) {
 			for (IToolbar aChildToolbarsList : childToolbarsList) {
 				SmToolbar toolbar = (SmToolbar) aChildToolbarsList;
+//				toolbar.setVisible(false);
+				Window parentWindow = ComponentUtilties.getParentWindow(toolbar);
+				if (parentWindow != Application.getActiveApplication().getMainFrame()) {
+					parentWindow.dispose();
+				}
 				this.toolbarContainer.remove(toolbar);
+
 			}
 		}
 		return result;
@@ -279,7 +283,7 @@ public class ToolbarManager implements IToolbarManager {
 		 */
 		@Override
 		public Dimension minimumLayoutSize(Container target) {
-			Dimension minimum = layoutSize(target, false);
+			Dimension minimum = layoutSize(target, true);
 			minimum.width -= (getHgap() + 1);
 			return minimum;
 		}
@@ -333,14 +337,10 @@ public class ToolbarManager implements IToolbarManager {
 
 						//  Can't add the component to current row. Start a new row.
 
-						if (rowWidth + d.width > maxWidth) {
-							if (rowWidth + m.getMinimumSize().getWidth() < maxWidth) {
-								m.setBounds(((int) m.getBounds().getX()), ((int) m.getBounds().getY()), maxWidth - rowWidth, (int) m.getBounds().getHeight());
-							} else {
-								addRow(dim, rowWidth, rowHeight);
-								rowWidth = 0;
-								rowHeight = 0;
-							}
+						if (rowWidth + m.getMinimumSize().getWidth() > maxWidth) {
+							addRow(dim, rowWidth, rowHeight);
+							rowWidth = 0;
+							rowHeight = 0;
 						}
 						//  Add a horizontal gap for all components after the first
 
@@ -390,5 +390,134 @@ public class ToolbarManager implements IToolbarManager {
 
 			dim.height += rowHeight;
 		}
+
+		@Override
+		public void layoutContainer(Container target) {
+			synchronized (target.getTreeLock()) {
+				Insets insets = target.getInsets();
+				int maxwidth = target.getWidth() - (insets.left + insets.right + getHgap() * 2);
+				int nmembers = target.getComponentCount();
+				int x = 0, y = insets.top + getVgap();
+				int rowh = 0, start = 0;
+
+				boolean ltr = target.getComponentOrientation().isLeftToRight();
+
+				boolean useBaseline = getAlignOnBaseline();
+				int[] ascent = null;
+				int[] descent = null;
+
+				if (useBaseline) {
+					ascent = new int[nmembers];
+					descent = new int[nmembers];
+				}
+
+				for (int i = 0; i < nmembers; i++) {
+					Component m = target.getComponent(i);
+					if (m.isVisible()) {
+						Dimension d = m.getPreferredSize();
+						m.setSize(d.width, d.height);
+
+						if (useBaseline) {
+							int baseline = m.getBaseline(d.width, d.height);
+							if (baseline >= 0) {
+								ascent[i] = baseline;
+								descent[i] = d.height - baseline;
+							} else {
+								ascent[i] = -1;
+							}
+						}
+						if ((x + d.width) <= maxwidth) {
+							if (x > 0) {
+								x += getHgap();
+							}
+							x += d.width;
+							rowh = Math.max(rowh, d.height);
+						} else {
+							// 大小不够时不换行改为缩短尺寸
+							if (x + m.getMinimumSize().getWidth() < maxwidth) {
+								m.setSize(maxwidth - x, d.height);
+								x += d.width;
+								rowh = Math.max(rowh, d.height);
+							} else {
+								if (m.getPreferredSize().getWidth() > maxwidth) {
+									// 换行前先做判断
+									m.setSize(maxwidth, d.height);
+								}
+								rowh = moveComponents(target, insets.left + getHgap(), y,
+										maxwidth - x, rowh, start, i, ltr,
+										useBaseline, ascent, descent);
+								x = d.width;
+								y += getVgap() + rowh;
+								rowh = d.height;
+								start = i;
+							}
+						}
+					}
+				}
+				moveComponents(target, insets.left + getHgap(), y, maxwidth - x, rowh,
+						start, nmembers, ltr, useBaseline, ascent, descent);
+			}
+		}
+
+		private int moveComponents(Container target, int x, int y, int width, int height,
+		                           int rowStart, int rowEnd, boolean ltr,
+		                           boolean useBaseline, int[] ascent,
+		                           int[] descent) {
+			switch (this.getAlignment()) {
+				case LEFT:
+					x += ltr ? 0 : width;
+					break;
+				case CENTER:
+					x += width / 2;
+					break;
+				case RIGHT:
+					x += ltr ? width : 0;
+					break;
+				case LEADING:
+					break;
+				case TRAILING:
+					x += width;
+					break;
+			}
+			int maxAscent = 0;
+			int nonbaselineHeight = 0;
+			int baselineOffset = 0;
+			if (useBaseline) {
+				int maxDescent = 0;
+				for (int i = rowStart; i < rowEnd; i++) {
+					Component m = target.getComponent(i);
+					if (m.isVisible()) {
+						if (ascent[i] >= 0) {
+							maxAscent = Math.max(maxAscent, ascent[i]);
+							maxDescent = Math.max(maxDescent, descent[i]);
+						} else {
+							nonbaselineHeight = Math.max(m.getHeight(),
+									nonbaselineHeight);
+						}
+					}
+				}
+				height = Math.max(maxAscent + maxDescent, nonbaselineHeight);
+				baselineOffset = (height - maxAscent - maxDescent) / 2;
+			}
+			for (int i = rowStart; i < rowEnd; i++) {
+				Component m = target.getComponent(i);
+				if (m.isVisible()) {
+					int cy;
+					if (useBaseline && ascent[i] >= 0) {
+						cy = y + baselineOffset + maxAscent - ascent[i];
+					} else {
+						cy = y + (height - m.getHeight()) / 2;
+					}
+					if (ltr) {
+						m.setLocation(x, cy);
+					} else {
+						m.setLocation(target.getWidth() - x - m.getWidth(), cy);
+					}
+					x += m.getWidth() + getHgap();
+				}
+			}
+			return height;
 	}
+	}
+
 }

@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -285,17 +286,32 @@ public class JDialogColorScheme extends SmDialog {
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
 		int result = fileChooser.showDefaultDialog();
 		File[] selectFiles = fileChooser.getSelectFiles();
-		int rowCount = tableColorScheme.getRowCount();
+		java.util.List<Integer> selectedRows = new ArrayList<>();
+		java.util.List<ColorScheme> colorSchemeList = tableColorScheme.getColorSchemeList();
 		if (result == JFileChooser.APPROVE_OPTION && selectFiles != null && selectFiles.length > 0) {
+			tableColorScheme.clearSelection();
 			for (File selectFile : selectFiles) {
-				ColorScheme colorScheme = new ColorScheme();
-				colorScheme.fromXML(selectFile);
-				tableColorScheme.addColorScheme(colorScheme);
+				boolean isExist = false;
+				for (int i = colorSchemeList.size() - 1; i >= 0; i--) {
+					if (colorSchemeList.get(i).getColorSchemePath().equals(selectFile.getAbsolutePath())) {
+						selectedRows.add(i);
+						isExist = true;
+					}
+				}
+				if (!isExist) {
+					ColorScheme colorScheme = new ColorScheme();
+					colorScheme.fromXML(selectFile);
+					tableColorScheme.addColorScheme(colorScheme);
+					selectedRows.add(tableColorScheme.getRowCount() - 1);
+				}
 			}
 		}
-		if (tableColorScheme.getRowCount() > rowCount) {
-			tableColorScheme.setRowSelectionInterval(rowCount, tableColorScheme.getRowCount() - 1);
-			tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(rowCount, 0, true));
+		if (selectedRows.size() > 0) {
+			tableColorScheme.clearSelection();
+			for (Integer selectedRow : selectedRows) {
+				tableColorScheme.addRowSelectionInterval(selectedRow, selectedRow);
+			}
+			tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(selectedRows.get(0), 0, true));
 		}
 	}
 

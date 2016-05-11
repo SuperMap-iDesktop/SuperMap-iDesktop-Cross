@@ -11,6 +11,7 @@ import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -30,7 +31,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 		} else {
 			this.setText(xmlCommand.getLabel());
 		}
-
+		this.setPreferredSize(new Dimension(31, 31));
 		this.formClass = formClass;
 		this.xmlCommand = xmlCommand;
 

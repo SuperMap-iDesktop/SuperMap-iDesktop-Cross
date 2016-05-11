@@ -596,6 +596,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		int result = fileChooser.showDefaultDialog();
 		if (result == JFileChooser.APPROVE_OPTION && fileChooser.getSelectFiles().length > 0 && fileChooser.getSelectFiles()[0] != null) {
 			colorScheme.fromXML(fileChooser.getSelectFiles()[0]);
+			colorsTableModel.fireTableDataChanged();
 			initComponentStates();
 		}
 	}

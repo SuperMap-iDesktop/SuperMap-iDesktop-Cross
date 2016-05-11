@@ -33,7 +33,10 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		super.setToolTipText(xmlCommand.getTooltip());
 
 		displayButton = new ControlButton(this);
-		displayButton.setPreferredSize(new Dimension(32, 24));
+		displayButton.setPreferredSize(new Dimension(31, 31));
+		this.setPreferredSize(new Dimension(52, 31));
+		this.setPreferredSize(new Dimension(52, 31));
+		this.setMaximumSize(new Dimension(52, 31));
 		String[] pathPrams = new String[] { PathUtilties.getRootPathName(), xmlCommand.getImageFile() };
 		String path = PathUtilties.combinePath(pathPrams, false);
 		File file = new File(path);
@@ -46,7 +49,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 
 		arrowButton = new ControlButton(this);
 		arrowButton.setIcon(new MetalComboBoxIcon());
-		arrowButton.setPreferredSize(new Dimension(16, displayButton.getPreferredSize().height));
+		arrowButton.setPreferredSize(new Dimension(20, 31));
 		Insets insets = arrowButton.getMargin();
 		arrowButton.setMargin(new Insets(insets.top, 1, insets.bottom, 1));
 
@@ -126,16 +129,18 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		GridBagConstraints c = new GridBagConstraints();
 		setLayout(gbl);
 
-		c.weightx = 100;
-		c.weighty = 100;
+		c.weightx = 0;
+		c.weighty = 1;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
+		c.ipadx = 10;
 		gbl.setConstraints(displayButton, c);
 		add(displayButton);
 
 		c.weightx = 0;
 		c.gridx++;
+		c.ipadx = 2;
 		gbl.setConstraints(arrowButton, c);
 		add(arrowButton);
 	}
