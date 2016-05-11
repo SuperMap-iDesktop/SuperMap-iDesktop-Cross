@@ -1,22 +1,11 @@
 package com.supermap.desktop.newtheme.commonPanel;
 
 import com.supermap.data.TextStyle;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JComponent;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
 
 public class TextStyleDialog extends SmDialog {
 
@@ -25,11 +14,6 @@ public class TextStyleDialog extends SmDialog {
 
 	public TextStyleDialog(TextStyle textStyle, Map map, Layer themeLayer) {
 		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLayer);
-		initComponents();
-	}
-
-	public TextStyleDialog(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLayer) {
-		this.textStyleContainer = new TextStyleContainer(themeLabel, selectRow, map, themeLayer);
 		initComponents();
 	}
 
@@ -64,7 +48,15 @@ public class TextStyleDialog extends SmDialog {
 		textStyleContainer.refreshMapAndLayer();
 	}
 
+	public void setMixedTextStyle(MixedTextStyle mixedTextStyle){
+		textStyleContainer.setMixedTextStyle(mixedTextStyle);
+	}
+	
 	public void setTheme(Theme theme) {
 		textStyleContainer.setTheme(theme);
+	}
+	
+	public void setRows(int[] rows){
+		textStyleContainer.setSelectRow(rows);
 	}
 }

@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -44,8 +45,9 @@ import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackMode;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
@@ -59,13 +61,16 @@ import com.supermap.data.Recordset;
  *
  */
 // @formatter:on
-public class EditEnvironment implements GeometrySelectChangedListener, LayerEditableChangedListener, LayerRemovedListener, MapClosedListener, MapOpenedListener {
+public class EditEnvironment {
 
 	private IFormMap formMap;
 	private EditProperties properties = new EditProperties();
 	private IEditor editor = NullEditor.INSTANCE;
 	private boolean isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
 	private boolean isMiddleMousePressed = false;
+
+	private IEditModel editModel;
+	private IEditController editController = NullEditController.instance();
 
 	private MouseListener mouseListener = new MouseListener() {
 
@@ -74,6 +79,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
 				EditEnvironment.this.isMiddleMousePressed = false;
 			}
+
+			EditEnvironment.this.editController.mouseReleased(EditEnvironment.this, e);
 		}
 
 		@Override
@@ -81,24 +88,26 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
 				EditEnvironment.this.isMiddleMousePressed = true;
 			}
+
+			EditEnvironment.this.editController.mousePressed(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.mouseExited(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.mouseEntered(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				activateEditor(NullEditor.INSTANCE);
+			} else {
+				EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
 			}
 		}
 	};
@@ -106,14 +115,12 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.keyTyped(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.keyReleased(EditEnvironment.this, e);
 		}
 
 		@Override
@@ -121,6 +128,8 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				activateEditor(NullEditor.INSTANCE);
 			}
+
+			EditEnvironment.this.editController.keyPressed(EditEnvironment.this, e);
 		}
 	};
 	private ActionChangedListener actionChangedListener = new ActionChangedListener() {
@@ -130,6 +139,49 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			if (!EditEnvironment.this.isInitialAction && isMiddleMousePressed && arg0.getOldAction() != Action.PAN) {
 				activateEditor(NullEditor.INSTANCE);
 			}
+		}
+	};
+	private GeometrySelectedListener geometrySelectedListener = new GeometrySelectedListener() {
+
+		@Override
+		public void geometrySelected(GeometrySelectedEvent arg0) {
+			EditEnvironment.this.editController.geometrySelected(EditEnvironment.this, arg0);
+		}
+	};
+	private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
+
+		@Override
+		public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
+			EditEnvironment.this.geometrySelectChanged(arg0);
+			EditEnvironment.this.editController.geometrySelectChanged(EditEnvironment.this, arg0);
+		}
+	};
+	private LayerEditableChangedListener layerEditableChangedListener = new LayerEditableChangedListener() {
+
+		@Override
+		public void editableChanged(LayerEditableChangedEvent arg0) {
+			EditEnvironment.this.editableChanged(arg0);
+		}
+	};
+	private LayerRemovedListener layerRemovedListener = new LayerRemovedListener() {
+
+		@Override
+		public void layerRemoved(LayerRemovedEvent arg0) {
+			EditEnvironment.this.layerRemoved(arg0);
+		}
+	};
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			EditEnvironment.this.mapClosed(arg0);
+		}
+	};
+	private MapOpenedListener mapOpenedListener = new MapOpenedListener() {
+
+		@Override
+		public void mapOpened(MapOpenedEvent arg0) {
+			EditEnvironment.this.mapOpened(arg0);
 		}
 	};
 
@@ -142,14 +194,26 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
 
 			// 选中对象状态改变
-			this.formMap.getMapControl().addGeometrySelectChangedListener(this);
-
+			this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
+			this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);
 			// 图层可编辑状态改变
-			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this);
-			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this);
-			this.formMap.getMapControl().getMap().addMapClosedListener(this);
-			this.formMap.getMapControl().getMap().addMapOpenedListener(this);
+			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
+			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
+			this.formMap.getMapControl().getMap().addMapClosedListener(this.mapClosedListener);
+			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
 		}
+	}
+
+	public IEditModel getEditModel() {
+		return this.editModel;
+	}
+
+	public void setEditModel(IEditModel editModel) {
+		this.editModel = editModel;
+	}
+
+	public void setEditController(IEditController editController) {
+		this.editController = editController;
 	}
 
 	/**
@@ -216,18 +280,15 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 		return new EditEnvironment(formMap);
 	}
 
-	@Override
 	public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
 		geometryStatusChange();
 	}
 
-	@Override
 	public void editableChanged(LayerEditableChangedEvent arg0) {
 		geometryStatusChange();
 		layersStatusChange();
 	}
 
-	@Override
 	public void layerRemoved(LayerRemovedEvent arg0) {
 		geometryStatusChange();
 		layersStatusChange();
@@ -388,15 +449,13 @@ public class EditEnvironment implements GeometrySelectChangedListener, LayerEdit
 	 * 直接打开地图会导致 Layers 对象的改变，因此需要重新处理一下 Layers 相关事件的监听
 	 *
 	 */
-	@Override
 	public void mapOpened(MapOpenedEvent arg0) {
-		this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this);
-		this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this);
+		this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
+		this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
 	}
 
-	@Override
 	public void mapClosed(MapClosedEvent arg0) {
-		this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
-		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this);
+		this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
+		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this.layerRemovedListener);
 	}
 }

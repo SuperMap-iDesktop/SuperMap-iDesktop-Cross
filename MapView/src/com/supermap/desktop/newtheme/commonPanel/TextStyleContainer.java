@@ -1,5 +1,34 @@
 package com.supermap.desktop.newtheme.commonPanel;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import com.supermap.data.Enum;
 import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
@@ -14,27 +43,10 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
+import com.supermap.mapping.MixedTextStyle;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeGraph;
 import com.supermap.mapping.ThemeLabel;
-
-import javax.swing.*;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
 
 public class TextStyleContainer extends ThemeChangePanel {
 
@@ -103,8 +115,10 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private boolean isUniformStyle = false;
 	private int[] selectRow;
 	private int textStyleType = -1;
-	public final int graphTextFormat = 0;
-	public final int graphAxisText = 1;
+	private final int GRAPHTEXTFORMAT = 0;// 统计图标注风格
+	private final int GRAPHAXISTEXT = 1;// 统计图坐标轴风格
+	private final int LABELCOMPLICATEDDEFUALT = 2;// 标签复合风格默认文本风格
+	private final int LABELCOMPLICATEDITEMS = 3;// 标签复合风格分段风格风格
 	private String layerName;
 
 	private transient LocalItemListener itemListener = new LocalItemListener();
@@ -114,29 +128,14 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private transient LocalPropertyListener propertyListener = new LocalPropertyListener();
 	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
 	private ChangeListener outLineWidthChangeListener = new OutLineChangeListener();
-	private transient ThemeLabel themeLabel;
 	private transient Theme theme;
+	private transient MixedTextStyle mixedTextStyle;
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle.clone();
 		this.map = map;
 		this.themeLayer = themeLabelLayer;
 		this.layerName = themeLabelLayer.getName();
-		initComponent();
-		initResources();
-		registActionListener();
-	}
-
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public TextStyleContainer(ThemeLabel themeLabel, int[] selectRow, Map map, Layer themeLabelLayer) {
-		this.selectRow = selectRow;
-		this.map = map;
-		this.themeLayer = themeLabelLayer;
-		this.layerName = themeLabelLayer.getName();
-		this.themeLabel = themeLabel;
-		this.textStyle = themeLabel.getItem(selectRow[selectRow.length - 1]).getStyle().clone();
 		initComponent();
 		initResources();
 		registActionListener();
@@ -516,18 +515,49 @@ public class TextStyleContainer extends ThemeChangePanel {
 		if (isRefreshAtOnce && null != map) {
 			refreshMapAndLayer();
 		}
-		if (null != map && null != themeLabel) {
+		if (textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT && !this.isUniformStyle && null != theme
+				&& theme instanceof ThemeLabel) {
 			for (int i = 0; i < this.selectRow.length; i++) {
-				themeLabel.getItem(this.selectRow[i]).setStyle(this.textStyle);
+				((ThemeLabel) theme).getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
 		}
-		if (null != theme && theme instanceof ThemeGraph && textStyleType == graphAxisText) {
-			((ThemeGraph)theme).setAxesTextStyle(textStyle);
+		if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHAXISTEXT) {
+			((ThemeGraph) theme).setAxesTextStyle(textStyle);
 		}
-		if (null != theme && theme instanceof ThemeGraph && textStyleType == graphTextFormat) {
-			((ThemeGraph)theme).setGraphTextStyle(textStyle);
+		if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHTEXTFORMAT) {
+			((ThemeGraph) theme).setGraphTextStyle(textStyle);
+		}
+		if (textStyleType == LABELCOMPLICATEDDEFUALT) {
+			mixedTextStyle.setDefaultStyle(textStyle);
+		}
+		if (textStyleType == LABELCOMPLICATEDITEMS) {
+			TextStyle[] newTextStyles = getNewComplicatedTextStyles();
+			mixedTextStyle.setStyles(newTextStyles);
 		}
 		return;
+	}
+
+	private TextStyle[] getNewComplicatedTextStyles() {
+		int textStyleCount = mixedTextStyle.getStyles().length;
+		TextStyle[] newTextStyles = new TextStyle[textStyleCount];
+
+		for (int i = 0; i < textStyleCount; i++) {
+			if (selectRowHasChanged(i)) {
+				newTextStyles[i] = this.textStyle;
+			} else {
+				newTextStyles[i] = mixedTextStyle.getStyles()[i];
+			}
+		}
+		return newTextStyles;
+	}
+
+	private boolean selectRowHasChanged(int i) {
+		for (int j = 0; j < selectRow.length; j++) {
+			if (i == selectRow[j]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	class LocalKeyListener extends KeyAdapter {
@@ -847,21 +877,33 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.isUniformStyle = isUniformStyle;
 	}
 
+	public void setMixedTextStyle(MixedTextStyle mixedTextStyle) {
+		this.mixedTextStyle = mixedTextStyle;
+	}
+
 	@Override
 	public void refreshMapAndLayer() {
 		this.themeLayer = MapUtilties.findLayerByName(map, layerName);
 		if (this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(this.textStyle);
-		} else if (!this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+		}
+		if (textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT && !this.isUniformStyle
+				&& this.themeLayer.getTheme() instanceof ThemeLabel) {
 			for (int i = 0; i < this.selectRow.length; i++) {
 				((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(this.textStyle);
 			}
 		}
-		if (textStyleType == graphTextFormat) {
+		if (textStyleType == GRAPHTEXTFORMAT) {
 			((ThemeGraph) this.themeLayer.getTheme()).setGraphTextStyle(this.textStyle);
 		}
-		if (textStyleType == graphAxisText) {
+		if (textStyleType == GRAPHAXISTEXT) {
 			((ThemeGraph) this.themeLayer.getTheme()).setAxesTextStyle(this.textStyle);
+		}
+		if (textStyleType == LABELCOMPLICATEDDEFUALT) {
+			((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setDefaultStyle(this.textStyle);
+		}
+		if (textStyleType == LABELCOMPLICATEDITEMS) {
+			((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setStyles(getNewComplicatedTextStyles());
 		}
 		this.map.refresh();
 	}
@@ -886,6 +928,10 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	public void setTheme(Theme theme) {
 		this.theme = theme;
+	}
+
+	public void setSelectRow(int[] selectRow) {
+		this.selectRow = selectRow;
 	}
 
 }

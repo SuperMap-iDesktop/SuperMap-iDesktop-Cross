@@ -672,11 +672,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		//设置一个坐标轴风格，避免显示异常
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
 		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
-		this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
+		this.themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
 		DecimalFormat decfmt = new DecimalFormat("#.######");   
 		this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 		this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-		this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
+		this.spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
 	}
 
 	class LocalDefualTableModel extends DefaultTableModel {
@@ -1104,7 +1104,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			double barWidth = (double) spinnerBarWidth.getValue();
-			themeGraph.setBarWidth(barWidth);
+			themeGraph.setBarWidthRatio(barWidth);
 			refreshMapAtOnce();
 		}
 	}
@@ -1439,11 +1439,11 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
 				}
 				Point2D pointStart1 = new Point2D(0, 0);
-				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidthRatio(), themeGraph.getBarWidthRatio());
 				Point2D point2DStart1 = map.mapToLogical(pointStart1);
 				Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
 
-				themeGraph.setBarWidth(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+				themeGraph.setBarWidthRatio(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
 			} else {
 				Point2D pointStart = new Point2D(0, 0);
 				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
@@ -1456,16 +1456,16 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
 				}
 				Point2D pointStart1 = new Point2D(0, 0);
-				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidthRatio(), themeGraph.getBarWidthRatio());
 				Point2D point2DStart1 = map.logicalToMap(pointStart1);
 				Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
-				themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
+				themeGraph.setBarWidthRatio(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
 			}
 			themeGraph.setGraphSizeFixed(!isAutoScale);
 			DecimalFormat decfmt = new DecimalFormat("#.######");
 			textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 			textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-			spinnerBarWidth.setValue(themeGraph.getBarWidth());
+			spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
 		}
 	}
 
@@ -1601,7 +1601,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					spinnerBarWidth.setEnabled(true);
 					spinnerRoseAngle.setEnabled(false);
 					spinnerStartAngle.setEnabled(false);
-					spinnerBarWidth.setValue(themeGraph.getBarWidth());
+					spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
 					setPanelEnableAndRefresh(true);
 					break;
 				case 12:
