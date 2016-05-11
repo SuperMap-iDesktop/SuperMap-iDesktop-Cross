@@ -514,6 +514,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化工具条
 	 */
 	private void initToolBar() {
+		this.toolBar.setFloatable(false);
 		this.toolBar.add(this.buttonMerge);
 		this.toolBar.add(this.buttonSplit);
 		this.toolBar.addSeparator();

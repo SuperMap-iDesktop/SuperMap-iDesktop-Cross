@@ -9,8 +9,10 @@ public class MathUtilties {
 	public static double log(double a, double newBase) {
 		return Math.log(a) / Math.log(newBase);
 	}
+
 	/**
 	 * 判断数组是否为连续数组
+	 * 
 	 * @param array
 	 * @return
 	 */
@@ -21,9 +23,10 @@ public class MathUtilties {
 				count++;
 			}
 		}
-		if (count == array.length - 1) {
+		if (count == array.length - 1 && array.length > 1) {
 			return true;
 		}
 		return false;
 	}
+
 }
