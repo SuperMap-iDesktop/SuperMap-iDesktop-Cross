@@ -198,6 +198,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilties.stopEditing(table);
 				createDataset();
 				dialogResult = DialogResult.OK;
 				if (checkboxAutoClose.isSelected()) {
@@ -215,6 +216,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilties.stopEditing(table);
 				table.getSelectionModel().setSelectionInterval(0, table.getRowCount() - 1);
 			}
 		});
@@ -222,6 +224,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilties.stopEditing(table);
 				TableUtilties.invertSelection(table);
 			}
 		});
@@ -229,6 +232,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilties.stopEditing(table);
 				int[] selectedRows = table.getSelectedRows();
 				for (int i = selectedRows.length - 1; i >= 0; i--) {
 					newDatasetTableModel.removeRow(selectedRows[i]);

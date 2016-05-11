@@ -22,4 +22,10 @@ public class TableUtilties {
 			}
 		}
 	}
+
+	public static void stopEditing(JTable table) {
+		if (table != null && table.getCellEditor() != null) {
+			table.getCellEditor().stopCellEditing();
+		}
+	}
 }

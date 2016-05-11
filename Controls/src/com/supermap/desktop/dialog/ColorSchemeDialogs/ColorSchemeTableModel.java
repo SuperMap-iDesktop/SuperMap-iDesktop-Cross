@@ -148,4 +148,9 @@ public class ColorSchemeTableModel extends SortableTableModel {
 			colorSchemes.remove(selectedRows[i]);
 		}
 	}
+
+	public void setColorSchemeAtRow(int row, ColorScheme colorScheme) {
+		colorSchemes.set(row, colorScheme);
+		fireTableDataChanged();
+	}
 }

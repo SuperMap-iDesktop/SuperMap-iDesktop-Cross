@@ -8,12 +8,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 /**
  * 颜色下拉选择器
@@ -26,12 +23,13 @@ public class ColorsComboBox extends JComboBox {
 		@Override
 		public void colorSchemeManagerChanged(ColorSchemeManagerChangedEvent colorSchemeManagerChangedEvent) {
 			initComboBox();
+			if (getItemCount() > 0) {
+				setSelectedIndex(getItemCount() - 2);
+			}
 		}
 	};
 
 	private ColorsCellRenderer colorsCellRenderer;
-
-	private int colorsCount;
 
 	private transient ActionListener customColorsListener;
 
@@ -47,29 +45,16 @@ public class ColorsComboBox extends JComboBox {
 	 */
 	public ColorsComboBox() {
 		super();
-		this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				((BasicComboBoxUI) ColorsComboBox.this.getUI()).paintCurrentValue(getGraphics(), getBounds(), true);
-			}
-		});
 		colorsCellRenderer = new ColorsCellRenderer(this);
 		this.setRenderer(colorsCellRenderer);
-		colorsCount = 32;
 		customColorsListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (getSelectedIndex() != -1 && getSelectedIndex() == getItemCount() - 1) {
-					final ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog(customColors);
-					dialog.setVisible(true);
-					DialogResult dialogResult = dialog.getResult();
-					if (dialogResult.equals(DialogResult.APPLY)) {
-						customColors = dialog.getResultColors();
-						removeItemAt(getItemCount() - 1);
-						addItem(customColors);
-						setSelectedItem(customColors);
+					ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
+					if (dialog.showDialog() == DialogResult.OK) {
+						ColorSchemeManager.getColorSchemeManager().addColorScheme(dialog.getColorScheme());
 					}
-					dialog.dispose();
 				}
 			}
 
@@ -99,24 +84,7 @@ public class ColorsComboBox extends JComboBox {
 		colorsCellRenderer.setPreferredSize(dimension);
 	}
 
-	/**
-	 * 返回一个单元格中要生成渐变色的颜色总数
-	 *
-	 * @return
-	 */
-	public int getColorsCount() {
-		return colorsCount;
-	}
 
-	/**
-	 * 设置一个单元格中要生成渐变色的颜色总数
-	 *
-	 * @param count
-	 */
-	public void setColorsCount(int count) {
-		colorsCount = count;
-		customColors = Colors.makeGradient(count, ColorGradientType.RAINBOW, false);
-	}
 
 
 	/**
@@ -125,6 +93,7 @@ public class ColorsComboBox extends JComboBox {
 	private void initComboBox() {
 		try {
 			this.removeAllItems();
+			this.removeActionListener(customColorsListener);
 			ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 			java.util.List<ColorScheme> colorSchemeList = colorSchemeManager.getColorSchemeList();
 			for (int i = 0; i < colorSchemeList.size(); i++) {
@@ -133,7 +102,7 @@ public class ColorsComboBox extends JComboBox {
 				}
 				this.addItem(colorSchemeList.get(i).getColors());
 			}
-			customColors = Colors.makeGradient(getColorsCount(), ColorGradientType.RAINBOW, false);
+			customColors = Colors.makeGradient(32, ColorGradientType.RAINBOW, false);
 			this.addItem(customColors);
 			this.addActionListener(customColorsListener);
 		} catch (Exception e) {

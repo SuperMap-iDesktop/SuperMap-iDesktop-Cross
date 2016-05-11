@@ -144,7 +144,7 @@ public class SortUtilties {
 
 	private static int compare(Dataset data, Dataset data1) {
 		if (data.getType() != data1.getType()) {
-			return data.getType().value() - data1.getType().value();
+			return data1.getType().value() - data.getType().value();
 		} else {
 			return data.getName().compareTo(data1.getName());
 		}

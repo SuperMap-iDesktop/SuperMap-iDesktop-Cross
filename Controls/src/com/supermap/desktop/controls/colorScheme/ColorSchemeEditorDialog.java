@@ -3,149 +3,236 @@ package com.supermap.desktop.controls.colorScheme;
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.TableUtilties;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * 自定义颜色编辑对话框
  *
  * @author xuzw
  */
-public class ColorSchemeEditorDialog extends JDialog {
+public class ColorSchemeEditorDialog extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel jLabelPreViewLabel;
 
+
+	//region 工具条
+	private JToolBar toolBar;
 	private SmButton jButtonMoveBottomButton;
 	private SmButton jButtonMoveDownButton;
 	private SmButton jButtonMoveUpButton;
 	private SmButton jButtonMoveTopButton;
 	private SmButton jButtonRemoveColorButton;
-	private SmButton jButtonEditColorButton;
 	private SmButton jButtonAddColorButton;
-	private SmButton jButtonClearSelectionButton;
+	private SmButton jButtonSelectInvert;
+	private SmButton jButtonSelectAllButton;
+	private SmButton buttonInvertColors;
+	private SmButton buttonImport;
+	private SmButton buttonExport;
+	//endregion
+
+	//region table
+	private JTable tableColorsTable;
+	private ColorsTableModel colorsTableModel;
+	//endregion
+
+	//region 预览面板
+	private JPanel jPanelPreView;
+	private JLabel jLabelPreViewLabel;
+	//endregion
+
+	//region 按钮
+	private JPanel panelButtons;
 	private SmButton jButtonCancelButton;
 	private SmButton jButtonConfirmButton;
-	private SmButton jButtonSelectAllButton;
+	//endregion
 
-	private ColorsTableModel colorsTableModel;
+	//region 基础信息面板
+	private JPanel panelBasicInfo;
+	private JLabel labelName;
+	private SmTextFieldLegit textFieldName;
+	private JLabel labelColorBuildMethod;
+	private JComboBox<String> comboBoxColorBuildMethod;
+	private JLabel labelAuthor;
+	private SmTextFieldLegit textFieldAuthor;
+	private JLabel labelIntervalColorCount;
+	private SmTextFieldLegit textFieldColorCount;
+	private JLabel labelDescribe;
+	private SmTextFieldLegit textFieldDescribe;
+	//endregion
 
-	private JTable jTableColorsTable;
 
-	private LinkedList<Color> colorLists;
+	private ColorScheme colorScheme;
 
-	private JScrollPane jScrollPaneColors;
-
-	private JPanel jPanelPreView;
-	private JPanel jPanelColors;
-	private JPanel jPanelSource;
-	private JPanel jPanelCenter;
-
-	private JToolBar toolBar;
-
-	private transient DialogResult dialogResult = DialogResult.CANCEL;
-
-	// 用户传入的Colors
-	private transient Colors preColors;
-	// 颜色列的序号是1
-	private static final int COLORCOLUMNINDEX = 1;
-	// 预览框中颜色分段数，当对话框大小为500时，预览面板的大小是484，分成121段比较合适
-	private static final int COLORSCOUNT = 121;
 
 	/**
 	 * 构造函数
 	 */
 	public ColorSchemeEditorDialog() {
-		super();
-		setBounds(100, 100, 500, 350);
-		setResizable(false);
+		this((ColorScheme) null);
 	}
 
-	/**
-	 * 构造函数
-	 */
-	public ColorSchemeEditorDialog(Colors colors) {
+	public ColorSchemeEditorDialog(ColorScheme colorScheme) {
 		super();
-		setBounds(100, 100, 500, 350);
-		setModal(true);
-		setResizable(false);
-		preColors = new Colors(colors);
-		colorLists = new LinkedList<>();
-		for (int i = 0; i < colors.getCount(); i++) {
-			colorLists.add(colors.get(i));
-		}
-		initialize();
+		init(colorScheme);
+	}
 
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		try {
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			Dimension frameSize = this.getSize();
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+	private void init(ColorScheme colorScheme) {
+		setSize(new Dimension(700, 500));
+
+		if (colorScheme == null) {
+			this.colorScheme = new ColorScheme();
+		} else {
+			this.colorScheme = colorScheme.clone();
 		}
+		this.setLocationRelativeTo(null);
+		setTitle(ControlsProperties.getString("String_ColorEditor"));
+
+		initComponents();
+		initLayout();
+		initResources();
+		initListeners();
+		initComponentStates();
+		componentList.add(jButtonConfirmButton);
+		componentList.add(jButtonCancelButton);
+		this.getRootPane().setDefaultButton(jButtonConfirmButton);
 		// 启动后刷新一下预览框
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
 				refreshViewLabel();
+				ColorSchemeEditorDialog.this.removeWindowListener(this);
 			}
 		});
 	}
 
-	/**
-	 * 获取对话框显示结果
-	 *
-	 * @return
-	 */
-	public DialogResult getResult() {
-		return dialogResult;
+	private void initComponents() {
+		initColorsTable();
+		this.jButtonSelectAllButton = new SmButton();
+		this.jButtonSelectAllButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+
+		this.jButtonSelectInvert = new SmButton();
+		this.jButtonSelectInvert.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
+
+		this.jButtonAddColorButton = new SmButton();
+		this.jButtonAddColorButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/addColor.png")));
+
+		this.jButtonRemoveColorButton = new SmButton();
+		this.jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_RemoveColorScheme"));
+		this.jButtonRemoveColorButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
+
+		this.jButtonMoveTopButton = new SmButton();
+		this.jButtonMoveTopButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/moveToTop.png")));
+
+		this.jButtonMoveUpButton = new SmButton();
+		this.jButtonMoveUpButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/moveUp.png")));
+
+		this.jButtonMoveDownButton = new SmButton();
+		this.jButtonMoveDownButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/moveDown.png")));
+
+		this.jButtonMoveBottomButton = new SmButton();
+		this.jButtonMoveBottomButton.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/moveBottom.png")));
+
+		buttonInvertColors = new SmButton();
+		buttonInvertColors.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/invert.png")));
+		this.buttonImport = new SmButton();
+		this.buttonImport.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Import.png")));
+
+		this.buttonExport = new SmButton();
+		this.buttonExport.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Export.png")));
+
+		this.panelBasicInfo = new JPanel();
+		this.labelName = new JLabel();
+		this.textFieldName = new SmTextFieldLegit();
+
+		this.labelColorBuildMethod = new JLabel();
+		this.comboBoxColorBuildMethod = new JComboBox<>(new String[]{
+				ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT.toString(),
+				ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM.toString(),
+		});
+		this.labelAuthor = new JLabel();
+		this.textFieldAuthor = new SmTextFieldLegit();
+
+		this.labelIntervalColorCount = new JLabel();
+		this.textFieldColorCount = new SmTextFieldLegit();
+		this.textFieldColorCount.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (!StringUtilties.isPositiveInteger(textFieldValue)) {
+					return false;
+				}
+				try {
+					Integer integer = Integer.valueOf(textFieldValue);
+					if (integer > 256) {
+						return false;
+					}
+				} catch (Exception e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
+		this.labelDescribe = new JLabel();
+		this.textFieldDescribe = new SmTextFieldLegit();
+
+		this.jButtonConfirmButton = new SmButton();
+		this.jButtonCancelButton = new SmButton();
+
 	}
 
-	/**
-	 * 获取对话框结果颜色集
-	 *
-	 * @return
-	 */
-	public Colors getResultColors() {
-		if (dialogResult.equals(DialogResult.APPLY)) {
-			Color[] temp = new Color[colorLists.size()];
-			return new Colors(colorLists.toArray(temp));
-		} else {
-			return preColors;
-		}
-	}
-
-	/**
-	 * 初始化
-	 */
-	private void initialize() {
-		setTitle(ControlsProperties.getString("String_ColorEditor"));
-		getContentPane().add(getToolBar(), BorderLayout.NORTH);
-		getContentPane().add(getCenterPanel(), BorderLayout.CENTER);
-		getContentPane().add(getSourcePanel(), BorderLayout.SOUTH);
+	private void initLayout() {
+		initToolBar();
+		initBasicInfoPanel();
+		initPreviewPanel();
+		initPanelButton();
+		this.setLayout(new GridBagLayout());
+		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 10));
+		this.add(new JScrollPane(tableColorsTable), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(jPanelPreView, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(panelBasicInfo, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(panelButtons, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 10, 10));
 	}
 
 	/**
@@ -153,140 +240,428 @@ public class ColorSchemeEditorDialog extends JDialog {
 	 *
 	 * @return
 	 */
-	protected JToolBar getToolBar() {
+	protected void initToolBar() {
 		if (toolBar == null) {
 			toolBar = new JToolBar();
-			toolBar.add(getSelectAllButton());
-			toolBar.add(getClearSelectionButton());
-			toolBar.add(getAddColorButton());
-			toolBar.add(getEditColorButton());
-			toolBar.add(getRemoveColorButton());
-			toolBar.add(getMoveTopButton());
-			toolBar.add(getMoveUpButton());
-			toolBar.add(getMoveDownButton());
-			toolBar.add(getMoveBottomButton());
+			toolBar.setFloatable(false);
+			toolBar.add(jButtonAddColorButton);
+			toolBar.add(jButtonRemoveColorButton);
+			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(jButtonSelectAllButton);
+			toolBar.add(jButtonSelectInvert);
+			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(buttonInvertColors);
+			toolBar.add(jButtonMoveTopButton);
+			toolBar.add(jButtonMoveUpButton);
+			toolBar.add(jButtonMoveDownButton);
+			toolBar.add(jButtonMoveBottomButton);
+			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(buttonImport);
+			toolBar.add(buttonExport);
+
+			jButtonAddColorButton.setFocusable(false);
+			jButtonRemoveColorButton.setFocusable(false);
+			jButtonSelectAllButton.setFocusable(false);
+			jButtonSelectInvert.setFocusable(false);
+			buttonInvertColors.setFocusable(false);
+			jButtonMoveTopButton.setFocusable(false);
+			jButtonMoveUpButton.setFocusable(false);
+			jButtonMoveDownButton.setFocusable(false);
+			jButtonMoveBottomButton.setFocusable(false);
+			buttonImport.setFocusable(false);
+			buttonExport.setFocusable(false);
 		}
-		return toolBar;
 	}
 
-	/**
-	 * 全选按钮
-	 *
-	 * @return
-	 */
-	protected JButton getSelectAllButton() {
-		if (jButtonSelectAllButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.SELECT_ALL.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
+	private void initPanelButton() {
+		panelButtons = new JPanel();
+		panelButtons.setLayout(new GridBagLayout());
+		panelButtons.add(jButtonConfirmButton, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(1, 1));
+		panelButtons.add(jButtonCancelButton, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setWeight(0, 1).setInsets(0, 5, 0, 0));
+	}
 
-			jButtonSelectAllButton = new SmButton(icon);
-			jButtonSelectAllButton.setToolTipText(ControlsProperties.getString("String_SelectAll"));
-			jButtonSelectAllButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					jTableColorsTable.selectAll();
+	private void initBasicInfoPanel() {
+		panelBasicInfo.setLayout(new GridBagLayout());
+		panelBasicInfo.setBorder(new TitledBorder(null, ControlsProperties.getString("String_BasicInfo"), TitledBorder.DEFAULT_JUSTIFICATION,
+				TitledBorder.DEFAULT_POSITION, null, null));
+		panelBasicInfo.add(labelName, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelBasicInfo.add(textFieldName, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(3, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panelBasicInfo.add(labelColorBuildMethod, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelBasicInfo.add(comboBoxColorBuildMethod, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(3, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBasicInfo.add(labelAuthor, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelBasicInfo.add(textFieldAuthor, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(3, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panelBasicInfo.add(labelIntervalColorCount, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelBasicInfo.add(textFieldColorCount, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(3, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBasicInfo.add(labelDescribe, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelBasicInfo.add(textFieldDescribe, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(3, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panelBasicInfo.add(new JPanel(), new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(4, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 0, 10));
+	}
+
+	private void initResources() {
+		jButtonAddColorButton.setToolTipText(ControlsProperties.getString("String_AddColor"));
+		jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_RemoveColor"));
+		jButtonSelectAllButton.setToolTipText(ControlsProperties.getString("String_SelectAll"));
+		jButtonSelectInvert.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
+		jButtonMoveTopButton.setToolTipText(ControlsProperties.getString("String_FirstColor"));
+		jButtonMoveUpButton.setToolTipText(ControlsProperties.getString("String_UpColor"));
+		jButtonMoveDownButton.setToolTipText(ControlsProperties.getString("String_DownColor"));
+		jButtonMoveBottomButton.setToolTipText(ControlsProperties.getString("String_LastColor"));
+		buttonImport.setToolTipText(CommonProperties.getString(CommonProperties.IMPORT));
+		buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.EXPORT));
+		jButtonConfirmButton.setText(CommonProperties.getString(CommonProperties.OK));
+		jButtonCancelButton.setText(CommonProperties.getString(CommonProperties.Cancel));
+		buttonInvertColors.setToolTipText(ControlsProperties.getString("String_ReverseColor"));
+		labelName.setText(ControlsProperties.getString("String_Label_Name"));
+		labelColorBuildMethod.setText(ControlsProperties.getString("String_labelColorChangeStyle"));
+		labelAuthor.setText(ControlsProperties.getString("String_labelAuthor"));
+		labelIntervalColorCount.setText(ControlsProperties.getString("String_labelIntervalColorCount"));
+		labelDescribe.setText(ControlsProperties.getString("String_labelDescription"));
+	}
+
+	private void initListeners() {
+		jButtonSelectAllButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableColorsTable.selectAll();
+			}
+		});
+		jButtonSelectInvert.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TableUtilties.stopEditing(tableColorsTable);
+				TableUtilties.invertSelection(tableColorsTable);
+			}
+
+		});
+
+		jButtonAddColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				colorsTableModel.add();
+				tableColorsTable.setRowSelectionInterval(tableColorsTable.getRowCount() - 1, tableColorsTable.getRowCount() - 1);
+				tableColorsTable.scrollRectToVisible(tableColorsTable.getCellRect(tableColorsTable.getRowCount() - 1, 0, true));
+			}
+		});
+		jButtonRemoveColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int[] selectedRow = tableColorsTable.getSelectedRows();
+				colorsTableModel.removeRow(selectedRow);
+				if (selectedRow[0] < tableColorsTable.getRowCount()) {
+					tableColorsTable.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
+				} else if (tableColorsTable.getRowCount() > 0) {
+					tableColorsTable.setRowSelectionInterval(tableColorsTable.getRowCount() - 1, tableColorsTable.getRowCount() - 1);
 				}
+			}
 
-			});
-		}
-		return jButtonSelectAllButton;
-	}
-
-	/**
-	 * 中央面板，该面板包含了颜色集合表格和预览
-	 *
-	 * @return
-	 */
-	protected JPanel getCenterPanel() {
-		if (jPanelCenter == null) {
-			jPanelCenter = new JPanel();
-			jPanelCenter.setLayout(new BorderLayout());
-			jPanelCenter.add(getColorsPanel(), BorderLayout.CENTER);
-			jPanelCenter.add(getPreViewPanel(), BorderLayout.SOUTH);
-		}
-		return jPanelCenter;
-	}
-
-	/**
-	 * 南部面板，包含确定和取消按钮
-	 *
-	 * @return
-	 */
-	protected JPanel getSourcePanel() {
-		if (jPanelSource == null) {
-			jPanelSource = new JPanel();
-			jPanelSource.add(getConfirmButton());
-			jPanelSource.add(getCancelButton());
-		}
-		return jPanelSource;
-	}
-
-	/**
-	 * 确定按钮
-	 *
-	 * @return
-	 */
-	protected JButton getConfirmButton() {
-		if (jButtonConfirmButton == null) {
-			jButtonConfirmButton = new SmButton();
-			jButtonConfirmButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dialogResult = DialogResult.APPLY;
-					setVisible(false);
+		});
+		jButtonMoveTopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int length = tableColorsTable.getSelectedRows().length;
+				colorsTableModel.moveToTop(tableColorsTable.getSelectedRows());
+				tableColorsTable.setRowSelectionInterval(0, length - 1);
+			}
+		});
+		jButtonMoveUpButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int[] selectedRows = tableColorsTable.getSelectedRows();
+				colorsTableModel.moveUp(selectedRows);
+				tableColorsTable.clearSelection();
+				for (int selectedRow : selectedRows) {
+					tableColorsTable.addRowSelectionInterval(selectedRow - 1, selectedRow - 1);
 				}
-			});
-			jButtonConfirmButton.setText(CommonProperties.getString(CommonProperties.OK));
-		}
-		return jButtonConfirmButton;
-	}
+			}
+		});
 
-	/**
-	 * 取消按钮
-	 *
-	 * @return
-	 */
-	protected JButton getCancelButton() {
-		if (jButtonCancelButton == null) {
-			jButtonCancelButton = new SmButton();
-			jButtonCancelButton.setText(CommonProperties.getString(CommonProperties.Cancel));
-			jButtonCancelButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					dialogResult = DialogResult.CANCEL;
-					setVisible(false);
+		jButtonMoveDownButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int[] selectedRows = tableColorsTable.getSelectedRows();
+				colorsTableModel.moveDown(selectedRows);
+				tableColorsTable.clearSelection();
+				for (int selectedRow : selectedRows) {
+					tableColorsTable.addRowSelectionInterval(selectedRow + 1, selectedRow + 1);
 				}
+			}
+		});
 
-			});
-		}
-		return jButtonCancelButton;
+		jButtonMoveBottomButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int length = tableColorsTable.getSelectedRows().length;
+				colorsTableModel.moveToBottom(tableColorsTable.getSelectedRows());
+				tableColorsTable.setRowSelectionInterval(tableColorsTable.getRowCount() - length, tableColorsTable.getRowCount() - 1);
+			}
+		});
+
+		jButtonConfirmButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.OK;
+				setVisible(false);
+			}
+		});
+
+		jButtonCancelButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.CANCEL;
+				setVisible(false);
+			}
+
+		});
+
+		buttonInvertColors.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				colorsTableModel.colorInvert();
+			}
+		});
+
+		tableColorsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				checkButtonStates();
+			}
+		});
+
+		tableColorsTable.getModel().addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				refreshViewLabel();
+			}
+		});
+
+		textFieldName.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateName();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateName();
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateName();
+			}
+
+			private void updateName() {
+				colorScheme.setName(textFieldName.getText());
+			}
+		});
+
+		comboBoxColorBuildMethod.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					colorScheme.setIntervalColorBuildMethod(ColorScheme.IntervalColorBuildMethod.getMethod((String) comboBoxColorBuildMethod.getSelectedItem()));
+					refreshViewLabel();
+				}
+			}
+		});
+
+		textFieldAuthor.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateAuthor();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateAuthor();
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateAuthor();
+
+			}
+
+			private void updateAuthor() {
+				colorScheme.setAuthor(textFieldAuthor.getText());
+			}
+		});
+
+		textFieldColorCount.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateCount();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateCount();
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateCount();
+
+			}
+
+			private void updateCount() {
+				if (textFieldColorCount.isLegitValue(textFieldColorCount.getText())) {
+					colorScheme.setIntervalColorCount(Integer.valueOf(textFieldColorCount.getText()));
+					refreshViewLabel();
+				}
+			}
+		});
+
+		textFieldDescribe.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateDescribe();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateDescribe();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateDescribe();
+			}
+
+			private void updateDescribe() {
+				colorScheme.setDescription(textFieldDescribe.getText());
+			}
+		});
+
+		buttonImport.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonImportClicked();
+			}
+		});
+
+		buttonExport.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonExportClicked();
+				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"));
+			}
+		});
+
+		tableColorsTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1
+						&& tableColorsTable.columnAtPoint(e.getPoint()) == 1 && tableColorsTable.rowAtPoint(e.getPoint()) != -1) {
+					final JPopupMenu popupMenu = new JPopupMenu();
+					final int selectedRow = tableColorsTable.getSelectedRow();
+					popupMenu.setBorderPainted(false);
+					ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+					popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+					colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+					popupMenu.show(tableColorsTable, (int) e.getPoint().getX(), (int) e.getPoint().getY());
+					colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							Color color = (Color) evt.getNewValue();
+							tableColorsTable.setValueAt(color, selectedRow, 1);
+							popupMenu.setVisible(false);
+						}
+					});
+					tableColorsTable.setRowSelectionInterval(selectedRow, selectedRow);
+				}
+			}
+		});
+
+		jLabelPreViewLabel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				refreshViewLabel();
+			}
+		});
 	}
 
-	/**
-	 * 颜色集合面板
-	 *
-	 * @return
-	 */
-	protected JPanel getColorsPanel() {
-		if (jPanelColors == null) {
-			jPanelColors = new JPanel();
-			jPanelColors.setBorder(new TitledBorder(null, ControlsProperties.getString("String_Title_ColorCollections"), TitledBorder.DEFAULT_JUSTIFICATION,
-					TitledBorder.DEFAULT_POSITION, null, null));
-			jPanelColors.setLayout(new BorderLayout());
-			jPanelColors.add(getColorsScrollPane(), BorderLayout.CENTER);
+	private void buttonImportClicked() {
+		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
+			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
+			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+					CommonProperties.getString(CommonProperties.open), "ColorSchemeImport", "OpenMany");
 		}
-		return jPanelColors;
+		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
+		int result = fileChooser.showDefaultDialog();
+		if (result == JFileChooser.APPROVE_OPTION && fileChooser.getSelectFiles().length > 0 && fileChooser.getSelectFiles()[0] != null) {
+			colorScheme.fromXML(fileChooser.getSelectFiles()[0]);
+			initComponentStates();
+		}
 	}
+
+	private void buttonExportClicked() {
+		if (!SmFileChoose.isModuleExist("ColorSchemeExportSingle")) {
+			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
+			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+					CommonProperties.getString(CommonProperties.open), "ColorSchemeExportSingle", "SaveOne");
+		}
+		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExportSingle");
+		int result = fileChooser.showDefaultDialog();
+		String filePath = fileChooser.getFilePath();
+		if (result == JFileChooser.APPROVE_OPTION && !StringUtilties.isNullOrEmpty(filePath)) {
+			colorScheme.saveAsFilePath(filePath);
+		}
+	}
+
+	private void checkButtonStates() {
+		int rowCount = tableColorsTable.getRowCount();
+		int selectedRowCount = tableColorsTable.getSelectedRowCount();
+		jButtonRemoveColorButton.setEnabled(selectedRowCount > 0);
+		jButtonSelectAllButton.setEnabled(rowCount > 0);
+		jButtonSelectInvert.setEnabled(rowCount > 0);
+		buttonInvertColors.setEnabled(rowCount > 0);
+
+		jButtonMoveTopButton.setEnabled(selectedRowCount > 0 && tableColorsTable.getSelectedRows()[selectedRowCount - 1] != selectedRowCount - 1);
+		jButtonMoveUpButton.setEnabled(selectedRowCount > 0 && !tableColorsTable.isRowSelected(0));
+		jButtonMoveDownButton.setEnabled(selectedRowCount > 0 && !tableColorsTable.isRowSelected(rowCount - 1));
+
+		jButtonMoveBottomButton.setEnabled(selectedRowCount > 0 && tableColorsTable.getSelectedRow() != rowCount - selectedRowCount);
+
+		jButtonConfirmButton.setEnabled(rowCount > 1);
+		buttonExport.setEnabled(rowCount > 1);
+	}
+
+	private void initComponentStates() {
+		colorsTableModel.setColors(colorScheme.getColorsList());
+		textFieldDescribe.setText(colorScheme.getDescription());
+		textFieldColorCount.setText(String.valueOf(colorScheme.getIntervalColorCount()));
+		textFieldName.setText(colorScheme.getName());
+		textFieldAuthor.setText(colorScheme.getAuthor());
+		comboBoxColorBuildMethod.setSelectedItem(colorScheme.getIntervalColorBuildMethod().toString());
+		if (tableColorsTable.getRowCount() > 0) {
+			tableColorsTable.setRowSelectionInterval(0, 0);
+		} else {
+			checkButtonStates();
+		}
+	}
+
+	public ColorSchemeEditorDialog(JDialog jDialog) {
+		this(jDialog, null);
+	}
+
+	public ColorSchemeEditorDialog(JDialog dialog, ColorScheme colorScheme) {
+		super(dialog);
+		init(colorScheme);
+	}
+
 
 	/**
 	 * 颜色集合预览面板
 	 *
 	 * @return
 	 */
-	protected JPanel getPreViewPanel() {
+	protected JPanel initPreviewPanel() {
 		if (jPanelPreView == null) {
 			jPanelPreView = new JPanel();
 			jPanelPreView.setLayout(new BorderLayout());
@@ -297,355 +672,52 @@ public class ColorSchemeEditorDialog extends JDialog {
 		return jPanelPreView;
 	}
 
-	/**
-	 * 滚动面板
-	 *
-	 * @return
-	 */
-	protected JScrollPane getColorsScrollPane() {
-		if (jScrollPaneColors == null) {
-			jScrollPaneColors = new JScrollPane();
-			jScrollPaneColors.setViewportView(getColorsTable());
-		}
-		return jScrollPaneColors;
-	}
 
 	/**
 	 * 颜色集合表格
 	 *
 	 * @return
 	 */
-	protected JTable getColorsTable() {
-		if (jTableColorsTable == null) {
-			jTableColorsTable = new JTable();
-			jTableColorsTable.setRowHeight(25);
+	protected JTable initColorsTable() {
+		if (tableColorsTable == null) {
+			tableColorsTable = new JTable();
+			tableColorsTable.setRowHeight(25);
 			colorsTableModel = new ColorsTableModel();
-			jTableColorsTable.setModel(colorsTableModel);
+			tableColorsTable.setModel(colorsTableModel);
 
 			// 设置表格颜色列的显示效果为指定的颜色
-			TableColumn colorColumn = jTableColorsTable.getColumn(ControlsProperties.getString("String_Color"));
+			TableColumn colorColumn = tableColorsTable.getColumnModel().getColumn(1);
 			colorColumn.setCellRenderer(new DefaultTableCellRenderer() {
 				@Override
-				public void setValue(Object value) {
+				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+					JLabel label = new JLabel();
+					label.setOpaque(true);
 					if (value instanceof Color) {
-						Color c = (Color) value;
-						setBackground(c);
-					} else {
-						super.setValue(value);
+						label.setBackground((Color) value);
 					}
+					return label;
 				}
+
 			});
-		}
-		return jTableColorsTable;
-	}
-
-	/**
-	 * 反选按钮
-	 *
-	 * @return
-	 */
-	protected JButton getClearSelectionButton() {
-		if (jButtonClearSelectionButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.SELECT_PREVIOUS.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonClearSelectionButton = new SmButton(icon);
-			jButtonClearSelectionButton.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
-			jButtonClearSelectionButton.addActionListener(new ActionListener() {
+			TableColumn column = tableColorsTable.getColumnModel().getColumn(0);
+			int indexWidth = FontUtilties.getStringWidth(ControlsProperties.getString("String_identifier"), tableColorsTable.getTableHeader().getFont()) + 30;
+			column.setMaxWidth(indexWidth);
+			column.setPreferredWidth(indexWidth);
+			column.setMinWidth(indexWidth);
+			column.setCellRenderer(new DefaultTableCellRenderer() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					abstractClearColorButton();
-				}
-
-			});
-		}
-		return jButtonClearSelectionButton;
-	}
-
-	private void abstractClearColorButton() {
-		int[] selectedRows = jTableColorsTable.getSelectedRows();
-		ArrayList<Integer> selected = new ArrayList<Integer>();
-		for (int i = 0; i < selectedRows.length; i++) {
-			selected.add(selectedRows[i]);
-		}
-		int size = colorLists.size();
-		ArrayList<Integer> all = new ArrayList<Integer>();
-		for (int j = 0; j < size; j++) {
-			all.add(j);
-		}
-		all.removeAll(selected);
-		// 清空选择，然后将获得的反选列表加到选择中
-		jTableColorsTable.clearSelection();
-		for (int k = 0; k < all.size(); k++) {
-			jTableColorsTable.addRowSelectionInterval(all.get(k), all.get(k));
-		}
-	}
-
-	/**
-	 * 添加按钮
-	 *
-	 * @return
-	 */
-	protected JButton getAddColorButton() {
-		if (jButtonAddColorButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_ADD_KEY_COLOR.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonAddColorButton = new SmButton(icon);
-			jButtonAddColorButton.setToolTipText(ControlsProperties.getString("String_Add"));
-			jButtonAddColorButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Color color = JColorChooser.showDialog(null, ControlsProperties.getString("String_ChooseColor"), null);
-					if (color != null) {
-						colorLists.add(color);
-						colorsTableModel.fireTableDataChanged();
-						refreshViewLabel();
-
-						// 将当前的表格选择位置放在新添加的列上
-						jTableColorsTable.setRowSelectionInterval(colorLists.size() - 1, colorLists.size() - 1);
+				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+					Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+					if (rendererComponent instanceof JLabel) {
+						((JLabel) rendererComponent).setHorizontalAlignment(CENTER);
 					}
+					return rendererComponent;
 				}
 			});
 		}
-		return jButtonAddColorButton;
+		return tableColorsTable;
 	}
 
-	/**
-	 * 编辑按钮
-	 *
-	 * @return
-	 */
-	protected JButton getEditColorButton() {
-		if (jButtonEditColorButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_EDIT_KEY_COLOER.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonEditColorButton = new SmButton(icon);
-			jButtonEditColorButton.setToolTipText(ControlsProperties.getString("String_Editor"));
-			jButtonEditColorButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int row = jTableColorsTable.getSelectedRow();
-					Object object = colorsTableModel.getValueAt(row, COLORCOLUMNINDEX);
-					if (object != null && object instanceof Color) {
-						Color color = JColorChooser.showDialog(null, ControlsProperties.getString("String_ChooseColor"), null);
-						if (color != null) {
-							colorLists.set(row, color);
-							colorsTableModel.fireTableDataChanged();
-							refreshViewLabel();
-
-							// 将当前的表格选择位置放在编辑的列上
-							jTableColorsTable.setRowSelectionInterval(row, row);
-						}
-					}
-				}
-			});
-		}
-		return jButtonEditColorButton;
-	}
-
-	/**
-	 * 移除按钮
-	 *
-	 * @return
-	 */
-	protected JButton getRemoveColorButton() {
-		if (jButtonRemoveColorButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_REMOVE_KEY_COLOR.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonRemoveColorButton = new SmButton(icon);
-			jButtonRemoveColorButton.setToolTipText(ControlsProperties.getString("String_Remove"));
-			jButtonRemoveColorButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					removeColorButton();
-				}
-
-			});
-		}
-		return jButtonRemoveColorButton;
-	}
-
-	private void removeColorButton() {
-		int row = jTableColorsTable.getSelectedRow();
-		int[] selectedRows = jTableColorsTable.getSelectedRows();
-		int length = selectedRows.length;
-		if (length > 0) {
-			while (length > 0) {
-				colorLists.remove(length - 1);
-				length--;
-			}
-			colorsTableModel.fireTableDataChanged();
-			refreshViewLabel();
-
-			// 将当前的表格选择位置放在移除列的上一列上
-			if (row - 1 != -1) {
-				jTableColorsTable.setRowSelectionInterval(row - 1, row - 1);
-			}
-		}
-	}
-
-	/**
-	 * 置顶按钮
-	 *
-	 * @return
-	 */
-	protected JButton getMoveTopButton() {
-		if (jButtonMoveTopButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_FIRST.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonMoveTopButton = new SmButton(icon);
-			jButtonMoveTopButton.setToolTipText(ControlsProperties.getString("String_MoveFirst"));
-			jButtonMoveTopButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (jTableColorsTable.getSelectedRow() == 0) {
-						return;
-					}
-					Object object = colorsTableModel.getValueAt(jTableColorsTable.getSelectedRow(), COLORCOLUMNINDEX);
-					if (object != null) {
-						colorLists.remove(jTableColorsTable.getSelectedRow());
-						colorLists.addFirst((Color) object);
-						colorsTableModel.fireTableDataChanged();
-						refreshViewLabel();
-
-						jTableColorsTable.setRowSelectionInterval(0, 0);
-					}
-				}
-			});
-		}
-		return jButtonMoveTopButton;
-	}
-
-	/**
-	 * 上移按钮
-	 *
-	 * @return
-	 */
-	protected JButton getMoveUpButton() {
-		if (jButtonMoveUpButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_UP.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonMoveUpButton = new SmButton(icon);
-			jButtonMoveUpButton.setToolTipText(ControlsProperties.getString("String_MoveUp"));
-			jButtonMoveUpButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int row = jTableColorsTable.getSelectedRow();
-					if (row == 0) {
-						return;
-					}
-					Object object = colorsTableModel.getValueAt(row, COLORCOLUMNINDEX);
-					Object object2 = colorsTableModel.getValueAt(row - 1, COLORCOLUMNINDEX);
-					if (object != null && object2 != null) {
-						colorLists.set(row - 1, (Color) object);
-						colorLists.set(row, (Color) object2);
-						colorsTableModel.fireTableDataChanged();
-						refreshViewLabel();
-
-						jTableColorsTable.setRowSelectionInterval(row - 1, row - 1);
-					}
-				}
-			});
-		}
-		return jButtonMoveUpButton;
-	}
-
-	/**
-	 * 下移按钮
-	 *
-	 * @return
-	 */
-	protected JButton getMoveDownButton() {
-		if (jButtonMoveDownButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_DOWN.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonMoveDownButton = new SmButton(icon);
-			jButtonMoveDownButton.setToolTipText(ControlsProperties.getString("String_MoveDown"));
-			jButtonMoveDownButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int row = jTableColorsTable.getSelectedRow();
-					if (row == colorLists.size() - 1) {
-						return;
-					}
-					Object object = colorsTableModel.getValueAt(row, COLORCOLUMNINDEX);
-					Object object2 = colorsTableModel.getValueAt(row + 1, COLORCOLUMNINDEX);
-					if (object != null && object2 != null) {
-						colorLists.set(row + 1, (Color) object);
-						colorLists.set(row, (Color) object2);
-						colorsTableModel.fireTableDataChanged();
-						refreshViewLabel();
-
-						jTableColorsTable.setRowSelectionInterval(row + 1, row + 1);
-					}
-				}
-			});
-		}
-		return jButtonMoveDownButton;
-	}
-
-	/**
-	 * 置底
-	 *
-	 * @return
-	 */
-	protected JButton getMoveBottomButton() {
-		if (jButtonMoveBottomButton == null) {
-			ImageIcon icon = new ImageIcon();
-			BufferedImage bufferedImage = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-			Graphics graphics = bufferedImage.getGraphics();
-			graphics.drawImage(InternalImageIconFactory.COLOR_SCHEME_EDITOR_MOVE_LAST.getImage(), 0, 0, null);
-			icon.setImage(bufferedImage);
-
-			jButtonMoveBottomButton = new SmButton(icon);
-			jButtonMoveBottomButton.setToolTipText(ControlsProperties.getString("String_MoveLast"));
-			jButtonMoveBottomButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (jTableColorsTable.getSelectedRow() == colorLists.size() - 1) {
-						return;
-					}
-					Object object = colorsTableModel.getValueAt(jTableColorsTable.getSelectedRow(), COLORCOLUMNINDEX);
-					if (object != null) {
-						colorLists.remove(jTableColorsTable.getSelectedRow());
-						colorLists.addLast((Color) object);
-						colorsTableModel.fireTableDataChanged();
-						refreshViewLabel();
-
-						jTableColorsTable.setRowSelectionInterval(colorLists.size() - 1, colorLists.size() - 1);
-					}
-				}
-			});
-		}
-		return jButtonMoveBottomButton;
-	}
 
 	/**
 	 * 预览标签
@@ -663,72 +735,34 @@ public class ColorSchemeEditorDialog extends JDialog {
 	/**
 	 * 刷新预览标签
 	 */
-	protected void refreshViewLabel() {
-		int imageWidth = jLabelPreViewLabel.getSize().width;
-		int imageHeight = jLabelPreViewLabel.getSize().height;
+	private void refreshViewLabel() {
+		int imageWidth = jLabelPreViewLabel.getSize().width > 0 ? jLabelPreViewLabel.getSize().width : 484;
+		int imageHeight = jLabelPreViewLabel.getSize().height > 0 ? jLabelPreViewLabel.getSize().height : 23;
 		BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
 
 		// 根据当前渲染单元格的宽度和颜色数计算出每个颜色应当渲染的步长
-		int size = colorLists.size();
-		Color[] temp = new Color[size];
+		int size = colorScheme.getColorsList().size();
 		if (size == 0) {
 			graphics.setColor(Color.white);
 			graphics.fillRect(0, 0, imageWidth, imageHeight);
 		} else if (size == 1) {
-			graphics.setColor(colorLists.get(0));
+			graphics.setColor(colorScheme.getColorsList().get(0));
 			graphics.fillRect(0, 0, imageWidth, imageHeight);
 		} else {
-			Colors colors = Colors.makeGradient(COLORSCOUNT, colorLists.toArray(temp));
-			int colorsCount = colors.getCount();
+
+			Colors colorsShow = colorScheme.getColors();
+			int colorsCount = colorsShow.getCount();
 			int step = imageWidth / colorsCount;
 			for (int i = 0; i < colorsCount; i++) {
-				graphics.setColor(colors.get(i));
+				graphics.setColor(colorsShow.get(i));
 				graphics.fillRect(step * i, 0, step * (i + 1), imageHeight);
 			}
 		}
 		jLabelPreViewLabel.setIcon(new ImageIcon(bufferedImage));
 	}
 
-	/**
-	 * 颜色表格模型
-	 */
-	class ColorsTableModel extends AbstractTableModel {
-
-		private static final long serialVersionUID = 1L;
-		private final String[] m_columns = new String[]{ControlsProperties.getString("String_identifier"), ControlsProperties.getString("String_Color")};
-
-		public ColorsTableModel() {
-			// 默认实现，后续进行初始化
-		}
-
-		@Override
-		public int getRowCount() {
-			return colorLists.size();
-		}
-
-		@Override
-		public int getColumnCount() {
-			return m_columns.length;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return m_columns[column];
-		}
-
-		@Override
-		public Object getValueAt(int row, int column) {
-			Object result = null;
-			if (row >= 0 && row < colorLists.size()) {
-				if (column == 0) {
-					result = row + 1;
-				} else {
-					result = colorLists.get(row);
-				}
-			}
-			return result;
-		}
+	public ColorScheme getColorScheme() {
+		return colorScheme;
 	}
-
 }

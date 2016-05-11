@@ -441,7 +441,12 @@ public class SmFileChoose extends JFileChooser {
 				return;
 			}
 		} else if ("GetDirectories".equals(moduleType)) {
-			this.filePath = getSelectedFile().getAbsolutePath();
+			String absolutePath = getSelectedFile().getAbsolutePath();
+			if (absolutePath.endsWith(File.pathSeparator)) {
+				int length = File.pathSeparator.length();
+				absolutePath = absolutePath.substring(0, absolutePath.length() - length);
+			}
+			this.filePath = absolutePath;
 		}
 		saveFilePath();
 		super.approveSelection();

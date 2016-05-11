@@ -2,23 +2,19 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.geometryoperation.editor.EraseEditor;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
+import com.supermap.desktop.geometryoperation.editor.LineExtendEditor;
 
-public class CtrlActionErase extends CtrlActionEditorBase {
+public class CtrlActionLineExtend extends CtrlActionEditorBase {
 
-	private EraseEditor editor = new EraseEditor();
+	private LineExtendEditor editor = new LineExtendEditor();
 
-	public CtrlActionErase(IBaseItem caller, IForm formClass) {
+	public CtrlActionLineExtend(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
-
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * 子类必须重写这个
-	 * 
-	 * @return
-	 */
+	@Override
 	public IEditor getEditor() {
 		return this.editor;
 	}
