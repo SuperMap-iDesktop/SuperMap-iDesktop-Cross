@@ -10,6 +10,10 @@ docs:
     TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
     TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
     TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
+    SQLQuery_Expression: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQuery_Expression.html
+    SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
+    SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
+    SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html

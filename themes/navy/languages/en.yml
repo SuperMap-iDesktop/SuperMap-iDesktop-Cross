@@ -13,8 +13,8 @@ page:
   contents: 本页目录
   back_to_top: Top
   improve: Improve this doc
-  prev: Prev
-  next: Next
+  prev: 前一页
+  next: 后一页
   last_updated: "Last updated: %s"
 
 sidebar:
@@ -30,6 +30,10 @@ sidebar:
     TopoPreprocess: 拓扑预处理
     TopoProcessLine: 线拓扑处理
     TopotoPolygon: 拓扑构面
+    SQLQuery_Expression: 构建SQL表达式
+    SQLQueryDia: SQL 查询
+    SQLQueryDiaFuction: SQL函数运算符
+    SQLSupporttedType: SQL查询引擎支持
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
