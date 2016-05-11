@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -78,6 +79,8 @@ public class EditEnvironment {
 			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
 				EditEnvironment.this.isMiddleMousePressed = false;
 			}
+
+			EditEnvironment.this.editController.mouseReleased(EditEnvironment.this, e);
 		}
 
 		@Override
@@ -85,24 +88,26 @@ public class EditEnvironment {
 			if (e.getButton() == MouseButtons.MIDDLE_BUTTON) {
 				EditEnvironment.this.isMiddleMousePressed = true;
 			}
+
+			EditEnvironment.this.editController.mousePressed(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.mouseExited(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
+			EditEnvironment.this.editController.mouseEntered(EditEnvironment.this, e);
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				activateEditor(NullEditor.INSTANCE);
+			} else {
+				EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
 			}
 		}
 	};

@@ -3,9 +3,7 @@ package com.supermap.desktop.geometryoperation.editor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -26,67 +24,92 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
-import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 
-public class LineExtendEditor extends AbstractEditor implements GeometrySelectedListener {
+public class LineExtendEditor extends AbstractEditor {
 
 	private static final String TAG_LINEEXTEND = "Tag_ExtendLineEditorBase";
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
-	private GeoLine baseLine;
-	private Layer baseLayer; // 基线所在图层
-
-	private Action oldMapControlAction = Action.SELECT2;
-	private TrackMode oldTrackMode = TrackMode.EDIT;
-	private Point mouseClickedLocation;
-
-	private MapControlTip tip = new MapControlTip();
-	private JLabel labelTip = new JLabel(MapEditorProperties.getString("String_LineEditor_SelectBaseLine"));
-
-	private MouseListener mouseListener = new MouseAdapter() {
+	private IEditController lineExtendEditController = new EditControllerAdapter() {
 
 		@Override
-		public void mousePressed(MouseEvent e) {
-			LineExtendEditor.this.mouseClickedLocation = e.getPoint();
+		public void mousePressed(EditEnvironment environment, MouseEvent e) {
+			if (!(environment.getEditModel() instanceof LineExtendEditModel)) {
+				return;
+			}
+			((LineExtendEditModel) environment.getEditModel()).mouseClickedLocation = e.getPoint();
+		}
+
+		@Override
+		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
+			if (!(environment.getEditModel() instanceof LineExtendEditModel)) {
+				return;
+			}
+
+			LineExtendEditModel editModel = (LineExtendEditModel) environment.getEditModel();
+			MapControl mapControl = (MapControl) arg0.getSource();
+
+			// 获取基线
+			if (editModel.baseLine == null) {
+				initialBaseLine(mapControl, editModel);
+			} else {
+				Layer activeEditableLayer = mapControl.getActiveEditableLayer();
+
+				if (activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
+					extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), getDesLine(activeEditableLayer, editModel), editModel);
+				} else {
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
+				}
+			}
 		}
 	};
 
 	public LineExtendEditor() {
 		super();
-		this.tip.getContentPanel().setLayout(new BorderLayout());
-		this.tip.getContentPanel().add(this.labelTip, BorderLayout.CENTER);
-		this.tip.getContentPanel().setSize(200, 20);
-		this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
 	}
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		this.oldMapControlAction = environment.getMapControl().getAction();
-		this.oldTrackMode = environment.getMapControl().getTrackMode();
+		LineExtendEditModel editModel;
+		if (environment.getEditModel() instanceof LineExtendEditModel) {
+			editModel = (LineExtendEditModel) environment.getEditModel();
+		} else {
+			editModel = new LineExtendEditModel();
+			environment.setEditModel(editModel);
+		}
+		environment.setEditController(this.lineExtendEditController);
+
+		editModel.oldMapControlAction = environment.getMapControl().getAction();
+		editModel.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
 		environment.getMapControl().setTrackMode(TrackMode.TRACK);
-		this.tip.bind(environment.getMapControl());
-		registerEvents(environment);
+		editModel.tip.bind(environment.getMapControl());
 	}
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		try {
-			environment.getMapControl().setAction(this.oldMapControlAction);
-			environment.getMapControl().setTrackMode(this.oldTrackMode);
-			unregisterEvents(environment);
-			clear(environment);
-		} finally {
-			this.tip.unbind();
+		if (environment.getEditModel() instanceof LineExtendEditModel) {
+			LineExtendEditModel editModel = (LineExtendEditModel) environment.getEditModel();
+
+			try {
+				environment.getMapControl().setAction(editModel.oldMapControlAction);
+				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
+				clear(environment);
+			} finally {
+				editModel.tip.unbind();
+			}
 		}
 	}
 
@@ -99,16 +122,6 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 	@Override
 	public boolean check(EditEnvironment environment) {
 		return environment.getEditor() instanceof LineExtendEditor;
-	}
-
-	private void registerEvents(EditEnvironment environment) {
-		environment.getMapControl().addGeometrySelectedListener(this);
-		environment.getMapControl().addMouseListener(this.mouseListener);
-	}
-
-	private void unregisterEvents(EditEnvironment environment) {
-		environment.getMapControl().removeGeometrySelectedListener(this);
-		environment.getMapControl().removeMouseListener(this.mouseListener);
 	}
 
 	private GeoStyle getBaseLineStyle() {
@@ -126,7 +139,7 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 		return dDistance;
 	}
 
-	private void getBaseLine(MapControl mapControl) {
+	private void getBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		try {
 			List<Layer> layers = MapUtilties.getLayers(mapControl.getMap());
 
@@ -140,11 +153,11 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 						try {
 
 							// 单选，取到一条线就可以撤了
-							while (!recordset.isEOF() && this.baseLine == null) {
+							while (!recordset.isEOF() && editModel.baseLine == null) {
 								IGeometry geometry = DGeometryFactory.create(recordset.getGeometry());
 
 								if (geometry instanceof ILineFeature) {
-									this.baseLine = ((ILineFeature) geometry).convertToLine(120);
+									editModel.baseLine = ((ILineFeature) geometry).convertToLine(120);
 								}
 
 								recordset.moveNext();
@@ -157,8 +170,8 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 						}
 					}
 
-					if (this.baseLine != null) {
-						this.baseLayer = layer;
+					if (editModel.baseLine != null) {
+						editModel.baseLayer = layer;
 						layer.getSelection().clear();
 						break;
 					}
@@ -169,7 +182,7 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 		}
 	}
 
-	private GeoLine getDesLine(Layer activeEditableLayer) {
+	private GeoLine getDesLine(Layer activeEditableLayer, LineExtendEditModel editModel) {
 		GeoLine desLine = null;
 		Recordset recordset = null;
 		try {
@@ -189,7 +202,7 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 			}
 
 			// 如果选中的基线和目标线是同一个对象就什么都不做
-			if (desLine != null && this.baseLayer == activeEditableLayer && desLine.getID() != baseLine.getID()) {
+			if (desLine != null && editModel.baseLayer == activeEditableLayer && desLine.getID() != editModel.baseLine.getID()) {
 				if (desLine.getPartCount() > 1) {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 
@@ -216,46 +229,28 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 		return desLine;
 	}
 
-	@Override
-	public void geometrySelected(GeometrySelectedEvent arg0) {
-		MapControl mapControl = (MapControl) arg0.getSource();
-
-		// 获取基线
-		if (this.baseLine == null) {
-			initialBaseLine(mapControl);
-		} else {
-			Layer activeEditableLayer = mapControl.getActiveEditableLayer();
-
-			if (activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
-				extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), getDesLine(activeEditableLayer));
-			} else {
-				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
-			}
-		}
-	}
-
-	private void initialBaseLine(MapControl mapControl) {
+	private void initialBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
-		getBaseLine(mapControl);
-		this.baseLine.setStyle(getBaseLineStyle());
-		mapControl.getMap().getTrackingLayer().add(this.baseLine, TAG_LINEEXTEND);
+		getBaseLine(mapControl, editModel);
+		editModel.baseLine.setStyle(getBaseLineStyle());
+		mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
 		mapControl.getMap().refreshTrackingLayer();
-		this.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
+		editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
 	}
 
 	// 采用的思路为：将目标线与基线的所有交点都插入到目标线中，构造一个新的线。
 	// 取得包含选中点的那段线段的两个端点，以头和第一交点构造一段线，或尾与第二
 	// 交点构造一段线，或以上两段线都构造。将构造好的线加入，然后删除原来的目标线。
-	private void extend(MapControl mapControl, DatasetVector dataset, GeoLine desLine) {
+	private void extend(MapControl mapControl, DatasetVector dataset, GeoLine desLine, LineExtendEditModel editModel) {
 		Recordset recordset = null;
 
 		try {
 			Point2Ds baseLinePoints = new Point2Ds();
 			Point2Ds desLinePoints = new Point2Ds();
 			int nBaseLinePntCount = 0;
-			for (int i = 0; i < this.baseLine.getPartCount(); i++) {
-				baseLinePoints.addRange(this.baseLine.getPart(i).toArray());
-				nBaseLinePntCount += this.baseLine.getPart(i).getCount();
+			for (int i = 0; i < editModel.baseLine.getPartCount(); i++) {
+				baseLinePoints.addRange(editModel.baseLine.getPart(i).toArray());
+				nBaseLinePntCount += editModel.baseLine.getPart(i).getCount();
 			}
 			int nDesLinePntCount = 0;
 			for (int i = 0; i < desLine.getPartCount(); i++) {
@@ -277,7 +272,7 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 			pointStart.dispose();
 			pointEnd.dispose();
 
-			Point2D pnt2D = mapControl.getMap().pixelToMap(mouseClickedLocation);
+			Point2D pnt2D = mapControl.getMap().pixelToMap(editModel.mouseClickedLocation);
 
 			if (dataset.getTolerance().getNodeSnap() == 0) {
 				dataset.getTolerance().setDefault();
@@ -332,7 +327,7 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 				desLine = null;
 				return;
 			}
-			
+
 			// 找到最合适的交点,因为可能有多个交点，但只有离合法端点最近的一个才是所求的
 			double dDistance = 99999999999999999999.0;
 			int nKey = -1;
@@ -398,11 +393,36 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 	 * 编辑结束清理资源
 	 */
 	private void clear(EditEnvironment environment) {
-		if (this.baseLine != null) {
-			this.baseLine.dispose();
-			this.baseLine = null;
+		if (environment.getEditModel() instanceof LineExtendEditModel) {
+			((LineExtendEditModel) environment.getEditModel()).clear();
 		}
 
 		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_LINEEXTEND);
+	}
+
+	private class LineExtendEditModel implements IEditModel {
+		public GeoLine baseLine;
+		public Layer baseLayer; // 基线所在图层
+
+		public Action oldMapControlAction = Action.SELECT2;
+		public TrackMode oldTrackMode = TrackMode.EDIT;
+		public Point mouseClickedLocation;
+
+		public MapControlTip tip = new MapControlTip();
+		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_LineEditor_SelectBaseLine"));
+
+		public LineExtendEditModel() {
+			this.tip.getContentPanel().setLayout(new BorderLayout());
+			this.tip.getContentPanel().add(this.labelTip, BorderLayout.CENTER);
+			this.tip.getContentPanel().setSize(200, 20);
+			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+		}
+
+		public void clear() {
+			if (this.baseLine != null) {
+				this.baseLine.dispose();
+				this.baseLine = null;
+			}
+		}
 	}
 }
