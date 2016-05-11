@@ -334,11 +334,18 @@ public class ThemeGuideFactory {
 		return success;
 	}
 
+	/**
+	 * 新建复合风格标签专题图
+	 * 
+	 * @param layer
+	 * @return
+	 */
 	public static boolean buildLabelComplicatedTheme(Layer layer) {
 		boolean success = false;
 		if (null != getDataset()) {
 			String expression = "SmID";
 			ThemeLabel themeLabel = new ThemeLabel();
+			success = true;
 			TextStyle[] textStyles = new TextStyle[4];
 			textStyles[0] = new TextStyle();
 			textStyles[0].setForeColor(Color.RED);
@@ -348,11 +355,16 @@ public class ThemeGuideFactory {
 			textStyles[2].setForeColor(Color.BLUE);
 			textStyles[3] = new TextStyle();
 			textStyles[3].setForeColor(Color.PINK);
-			int[] splitIndexes = { 1, 3, 4, 9 };
-			themeLabel.setUniformMixedStyle(new MixedTextStyle(textStyles, splitIndexes));
+			int[] splitIndexes = { 1, 3, 7 };
+			MixedTextStyle textStyle = new MixedTextStyle();
+			textStyle.setSeparatorEnabled(false);
+			textStyle.setStyles(textStyles);
+			textStyle.setSplitIndexes(splitIndexes);
+			themeLabel.setUniformMixedStyle(textStyle);
 			themeLabel.setLabelExpression(expression);
 			ThemeLabelComplicatedContainer themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer((DatasetVector) getDataset(), themeLabel, layer);
-			themeTypeContainer.put(themeLabelComplicatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_LABEL_COMPLICATED, themeLabelComplicatedContainer);
+			themeTypeContainer.put(themeLabelComplicatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_LABEL_COMPLICATED,
+					themeLabelComplicatedContainer);
 			addPanelToThemeMainContainer(themeLabelComplicatedContainer, null);
 			getDockbarThemeContainer().setVisible(true);
 		}
@@ -457,7 +469,7 @@ public class ThemeGuideFactory {
 			Point2D point2DStart = getMapControl().getMap().pixelToMap(pointStart);
 			Point2D point2DEnd = getMapControl().getMap().pixelToMap(pointEnd);
 			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
-			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
+			themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
 			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph, layer);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getName() + "@" + THEMETYPE_GRAPH, themeGraphContainer);
@@ -606,7 +618,7 @@ public class ThemeGuideFactory {
 				return;
 			}
 			if (THEMETYPE_LABEL_COMPLICATED.equals(themeType)) {
-				// 分段风格标签专题图
+				// 复合风格标签专题图
 				themeContainer = new ThemeLabelComplicatedContainer(layer);
 				initThemePanel(layer, themeType, themeContainer);
 				return;

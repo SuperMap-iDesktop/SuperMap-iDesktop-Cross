@@ -48,8 +48,10 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * 标签分段风格专题图
+ * 
  * @author Administrator
  *
  */
@@ -61,7 +63,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient ThemeLabelPropertyPanel panelProperty;
 	private transient ThemeLabelAdvancePanel panelAdvance;
 	private JTabbedPane tabbedPane = new JTabbedPane();
-	private JPanel panelSytle = new JPanel();
+	private JPanel panelStyle = new JPanel();
 
 	private JLabel labelExpression = new JLabel();
 	private JComboBox<String> comboBoxExpression = new JComboBox<String>();
@@ -172,7 +174,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
-		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), this.panelSytle);
+		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), this.panelStyle);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.tabbedPane.setSelectedIndex(1);
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
@@ -197,21 +199,21 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.comboBoxExpression.setEditable(true);
 		this.spinnerRangeLength.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		this.spinnerRangeLength.setEnabled(false);
-		this.panelSytle.setLayout(new GridBagLayout());
-		this.panelSytle.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.spinnerRangeLength,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelRangeFormat,    new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.comboBoxRangeFormat, new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.labelColorStyle,     new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
-		this.panelSytle.add(this.comboBoxColorStyle,  new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelSytle.add(this.toolBar,             new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 5).setWeight(100, 0).setIpad(50, 0));
-		this.panelSytle.add(this.scrollPane,          new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
+		this.panelStyle.setLayout(new GridBagLayout());
+		this.panelStyle.add(this.labelExpression,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.comboBoxExpression,  new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.labelRangeMethod,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.comboBoxRangeMethod, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.labelRangeCount,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.comboBoxRangeCount,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.labelRangeLength,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.spinnerRangeLength,  new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.labelRangeFormat,    new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.comboBoxRangeFormat, new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.labelColorStyle,     new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(50, 0));
+		this.panelStyle.add(this.comboBoxColorStyle,  new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelStyle.add(this.toolBar,             new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 5).setWeight(100, 0).setIpad(50, 0));
+		this.panelStyle.add(this.scrollPane,          new GridBagConstraintsHelper(0, 7, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0, 10, 5, 10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
 		getTable();
 		this.tableLabelInfo.addRowSelectionInterval(0, 0);
 		this.scrollPane.setViewportView(tableLabelInfo);
@@ -317,7 +319,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		TableColumn visibleColumn = this.tableLabelInfo.getColumn(MapViewProperties.getString("String_Title_Visible"));
 		visibleColumn.setMaxWidth(40);
 		List<ThemeLabelItem> items = initColumnIcon();
-		this.tableLabelInfo.getColumnModel().getColumn(2).setCellRenderer(new TableColorCellRenderer(items));
+		this.tableLabelInfo.getColumnModel().getColumn(2).setCellRenderer(new TableColorCellRenderer(items, true));
 		this.tableLabelInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableLabelInfo;
@@ -396,6 +398,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 * 初始化工具条
 	 */
 	private void initToolBar() {
+		this.toolBar.setFloatable(false);
 		this.toolBar.add(this.buttonMerge);
 		this.toolBar.add(this.buttonSplit);
 		this.toolBar.addSeparator();
@@ -650,7 +653,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			int x = buttonStyle.getLocationOnScreen().x - 4 * width;
 			int y = buttonStyle.getLocationOnScreen().y + height;
 			if (selectedRow.length > 0) {
-				textStyleDialog = new TextStyleDialog(themeLabel, selectedRow, map, themeLabelLayer);
+				textStyleDialog = new TextStyleDialog(themeLabel.getItem(selectedRow[selectedRow.length - 1]).getStyle().clone(), map, themeLabelLayer);
+				textStyleDialog.setTheme(themeLabel);
+				textStyleDialog.setRows(selectedRow);
 				textStyleDialog.setTitle(MapViewProperties.getString("String_SetTextStyle"));
 				textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", ThemeLabelRangeContainer.this.propertyChangeListener);
 				textStyleDialog.setRefreshAtOnce(isRefreshAtOnce);

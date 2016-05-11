@@ -329,7 +329,7 @@ public class ThemeGuidDialog extends SmDialog {
 			if (isUniform) {
 				ThemeGuideFactory.buildLabelUniformTheme(ThemeUtil.getActiveLayer());
 				ThemeGuidDialog.this.dispose();
-			} 
+			}
 			// 标签分段风格专题图
 			if (isRange) {
 				ThemeGuideFactory.buildLabelRangeTheme(ThemeUtil.getActiveLayer());
@@ -446,8 +446,9 @@ public class ThemeGuidDialog extends SmDialog {
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}
+				return;
 			}
-			if (e.getSource()==labelRange) {
+			if (e.getSource() == labelRange) {
 				// 分段风格标签专题图
 				if (1 == e.getClickCount()) {
 					labelUniform.selected(false);
@@ -462,8 +463,9 @@ public class ThemeGuidDialog extends SmDialog {
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}
+				return;
 			}
-			if (e.getSource()==labelComplicated) {
+			if (e.getSource() == labelComplicated) {
 				// 复合风格标签专题图
 				if (1 == e.getClickCount()) {
 					labelUniform.selected(false);
@@ -474,14 +476,14 @@ public class ThemeGuidDialog extends SmDialog {
 					isComplicated = true;
 				} else if (2 == e.getClickCount()) {
 					// 新建复合风格标签专题图
-				
+					ThemeGuideFactory.buildLabelComplicatedTheme(ThemeUtil.getActiveLayer());
 					ThemeGuidDialog.this.dispose();
 					unregistListener();
 				}
+				return;
 			}
 
 		}
-
 	}
 
 }
