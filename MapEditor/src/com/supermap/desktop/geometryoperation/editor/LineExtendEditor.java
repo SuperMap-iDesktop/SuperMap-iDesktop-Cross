@@ -326,12 +326,13 @@ public class LineExtendEditor extends AbstractEditor implements GeometrySelected
 					}
 				}
 			}
-			if (pntIntersections.getCount() == 0)// 无交点，不理
+			if (pntIntersections.getCount() == 0) // 无交点，不理
 			{
 				desLine.dispose();
 				desLine = null;
 				return;
 			}
+			
 			// 找到最合适的交点,因为可能有多个交点，但只有离合法端点最近的一个才是所求的
 			double dDistance = 99999999999999999999.0;
 			int nKey = -1;
