@@ -15,6 +15,7 @@ import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -35,7 +36,6 @@ import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Selection;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;
@@ -53,6 +53,7 @@ public class EraseEditor extends AbstractEditor {
 
 	// 用于在 trackingLayer 中做结果展示的 id
 	private static final String TAG_ERASE = "Tag_EraseEditorResult";
+	private static final String TAG_SOURCE = "Tag_EraseEditorSource";
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
 	private IEditController eraseEditController = new EditControllerAdapter() {
@@ -160,15 +161,20 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getMapControl().getEditableLayers().length > 0
-				&& environment.getEditProperties().getSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
-						ICompoundFeature.class);
+		return environment.getMapControl().getEditableLayers().length > 0 && environment.getEditProperties().getSelectedGeometryCount() > 0 && ListUtilties
+				.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	@Override
 	public boolean check(EditEnvironment environment) {
 		return environment.getEditor() instanceof EraseEditor;
+	}
+
+	private GeoStyle getSourceStyle() {
+		GeoStyle style = new GeoStyle();
+		style.setLineWidth(0.6);
+		style.setLineColor(Color.RED);
+		return style;
 	}
 
 	private void geometrySelected(EditEnvironment environment, GeometrySelectedEvent e) {
@@ -439,6 +445,10 @@ public class EraseEditor extends AbstractEditor {
 			editModel.srcInfos.put(layer, selectedIds);
 			Geometry unionLayer = GeometryUtilties.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
 			editModel.srRegion = GeometryUtilties.union(editModel.srRegion, unionLayer, true);
+			editModel.srRegion.setStyle(getSourceStyle());
+
+			// 将结果对象添加到 TrackingLayer 做高亮显示
+			environment.getMapControl().getMap().getTrackingLayer().add(editModel.srRegion, TAG_SOURCE);
 		}
 	}
 
@@ -454,6 +464,7 @@ public class EraseEditor extends AbstractEditor {
 		editModel.clear();
 
 		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_ERASE);
+		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SOURCE);
 	}
 
 	private class EraseEditModel implements IEditModel {
