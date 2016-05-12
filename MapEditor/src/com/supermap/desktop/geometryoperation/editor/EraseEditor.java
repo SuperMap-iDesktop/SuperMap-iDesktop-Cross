@@ -2,7 +2,9 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -31,6 +33,7 @@ import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Selection;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;
@@ -179,6 +182,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			Layer[] editableLayers = mapControl.getEditableLayers();
+			Layer selectLayer = null;
 
 			if (editableLayers != null && editableLayers.length > 0) {
 				for (int i = 0; i < editableLayers.length; i++) {
@@ -187,13 +191,23 @@ public class EraseEditor extends AbstractEditor {
 					if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 
 						// 单选模式，拿到一个就可以撤了
-						recordset = layer.getSelection().toRecordset();
+						selectLayer = layer;
 						break;
 					}
 				}
 			}
 
-			if (recordset != null) {
+			if (selectLayer != null) {
+				// 判断选中的对象是否是源擦除对象，如果是，则什么都不做
+				if (editModel.srcInfos.containsKey(selectLayer)) {
+					int selectedId = selectLayer.getSelection().get(0);
+
+					if (editModel.srcInfos.get(selectLayer).contains(selectedId)) {
+						return;
+					}
+				}
+
+				recordset = selectLayer.getSelection().toRecordset();
 				eraseResult = erase(mapControl.getEditHistory(), recordset, editModel);
 
 				if (eraseResult != null) {
@@ -393,6 +407,12 @@ public class EraseEditor extends AbstractEditor {
 		List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
 
 		for (int i = 0; i < selectedLayers.size(); i++) {
+			Layer layer = selectedLayers.get(i);
+			ArrayList<Integer> selectedIds = new ArrayList<>();
+			for (int j = 0; j < layer.getSelection().getCount(); j++) {
+				selectedIds.add(layer.getSelection().get(j));
+			}
+			editModel.srcInfos.put(layer, selectedIds);
 			Geometry unionLayer = GeometryUtilties.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
 			editModel.srRegion = GeometryUtilties.union(editModel.srRegion, unionLayer, true);
 		}
@@ -424,6 +444,7 @@ public class EraseEditor extends AbstractEditor {
 		public MapControlTip tip = new MapControlTip();
 		public JLabel labelMsg = new JLabel(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));
 		public JLabel labelChangeMode = new JLabel();
+		public HashMap<Layer, ArrayList<Integer>> srcInfos = new HashMap<>(); // 用来记录擦除对象所在图层以及对应的 id 集合
 
 		public EraseEditModel() {
 			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
@@ -438,6 +459,9 @@ public class EraseEditor extends AbstractEditor {
 				this.srRegion.dispose();
 				this.srRegion = null;
 			}
+
+			this.srcInfos.clear();
+			this.pressedKey = 0;
 		}
 	}
 }
