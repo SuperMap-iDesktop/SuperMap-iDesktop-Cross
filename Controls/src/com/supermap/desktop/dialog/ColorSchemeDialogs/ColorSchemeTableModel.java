@@ -69,18 +69,18 @@ public class ColorSchemeTableModel extends SortableTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		row = getIndexRow(row)[0];
+		int realRow = getIndexRow(row)[0];
 		switch (col) {
 			case COLUMN_INDEX:
 				return row + 1;
 			case COLUMN_COLOR_RAMP:
-				return colorSchemes.get(row).getColors();
+				return colorSchemes.get(realRow).getColors();
 			case COLUMN_RAMP_NAME:
-				return colorSchemes.get(row).getName();
+				return colorSchemes.get(realRow).getName();
 			case COLUMN_AUTHOR:
-				return colorSchemes.get(row).getAuthor();
+				return colorSchemes.get(realRow).getAuthor();
 			case COLUMN_DESCRIPTION:
-				return colorSchemes.get(row).getDescription();
+				return colorSchemes.get(realRow).getDescription();
 		}
 		return "";
 	}
@@ -153,4 +153,10 @@ public class ColorSchemeTableModel extends SortableTableModel {
 		colorSchemes.set(row, colorScheme);
 		fireTableDataChanged();
 	}
+
+	@Override
+	protected boolean isSortColumn(int column) {
+		return column != COLUMN_INDEX;
+	}
+
 }

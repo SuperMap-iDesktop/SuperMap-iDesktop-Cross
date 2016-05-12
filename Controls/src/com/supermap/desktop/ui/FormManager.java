@@ -595,6 +595,8 @@ public class FormManager implements IFormManager {
 							// 取消关闭操作
 							evt.setCancel(true);
 						}
+					} else {
+						form.clean();
 					}
 				}
 			} else if (evt.getWindow() instanceof FloatingWindow && evt.getWindow().getChildWindowCount() > 0) {

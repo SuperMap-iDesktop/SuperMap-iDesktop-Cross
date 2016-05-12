@@ -241,6 +241,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.comboBoxOffsetX.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
+		this.comboboxColor.addColorChangedListener();
 		this.comboBoxOffsetUnity.addItemListener(this.comboBoxItemListener);
 		this.buttonVisble.addActionListener(this.actionListener);
 		this.buttonAdd.addActionListener(this.actionListener);
@@ -292,6 +293,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.comboBoxOffsetX.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboboxColor.removeItemListener(this.comboBoxItemListener);
+		this.comboboxColor.removeColorChangedListener();
 		this.comboBoxOffsetUnity.removeItemListener(this.comboBoxItemListener);
 		this.buttonVisble.removeActionListener(this.actionListener);
 		this.buttonAdd.removeActionListener(this.actionListener);

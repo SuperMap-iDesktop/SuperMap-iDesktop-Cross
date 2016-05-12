@@ -1,36 +1,36 @@
-<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>60000</Version>
-    <Name>ColorRamp10</Name>
-    <Author>SuperMap</Author>
-    <Description></Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>3</KeyColorCount>
-    <IntervalColorCount>86</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>67</Red>
-      <Green>14</Green>
-      <Blue>89</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>204</Red>
-      <Green>204</Green>
-      <Blue>102</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>24</Red>
-      <Green>79</Green>
-      <Blue>15</Blue>
-    </KeyColor3>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>60000</Version>
+<Name>ColorRamp10</Name>
+<Author>SuperMap</Author>
+<Description/>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>3</KeyColorCount>
+<IntervalColorCount>86</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>67</Red>
+<Green>14</Green>
+<Blue>89</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>204</Red>
+<Green>204</Green>
+<Blue>102</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>24</Red>
+<Green>79</Green>
+<Blue>15</Blue>
+</KeyColor3>
+</DataBlock>
 </ColorScheme>

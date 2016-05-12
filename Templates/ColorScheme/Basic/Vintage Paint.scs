@@ -1,50 +1,50 @@
-<ColorScheme>
-  <FileHeader>
-    <FileType>0</FileType>
-    <Version>60000</Version>
-    <Name>Vintage Paint</Name>
-    <Author>SuperMap</Author>
-    <Description></Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>5</KeyColorCount>
-    <IntervalColorCount>64</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>149</Red>
-      <Green>10</Green>
-      <Blue>14</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>16</Red>
-      <Green>50</Green>
-      <Blue>86</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>118</Red>
-      <Green>118</Green>
-      <Blue>78</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>135</Red>
-      <Green>86</Green>
-      <Blue>54</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>137</Red>
-      <Green>133</Green>
-      <Blue>116</Blue>
-    </KeyColor5>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>0</FileType>
+<Version>60000</Version>
+<Name>Vintage Paint</Name>
+<Author>SuperMap</Author>
+<Description/>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>5</KeyColorCount>
+<IntervalColorCount>64</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>149</Red>
+<Green>10</Green>
+<Blue>14</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>16</Red>
+<Green>50</Green>
+<Blue>86</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>118</Red>
+<Green>118</Green>
+<Blue>78</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>135</Red>
+<Green>86</Green>
+<Blue>54</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>137</Red>
+<Green>133</Green>
+<Blue>116</Blue>
+</KeyColor5>
+</DataBlock>
 </ColorScheme>

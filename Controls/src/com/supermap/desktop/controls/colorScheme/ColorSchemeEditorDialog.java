@@ -42,6 +42,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * 自定义颜色编辑对话框
@@ -195,12 +196,12 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		this.textFieldColorCount.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (!StringUtilties.isPositiveInteger(textFieldValue)) {
+				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
 					Integer integer = Integer.valueOf(textFieldValue);
-					if (integer > 256) {
+					if (integer > 256 || integer < 0) {
 						return false;
 					}
 				} catch (Exception e) {
@@ -339,7 +340,12 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		jButtonAddColorButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (colorsTableModel.getRowCount() == 0) {
+					// 古锭刀效果触发
+					colorsTableModel.add();
+				}
 				colorsTableModel.add();
+
 				tableColorsTable.setRowSelectionInterval(tableColorsTable.getRowCount() - 1, tableColorsTable.getRowCount() - 1);
 				tableColorsTable.scrollRectToVisible(tableColorsTable.getCellRect(tableColorsTable.getRowCount() - 1, 0, true));
 			}
@@ -549,7 +555,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonExportClicked();
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"));
 			}
 		});
 
@@ -590,12 +595,12 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
 			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
-					CommonProperties.getString(CommonProperties.open), "ColorSchemeImport", "OpenMany");
+					ControlsProperties.getString("String_ImportColorScheme"), "ColorSchemeImport", "OpenMany");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
 		int result = fileChooser.showDefaultDialog();
 		if (result == JFileChooser.APPROVE_OPTION && fileChooser.getSelectFiles().length > 0 && fileChooser.getSelectFiles()[0] != null) {
-			colorScheme.fromXML(fileChooser.getSelectFiles()[0]);
+			colorScheme.fromXML(fileChooser.getSelectFiles()[0], true);
 			colorsTableModel.fireTableDataChanged();
 			initComponentStates();
 		}
@@ -605,13 +610,14 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExportSingle")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
 			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
-					CommonProperties.getString(CommonProperties.open), "ColorSchemeExportSingle", "SaveOne");
+					ControlsProperties.getString("String_ExportColorScheme"), "ColorSchemeExportSingle", "SaveOne");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExportSingle");
 		int result = fileChooser.showDefaultDialog();
 		String filePath = fileChooser.getFilePath();
 		if (result == JFileChooser.APPROVE_OPTION && !StringUtilties.isNullOrEmpty(filePath)) {
 			colorScheme.saveAsFilePath(filePath);
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"), filePath));
 		}
 	}
 
@@ -751,13 +757,12 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			graphics.setColor(colorScheme.getColorsList().get(0));
 			graphics.fillRect(0, 0, imageWidth, imageHeight);
 		} else {
-
 			Colors colorsShow = colorScheme.getColors();
 			int colorsCount = colorsShow.getCount();
-			int step = imageWidth / colorsCount;
+			double step = (double) imageWidth / colorsCount;
 			for (int i = 0; i < colorsCount; i++) {
 				graphics.setColor(colorsShow.get(i));
-				graphics.fillRect(step * i, 0, step * (i + 1), imageHeight);
+				graphics.fillRect((int) (step * i), 0, (int) (step + 1), imageHeight);
 			}
 		}
 		jLabelPreViewLabel.setIcon(new ImageIcon(bufferedImage));

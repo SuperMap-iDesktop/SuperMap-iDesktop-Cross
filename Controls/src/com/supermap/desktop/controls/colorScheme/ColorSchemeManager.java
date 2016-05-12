@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +87,8 @@ public class ColorSchemeManager {
 							String colorFilePath = childNodesColors.item(j).getChildNodes().item(0).getNodeValue();
 							if (new File(colorFilePath).exists()) {
 								ColorScheme colorScheme = new ColorScheme();
-								if (colorScheme.fromXML(new File(colorFilePath))) {
+								if (colorScheme.fromXML(new File(colorFilePath), false)) {
+									colorScheme.setColorSchemePath(colorFilePath);
 									colorSchemeList.add(colorScheme);
 								}
 							}
@@ -138,9 +140,10 @@ public class ColorSchemeManager {
 	}
 
 	public void initDefaultColorSchemes(List<ColorScheme> schemeList) {
+		InputStream in = this.getClass().getResourceAsStream("/com/supermap/desktop/controlsresources/ColorScheme/DefaultColorScheme.xml");
 		String baseDirectory = PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true);
-		if (new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeDefaultFilePath"), false)).exists()) {
-			Document defaultColorScheme = XmlUtilties.getDocument(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeDefaultFilePath"), false));
+		if (in != null) {
+			Document defaultColorScheme = XmlUtilties.getDocument(in);
 			NodeList childNodes = defaultColorScheme.getChildNodes().item(0).getChildNodes();
 			for (int i = 0; i < childNodes.getLength(); i++) {
 				if (childNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
