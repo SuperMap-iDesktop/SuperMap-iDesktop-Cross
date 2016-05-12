@@ -105,6 +105,13 @@ public class XOREditor extends AbstractEditor {
 					// 添加结果几何对象
 					targetRecordset.addNew(result, propertyData);
 					targetRecordset.update();
+
+					// 清空选择集，并选中结果对象
+					selection.clear();
+					int addedId = targetRecordset.getID();
+					if (addedId > -1) {
+						selection.add(addedId);
+					}
 					environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
 				}
 			}
