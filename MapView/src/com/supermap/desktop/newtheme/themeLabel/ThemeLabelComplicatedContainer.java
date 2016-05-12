@@ -10,8 +10,6 @@ import java.text.MessageFormat;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import sun.awt.image.OffScreenImage;
-
 import com.supermap.data.DatasetVector;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -602,6 +600,14 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformMixedStyle(this.mixedTextStyle);
 			this.map.refresh();
 		}
+	}
+
+	public ThemeLabelPropertyPanel getPanelProperty() {
+		return panelProperty;
+	}
+
+	public ThemeLabelAdvancePanel getPanelAdvance() {
+		return panelAdvance;
 	}
 
 }
