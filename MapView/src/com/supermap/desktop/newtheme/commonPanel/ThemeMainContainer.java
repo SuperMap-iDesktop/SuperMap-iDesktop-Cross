@@ -31,6 +31,7 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.themeLabel.ThemeLabelComplicatedContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -208,9 +209,14 @@ public class ThemeMainContainer extends JPanel {
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
+				boolean isThemeLabelUniform = false;
+				boolean isThemeLabelRange = false;
+				boolean isThemeLabelComplicated = false;
 				if (panel instanceof ThemeLabelUniformContainer) {
 					panel.refreshMapAndLayer();
-				} else if (panel instanceof ThemeLabelRangeContainer) {
+					isThemeLabelUniform = true;
+				}
+				if (panel instanceof ThemeLabelRangeContainer) {
 					((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
 					((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
 					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
@@ -224,7 +230,17 @@ public class ThemeMainContainer extends JPanel {
 						}
 					}
 					nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
-				} else {
+					isThemeLabelRange = true;
+				}
+				if (panel instanceof ThemeLabelComplicatedContainer) {
+					((ThemeLabelComplicatedContainer) panel).getPanelAdvance().refreshMapAndLayer();
+					((ThemeLabelComplicatedContainer) panel).getPanelProperty().refreshMapAndLayer();
+					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
+					ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
+					nowThemeLabel.setUniformMixedStyle(themeLabel.getUniformMixedStyle());
+					isThemeLabelComplicated = true;
+				}
+				if (!isThemeLabelComplicated && !isThemeLabelRange && !isThemeLabelUniform) {
 					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
 				}
 				TreePath treePath = layersTree.getSelectionPath();

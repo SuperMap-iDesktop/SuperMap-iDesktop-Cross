@@ -117,7 +117,6 @@ public class ThemeGuideFactory {
 				public void mapClosed(MapClosedEvent arg0) {
 					if (null != arg0.getMap()) {
 						container.setLayerPropertyChanged(false);
-						themeTypeContainer.clear();
 						// 移除事件
 						HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
 						Iterator<?> iterator = themeContainers.entrySet().iterator();
@@ -125,6 +124,7 @@ public class ThemeGuideFactory {
 							java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
 							((ThemeChangePanel) entry.getValue()).unregistActionListener();
 						}
+						themeTypeContainer.clear();
 					}
 				}
 			});
