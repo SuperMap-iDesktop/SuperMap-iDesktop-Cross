@@ -1,9 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.EventObject;
 import java.util.List;
 
@@ -13,8 +11,6 @@ import javax.swing.SwingUtilities;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
-import com.supermap.data.Environment;
-import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -37,11 +33,8 @@ import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
-import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
-import com.supermap.ui.RedoneListener;
 import com.supermap.ui.TrackMode;
-import com.supermap.ui.UndoneListener;
 
 // @formatter:off
 /**
@@ -162,7 +155,8 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getEditProperties().getSelectedGeometryCount() > 0
+		return environment.getMapControl().getEditableLayers().length > 0
+				&& environment.getEditProperties().getSelectedGeometryCount() > 0
 				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
 						ICompoundFeature.class);
 	}
@@ -413,10 +407,7 @@ public class EraseEditor extends AbstractEditor {
 		}
 
 		EraseEditModel editModel = (EraseEditModel) environment.getEditModel();
-		if (editModel.srRegion != null) {
-			editModel.srRegion.dispose();
-			editModel.srRegion = null;
-		}
+		editModel.clear();
 
 		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_ERASE);
 	}

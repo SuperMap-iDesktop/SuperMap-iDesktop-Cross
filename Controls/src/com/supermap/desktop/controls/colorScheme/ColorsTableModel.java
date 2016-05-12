@@ -90,8 +90,8 @@ public class ColorsTableModel extends DefaultTableModel {
 	}
 
 	public void moveDown(int... rows) {
-		for (int row : rows) {
-			moveTo(row, row + 1);
+		for (int i = rows.length - 1; i >= 0; i--) {
+			moveTo(rows[i], rows[i] + 1);
 		}
 		fireTableDataChanged();
 	}

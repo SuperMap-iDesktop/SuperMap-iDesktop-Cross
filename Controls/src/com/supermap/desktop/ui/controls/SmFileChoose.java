@@ -476,7 +476,7 @@ public class SmFileChoose extends JFileChooser {
 			return;
 		}
 		int i = filePath.lastIndexOf("\\");
-		if (i > 0 && i < filePath.length() - 1) {
+		if (i > 0 && i < filePath.length() - 1 && !"GetDirectories".equals(moduleType)) {
 			menuPath = filePath.substring(0, i);
 		} else {
 			menuPath = filePath;

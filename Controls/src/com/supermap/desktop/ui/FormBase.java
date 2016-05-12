@@ -187,7 +187,7 @@ public class FormBase extends JFrame implements IFormMain {
 	private void initLayout(DockbarManager dockbar) {
 		this.setLayout(new GridBagLayout());
 		this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
-		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
 		this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 	}
 

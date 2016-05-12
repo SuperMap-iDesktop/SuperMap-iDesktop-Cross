@@ -168,6 +168,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	public void registActionListener() {
 		unregistActionListener();
 		this.comboboxColor.addItemListener(this.comboBoxItemListener);
+		this.comboboxColor.addColorChangedListener();
 		this.buttonVisble.addActionListener(this.actionListener);
 		this.buttonAdd.addActionListener(this.actionListener);
 		this.buttonDelete.addActionListener(this.actionListener);
@@ -211,6 +212,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 */
 	public void unregistActionListener() {
 		this.comboboxColor.removeItemListener(this.comboBoxItemListener);
+		this.comboboxColor.removeColorChangedListener();
 		this.buttonVisble.removeActionListener(this.actionListener);
 		this.buttonAdd.removeActionListener(this.actionListener);
 		this.buttonDelete.removeActionListener(this.actionListener);

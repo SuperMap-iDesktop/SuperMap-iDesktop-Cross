@@ -8,6 +8,7 @@ import com.supermap.desktop.controls.utilties.ColorsUtilties;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -63,6 +64,7 @@ public class ColorScheme implements ICloneable {
 	 */
 	public ColorScheme() {
 		colors = new ArrayList<>();
+		fileType = 678370;
 		name = "NewColorScheme";
 		author = "SuperMap";
 		description = "Custom";
@@ -73,7 +75,7 @@ public class ColorScheme implements ICloneable {
 
 	@Override
 	public ColorScheme clone() {
-		ColorScheme clone = null;
+		ColorScheme clone;
 		try {
 			clone = ((ColorScheme) super.clone());
 		} catch (CloneNotSupportedException e) {
@@ -120,9 +122,9 @@ public class ColorScheme implements ICloneable {
 		int intervalColorCount = this.getIntervalColorCount();
 		ColorScheme.IntervalColorBuildMethod method = this.getIntervalColorBuildMethod();
 		if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT)) {
-			colors = Colors.makeGradient(intervalColorCount + this.getKeyColorCount(), gradientColors);
+			colors = Colors.makeGradient((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
 		} else if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM)) {
-			colors = ColorsUtilties.buildRandom(intervalColorCount + this.getKeyColorCount(), gradientColors);
+			colors = ColorsUtilties.buildRandom((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
 		}
 		return colors;
 	}
@@ -337,7 +339,10 @@ public class ColorScheme implements ICloneable {
 				FileUtilties.delete(file);
 			}
 			if (file.createNewFile()) {
-				FileUtilties.writeToFile(file, this.toXML());
+				String s = this.toXML();
+				if (s != null) {
+					FileUtilties.writeToFile(file, s);
+				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -355,16 +360,17 @@ public class ColorScheme implements ICloneable {
 		int i = -1;
 		while (isExist) {
 			i++;
-			isExist = new File(customDirectory + getFileName(i)).exists();
+			isExist = new File(customDirectory + getFileName(i, this.name)).exists();
 		}
-		return customDirectory + getFileName(i);
+		return customDirectory + getFileName(i, this.name);
 	}
 
-	private String getFileName(int i) {
+	private String getFileName(int i, String fileName) {
+		String name = StringUtilties.isNullOrEmpty(fileName) ? "ColorScheme" : fileName;
 		if (i == 0) {
-			return "ColorScheme.SCS";
+			return fileName + ".SCS";
 		}
-		return "ColorScheme" + i + ".SCS";
+		return fileName + "(" + i + ").SCS";
 	}
 
 	public void setColorSchemePath(String colorSchemePath) {
@@ -379,94 +385,112 @@ public class ColorScheme implements ICloneable {
 	}
 
 	private String toXML() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<ColorScheme>");
-		stringBuilder.append(System.lineSeparator());
+		String xml = null;
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = null;
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.newDocument();
+			Element colorScheme = document.createElement("ColorScheme");
+			// fileHeader
+			Element fileHeader = document.createElement("FileHeader");
+			// fileType
+			Element fileType = document.createElement("FileType");
+			fileType.appendChild(document.createTextNode(String.valueOf(this.fileType)));
+			fileHeader.appendChild(fileType);
+			// Version
+			Element version = document.createElement("Version");
+			version.appendChild(document.createTextNode(String.valueOf(this.version)));
+			fileHeader.appendChild(version);
 
-		stringBuilder.append("  <FileHeader>");
-		stringBuilder.append(System.lineSeparator());
+			// Name
+			Element name = document.createElement("Name");
+			name.appendChild(document.createTextNode(String.valueOf(this.name)));
+			fileHeader.appendChild(name);
+			// Author
+			Element author = document.createElement("Author");
+			author.appendChild(document.createTextNode(String.valueOf(this.author)));
+			fileHeader.appendChild(author);
+			// Description
+			Element description = document.createElement("Description");
+			description.appendChild(document.createTextNode(this.description));
+			fileHeader.appendChild(description);
+			// ColorSystem
+			Element colorSystem = document.createElement("ColorSystem");
+			colorSystem.appendChild(document.createTextNode(String.valueOf(this.colorSystem.getValue())));
+			fileHeader.appendChild(colorSystem);
+			// IntervalColorBuildMethod
+			Element intervalColorBuildMethod = document.createElement("IntervalColorBuildMethod");
+			intervalColorBuildMethod.appendChild(document.createTextNode(String.valueOf(this.intervalColorBuildMethod.getValue())));
+			fileHeader.appendChild(intervalColorBuildMethod);
+			// KeyColorCount
+			Element keyColorCount = document.createElement("KeyColorCount");
+			keyColorCount.appendChild(document.createTextNode(String.valueOf(getKeyColorCount())));
+			fileHeader.appendChild(keyColorCount);
+			// IntervalColorCount
+			Element intervalColorCount = document.createElement("IntervalColorCount");
+			intervalColorCount.appendChild(document.createTextNode(String.valueOf(this.intervalColorCount)));
+			fileHeader.appendChild(intervalColorCount);
+			colorScheme.appendChild(fileHeader);
 
-		stringBuilder.append("    <FileType>");
-		stringBuilder.append(fileType);
-		stringBuilder.append("</FileType>");
-		stringBuilder.append(System.lineSeparator());
+			Element dataBlock = document.createElement("DataBlock");
+			for (int i = 0; i < getKeyColorCount(); i++) {
+				Element keyColor = document.createElement("KeyColor" + (i + 1));
 
-		stringBuilder.append("    <Version>");
-		stringBuilder.append(version);
-		stringBuilder.append("</Version>");
-		stringBuilder.append(System.lineSeparator());
+				Element colorName = document.createElement("Name");
+				colorName.appendChild(document.createTextNode(""));
+				keyColor.appendChild(colorName);
 
-		stringBuilder.append("    <Name>");
-		stringBuilder.append(name);
-		stringBuilder.append("</Name>");
-		stringBuilder.append(System.lineSeparator());
+				Element colorSystem1 = document.createElement("ColorSystem");
+				colorSystem1.appendChild(document.createTextNode(String.valueOf(this.colorSystem.getValue())));
+				keyColor.appendChild(colorSystem1);
 
-		stringBuilder.append("    <Author>");
-		stringBuilder.append(author);
-		stringBuilder.append("</Author>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("    <Description>");
-		if (description == null) {
-			description = "";
-		}
-		stringBuilder.append(description);
-		stringBuilder.append("</Description>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("    <ColorSystem>");
-		stringBuilder.append(this.getColorSystem().getValue());
-		stringBuilder.append("</ColorSystem>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("    <IntervalColorBuildMethod>");
-		stringBuilder.append(this.getIntervalColorBuildMethod().getValue());
-		stringBuilder.append("</IntervalColorBuildMethod>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("    <KeyColorCount>");
-		stringBuilder.append(this.getKeyColorCount());
-		stringBuilder.append("</KeyColorCount>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("    <IntervalColorCount>");
-		stringBuilder.append(this.getIntervalColorCount());
-		stringBuilder.append("</IntervalColorCount>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("  </FileHeader>");
-		stringBuilder.append(System.lineSeparator());
-
-		stringBuilder.append("  <DataBlock>").append(System.lineSeparator());
-
-		if (colors != null) {
-			for (int i = 0; i < colors.size(); i++) {
-				Color color = colors.get(i);
-				stringBuilder.append("    <KeyColor").append(i + 1).append(">").append(System.lineSeparator());
-				stringBuilder.append("      <Name></Name>").append(System.lineSeparator());
-				stringBuilder.append("      <ColorSystem>");
-				stringBuilder.append(this.getColorSystem().toString());
-				stringBuilder.append("</ColorSystem>").append(System.lineSeparator());
-				if (this.getColorSystem() == ColorSystem.CS_RGB) {
-					stringBuilder.append("      <Red>").append(color.getRed()).append("</Red>").append(System.lineSeparator());
-					stringBuilder.append("      <Green>").append(color.getGreen()).append("</Green>").append(System.lineSeparator());
-					stringBuilder.append("      <Blue>").append(color.getBlue()).append("</Blue>").append(System.lineSeparator());
-				} else if (this.getColorSystem() == ColorSystem.CS_HSB) {
+				if (this.getColorSystem() == ColorSystem.CS_HSB) {
+					Color color = colors.get(i);
 					float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-					stringBuilder.append("      <Hue>").append(hsb[0]).append("</Hue>").append(System.lineSeparator());
-					stringBuilder.append("      <Saturation>").append(hsb[1]).append("</Saturation>").append(System.lineSeparator());
-					stringBuilder.append("      <Value>").append(hsb[2]).append("</Value>").append(System.lineSeparator());
+					Element hue = document.createElement("Hue");
+					hue.appendChild(document.createTextNode(String.valueOf((int) hsb[0])));
+					keyColor.appendChild(hue);
+
+					Element saturation = document.createElement("Saturation");
+					saturation.appendChild(document.createTextNode(String.valueOf((int) hsb[1])));
+					keyColor.appendChild(saturation);
+
+					Element value = document.createElement("Value");
+					value.appendChild(document.createTextNode(String.valueOf(String.valueOf((int) hsb[2]))));
+					keyColor.appendChild(value);
+
+				} else {
+					Element red = document.createElement("Red");
+					red.appendChild(document.createTextNode(String.valueOf(colors.get(i).getRed())));
+					keyColor.appendChild(red);
+
+					Element green = document.createElement("Green");
+					green.appendChild(document.createTextNode(String.valueOf(colors.get(i).getGreen())));
+					keyColor.appendChild(green);
+
+					Element blue = document.createElement("Blue");
+					blue.appendChild(document.createTextNode(String.valueOf(colors.get(i).getBlue())));
+					keyColor.appendChild(blue);
 				}
-				stringBuilder.append("    </KeyColor").append(i + 1).append(">").append(System.lineSeparator());
+				dataBlock.appendChild(keyColor);
 			}
+			colorScheme.appendChild(dataBlock);
+			xml = XmlUtilties.nodeToString(colorScheme, "UTF-8");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		stringBuilder.append("  </DataBlock>").append(System.lineSeparator());
-		stringBuilder.append("</ColorScheme>");
-		return stringBuilder.toString();
+		return xml;
 	}
 
-	public boolean fromXML(File xmlFile) {
-		this.colorSchemePath = xmlFile.getAbsolutePath();
+	public void delete() {
+		// 自爆
+		if (new File(this.colorSchemePath).exists()) {
+			new File(this.colorSchemePath).delete();
+		}
+	}
+
+	public boolean fromXML(File xmlFile, boolean isNeedOutPutException) {
 		boolean result = false;
 		if (!xmlFile.exists()) {
 			return false;
@@ -480,8 +504,10 @@ public class ColorScheme implements ICloneable {
 			Node nodeColorScheme = document.getChildNodes().item(0);
 			result = fromXML(nodeColorScheme);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			result = false;
+			if (!StringUtilties.isNullOrEmpty(xmlFile.getAbsolutePath()) && isNeedOutPutException) {
+				String message = MessageFormat.format(ControlsProperties.getString("String_ColorSchemeBreak"), xmlFile.getAbsolutePath());
+				Application.getActiveApplication().getOutput().output(message);
+			}
 		}
 		return result;
 	}
@@ -501,143 +527,136 @@ public class ColorScheme implements ICloneable {
 		boolean booleanResult = false;
 		// 存放颜色数据结果
 		ArrayList<Color> colorList = new ArrayList<Color>();
-		try {
 
 
-			for (int i = 0; i < nodeListFileHeader.getLength(); i++) {
-				Node child = nodeListFileHeader.item(i);
+		for (int i = 0; i < nodeListFileHeader.getLength(); i++) {
+			Node child = nodeListFileHeader.item(i);
+			if (child instanceof Element) {
+				Element childElement = (Element) child;
+				String childElementName = childElement.getNodeName();
+				Text textNode = (Text) childElement.getFirstChild();
+				// 调用trim会保证移除真实数据旁边的空白，比如说xml的作者将数据单独放在一行
+				String value = null;
+				if (textNode != null && textNode.getData() != null) {
+					value = textNode.getData().trim();
+				} else {
+					value = "";
+				}
+				switch (childElementName) {
+					case ColorSchemeTags.FILE_TYPE:
+						// 文件类型信息，FileType节点
+						this.setFileType(Integer.valueOf(value));
+						break;
+					case ColorSchemeTags.VERSION:
+						// 版本信息，Version节点
+						this.setVersion(Integer.valueOf(value));
+						break;
+					case ColorSchemeTags.NAME:
+						// 名称，Name节点
+						this.setName(value);
+						break;
+					case ColorSchemeTags.AUTHOR:
+						// 作者，Author节点
+						this.setAuthor(value);
+						break;
+					case ColorSchemeTags.DESCRIPTION:
+						// 描述，Description节点
+						this.setDescription(value);
+						break;
+					case ColorSchemeTags.COLORSYSTEM:
+						// 颜色系统，ColorSystem节点
+						int colorSystemValue = Integer.parseInt(value);
+						ColorSystem colorSystemTemp = null;
+						switch (colorSystemValue) {
+							case 1:
+								colorSystemTemp = ColorSystem.CS_RGB;
+								break;
+							case 2:
+								colorSystemTemp = ColorSystem.CS_CMYK;
+								break;
+							case 3:
+								colorSystemTemp = ColorSystem.CS_HLS;
+								break;
+							case 4:
+								colorSystemTemp = ColorSystem.CS_HSB;
+								break;
+							case 5:
+								colorSystemTemp = ColorSystem.CS_LAB;
+								break;
+							case 6:
+								colorSystemTemp = ColorSystem.CS_CMY;
+								break;
+							case 7:
+								colorSystemTemp = ColorSystem.CS_YIQ;
+								break;
+							case 8:
+								colorSystemTemp = ColorSystem.CS_GRAY;
+								break;
+							default:
+								colorSystemTemp = ColorSystem.CS_UNKNOWN;
+								break;
+						}
+						this.setColorSystem(colorSystemTemp);
+						break;
+					case ColorSchemeTags.INTERVAL_COLOR_BUILD_METHOD:
+						// 差值方法，IntervalColorBuildMethod节点
+						int methodValue = Integer.parseInt(value);
+						IntervalColorBuildMethod buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
+						switch (methodValue) {
+							case 0:
+								buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
+								break;
+							case 1:
+								buildMethod = IntervalColorBuildMethod.ICBM_RANDOM;
+								break;
+							default:
+								buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
+								break;
+						}
+						this.setIntervalColorBuildMethod(buildMethod);
+						break;
+					case ColorSchemeTags.KEY_COLOR_COUNT:
+						// 关键色个数，KeyColorCount节点
+						this.setKeyColorCount(Integer.valueOf(value));
+						break;
+					case ColorSchemeTags.INTERVAL_COLOR_COUNT:
+						// 两个关键色直接插值颜色数目，IntervalColorCount节点
+						this.setIntervalColorCount(Integer.valueOf(value));
+						break;
+				}
+			}
+		}
+		// 读取关键色数据
+		Node nodeDataBlock = elementColorScheme.getElementsByTagName(ColorSchemeTags.DATA_BLOCK).item(0);
+		NodeList nodeListDataBlock = nodeDataBlock.getChildNodes();
+		if (this.getColorSystem().equals(ColorSystem.CS_RGB)) {
+			for (int i = 0; i < nodeListDataBlock.getLength(); i++) {
+				Node child = nodeListDataBlock.item(i);
 				if (child instanceof Element) {
 					Element childElement = (Element) child;
 					String childElementName = childElement.getNodeName();
-					Text textNode = (Text) childElement.getFirstChild();
-					// 调用trim会保证移除真实数据旁边的空白，比如说xml的作者将数据单独放在一行
-					String value = null;
-					if (textNode != null && textNode.getData() != null) {
-						value = textNode.getData().trim();
-					} else {
-						value = "";
-					}
-					switch (childElementName) {
-						case ColorSchemeTags.FILE_TYPE:
-							// 文件类型信息，FileType节点
-							this.setFileType(Integer.valueOf(value));
-							break;
-						case ColorSchemeTags.VERSION:
-							// 版本信息，Version节点
-							this.setVersion(Integer.valueOf(value));
-							break;
-						case ColorSchemeTags.NAME:
-							// 名称，Name节点
-							this.setName(value);
-							break;
-						case ColorSchemeTags.AUTHOR:
-							// 作者，Author节点
-							this.setAuthor(value);
-							break;
-						case ColorSchemeTags.DESCRIPTION:
-							// 描述，Description节点
-							this.setDescription(value);
-							break;
-						case ColorSchemeTags.COLORSYSTEM:
-							// 颜色系统，ColorSystem节点
-							int colorSystemValue = Integer.parseInt(value);
-							ColorSystem colorSystemTemp = null;
-							switch (colorSystemValue) {
-								case 1:
-									colorSystemTemp = ColorSystem.CS_RGB;
-									break;
-								case 2:
-									colorSystemTemp = ColorSystem.CS_CMYK;
-									break;
-								case 3:
-									colorSystemTemp = ColorSystem.CS_HLS;
-									break;
-								case 4:
-									colorSystemTemp = ColorSystem.CS_HSB;
-									break;
-								case 5:
-									colorSystemTemp = ColorSystem.CS_LAB;
-									break;
-								case 6:
-									colorSystemTemp = ColorSystem.CS_CMY;
-									break;
-								case 7:
-									colorSystemTemp = ColorSystem.CS_YIQ;
-									break;
-								case 8:
-									colorSystemTemp = ColorSystem.CS_GRAY;
-									break;
-								default:
-									colorSystemTemp = ColorSystem.CS_UNKNOWN;
-									break;
-							}
-							this.setColorSystem(colorSystemTemp);
-							break;
-						case ColorSchemeTags.INTERVAL_COLOR_BUILD_METHOD:
-							// 差值方法，IntervalColorBuildMethod节点
-							int methodValue = Integer.parseInt(value);
-							IntervalColorBuildMethod buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
-							switch (methodValue) {
-								case 0:
-									buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
-									break;
-								case 1:
-									buildMethod = IntervalColorBuildMethod.ICBM_RANDOM;
-									break;
-								default:
-									buildMethod = IntervalColorBuildMethod.ICBM_GRADIENT;
-									break;
-							}
-							this.setIntervalColorBuildMethod(buildMethod);
-							break;
-						case ColorSchemeTags.KEY_COLOR_COUNT:
-							// 关键色个数，KeyColorCount节点
-							this.setKeyColorCount(Integer.valueOf(value));
-							break;
-						case ColorSchemeTags.INTERVAL_COLOR_COUNT:
-							// 两个关键色直接插值颜色数目，IntervalColorCount节点
-							this.setIntervalColorCount(Integer.valueOf(value));
-							break;
+					if (childElementName.contains(ColorSchemeTags.KEY_COLOR)) {
+						int r = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.RED));
+						int g = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.GREEN));
+						int b = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.BLUE));
+						colorList.add(new Color(r, g, b));
 					}
 				}
 			}
-			// 读取关键色数据
-			Node nodeDataBlock = elementColorScheme.getElementsByTagName(ColorSchemeTags.DATA_BLOCK).item(0);
-			NodeList nodeListDataBlock = nodeDataBlock.getChildNodes();
-			if (this.getColorSystem().equals(ColorSystem.CS_RGB)) {
-				for (int i = 0; i < nodeListDataBlock.getLength(); i++) {
-					Node child = nodeListDataBlock.item(i);
-					if (child instanceof Element) {
-						Element childElement = (Element) child;
-						String childElementName = childElement.getNodeName();
-						if (childElementName.contains(ColorSchemeTags.KEY_COLOR)) {
-							int r = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.RED));
-							int g = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.GREEN));
-							int b = Integer.parseInt(getValueFromNode(childElement, ColorSchemeTags.BLUE));
-							colorList.add(new Color(r, g, b));
-						}
-					}
-				}
-			} else if (this.getColorSystem().equals(ColorSystem.CS_HSB)) {
-				for (int i = 0; i < nodeListDataBlock.getLength(); i++) {
-					Node child = nodeListDataBlock.item(i);
-					if (child instanceof Element) {
-						Element childElement = (Element) child;
-						String childElementName = childElement.getNodeName();
-						if (childElementName.contains(ColorSchemeTags.KEY_COLOR)) {
-							float h = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.HUE));
-							float s = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.SATURATION));
-							float b = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.VALUE));
+		} else if (this.getColorSystem().equals(ColorSystem.CS_HSB)) {
+			for (int i = 0; i < nodeListDataBlock.getLength(); i++) {
+				Node child = nodeListDataBlock.item(i);
+				if (child instanceof Element) {
+					Element childElement = (Element) child;
+					String childElementName = childElement.getNodeName();
+					if (childElementName.contains(ColorSchemeTags.KEY_COLOR)) {
+						float h = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.HUE));
+						float s = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.SATURATION));
+						float b = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.VALUE));
 
-							colorList.add(Color.getHSBColor(h, s, b));
-						}
+						colorList.add(Color.getHSBColor(h, s, b));
 					}
 				}
-			}
-		} catch (Exception ex) {
-			if (!StringUtilties.isNullOrEmpty(this.colorSchemePath)) {
-				String message = MessageFormat.format(ControlsProperties.getString("String_ColorSchemeBreak"), this.colorSchemePath);
-				Application.getActiveApplication().getOutput().output(message);
 			}
 		}
 
@@ -805,10 +824,10 @@ public class ColorScheme implements ICloneable {
 		// 根据当前渲染单元格的宽度和颜色数计算出每个颜色应当渲染的步长
 		if (colors != null) {
 			int colorsCount = colors.getCount();
-			int step = imageWidth / colorsCount;
+			double step = (double) imageWidth / colorsCount;
 			for (int i = 0; i < colorsCount; i++) {
 				graphics.setColor(colors.get(i));
-				graphics.fillRect(step * i, 0, step * (i + 1), imageHeight);
+				graphics.fillRect(((int) (step * i)), 0, (int) step + 1, imageHeight);
 			}
 		}
 		label.setIcon(new ImageIcon(bufferedImage));

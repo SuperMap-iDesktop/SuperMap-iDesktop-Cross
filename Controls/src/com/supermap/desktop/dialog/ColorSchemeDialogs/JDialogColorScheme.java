@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -36,7 +38,6 @@ public class JDialogColorScheme extends SmDialog {
 
 	private JToolBar toolBar;
 	private SmButton buttonAdd;
-	private SmButton buttonReset;
 	private SmButton buttonEdit;
 	private SmButton buttonRevert;
 	private SmButton buttonDel;
@@ -48,7 +49,8 @@ public class JDialogColorScheme extends SmDialog {
 	private JPanel panelButton;
 	private SmButton buttonOk;
 	private SmButton buttonCancle;
-	private boolean isModified = false;
+	//存放删除的颜色方案，确定时删除
+	private java.util.List<ColorScheme> deletedList;
 
 	public JDialogColorScheme() {
 		initComponents();
@@ -61,7 +63,6 @@ public class JDialogColorScheme extends SmDialog {
 	private void initComponents() {
 		toolBar = new JToolBar();
 		buttonAdd = new SmButton();
-		buttonReset = new SmButton();
 		buttonEdit = new SmButton();
 		buttonRevert = new SmButton();
 		buttonDel = new SmButton();
@@ -75,8 +76,9 @@ public class JDialogColorScheme extends SmDialog {
 		buttonCancle = new SmButton();
 		this.componentList.add(buttonOk);
 		this.componentList.add(buttonCancle);
+		deletedList = new ArrayList<>();
 		this.getRootPane().setDefaultButton(buttonOk);
-		this.setSize(new Dimension(800, 450));
+		this.setSize(new Dimension(800, 456));
 		this.setLocationRelativeTo(null);
 	}
 
@@ -97,7 +99,6 @@ public class JDialogColorScheme extends SmDialog {
 
 	private void initToolBarLayout() {
 		toolBar.add(buttonAdd);
-		toolBar.add(buttonReset);
 		toolBar.add(buttonEdit);
 		toolBar.add(ToolbarUtilties.getVerticalSeparator());
 		toolBar.add(buttonRevert);
@@ -111,7 +112,6 @@ public class JDialogColorScheme extends SmDialog {
 		toolBar.setFloatable(false);
 
 		buttonAdd.setFocusable(false);
-		buttonReset.setFocusable(false);
 		buttonEdit.setFocusable(false);
 		buttonRevert.setFocusable(false);
 		buttonDel.setFocusable(false);
@@ -137,16 +137,15 @@ public class JDialogColorScheme extends SmDialog {
 			}
 		});
 
-		this.buttonReset.addActionListener(new ActionListener() {
+		this.buttonRevert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				deletedList.addAll(tableColorScheme.getColorSchemeList());
 				TableUtilties.stopEditing(tableColorScheme);
 				tableColorScheme.setColorSchemeList(ListUtilties.listDeepCopy(ColorSchemeManager.getColorSchemeManager().getDefaultColorSchemeList()));
-				isModified = true;
 				if (tableColorScheme.getRowCount() > 0) {
 					tableColorScheme.setRowSelectionInterval(0, 0);
 				}
-//				checkButtonState();
 			}
 		});
 
@@ -159,26 +158,20 @@ public class JDialogColorScheme extends SmDialog {
 			}
 		});
 
-		this.buttonRevert.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(tableColorScheme);
-				tableColorScheme.setColorSchemeList(ListUtilties.listDeepCopy(ColorSchemeManager.getColorSchemeManager().getDefaultColorSchemeList()));
-				isModified = false;
-				tableColorScheme.setRowSelectionInterval(0, 0);
-//				checkButtonState();
-			}
-		});
 
 		this.buttonDel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableUtilties.stopEditing(tableColorScheme);
-				int selectedRow = tableColorScheme.getSelectedRow();
+				int[] selectedRows = tableColorScheme.getSelectedRows();
+
+				for (int selectedRow : selectedRows) {
+					deletedList.add(tableColorScheme.getColorScheme(selectedRow));
+				}
+
 				tableColorScheme.deleteSelectedRow();
-				isModified = true;
-				if (selectedRow < tableColorScheme.getRowCount()) {
-					tableColorScheme.setRowSelectionInterval(selectedRow, selectedRow);
+				if (selectedRows[0] < tableColorScheme.getRowCount()) {
+					tableColorScheme.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 				} else if (tableColorScheme.getRowCount() > 0) {
 					tableColorScheme.setRowSelectionInterval(tableColorScheme.getRowCount() - 1, tableColorScheme.getRowCount() - 1);
 				}
@@ -214,7 +207,7 @@ public class JDialogColorScheme extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				TableUtilties.stopEditing(tableColorScheme);
 				buttonExportClicked();
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"));
+
 			}
 		});
 
@@ -229,12 +222,14 @@ public class JDialogColorScheme extends SmDialog {
 		this.buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (isModified) {
-					for (ColorScheme colorScheme : tableColorScheme.getColorSchemeList()) {
-						colorScheme.save();
-					}
-					ColorSchemeManager.getColorSchemeManager().setColorSchemeList(tableColorScheme.getColorSchemeList());
+				for (ColorScheme colorScheme : deletedList) {
+					colorScheme.delete();
 				}
+				for (ColorScheme colorScheme : tableColorScheme.getColorSchemeList()) {
+					colorScheme.save();
+				}
+				ColorSchemeManager.getColorSchemeManager().setColorSchemeList(tableColorScheme.getColorSchemeList());
+
 				dialogResult = DialogResult.OK;
 				dispose();
 			}
@@ -250,7 +245,6 @@ public class JDialogColorScheme extends SmDialog {
 		this.tableColorScheme.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				isModified = true;
 				checkButtonState();
 			}
 		});
@@ -277,10 +271,11 @@ public class JDialogColorScheme extends SmDialog {
 	}
 
 	private void buttonImportClicked() {
+
 		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
 			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
-					CommonProperties.getString(CommonProperties.open), "ColorSchemeImport", "OpenMany");
+					ControlsProperties.getString("String_ImportColorScheme"), "ColorSchemeImport", "OpenMany");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
 		int result = fileChooser.showDefaultDialog();
@@ -289,21 +284,23 @@ public class JDialogColorScheme extends SmDialog {
 		if (result == JFileChooser.APPROVE_OPTION && selectFiles != null && selectFiles.length > 0) {
 			for (File selectFile : selectFiles) {
 				ColorScheme colorScheme = new ColorScheme();
-				colorScheme.fromXML(selectFile);
-				tableColorScheme.addColorScheme(colorScheme);
+				if (colorScheme.fromXML(selectFile, true)) {
+					tableColorScheme.addColorScheme(colorScheme);
+				}
 			}
 		}
 		if (tableColorScheme.getRowCount() > rowCount) {
 			tableColorScheme.setRowSelectionInterval(rowCount, tableColorScheme.getRowCount() - 1);
 			tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(rowCount, 0, true));
 		}
+
 	}
 
 	private void buttonExportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExport")) {
 
 			SmFileChoose.addNewNode("", PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
-					CommonProperties.getString(CommonProperties.open), "ColorSchemeExport", "GetDirectories");
+					ControlsProperties.getString("String_ExportColorScheme"), "ColorSchemeExport", "GetDirectories");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExport");
 		int result = fileChooser.showDefaultDialog();
@@ -313,12 +310,12 @@ public class JDialogColorScheme extends SmDialog {
 				ColorScheme colorScheme = tableColorScheme.getColorScheme(i);
 				colorScheme.saveAsDirectories(directories);
 			}
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"), directories));
 		}
 	}
 
 	private void checkButtonState() {
 		this.buttonEdit.setEnabled(tableColorScheme.getSelectedRowCount() == 1);
-		this.buttonRevert.setEnabled(isModified);
 		this.buttonDel.setEnabled(tableColorScheme.getSelectedRowCount() > 0);
 		this.buttonExport.setEnabled(tableColorScheme.getSelectedRowCount() > 0);
 		this.buttonOk.setEnabled(tableColorScheme.getRowCount() > 0);
@@ -327,12 +324,10 @@ public class JDialogColorScheme extends SmDialog {
 	private void initResources() {
 		this.buttonAdd.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/add.png")));
 		this.buttonAdd.setToolTipText(ControlsProperties.getString("String_AddColorScheme"));
-		this.buttonReset.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/basic.png")));
-		this.buttonReset.setToolTipText(ControlsProperties.getString("String_DefaultColorSchemes"));
 		this.buttonEdit.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/edit.png")));
 		this.buttonEdit.setToolTipText(ControlsProperties.getString("String_EditColorScheme"));
 		this.buttonRevert.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/undo.png")));
-		this.buttonRevert.setToolTipText(ControlsProperties.getString("String_ResetColorSchemes"));
+		this.buttonRevert.setToolTipText(ControlsProperties.getString("String_DefaultColorSchemes"));
 		this.buttonDel.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonDel.setToolTipText(ControlsProperties.getString("String_RemoveColorScheme"));
 
@@ -355,7 +350,6 @@ public class JDialogColorScheme extends SmDialog {
 	private void initComponentState() {
 		ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 		tableColorScheme.setColorSchemeList(ListUtilties.listDeepCopy(colorSchemeManager.getColorSchemeList()));
-		isModified = false;
 		if (tableColorScheme.getRowCount() > 0) {
 			tableColorScheme.setRowSelectionInterval(0, 0);
 		} else {

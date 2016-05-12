@@ -51,8 +51,15 @@ public class SortableTableModel extends DefaultTableModel {
 		if (sorter == null) {
 			sorter = new TableSorter(this);
 		}
-		sorter.sort(column, isAscent);
-		fireTableDataChanged();
+		if (isSortColumn(column)) {
+			sorter.sort(column, isAscent);
+			fireTableDataChanged();
+		}
+
+	}
+
+	protected boolean isSortColumn(int column) {
+		return true;
 	}
 
 	/**

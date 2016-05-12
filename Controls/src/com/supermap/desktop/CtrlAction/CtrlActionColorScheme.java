@@ -17,6 +17,7 @@ public class CtrlActionColorScheme extends CtrlAction {
 	public void run() {
 		JDialogColorScheme jDialogColorScheme = new JDialogColorScheme();
 		jDialogColorScheme.showDialog();
+		jDialogColorScheme.dispose();
 	}
 
 	@Override

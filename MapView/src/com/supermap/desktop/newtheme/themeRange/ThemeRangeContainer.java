@@ -544,6 +544,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.buttonSplit.addActionListener(this.actionListener);
 		this.tableRangeInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
+		this.comboBoxColorStyle.addColorChangedListener();
 		this.comboBoxExpression.addItemListener(this.itemListener);
 		this.comboBoxExpression.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboBoxRangePrecision.addItemListener(this.itemListener);
@@ -573,6 +574,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.buttonSplit.removeActionListener(this.actionListener);
 		this.tableRangeInfo.removeMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
+		this.comboBoxColorStyle.removeColorChangedListener();
 		this.comboBoxExpression.removeItemListener(this.itemListener);
 		this.comboBoxExpression.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboBoxRangePrecision.removeItemListener(this.itemListener);

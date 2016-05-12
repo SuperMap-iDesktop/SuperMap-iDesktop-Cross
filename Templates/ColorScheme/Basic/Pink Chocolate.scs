@@ -1,50 +1,50 @@
-<ColorScheme>
-  <FileHeader>
-    <FileType>0</FileType>
-    <Version>60000</Version>
-    <Name>Pink Chocolate</Name>
-    <Author>SuperMap</Author>
-    <Description></Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>5</KeyColorCount>
-    <IntervalColorCount>64</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>215</Red>
-      <Green>76</Green>
-      <Blue>185</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>215</Red>
-      <Green>110</Green>
-      <Blue>181</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>243</Red>
-      <Green>151</Green>
-      <Blue>225</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>237</Red>
-      <Green>175</Green>
-      <Blue>225</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>247</Red>
-      <Green>221</Green>
-      <Blue>243</Blue>
-    </KeyColor5>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>0</FileType>
+<Version>60000</Version>
+<Name>Pink Chocolate</Name>
+<Author>SuperMap</Author>
+<Description/>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>5</KeyColorCount>
+<IntervalColorCount>64</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>215</Red>
+<Green>76</Green>
+<Blue>185</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>215</Red>
+<Green>110</Green>
+<Blue>181</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>243</Red>
+<Green>151</Green>
+<Blue>225</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>237</Red>
+<Green>175</Green>
+<Blue>225</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>247</Red>
+<Green>221</Green>
+<Blue>243</Blue>
+</KeyColor5>
+</DataBlock>
 </ColorScheme>

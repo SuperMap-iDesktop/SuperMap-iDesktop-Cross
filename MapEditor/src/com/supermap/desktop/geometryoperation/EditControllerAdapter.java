@@ -1,6 +1,7 @@
 package com.supermap.desktop.geometryoperation;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -21,6 +22,36 @@ public abstract class EditControllerAdapter implements IEditController {
 	@Override
 	public void keyReleased(EditEnvironment environment, KeyEvent e) {
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void mousePressed(EditEnvironment environment, MouseEvent e) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void mouseReleased(EditEnvironment environment, MouseEvent e) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void mouseEntered(EditEnvironment environment, MouseEvent e) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void mouseExited(EditEnvironment environment, MouseEvent e) {
 	}
 
 	@Override
