@@ -1,36 +1,36 @@
-<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>60000</Version>
-    <Name>GradienScheme35</Name>
-    <Author>SuperMap</Author>
-    <Description></Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>3</KeyColorCount>
-    <IntervalColorCount>16</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>31</Red>
-      <Green>85</Green>
-      <Blue>156</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>191</Red>
-      <Green>255</Green>
-      <Blue>255</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>145</Red>
-      <Green>130</Green>
-      <Blue>33</Blue>
-    </KeyColor3>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>60000</Version>
+<Name>GradienScheme35</Name>
+<Author>SuperMap</Author>
+<Description/>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>3</KeyColorCount>
+<IntervalColorCount>16</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>31</Red>
+<Green>85</Green>
+<Blue>156</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>191</Red>
+<Green>255</Green>
+<Blue>255</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>145</Red>
+<Green>130</Green>
+<Blue>33</Blue>
+</KeyColor3>
+</DataBlock>
 </ColorScheme>

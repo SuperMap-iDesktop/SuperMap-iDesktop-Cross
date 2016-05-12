@@ -4,6 +4,7 @@ import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.ColorsUtilties;
 import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
@@ -22,9 +23,23 @@ public class ColorsComboBox extends JComboBox {
 	private final ColorSchemeManagerChangedListener colorSchemeManagerChangedListener = new ColorSchemeManagerChangedListener() {
 		@Override
 		public void colorSchemeManagerChanged(ColorSchemeManagerChangedEvent colorSchemeManagerChangedEvent) {
+			int selectedIndex = getSelectedIndex();
+			Colors selectedItem = ((Colors) getSelectedItem());
 			initComboBox();
-			if (getItemCount() > 0) {
-				setSelectedIndex(getItemCount() - 2);
+			if (selectedItem != null) {
+				if (selectedItem == customColors) {
+					setSelectedIndex(getItemCount() - 2);
+				} else {
+					for (int i = 0; i < getItemCount(); i++) {
+						if (ColorsUtilties.isEqualsColors((Colors) getItemAt(i), selectedItem)) {
+							setSelectedIndex(i);
+							return;
+						}
+					}
+					if (selectedIndex < getItemCount() - 1) {
+						setSelectedIndex(selectedIndex);
+					}
+				}
 			}
 		}
 	};
@@ -54,6 +69,7 @@ public class ColorsComboBox extends JComboBox {
 					ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
 					if (dialog.showDialog() == DialogResult.OK) {
 						ColorSchemeManager.getColorSchemeManager().addColorScheme(dialog.getColorScheme());
+						setSelectedIndex(getItemCount() - 2);
 					}
 				}
 			}
@@ -85,8 +101,6 @@ public class ColorsComboBox extends JComboBox {
 	}
 
 
-
-
 	/**
 	 * 根据xml配置文件来初始化JComboBox
 	 */
@@ -111,9 +125,23 @@ public class ColorsComboBox extends JComboBox {
 	}
 
 	public void dispose() {
+		removeColorChangedListener();
+	}
+
+	/**
+	 * 移除颜色方案改变时的监听事件，使用完一定要记得移除
+	 */
+	public void removeColorChangedListener() {
 		ColorSchemeManager.getColorSchemeManager().removeColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
 	}
 
+	/**
+	 * 添加颜色方案改变时的监听事件
+	 */
+	public void addColorChangedListener() {
+		removeColorChangedListener();
+		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
+	}
 }
 
 class ColorsCellRenderer extends JLabel implements ListCellRenderer {

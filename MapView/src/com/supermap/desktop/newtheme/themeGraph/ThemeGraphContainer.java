@@ -816,6 +816,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.comboBoxGraphType.addItemListener(this.graphTypeChangeListener);
 		this.comboBoxMethod.addItemListener(this.graphModeChangeListener);
 		this.comboBoxColor.addItemListener(this.graphColorChangeListener);
+		this.comboBoxColor.addColorChangedListener();
 		this.checkBoxShowFlow.addItemListener(this.OptionsChangeListener);
 		this.checkBoxShowNegative.addItemListener(this.OptionsChangeListener);
 		this.checkBoxAutoAvoid.addItemListener(this.OptionsChangeListener);
@@ -1661,6 +1662,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.comboBoxGraphType.removeItemListener(this.graphTypeChangeListener);
 		this.comboBoxMethod.removeItemListener(this.graphModeChangeListener);
 		this.comboBoxColor.removeItemListener(this.graphColorChangeListener);
+		this.comboBoxColor.removeColorChangedListener();
 		this.checkBoxShowFlow.removeItemListener(this.OptionsChangeListener);
 		this.checkBoxShowNegative.removeItemListener(this.OptionsChangeListener);
 		this.checkBoxAutoAvoid.removeItemListener(this.OptionsChangeListener);

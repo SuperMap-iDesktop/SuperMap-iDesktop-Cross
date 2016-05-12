@@ -59,13 +59,6 @@ public class ColorsUtilties {
 		return (Color[]) colors.toArray(new Color[colors.size()]);
 	}
 
-	/// <summary>
-	///
-	/// </summary>
-	/// <param name="colorCount"></param>
-	/// <param name="hueCount"></param>
-	/// <param name="colorHSV"></param>
-	/// <returns></returns>
 
 	/**
 	 * 指定色调区块取随机色
@@ -134,38 +127,56 @@ public class ColorsUtilties {
 
 		for (int index = 0; index < colorCount; index++) {
 			int tempS = tempMaxSaturation - tempMinSaturation;
-			if (tempS == 0) {
-				tempS = 1;
+			int saturation = tempMinSaturation;
+			if (tempS != 0) {
+				saturation = random.nextInt(tempS) + tempMinSaturation;
 			}
-			int saturation = random.nextInt(tempS) + tempMinSaturation;
 			int tempValue = tempMaxValue - tempMinValue;
-			if (tempValue == 0) {
-				tempValue = 1;
+			int value = tempMinValue;
+			if (tempValue != 0) {
+				value = random.nextInt(tempValue) + tempMinValue;
 			}
-			int value = random.nextInt(tempValue) + tempMinValue;
 
-			int hue = 0;
+			int hue = tempStartHue;
 
 			if (endHue < startHue) {
 				int tempH = 36000 + tempEndHue - tempStartHue;
-				if (tempH == 0) {
-					tempH = 1;
+				if (tempH != 0) {
+					hue = random.nextInt(tempH) + tempStartHue;
 				}
-				hue = random.nextInt(tempH) + tempStartHue;
 				if (hue > 36000) {
 					hue = hue - 36000;
 				}
 			} else {
 				int tempH = tempEndHue - tempStartHue;
-				if (tempH == 0) {
-					tempH = 1;
+				if (tempH != 0) {
+					hue = random.nextInt(tempH) + tempStartHue;
 				}
-				hue = random.nextInt(tempH) + tempStartHue;
 			}
 
 			colors.add(Color.getHSBColor((float) (hue * 0.01), (float) (saturation * 0.01), (float) (value * 0.01)));
 		}
 
 		return colors;
+	}
+
+	public static boolean isEqualsColors(Colors c1, Colors c2) {
+		if (c1 == c2) {
+			return true;
+		}
+		if (c1 == null || c2 == null) {
+			return false;
+		}
+
+		if (c1.getCount() != c2.getCount()) {
+			return false;
+		}
+
+		for (int i = 0; i < c1.getCount(); i++) {
+			if (!c1.get(i).equals(c2.get(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

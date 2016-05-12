@@ -348,6 +348,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.buttonSplit.addActionListener(this.actionListener);
 		this.tableRangeInfo.addMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
+		this.comboBoxColorStyle.addColorChangedListener();
 		this.comboBoxRangeCount.addItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).addMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.addMouseListener(this.mouseListener);
@@ -369,6 +370,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.buttonSplit.removeActionListener(this.actionListener);
 		this.tableRangeInfo.removeMouseListener(this.mouseListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
+		this.comboBoxColorStyle.removeColorChangedListener();
 		this.comboBoxRangeCount.removeItemListener(this.itemListener);
 		this.comboBoxRangeCount.getComponent(0).removeMouseListener(this.mouseListener);
 		this.comboBoxRangeMethod.removeMouseListener(this.mouseListener);

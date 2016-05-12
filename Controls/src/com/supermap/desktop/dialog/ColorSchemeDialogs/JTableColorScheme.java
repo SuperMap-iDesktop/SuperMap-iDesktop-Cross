@@ -79,7 +79,7 @@ public class JTableColorScheme extends SortTable {
 			}
 			int width = table.getColumnModel().getColumn(column).getWidth();
 			int height = table.getRowHeight(row);
-			JLabel colorsLabel = ColorScheme.getColorsLabel(((Colors) value), width, height);
+			JLabel colorsLabel = ColorScheme.getColorsLabel(((Colors) value), width, 23);
 			if (isSelected) {
 				colorsLabel.setBorder(new LineBorder(Color.black, 1, false));
 			} else {

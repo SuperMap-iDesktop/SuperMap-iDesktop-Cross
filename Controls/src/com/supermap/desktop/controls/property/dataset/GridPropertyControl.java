@@ -369,6 +369,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.buttonReset.addActionListener(this.actionListener);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.comboBoxColors.addItemListener(this.itemListener);
+		this.comboBoxColors.addColorChangedListener();
 	}
 
 	private void unregisterEvents() {
@@ -380,6 +381,8 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.buttonReset.removeActionListener(this.actionListener);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.comboBoxColors.removeItemListener(this.itemListener);
+		this.comboBoxColors.removeColorChangedListener();
+
 	}
 
 	private void fillComponents() {
