@@ -13,6 +13,8 @@ import javax.swing.SwingUtilities;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -257,6 +259,11 @@ public class EraseEditor extends AbstractEditor {
 				recordset.edit();
 				recordset.setGeometry(result);
 				recordset.update();
+			} else {
+				// 没有擦除结果，删除被擦除对象
+				editHistory.add(EditType.DELETE, recordset, true);
+				recordset.delete();
+				recordset.update();
 			}
 		} finally {
 			if (geometry != null) {
@@ -279,17 +286,26 @@ public class EraseEditor extends AbstractEditor {
 		Geometry eraseResult = null;
 
 		try {
-			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
-
-				// 没有擦除结果，删除被擦除对象
-				if (eraseResult == null) {
-					editHistory.add(EditType.DELETE, recordset, true);
-					recordset.delete();
-					recordset.update();
+			if (geometry instanceof IRegionFeature) {
+				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+				try {
+					eraseResult = Geometrist.erase(geoRegion, editModel.srRegion);
+				} finally {
+					if (geoRegion != null) {
+						geoRegion.dispose();
+					}
+				}
+			} else if (geometry instanceof ILineFeature) {
+				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
+				try {
+					eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
+				} finally {
+					if (geoLine != null) {
+						geoLine.dispose();
+					}
 				}
 			} else if (geometry instanceof DGeoCompound) {
-				eraseCompound((DGeoCompound) geometry, editModel);
+				eraseResult = eraseCompound((DGeoCompound) geometry, editModel);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
 			}
@@ -312,17 +328,26 @@ public class EraseEditor extends AbstractEditor {
 		Geometry eraseResult = null;
 
 		try {
-			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
-
-				// 没有擦除结果，删除被擦除对象
-				if (eraseResult == null) {
-					editHistory.add(EditType.DELETE, recordset, true);
-					recordset.delete();
-					recordset.update();
+			if (geometry instanceof IRegionFeature) {
+				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+				try {
+					eraseResult = Geometrist.clip(geoRegion, editModel.srRegion);
+				} finally {
+					if (geoRegion != null) {
+						geoRegion.dispose();
+					}
+				}
+			} else if (geometry instanceof ILineFeature) {
+				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
+				try {
+					eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
+				} finally {
+					if (geoLine != null) {
+						geoLine.dispose();
+					}
 				}
 			} else if (geometry instanceof DGeoCompound) {
-				eraseCompound((DGeoCompound) geometry, editModel);
+				eraseResult = eraseCompound((DGeoCompound) geometry, editModel);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
 			}
@@ -339,8 +364,6 @@ public class EraseEditor extends AbstractEditor {
 	 * @return
 	 */
 	private Geometry eraseCompound(DGeoCompound geoCompound, EraseEditModel editModel) {
-		Geometry eraseResult = null;
-
 		for (int i = geoCompound.getPartCount() - 1; i >= 0; i--) {
 			IGeometry part = DGeometryFactory.create(geoCompound.getPart(i));
 			Geometry partEraseResult = null; // 子对象擦除结果
@@ -363,7 +386,8 @@ public class EraseEditor extends AbstractEditor {
 				geoCompound.setPart(i, partEraseResult);
 			}
 		}
-		return eraseResult;
+
+		return geoCompound.getPartCount() == 0 ? null : geoCompound.getGeometry();
 	}
 
 	private void setIsEraseExternal(final boolean isEraseExternal, final EraseEditModel editModel) {
