@@ -28,6 +28,7 @@ import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
@@ -43,14 +44,6 @@ public class LineExtendEditor extends AbstractEditor {
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
 	private IEditController lineExtendEditController = new EditControllerAdapter() {
-
-		@Override
-		public void mousePressed(EditEnvironment environment, MouseEvent e) {
-			if (!(environment.getEditModel() instanceof LineExtendEditModel)) {
-				return;
-			}
-			((LineExtendEditModel) environment.getEditModel()).mouseClickedLocation = e.getPoint();
-		}
 
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
@@ -106,6 +99,7 @@ public class LineExtendEditor extends AbstractEditor {
 			try {
 				environment.getMapControl().setAction(editModel.oldMapControlAction);
 				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
+				environment.setEditController(NullEditController.instance());
 				clear(environment);
 			} finally {
 				editModel.tip.unbind();
@@ -272,7 +266,7 @@ public class LineExtendEditor extends AbstractEditor {
 			pointStart.dispose();
 			pointEnd.dispose();
 
-			Point2D pnt2D = mapControl.getMap().pixelToMap(editModel.mouseClickedLocation);
+			Point2D pnt2D = mapControl.getMap().pixelToMap(mapControl.getMousePosition(true));
 
 			if (dataset.getTolerance().getNodeSnap() == 0) {
 				dataset.getTolerance().setDefault();
@@ -406,7 +400,6 @@ public class LineExtendEditor extends AbstractEditor {
 
 		public Action oldMapControlAction = Action.SELECT2;
 		public TrackMode oldTrackMode = TrackMode.EDIT;
-		public Point mouseClickedLocation;
 
 		public MapControlTip tip = new MapControlTip();
 		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_LineEditor_SelectBaseLine"));
