@@ -156,7 +156,7 @@ class ColorsCellRenderer extends JLabel implements ListCellRenderer {
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		Colors colors = (Colors) value;
 		int imageWidth = colorsComboBox.getWidth() - colorsComboBox.getComponent(0).getWidth();
-		int imageHeight = this.getPreferredSize().height;
+		int imageHeight = 24;
 		JLabel colorsLabel = ColorScheme.getColorsLabel(colors, imageWidth, imageHeight);
 		if (index == list.getModel().getSize() - 1) {
 			colorsLabel.setText(ControlsProperties.getString("String_CustomColor"));
