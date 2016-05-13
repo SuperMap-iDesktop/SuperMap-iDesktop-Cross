@@ -49,7 +49,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 	};
 	private JPopupMenu subPopupMenu;
-	private Rectangle subPopupMenuParentRectangle;
 	private PopupMenuListener subPopupMenuListener = new PopupMenuListener() {
 		@Override
 		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
