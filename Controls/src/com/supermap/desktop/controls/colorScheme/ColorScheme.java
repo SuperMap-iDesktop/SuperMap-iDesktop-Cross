@@ -447,17 +447,18 @@ public class ColorScheme implements ICloneable {
 
 				if (this.getColorSystem() == ColorSystem.CS_HSB) {
 					Color color = colors.get(i);
-					float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+					ColorHSV colorHSV = new ColorHSV();
+					colorHSV.fromColor(color);
 					Element hue = document.createElement("Hue");
-					hue.appendChild(document.createTextNode(String.valueOf((int) hsb[0])));
+					hue.appendChild(document.createTextNode(String.valueOf((int) colorHSV.getH())));
 					keyColor.appendChild(hue);
 
 					Element saturation = document.createElement("Saturation");
-					saturation.appendChild(document.createTextNode(String.valueOf((int) hsb[1])));
+					saturation.appendChild(document.createTextNode(String.valueOf((int) colorHSV.getS())));
 					keyColor.appendChild(saturation);
 
 					Element value = document.createElement("Value");
-					value.appendChild(document.createTextNode(String.valueOf(String.valueOf((int) hsb[2]))));
+					value.appendChild(document.createTextNode(String.valueOf(String.valueOf((int) colorHSV.getV()))));
 					keyColor.appendChild(value);
 
 				} else {
@@ -652,9 +653,10 @@ public class ColorScheme implements ICloneable {
 					if (childElementName.contains(ColorSchemeTags.KEY_COLOR)) {
 						float h = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.HUE));
 						float s = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.SATURATION));
-						float b = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.VALUE));
+						float v = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.VALUE));
 
-						colorList.add(Color.getHSBColor(h, s, b));
+						ColorHSV colorHSV = new ColorHSV(h, s, v);
+						colorList.add(colorHSV.ToColor());
 					}
 				}
 			}

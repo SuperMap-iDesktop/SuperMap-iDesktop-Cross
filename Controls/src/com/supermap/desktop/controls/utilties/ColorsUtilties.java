@@ -2,6 +2,7 @@ package com.supermap.desktop.controls.utilties;
 
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.colorScheme.ColorHSV;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -47,8 +48,11 @@ public class ColorsUtilties {
 		java.util.List<Color> colors = new ArrayList<>();
 
 		try {
-			float[] startHSV = Color.RGBtoHSB(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), null);
-			float[] endHSV = Color.RGBtoHSB(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), null);
+
+			ColorHSV startHSV = new ColorHSV();
+			ColorHSV endHSV = new ColorHSV();
+			startHSV.fromColor(startColor);
+			endHSV.fromColor(endColor);
 
 			colors.addAll(bulid(colorCount / 2, 12, startHSV));
 			colors.addAll(bulid(colorCount - colorCount / 2, 12, endHSV));
@@ -63,21 +67,22 @@ public class ColorsUtilties {
 	/**
 	 * 指定色调区块取随机色
 	 */
-	private static List<Color> bulid(int colorCount, int hueCount, float[] colorHSV) {
+	private static List<Color> bulid(int colorCount, int hueCount, ColorHSV colorHSV) {
 		List<Color> colors = new ArrayList<>();
 		try {
 			double increment = 360 / hueCount;
 
-			if (colorHSV[2] < Math.pow(Math.E, -10)
-					|| (Math.abs(colorHSV[1] - 1.0) < Math.pow(Math.E, -10) && colorHSV[1] < Math.pow(Math.E, -10))) {
-				colors.addAll(Build(colorCount, colorHSV[0], colorHSV[0], colorHSV[1], colorHSV[1], 1, 0));
+			if (colorHSV.getV() < Math.pow(Math.E, -10)
+					|| (Math.abs(colorHSV.getV() - 1.0) < Math.pow(Math.E, -10) && colorHSV.getS() < Math.pow(Math.E, -10))) {
+				colors.addAll(Build(colorCount, colorHSV.getH(), colorHSV.getH(), colorHSV.getS(), colorHSV.getS(), 1, 0));
 			} else {
-				int currentSegment = (int) Math.floor(colorHSV[0] / increment);
-				colors.addAll(Build(colorCount, increment * (currentSegment + 1), increment * currentSegment, 1, 0, colorHSV[2], colorHSV[2]));
+				int currentSegment = (int) Math.floor(colorHSV.getH() / increment);
+				colors.addAll(Build(colorCount, increment * (currentSegment + 1), increment * currentSegment, 1, 0, colorHSV.getV(), colorHSV.getV()));
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+
 
 		return colors;
 	}
