@@ -99,10 +99,11 @@ public class LineExtendEditor extends AbstractEditor {
 			try {
 				environment.getMapControl().setAction(editModel.oldMapControlAction);
 				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
-				environment.setEditController(NullEditController.instance());
 				clear(environment);
 			} finally {
 				editModel.tip.unbind();
+				environment.setEditController(NullEditController.instance());
+				environment.setEditModel(null);
 			}
 		}
 	}
