@@ -261,6 +261,7 @@ public class LineExtendEditor extends AbstractEditor {
 			GeoPoint pointStart = new GeoPoint(desLinePoints.getItem(0));
 			GeoPoint pointEnd = new GeoPoint(desLinePoints.getItem(nDesLinePntCount - 1));
 			if (Geometrist.isIdentical(pointStart, pointEnd)) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_Closed"));
 				desLine.dispose();
 				desLine = null;
 
@@ -305,7 +306,7 @@ public class LineExtendEditor extends AbstractEditor {
 			}
 
 			for (int i = 0; i < nBaseLinePntCount - 1; i++) {
-				if (baseLinePoints.getItem(i) == baseLinePoints.getItem(i + 1)) // 自由曲线时，有很多的重复节点
+				if (baseLinePoints.getItem(i) == baseLinePoints.getItem(i + 1)) // 自由曲线、B样条等，有很多的重复节点
 					continue;
 				pntIntersection = Geometrist.intersectLine(baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), desLinePoints.getItem(nStartPntNumber),
 						desLinePoints.getItem(nEndPntNumber), true);
