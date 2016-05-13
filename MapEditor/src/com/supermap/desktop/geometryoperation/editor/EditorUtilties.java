@@ -25,6 +25,9 @@ public class EditorUtilties {
 				for (int i = 0; i < nDesPointCount - 1; i++) {
 
 					// 会出现起始点和终点重合的情况，这里做一下处理
+					if (desLinePoints.getItem(i).equals(desLinePoints.getItem(i + 1))) {
+						continue;
+					}
 					pntTemp = Geometrist.computePerpendicularPosition(breakPoint, desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
 
 					if (pntTemp != Point2D.getEMPTY() && isPointInLineRect(pntTemp, desLinePoints.getItem(i), desLinePoints.getItem(i + 1), tolerance))
