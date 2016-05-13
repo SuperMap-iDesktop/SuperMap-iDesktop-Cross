@@ -52,7 +52,7 @@ public class LineExtendEditor extends AbstractEditor {
 			}
 
 			LineExtendEditModel editModel = (LineExtendEditModel) environment.getEditModel();
-			MapControl mapControl = (MapControl) arg0.getSource();
+			MapControl mapControl = environment.getMapControl();
 
 			// 获取基线
 			if (editModel.baseLine == null) {
@@ -61,7 +61,11 @@ public class LineExtendEditor extends AbstractEditor {
 				Layer activeEditableLayer = mapControl.getActiveEditableLayer();
 
 				if (activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
-					extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), getDesLine(activeEditableLayer, editModel), editModel);
+					GeoLine desLine = getDesLine(activeEditableLayer, editModel);
+
+					if (desLine != null) {
+						extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), desLine, editModel);
+					}
 				} else {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
 				}
@@ -196,18 +200,18 @@ public class LineExtendEditor extends AbstractEditor {
 				}
 			}
 
-			// 如果选中的基线和目标线是同一个对象就什么都不做
-			if (desLine != null && editModel.baseLayer == activeEditableLayer && desLine.getID() != editModel.baseLine.getID()) {
-				if (desLine.getPartCount() > 1) {
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
-
-					if (desLine != null) {
-						desLine.dispose();
-						desLine = null;
-					}
-				}
+			if (desLine == null) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 			} else {
-				if (desLine != null) {
+
+				// 如果选中的基线和目标线是同一个对象就什么都不做
+				if (editModel.baseLayer == activeEditableLayer && desLine.getID() == editModel.baseLine.getID()) {
+					Application.getActiveApplication().getOutput()
+							.output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ShouldNotBaseLine"));
+					desLine.dispose();
+					desLine = null;
+				} else if (desLine.getPartCount() > 1) {
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 					desLine.dispose();
 					desLine = null;
 				}
@@ -227,10 +231,15 @@ public class LineExtendEditor extends AbstractEditor {
 	private void initialBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
 		getBaseLine(mapControl, editModel);
-		editModel.baseLine.setStyle(getBaseLineStyle());
-		mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
-		mapControl.getMap().refreshTrackingLayer();
-		editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
+
+		if (editModel.baseLine != null) {
+			editModel.baseLine.setStyle(getBaseLineStyle());
+			mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
+			mapControl.getMap().refreshTrackingLayer();
+			editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
+		} else {
+
+		}
 	}
 
 	// 采用的思路为：将目标线与基线的所有交点都插入到目标线中，构造一个新的线。
@@ -257,6 +266,7 @@ public class LineExtendEditor extends AbstractEditor {
 			GeoPoint pointStart = new GeoPoint(desLinePoints.getItem(0));
 			GeoPoint pointEnd = new GeoPoint(desLinePoints.getItem(nDesLinePntCount - 1));
 			if (Geometrist.isIdentical(pointStart, pointEnd)) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_Closed"));
 				desLine.dispose();
 				desLine = null;
 
@@ -301,7 +311,7 @@ public class LineExtendEditor extends AbstractEditor {
 			}
 
 			for (int i = 0; i < nBaseLinePntCount - 1; i++) {
-				if (baseLinePoints.getItem(i) == baseLinePoints.getItem(i + 1)) // 自由曲线时，有很多的重复节点
+				if (baseLinePoints.getItem(i).equals(baseLinePoints.getItem(i + 1))) // 自由曲线、B样条等，有很多的重复节点
 					continue;
 				pntIntersection = Geometrist.intersectLine(baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), desLinePoints.getItem(nStartPntNumber),
 						desLinePoints.getItem(nEndPntNumber), true);
@@ -316,8 +326,10 @@ public class LineExtendEditor extends AbstractEditor {
 					}
 				}
 			}
-			if (pntIntersections.getCount() == 0) // 无交点，不理
-			{
+
+			// 无交点，不理
+			if (pntIntersections.getCount() == 0) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NoIntersection"));
 				desLine.dispose();
 				desLine = null;
 				return;
@@ -326,8 +338,9 @@ public class LineExtendEditor extends AbstractEditor {
 			// 找到最合适的交点,因为可能有多个交点，但只有离合法端点最近的一个才是所求的
 			double dDistance = 99999999999999999999.0;
 			int nKey = -1;
-			if (bExtendFirstPart) // 延伸第一段线段
-			{
+			if (bExtendFirstPart) {
+
+				// 延伸第一段线段
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
@@ -341,8 +354,9 @@ public class LineExtendEditor extends AbstractEditor {
 				if (nKey != -1) {
 					desLinePoints.setItem(nStartPntNumber, pntIntersections.getItem(nKey));
 				}
-			} else // 延伸最后一段线段
-			{
+			} else {
+
+				// 延伸最后一段线段
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
