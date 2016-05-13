@@ -3,7 +3,6 @@ package com.supermap.desktop.geometryoperation.editor;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,7 +51,6 @@ import com.supermap.ui.TrackMode;
 public class EraseEditor extends AbstractEditor {
 
 	// 用于在 trackingLayer 中做结果展示的 id
-	private static final String TAG_ERASE = "Tag_EraseEditorResult";
 	private static final String TAG_SOURCE = "Tag_EraseEditorSource";
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
@@ -99,20 +97,6 @@ public class EraseEditor extends AbstractEditor {
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
 			EraseEditor.this.geometrySelected(environment, arg0);
-		}
-
-		@Override
-		public void undone(EditEnvironment environment, EventObject arg0) {
-
-			// undone 的时候清除 trackingLayer
-			MapControlUtilties.clearTrackingObjects((MapControl) arg0.getSource(), TAG_ERASE);
-		}
-
-		@Override
-		public void redone(EditEnvironment environment, EventObject arg0) {
-
-			// redone 的时候清除 trackingLayer
-			MapControlUtilties.clearTrackingObjects((MapControl) arg0.getSource(), TAG_ERASE);
 		}
 	};
 
@@ -161,8 +145,10 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getMapControl().getEditableLayers().length > 0 && environment.getEditProperties().getSelectedGeometryCount() > 0 && ListUtilties
-				.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ICompoundFeature.class);
+		return environment.getMapControl().getEditableLayers().length > 0
+				&& environment.getEditProperties().getSelectedGeometryCount() > 0
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
+						ICompoundFeature.class);
 	}
 
 	@Override
@@ -170,10 +156,16 @@ public class EraseEditor extends AbstractEditor {
 		return environment.getEditor() instanceof EraseEditor;
 	}
 
+	/**
+	 * 获取擦除对象的 Tracking 风格
+	 * 
+	 * @return
+	 */
 	private GeoStyle getSourceStyle() {
 		GeoStyle style = new GeoStyle();
-		style.setLineWidth(0.6);
 		style.setLineColor(Color.RED);
+		style.setLineWidth(0.5);
+		style.setFillOpaqueRate(0);
 		return style;
 	}
 
@@ -217,10 +209,6 @@ public class EraseEditor extends AbstractEditor {
 
 				recordset = selectLayer.getSelection().toRecordset();
 				eraseResult = erase(mapControl.getEditHistory(), recordset, editModel);
-
-				if (eraseResult != null) {
-					addResultTracking(mapControl, eraseResult);
-				}
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_LayerCannotEdit"));
 			}
@@ -296,6 +284,7 @@ public class EraseEditor extends AbstractEditor {
 				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
 				try {
 					eraseResult = Geometrist.erase(geoRegion, editModel.srRegion);
+					eraseResult.setStyle(geometry.getGeometry().getStyle());
 				} finally {
 					if (geoRegion != null) {
 						geoRegion.dispose();
@@ -305,6 +294,7 @@ public class EraseEditor extends AbstractEditor {
 				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
 				try {
 					eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
+					eraseResult.setStyle(geometry.getGeometry().getStyle());
 				} finally {
 					if (geoLine != null) {
 						geoLine.dispose();
@@ -330,6 +320,15 @@ public class EraseEditor extends AbstractEditor {
 	 *            被擦除对象
 	 * @return
 	 */
+	/**
+	 * @param editHistory
+	 * @param recordset
+	 * @param geometry
+	 *            被擦除对象
+	 * @param editModel
+	 *            与 EditEnvironment 绑定的过程数据
+	 * @return
+	 */
 	private Geometry eraseExternal(EditHistory editHistory, Recordset recordset, IGeometry geometry, EraseEditModel editModel) {
 		Geometry eraseResult = null;
 
@@ -338,6 +337,7 @@ public class EraseEditor extends AbstractEditor {
 				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
 				try {
 					eraseResult = Geometrist.clip(geoRegion, editModel.srRegion);
+					eraseResult.setStyle(geometry.getGeometry().getStyle());
 				} finally {
 					if (geoRegion != null) {
 						geoRegion.dispose();
@@ -347,6 +347,7 @@ public class EraseEditor extends AbstractEditor {
 				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
 				try {
 					eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
+					eraseResult.setStyle(geometry.getGeometry().getStyle());
 				} finally {
 					if (geoLine != null) {
 						geoLine.dispose();
@@ -376,20 +377,31 @@ public class EraseEditor extends AbstractEditor {
 
 			if (part instanceof DGeoCompound) {
 				partEraseResult = eraseCompound(geoCompound, editModel);
-			} else if (part instanceof IRegionFeature || part instanceof ILineFeature) {
-				if (editModel.isEraseExternal) {
-					partEraseResult = Geometrist.clip(editModel.srRegion, part.getGeometry());
-				} else {
-					partEraseResult = Geometrist.erase(editModel.srRegion, part.getGeometry());
-				}
-			}
-
-			if (partEraseResult == null) {
-
-				// 擦除结果为空，移除该子项
-				geoCompound.removePart(i);
 			} else {
-				geoCompound.setPart(i, partEraseResult);
+				try {
+					if (part instanceof IRegionFeature) {
+						GeoRegion geoRegion = ((IRegionFeature) part).convertToRegion(120);
+						partEraseResult = editModel.isEraseExternal ? Geometrist.clip(editModel.srRegion, geoRegion) : Geometrist.erase(editModel.srRegion,
+								geoRegion);
+					} else if (part instanceof ILineFeature) {
+						GeoLine geoLine = ((ILineFeature) part).convertToLine(120);
+						partEraseResult = editModel.isEraseExternal ? Geometrist.clip(editModel.srRegion, geoLine) : Geometrist.erase(editModel.srRegion,
+								geoLine);
+					}
+
+					if (partEraseResult == null) {
+
+						// 擦除结果为空，移除该子项
+						geoCompound.removePart(i);
+					} else {
+						partEraseResult.setStyle(part.getGeometry().getStyle());
+						geoCompound.setPart(i, partEraseResult);
+					}
+				} finally {
+					if (part != null) {
+						part.dispose();
+					}
+				}
 			}
 		}
 
@@ -412,12 +424,6 @@ public class EraseEditor extends AbstractEditor {
 				editModel.labelChangeMode.repaint();
 			}
 		});
-	}
-
-	private void addResultTracking(MapControl mapControl, Geometry geometry) {
-		if (mapControl != null) {
-			mapControl.getMap().getTrackingLayer().add(geometry, TAG_ERASE);
-		}
 	}
 
 	// @formatter:off
@@ -449,6 +455,7 @@ public class EraseEditor extends AbstractEditor {
 
 			// 将结果对象添加到 TrackingLayer 做高亮显示
 			environment.getMapControl().getMap().getTrackingLayer().add(editModel.srRegion, TAG_SOURCE);
+			environment.getMap().refreshTrackingLayer();
 		}
 	}
 
@@ -463,7 +470,6 @@ public class EraseEditor extends AbstractEditor {
 		EraseEditModel editModel = (EraseEditModel) environment.getEditModel();
 		editModel.clear();
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_ERASE);
 		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SOURCE);
 	}
 
