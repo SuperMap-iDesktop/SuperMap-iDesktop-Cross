@@ -135,10 +135,11 @@ public class EraseEditor extends AbstractEditor {
 			try {
 				environment.getMapControl().setAction(editModel.oldMapControlAction);
 				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
-				environment.setEditController(NullEditController.instance());
 				clear(environment);
 			} finally {
 				editModel.tip.unbind();
+				environment.setEditController(NullEditController.instance());
+				environment.setEditModel(null);
 			}
 		}
 	}
@@ -428,8 +429,6 @@ public class EraseEditor extends AbstractEditor {
 				} else {
 					editModel.labelChangeMode.setText(MapEditorProperties.getString("String_EraseEditor_EraseTipInside"));
 				}
-
-				editModel.labelChangeMode.repaint();
 			}
 		});
 	}

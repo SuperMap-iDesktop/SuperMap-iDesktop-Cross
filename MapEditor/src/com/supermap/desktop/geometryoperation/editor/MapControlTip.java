@@ -34,6 +34,7 @@ public class MapControlTip {
 
 	public MapControlTip() {
 		this.contentPanel = new JPanel();
+		this.contentPanel.setVisible(false);
 	}
 
 	public JPanel getContentPanel() {
