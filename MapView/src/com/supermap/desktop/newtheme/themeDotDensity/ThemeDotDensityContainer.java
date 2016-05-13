@@ -13,24 +13,14 @@ import javax.swing.event.*;
 import com.supermap.data.*;
 import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
-import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
+import com.supermap.desktop.dialog.symbolDialogs.*;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
+import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeDotDensity;
-import com.supermap.mapping.ThemeType;
-import com.supermap.ui.MapControl;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.*;
+import com.supermap.mapping.*;
 
 /**
  * 点密度专题图
@@ -118,7 +108,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.spinnerDotDensityValue = new JSpinner();
 		this.labelDotDensityStyle = new JLabel();
 		this.buttonDotDensityStyle = new JButton("...");
-		this.spinnerDotDensityValue.setModel(new SpinnerNumberModel(1.0, 1.0, null, 1.0));
+		this.spinnerDotDensityValue.setModel(new SpinnerNumberModel(1, 1, null, 1));
 		initComboBoxExpression();
 		initTextFieldValue();
 		Dimension dimension = new Dimension(120, 23);
@@ -152,7 +142,8 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.textFieldValue.setText(String.valueOf(format.format(themeDotDensity.getValue())));
 		String expression = themeDotDensity.getDotExpression();
 		setThemeDotDensityInfo(expression);
-		this.spinnerDotDensityValue.setValue((int) maxValue / themeDotDensity.getValue());
+		int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(maxValue / themeDotDensity.getValue()));
+		this.spinnerDotDensityValue.setValue(splinnerValue);
 	}
 
 	private void setThemeDotDensityInfo(String expression) {
@@ -184,6 +175,27 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 	@Override
 	public void registActionListener() {
+		this.textFieldValue.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				int keyChar = e.getKeyChar();
+				if (keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) {
+					return;
+				} else {
+					e.consume();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					resetValue();
+				}
+			}
+
+		});
+		unregistActionListener();
 		this.comboBoxExpression.addItemListener(this.expressionListener);
 		this.buttonDotDensityStyle.addActionListener(this.buttonActionListener);
 		this.textFieldValue.addFocusListener(this.textFieldListener);
@@ -206,15 +218,20 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			String strValue = textFieldValue.getText();
-			if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)
-					&& 0 != Double.compare(Double.parseDouble(strValue), Double.parseDouble(format.format(themeDotDensity.getValue())))) {
-				themeDotDensity.setValue(Double.parseDouble(strValue));
-				spinnerDotDensityValue.setValue((int) maxValue / Double.parseDouble(strValue));
-				refreshAtOnce();
-			}
+			resetValue();
 		}
 
+	}
+
+	private void resetValue() {
+		String strValue = textFieldValue.getText();
+		if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)
+				&& 0 != Double.compare(Double.parseDouble(strValue), Double.parseDouble(format.format(themeDotDensity.getValue())))) {
+			themeDotDensity.setValue(Double.parseDouble(strValue));
+			int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(maxValue / themeDotDensity.getValue()));
+			spinnerDotDensityValue.setValue(splinnerValue);
+			refreshAtOnce();
+		}
 	}
 
 	class ExpressionListener implements ItemListener {
