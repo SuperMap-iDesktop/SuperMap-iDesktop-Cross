@@ -368,9 +368,9 @@ public class ColorScheme implements ICloneable {
 	private String getFileName(int i, String fileName) {
 		String name = StringUtilties.isNullOrEmpty(fileName) ? "ColorScheme" : fileName;
 		if (i == 0) {
-			return fileName + ".SCS";
+			return fileName + ".scs";
 		}
-		return fileName + "(" + i + ").SCS";
+		return fileName + "(" + i + ").scs";
 	}
 
 	public void setColorSchemePath(String colorSchemePath) {
