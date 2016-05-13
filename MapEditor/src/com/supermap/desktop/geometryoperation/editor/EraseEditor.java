@@ -2,7 +2,9 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -11,6 +13,9 @@ import javax.swing.SwingUtilities;
 
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
@@ -48,6 +53,7 @@ public class EraseEditor extends AbstractEditor {
 
 	// 用于在 trackingLayer 中做结果展示的 id
 	private static final String TAG_ERASE = "Tag_EraseEditorResult";
+	private static final String TAG_SOURCE = "Tag_EraseEditorSource";
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
 	private IEditController eraseEditController = new EditControllerAdapter() {
@@ -155,15 +161,20 @@ public class EraseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getMapControl().getEditableLayers().length > 0
-				&& environment.getEditProperties().getSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
-						ICompoundFeature.class);
+		return environment.getMapControl().getEditableLayers().length > 0 && environment.getEditProperties().getSelectedGeometryCount() > 0 && ListUtilties
+				.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	@Override
 	public boolean check(EditEnvironment environment) {
 		return environment.getEditor() instanceof EraseEditor;
+	}
+
+	private GeoStyle getSourceStyle() {
+		GeoStyle style = new GeoStyle();
+		style.setLineWidth(0.6);
+		style.setLineColor(Color.RED);
+		return style;
 	}
 
 	private void geometrySelected(EditEnvironment environment, GeometrySelectedEvent e) {
@@ -179,6 +190,7 @@ public class EraseEditor extends AbstractEditor {
 
 		try {
 			Layer[] editableLayers = mapControl.getEditableLayers();
+			Layer selectLayer = null;
 
 			if (editableLayers != null && editableLayers.length > 0) {
 				for (int i = 0; i < editableLayers.length; i++) {
@@ -187,13 +199,23 @@ public class EraseEditor extends AbstractEditor {
 					if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 
 						// 单选模式，拿到一个就可以撤了
-						recordset = layer.getSelection().toRecordset();
+						selectLayer = layer;
 						break;
 					}
 				}
 			}
 
-			if (recordset != null) {
+			if (selectLayer != null) {
+				// 判断选中的对象是否是源擦除对象，如果是，则什么都不做
+				if (editModel.srcInfos.containsKey(selectLayer)) {
+					int selectedId = selectLayer.getSelection().get(0);
+
+					if (editModel.srcInfos.get(selectLayer).contains(selectedId)) {
+						return;
+					}
+				}
+
+				recordset = selectLayer.getSelection().toRecordset();
 				eraseResult = erase(mapControl.getEditHistory(), recordset, editModel);
 
 				if (eraseResult != null) {
@@ -243,6 +265,11 @@ public class EraseEditor extends AbstractEditor {
 				recordset.edit();
 				recordset.setGeometry(result);
 				recordset.update();
+			} else {
+				// 没有擦除结果，删除被擦除对象
+				editHistory.add(EditType.DELETE, recordset, true);
+				recordset.delete();
+				recordset.update();
 			}
 		} finally {
 			if (geometry != null) {
@@ -265,17 +292,26 @@ public class EraseEditor extends AbstractEditor {
 		Geometry eraseResult = null;
 
 		try {
-			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
-
-				// 没有擦除结果，删除被擦除对象
-				if (eraseResult == null) {
-					editHistory.add(EditType.DELETE, recordset, true);
-					recordset.delete();
-					recordset.update();
+			if (geometry instanceof IRegionFeature) {
+				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+				try {
+					eraseResult = Geometrist.erase(geoRegion, editModel.srRegion);
+				} finally {
+					if (geoRegion != null) {
+						geoRegion.dispose();
+					}
+				}
+			} else if (geometry instanceof ILineFeature) {
+				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
+				try {
+					eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
+				} finally {
+					if (geoLine != null) {
+						geoLine.dispose();
+					}
 				}
 			} else if (geometry instanceof DGeoCompound) {
-				eraseCompound((DGeoCompound) geometry, editModel);
+				eraseResult = eraseCompound((DGeoCompound) geometry, editModel);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
 			}
@@ -298,17 +334,26 @@ public class EraseEditor extends AbstractEditor {
 		Geometry eraseResult = null;
 
 		try {
-			if (geometry instanceof IRegionFeature || geometry instanceof ILineFeature) {
-				eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
-
-				// 没有擦除结果，删除被擦除对象
-				if (eraseResult == null) {
-					editHistory.add(EditType.DELETE, recordset, true);
-					recordset.delete();
-					recordset.update();
+			if (geometry instanceof IRegionFeature) {
+				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+				try {
+					eraseResult = Geometrist.clip(geoRegion, editModel.srRegion);
+				} finally {
+					if (geoRegion != null) {
+						geoRegion.dispose();
+					}
+				}
+			} else if (geometry instanceof ILineFeature) {
+				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
+				try {
+					eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
+				} finally {
+					if (geoLine != null) {
+						geoLine.dispose();
+					}
 				}
 			} else if (geometry instanceof DGeoCompound) {
-				eraseCompound((DGeoCompound) geometry, editModel);
+				eraseResult = eraseCompound((DGeoCompound) geometry, editModel);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_InvalidGeometryType"));
 			}
@@ -325,8 +370,6 @@ public class EraseEditor extends AbstractEditor {
 	 * @return
 	 */
 	private Geometry eraseCompound(DGeoCompound geoCompound, EraseEditModel editModel) {
-		Geometry eraseResult = null;
-
 		for (int i = geoCompound.getPartCount() - 1; i >= 0; i--) {
 			IGeometry part = DGeometryFactory.create(geoCompound.getPart(i));
 			Geometry partEraseResult = null; // 子对象擦除结果
@@ -349,7 +392,8 @@ public class EraseEditor extends AbstractEditor {
 				geoCompound.setPart(i, partEraseResult);
 			}
 		}
-		return eraseResult;
+
+		return geoCompound.getPartCount() == 0 ? null : geoCompound.getGeometry();
 	}
 
 	private void setIsEraseExternal(final boolean isEraseExternal, final EraseEditModel editModel) {
@@ -393,8 +437,18 @@ public class EraseEditor extends AbstractEditor {
 		List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
 
 		for (int i = 0; i < selectedLayers.size(); i++) {
+			Layer layer = selectedLayers.get(i);
+			ArrayList<Integer> selectedIds = new ArrayList<>();
+			for (int j = 0; j < layer.getSelection().getCount(); j++) {
+				selectedIds.add(layer.getSelection().get(j));
+			}
+			editModel.srcInfos.put(layer, selectedIds);
 			Geometry unionLayer = GeometryUtilties.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
 			editModel.srRegion = GeometryUtilties.union(editModel.srRegion, unionLayer, true);
+			editModel.srRegion.setStyle(getSourceStyle());
+
+			// 将结果对象添加到 TrackingLayer 做高亮显示
+			environment.getMapControl().getMap().getTrackingLayer().add(editModel.srRegion, TAG_SOURCE);
 		}
 	}
 
@@ -410,6 +464,7 @@ public class EraseEditor extends AbstractEditor {
 		editModel.clear();
 
 		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_ERASE);
+		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SOURCE);
 	}
 
 	private class EraseEditModel implements IEditModel {
@@ -424,6 +479,7 @@ public class EraseEditor extends AbstractEditor {
 		public MapControlTip tip = new MapControlTip();
 		public JLabel labelMsg = new JLabel(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));
 		public JLabel labelChangeMode = new JLabel();
+		public HashMap<Layer, ArrayList<Integer>> srcInfos = new HashMap<>(); // 用来记录擦除对象所在图层以及对应的 id 集合
 
 		public EraseEditModel() {
 			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
@@ -438,6 +494,9 @@ public class EraseEditor extends AbstractEditor {
 				this.srRegion.dispose();
 				this.srRegion = null;
 			}
+
+			this.srcInfos.clear();
+			this.pressedKey = 0;
 		}
 	}
 }
