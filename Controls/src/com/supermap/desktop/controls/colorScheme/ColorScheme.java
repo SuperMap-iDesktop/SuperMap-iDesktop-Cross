@@ -454,11 +454,11 @@ public class ColorScheme implements ICloneable {
 					keyColor.appendChild(hue);
 
 					Element saturation = document.createElement("Saturation");
-					saturation.appendChild(document.createTextNode(String.valueOf((int) colorHSV.getS())));
+					saturation.appendChild(document.createTextNode(String.valueOf((int) colorHSV.getS() * 100)));
 					keyColor.appendChild(saturation);
 
 					Element value = document.createElement("Value");
-					value.appendChild(document.createTextNode(String.valueOf(String.valueOf((int) colorHSV.getV()))));
+					value.appendChild(document.createTextNode(String.valueOf(String.valueOf((int) colorHSV.getV() * 100))));
 					keyColor.appendChild(value);
 
 				} else {
@@ -655,7 +655,7 @@ public class ColorScheme implements ICloneable {
 						float s = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.SATURATION));
 						float v = Float.parseFloat(getValueFromNode(childElement, ColorSchemeTags.VALUE));
 
-						ColorHSV colorHSV = new ColorHSV(h, s, v);
+						ColorHSV colorHSV = new ColorHSV(h, s * 0.01, v * 0.01);
 						colorList.add(colorHSV.ToColor());
 					}
 				}

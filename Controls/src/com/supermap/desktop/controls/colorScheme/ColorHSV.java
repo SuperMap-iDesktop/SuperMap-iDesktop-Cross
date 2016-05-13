@@ -24,7 +24,7 @@ public class ColorHSV {
 
 	}
 
-	public ColorHSV(float h, float s, float v) {
+	public ColorHSV(double h, double s, double v) {
 		this.h = h;
 		this.s = s;
 		this.v = v;
@@ -128,9 +128,9 @@ public class ColorHSV {
 			}
 
 			DecimalFormat df = new DecimalFormat("0.00");
-			color = new Color(Integer.valueOf(df.format(r * 255)),
-					Integer.valueOf(df.format(g * 255)),
-					Integer.valueOf(df.format(b * 255)));
+			color = new Color((int) ((double) Double.valueOf(df.format(r * 255))),
+					(int) ((double) Double.valueOf(df.format(g * 255))),
+					(int) ((double) Double.valueOf(df.format(b * 255))));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

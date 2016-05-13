@@ -159,7 +159,7 @@ public class ColorsUtilties {
 				}
 			}
 
-			colors.add(Color.getHSBColor((float) (hue * 0.01), (float) (saturation * 0.01), (float) (value * 0.01)));
+			colors.add(new ColorHSV(hue * 0.01, saturation * 0.01, value * 0.01).ToColor());
 		}
 
 		return colors;
