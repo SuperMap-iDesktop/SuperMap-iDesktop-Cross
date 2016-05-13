@@ -10,40 +10,18 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.MathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.*;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
+import javax.swing.event.*;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
+import java.awt.event.*;
+import java.beans.*;
+import java.text.*;
 
 public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private static final long serialVersionUID = 1L;
@@ -97,21 +75,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	private transient LocalDefualTableModel tableModel;
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeGridRangeContainer(DatasetGrid datasetGrid, ThemeGridRange themeGridRange) {
-		this.datasetGrid = datasetGrid;
-		this.themeGridRange = new ThemeGridRange(themeGridRange);
-		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeGridRangeContainer(Layer layer) {
+	public ThemeGridRangeContainer(Layer layer, boolean isNewTheme) {
 		this.themeRangeLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.datasetGrid = (DatasetGrid) layer.getDataset();
 		this.themeGridRange = new ThemeGridRange((ThemeGridRange) layer.getTheme());
 		this.layerName = this.themeRangeLayer.getName();

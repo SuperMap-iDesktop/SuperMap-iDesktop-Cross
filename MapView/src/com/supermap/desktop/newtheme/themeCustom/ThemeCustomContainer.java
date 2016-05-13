@@ -117,15 +117,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		}
 	};
 
-	public ThemeCustomContainer(DatasetVector datasetVector, ThemeCustom themeCustom, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeCustom = new ThemeCustom(themeCustom);
-		this.map = initCurrentTheme(datasetVector, layer);
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
 	public ThemeCustomContainer(Layer layer) {
 		this.themeCustomLayer = layer;
 		this.layerName = layer.getName();
@@ -135,19 +126,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	private Map initCurrentTheme(DatasetVector datasetVector2, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeCustomLayer = mapControl.getMap().getLayers().add(datasetVector, themeCustom, true);
-			// 复制关联表信息到新图层中
-			this.themeCustomLayer.setDisplayFilter(layer.getDisplayFilter());
-			this.layerName = this.themeCustomLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
-		}
-		return mapControl.getMap();
 	}
 
 	private void initComponents() {

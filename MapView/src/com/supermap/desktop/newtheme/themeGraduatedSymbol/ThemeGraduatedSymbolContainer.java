@@ -24,7 +24,6 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.*;
-import com.supermap.ui.MapControl;
 
 /**
  * 等级符号专题图
@@ -101,15 +100,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 			isResetLayerProperty = false;
 		}
 	};
-
-	public ThemeGraduatedSymbolContainer(DatasetVector datasetVector, ThemeGraduatedSymbol themeGraduatedSymbol, Layer themeGraduatedLayer) {
-		this.datasetVector = datasetVector;
-		this.themeGraduatedSymbol = new ThemeGraduatedSymbol(themeGraduatedSymbol);
-		this.map = initCurrentTheme(datasetVector, themeGraduatedLayer);
-		initComponents();
-		initResources();
-		registActionListener();
-	}
+	private KeyAdapter textFieldKeyListener;
 
 	public ThemeGraduatedSymbolContainer(Layer layer) {
 		this.themeGraduatedSymbolLayer = layer;
@@ -120,19 +111,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	private Map initCurrentTheme(DatasetVector datasetVector, Layer themeGraduatedLayer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeGraduatedSymbolLayer = mapControl.getMap().getLayers().add(datasetVector, themeGraduatedSymbol, true);
-			// 复制关联表信息到新图层中
-			this.themeGraduatedSymbolLayer.setDisplayFilter(themeGraduatedLayer.getDisplayFilter());
-			this.layerName = this.themeGraduatedSymbolLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
-		}
-		return mapControl.getMap();
 	}
 
 	private void initComponents() {
@@ -353,9 +331,27 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	@Override
 	public void registActionListener() {
+		this.textFieldKeyListener = new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				char keyChar = e.getKeyChar();
+				if (keyChar >= '0' && keyChar <= '9' || keyChar == '.' || keyChar == '-') {
+					return;
+				} else {
+					e.consume();
+				}
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					resetBaseValue();
+				}
+			}
+
+		};
+		unregistActionListener();
 		this.comboBoxExpression.addItemListener(this.expressionListener);
 		this.comboBoxGraduatedMode.addItemListener(this.graduatedModeListener);
 		this.textFieldBaseValue.addFocusListener(this.textFieldPropertyListener);
+		this.textFieldBaseValue.addKeyListener(this.textFieldKeyListener);
 		this.checkBoxShowZero.addItemListener(this.checkboxListener);
 		this.checkBoxShowNegativeStyle.addItemListener(this.checkboxListener);
 		this.checkBoxIsFlowEnabled.addItemListener(this.checkboxListener);
@@ -378,6 +374,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		this.comboBoxExpression.removeItemListener(this.expressionListener);
 		this.comboBoxGraduatedMode.removeItemListener(this.graduatedModeListener);
 		this.textFieldBaseValue.removeFocusListener(this.textFieldPropertyListener);
+		this.textFieldBaseValue.removeKeyListener(this.textFieldKeyListener);
 		this.checkBoxShowZero.removeItemListener(this.checkboxListener);
 		this.checkBoxShowNegativeStyle.removeItemListener(this.checkboxListener);
 		this.checkBoxIsFlowEnabled.removeItemListener(this.checkboxListener);
@@ -589,29 +586,26 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		public void focusLost(FocusEvent e) {
 			resetBaseValue();
 		}
+	}
 
-		private void resetBaseValue() {
-			String strBaseValue = textFieldBaseValue.getText();
-			if (!StringUtilties.isNullOrEmpty(strBaseValue) && StringUtilties.isNumber(strBaseValue)) {
-				double newBaseValue = Double.parseDouble(strBaseValue);
+	private void resetBaseValue() {
+		String strBaseValue = textFieldBaseValue.getText();
+		if (!StringUtilties.isNullOrEmpty(strBaseValue) && StringUtilties.isNumber(strBaseValue)) {
 
-				if (Double.compare(newBaseValue, 0.0) == 0) {
-					textFieldBaseValue.setForeground(Color.red);
-				} else {
-					textFieldBaseValue.setForeground(Color.black);
-				}
-				if (Double.compare(newBaseValue, 0.0) < 0) {
-					textFieldBaseValue.setText(String.valueOf(Math.abs(newBaseValue)));
-				}
-				themeGraduatedSymbol.setBaseValue(Math.abs(newBaseValue));
-				refreshAtOnce();
-				return;
-			}
-			if (!StringUtilties.isNullOrEmpty(strBaseValue) && !StringUtilties.isNumber(strBaseValue)) {
+			double newBaseValue = Double.parseDouble(strBaseValue);
+			if (Double.compare(newBaseValue, 0.0) == 0) {
 				textFieldBaseValue.setForeground(Color.red);
-				return;
+			} else {
+				textFieldBaseValue.setForeground(Color.black);
 			}
+			if (Double.compare(newBaseValue, 0.0) < 0) {
+				textFieldBaseValue.setText(String.valueOf(Math.abs(newBaseValue)));
+			}
+			themeGraduatedSymbol.setBaseValue(Math.abs(newBaseValue));
+			refreshAtOnce();
+			return;
 		}
+
 	}
 
 	class GraduatedModelListener implements ItemListener {
@@ -692,8 +686,13 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				// 修改表达式
 				if (itemHasChanged) {
 					// 如果sql表达式中修改了选项
-					expression = comboBoxExpression.getSelectedItem().toString();
 					DatasetVector dataset = datasetVector;
+					expression = comboBoxExpression.getSelectedItem().toString();
+					if (expression.contains(".") && expression.split("\\.").length > 2) {
+						themeGraduatedSymbol.setExpression(expression);
+						refreshAtOnce();
+						return;
+					}
 					if (expression.contains(".") && expression.split("\\.").length == 2) {
 						dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(expression.substring(0, expression.indexOf(".")));
 					}
@@ -708,6 +707,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 						UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
 						resetThemeItem();
 					}
+
 				}
 			}
 		}

@@ -4,6 +4,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import com.supermap.desktop.utilties.StringUtilties;
+
 public class LimitedDmt extends PlainDocument {
 
 	private int limit;
@@ -28,7 +30,10 @@ public class LimitedDmt extends PlainDocument {
 					upper[length++] = upper[i];
 				}
 			}
-			super.insertString(offset, new String(upper, 0, length), attr);
+			String insertStr = new String(upper, 0, length);
+			if (!StringUtilties.isNullOrEmptyString(insertStr) && StringUtilties.isNumeric(insertStr)) {
+				super.insertString(offset, new String(upper, 0, length), attr);
+			}
 		}
 		if ((getLength() + str.length()) <= limit && !isNumber) {
 			char[] upper = str.toCharArray();

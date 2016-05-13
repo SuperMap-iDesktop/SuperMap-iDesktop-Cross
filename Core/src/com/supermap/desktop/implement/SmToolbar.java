@@ -39,7 +39,36 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	private Dimension dimension = new Dimension(0, 0);
 	private int currentWidth = -1;
 	private MouseAdapter popupMouseListener;
-	private ActionListener buttonActionListener;
+	private ActionListener buttonActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (subPopupMenu != null) {
+				subPopupMenu.setVisible(false);
+			}
+			popupMenu.setVisible(false);
+		}
+	};
+	private JPopupMenu subPopupMenu;
+	private Rectangle subPopupMenuParentRectangle;
+	private PopupMenuListener subPopupMenuListener = new PopupMenuListener() {
+		@Override
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			if (subPopupMenu != null) {
+				subPopupMenu.setVisible(false);
+			}
+			subPopupMenu = (JPopupMenu) e.getSource();
+		}
+
+		@Override
+		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			subPopupMenu = null;
+		}
+
+		@Override
+		public void popupMenuCanceled(PopupMenuEvent e) {
+
+		}
+	};
 
 	public SmToolbar(XMLToolbar xmlToolbar) {
 		if (xmlToolbar != null) {
@@ -68,9 +97,16 @@ public class SmToolbar extends JToolBar implements IToolbar {
 //
 //				}
 			});
-			popupMenu = new JPopupMenu();
+			popupMenu = new JPopupMenu() {
+				@Override
+				public void menuSelectionChanged(boolean isIncluded) {
+					// hehe
+				}
+			};
 			popupMenu.setLayout(new GridBagLayout());
 			popupMenu.addPopupMenuListener(new PopupMenuListener() {
+
+
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 					checkButtonsState();
@@ -87,16 +123,18 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			});
 			popupMouseListener = new MouseAdapter() {
 				@Override
-				public void mouseExited(MouseEvent e) {
-					if (!popupMenu.getBounds().contains(e.getPoint())) {
-						popupMenu.setVisible(false);
+				public void mouseEntered(MouseEvent e) {
+					if (e.getSource() != null && e.getSource() != popupMenu && e.getSource() != subPopupMenu && ((JComponent) e.getSource()).getParent() != null
+							&& ((JComponent) e.getSource()).getParent() != subPopupMenu && !(((JComponent) e.getSource()).getParent() instanceof SmButtonDropdown) && subPopupMenu != null) {
+						subPopupMenu.setVisible(false);
 					}
 				}
-			};
-			buttonActionListener = new ActionListener() {
+
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					popupMenu.setVisible(false);
+				public void mouseExited(MouseEvent e) {
+					Point point = e.getPoint();
+					SwingUtilities.convertPointToScreen(point, e.getComponent());
+					checkPopupMenuVisible(point);
 				}
 			};
 			popupMenu.addMouseListener(popupMouseListener);
@@ -122,18 +160,36 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		return result;
 	}
 
+	/**
+	 * 判断是否需要影藏
+	 *
+	 * @param point 需要判成相对屏幕的点，需要转换为绝对坐标
+	 */
+	private void checkPopupMenuVisible(Point point) {
+		Point popupMenuLocationOnScreen = popupMenu.getLocationOnScreen();
+
+		boolean isNotInPopupMenu = point.getX() < popupMenuLocationOnScreen.getX() + 1 || point.getY() < popupMenuLocationOnScreen.getY() + 1
+				|| point.getX() > popupMenuLocationOnScreen.getX() + popupMenu.getWidth() - 1 || point.getY() > popupMenuLocationOnScreen.getY() + popupMenu.getHeight() - 1;
+
+		boolean isNotInSubPopupMenu = true;
+		if (subPopupMenu != null) {
+			Point locationOnScreen = subPopupMenu.getLocationOnScreen();
+			isNotInSubPopupMenu = point.getX() < locationOnScreen.getX() + 1 || point.getY() < locationOnScreen.getY() + 1
+					|| point.getX() > locationOnScreen.getX() + subPopupMenu.getWidth() - 1 || point.getY() > locationOnScreen.getY() + subPopupMenu.getHeight() - 1;
+		}
+		if (isNotInPopupMenu && isNotInSubPopupMenu) {
+			popupMenu.setVisible(false);
+		}
+	}
+
 	private void checkButtonsState() {
 		for (int i = 0; i < popupMenu.getComponentCount(); i++) {
 			popupMenu.getComponent(i).setEnabled(popupMenu.getComponent(i).isEnabled());
-//			if (popupMenu.getComponent(i) instanceof ToolBarMorePopupMenu) {
-//				popupMenu.getComponent(i).setEnabled(popupMenu.getComponent(i).isEnabled());
-//			} else {
-//				// TODO: 2016/5/10 JMenu
-//			}
 		}
 	}
 
 	private void reAddComponents() {
+		// 根据大小重新添加控件，放的下的就放，放不下就到小黑屋了待着
 		this.removeAll();
 		removePopupItem();
 		int widthCount = 0;
@@ -156,17 +212,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 				}
 			}
 		}
-	}
-
-	private void removePopupItem() {
-		for (int i = 0; i < popupMenu.getComponentCount(); i++) {
-			if (popupMenu.getComponent(i) instanceof AbstractButton) {
-				((AbstractButton) popupMenu.getComponent(i)).setContentAreaFilled(true);
-				((AbstractButton) popupMenu.getComponent(i)).removeActionListener(buttonActionListener);
-			}
-			popupMenu.getComponent(i).removeMouseListener(popupMouseListener);
-		}
-		popupMenu.removeAll();
 	}
 
 	/**
@@ -213,29 +258,58 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	private void addToPopUpMenu(Component item) {
 		if (item instanceof JSeparator) {
 			JSeparator separator = new Separator(new Dimension(30, 2));
-			popupMenu.add(separator, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setIpad(0, 2));
+			separator.addMouseListener(popupMouseListener);
+			popupMenu.add(separator, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setIpad(0, 2).setWeight(1, 1));
 		} else if (item instanceof SmCtrlActionButton) {
 			SmCtrlActionButton button = (SmCtrlActionButton) item;
 			button.setContentAreaFilled(false);
-//			button.setOpaque(false);
-//			button.setRolloverEnabled(true);
-			button.setFocusable(true);
-			button.setFocusPainted(true);
 			button.addMouseListener(popupMouseListener);
-
 			button.addActionListener(buttonActionListener);
-			popupMenu.add(button, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.CENTER));
+			popupMenu.add(button, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.WEST));
+		} else if (item instanceof SmButtonDropdown) {
+			((SmButtonDropdown) item).reLayout(true);
+			addAutoHidingListener(((SmButtonDropdown) item).getPopupMenu());
+			((SmButtonDropdown) item).getDisplayButton().addActionListener(buttonActionListener);
+			item.addMouseListener(popupMouseListener);
+			popupMenu.add(item, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.WEST));
 		}
 	}
 
+	private void removePopupItem() {
+		for (int i = 0; i < popupMenu.getComponentCount(); i++) {
+			if (popupMenu.getComponent(i) instanceof SmCtrlActionButton) {
+				((AbstractButton) popupMenu.getComponent(i)).setContentAreaFilled(true);
+				((AbstractButton) popupMenu.getComponent(i)).removeActionListener(buttonActionListener);
+			} else if (popupMenu.getComponent(i) instanceof SmButtonDropdown) {
+				((SmButtonDropdown) popupMenu.getComponent(i)).reLayout(false);
+				((SmButtonDropdown) popupMenu.getComponent(i)).getDisplayButton().removeActionListener(buttonActionListener);
+				removeSubPopupMenuListener(((SmButtonDropdown) popupMenu.getComponent(i)).getPopupMenu());
+			}
+			popupMenu.getComponent(i).removeMouseListener(popupMouseListener);
+		}
+		popupMenu.removeAll();
+	}
+
+	private void addAutoHidingListener(JPopupMenu popupMenu) {
+		for (int i = 0; i < popupMenu.getComponentCount(); i++) {
+			popupMenu.getComponent(i).addMouseListener(popupMouseListener);
+		}
+		popupMenu.addPopupMenuListener(subPopupMenuListener);
+		popupMenu.addMouseListener(popupMouseListener);
+	}
+
+	private void removeSubPopupMenuListener(JPopupMenu popupMenu) {
+		for (int i = 0; i < popupMenu.getComponentCount(); i++) {
+			if (popupMenu.getComponent(i) instanceof AbstractButton) {
+				((AbstractButton) popupMenu.getComponent(i)).addActionListener(buttonActionListener);
+			}
+			popupMenu.getComponent(i).removeMouseListener(popupMouseListener);
+		}
+		popupMenu.removePopupMenuListener(subPopupMenuListener);
+		popupMenu.removeMouseListener(popupMouseListener);
+	}
+
 	public List<IBaseItem> items() {
-//		ArrayList<IBaseItem> items = new ArrayList<IBaseItem>();
-//		for (int i = 0; i < super.getComponentCount(); i++) {
-//			if (super.getComponent(i) instanceof IBaseItem) {
-//				IBaseItem item = (IBaseItem) this.getComponent(i);
-//				items.add(item);
-//			}
-//		}
 		return items;
 	}
 
@@ -309,13 +383,11 @@ public class SmToolbar extends JToolBar implements IToolbar {
 
 	@Override
 	public boolean isChecked() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void setChecked(boolean checked) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -446,12 +518,20 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		return this.xmlToolbar;
 	}
 
-	class ToolBarMorePopupMenu extends JMenuItem implements IBaseItem {
+	class ToolBarMorePopupMenu extends JMenu implements IBaseItem {
 
 		private IBaseItem baseItem;
 
 		public ToolBarMorePopupMenu(IBaseItem baseItem) {
 			this.baseItem = baseItem;
+			this.setFocusPainted(false);
+			this.setFocusable(false);
+			this.setIcon(((SmButtonDropdown) baseItem).getDisplayButton().getIcon());
+		}
+
+		@Override
+		public void setPopupMenuVisible(boolean b) {
+			((SmButtonDropdown) baseItem).getPopupMenu().show(popupMenu, 33, 30);
 		}
 
 		@Override

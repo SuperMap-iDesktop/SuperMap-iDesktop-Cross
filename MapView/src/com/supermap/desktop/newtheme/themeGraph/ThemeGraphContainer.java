@@ -195,21 +195,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeGraphContainer(DatasetVector datasetVector, ThemeGraph themeGraph, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeGraph = new ThemeGraph(themeGraph);
-		this.map = initCurrentTheme(datasetVector, layer);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeGraphContainer(Layer layer) {
+	public ThemeGraphContainer(Layer layer, boolean isNewTheme) {
 		this.themeGraphLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.themeGraph = new ThemeGraph((ThemeGraph) layer.getTheme());
 		this.layerName = this.themeGraphLayer.getName();
@@ -217,17 +205,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	private Map initCurrentTheme(DatasetVector datasetVector, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeGraphLayer = mapControl.getMap().getLayers().add(datasetVector, themeGraph, true);
-			this.themeGraphLayer.setDisplayFilter(layer.getDisplayFilter());
-			this.layerName = this.themeGraphLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	private void initResources() {
@@ -667,13 +644,14 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		Point pointEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 3));
 		Point2D point2DStart = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointStart);
 		Point2D point2DEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointEnd);
-		Point pointMinEnd = new Point(0,(int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 18));
+		Point pointMinEnd = new Point(0, (int) (ThemeGuideFactory.getMapControl().getSize().getWidth() / 18));
 		Point2D point2DMinEnd = ThemeGuideFactory.getMapControl().getMap().pixelToMap(pointMinEnd);
-		//设置一个坐标轴风格，避免显示异常
+		// 设置一个坐标轴风格，避免显示异常
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
-		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
+		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2)
+				+ Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
 		this.themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
-		DecimalFormat decfmt = new DecimalFormat("#.######");   
+		DecimalFormat decfmt = new DecimalFormat("#.######");
 		this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 		this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
 		this.spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());

@@ -134,22 +134,9 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 	};
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeRangeContainer(DatasetVector datasetVector, ThemeRange themeRange, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeRange = new ThemeRange(themeRange);
-		this.map = initCurrentTheme(datasetVector, layer);
-		this.precision = themeRange.getPrecision();
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeRangeContainer(Layer layer) {
+	public ThemeRangeContainer(Layer layer, boolean isNewTheme) {
 		this.themeRangeLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.layerName = this.themeRangeLayer.getName();
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.themeRange = new ThemeRange((ThemeRange) layer.getTheme());
@@ -158,24 +145,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	/**
-	 * 初始化单值专题图
-	 *
-	 * @param dataset
-	 * @return
-	 */
-	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeRangeLayer = mapControl.getMap().getLayers().add(dataset, themeRange, true);
-			// 添加关联字段
-			this.themeRangeLayer.setDisplayFilter(layer.getDisplayFilter());
-			this.layerName = this.themeRangeLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	/**
@@ -452,10 +421,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (i == rangeCount - 1) {
 				this.tableRangeInfo.setValueAt("Max", i, TABLE_COLUMN_RANGEVALUE);
 			}
-			if (i != rangeCount - 1 && Double.compare(precision, 1)==0) {
-				this.tableRangeInfo.setValueAt((int)rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
+			if (i != rangeCount - 1 && Double.compare(precision, 1) == 0) {
+				this.tableRangeInfo.setValueAt((int) rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
 			}
-			if (i != rangeCount - 1 && Double.compare(precision, 1)!=0) {
+			if (i != rangeCount - 1 && Double.compare(precision, 1) != 0) {
 				this.tableRangeInfo.setValueAt(rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
 			}
 			String caption = rangeItem.getCaption();

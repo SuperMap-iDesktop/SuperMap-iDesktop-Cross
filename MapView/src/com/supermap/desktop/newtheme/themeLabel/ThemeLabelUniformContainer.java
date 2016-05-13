@@ -43,12 +43,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
-	public ThemeLabelUniformContainer(DatasetVector datasetVector, ThemeLabel themeLabel, Layer layer) {
-		this.themeLabel = new ThemeLabel(themeLabel);
-		this.map = initCurrentTheme(datasetVector, layer);
-		initComponents();
-	}
-
 	public ThemeLabelUniformContainer(Layer layer) {
 		this.themeLabelLayer = layer;
 		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
@@ -74,26 +68,6 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.add(this.tabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH)
 				.setWeight(1, 1));
-	}
-
-	/**
-	 * 初始化单值专题图
-	 *
-	 * @param dataset
-	 * @return
-	 */
-	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
-			// 复制关联表信息到新图层中
-			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
-
-			this.textStyle = themeLabel.getUniformStyle();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
-		}
-		return mapControl.getMap();
 	}
 
 	public boolean isRefreshAtOnece() {
