@@ -52,7 +52,7 @@ public class LineExtendEditor extends AbstractEditor {
 			}
 
 			LineExtendEditModel editModel = (LineExtendEditModel) environment.getEditModel();
-			MapControl mapControl = (MapControl) arg0.getSource();
+			MapControl mapControl = environment.getMapControl();
 
 			// 获取基线
 			if (editModel.baseLine == null) {
@@ -306,7 +306,7 @@ public class LineExtendEditor extends AbstractEditor {
 			}
 
 			for (int i = 0; i < nBaseLinePntCount - 1; i++) {
-				if (baseLinePoints.getItem(i) == baseLinePoints.getItem(i + 1)) // 自由曲线、B样条等，有很多的重复节点
+				if (baseLinePoints.getItem(i).equals(baseLinePoints.getItem(i + 1))) // 自由曲线、B样条等，有很多的重复节点
 					continue;
 				pntIntersection = Geometrist.intersectLine(baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), desLinePoints.getItem(nStartPntNumber),
 						desLinePoints.getItem(nEndPntNumber), true);
@@ -321,8 +321,10 @@ public class LineExtendEditor extends AbstractEditor {
 					}
 				}
 			}
-			if (pntIntersections.getCount() == 0) // 无交点，不理
-			{
+
+			// 无交点，不理
+			if (pntIntersections.getCount() == 0) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NoIntersection"));
 				desLine.dispose();
 				desLine = null;
 				return;
@@ -331,8 +333,9 @@ public class LineExtendEditor extends AbstractEditor {
 			// 找到最合适的交点,因为可能有多个交点，但只有离合法端点最近的一个才是所求的
 			double dDistance = 99999999999999999999.0;
 			int nKey = -1;
-			if (bExtendFirstPart) // 延伸第一段线段
-			{
+			if (bExtendFirstPart) {
+
+				// 延伸第一段线段
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
@@ -346,8 +349,9 @@ public class LineExtendEditor extends AbstractEditor {
 				if (nKey != -1) {
 					desLinePoints.setItem(nStartPntNumber, pntIntersections.getItem(nKey));
 				}
-			} else // 延伸最后一段线段
-			{
+			} else {
+
+				// 延伸最后一段线段
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
