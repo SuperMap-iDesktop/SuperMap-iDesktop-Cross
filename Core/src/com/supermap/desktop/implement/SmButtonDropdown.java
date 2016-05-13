@@ -7,6 +7,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLButtonDropdown;
 import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.CtrlActionUtilties;
 import com.supermap.desktop.utilties.JOptionPaneUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
@@ -16,12 +17,16 @@ import javax.swing.plaf.metal.MetalComboBoxIcon;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 
 public class SmButtonDropdown extends JComponent implements IBaseItem {
 
 	private static final long serialVersionUID = 1L;
+	private final MouseAdapter popupMenuMouseListener;
 	private transient IForm formClass = null;
 	private transient XMLCommand xmlCommand = null;
 
@@ -37,7 +42,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		this.setPreferredSize(new Dimension(52, 31));
 		this.setPreferredSize(new Dimension(52, 31));
 		this.setMaximumSize(new Dimension(52, 31));
-		String[] pathPrams = new String[] { PathUtilties.getRootPathName(), xmlCommand.getImageFile() };
+		String[] pathPrams = new String[]{PathUtilties.getRootPathName(), xmlCommand.getImageFile()};
 		String path = PathUtilties.combinePath(pathPrams, false);
 		File file = new File(path);
 		if (file.exists() && file.isFile()) {
@@ -50,6 +55,24 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		arrowButton = new ControlButton(this);
 		arrowButton.setIcon(new MetalComboBoxIcon());
 		arrowButton.setPreferredSize(new Dimension(20, 31));
+		popupMenuMouseListener = new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if (getParent() instanceof JPopupMenu) {
+					Point p = new Point(getWidth() - 2 + popupMenu.getWidth(), getY());
+					SwingUtilities.convertPointToScreen(p, getParent());
+
+					Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+					int x = getWidth() - 2;
+					if (p.getX() > screenSize.getWidth()) {
+						x = -popupMenu.getWidth() + 2;
+					}
+					popupMenu.show(getParent(), x, getY());
+				}
+			}
+		};
+		displayButton.addMouseListener(popupMenuMouseListener);
+		arrowButton.addMouseListener(popupMenuMouseListener);
 		Insets insets = arrowButton.getMargin();
 		arrowButton.setMargin(new Insets(insets.top, 1, insets.bottom, 1));
 
@@ -63,7 +86,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 			}
 
 		});
-		setupLayout();
+		reLayout(false);
 
 		this.formClass = formClass;
 		this.xmlCommand = xmlCommand;
@@ -96,9 +119,10 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		}
 	}
 
+
 	/**
 	 * 获取m_popupMenu
-	 * 
+	 *
 	 * @return
 	 */
 	protected SmPopupMenu getPopupMenu() {
@@ -107,7 +131,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 
 	/**
 	 * 获取m_arrow
-	 * 
+	 *
 	 * @return
 	 */
 	protected ControlButton getDisplayButton() {
@@ -116,37 +140,34 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 
 	/**
 	 * 获取m_arrow
-	 * 
+	 *
 	 * @return
 	 */
 	protected ControlButton getArrowButton() {
 		return this.arrowButton;
 	}
 
-	/** 按钮布局 */
-	protected void setupLayout() {
-		GridBagLayout gbl = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		setLayout(gbl);
 
-		c.weightx = 0;
-		c.weighty = 1;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.fill = GridBagConstraints.BOTH;
-		c.ipadx = 10;
-		gbl.setConstraints(displayButton, c);
-		add(displayButton);
-
-		c.weightx = 0;
-		c.gridx++;
-		c.ipadx = 2;
-		gbl.setConstraints(arrowButton, c);
-		add(arrowButton);
+	/**
+	 * 根据在的地方不同重新布局
+	 *
+	 * @param isPopupMenu 是否在弹出菜单中显示
+	 */
+	protected void reLayout(boolean isPopupMenu) {
+		int anchor = isPopupMenu ? GridBagConstraints.WEST : GridBagConstraints.CENTER;
+		int ipadx = isPopupMenu ? 0 : 10;
+		this.removeAll();
+		this.setLayout(new GridBagLayout());
+		this.add(displayButton, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(anchor).setWeight(1, 1).setIpad(ipadx, 0));
+		this.add(arrowButton, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 	}
+
 
 	private void showPopupMenu() {
 		try {
+			if (getParent() instanceof JPopupMenu) {
+				return;
+			}
 			int y = (int) displayButton.getLocation().getY() + displayButton.getHeight();
 			popupMenu.show(displayButton, 0, y);
 		} catch (Exception ex) {
@@ -231,4 +252,25 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 		this.xmlCommand.setCtrlAction(ctrlAction);
 	}
 
+	@Override
+	public synchronized void addMouseListener(MouseListener l) {
+		if (getDisplayButton() != null) {
+			getDisplayButton().addMouseListener(l);
+		}
+		if (getArrowButton() != null) {
+			getArrowButton().addMouseListener(l);
+		}
+		super.addMouseListener(l);
+	}
+
+	@Override
+	public synchronized void removeMouseListener(MouseListener l) {
+		if (getDisplayButton() != null) {
+			getDisplayButton().removeMouseListener(l);
+		}
+		if (getArrowButton() != null) {
+			getArrowButton().removeMouseListener(l);
+		}
+		super.removeMouseListener(l);
+	}
 }
