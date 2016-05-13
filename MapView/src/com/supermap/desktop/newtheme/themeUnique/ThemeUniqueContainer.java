@@ -130,21 +130,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 	};
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeUniqueContainer(DatasetVector datasetVector, ThemeUnique themeUnique, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeUnique = new ThemeUnique(themeUnique);
-		this.map = initCurrentTheme(datasetVector, layer);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeUniqueContainer(Layer layer) {
+	public ThemeUniqueContainer(Layer layer, boolean isNewTheme) {
 		this.themeUniqueLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.layerName = this.themeUniqueLayer.getName();
 		this.themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 		this.datasetVector = (DatasetVector) layer.getDataset();
@@ -152,24 +140,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	/**
-	 * 初始化单值专题图
-	 *
-	 * @param dataset
-	 * @return
-	 */
-	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeUniqueLayer = mapControl.getMap().getLayers().add(dataset, themeUnique, true);
-			// 复制关联表信息到新图层中
-			this.themeUniqueLayer.setDisplayFilter(layer.getDisplayFilter());
-			this.layerName = this.themeUniqueLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	/**

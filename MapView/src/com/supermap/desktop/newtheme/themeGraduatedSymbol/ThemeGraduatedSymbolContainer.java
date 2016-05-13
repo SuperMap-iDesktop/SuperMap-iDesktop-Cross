@@ -102,15 +102,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		}
 	};
 
-	public ThemeGraduatedSymbolContainer(DatasetVector datasetVector, ThemeGraduatedSymbol themeGraduatedSymbol, Layer themeGraduatedLayer) {
-		this.datasetVector = datasetVector;
-		this.themeGraduatedSymbol = new ThemeGraduatedSymbol(themeGraduatedSymbol);
-		this.map = initCurrentTheme(datasetVector, themeGraduatedLayer);
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
 	public ThemeGraduatedSymbolContainer(Layer layer) {
 		this.themeGraduatedSymbolLayer = layer;
 		this.layerName = layer.getName();
@@ -120,19 +111,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	private Map initCurrentTheme(DatasetVector datasetVector, Layer themeGraduatedLayer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeGraduatedSymbolLayer = mapControl.getMap().getLayers().add(datasetVector, themeGraduatedSymbol, true);
-			// 复制关联表信息到新图层中
-			this.themeGraduatedSymbolLayer.setDisplayFilter(themeGraduatedLayer.getDisplayFilter());
-			this.layerName = this.themeGraduatedSymbolLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
-		}
-		return mapControl.getMap();
 	}
 
 	private void initComponents() {
