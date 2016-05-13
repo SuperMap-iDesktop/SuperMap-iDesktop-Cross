@@ -200,18 +200,18 @@ public class LineExtendEditor extends AbstractEditor {
 				}
 			}
 
-			// 如果选中的基线和目标线是同一个对象就什么都不做
-			if (desLine != null && editModel.baseLayer == activeEditableLayer && desLine.getID() != editModel.baseLine.getID()) {
-				if (desLine.getPartCount() > 1) {
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
-
-					if (desLine != null) {
-						desLine.dispose();
-						desLine = null;
-					}
-				}
+			if (desLine == null) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 			} else {
-				if (desLine != null) {
+
+				// 如果选中的基线和目标线是同一个对象就什么都不做
+				if (editModel.baseLayer == activeEditableLayer && desLine.getID() == editModel.baseLine.getID()) {
+					Application.getActiveApplication().getOutput()
+							.output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ShouldNotBaseLine"));
+					desLine.dispose();
+					desLine = null;
+				} else if (desLine.getPartCount() > 1) {
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
 					desLine.dispose();
 					desLine = null;
 				}
@@ -231,10 +231,15 @@ public class LineExtendEditor extends AbstractEditor {
 	private void initialBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
 		getBaseLine(mapControl, editModel);
-		editModel.baseLine.setStyle(getBaseLineStyle());
-		mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
-		mapControl.getMap().refreshTrackingLayer();
-		editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
+
+		if (editModel.baseLine != null) {
+			editModel.baseLine.setStyle(getBaseLineStyle());
+			mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
+			mapControl.getMap().refreshTrackingLayer();
+			editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
+		} else {
+
+		}
 	}
 
 	// 采用的思路为：将目标线与基线的所有交点都插入到目标线中，构造一个新的线。
