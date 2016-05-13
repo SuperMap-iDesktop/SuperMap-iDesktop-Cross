@@ -61,7 +61,11 @@ public class LineExtendEditor extends AbstractEditor {
 				Layer activeEditableLayer = mapControl.getActiveEditableLayer();
 
 				if (activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
-					extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), getDesLine(activeEditableLayer, editModel), editModel);
+					GeoLine desLine = getDesLine(activeEditableLayer, editModel);
+
+					if (desLine != null) {
+						extend(mapControl, (DatasetVector) activeEditableLayer.getDataset(), desLine, editModel);
+					}
 				} else {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
 				}
