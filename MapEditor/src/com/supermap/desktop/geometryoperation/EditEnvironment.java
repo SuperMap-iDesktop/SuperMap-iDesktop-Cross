@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -48,6 +49,8 @@ import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.RedoneListener;
+import com.supermap.ui.UndoneListener;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
@@ -184,6 +187,20 @@ public class EditEnvironment {
 			EditEnvironment.this.mapOpened(arg0);
 		}
 	};
+	private RedoneListener redoneListener = new RedoneListener() {
+
+		@Override
+		public void redone(EventObject arg0) {
+			EditEnvironment.this.editController.redone(EditEnvironment.this, arg0);
+		}
+	};
+	private UndoneListener undoneListener = new UndoneListener() {
+
+		@Override
+		public void undone(EventObject arg0) {
+			EditEnvironment.this.editController.undone(EditEnvironment.this, arg0);
+		}
+	};
 
 	private EditEnvironment(IFormMap formMap) {
 		this.formMap = formMap;
@@ -193,6 +210,8 @@ public class EditEnvironment {
 			this.formMap.getMapControl().addKeyListener(this.keyListener);
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
 
+			this.formMap.getMapControl().addRedoneListener(this.redoneListener);
+			this.formMap.getMapControl().addUndoneListener(this.undoneListener);
 			// 选中对象状态改变
 			this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);
@@ -254,8 +273,11 @@ public class EditEnvironment {
 			this.isInitialAction = true;
 			this.editor.deactivate(this);
 
-			this.editor = editor;
-
+			if (this.editor != NullEditor.INSTANCE && this.editor == editor) {
+				this.editor = NullEditor.INSTANCE;
+			} else {
+				this.editor = editor;
+			}
 			this.editor.activate(this);
 		} finally {
 			this.isInitialAction = false;

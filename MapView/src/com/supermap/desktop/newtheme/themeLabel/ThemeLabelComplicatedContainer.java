@@ -10,8 +10,6 @@ import java.text.MessageFormat;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import sun.awt.image.OffScreenImage;
-
 import com.supermap.data.DatasetVector;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -71,16 +69,6 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private ActionListener buttonListener = new ButtonListener();
 	private PropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	private FocusListener separatorCountFocusListener;
-
-	public ThemeLabelComplicatedContainer(DatasetVector dataset, ThemeLabel themeLabel, Layer layer) {
-		this.datasetVector = dataset;
-		this.themeLabel = new ThemeLabel(themeLabel);
-		mixStyleClone(themeLabel);
-		this.map = initCurrentTheme(datasetVector, layer);
-		initComponents();
-		initResources();
-		registActionListener();
-	}
 
 	public ThemeLabelComplicatedContainer(Layer layer) {
 		this.themeLabelLayer = layer;
@@ -204,18 +192,6 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.labelDefualtStyle.setText(MapViewProperties.getString("String_DefaultTextStyle"));
 	}
 
-	private Map initCurrentTheme(DatasetVector datasetVector, Layer themeGraduatedLayer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeLabelLayer = mapControl.getMap().getLayers().add(datasetVector, themeLabel, true);
-			// 复制关联表信息到新图层中
-			this.themeLabelLayer.setDisplayFilter(themeGraduatedLayer.getDisplayFilter());
-			this.layerName = this.themeLabelLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-			mapControl.getMap().refresh();
-		}
-		return mapControl.getMap();
-	}
 
 	@Override
 	public Theme getCurrentTheme() {
@@ -602,6 +578,14 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformMixedStyle(this.mixedTextStyle);
 			this.map.refresh();
 		}
+	}
+
+	public ThemeLabelPropertyPanel getPanelProperty() {
+		return panelProperty;
+	}
+
+	public ThemeLabelAdvancePanel getPanelAdvance() {
+		return panelAdvance;
 	}
 
 }

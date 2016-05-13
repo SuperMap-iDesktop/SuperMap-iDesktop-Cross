@@ -81,15 +81,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		}
 	};
 
-	public ThemeDotDensityContainer(DatasetVector datasetVector, ThemeDotDensity themeDotDensity, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeDotDensity = new ThemeDotDensity(themeDotDensity);
-		this.map = initCurrentTheme(datasetVector, layer);
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
 	public ThemeDotDensityContainer(Layer layer) {
 		this.themeDotDensityLayer = layer;
 		this.layerName = layer.getName();
@@ -99,18 +90,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	private Map initCurrentTheme(DatasetVector datasetVector, Layer dotDensityLayer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeDotDensityLayer = mapControl.getMap().getLayers().add(datasetVector, themeDotDensity, true);
-			// 复制关联表信息到新图层中
-			this.themeDotDensityLayer.setDisplayFilter(dotDensityLayer.getDisplayFilter());
-			this.layerName = this.themeDotDensityLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	private void initComponents() {

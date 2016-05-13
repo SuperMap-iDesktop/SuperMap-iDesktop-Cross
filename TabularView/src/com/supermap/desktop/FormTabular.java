@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
-	//region 变量定义
+	// region 变量定义
 	/**
 	 *
 	 */
@@ -103,8 +103,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
-	};
-	;
+	};;
 	private JList rowHeader;
 	private MouseAdapter rowHeaderMouseMotionListener = new MouseAdapter() {
 
@@ -150,7 +149,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 	};
 
-	//endregion
+	// endregion
 
 	public FormTabular() {
 		this("");
@@ -177,7 +176,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
-
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 
@@ -461,7 +459,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		// 设置选中字体颜色不变
 		jTableTabular.setSelectionForeground(COLOR_WORD_SELECTED);
 
-
 		// 设置多选可用
 		jTableTabular.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -538,6 +535,18 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		Rectangle aRect = this.jTableTabular.getCellRect(goToRow, 0, true);
 		this.jTableTabular.scrollRectToVisible(aRect);
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+	}
+
+	@Override
+	public void addRow(int[] addRows) {
+		this.jTableTabular.clearSelection();
+		for (int i = 0; i < addRows.length; i++) {
+			this.jTableTabular.addRowSelectionInterval(addRows[i], addRows[i]);
+			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
+			Rectangle aRect = this.jTableTabular.getCellRect(addRows[i], 0, true);
+			this.jTableTabular.scrollRectToVisible(aRect);
+		}
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
@@ -675,6 +684,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 
 	}
+	@Override
+	public JTable getjTableTabular() {
+		return jTableTabular;
+	}
+
 
 	class TableDefaultCellEditor extends DefaultCellEditor {
 

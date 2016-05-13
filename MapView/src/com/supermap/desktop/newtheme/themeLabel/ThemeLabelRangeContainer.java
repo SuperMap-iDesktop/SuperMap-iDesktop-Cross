@@ -19,14 +19,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.MathUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeType;
-import com.supermap.ui.MapControl;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -36,12 +29,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -124,21 +112,9 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		}
 	};
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeLabelRangeContainer(DatasetVector datasetVector, ThemeLabel themeLabel, Layer layer) {
-		this.datasetVector = datasetVector;
-		this.themeLabel = new ThemeLabel(themeLabel);
-		this.map = initCurrentTheme(datasetVector, layer);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeLabelRangeContainer(Layer layer) {
+	public ThemeLabelRangeContainer(Layer layer, boolean isNewTheme) {
 		this.themeLabelLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.layerName = this.themeLabelLayer.getName();
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
@@ -146,24 +122,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	/**
-	 * 初始化分段专题图
-	 *
-	 * @param dataset
-	 * @return
-	 */
-	private Map initCurrentTheme(DatasetVector dataset, Layer layer) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeLabelLayer = mapControl.getMap().getLayers().add(dataset, themeLabel, true);
-			this.themeLabelLayer.setDisplayFilter(layer.getDisplayFilter());
-			// 复制关联表信息到新图层中
-			this.layerName = this.themeLabelLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	/**

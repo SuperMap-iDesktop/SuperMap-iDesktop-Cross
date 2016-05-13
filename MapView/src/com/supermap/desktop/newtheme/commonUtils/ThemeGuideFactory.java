@@ -8,6 +8,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
+import com.supermap.data.Size2D;
 import com.supermap.data.StatisticMode;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
@@ -22,32 +23,12 @@ import com.supermap.desktop.newtheme.themeGraduatedSymbol.ThemeGraduatedSymbolCo
 import com.supermap.desktop.newtheme.themeGraph.ThemeGraphContainer;
 import com.supermap.desktop.newtheme.themeGridRange.ThemeGridRangeContainer;
 import com.supermap.desktop.newtheme.themeGridUnique.ThemeGridUniqueContainer;
-import com.supermap.desktop.newtheme.themeLabel.ThemeLabelComplicatedContainer;
-import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
-import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
+import com.supermap.desktop.newtheme.themeLabel.*;
 import com.supermap.desktop.newtheme.themeRange.ThemeRangeContainer;
 import com.supermap.desktop.newtheme.themeUnique.ThemeUniqueContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.mapping.GraduatedMode;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
-import com.supermap.mapping.MixedTextStyle;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.ThemeCustom;
-import com.supermap.mapping.ThemeDotDensity;
-import com.supermap.mapping.ThemeGraduatedSymbol;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGraphType;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeType;
-import com.supermap.mapping.ThemeUnique;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -117,7 +98,6 @@ public class ThemeGuideFactory {
 				public void mapClosed(MapClosedEvent arg0) {
 					if (null != arg0.getMap()) {
 						container.setLayerPropertyChanged(false);
-						themeTypeContainer.clear();
 						// 移除事件
 						HashMap<String, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
 						Iterator<?> iterator = themeContainers.entrySet().iterator();
@@ -125,6 +105,7 @@ public class ThemeGuideFactory {
 							java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
 							((ThemeChangePanel) entry.getValue()).unregistActionListener();
 						}
+						themeTypeContainer.clear();
 					}
 				}
 			});
@@ -231,6 +212,29 @@ public class ThemeGuideFactory {
 	}
 
 	/**
+	 * 初始化专题图
+	 * 
+	 * @param dataset
+	 *            目标数据集
+	 * @param layer
+	 *            源图层
+	 * @return 专题图图层
+	 */
+	private static Layer initCurrentTheme(Dataset dataset, Layer layer, Theme theme) {
+		Layer result = null;
+		if (null != getMapControl()) {
+			result = getMapControl().getMap().getLayers().add(dataset, theme, true);
+			if (null != layer) {
+				// 复制关联表信息到新图层中
+				result.setDisplayFilter(layer.getDisplayFilter());
+			}
+			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
+			getMapControl().getMap().refresh();
+		}
+		return result;
+	}
+
+	/**
 	 * 新建单值专题图
 	 */
 	public static boolean buildUniqueTheme(Layer layer) {
@@ -250,7 +254,8 @@ public class ThemeGuideFactory {
 					textStyle.setLineColor(Color.GRAY);
 				}
 				success = true;
-				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer((DatasetVector) getDataset(), themeUnique, layer);
+
+				ThemeUniqueContainer themeUniqueContainer = new ThemeUniqueContainer(initCurrentTheme((DatasetVector) getDataset(), layer, themeUnique), true);
 				themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getName() + "@" + THEMETYPE_UNIQUE, themeUniqueContainer);
 				addPanelToThemeMainContainer(themeUniqueContainer, null);
 				getDockbarThemeContainer().setVisible(true);
@@ -279,7 +284,7 @@ public class ThemeGuideFactory {
 					GeoStyle textStyle = themeRange.getItem(i).getStyle();
 					textStyle.setLineColor(Color.GRAY);
 				}
-				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer((DatasetVector) getDataset(), themeRange, layer);
+				ThemeRangeContainer themeRangeContainer = new ThemeRangeContainer(initCurrentTheme((DatasetVector) getDataset(), layer, themeRange), true);
 				themeTypeContainer.put(themeRangeContainer.getThemeRangeLayer().getName() + "@" + THEMETYPE_RANGE, themeRangeContainer);
 				addPanelToThemeMainContainer(themeRangeContainer, null);
 				getDockbarThemeContainer().setVisible(true);
@@ -301,7 +306,8 @@ public class ThemeGuideFactory {
 			ThemeLabel themeLabel = new ThemeLabel();
 			themeLabel.setLabelExpression(expression);
 			themeLabel.setMaxLabelLength(8);
-			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer((DatasetVector) getDataset(), themeLabel, layer);
+			ThemeLabelUniformContainer themeLabelUniformContainer = new ThemeLabelUniformContainer(initCurrentTheme((DatasetVector) getDataset(), layer,
+					themeLabel));
 			themeTypeContainer.put(themeLabelUniformContainer.getThemeLabelLayer().getName() + "@" + THEMETYPE_LABEL_UNIFORM, themeLabelUniformContainer);
 			addPanelToThemeMainContainer(themeLabelUniformContainer, null);
 			getDockbarThemeContainer().setVisible(true);
@@ -321,7 +327,8 @@ public class ThemeGuideFactory {
 				themeLabel.setMaxLabelLength(8);
 				themeLabel.setNumericPrecision(1);
 				themeLabel.setLabelExpression(expression);
-				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer((DatasetVector) getDataset(), themeLabel, layer);
+				ThemeLabelRangeContainer themeLabelRangeContainer = new ThemeLabelRangeContainer(initCurrentTheme((DatasetVector) getDataset(), layer,
+						themeLabel), true);
 				themeTypeContainer.put(themeLabelRangeContainer.getThemeLabelLayer().getName() + "@" + THEMETYPE_LABEL_RANGE, themeLabelRangeContainer);
 				addPanelToThemeMainContainer(themeLabelRangeContainer, null);
 				getDockbarThemeContainer().setVisible(true);
@@ -362,7 +369,8 @@ public class ThemeGuideFactory {
 			textStyle.setSplitIndexes(splitIndexes);
 			themeLabel.setUniformMixedStyle(textStyle);
 			themeLabel.setLabelExpression(expression);
-			ThemeLabelComplicatedContainer themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer((DatasetVector) getDataset(), themeLabel, layer);
+			ThemeLabelComplicatedContainer themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer(initCurrentTheme((DatasetVector) getDataset(),
+					layer, themeLabel));
 			themeTypeContainer.put(themeLabelComplicatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_LABEL_COMPLICATED,
 					themeLabelComplicatedContainer);
 			addPanelToThemeMainContainer(themeLabelComplicatedContainer, null);
@@ -387,7 +395,8 @@ public class ThemeGuideFactory {
 				}
 				if (null != themeUnique) {
 					success = true;
-					ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer((DatasetGrid) getDataset(), themeUnique);
+					ThemeGridUniqueContainer themeUniqueContainer = new ThemeGridUniqueContainer(
+							initCurrentTheme((DatasetGrid) getDataset(), null, themeUnique), true);
 					themeTypeContainer.put(themeUniqueContainer.getThemeUniqueLayer().getName() + "@" + THEMETYPE_GRID_UNIQUE, themeUniqueContainer);
 					addPanelToThemeMainContainer(themeUniqueContainer, null);
 					getDockbarThemeContainer().setVisible(true);
@@ -415,11 +424,11 @@ public class ThemeGuideFactory {
 		if (null != getDataset()) {
 			DatasetGrid datasetGrid = (DatasetGrid) getDataset();
 			try {
-				ThemeGridRange themeUnique = ThemeGridRange.makeDefault(datasetGrid, RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENORANGEVIOLET);
+				ThemeGridRange themeRange = ThemeGridRange.makeDefault(datasetGrid, RangeMode.EQUALINTERVAL, 5, ColorGradientType.GREENORANGEVIOLET);
 
-				if (null != themeUnique) {
+				if (null != themeRange) {
 					success = true;
-					ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer((DatasetGrid) getDataset(), themeUnique);
+					ThemeGridRangeContainer themeGridRangeContainer = new ThemeGridRangeContainer(initCurrentTheme(getDataset(), null, themeRange), true);
 					themeTypeContainer.put(themeGridRangeContainer.getThemeRangeLayer().getName() + "@" + THEMETYPE_GRID_RANGE, themeGridRangeContainer);
 					addPanelToThemeMainContainer(themeGridRangeContainer, null);
 					getDockbarThemeContainer().setVisible(true);
@@ -471,7 +480,7 @@ public class ThemeGuideFactory {
 			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
 			themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
-			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(datasetVector, themeGraph, layer);
+			ThemeGraphContainer themeGraphContainer = new ThemeGraphContainer(initCurrentTheme(datasetVector, layer, themeGraph), true);
 			themeTypeContainer.put(themeGraphContainer.getThemeGraphLayer().getName() + "@" + THEMETYPE_GRAPH, themeGraphContainer);
 			addPanelToThemeMainContainer(themeGraphContainer, null);
 			getDockbarThemeContainer().setVisible(true);
@@ -494,7 +503,7 @@ public class ThemeGuideFactory {
 			if (null != themeGraduated) {
 				successed = true;
 				themeGraduated.setExpression(expression);
-				ThemeGraduatedSymbolContainer themeGraduatedContainer = new ThemeGraduatedSymbolContainer((DatasetVector) getDataset(), themeGraduated, layer);
+				ThemeGraduatedSymbolContainer themeGraduatedContainer = new ThemeGraduatedSymbolContainer(initCurrentTheme(getDataset(), layer, themeGraduated));
 				themeTypeContainer.put(themeGraduatedContainer.getCurrentLayer().getName() + "@" + THEMETYPE_GRADUATEDSYMBOL, themeGraduatedContainer);
 				addPanelToThemeMainContainer(themeGraduatedContainer, null);
 				getDockbarThemeContainer().setVisible(true);
@@ -517,9 +526,13 @@ public class ThemeGuideFactory {
 			String expression = "SmID";
 			expression = hasJoinItems(layer, expression);
 			themeDotDensity.setDotExpression(expression);
+			GeoStyle geoStyle = new GeoStyle();
+			geoStyle.setMarkerSize(new Size2D(2, 2));
+			geoStyle.setLineColor(Color.PINK);
+			themeDotDensity.setStyle(geoStyle);
 			double maxValue = getMaxValue((DatasetVector) getDataset(), "SmID");
 			themeDotDensity.setValue(maxValue / 1000);
-			ThemeDotDensityContainer themeDotDensityContainer = new ThemeDotDensityContainer((DatasetVector) getDataset(), themeDotDensity, layer);
+			ThemeDotDensityContainer themeDotDensityContainer = new ThemeDotDensityContainer(initCurrentTheme(getDataset(), layer, themeDotDensity));
 			themeTypeContainer.put(themeDotDensityContainer.getCurrentLayer().getName() + "@" + THEMETYPE_DOTDENSITY, themeDotDensityContainer);
 			addPanelToThemeMainContainer(themeDotDensityContainer, null);
 			getDockbarThemeContainer().setVisible(true);
@@ -538,7 +551,7 @@ public class ThemeGuideFactory {
 		if (null != getDataset()) {
 			ThemeCustom themeCustom = new ThemeCustom();
 			successed = true;
-			ThemeCustomContainer themeCustomContainer = new ThemeCustomContainer((DatasetVector) getDataset(), themeCustom, layer);
+			ThemeCustomContainer themeCustomContainer = new ThemeCustomContainer(initCurrentTheme(getDataset(), layer, themeCustom));
 			themeTypeContainer.put(themeCustomContainer.getCurrentLayer().getName() + "@" + THEMETYPE_CUSTOM, themeCustomContainer);
 			addPanelToThemeMainContainer(themeCustomContainer, null);
 			getDockbarThemeContainer().setVisible(true);
@@ -595,13 +608,13 @@ public class ThemeGuideFactory {
 			ThemeChangePanel themeContainer = null;
 			if (THEMETYPE_UNIQUE.equals(themeType)) {
 				// 单值专题图
-				themeContainer = new ThemeUniqueContainer(layer);
+				themeContainer = new ThemeUniqueContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
 			if (THEMETYPE_RANGE.equals(themeType)) {
 				// 分段专题图
-				themeContainer = new ThemeRangeContainer(layer);
+				themeContainer = new ThemeRangeContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
@@ -613,7 +626,7 @@ public class ThemeGuideFactory {
 			}
 			if (THEMETYPE_LABEL_RANGE.equals(themeType)) {
 				// 分段风格标签专题图
-				themeContainer = new ThemeLabelRangeContainer(layer);
+				themeContainer = new ThemeLabelRangeContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
@@ -625,19 +638,19 @@ public class ThemeGuideFactory {
 			}
 			if (THEMETYPE_GRID_UNIQUE.equals(themeType)) {
 				// 栅格单值专题图
-				themeContainer = new ThemeGridUniqueContainer(layer);
+				themeContainer = new ThemeGridUniqueContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
 			if (THEMETYPE_GRID_RANGE.equals(themeType)) {
 				// 栅格分段专题图
-				themeContainer = new ThemeGridRangeContainer(layer);
+				themeContainer = new ThemeGridRangeContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}
 			if (THEMETYPE_GRAPH.equals(themeType)) {
 				// 统计专题图
-				themeContainer = new ThemeGraphContainer(layer);
+				themeContainer = new ThemeGraphContainer(layer, false);
 				initThemePanel(layer, themeType, themeContainer);
 				return;
 			}

@@ -11,19 +11,9 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.themeUnique.AddItemPanel;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeType;
-import com.supermap.ui.MapControl;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.*;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -33,16 +23,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -92,21 +73,9 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public ThemeGridUniqueContainer(DatasetGrid datasetGrid, ThemeGridUnique themeUnique) {
-		this.datasetGrid = datasetGrid;
-		this.themeUnique = new ThemeGridUnique(themeUnique);
-		this.map = initCurrentTheme(datasetGrid);
-		this.isNewTheme = true;
-		initComponents();
-		initResources();
-		registActionListener();
-	}
-
-	public ThemeGridUniqueContainer(Layer layer) {
+	public ThemeGridUniqueContainer(Layer layer,boolean isNewTheme) {
 		this.themeUniqueLayer = layer;
+		this.isNewTheme = isNewTheme;
 		this.layerName = this.themeUniqueLayer.getName();
 		this.themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
 		this.datasetGrid = (DatasetGrid) layer.getDataset();
@@ -114,22 +83,6 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
-	}
-
-	/**
-	 * 初始化单值专题图
-	 *
-	 * @param dataset
-	 * @return
-	 */
-	private Map initCurrentTheme(DatasetGrid datasetGrid) {
-		MapControl mapControl = ThemeGuideFactory.getMapControl();
-		if (null != mapControl) {
-			this.themeUniqueLayer = mapControl.getMap().getLayers().add(datasetGrid, themeUnique, true);
-			this.layerName = this.themeUniqueLayer.getName();
-			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
-		}
-		return mapControl.getMap();
 	}
 
 	/**

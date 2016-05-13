@@ -1,15 +1,6 @@
 package com.supermap.desktop.Action;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.Datasource;
-import com.supermap.data.GeoText;
-import com.supermap.data.PixelFormat;
-import com.supermap.data.Point2D;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.TextPart;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -20,11 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
-import com.supermap.mapping.TrackingLayer;
+import com.supermap.mapping.*;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -37,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
 	private transient MapControl mapControl;
@@ -48,7 +36,6 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		formMap.showPopupMenu();
 		mapControl.remove(transparentBackground);
 		TransparentBackground.queryGridMap.remove(mapControl);
-		removeListner();
 	}
 
 	private KeyAdapter keyAdapter = new KeyAdapter() {
@@ -56,6 +43,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				hideTransparentBackground();
+				mapControl.getMap().getTrackingLayer().clear();
 			}
 		}
 	};
@@ -93,14 +81,12 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	}
 
 	protected void getQueryInfo(MouseEvent e) {
-		Point2D point2D = mapControl.getMap().pixelToMap(e.getPoint());
-		TextPart textPart = new TextPart();
-		textPart.setAnchorPoint(point2D);
-		textPart.setText(".");
-		GeoText geoText = new GeoText(textPart);
-		TextStyle textStyle = new TextStyle();
-		textStyle.setForeColor(Color.RED);
-		geoText.setTextStyle(textStyle);
+
+		GeoPoint geoPoint = new GeoPoint(mapControl.getMap().pixelToMap(e.getPoint()));
+		GeoStyle geoStyle = new GeoStyle();
+		geoStyle.setLineColor(Color.RED);
+		geoStyle.setMarkerSize(new Size2D(5, 5));
+		geoPoint.setStyle(geoStyle);
 
 		Point2D point2DNumber = mapControl.getMap().pixelToMap(e.getPoint());
 		TextPart textPartNumber = new TextPart();
@@ -111,7 +97,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		geoTextNumber.setTextStyle(textStyleNumber);
 
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		trackingLayer.add(geoText, "point");
+		trackingLayer.add(geoPoint, "point");
 		Application
 				.getActiveApplication()
 				.getOutput()
