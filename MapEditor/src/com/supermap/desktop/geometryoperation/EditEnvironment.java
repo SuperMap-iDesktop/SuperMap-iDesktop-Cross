@@ -273,8 +273,11 @@ public class EditEnvironment {
 			this.isInitialAction = true;
 			this.editor.deactivate(this);
 
-			this.editor = editor;
-
+			if (this.editor != NullEditor.INSTANCE && this.editor == editor) {
+				this.editor = NullEditor.INSTANCE;
+			} else {
+				this.editor = editor;
+			}
 			this.editor.activate(this);
 		} finally {
 			this.isInitialAction = false;
