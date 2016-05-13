@@ -284,7 +284,9 @@ public class EraseEditor extends AbstractEditor {
 				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
 				try {
 					eraseResult = Geometrist.erase(geoRegion, editModel.srRegion);
-					eraseResult.setStyle(geometry.getGeometry().getStyle());
+					if (eraseResult != null) {
+						eraseResult.setStyle(geometry.getGeometry().getStyle());
+					}
 				} finally {
 					if (geoRegion != null) {
 						geoRegion.dispose();
@@ -294,7 +296,9 @@ public class EraseEditor extends AbstractEditor {
 				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
 				try {
 					eraseResult = Geometrist.erase(geometry.getGeometry(), editModel.srRegion);
-					eraseResult.setStyle(geometry.getGeometry().getStyle());
+					if (eraseResult != null) {
+						eraseResult.setStyle(geometry.getGeometry().getStyle());
+					}
 				} finally {
 					if (geoLine != null) {
 						geoLine.dispose();
@@ -337,7 +341,9 @@ public class EraseEditor extends AbstractEditor {
 				GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
 				try {
 					eraseResult = Geometrist.clip(geoRegion, editModel.srRegion);
-					eraseResult.setStyle(geometry.getGeometry().getStyle());
+					if (eraseResult != null) {
+						eraseResult.setStyle(geometry.getGeometry().getStyle());
+					}
 				} finally {
 					if (geoRegion != null) {
 						geoRegion.dispose();
@@ -347,7 +353,9 @@ public class EraseEditor extends AbstractEditor {
 				GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
 				try {
 					eraseResult = Geometrist.clip(geometry.getGeometry(), editModel.srRegion);
-					eraseResult.setStyle(geometry.getGeometry().getStyle());
+					if (eraseResult != null) {
+						eraseResult.setStyle(geometry.getGeometry().getStyle());
+					}
 				} finally {
 					if (geoLine != null) {
 						geoLine.dispose();
