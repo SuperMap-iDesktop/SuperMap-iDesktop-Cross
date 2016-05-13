@@ -22,7 +22,6 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	private JTable tabularTable;
 	private Map map;
 	private Layer layer;
-	private SplitWindow splitWindow;
 
 	public CtrlActionGeometryPropertyBindWindow(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -41,9 +40,9 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				if (null != activeDataset) {
 					tabular = TabularUtilties.openDatasetVectorFormTabular(activeDataset);
 				}
-				if (null == splitWindow) {
-					splitWindow = tabWindow.split(tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1), Direction.RIGHT, 0.5f);
-				}
+
+				tabWindow.split(tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1), Direction.RIGHT, 0.5f);
+
 				layer = map.getLayers().get(0);
 				map.addDrawingListener(new MapDrawingListener() {
 
