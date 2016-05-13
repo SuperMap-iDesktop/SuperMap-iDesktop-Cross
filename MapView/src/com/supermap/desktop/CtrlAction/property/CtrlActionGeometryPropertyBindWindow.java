@@ -12,7 +12,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.*;

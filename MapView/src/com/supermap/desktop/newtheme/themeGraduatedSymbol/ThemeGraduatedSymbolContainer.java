@@ -332,15 +332,19 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	@Override
 	public void registActionListener() {
 		this.textFieldKeyListener = new KeyAdapter() {
-
 			@Override
-			public void keyReleased(KeyEvent e) {
-				char keyChar = e.getKeyChar();
-				if (keyChar >= '0' && keyChar <= '9' || keyChar == '.' || keyChar == '-') {
+			public void keyTyped(KeyEvent e) {
+				int keyChar = e.getKeyChar();
+				if (keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9 || keyChar == '.' || keyChar == '-') {
 					return;
 				} else {
 					e.consume();
 				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
 				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
 					resetBaseValue();
 				}

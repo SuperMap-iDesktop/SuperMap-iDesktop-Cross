@@ -5,6 +5,7 @@ import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
@@ -566,8 +567,19 @@ public class ThemeGuideFactory {
 	 * @return
 	 */
 	public static double getMaxValue(DatasetVector datasetVector, String expression) {
-		Recordset recordset = datasetVector.getRecordset(false, CursorType.STATIC);
-		double maxValue = recordset.statistic(expression, StatisticMode.MAX);
+		double maxValue = 0;
+		int fieldCount = datasetVector.getFieldCount();
+		com.supermap.data.FieldInfo tempField = null;
+		for (int i = 0; i < fieldCount; i++) {
+			if (expression.equals(datasetVector.getFieldInfos().get(i).getName())) {
+				tempField = datasetVector.getFieldInfos().get(i);
+				break;
+			}
+		}
+		if (null != tempField && !tempField.getType().equals(FieldType.INT64)) {
+			Recordset recordset = datasetVector.getRecordset(false, CursorType.STATIC);
+			maxValue = recordset.statistic(expression, StatisticMode.MAX);
+		}
 		return maxValue;
 	}
 
