@@ -58,6 +58,9 @@ public class ColorScheme implements ICloneable {
 
 	private String colorSchemePath;
 
+	private static final char[] unLegitFileNameChars = new char[]{
+			'<', '>', '!', ':', '\\', '/', '*', '?', '|'
+	};
 
 	/**
 	 * 构造函数
@@ -366,11 +369,20 @@ public class ColorScheme implements ICloneable {
 	}
 
 	private String getFileName(int i, String fileName) {
-		String name = StringUtilties.isNullOrEmpty(fileName) ? "ColorScheme" : fileName;
+		String name = StringUtilties.isNullOrEmpty(fileName) || !isLegitName(fileName) ? "ColorScheme" : fileName;
 		if (i == 0) {
 			return name + ".scs";
 		}
 		return name + "(" + i + ").scs";
+	}
+
+	private boolean isLegitName(String fileName) {
+		for (char unLegitFileNameChar : unLegitFileNameChars) {
+			if (fileName.contains(String.valueOf(unLegitFileNameChar))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void setColorSchemePath(String colorSchemePath) {
