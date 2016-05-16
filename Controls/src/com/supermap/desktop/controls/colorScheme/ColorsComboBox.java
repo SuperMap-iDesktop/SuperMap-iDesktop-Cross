@@ -12,6 +12,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 /**
  * 颜色下拉选择器
@@ -24,12 +25,15 @@ public class ColorsComboBox extends JComboBox {
 		@Override
 		public void colorSchemeManagerChanged(ColorSchemeManagerChangedEvent colorSchemeManagerChangedEvent) {
 			int selectedIndex = getSelectedIndex();
+			int itemCount = getItemCount();
 			Colors selectedItem = ((Colors) getSelectedItem());
 			initComboBox();
 			if (selectedItem != null) {
-				if (selectedItem == customColors) {
+				if (itemCount - 1 == selectedIndex) {
 					setSelectedIndex(getItemCount() - 2);
 				} else {
+					ItemListener[] itemListeners = ColorsComboBox.this.getItemListeners();
+					removeItemListeners(itemListeners);
 					for (int i = 0; i < getItemCount(); i++) {
 						if (ColorsUtilties.isEqualsColors((Colors) getItemAt(i), selectedItem)) {
 							setSelectedIndex(i);
@@ -39,6 +43,7 @@ public class ColorsComboBox extends JComboBox {
 					if (selectedIndex < getItemCount() - 1) {
 						setSelectedIndex(selectedIndex);
 					}
+					addItemListeners(itemListeners);
 				}
 			}
 		}
@@ -107,6 +112,8 @@ public class ColorsComboBox extends JComboBox {
 	private void initComboBox() {
 		try {
 			this.removeAllItems();
+			ItemListener[] itemListeners = this.getItemListeners();
+			removeItemListeners(itemListeners);
 			this.removeActionListener(customColorsListener);
 			ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 			java.util.List<ColorScheme> colorSchemeList = colorSchemeManager.getColorSchemeList();
@@ -119,8 +126,21 @@ public class ColorsComboBox extends JComboBox {
 			customColors = Colors.makeGradient(32, ColorGradientType.RAINBOW, false);
 			this.addItem(customColors);
 			this.addActionListener(customColorsListener);
+			addItemListeners(itemListeners);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	private void addItemListeners(ItemListener[] itemListeners) {
+		for (ItemListener itemListener : itemListeners) {
+			this.addItemListener(itemListener);
+		}
+	}
+
+	private void removeItemListeners(ItemListener[] itemListeners) {
+		for (ItemListener itemListener : itemListeners) {
+			this.removeItemListener(itemListener);
 		}
 	}
 
