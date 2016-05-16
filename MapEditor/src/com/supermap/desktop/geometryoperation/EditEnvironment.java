@@ -260,6 +260,10 @@ public class EditEnvironment {
 		return this.formMap.getMapControl().getActiveEditableLayer();
 	}
 
+	public Layer[] getEditableLayers() {
+		return this.formMap.getMapControl().getEditableLayers();
+	}
+
 	public EditProperties getEditProperties() {
 		return this.properties;
 	}
