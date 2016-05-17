@@ -22,6 +22,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -32,7 +33,12 @@ import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
-public class JointLineEditor extends AbstractEditor {
+/**
+ * 首尾连接线
+ * @author highsad
+ *
+ */
+public class JointLineDirectionEditor extends AbstractEditor {
 
 	private int OperationType = 1; // 1. 临近点相连。 2. 首尾相连。
 
@@ -290,5 +296,13 @@ public class JointLineEditor extends AbstractEditor {
 				}
 			}
 		}
+	}
+
+	private class JointLineModel implements IEditModel {
+
+		public static final int KEEP_DERECTION = 1;
+		public static final int JOINT_NEAR = 2;
+
+		public int operationType = JOINT_NEAR;
 	}
 }

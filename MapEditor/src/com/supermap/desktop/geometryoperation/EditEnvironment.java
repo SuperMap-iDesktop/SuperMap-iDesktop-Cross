@@ -220,6 +220,10 @@ public class EditEnvironment {
 			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
 			this.formMap.getMapControl().getMap().addMapClosedListener(this.mapClosedListener);
 			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
+
+			// 工具条上的下拉按钮在点开的时候才会构造，在那之前对地图的操作都没有记录，因此在这里初始化一下。
+			geometryStatusChange();
+			layersStatusChange();
 		}
 	}
 
