@@ -850,7 +850,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			menuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: 2016/5/16  弹菜单啦！！
+					// TODO: 2016/5/16
+					new JDialogUserDefinePrjProjection().showDialog();
 				}
 			});
 			tablePopupmenu.add(menuItem);
