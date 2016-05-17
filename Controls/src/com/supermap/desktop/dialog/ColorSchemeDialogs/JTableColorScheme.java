@@ -22,6 +22,8 @@ public class JTableColorScheme extends SortTable {
 
 	public JTableColorScheme() {
 		this.colorSchemeTableModel = new ColorSchemeTableModel();
+		// 输入时直接开始编辑
+		this.setSurrendersFocusOnKeystroke(true);
 		this.setModel(colorSchemeTableModel);
 		this.setRowHeight(23);
 		int indexWidth = FontUtilties.getStringWidth(ControlsProperties.getString("String_identifier"), tableHeader.getFont()) + 30;
@@ -45,6 +47,17 @@ public class JTableColorScheme extends SortTable {
 		columnColors.setMinWidth(preferredWidth);
 		columnColors.setPreferredWidth(preferredWidth);
 
+		DefaultCellEditor objectCellEditor = new DefaultCellEditor(new JTextField()) {
+			@Override
+			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+				Component tableCellEditorComponent = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+				if (tableCellEditorComponent instanceof JTextField) {
+					((JTextField) tableCellEditorComponent).selectAll();
+				}
+				return tableCellEditorComponent;
+			}
+		};
+		this.setDefaultEditor(Object.class, objectCellEditor);
 	}
 
 	public ColorScheme getColorScheme(int row) {

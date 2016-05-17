@@ -151,7 +151,7 @@ public class ColorSchemeManager {
 					if (colorScheme.fromXML(childNodes.item(i))) {
 						schemeList.add(colorScheme);
 					}
-					colorScheme.setColorSchemePath(baseDirectory + colorScheme.getName() + ".SCS");
+					colorScheme.setColorSchemePath(baseDirectory + colorScheme.getName() + ".scs");
 				}
 			}
 		}
