@@ -3,13 +3,18 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
-import com.supermap.desktop.geometryoperation.editor.JointLineEditor;
+import com.supermap.desktop.geometryoperation.editor.JointLineDirectionEditor;
 
-public class CtrlActionJointLine extends CtrlActionEditorBase {
+/**
+ * 首尾连接线
+ * @author highsad
+ *
+ */
+public class CtrlActionJointLineDirection extends CtrlActionEditorBase {
 
-	private JointLineEditor editor = new JointLineEditor();
+	private JointLineDirectionEditor editor = new JointLineDirectionEditor();
 
-	public CtrlActionJointLine(IBaseItem caller, IForm formClass) {
+	public CtrlActionJointLineDirection(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 		// TODO Auto-generated constructor stub
 	}

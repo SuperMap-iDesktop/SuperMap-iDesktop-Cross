@@ -22,6 +22,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
@@ -30,6 +31,8 @@ public class ExplodeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
+		CursorUtilties.setWaitCursor(environment.getMapControl());
+
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
 
@@ -96,6 +99,8 @@ public class ExplodeEditor extends AbstractEditor {
 			environment.getMap().refresh();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
