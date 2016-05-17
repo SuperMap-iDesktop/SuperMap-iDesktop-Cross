@@ -8,7 +8,6 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
@@ -36,14 +35,14 @@ public class UnionEditor extends AbstractEditor {
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
 					.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor();
+				CursorUtilties.setWaitCursor(environment.getMapControl());
 				union(environment, form.getEditLayer(), form.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 

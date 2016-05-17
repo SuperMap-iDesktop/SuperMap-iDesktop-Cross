@@ -26,11 +26,12 @@ public class DecomposeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		CursorUtilties.setWaitCursor();
+		CursorUtilties.setWaitCursor(environment.getMapControl());
+
 		try {
 			decompose(environment);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 

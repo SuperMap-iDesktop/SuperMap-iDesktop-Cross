@@ -326,7 +326,7 @@ public class JDialogColorScheme extends SmDialog {
 		this.buttonAdd.setToolTipText(ControlsProperties.getString("String_AddColorScheme"));
 		this.buttonEdit.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/edit.png")));
 		this.buttonEdit.setToolTipText(ControlsProperties.getString("String_EditColorScheme"));
-		this.buttonRevert.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/undo.png")));
+		this.buttonRevert.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/controlsresources/ToolBar/ColorScheme/basic.png")));
 		this.buttonRevert.setToolTipText(ControlsProperties.getString("String_DefaultColorSchemes"));
 		this.buttonDel.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_Delete.png")));
 		this.buttonDel.setToolTipText(ControlsProperties.getString("String_RemoveColorScheme"));

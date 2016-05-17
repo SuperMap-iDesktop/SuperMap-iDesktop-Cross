@@ -116,8 +116,17 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		}
 	};
 	private transient MouseAdapter mouseAdapter = new MouseAdapter() {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if ((e.getSource() == tablePrjCoordSys.getParent() || e.getSource() == tablePrjCoordSys) && e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+				tableMouseRightClicked(e);
+			}
+		}
+
 		@Override
 		public void mouseClicked(MouseEvent e) {
+
 			if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2) {
 				return;
 			}
@@ -129,6 +138,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			}
 		}
 	};
+
 	private transient ActionListener actionListener = new ActionListener() {
 
 		@Override
@@ -142,6 +152,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			}
 		}
 	};
+
 	private transient DocumentListener documentListener = new DocumentListener() {
 
 		@Override
@@ -156,10 +167,10 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 		@Override
 		public void changedUpdate(DocumentEvent e) {
-			// TODO Auto-generated method stub
-
+			textFieldSearchAction();
 		}
 	};
+	private JPopupMenu tablePopupmenu;
 
 	/**
 	 * Create the dialog.
@@ -190,6 +201,33 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	private void tableMouseRightClicked(MouseEvent e) {
+		if (tablePrjCoordSys.getRowCount() <= 0) {
+			return;
+		}
+		int i = tablePrjCoordSys.rowAtPoint(e.getPoint());
+		int[] selectedRows = tablePrjCoordSys.getSelectedRows();
+
+		if (i != -1) {
+			// 判断是否已有选中行
+			boolean isExist = false;
+			for (int selectedRow : selectedRows) {
+				if (selectedRow == i) {
+					isExist = true;
+				}
+			}
+			if (!isExist) {
+				tablePrjCoordSys.setRowSelectionInterval(i, i);
+			}
+		} else {
+			tablePrjCoordSys.setRowSelectionInterval(tablePrjCoordSys.getRowCount() - 1, tablePrjCoordSys.getRowCount() - 1);
+		}
+
+		// 弹菜单
+		getTablePopupmenu().show(tablePrjCoordSys, e.getX(), e.getY());
+		prjModel.getRowData(tablePrjCoordSys.getSelectedRow());
 	}
 
 	// 获取选定的投影
@@ -272,6 +310,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		this.tablePrjCoordSys.getSelectionModel().addListSelectionListener(listSelectionListener);
 		this.treePrjCoordSys.addMouseListener(this.mouseAdapter);
 		this.tablePrjCoordSys.addMouseListener(this.mouseAdapter);
+		this.tablePrjCoordSys.getParent().addMouseListener(this.mouseAdapter);
 		this.buttonApply.addActionListener(this.actionListener);
 		this.buttonClose.addActionListener(this.actionListener);
 		this.textFieldSearch.addActionListener(this.actionListener);
@@ -283,6 +322,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		this.tablePrjCoordSys.getSelectionModel().removeListSelectionListener(listSelectionListener);
 		this.treePrjCoordSys.removeMouseListener(this.mouseAdapter);
 		this.tablePrjCoordSys.removeMouseListener(this.mouseAdapter);
+		this.tablePrjCoordSys.getParent().removeMouseListener(this.mouseAdapter);
 		this.buttonApply.removeActionListener(this.actionListener);
 		this.buttonClose.removeActionListener(this.actionListener);
 		this.textFieldSearch.removeActionListener(this.actionListener);
@@ -689,7 +729,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
 	}
@@ -801,6 +841,26 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				searchModel.add(allLeafDefines[i]);
 			}
 		}
+	}
+
+	public JPopupMenu getTablePopupmenu() {
+		if (tablePopupmenu == null) {
+			tablePopupmenu = new JPopupMenu();
+			JMenuItem menuItem = new JMenuItem(ControlsProperties.getString("String_Button_NewCoordSys"));
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO: 2016/5/16
+					new JDialogUserDefinePrjProjection().showDialog();
+				}
+			});
+			tablePopupmenu.add(menuItem);
+		}
+		return tablePopupmenu;
+	}
+
+	public void setTablePopupmenu(JPopupMenu tablePopupmenu) {
+		this.tablePopupmenu = tablePopupmenu;
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,31 +7,19 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
-import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoLine3D;
-import com.supermap.data.GeoLineM;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoRegion3D;
-import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
-import com.supermap.desktop.mapeditor.PluginEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Selection;
 
 //@formatter:off
 /**
@@ -50,23 +37,22 @@ public class CombinationEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
-			EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) {
 				datasetType = environment.getEditProperties().getSelectedDatasetTypes().get(0);
 			}
 
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
-					MapEditorProperties.getString("String_GeometryOperation_Combination"), geometryEdit.getMap(), datasetType);
+					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor();
+				CursorUtilties.setWaitCursor(environment.getMapControl());
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 

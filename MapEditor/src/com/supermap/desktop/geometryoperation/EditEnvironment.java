@@ -2,7 +2,6 @@ package com.supermap.desktop.geometryoperation;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -220,6 +219,10 @@ public class EditEnvironment {
 			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
 			this.formMap.getMapControl().getMap().addMapClosedListener(this.mapClosedListener);
 			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
+
+			// 工具条上的下拉按钮在点开的时候才会构造，在那之前对地图的操作都没有记录，因此在这里初始化一下。
+			geometryStatusChange();
+			layersStatusChange();
 		}
 	}
 
@@ -258,6 +261,10 @@ public class EditEnvironment {
 
 	public Layer getActiveEditableLayer() {
 		return this.formMap.getMapControl().getActiveEditableLayer();
+	}
+
+	public Layer[] getEditableLayers() {
+		return this.formMap.getMapControl().getEditableLayers();
 	}
 
 	public EditProperties getEditProperties() {
