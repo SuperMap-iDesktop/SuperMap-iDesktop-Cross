@@ -640,7 +640,23 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		}
 
 		private void resetGraduatedMode() {
-			resetThemeInfo(false);
+			int selectDefualt = comboBoxGraduatedMode.getSelectedIndex();
+			switch (selectDefualt) {
+			case 0:
+				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.CONSTANT);
+				refreshAtOnce();
+				break;
+			case 1:
+				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.LOGARITHM);
+				refreshAtOnce();
+				break;
+			case 2:
+				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.SQUAREROOT);
+				refreshAtOnce();
+				break;
+			default:
+				break;
+			}
 		}
 
 	}
@@ -685,6 +701,20 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	private void resetThemeInfo(boolean resetExpression) {
 		DatasetVector dataset = datasetVector;
+		int selectDefualt = comboBoxGraduatedMode.getSelectedIndex();
+		switch (selectDefualt) {
+		case 0:
+			graduatedMode = GraduatedMode.CONSTANT;
+			break;
+		case 1:
+			graduatedMode = GraduatedMode.LOGARITHM;
+			break;
+		case 2:
+			graduatedMode = GraduatedMode.SQUAREROOT;
+			break;
+		default:
+			break;
+		}
 		expression = comboBoxExpression.getSelectedItem().toString();
 		if (expression.contains(".") && expression.split("\\.").length > 2) {
 			themeGraduatedSymbol.setExpression(expression);
