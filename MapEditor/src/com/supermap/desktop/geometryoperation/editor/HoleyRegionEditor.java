@@ -30,12 +30,16 @@ public class HoleyRegionEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Combination"),
-				environment.getMap(), DatasetType.REGION);
-		if (formCombination.showDialog() == DialogResult.OK) {
-			CursorUtilties.setWaitCursor();
-			holeyRegion(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-			TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+		try {
+			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
+					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), DatasetType.REGION);
+			if (formCombination.showDialog() == DialogResult.OK) {
+				CursorUtilties.setWaitCursor(environment.getMapControl());
+				holeyRegion(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
+				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+			}
+		} finally {
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
