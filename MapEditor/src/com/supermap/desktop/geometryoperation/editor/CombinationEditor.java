@@ -50,14 +50,13 @@ public class CombinationEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
-			EditEnvironment geometryEdit = PluginEnvironment.getGeometryEditManager().instance();
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedDatasetTypes().size() == 1) {
 				datasetType = environment.getEditProperties().getSelectedDatasetTypes().get(0);
 			}
 
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
-					MapEditorProperties.getString("String_GeometryOperation_Combination"), geometryEdit.getMap(), datasetType);
+					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
 				CursorUtilties.setWaitCursor();
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
