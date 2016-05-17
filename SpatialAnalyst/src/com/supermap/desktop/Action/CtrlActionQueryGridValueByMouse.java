@@ -33,6 +33,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
+		removeListner();
 		formMap.showPopupMenu();
 		mapControl.remove(transparentBackground);
 		TransparentBackground.queryGridMap.remove(mapControl);
@@ -44,6 +45,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				hideTransparentBackground();
 				mapControl.getMap().getTrackingLayer().clear();
+				mapControl.getMap().refresh();
 			}
 		}
 	};

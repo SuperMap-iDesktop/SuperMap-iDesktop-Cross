@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-import org.apache.http.entity.FileEntity;
-
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -28,7 +26,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.*;
-import com.supermap.ui.MapControl;
 
 /**
  * 自定义专题图
@@ -172,7 +169,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxFillGradientOffsetRatioX = new JComboBox<String>();
 		this.labelFillGradientOffsetRatioY = new JLabel();
 		this.comboBoxFillGradientOffsetRatioY = new JComboBox<String>();
-		if (ThemeUtil.isRegion(datasetVector)) {
+		if (datasetVector.getType().equals(DatasetType.REGION)) {
 			setPanelFillState(true);
 		}else {
 			setPanelFillState(false);
@@ -291,7 +288,8 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		initComboBoxLineSymbol();
 		initComboBoxLineColor();
 		initComboBoxLineWidth();
-		if (ThemeUtil.isRegion(datasetVector) || ThemeUtil.isLine(datasetVector)) {
+		if (datasetVector.getType().equals(DatasetType.REGION) || datasetVector.getType().equals(DatasetType.LINE)
+				|| datasetVector.getType().equals(DatasetType.LINEM) || datasetVector.getType().equals(DatasetType.NETWORK)) {
 			setPanelLineState(true);
 		} else {
 			setPanelLineState(false);
@@ -351,7 +349,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		initComboBoxMarkerColor();
 		initComboBoxMarkerSize();
 		initComboBoxMarkerAngle();
-		if (ThemeUtil.isPoint(datasetVector)) {
+		if (datasetVector.getType().equals(DatasetType.POINT)) {
 			setPanelMarkerState(true);
 		} else {
 			setPanelMarkerState(false);
@@ -458,6 +456,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxLineColor.addItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineWidth.addItemListener(this.panelLineComboBoxListener);
 		this.comboBoxMarkerSymbol.addItemListener(this.panelMarkerComboBoxListener);
+		this.comboBoxMarkerColor.addItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxMarkerSize.addItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxMarkerAngle.addItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxFillSymbol.getComponent(0).addMouseListener(this.mouseAdapter);
@@ -472,6 +471,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxLineColor.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxLineWidth.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSymbol.getComponent(0).addMouseListener(this.mouseAdapter);
+		this.comboBoxMarkerColor.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSize.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerAngle.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
@@ -491,6 +491,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxLineColor.removeItemListener(this.panelLineComboBoxListener);
 		this.comboBoxLineWidth.removeItemListener(this.panelLineComboBoxListener);
 		this.comboBoxMarkerSymbol.removeItemListener(this.panelMarkerComboBoxListener);
+		this.comboBoxMarkerColor.removeItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxMarkerSize.removeItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxMarkerAngle.removeItemListener(this.panelMarkerComboBoxListener);
 		this.comboBoxFillSymbol.getComponent(0).removeMouseListener(this.mouseAdapter);
@@ -505,6 +506,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxLineColor.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxLineWidth.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSymbol.getComponent(0).removeMouseListener(this.mouseAdapter);
+		this.comboBoxMarkerColor.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSize.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerAngle.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
@@ -769,6 +771,10 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				break;
 			case MARKERSIZE:
 				themeCustom.setMarkerSizeExpression(expression);// 修改符号大小表达式
+				refreshAtOnce();
+				break;
+			case MARKERCOLOR:
+				themeCustom.setLineColorExpression(expression);// 修改符号颜色表达式
 				refreshAtOnce();
 				break;
 			case MARKERANGLE:
