@@ -10,6 +10,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -59,7 +61,7 @@ public class ThemeMainContainer extends JPanel {
 	private JButton buttonApply = new SmButton();
 	private ThemeChangePanel panel;
 
-	private Map map;
+	// private Map map;
 
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private LocalTreeMouseListener localMouseListener = new LocalTreeMouseListener();
@@ -116,7 +118,7 @@ public class ThemeMainContainer extends JPanel {
 	/**
 	 * 注册事件
 	 */
-	private void registActionListener() {
+	public void registActionListener() {
 		this.layerRemoveListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -153,6 +155,16 @@ public class ThemeMainContainer extends JPanel {
 					if (null != tempLayer && !tempLayer.isDisposed()) {
 						updateProperty(tempLayer);
 					}
+				}
+				if (null == e.getNewActiveForm()) {
+					// 关闭地图移除事件
+					HashMap<Layer, ThemeChangePanel> themeContainers = ThemeGuideFactory.themeTypeContainer;
+					Iterator<?> iterator = themeContainers.entrySet().iterator();
+					while (iterator.hasNext()) {
+						java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
+						((ThemeChangePanel) entry.getValue()).unregistActionListener();
+					}
+					ThemeGuideFactory.themeTypeContainer.clear();
 				}
 			}
 		};
@@ -205,7 +217,7 @@ public class ThemeMainContainer extends JPanel {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				panel.unregistActionListener();
-				ThemeGuideFactory.themeTypeContainer.remove(ThemeGuideFactory.getThemeTypeString(oldLayer));
+				ThemeGuideFactory.themeTypeContainer.remove(oldLayer);
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
@@ -318,10 +330,6 @@ public class ThemeMainContainer extends JPanel {
 		this.panelThemeInfo = panelThemeInfo;
 	}
 
-	public Map getMap() {
-		return map;
-	}
-
 	public boolean isLayerPropertyChanged() {
 		return layerPropertyChanged;
 	}
@@ -344,6 +352,14 @@ public class ThemeMainContainer extends JPanel {
 
 	public void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
+	}
+	
+	public JTextField getTextFieldThemeLayer() {
+		return textFieldThemeLayer;
+	}
+
+	public void setTextFieldThemeLayer(JTextField textFieldThemeLayer) {
+		this.textFieldThemeLayer = textFieldThemeLayer;
 	}
 
 	class LocalTreeMouseListener extends MouseAdapter {

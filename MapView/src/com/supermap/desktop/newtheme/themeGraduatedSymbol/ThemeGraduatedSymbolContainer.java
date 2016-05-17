@@ -608,6 +608,8 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 			themeGraduatedSymbol.setBaseValue(Math.abs(newBaseValue));
 			refreshAtOnce();
 			return;
+		} else {
+			textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
 		}
 
 	}
@@ -638,22 +640,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		}
 
 		private void resetGraduatedMode() {
-			String tempExpression = comboBoxExpression.getSelectedItem().toString();
-			DatasetVector dataset = datasetVector;
-			if (tempExpression.contains(".") && tempExpression.split("\\.").length == 2) {
-				dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(tempExpression.substring(0, tempExpression.indexOf(".")));
-			}
-			ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(dataset, tempExpression, graduatedMode);
-			if (null != tempTheme) {
-				copyThemeInfo(tempTheme, themeGraduatedSymbol);
-				themeGraduatedSymbol.fromXML(tempTheme.toXML());
-				textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
-				refreshAtOnce();
-				tempTheme.dispose();
-			} else {
-				UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-				resetThemeItem();
-			}
+			resetThemeInfo(false);
 		}
 
 	}
@@ -689,31 +676,41 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				boolean itemHasChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray, expression, true);
 				// 修改表达式
 				if (itemHasChanged) {
-					// 如果sql表达式中修改了选项
-					DatasetVector dataset = datasetVector;
-					expression = comboBoxExpression.getSelectedItem().toString();
-					if (expression.contains(".") && expression.split("\\.").length > 2) {
-						themeGraduatedSymbol.setExpression(expression);
-						refreshAtOnce();
-						return;
-					}
-					if (expression.contains(".") && expression.split("\\.").length == 2) {
-						dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(expression.substring(0, expression.indexOf(".")));
-					}
-					ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(dataset, expression, graduatedMode);
-					if (null != tempTheme) {
-						copyThemeInfo(tempTheme, themeGraduatedSymbol);
-						themeGraduatedSymbol.fromXML(tempTheme.toXML());
-						textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
-						refreshAtOnce();
-						tempTheme.dispose();
-					} else {
-						UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
-						resetThemeItem();
-					}
-
+					resetThemeInfo(true);
 				}
 			}
+		}
+
+	}
+
+	private void resetThemeInfo(boolean resetExpression) {
+		DatasetVector dataset = datasetVector;
+		expression = comboBoxExpression.getSelectedItem().toString();
+		if (expression.contains(".") && expression.split("\\.").length > 2) {
+			themeGraduatedSymbol.setExpression(expression);
+			refreshAtOnce();
+			return;
+		}
+		if (expression.contains(".") && expression.split("\\.").length == 2) {
+			dataset = (DatasetVector) datasetVector.getDatasource().getDatasets().get(expression.substring(0, expression.indexOf(".")));
+		}
+		ThemeGraduatedSymbol tempTheme = ThemeGraduatedSymbol.makeDefault(dataset, expression, graduatedMode);
+		if (null != tempTheme) {
+			copyThemeInfo(tempTheme, themeGraduatedSymbol);
+			themeGraduatedSymbol.fromXML(tempTheme.toXML());
+			textFieldBaseValue.setText(String.valueOf(themeGraduatedSymbol.getBaseValue()));
+			refreshAtOnce();
+			tempTheme.dispose();
+		}
+		if (null == tempTheme && !comboBoxArray.contains(expression)) {
+			UICommonToolkit.showMessageDialog(MapViewProperties.getString("String_Theme_UpdataFailed"));
+			if (resetExpression) {
+				resetThemeItem();
+			}
+		}
+		if (null == tempTheme && comboBoxArray.contains(expression) && resetExpression) {
+			themeGraduatedSymbol.setExpression(expression);
+			refreshAtOnce();
 		}
 
 	}

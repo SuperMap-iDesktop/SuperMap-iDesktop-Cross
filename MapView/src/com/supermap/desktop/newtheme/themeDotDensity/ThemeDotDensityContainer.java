@@ -57,7 +57,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArray;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private DecimalFormat format = new DecimalFormat("#.####");
-	private DecimalFormat formatZero = new DecimalFormat("#");
 
 	private ItemListener expressionListener = new ExpressionListener();
 	private ActionListener buttonActionListener = new ButtonActionListener();
@@ -142,20 +141,16 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.textFieldValue.setText(String.valueOf(format.format(themeDotDensity.getValue())));
 		String expression = themeDotDensity.getDotExpression();
 		setThemeDotDensityInfo(expression);
-		int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(maxValue / themeDotDensity.getValue()));
-		this.spinnerDotDensityValue.setValue(splinnerValue);
+		if (Double.compare(themeDotDensity.getValue(), 0.0) != 0) {
+			int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(maxValue / themeDotDensity.getValue()));
+			this.spinnerDotDensityValue.setValue(splinnerValue);
+		}
 	}
 
 	private void setThemeDotDensityInfo(String expression) {
 		String tempExpression = expression;
 		DatasetVector dataset = this.datasetVector;
-		String datasetName = this.datasetVector.getName();
-		if (expression.contains(".")) {
-			tempExpression = expression.substring(expression.indexOf(".") + 1, expression.length());
-			datasetName = expression.substring(0, expression.indexOf("."));
-			dataset = (DatasetVector) this.datasetVector.getDatasource().getDatasets().get(datasetName);
-		}
-		maxValue = ThemeGuideFactory.getMaxValue(dataset, tempExpression);
+		maxValue = ThemeGuideFactory.getMaxValue(dataset, tempExpression, this.themeDotDensityLayer.getDisplayFilter().getJoinItems());
 	}
 
 	@Override
@@ -179,7 +174,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				int keyChar = e.getKeyChar();
-				if (keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) {
+				if ((keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) || keyChar == '.') {
 					return;
 				} else {
 					e.consume();
@@ -228,9 +223,15 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)
 				&& 0 != Double.compare(Double.parseDouble(strValue), Double.parseDouble(format.format(themeDotDensity.getValue())))) {
 			themeDotDensity.setValue(Double.parseDouble(strValue));
-			int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(maxValue / themeDotDensity.getValue()));
+			double newValue = maxValue / themeDotDensity.getValue();
+			if (Double.compare(newValue, 1.0) < 0) {
+				newValue = 1.0;
+			}
+			int splinnerValue = Integer.parseInt(new DecimalFormat("#").format(newValue));
 			spinnerDotDensityValue.setValue(splinnerValue);
 			refreshAtOnce();
+		} else {
+			textFieldValue.setText(format.format(themeDotDensity.getValue()));
 		}
 	}
 
@@ -256,9 +257,9 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 					themeDotDensity.setDotExpression(tempExpression);
 					setThemeDotDensityInfo(tempExpression);
 					if (maxValue > 0) {
-						themeDotDensity.setValue(maxValue / 1000);
-						textFieldValue.setText(String.valueOf(format.format(maxValue / 1000)));
-						spinnerDotDensityValue.setValue(1000);
+						int dotValue = (int) spinnerDotDensityValue.getValue();
+						themeDotDensity.setValue(maxValue / dotValue);
+						textFieldValue.setText(String.valueOf(format.format(maxValue / dotValue)));
 						refreshAtOnce();
 					} else {
 						SmOptionPane smOptionPane = new SmOptionPane();

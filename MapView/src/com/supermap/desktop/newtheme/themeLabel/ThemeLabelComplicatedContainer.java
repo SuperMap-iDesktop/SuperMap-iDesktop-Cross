@@ -6,8 +6,11 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.supermap.data.DatasetVector;
@@ -15,16 +18,10 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.LimitedDmt;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.MathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.newtheme.commonUtils.*;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.*;
 import com.supermap.mapping.*;
-import com.supermap.ui.MapControl;
 
 /**
  * 标签复合风格专题图
@@ -69,6 +66,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private ActionListener buttonListener = new ButtonListener();
 	private PropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	private FocusListener separatorCountFocusListener;
+	private MouseAdapter tableMouseListener;
 
 	public ThemeLabelComplicatedContainer(Layer layer) {
 		this.themeLabelLayer = layer;
@@ -192,7 +190,6 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.labelDefualtStyle.setText(MapViewProperties.getString("String_DefaultTextStyle"));
 	}
 
-
 	@Override
 	public Theme getCurrentTheme() {
 		return themeLabel;
@@ -217,7 +214,21 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 				setSeparatorCount();
 			}
 		};
+		this.tableMouseListener = new MouseAdapter() {
 
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+				resetToolBarButtonState();
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (2 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+					setItemStyle();
+				}
+			}
+		};
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.comboBoxSeparatorMethod.addItemListener(this.separatorListener);
@@ -228,19 +239,22 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.buttonMerge.addActionListener(this.buttonListener);
 		this.buttonSplit.addActionListener(this.buttonListener);
 		this.buttonStyle.addActionListener(this.buttonListener);
-		this.tableComplicated.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				resetToolBarButtonState();
-			}
-
-		});
+		this.tableComplicated.addMouseListener(tableMouseListener);
 	}
 
 	@Override
 	public void unregistActionListener() {
-
+		this.panelProperty.removePropertyChangeListener("ThemeChange", this.propertyChangeListener);
+		this.panelAdvance.removePropertyChangeListener("ThemeChange", this.propertyChangeListener);
+		this.comboBoxSeparatorMethod.removeItemListener(this.separatorListener);
+		this.textFieldSeparator.removeKeyListener(this.separatorChangeListener);
+		this.textFieldSeparatNumber.removeKeyListener(this.separatorCountListener);
+		this.textFieldSeparatNumber.removeFocusListener(this.separatorCountFocusListener);
+		this.buttonDefualtStyle.removeActionListener(this.buttonListener);
+		this.buttonMerge.removeActionListener(this.buttonListener);
+		this.buttonSplit.removeActionListener(this.buttonListener);
+		this.buttonStyle.removeActionListener(this.buttonListener);
+		this.tableComplicated.removeMouseListener(tableMouseListener);
 	}
 
 	class SeparatorChangeListener extends KeyAdapter {
@@ -303,7 +317,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		int tableRows = tableComplicated.getRowCount();
 		// 选中连续的选项时可以合并
 		this.buttonMerge.setEnabled(MathUtilties.isContinuouslyArray(selectRows));
-		// 1.只能选中一条数据 2.选中第一项时判断第一项时若区间为min<x<1时不能拆分
+		// 1.只能选中一条数据 2.选中第一项时,判断第一项区间为min<x<1时不能拆分
 		// 3.选中非第一项且不是最后一项时，区间差不能小于1可以拆分。4.选中最后一项默认添加2可以拆分
 		if (selectRows.length == 1) {
 			int split = 0;
@@ -409,8 +423,15 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		}
 
 		private void resetSplits(int[] newSplits, TextStyle[] newTextStyle) {
-			mixedTextStyle.setSplitIndexes(newSplits);
-			mixedTextStyle.setStyles(newTextStyle);
+			TextStyle[] tempTextStyles = newTextStyle.clone();
+			// 由于setStyles()方法会重置newTextStyle且出现错误结果故采用新建的方式来得到正确结果
+			TextStyle defaultStyle = mixedTextStyle.getDefaultStyle();
+			String separator = mixedTextStyle.getSeparator();
+			boolean isSeparatorEnable = mixedTextStyle.isSeparatorEnabled();
+			mixedTextStyle = new MixedTextStyle(tempTextStyles, newSplits);
+			mixedTextStyle.setDefaultStyle(defaultStyle);
+			mixedTextStyle.setSeparator(separator);
+			mixedTextStyle.setSeparatorEnabled(isSeparatorEnable);
 			textFieldSeparatNumber.setText(String.valueOf(newSplits.length + 1));
 			getTable();
 			refreshAtOnce();
@@ -489,6 +510,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			}
 			mixedTextStyle.setStyles(tempTextStyles);
 			getTable();
+			tableComplicated.setRowSelectionInterval(0, 0);
 			refreshAtOnce();
 		}
 	}
