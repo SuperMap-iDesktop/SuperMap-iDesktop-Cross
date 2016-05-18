@@ -32,6 +32,9 @@ public class DecomposeEditor extends AbstractEditor {
 			decompose(environment);
 		} finally {
 			CursorUtilties.setDefaultCursor(environment.getMapControl());
+
+			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
+			environment.activateEditor(NullEditor.INSTANCE);
 		}
 	}
 
