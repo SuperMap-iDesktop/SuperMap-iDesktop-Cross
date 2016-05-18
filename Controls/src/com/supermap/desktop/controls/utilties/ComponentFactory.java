@@ -1,8 +1,17 @@
 package com.supermap.desktop.controls.utilties;
 
+import java.text.NumberFormat;
+
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JTextField;
+import javax.swing.text.NumberFormatter;
 
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.NumberUtilties;
 
 /**
  * 控件构造工厂
@@ -24,7 +33,7 @@ public class ComponentFactory {
 	}
 
 	/**
-	 * 生成一个Cancel按钮
+	 * 生产一个Cancel按钮
 	 * 
 	 * @return
 	 */
@@ -32,5 +41,44 @@ public class ComponentFactory {
 		JButton buttonCancel = new JButton();
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		return buttonCancel;
+	}
+
+	/**
+	 * 生产一个整型限制的输入控件
+	 * 
+	 * @param defaultValue
+	 * @param minValue
+	 * @param maxValue
+	 * @return
+	 */
+	public static SmTextFieldLegit createIntegerTextField(int defaultValue, final int minValue, final int maxValue) {
+		if (minValue > maxValue) {
+			return null;
+		}
+
+		SmTextFieldLegit textField = new SmTextFieldLegit();
+		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
+
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				boolean result = false;
+
+				if (NumberUtilties.isIntegerNumeric(textFieldValue)) {
+					Integer value = Integer.valueOf(textFieldValue);
+
+					if (value >= minValue && value <= maxValue) {
+						result = true;
+					}
+				}
+				return result;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
+
+		return textField;
 	}
 }

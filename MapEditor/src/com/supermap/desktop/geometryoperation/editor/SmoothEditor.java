@@ -2,8 +2,6 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.util.ArrayList;
 
-import javax.swing.plaf.ListUI;
-
 import com.supermap.data.DatasetType;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;

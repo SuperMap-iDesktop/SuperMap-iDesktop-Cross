@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.GroupLayout.Alignment;
 
 import com.supermap.desktop.controls.utilties.ComponentFactory;
@@ -14,6 +15,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
 /**
  * 光滑系数
@@ -28,12 +30,12 @@ public class JDialogSmoothRatio extends SmDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelSmoothRatio;
-	private SMFormattedTextField textFieldSmoothRatio;
+	private SmTextFieldLegit textFieldSmoothRatio = ComponentFactory.createIntegerTextField(4, 2, 10);
 	private JButton buttonOK = ComponentFactory.createButtonOK();
 	private JButton buttonCancel = ComponentFactory.createButtonCancel();
 
 	public Integer getSmoothRatio() {
-		return (Integer) this.textFieldSmoothRatio.getValue();
+		return Integer.valueOf(this.textFieldSmoothRatio.getText());
 	}
 
 	public JDialogSmoothRatio() {
@@ -46,11 +48,6 @@ public class JDialogSmoothRatio extends SmDialog {
 	private void initializeComponents() {
 		setTitle(MapEditorProperties.getString("String_GeometryOperation_Smooth_Title"));
 		this.labelSmoothRatio = new JLabel(MapEditorProperties.getString("String_Label_SmoothRatio"));
-		NumberFormat format = NumberFormat.getIntegerInstance();
-		format.setMaximumFractionDigits(10);
-		format.setMinimumIntegerDigits(2);
-		this.textFieldSmoothRatio = new SMFormattedTextField(format);
-		this.textFieldSmoothRatio.setValue(4);
 
 		GroupLayout gl = new GroupLayout(getContentPane());
 		gl.setAutoCreateContainerGaps(true);
@@ -93,6 +90,18 @@ public class JDialogSmoothRatio extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				setDialogResult(DialogResult.CANCEL);
 				setVisible(false);
+			}
+		});
+	}
+
+	public static void main(String[] args) {
+		final JDialogSmoothRatio dialog = new JDialogSmoothRatio();
+
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				dialog.setVisible(true);
 			}
 		});
 	}
