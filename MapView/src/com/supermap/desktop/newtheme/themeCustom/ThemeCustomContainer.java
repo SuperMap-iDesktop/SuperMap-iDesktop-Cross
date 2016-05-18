@@ -625,6 +625,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				initComboBoxLineColor();
 				initComboBoxLineWidth();
 				initComboBoxMarkerSymbol();
+				initComboBoxMarkerColor();
 				initComboBoxMarkerSize();
 				initComboBoxMarkerAngle();
 			}

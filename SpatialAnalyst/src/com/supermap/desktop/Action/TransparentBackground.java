@@ -22,7 +22,6 @@ public class TransparentBackground extends JPanel {
 	private JLabel jLabelColumnOfGrid = new JLabel("lineOfGrid:");
 	private JLabel jLabelGridValue = new JLabel("gridValue:");
 	private static final int gapWith = 10;
-	//	private static TransparentBackground transparent;
 	public static HashMap<MapControl, TransparentBackground> queryGridMap = new HashMap<>();
 
 	public TransparentBackground() {
@@ -36,14 +35,6 @@ public class TransparentBackground extends JPanel {
 			this.setSize(268, 220);
 		}
 	}
-
-//	public static TransparentBackground getInstance() {
-//		if (null == transparent) {
-//			transparent = new TransparentBackground();
-//
-//		}
-//		return transparent;
-//	}
 
 	/**
 	 * 资源化
