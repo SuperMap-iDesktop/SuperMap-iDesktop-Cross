@@ -1,5 +1,8 @@
 package com.supermap.desktop.geometryoperation;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -7,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentListener;
 import javax.swing.SwingUtilities;
 
 import com.supermap.data.DatasetVector;
@@ -14,10 +18,14 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxDataset;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasource;
 
-public class JDialogGeometryConvert extends JDialog {
+public class JDialogGeometryConvert extends SmDialog {
 
 	/**
 	 * 
@@ -26,10 +34,10 @@ public class JDialogGeometryConvert extends JDialog {
 
 	private JLabel labelDesDatasource;
 	private JLabel labelDesDataset;
-	private ComboBoxDatasource comboBoxDatasource;
-	private ComboBoxDataset comboBoxDataset;
+	private DatasourceComboBox comboBoxDatasource;
+	private DatasetComboBox comboBoxDataset;
 	private JCheckBox checkBoxNewDataset;
-	private JTextField textFieldNewDataset;
+	private SmTextFieldLegit textFieldNewDataset;
 	private JCheckBox checkBoxRemoveSrc;
 	private JButton buttonOK;
 	private JButton buttonCancel;
@@ -40,6 +48,15 @@ public class JDialogGeometryConvert extends JDialog {
 	private boolean isNewDataset;
 	private boolean isRemoveSrc;
 
+	private ItemListener itemListener = new ItemListener() {
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	public JDialogGeometryConvert(String title) {
 		initializeComponents(title);
 	}
@@ -48,10 +65,10 @@ public class JDialogGeometryConvert extends JDialog {
 		setTitle(title);
 		this.labelDesDatasource = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.labelDesDataset = new JLabel(ControlsProperties.getString("String_Label_TargetDataset"));
-		this.comboBoxDatasource = new ComboBoxDatasource();
-		this.comboBoxDataset = new ComboBoxDataset();
+		this.comboBoxDatasource = new DatasourceComboBox();
+		this.comboBoxDataset = new DatasetComboBox();
 		this.checkBoxNewDataset = new JCheckBox(ControlsProperties.getString("String_Label_NewDataset"));
-		this.textFieldNewDataset = new JTextField();
+		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
 		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
@@ -95,8 +112,6 @@ public class JDialogGeometryConvert extends JDialog {
 		// @formatter:on
 	}
 
-	
-	
 	public static void main(String[] args) {
 		final JDialogGeometryConvert dialog = new JDialogGeometryConvert("test");
 		dialog.setSize(400, 200);
