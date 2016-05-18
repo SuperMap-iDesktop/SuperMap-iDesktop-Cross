@@ -41,6 +41,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
@@ -152,8 +153,11 @@ public class ThemeMainContainer extends JPanel {
 				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof FormMap && null != ((FormMap) e.getOldActiveForm()).getMapControl()
 						&& ((FormMap) e.getOldActiveForm()).getActiveLayers().length > 0) {
 					Layer tempLayer = ((FormMap) e.getOldActiveForm()).getActiveLayers()[0];
+					panel = ThemeGuideFactory.themeTypeContainer.get(tempLayer);
 					if (null != tempLayer && !tempLayer.isDisposed()) {
+						// 切换窗口，提示是否保存专题图
 						updateProperty(tempLayer);
+						((FormMap) e.getOldActiveForm()).getMapControl().getMap().refresh();
 					}
 				}
 				if (null == e.getNewActiveForm()) {
@@ -209,15 +213,16 @@ public class ThemeMainContainer extends JPanel {
 		}
 		if (null != oldLayer && !oldLayer.isDisposed()) {
 			updateProperty(oldLayer);
+			ThemeGuideFactory.getMapControl().getMap().refresh();
 		}
 	}
 
-	private void updateProperty(Layer oldLayer) {
-		if (null != oldLayer.getTheme() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
+	private void updateProperty(Layer layer) {
+		if (null != layer.getTheme() && !checkBoxRefreshAtOnce.isSelected() && isLayerPropertyChanged()) {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(MapViewProperties.getString("String_ThemeProperty_Message"))) {
 				// 不保存修改
 				panel.unregistActionListener();
-				ThemeGuideFactory.themeTypeContainer.remove(oldLayer);
+				ThemeGuideFactory.themeTypeContainer.remove(layer);
 				setLayerPropertyChanged(false);
 			} else {
 				// 保存修改并刷新
@@ -232,7 +237,7 @@ public class ThemeMainContainer extends JPanel {
 					((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
 					((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
 					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
-					ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
+					ThemeLabel nowThemeLabel = ((ThemeLabel) layer.getTheme());
 					nowThemeLabel.clear();
 					if (0 < themeLabel.getCount()) {
 						for (int i = 0; i < themeLabel.getCount(); i++) {
@@ -248,12 +253,12 @@ public class ThemeMainContainer extends JPanel {
 					((ThemeLabelComplicatedContainer) panel).getPanelAdvance().refreshMapAndLayer();
 					((ThemeLabelComplicatedContainer) panel).getPanelProperty().refreshMapAndLayer();
 					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
-					ThemeLabel nowThemeLabel = ((ThemeLabel) oldLayer.getTheme());
+					ThemeLabel nowThemeLabel = ((ThemeLabel) layer.getTheme());
 					nowThemeLabel.setUniformMixedStyle(themeLabel.getUniformMixedStyle());
 					isThemeLabelComplicated = true;
 				}
 				if (!isThemeLabelComplicated && !isThemeLabelRange && !isThemeLabelUniform) {
-					oldLayer.getTheme().fromXML(panel.getCurrentTheme().toXML());
+					layer.getTheme().fromXML(panel.getCurrentTheme().toXML());
 				}
 				TreePath treePath = layersTree.getSelectionPath();
 				int row = layersTree.getRowForPath(treePath);
@@ -261,7 +266,7 @@ public class ThemeMainContainer extends JPanel {
 				layersTree.reload();
 				layersTree.setSelectionRow(row);
 				buttonApply.setEnabled(false);
-				ThemeGuideFactory.getMapControl().getMap().refresh();
+				
 			}
 		}
 	}
