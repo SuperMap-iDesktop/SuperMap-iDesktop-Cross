@@ -1,4 +1,4 @@
-title: SuperMap iDesktop Cross 8C产品介绍
+title: SuperMap iDesktop Cross 8C 产品介绍
 ---
 
 　　SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源、可扩展的桌面GIS应用与开发平台系统，也是超图新一代的开源GIS桌面产品，可在Windows和Linux系统上运行，实现了GIS数据在跨平台环境下的展示。
@@ -7,9 +7,9 @@ title: SuperMap iDesktop Cross 8C产品介绍
 
 ## 产品简介
 
-　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于SuperMap iObjects Java 8C、Eclipse 和 OSGI 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows版本包括 32 位和 64 位两个，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
+　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C、Eclipse 和 OSGI 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows版本包括 32 位和 64 位两个，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
 
-　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
+　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有 SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
 
 ## 提供功能
 
@@ -17,9 +17,9 @@ title: SuperMap iDesktop Cross 8C产品介绍
 
 　　提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
 
--   **数据引擎**：支持打开不同数据引擎，如Oracle、SQLPlus、DB2、MySQL等数据库，其中，Linux版本不支持SQLPlus数据引擎；同时支持打开Web地图数据，即谷歌地图、百度地图、超图云服务、天地图服务、OGC服务、REST服务、OpenStreetMap等Web地图。
+-   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即谷歌地图、百度地图、超图云服务、天地图服务、OGC服务、REST服务、OpenStreetMap 等Web地图。
 
--   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer三种类型，Linux版本不支持打开SQL Server工作空间。
+-   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer 三种类型，Linux 版本不支持打开 SQL Server 工作空间。
 
 -   **数据源管理**：支持打开文件型、数据库型、Web型数据源，同时支持新建文件型、数据库型和内存数据源。
 
@@ -78,9 +78,9 @@ title: SuperMap iDesktop Cross 8C产品介绍
 
 -   采用稳健的 Eclipse 插件框架，实现了插件式桌面及源代码的开源。
 
--   遵循OSGI国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
+-   遵循 OSGI 国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
 
--   界面采用Swing图形风格，界面支持跨平台，安全性高，易于界面定制和二次开发。
+-   界面采用 Swing 图形风格，界面支持跨平台，安全性高，易于界面定制和二次开发。
 
 ### 稳定、易用、高效、美观
 
