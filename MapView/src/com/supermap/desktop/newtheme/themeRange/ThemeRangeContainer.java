@@ -428,12 +428,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				this.tableRangeInfo.setValueAt(rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
 			}
 			String caption = rangeItem.getCaption();
-			if (this.captiontype.contains("-")) {
-				caption = caption.replaceAll("<= X <", "-");
-				caption = caption.replaceAll("< X <", "-");
-			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
-				caption = caption.replaceAll(" - ", " <= X < ");
-			}
+//			if (this.captiontype.contains("-")) {
+//				caption = caption.replaceAll("<= X <", "-");
+//				caption = caption.replaceAll("< X <", "-");
+//			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
+//				caption = caption.replaceAll(" - ", " <= X < ");
+//			}
 			rangeItem.setCaption(caption);
 			this.tableRangeInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
 		}

@@ -150,6 +150,10 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	private void setThemeDotDensityInfo(String expression) {
 		String tempExpression = expression;
 		DatasetVector dataset = this.datasetVector;
+		if (expression.contains(".")) {
+			String datasetName = expression.substring(0, expression.indexOf("."));
+			dataset = (DatasetVector) dataset.getDatasource().getDatasets().get(datasetName);
+		}
 		maxValue = ThemeGuideFactory.getMaxValue(dataset, tempExpression, this.themeDotDensityLayer.getDisplayFilter().getJoinItems());
 	}
 
@@ -220,10 +224,11 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 	private void resetValue() {
 		String strValue = textFieldValue.getText();
-		if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)
-				&& 0 != Double.compare(Double.parseDouble(strValue), Double.parseDouble(format.format(themeDotDensity.getValue())))) {
+		if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)) {
 			themeDotDensity.setValue(Double.parseDouble(strValue));
 			double newValue = maxValue / themeDotDensity.getValue();
+			// 为了触发spinner的ChangeListener事件而设置两次
+			spinnerDotDensityValue.setValue(0);
 			if (Double.compare(newValue, 1.0) < 0) {
 				newValue = 1.0;
 			}
@@ -254,9 +259,9 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 				if (itemHasChanged) {
 					// 如果sql表达式中修改了选项
 					tempExpression = comboBoxExpression.getSelectedItem().toString();
-					themeDotDensity.setDotExpression(tempExpression);
 					setThemeDotDensityInfo(tempExpression);
 					if (maxValue > 0) {
+						themeDotDensity.setDotExpression(tempExpression);
 						int dotValue = (int) spinnerDotDensityValue.getValue();
 						themeDotDensity.setValue(maxValue / dotValue);
 						textFieldValue.setText(String.valueOf(format.format(maxValue / dotValue)));
@@ -264,9 +269,19 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 					} else {
 						SmOptionPane smOptionPane = new SmOptionPane();
 						smOptionPane.showMessageDialog(MapViewProperties.getString("String_MaxValue"));
+						resetThemeItem();
 					}
 				}
 			}
+		}
+	}
+
+	private void resetThemeItem() {
+		String tempExpression = themeDotDensity.getDotExpression();
+		if (comboBoxArray.contains(tempExpression)) {
+			comboBoxExpression.setSelectedItem(tempExpression);
+		} else {
+			comboBoxExpression.setSelectedItem(tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length()));
 		}
 	}
 

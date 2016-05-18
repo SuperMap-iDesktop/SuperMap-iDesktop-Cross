@@ -525,6 +525,21 @@ public class ThemeGuideFactory {
 	 */
 	public static double getMaxValue(DatasetVector datasetVector, String expression, JoinItems joinItems) {
 
+		double maxValue = 0;
+		int fieldCount = datasetVector.getFieldCount();
+		com.supermap.data.FieldInfo tempField = null;
+		for (int i = 0; i < fieldCount; i++) {
+			if (expression.equals(datasetVector.getFieldInfos().get(i).getName())) {
+				tempField = datasetVector.getFieldInfos().get(i);
+				break;
+			}
+		}
+
+		if (null != tempField && tempField.getType().equals(FieldType.INT64)) {
+			// 屏蔽掉64位整形数据,组件不支持
+			return maxValue;
+		}
+
 		QueryParameter parameter = new QueryParameter();
 		String[] result = new String[1];
 		result[0] = expression + " as Result";
@@ -533,10 +548,8 @@ public class ThemeGuideFactory {
 		parameter.setAttributeFilter("1=1");
 		parameter.setCursorType(CursorType.STATIC);
 		parameter.setJoinItems(joinItems);
-
-		double maxValue = 0;
 		Recordset recordset = datasetVector.query(parameter);
-		if (recordset.getFieldInfos().get("Result").getType() != FieldType.TEXT) {
+		if (null != recordset.getFieldInfos().get("Result") && recordset.getFieldInfos().get("Result").getType() != FieldType.TEXT) {
 			maxValue = recordset.statistic("Result", StatisticMode.MAX);
 		}
 		return maxValue;
