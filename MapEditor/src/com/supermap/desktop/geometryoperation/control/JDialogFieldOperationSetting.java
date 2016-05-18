@@ -1,4 +1,4 @@
-package com.supermap.desktop.geometryoperation;
+package com.supermap.desktop.geometryoperation.control;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
