@@ -12,6 +12,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilties.NumberUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 
 /**
  * 控件构造工厂
@@ -63,7 +64,7 @@ public class ComponentFactory {
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				boolean result = false;
 
-				if (NumberUtilties.isIntegerNumeric(textFieldValue)) {
+				if (StringUtilties.isPositiveInteger(textFieldValue)) {
 					Integer value = Integer.valueOf(textFieldValue);
 
 					if (value >= minValue && value <= maxValue) {
@@ -78,6 +79,7 @@ public class ComponentFactory {
 				return backUpValue;
 			}
 		});
+		textField.setText(String.valueOf(defaultValue));
 
 		return textField;
 	}
