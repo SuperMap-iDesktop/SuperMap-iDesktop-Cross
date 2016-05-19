@@ -113,7 +113,8 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		Application
 				.getActiveApplication()
 				.getOutput()
-				.output(transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
+				.output(MessageFormat.format(SpatialAnalystProperties.getString("String_GridValueMessage"), pointCount)+ "\n" 
+						+transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
 						+ transparentBackground.getjLabelPointX().getText() + "\n" + transparentBackground.getjLabelPointY().getText() + "\n"
 						+ transparentBackground.getjLabelRowOfGrid().getText() + "\n" + transparentBackground.getjLabelColumnOfGrid().getText() + "\n"
 						+ transparentBackground.getjLabelGridValue().getText().replace("<html>", "").replace("<br>", "").replace("<html>", "") + "\n");
