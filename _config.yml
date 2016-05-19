@@ -27,15 +27,18 @@ duoshuo_share: true
 google_analytics: UA-4910098-10
 fb_admins: 100000247608790
 algolia:
-  en:
+  github:
     api_key: 87c625ea3b3f57f243d590e3c59b0748
     index_name: supermap-idesktop
-# zh-tw:
-#   api_key: c83d2ec3440f40aec6d0e695ecec7ef3
-#   index_name: hexo_zh-tw
+  support:
+    api_key: 19f860b1fcffb4b23a7b2f928e8b0692
+    index_name: supermap-cn
+host:
+  github: supermap-idesktop.github.io
+  support: support.supermap.com.cn
 # zh-cn:
 #   api_key: cdea7d4e47d84f6145b77e7f68689f35
 #   index_name: hexo_zh-cn
 #twitter: qinlj
-github: qinlj/iDesktop-Cross-Docs
+#github: qinlj/iDesktop-Cross-Docs
 oschina: supermap/SuperMap-iDesktop-Cross

@@ -13,14 +13,26 @@
 <!-- endbuild -->
 {% endif %}
 <!-- Algolia -->
-{% if config.algolia[page.lang] %}
+{% if config.algolia %}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
 <script type="text/javascript">
 document.getElementById('search-input-wrap').classList.add('on');
-docsearch({
-  apiKey: '{{ config.algolia[page.lang].api_key }}',
-  indexName: '{{ config.algolia[page.lang].index_name }}',
-  inputSelector: '#search-input'
-});
+var host=window.location.host;
+if(host=='{{ config.host.github }}')
+{
+  docsearch({
+    apiKey: '{{ config.algolia['github'].api_key }}',
+    indexName: '{{ config.algolia['github'].index_name }}',
+    inputSelector: '#search-input'
+  });
+}
+else if(host=='{{ config.host.support }}')
+{
+  docsearch({
+    apiKey: '{{ config.algolia['support'].api_key }}',
+    indexName: '{{ config.algolia['support'].index_name }}',
+    inputSelector: '#search-input'
+  });
+}
 </script>
 {% endif %}
