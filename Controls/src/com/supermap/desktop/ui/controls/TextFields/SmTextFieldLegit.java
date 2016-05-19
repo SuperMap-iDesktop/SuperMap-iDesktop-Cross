@@ -16,6 +16,11 @@ import java.awt.event.FocusEvent;
  */
 public class SmTextFieldLegit extends JTextField {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String backUpValue = "";
 
 	private ISmTextFieldLegit smTextFieldLegit;

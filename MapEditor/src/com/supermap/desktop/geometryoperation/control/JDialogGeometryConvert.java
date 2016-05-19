@@ -1,4 +1,4 @@
-package com.supermap.desktop.geometryoperation;
+package com.supermap.desktop.geometryoperation.control;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -6,11 +6,8 @@ import java.awt.event.ItemListener;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentListener;
 import javax.swing.SwingUtilities;
 
 import com.supermap.data.DatasetVector;
@@ -22,8 +19,6 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDataset;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasource;
 
 public class JDialogGeometryConvert extends SmDialog {
 
