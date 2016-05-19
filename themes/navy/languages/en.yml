@@ -42,6 +42,7 @@ sidebar:
     Map: 地图制图
     ThematicMap: 专题图概述
     Style: 设置图层风格
+    LayerSetting: 图层属性
     Measuregroup: 地图量算
     Scene: 三维场景
     SceneDia: 场景概述
