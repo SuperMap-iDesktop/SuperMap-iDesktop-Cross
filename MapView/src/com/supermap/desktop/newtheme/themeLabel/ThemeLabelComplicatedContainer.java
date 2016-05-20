@@ -54,8 +54,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private JButton buttonSplit;// 拆分
 	private JButton buttonStyle;// 字体样式
 	private JTable tableComplicated;
-	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue"),
-			MapViewProperties.getString("String_SplitRange") };
+	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue")};
+//			,MapViewProperties.getString("String_SplitRange") };
 	protected TextStyleDialog textStyleDialog;
 
 	private boolean isRefreshAtOnce;
@@ -67,6 +67,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private PropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	private FocusListener separatorCountFocusListener;
 	private MouseAdapter tableMouseListener;
+	private TableModelListener tableModelListener = new LocalTableModelListener();
 
 	public ThemeLabelComplicatedContainer(Layer layer) {
 		this.themeLabelLayer = layer;
@@ -233,6 +234,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			public void mouseClicked(MouseEvent e) {
 				if (2 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
 					setItemStyle();
+					refreshAtOnce();
 				}
 			}
 		};
@@ -328,7 +330,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		// 3.选中非第一项且不是最后一项时，区间差不能小于1可以拆分。4.选中最后一项默认添加2可以拆分
 		if (selectRows.length == 1) {
 			int split = 0;
-			if (selectRows[0] == 0) {
+			if (selectRows[0] == 0 && mixedTextStyle.getSplitIndexes().length > 0) {
 				split = mixedTextStyle.getSplitIndexes()[0];
 				this.buttonSplit.setEnabled(1 != split);
 			}
@@ -362,6 +364,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == buttonStyle) {
 				setItemStyle();
+				refreshAtOnce();
 				return;
 			}
 		}
@@ -483,6 +486,35 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		}
 	}
 
+	class LocalTableModelListener implements TableModelListener{
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			int selectRow = e.getFirstRow();
+			int selectColumn = e.getColumn();
+			if (selectColumn == 1 && selectRow != tableComplicated.getRowCount() - 1) {
+				String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
+				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
+					int rangeValue = Integer.valueOf(rangeStr);
+					int nowValue = mixedTextStyle.getSplitIndexes()[selectRow];
+					if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
+						mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+					}
+					if (selectRow == 0 && mixedTextStyle.getSplitIndexes().length > selectRow + 1
+							&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
+						mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+					}
+					if (selectRow != 0 && selectRow != tableComplicated.getRowCount() - 2 && rangeValue > nowValue
+							&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
+						mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+					}
+				}
+			}
+			refreshAtOnce();
+			getTable();
+			tableComplicated.setRowSelectionInterval(selectRow, selectRow);
+		}
+	}
+	
 	protected void setTextStyle(int x, int y, int styleType) {
 		textStyleDialog.getTextStyleContainer().setTextStyleType(styleType);
 		textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
@@ -541,7 +573,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	 */
 	private JTable getTable() {
 		int textStyleLength = mixedTextStyle.getSplitIndexes().length;
-		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[textStyleLength + 1][3], nameStrings) {
+		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[textStyleLength + 1][2], nameStrings) {
 			@Override
 			public Class getColumnClass(int column) {
 				return String.class;
@@ -556,35 +588,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		initColumn();
 		this.tableComplicated.setRowHeight(20);
 		this.tableComplicated.getColumnModel().getColumn(0).setCellRenderer(new TableColorCellRenderer(mixedTextStyle.getStyles()));
-		this.tableComplicated.getModel().addTableModelListener(new TableModelListener() {
-
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				int selectRow = e.getFirstRow();
-				int selectColumn = e.getColumn();
-				if (selectColumn == 1 && selectRow != tableComplicated.getRowCount() - 1) {
-					String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
-					if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
-						int rangeValue = Integer.valueOf(rangeStr);
-						int nowValue = mixedTextStyle.getSplitIndexes()[selectRow];
-						if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
-							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
-						}
-						if (selectRow == 0 && rangeValue > 0 && mixedTextStyle.getSplitIndexes().length > selectRow+1
-								&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
-							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
-						}
-						if (selectRow != 0 && selectRow != tableComplicated.getRowCount() - 2 && rangeValue > nowValue
-								&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
-							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
-						}
-					}
-				}
-				refreshAtOnce();
-				getTable();
-				tableComplicated.setRowSelectionInterval(selectRow, selectRow);
-			}
-		});
+		this.tableComplicated.getModel().removeTableModelListener(this.tableModelListener);
+		this.tableComplicated.getModel().addTableModelListener(this.tableModelListener);
 		return this.tableComplicated;
 	}
 
@@ -594,22 +599,22 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		for (int i = 0; i < splitsCount; i++) {
 			this.tableComplicated.setValueAt(MessageFormat.format(MapViewProperties.getString("String_SplitInfo"), i + 1), i, 0);
 			if (!mixedTextStyle.isSeparatorEnabled() && splits.length > 0) {
-				String rangeInfo = "";
+//				String rangeInfo = "";
 				String rangeValue = "";
 				if (0 == i && splits.length > 0) {
-					rangeInfo = "min < x < " + splits[i];
+//					rangeInfo = "min < x <= " + splits[i];
 					rangeValue = String.valueOf(splits[i]);
 				}
 				if (i == splitsCount - 1) {
-					rangeInfo = splits[i - 1] + " =< x < max";
+//					rangeInfo = splits[i - 1] + " =< x < max";
 					rangeValue = "max";
 				}
 				if (0 != i && i != splitsCount - 1) {
-					rangeInfo = splits[i - 1] + " =< x < " + splits[i];
+//					rangeInfo = splits[i - 1] + " =< x < " + splits[i];
 					rangeValue = String.valueOf(splits[i]);
 				}
 				this.tableComplicated.setValueAt(rangeValue, i, 1);
-				this.tableComplicated.setValueAt(rangeInfo, i, 2);
+//				this.tableComplicated.setValueAt(rangeInfo, i, 2);
 			}
 		}
 
@@ -627,6 +632,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		if (isRefreshAtOnce) {
 			refreshMapAndLayer();
 		}
+		themeLabel.setUniformMixedStyle(this.mixedTextStyle);
 	}
 
 	@Override
