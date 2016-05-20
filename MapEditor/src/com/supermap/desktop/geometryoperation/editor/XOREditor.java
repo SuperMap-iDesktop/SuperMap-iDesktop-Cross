@@ -12,7 +12,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.geometryoperation.JDialogFieldOperationSetting;
+import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilties.CursorUtilties;
@@ -52,6 +52,9 @@ public class XOREditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			
+			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
+			environment.activateEditor(NullEditor.INSTANCE);
 		}
 	}
 

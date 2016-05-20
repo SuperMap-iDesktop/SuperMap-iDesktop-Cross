@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -55,7 +54,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private JButton buttonSplit;// 拆分
 	private JButton buttonStyle;// 字体样式
 	private JTable tableComplicated;
-	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_SplitRange") };
+	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue"),
+			MapViewProperties.getString("String_SplitRange") };
 	protected TextStyleDialog textStyleDialog;
 
 	private boolean isRefreshAtOnce;
@@ -534,7 +534,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	 */
 	private JTable getTable() {
 		int textStyleLength = mixedTextStyle.getSplitIndexes().length;
-		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[textStyleLength + 1][2], nameStrings) {
+		DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[textStyleLength + 1][3], nameStrings) {
 			@Override
 			public Class getColumnClass(int column) {
 				return String.class;
@@ -542,13 +542,41 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 			@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				return columnIndex == 1;
+				return columnIndex == 1 || columnIndex == 2;
 			}
 		};
 		this.tableComplicated.setModel(defaultTableModel);
 		initColumn();
 		this.tableComplicated.setRowHeight(20);
 		this.tableComplicated.getColumnModel().getColumn(0).setCellRenderer(new TableColorCellRenderer(mixedTextStyle.getStyles()));
+		this.tableComplicated.getModel().addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				int selectRow = e.getFirstRow();
+				int selectColumn = e.getColumn();
+				if (selectColumn == 1 && selectRow != tableComplicated.getRowCount() - 1) {
+					String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
+					if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
+						int rangeValue = Integer.valueOf(rangeStr);
+						int nowValue = mixedTextStyle.getSplitIndexes()[selectRow];
+						if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
+							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+						}
+						if (selectRow == 0 && rangeValue > 0 && rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
+							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+						}
+						if (selectRow != 0 && selectRow != tableComplicated.getRowCount() - 2 && rangeValue > nowValue
+								&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
+							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
+						}
+					}
+				}
+				refreshAtOnce();
+				getTable();
+				tableComplicated.setRowSelectionInterval(selectRow, selectRow);
+			}
+		});
 		return this.tableComplicated;
 	}
 
@@ -559,16 +587,21 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			this.tableComplicated.setValueAt(MessageFormat.format(MapViewProperties.getString("String_SplitInfo"), i + 1), i, 0);
 			if (!mixedTextStyle.isSeparatorEnabled() && splits.length > 0) {
 				String rangeInfo = "";
+				String rangeValue = "";
 				if (0 == i && splits.length > 0) {
 					rangeInfo = "min < x < " + splits[i];
+					rangeValue = String.valueOf(splits[i]);
 				}
 				if (i == splitsCount - 1) {
 					rangeInfo = splits[i - 1] + " =< x < max";
+					rangeValue = "max";
 				}
 				if (0 != i && i != splitsCount - 1) {
 					rangeInfo = splits[i - 1] + " =< x < " + splits[i];
+					rangeValue = String.valueOf(splits[i]);
 				}
-				this.tableComplicated.setValueAt(rangeInfo, i, 1);
+				this.tableComplicated.setValueAt(rangeValue, i, 1);
+				this.tableComplicated.setValueAt(rangeInfo, i, 2);
 			}
 		}
 

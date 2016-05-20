@@ -7,12 +7,12 @@ import com.supermap.data.Geometry;
 import com.supermap.data.PointMs;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
+import com.supermap.desktop.geometry.Abstract.IReverse;
 
-public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<PointMs>, ILineConvertor, IRegionConvertor {
+public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<PointMs>, ILineConvertor, IRegionConvertor, IReverse {
 
 	private GeoLineM geoLineM;
 
@@ -88,5 +88,12 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 		}
 
 		return null;
+	}
+
+	@Override
+	public Geometry reverse() {
+		GeoLineM reverseLineM = (GeoLineM) this.geoLineM.clone();
+		reverseLineM.reverse();
+		return reverseLineM;
 	}
 }

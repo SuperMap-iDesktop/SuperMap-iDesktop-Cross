@@ -3,6 +3,7 @@
  */
 package com.supermap.desktop.ui.controls.mutiTable.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,6 +43,11 @@ public class MutiTableModel extends AbstractTableModel {
 	 * 数据内容列表
 	 */
 	protected transient List<Object> contents;
+	
+	/**
+	 * 表格行后台数据列表
+	 */
+	protected transient ArrayList<Object> rowTagContents;
 
 	/**
 	 * 构造函数。
@@ -51,6 +57,7 @@ public class MutiTableModel extends AbstractTableModel {
 		this.columnNames = new Vector<String>();
 		// 数据序列
 		this.contents = new Vector<Object>();
+		this.rowTagContents = new ArrayList<Object>();
 	}
 
 	/**
@@ -96,6 +103,7 @@ public class MutiTableModel extends AbstractTableModel {
 	public void refreshContents(Object[][] datas) throws Exception {
 		// 先情况原来的内容
 		this.contents.clear();
+		this.rowTagContents.clear();
 
 		if (null == datas) {
 			// 判断数据为空，不合法
@@ -104,7 +112,7 @@ public class MutiTableModel extends AbstractTableModel {
 
 		for (Object[] data : datas) {
 			// 将数据逐行添加到列表中
-			addRow(data);
+			addRow(data, null);
 		}
 	}
 
@@ -114,7 +122,7 @@ public class MutiTableModel extends AbstractTableModel {
 	 * @param data　数据
 	 * @throws Exception 抛出数据数不正确的异常
 	 */
-	public void addRow(Object[] data) {
+	public void addRow(Object[] data, Object tag) {
 		if (null == data) {
 			return;
 		}
@@ -138,6 +146,7 @@ public class MutiTableModel extends AbstractTableModel {
 
 		// 追加内容
 		contents.add(content);
+		rowTagContents.add(tag);
 	}
 
 	/**
@@ -147,6 +156,7 @@ public class MutiTableModel extends AbstractTableModel {
 	 */
 	public void removeRow(int row) {
 		contents.remove(row);
+		rowTagContents.remove(row);
 	}
 
 	/**
@@ -159,13 +169,9 @@ public class MutiTableModel extends AbstractTableModel {
 		for (int ii = 0; ii < count; ii++) {
 			if (contents.size() > row) {
 				contents.remove(row);
+				rowTagContents.remove(row);
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public Vector<Object> getTagValue(int row) {
-		return (Vector<Object>) contents.get(row);
 	}
 
 	/**
@@ -176,10 +182,13 @@ public class MutiTableModel extends AbstractTableModel {
 	public void removeRows(int[] rows) {
 		// 初始化内容存储
 		Vector<Object> removeVector = new Vector<Object>(rows.length);
+		ArrayList<Object> removeRowTag = new ArrayList<Object>(rows.length);
 		for (int i = 0; i < rows.length; i++) {
 			removeVector.add(contents.get(rows[i]));
+			removeRowTag.add(this.rowTagContents.get(rows[i]));
 		}
 		contents.removeAll(removeVector);
+		removeRowTag.removeAll(removeRowTag);
 	}
 
 	/*
@@ -206,6 +215,20 @@ public class MutiTableModel extends AbstractTableModel {
 	public void setValueAt(Object value, int row, int col) {
 		((Vector) contents.get(row)).set(col, value);
 		this.fireTableCellUpdated(row, col);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setRowTagAt(Object value, int row) {
+		if (this.rowTagContents.size() <= row) {
+			rowTagContents.add(value);
+		} else {
+			this.rowTagContents.set(row, value);
+		}
 	}
 
 	/*
@@ -244,6 +267,11 @@ public class MutiTableModel extends AbstractTableModel {
 		return this.contents.size();
 	}
 
+	@SuppressWarnings("unchecked")
+	public Vector<Object> getRowValue(int row) {
+		return (Vector<Object>) contents.get(row);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -253,6 +281,16 @@ public class MutiTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int row, int col) {
 		return ((Vector) contents.get(row)).get(col);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
+	 */
+	@SuppressWarnings("rawtypes")
+	public Object getRowTagAt(int row) {
+		return this.rowTagContents.get(row);
 	}
 
 	/*

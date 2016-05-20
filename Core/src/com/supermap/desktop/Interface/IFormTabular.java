@@ -1,5 +1,6 @@
 package com.supermap.desktop.Interface;
 
+import javax.swing.JList;
 import javax.swing.JTable;
 
 import com.supermap.data.Recordset;
@@ -93,9 +94,16 @@ public interface IFormTabular extends IForm {
 	public String getSelectColumnName(int columnIndex);
 
 	/**
-	 * 获取属性表容器
+	 * 获取属性表table容器
 	 * 
 	 * @return
 	 */
 	public JTable getjTableTabular();
+
+	/**
+	 * 获取属性表list容器
+	 * 
+	 * @return
+	 */
+	public JList getRowHeader();
 }

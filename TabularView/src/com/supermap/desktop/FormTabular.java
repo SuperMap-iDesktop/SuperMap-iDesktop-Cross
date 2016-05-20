@@ -612,6 +612,10 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		return recordset.getFieldInfos().get(column).getCaption();
 	}
 
+	public JList getRowHeader() {
+		return rowHeader;
+	}
+
 	public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		JTable table;
 

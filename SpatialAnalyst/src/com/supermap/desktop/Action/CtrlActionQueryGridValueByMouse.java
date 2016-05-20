@@ -23,13 +23,14 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
 	private transient MapControl mapControl;
 	private IFormMap formMap;
 	private final DecimalFormat format = new DecimalFormat("######0.000000");
+	public static HashMap<MapControl, ArrayList<Integer>> queryArrayMap = new HashMap<>();
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
@@ -87,26 +88,36 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		GeoPoint geoPoint = new GeoPoint(mapControl.getMap().pixelToMap(e.getPoint()));
 		GeoStyle geoStyle = new GeoStyle();
 		geoStyle.setLineColor(Color.RED);
-		geoStyle.setMarkerSize(new Size2D(5, 5));
+		geoStyle.setMarkerSize(new Size2D(3, 3));
 		geoPoint.setStyle(geoStyle);
-
+		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+		int geoCount = trackingLayer.getCount();
+		int pointCount = 1;
+		if (0 != geoCount) {
+			pointCount = 1 + geoCount / 2;
+		}
+		// 在跟踪层上画点
 		Point2D point2DNumber = mapControl.getMap().pixelToMap(e.getPoint());
 		TextPart textPartNumber = new TextPart();
 		textPartNumber.setAnchorPoint(point2DNumber);
+		textPartNumber.setText(String.valueOf(pointCount));
+		// 在跟踪层上绘制数字
 		GeoText geoTextNumber = new GeoText(textPartNumber);
 		TextStyle textStyleNumber = new TextStyle();
 		textStyleNumber.setBold(true);
+		textStyleNumber.setAlignment(TextAlignment.TOPLEFT);
 		geoTextNumber.setTextStyle(textStyleNumber);
 
-		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
 		trackingLayer.add(geoPoint, "point");
+		trackingLayer.add(geoTextNumber, "pointCount");
 		Application
 				.getActiveApplication()
 				.getOutput()
-				.output(transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
+				.output(MessageFormat.format(SpatialAnalystProperties.getString("String_GridValueMessage"), pointCount)+ "\n" 
+						+transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
 						+ transparentBackground.getjLabelPointX().getText() + "\n" + transparentBackground.getjLabelPointY().getText() + "\n"
 						+ transparentBackground.getjLabelRowOfGrid().getText() + "\n" + transparentBackground.getjLabelColumnOfGrid().getText() + "\n"
-						+ transparentBackground.getjLabelGridValue().getText() + "\n");
+						+ transparentBackground.getjLabelGridValue().getText().replace("<html>", "").replace("<br>", "").replace("<html>", "") + "\n");
 	}
 
 	@Override

@@ -361,8 +361,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 				for (int i = 0; i < rowCount.length; i++) {
 					Object[] temp = new Object[3];
 					temp[COLUMN_INDEX_COUNT] = i + 1;
-					DataCell datasetCell = (DataCell) tableModel.getTagValue(i).get(1);
-					DataCell datasourceCell = (DataCell) tableModel.getTagValue(i).get(2);
+					DataCell datasetCell = (DataCell) tableModel.getRowValue(i).get(1);
+					DataCell datasourceCell = (DataCell) tableModel.getRowValue(i).get(2);
 					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceCell.toString());
 					temp[COLUMN_INDEX_DATASET] = datasetCell;
 					Dataset dataset = DatasetUtilties.getDatasetFromDatasource(datasetCell.toString(), datasource);

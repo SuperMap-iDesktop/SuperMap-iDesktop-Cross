@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction.property;
 
+import java.awt.Component;
 import java.awt.event.*;
 import java.util.Iterator;
 
@@ -21,6 +22,39 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	private JTable tabularTable;
 	private Map map;
 	private Layer layer;
+	private IFormMap formMap = null;
+	private MouseMotionListener listMouseMotionListener = new MouseMotionAdapter() {
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			queryMap();
+		}
+	};
+	private MouseListener listMouseListener = new MouseAdapter() {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			queryMap();
+		}
+
+	};
+	private MouseAdapter tabularTableListener = new MouseAdapter() {
+		// 属性表对应地图
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			map.removeDrawingListener(mapDrawingListener);
+			queryMap();
+		}
+
+	};
+	private MapDrawingListener mapDrawingListener = new MapDrawingListener() {
+
+		@Override
+		public void mapDrawing(MapDrawingEvent arg0) {
+			queryTabularTable();
+		}
+
+	};
 
 	public CtrlActionGeometryPropertyBindWindow(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -29,7 +63,6 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			IFormMap formMap = null;
 			if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 				formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				map = formMap.getMapControl().getMap();
@@ -43,20 +76,16 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				tabWindow.split(tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1), Direction.RIGHT, 0.5f);
 
 				layer = map.getLayers().get(0);
-				map.addDrawingListener(new MapDrawingListener() {
-
-					@Override
-					public void mapDrawing(MapDrawingEvent arg0) {
-						queryTabularTable();
-					}
-
-				});
+				map.addDrawingListener(mapDrawingListener);
 				tabularTable = tabular.getjTableTabular();
-				tabularTable.addMouseListener(new MouseAdapter() {
-					// 属性表对应地图
+				tabularTable.addMouseListener(tabularTableListener);
+				tabular.getRowHeader().addMouseMotionListener(this.listMouseMotionListener);
+				tabular.getRowHeader().addMouseListener(this.listMouseListener);
+				formMap.getMapControl().addMouseListener(new MouseAdapter() {
+					
 					@Override
-					public void mouseReleased(MouseEvent e) {
-						queryMap();
+					public void mouseEntered(MouseEvent e) {
+						map.addDrawingListener(mapDrawingListener);
 					}
 
 				});
@@ -99,7 +128,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		if (map.isDynamicProjection()) {
 			// 当前地图窗口中地图的投影信息与数据源的投影信息不同时，利用地图动态投影显示可以将当前地图的投影信息转换为数据源的投影信息
 			unionRectangle(recordset, map.getPrjCoordSys(), rectangle2d);
-		} else {
+		} else if (null != geo) {
 			Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
 					new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop()) });
 			rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));

@@ -6,14 +6,15 @@ import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
+import com.supermap.desktop.geometry.Abstract.IReverse;
+import com.supermap.desktop.utilties.GeometryUtilties;
 
-public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, ILineFeature, IRegionConvertor, ILineConvertor {
+public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, ILineFeature, IRegionConvertor, ILineConvertor, IReverse {
 
 	private GeoLine geoLine;
 
@@ -96,5 +97,16 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 		}
 
 		return null;
+	}
+
+	@Override
+	public Geometry reverse() {
+		GeoLine reverseLine = new GeoLine();
+
+		for (int i = 0; i < this.geoLine.getPartCount(); i++) {
+			Point2Ds point2Ds = GeometryUtilties.reverse(this.geoLine.getPart(i));
+			reverseLine.addPart(point2Ds);
+		}
+		return reverseLine;
 	}
 }
