@@ -6,14 +6,14 @@ import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Abstract.IReverse;
 
-public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, IRegionFeature, IRegionConvertor, ILineConvertor {
+public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, IRegionFeature, IRegionConvertor, ILineConvertor, IReverse {
 
 	private GeoRegion geoRegion;
 
@@ -103,5 +103,16 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 	 */
 	public Geometry[] protectedDivide() {
 		return this.geoRegion == null ? null : this.geoRegion.protectedDecompose();
+	}
+
+	@Override
+	public Geometry reverse() {
+		GeoRegion resultRegion = new GeoRegion();
+
+		for (int i = 0; i < this.geoRegion.getPartCount(); i++) {
+			Point2Ds point2Ds = this.geoRegion.getPart(i);
+			geoRegion.addPart(point2Ds);
+		}
+		return geoRegion;
 	}
 }

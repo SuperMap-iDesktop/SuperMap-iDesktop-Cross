@@ -1,13 +1,16 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.PrjCoordSys;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
@@ -93,6 +96,51 @@ public class LineToPointEditor extends AbstractEditor {
 	}
 
 	private void LineToPoint(EditEnvironment environment, DatasetVector desDataset) {
+		environment.getMapControl().getEditHistory().batchBegin();
+		Recordset desRecordset = null;
 
+		try {
+			desRecordset = desDataset.getRecordset(false, CursorType.DYNAMIC);
+			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+
+			for (Layer layer : layers) {
+				if (layer.getDataset().getType() == DatasetType.LINE && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+					Recordset recordset = layer.getSelection().toRecordset();
+
+					try {
+						while (!recordset.isEOF()) {
+
+							recordset.moveNext();
+						}
+					} finally {
+						if (recordset != null) {
+							recordset.close();
+							recordset.dispose();
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			environment.getMapControl().getEditHistory().batchEnd();
+
+			if (desDataset != null) {
+				desRecordset.close();
+				desRecordset.dispose();
+			}
+		}
+	}
+
+	/**
+	 * 合并属性值，字段名相同则进行赋值
+	 * @param des
+	 * @param properties
+	 * @return
+	 */
+	private HashMap<String, Object> mergePropertyData(DatasetVector des, HashMap<String, Object> properties) {
+		HashMap<String, Object> results = null;
+		return results;
 	}
 }

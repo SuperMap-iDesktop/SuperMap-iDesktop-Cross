@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IReverse;
 import com.supermap.desktop.utilties.ListUtilties;
 
-public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<Geometry> {
+public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<Geometry>, IReverse {
 
 	private GeoCompound geoCompound;
 
@@ -116,5 +115,21 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 		}
 
 		return null;
+	}
+
+	@Override
+	public Geometry reverse() {
+		GeoCompound reverseCompound = new GeoCompound();
+
+		for (int i = 0; i < this.geoCompound.getPartCount(); i++) {
+			IGeometry geometry = DGeometryFactory.create(this.geoCompound.getPart(i));
+
+			if (geometry instanceof IReverse) {
+				geoCompound.addPart(((IReverse) geometry).reverse());
+			} else {
+				geoCompound.addPart(geometry.getGeometry().clone());
+			}
+		}
+		return reverseCompound;
 	}
 }
