@@ -28,8 +28,9 @@ public class ReverseEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.LINE, DatasetType.LINEM, DatasetType.CAD,
-				DatasetType.REGION, DatasetType.REGION3D, DatasetType.LINE3D);
+		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.LINE, DatasetType.LINEM,
+						DatasetType.CAD, DatasetType.REGION, DatasetType.REGION3D, DatasetType.LINE3D);
 	}
 
 	private void reverse(EditEnvironment environment) {
