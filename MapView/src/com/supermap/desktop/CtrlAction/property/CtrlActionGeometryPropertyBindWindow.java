@@ -1,60 +1,67 @@
 package com.supermap.desktop.CtrlAction.property;
 
-import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JTable;
 
 import net.infonode.util.Direction;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Feature;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DockbarManager;
+import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilties.TabularUtilties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.MapDrawingEvent;
+import com.supermap.mapping.MapDrawingListener;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
+import com.supermap.mapping.Selection;
 
 public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
-	private IFormTabular tabular;
+	private SplitWindow splitWindow;
+	private IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+	private MouseMotionListener listMouseMotionListener = new ListMouseMotionListener();
+	private MouseListener listMouseListener = new ListMouseListener();
+	private MouseAdapter tabularTableListener = new TabularTableListener();
+	private MapDrawingListener mapDrawingListener;
+
 	private JTable tabularTable;
 	private Map map;
-	private Layer layer;
-	private IFormMap formMap = null;
-	private MouseMotionListener listMouseMotionListener = new MouseMotionAdapter() {
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			queryMap();
-		}
-	};
-	private MouseListener listMouseListener = new MouseAdapter() {
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			queryMap();
-		}
-
-	};
-	private MouseAdapter tabularTableListener = new MouseAdapter() {
-		// 属性表对应地图
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			map.removeDrawingListener(mapDrawingListener);
-			queryMap();
-		}
-
-	};
-	private MapDrawingListener mapDrawingListener = new MapDrawingListener() {
-
-		@Override
-		public void mapDrawing(MapDrawingEvent arg0) {
-			queryTabularTable();
-		}
-
-	};
+	private IFormTabular tabular;
+	private HashMap<Map, IFormTabular> tabularMap = new HashMap<Map, IFormTabular>();
 
 	public CtrlActionGeometryPropertyBindWindow(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -64,30 +71,75 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	public void run() {
 		try {
 			if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-				formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+				//
+				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				map = formMap.getMapControl().getMap();
 				IFormMain formMain = Application.getActiveApplication().getMainFrame();
 				TabWindow tabWindow = ((DockbarManager) formMain.getDockbarManager()).getChildFormsWindow();
 				DatasetVector activeDataset = (DatasetVector) Application.getActiveApplication().getActiveDatasets()[0];
-				if (null != activeDataset) {
-					tabular = TabularUtilties.openDatasetVectorFormTabular(activeDataset);
+				tabular = TabularUtilties.openDatasetVectorFormTabular(activeDataset);
+				tabularMap.put(map, tabular);
+				DockingWindow newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
+				if (null == splitWindow) {
+					splitWindow = tabWindow.split(newTabWindow, Direction.RIGHT, 0.5f);
+				} else if (splitWindow.getChildWindowCount() > 0) {
+					// 注销事件保证单前地图关联当前的属性表
+					((TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
 				}
-
-				tabWindow.split(tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1), Direction.RIGHT, 0.5f);
-
-				layer = map.getLayers().get(0);
-				map.addDrawingListener(mapDrawingListener);
 				tabularTable = tabular.getjTableTabular();
-				tabularTable.addMouseListener(tabularTableListener);
-				tabular.getRowHeader().addMouseMotionListener(this.listMouseMotionListener);
-				tabular.getRowHeader().addMouseListener(this.listMouseListener);
-				formMap.getMapControl().addMouseListener(new MouseAdapter() {
+				this.mapDrawingListener = new LocalMapDrawingListener(tabular);
+
+				// 注册事件
+				registEvents();
+				// // 焦点
+				// formMap.actived();
+				
+				map.addMapOpenedListener(new MapOpenedListener() {
 					
 					@Override
-					public void mouseEntered(MouseEvent e) {
-						map.addDrawingListener(mapDrawingListener);
+					public void mapOpened(MapOpenedEvent arg0) {
+						// 地图打开时销毁事件，保证当前地图只关联当前属性表
+						removeEventes();
+						tabularMap.clear();
+					}
+				});
+				
+				map.addMapClosedListener(new MapClosedListener() {
+
+					@Override
+					public void mapClosed(MapClosedEvent arg0) {
+						// 地图关闭时销毁事件，保证当前地图只关联当前属性表
+						removeEventes();
+						tabularMap.clear();
+					}
+				});
+
+				newTabWindow.addListener(new DockingWindowAdapter() {
+					
+					@Override
+					public void windowClosed(DockingWindow window) {
+						// 浮动窗口关闭时销毁事件，保证当前地图只关联当前属性表
+						removeEventes();
+						tabularMap.clear();
 					}
 
+				});
+
+				formManager.addActiveFormChangedListener(new ActiveFormChangedListener() {
+
+					@Override
+					public void activeFormChanged(ActiveFormChangedEvent e) {
+						if (null == e.getNewActiveForm()) {
+							// 当所有地图关闭时将splitWindow设置为空，重新关联
+							splitWindow = null;
+						} else if (e.getNewActiveForm() instanceof IFormMap) {
+							
+							map = ((IFormMap) e.getNewActiveForm()).getMapControl().getMap();
+							if (null != tabularMap.get(map)) {
+								map.addDrawingListener(mapDrawingListener);
+							}
+						}
+					}
 				});
 			}
 		} catch (Exception e) {
@@ -95,9 +147,25 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		}
 	}
 
-	private void queryTabularTable() {
+	private void registEvents() {
+		removeEventes();
+		tabularTable.addMouseListener(this.tabularTableListener);
+		map.addDrawingListener(this.mapDrawingListener);
+		tabular.getRowHeader().addMouseMotionListener(this.listMouseMotionListener);
+		tabular.getRowHeader().addMouseListener(this.listMouseListener);
+	}
+
+	private void removeEventes() {
+		tabularTable.removeMouseListener(this.tabularTableListener);
+		map.removeDrawingListener(this.mapDrawingListener);
+		tabular.getRowHeader().removeMouseMotionListener(this.listMouseMotionListener);
+		tabular.getRowHeader().removeMouseListener(this.listMouseListener);
+	};
+
+	private void queryTabularTable(MapDrawingEvent event, IFormTabular tabular) {
 		// 地图选择集对应属性表
-		if (null != layer.getSelection()) {
+		if (event.getMap().getLayers().getCount() > 0 && null != event.getMap().getLayers().get(0)&& null != event.getMap().getLayers().get(0).getSelection()) {
+			Layer layer = event.getMap().getLayers().get(0);
 			Selection selection = layer.getSelection();
 			Recordset recordset = selection.toRecordset();
 			java.util.Map<Integer, Feature> featureMap = recordset.getAllFeatures();
@@ -135,11 +203,50 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		}
 		Selection selection = new Selection();
 		selection.fromRecordset(recordset);
-		layer.setSelection(selection);
+		map.getLayers().get(0).setSelection(selection);
 		map.setCenter(rectangle2d.getCenter());
 		map.refresh();
 		selection.clear();
 		recordset.dispose();
+	}
+
+	class TabularTableListener extends MouseAdapter {
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			map.removeDrawingListener(mapDrawingListener);
+			queryMap();
+		}
+
+	}
+
+	class ListMouseMotionListener extends MouseMotionAdapter {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			queryMap();
+		}
+	}
+
+	class ListMouseListener extends MouseAdapter {
+		// 属性表对应地图
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			map.removeDrawingListener(mapDrawingListener);
+			queryMap();
+		}
+	}
+
+	class LocalMapDrawingListener implements MapDrawingListener {
+		private IFormTabular tabular;
+
+		public LocalMapDrawingListener(IFormTabular tabular) {
+			this.tabular = tabular;
+		}
+
+		@Override
+		public void mapDrawing(MapDrawingEvent arg0) {
+			queryTabularTable(arg0, tabular);
+		}
 	}
 
 	private void unionRectangle(Recordset recordset, PrjCoordSys prjCoordSys, Rectangle2D rectangle) {

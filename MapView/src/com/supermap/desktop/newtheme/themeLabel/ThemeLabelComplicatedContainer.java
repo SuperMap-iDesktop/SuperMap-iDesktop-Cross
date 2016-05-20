@@ -72,8 +72,6 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.themeLabelLayer = layer;
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
-		System.out.println("LayerName:" + layer.getName());
-		System.out.println("Length:" + ((ThemeLabel) layer.getTheme()).getUniformMixedStyle().getStyles().length);
 
 		mixStyleClone(themeLabel);
 		this.layerName = layer.getName();
@@ -95,7 +93,16 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.setLayout(new GridBagLayout());
 		this.tabbedPane = new JTabbedPane();
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
+		this.panelProperty.getCheckBoxShowSubscription().setEnabled(false);
+		this.panelProperty.getLabelShowSubscription().setEnabled(false);
+		this.panelProperty.getCheckBoxShowLabelVertical().setVisible(false);
+		this.panelProperty.getLabelShowLabelVertical().setVisible(false);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
+		this.panelAdvance.getLabelFontCount().setVisible(false);
+		this.panelAdvance.getSpinnerFontCount().setVisible(false);
+		this.panelAdvance.getLabelSplitSeparator().setVisible(false);
+		this.panelAdvance.getComboBoxSplitSeparator().setVisible(false);
+		this.panelAdvance.getCheckBoxOptimizeMutilineAlignment().setVisible(false);
 		this.panelStyle = new JPanel();
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Style"), this.panelStyle);
@@ -542,7 +549,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 			@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				return columnIndex == 1 || columnIndex == 2;
+				return columnIndex == 1;
 			}
 		};
 		this.tableComplicated.setModel(defaultTableModel);
@@ -563,7 +570,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 						if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
 							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
 						}
-						if (selectRow == 0 && rangeValue > 0 && rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
+						if (selectRow == 0 && rangeValue > 0 && mixedTextStyle.getSplitIndexes().length > selectRow+1
+								&& rangeValue < mixedTextStyle.getSplitIndexes()[selectRow + 1]) {
 							mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
 						}
 						if (selectRow != 0 && selectRow != tableComplicated.getRowCount() - 2 && rangeValue > nowValue
