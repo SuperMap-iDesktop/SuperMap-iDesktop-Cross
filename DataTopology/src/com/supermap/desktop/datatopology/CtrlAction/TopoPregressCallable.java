@@ -34,8 +34,8 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 			int[] precisionOrders = new int[count];
 			if (0 < count) {
 				for (int i = 0; i < count; i++) {
-					String datasetName = model.getTagValue(i).get(1).toString();
-					String datasourceName = model.getTagValue(i).get(2).toString();
+					String datasetName = model.getRowValue(i).get(1).toString();
+					String datasourceName = model.getRowValue(i).get(2).toString();
 					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 					datasets[i] = (DatasetVector) datasource.getDatasets().get(datasetName);
 					TopologyDatasetRelationItem item = new TopologyDatasetRelationItem(datasets[i]);
