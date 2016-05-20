@@ -11,6 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.NumberUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -28,7 +29,7 @@ public class ComponentFactory {
 	 * @return
 	 */
 	public static JButton createButtonOK() {
-		JButton buttonOK = new JButton();
+		SmButton buttonOK = new SmButton();
 		buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
 		return buttonOK;
 	}
@@ -39,7 +40,7 @@ public class ComponentFactory {
 	 * @return
 	 */
 	public static JButton createButtonCancel() {
-		JButton buttonCancel = new JButton();
+		SmButton buttonCancel = new SmButton();
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		return buttonCancel;
 	}
@@ -66,6 +67,38 @@ public class ComponentFactory {
 
 				if (StringUtilties.isPositiveInteger(textFieldValue)) {
 					Integer value = Integer.valueOf(textFieldValue);
+
+					if (value >= minValue && value <= maxValue) {
+						result = true;
+					}
+				}
+				return result;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
+		textField.setText(String.valueOf(defaultValue));
+
+		return textField;
+	}
+
+	public static SmTextFieldLegit createNumericTextField(double defaultValue, final double minValue, final double maxValue) {
+		if (minValue > maxValue) {
+			return null;
+		}
+
+		SmTextFieldLegit textField = new SmTextFieldLegit();
+		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
+
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				boolean result = false;
+
+				if (StringUtilties.isNumber(textFieldValue)) {
+					Double value = Double.valueOf(textFieldValue);
 
 					if (value >= minValue && value <= maxValue) {
 						result = true;

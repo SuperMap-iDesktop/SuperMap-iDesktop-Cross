@@ -1,4 +1,4 @@
-package com.supermap.desktop.geometryoperation.editor;
+package com.supermap.desktop.geometryoperation.control;
 
 import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
