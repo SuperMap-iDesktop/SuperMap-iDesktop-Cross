@@ -144,4 +144,22 @@ public class ListUtilties {
 		}
 		return result;
 	}
+
+	/**
+	 * 将指定列表里的元素反序
+	 * 
+	 * @param list
+	 */
+	public static <T> void reverse(List<T> list) {
+		if (list != null && list.size() > 0) {
+
+			for (int i = 0; i < list.size() / 2; i++) {
+				T temp = list.get(i);
+
+				// 首尾交换
+				list.set(i, list.get(list.size() - 1 - i));
+				list.set(list.size() - 1 - i, temp);
+			}
+		}
+	}
 }

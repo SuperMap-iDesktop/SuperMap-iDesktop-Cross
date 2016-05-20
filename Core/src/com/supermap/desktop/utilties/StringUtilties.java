@@ -39,19 +39,35 @@ public class StringUtilties {
 	}
 
 	/**
-	 * 判断是否符合正则表达式
+	 * 判断是否符合正则表达式，匹配整个字符串
 	 *
 	 * @param regex
 	 * @param orginal
 	 * @return
 	 */
-	private static boolean isMatch(String regex, String orginal) {
+	public static boolean isMatch(String regex, String orginal) {
 		if (orginal == null || orginal.trim().equals("")) {
 			return false;
 		}
 		Pattern pattern = Pattern.compile(regex);
-		Matcher isNum = pattern.matcher(orginal);
-		return isNum.matches();
+		Matcher matcher = pattern.matcher(orginal);
+		return matcher.matches();
+	}
+
+	/**
+	 * 匹配字符串中的一部分
+	 * 
+	 * @param regex
+	 * @param orginal
+	 * @return
+	 */
+	public static boolean isFind(String regex, String orginal) {
+		if (orginal == null || orginal.trim().equals("")) {
+			return false;
+		}
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(orginal);
+		return matcher.find();
 	}
 
 	/**
@@ -61,7 +77,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isPositiveInteger(String orginal) {
-		return isMatch("^\\+{0,1}[1-9]\\d*$", orginal);
+		return isMatch("^\\+?[1-9]\\d*$", orginal);
 	}
 
 	/**
@@ -81,7 +97,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isWholeNumber(String orginal) {
-		return isMatch("^[+-]{0,1}0$", orginal) || isPositiveInteger(orginal) || isNegativeInteger(orginal);
+		return isMatch("^[+-]?0$", orginal) || isPositiveInteger(orginal) || isNegativeInteger(orginal);
 	}
 
 	/**
@@ -91,7 +107,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isPositiveDecimal(String orginal) {
-		return isMatch("^\\+{0,1}[0]\\.[1-9]*|\\+{0,1}[1-9]\\d*\\.\\d*$", orginal);
+		return isMatch("^\\+?[0]\\.[1-9]*$|^\\+?[1-9]\\d*\\.\\d*$", orginal);
 	}
 
 	/**
@@ -101,7 +117,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isNegativeDecimal(String orginal) {
-		return isMatch("^-[0]\\.[1-9]*|^-[1-9]\\d*\\.\\d*$", orginal);
+		return isMatch("^-[0]\\.[1-9]*$|^-[1-9]\\d*\\.\\d*$", orginal);
 	}
 
 	/**
@@ -111,7 +127,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isDecimal(String orginal) {
-		return isMatch("^[-+]{0,1}\\d+\\.\\d*|[-+]{0,1}\\d*\\.\\d+$", orginal);
+		return isMatch("^[-+]?\\d+\\.\\d*$|^[-+]?\\d*\\.\\d+$", orginal);
 	}
 
 	/**
@@ -131,7 +147,7 @@ public class StringUtilties {
 	 * @return
 	 */
 	public static boolean isNumeric(String str) {
-		for (int i = str.length(); --i >= 0; ) {
+		for (int i = str.length(); --i >= 0;) {
 			if (!Character.isDigit(str.charAt(i))) {
 				return false;
 			}

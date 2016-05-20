@@ -12,6 +12,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilties.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -19,6 +20,7 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.StringUtilties;
 
 /**
  * 光滑系数
@@ -100,6 +102,7 @@ public class JDialogSmoothRatio extends SmDialog {
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
+				textFieldTextChanged();
 			}
 
 			@Override
@@ -119,19 +122,10 @@ public class JDialogSmoothRatio extends SmDialog {
 			this.buttonOK.setEnabled(true);
 		} else {
 			this.buttonOK.setEnabled(false);
-			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_Smooth_RatioError"));
-		}
-	}
 
-	public static void main(String[] args) {
-		final JDialogSmoothRatio dialog = new JDialogSmoothRatio();
-
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				dialog.setVisible(true);
+			if (!StringUtilties.isNullOrEmpty(this.textFieldSmoothRatio.getText())) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_Smooth_RatioError"));
 			}
-		});
+		}
 	}
 }

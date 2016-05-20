@@ -1,12 +1,17 @@
 package com.supermap.desktop.utilties;
 
+import java.util.ArrayList;
+
 import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.GeoText;
 import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Point3D;
+import com.supermap.data.Point3Ds;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -375,5 +380,41 @@ public class GeometryUtilties {
 				feature.addPart(geometry);
 			}
 		}
+	}
+
+	/**
+	 * 将指定的 Point2Ds 反序
+	 * 
+	 * @param point2Ds
+	 * @return
+	 */
+	public static Point2Ds reverse(Point2Ds point2Ds) {
+		Point2Ds result = null;
+
+		if (point2Ds.getCount() > 0) {
+			ArrayList<Point2D> point2DList = new ArrayList<>();
+			ListUtilties.addArray(point2DList, point2Ds.toArray());
+			ListUtilties.reverse(point2DList);
+			result = new Point2Ds(point2DList.toArray(new Point2D[point2DList.size()]));
+		}
+		return result;
+	}
+
+	/**
+	 * 将指定的 Point3Ds 反序
+	 * 
+	 * @param point3Ds
+	 * @return
+	 */
+	public static Point3Ds reverse(Point3Ds point3Ds) {
+		Point3Ds result = null;
+
+		if (point3Ds.getCount() > 0) {
+			ArrayList<Point3D> point3DList = new ArrayList<>();
+			ListUtilties.addArray(point3DList, point3Ds.toArray());
+			ListUtilties.reverse(point3DList);
+			result = new Point3Ds(point3DList.toArray(new Point3D[point3DList.size()]));
+		}
+		return result;
 	}
 }
