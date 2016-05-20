@@ -53,34 +53,34 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private static final long serialVersionUID = 1L;
 
 	private JLabel labelLabelExpression = new JLabel();
-	private JComboBox<String> comboBoxLabelExpression = new JComboBox<>();
+	private JComboBox<String> comboBoxLabelExpression = new JComboBox<>();// 表达式
 	// panelBackgroundSet
 	private JLabel labelBGShape = new JLabel();
-	private JComboBox<String> comboBoxBGShape = new JComboBox<>();
+	private JComboBox<String> comboBoxBGShape = new JComboBox<>();// 背景形状
 	private JLabel labelBGStyle = new JLabel();
-	private JButton buttonBGStyle = new JButton();
+	private JButton buttonBGStyle = new JButton();// 背景风格
 	// panelLabelOffset
-	private JLabel labelOffsetUnity = new JLabel();
+	private JLabel labelOffsetUnity = new JLabel();// 偏移量单位
 	private JComboBox<String> comboBoxOffsetUnity = new JComboBox<>();
 	private JLabel labelOffsetX = new JLabel();
 	private JLabel labelOffsetXUnity = new JLabel();
-	private JComboBox<String> comboBoxOffsetX = new JComboBox<>();
+	private JComboBox<String> comboBoxOffsetX = new JComboBox<>();// 水平偏移量
 	private JLabel labelOffsetY = new JLabel();
 	private JLabel labelOffsetYUnity = new JLabel();
-	private JComboBox<String> comboBoxOffsetY = new JComboBox<>();
+	private JComboBox<String> comboBoxOffsetY = new JComboBox<>();// 垂直偏移量
 	// panelLabelEffectSet
-	private JCheckBox checkBoxFlowVisual = new JCheckBox();
-	private JCheckBox checkBoxShowSubscription = new JCheckBox();
+	private JCheckBox checkBoxFlowVisual = new JCheckBox();// 流动显示
+	private JCheckBox checkBoxShowSubscription = new JCheckBox();// 显示上下标
 	private JLabel labelShowSubscription = new JLabel("?");
-	private JCheckBox checkBoxShowSmallLabel = new JCheckBox();
-	private JCheckBox checkBoxShowLabelVertical = new JCheckBox();
+	private JCheckBox checkBoxShowSmallLabel = new JCheckBox();// 显示小对象标签
+	private JCheckBox checkBoxShowLabelVertical = new JCheckBox();// 竖排显示标签
 	private JLabel labelShowLabelVertical = new JLabel("?");
-	private JCheckBox checkBoxAutoAvoidance = new JCheckBox();
+	private JCheckBox checkBoxAutoAvoidance = new JCheckBox();// 自动避让
 	private JComboBox<String> comboBoxAutoAvoidance = new JComboBox<>();
-	private JCheckBox checkBoxDraftLine = new JCheckBox();
+	private JCheckBox checkBoxDraftLine = new JCheckBox();// 显示牵引线
 	private JButton buttonDraftLine = new JButton();
 	private JLabel labelTextPrecision = new JLabel();
-	private JComboBox<String> comboBoxTextPrecision = new JComboBox<>();
+	private JComboBox<String> comboBoxTextPrecision = new JComboBox<>();// 数值文本精度
 
 	private transient DatasetVector datasetVector;
 	private transient ThemeLabel themeLabel;
@@ -709,7 +709,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		private void setLineStyle() {
 			symbolType = SymbolType.LINE;
 			SymbolDialog textStyleDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
-			GeoStyle geoStyle = new GeoStyle();
+			GeoStyle geoStyle = themeLabel.getLeaderLineStyle();
+			if (null == geoStyle) {
+				geoStyle = new GeoStyle();
+			}
 			DialogResult dialogResult = textStyleDialog.showDialog(geoStyle, new ISymbolApply() {
 				@Override
 				public void apply(GeoStyle geoStyle) {
@@ -790,6 +793,22 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	@Override
 	public void setCurrentLayer(Layer layer) {
 		this.themelabelLayer = layer;
+	}
+
+	public JCheckBox getCheckBoxShowSubscription() {
+		return checkBoxShowSubscription;
+	}
+
+	public JLabel getLabelShowSubscription() {
+		return labelShowSubscription;
+	}
+
+	public JCheckBox getCheckBoxShowLabelVertical() {
+		return checkBoxShowLabelVertical;
+	}
+
+	public JLabel getLabelShowLabelVertical() {
+		return labelShowLabelVertical;
 	}
 
 }

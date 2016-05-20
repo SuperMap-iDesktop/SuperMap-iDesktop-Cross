@@ -150,7 +150,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			this.setRollover(true);
 			this.setToolTipText(this.xmlToolbar.getTooltip());
 			setVisible(this.xmlToolbar.getVisible());
-			this.setMinimumSize(new Dimension(25, 33));
+			this.setMinimumSize(new Dimension(45, 33));
 			this.load();
 			initPreferredSize();
 			result = true;

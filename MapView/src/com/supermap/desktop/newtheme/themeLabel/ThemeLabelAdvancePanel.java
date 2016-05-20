@@ -26,48 +26,48 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 	// panelAdvanced
-	private JCheckBox checkBoxRotateLabel = new JCheckBox();
+	private JCheckBox checkBoxRotateLabel = new JCheckBox();// 沿线标注
 	// panelRotateLabel
-	private JCheckBox checkBoxFixedFontAngl = new JCheckBox();
-	private JCheckBox checkBoxRemoveRepeatLabel = new JCheckBox();
+	private JCheckBox checkBoxFixedFontAngl = new JCheckBox();// 固定文本角度
+	private JCheckBox checkBoxRemoveRepeatLabel = new JCheckBox();// 去除重复标注
 	private JLabel labelLineDirection = new JLabel();
-	private JComboBox<String> comboBoxLineDirection = new JComboBox<String>();
+	private JComboBox<String> comboBoxLineDirection = new JComboBox<String>();// 沿线显示方向
 	private JLabel labelFontSpace = new JLabel();
-	private JSpinner spinnerFontSpace = new JSpinner();
+	private JSpinner spinnerFontSpace = new JSpinner();// 沿线字间距
 	private JLabel labelRepeatInterval = new JLabel();
-	private JTextField textFieldRepeatInterval = new JTextField();
+	private JTextField textFieldRepeatInterval = new JTextField();// 沿线周期间距
 	private JLabel labelUnity = new JLabel();
-	private JCheckBox checkBoxRepeatIntervalFixed = new JCheckBox();
+	private JCheckBox checkBoxRepeatIntervalFixed = new JCheckBox();// 固定循环标注
 	// panelTextFontSet
 	private JLabel labelOverLength = new JLabel();
-	private JComboBox<String> comboBoxOverLength = new JComboBox<String>();
+	private JComboBox<String> comboBoxOverLength = new JComboBox<String>();// 超长处理方式
 	private JLabel labelFontCount = new JLabel();
-	private JSpinner spinnerFontCount = new JSpinner();
+	private JSpinner spinnerFontCount = new JSpinner();// 单行文本字数
 	private JLabel labelAlignmentStyle = new JLabel();
-	private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();
+	private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();// 文本对齐方式
 	private JLabel labelSplitSeparator = new JLabel();
-	private JComboBox<Character> comboBoxSplitSeparator = new JComboBox<Character>();
-	private JCheckBox checkBoxOptimizeMutilineAlignment = new JCheckBox();
+	private JComboBox<Character> comboBoxSplitSeparator = new JComboBox<Character>();// 指定换行字符
+	private JCheckBox checkBoxOptimizeMutilineAlignment = new JCheckBox();// 避让后多行文本对齐
 	// panelFontHeight
 	private JLabel labelMaxFontHeight = new JLabel();
-	private JTextField textFieldMaxFontHeight = new JTextField();
+	private JTextField textFieldMaxFontHeight = new JTextField();// 最大文本高度
 	private JLabel labelMaxFontHeightUnity = new JLabel();
 	private JLabel labelMinFontHeight = new JLabel();
-	private JTextField textFieldMinFontHeight = new JTextField();
+	private JTextField textFieldMinFontHeight = new JTextField();// 最小文本高度
 	private JLabel labelMinFontHeightUnity = new JLabel();
 	// panelFontWide
 	private JLabel labelMaxFontWidth = new JLabel();
-	private JTextField textFieldMaxFontWidth = new JTextField();
+	private JTextField textFieldMaxFontWidth = new JTextField();// 最大文本宽度
 	private JLabel labelMaxFontWidthUnity = new JLabel();
 	private JLabel labelMinFontWidth = new JLabel();
-	private JTextField textFieldMinFontWidth = new JTextField();
+	private JTextField textFieldMinFontWidth = new JTextField();// 最小文本宽度
 	private JLabel labelMinFontWidthUnity = new JLabel();
 	// panelTextExtentInflation
 	private JLabel labelHorizontal = new JLabel();
-	private JTextField textFieldHorizontal = new JTextField();
+	private JTextField textFieldHorizontal = new JTextField();// 横向
 	private JLabel labelHorizontalUnity = new JLabel();
 	private JLabel labelVertical = new JLabel();
-	private JTextField textFieldVertical = new JTextField();
+	private JTextField textFieldVertical = new JTextField();// 纵向
 	private JLabel labelVerticalUnity = new JLabel();
 	private Dimension textFieldDimension = new Dimension(400, 20);
 	private Dimension labelDimension = new Dimension(30, 20);
@@ -923,4 +923,25 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	public void setCurrentLayer(Layer layer) {
 		this.themeLabelLayer = layer;
 	}
+
+	public JLabel getLabelFontCount() {
+		return labelFontCount;
+	}
+
+	public JSpinner getSpinnerFontCount() {
+		return spinnerFontCount;
+	}
+
+	public JLabel getLabelSplitSeparator() {
+		return labelSplitSeparator;
+	}
+
+	public JComboBox<Character> getComboBoxSplitSeparator() {
+		return comboBoxSplitSeparator;
+	}
+
+	public JCheckBox getCheckBoxOptimizeMutilineAlignment() {
+		return checkBoxOptimizeMutilineAlignment;
+	}
+
 }
