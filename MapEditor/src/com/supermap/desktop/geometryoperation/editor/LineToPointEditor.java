@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -9,14 +10,25 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.recordset.RecordsetDelete;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.RecordsetUtilties;
 import com.supermap.mapping.Layer;
 
 public class LineToPointEditor extends AbstractEditor {
@@ -35,7 +47,7 @@ public class LineToPointEditor extends AbstractEditor {
 				} else {
 					dataset = dialog.getDesDataset();
 				}
-				LineToPoint(environment, dataset);
+				LineToPoint(environment, dataset, dialog.isRemoveSrc());
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -46,7 +58,7 @@ public class LineToPointEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return false;
+		return ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class);
 	}
 
 	DatasetType getDesDatasetType() {
@@ -95,22 +107,77 @@ public class LineToPointEditor extends AbstractEditor {
 		return newDataset;
 	}
 
-	private void LineToPoint(EditEnvironment environment, DatasetVector desDataset) {
+	private void LineToPoint(EditEnvironment environment, DatasetVector desDataset, boolean isRemoveSrc) {
 		environment.getMapControl().getEditHistory().batchBegin();
 		Recordset desRecordset = null;
 
 		try {
 			desRecordset = desDataset.getRecordset(false, CursorType.DYNAMIC);
+			desRecordset.getBatch().setMaxRecordCount(2000);
+			desRecordset.getBatch().begin();
 			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
-				if (layer.getDataset().getType() == DatasetType.LINE && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+				// @formatter:off
+				if ((layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.CAD) 
+						&& layer.getSelection() != null
+						&& layer.getSelection().getCount() > 0) {
+				// @formatter:on
 					Recordset recordset = layer.getSelection().toRecordset();
+					RecordsetDelete delete = null;
+					if (isRemoveSrc) {
+						delete = new RecordsetDelete((DatasetVector) layer.getDataset(), environment.getMapControl().getEditHistory());
+					}
 
 					try {
 						while (!recordset.isEOF()) {
+							IGeometry geometry = null;
+							GeoLine geoLine = null;
 
-							recordset.moveNext();
+							try {
+								geometry = DGeometryFactory.create(recordset.getGeometry());
+
+								if (!(geometry instanceof ILineFeature)) {
+									continue;
+								}
+								geoLine = ((ILineFeature) geometry).convertToLine(120);
+
+								// 获取当前对象自身的属性
+								Map<String, Object> currentValues = RecordsetUtilties.getFieldValues(recordset);
+
+								// 拿目标数据集的属性结构来和当前对象属性进行合并处理，相同的字段赋值，目标数据集没有的字段不要
+								Map<String, Object> desValues = mergePropertyData(desDataset, recordset.getFieldInfos(), currentValues);
+
+								for (int i = 0; i < geoLine.getPartCount(); i++) {
+									Point2Ds points = geoLine.getPart(i);
+
+									for (int j = 0; j < points.getCount(); j++) {
+										GeoPoint geoPoint = new GeoPoint(points.getItem(j));
+										desRecordset.addNew(geoPoint, desValues);
+										geoPoint.dispose();
+									}
+								}
+
+								if (delete != null) {
+									delete.delete(recordset.getID());
+								}
+							} finally {
+								if (geometry != null) {
+									geometry.dispose();
+								}
+
+								if (geoLine != null) {
+									geoLine.dispose();
+								}
+
+								recordset.moveNext();
+							}
+						}
+
+						// 移除源对象
+						if (delete != null) {
+							delete.update();
+							environment.getMap().refresh();
 						}
 					} finally {
 						if (recordset != null) {
@@ -121,6 +188,7 @@ public class LineToPointEditor extends AbstractEditor {
 				}
 			}
 
+			desRecordset.getBatch().update();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -133,14 +201,37 @@ public class LineToPointEditor extends AbstractEditor {
 		}
 	}
 
+	// @formatter:off
 	/**
-	 * 合并属性值，字段名相同则进行赋值
+	 * 合并属性值，字段名相同则进行赋值，具体处理逻辑如下。
+	 * 1. 如果目标字段是文本型字段，则源数据类型均作 toString 处理
+	 * 2. 如果目标字段不是文本型字段，则要求字段名和字段类型均匹配才能进行合并处理
+	 * 
 	 * @param des
 	 * @param properties
 	 * @return
 	 */
-	private HashMap<String, Object> mergePropertyData(DatasetVector des, HashMap<String, Object> properties) {
-		HashMap<String, Object> results = null;
+	// @formatter:on
+	private HashMap<String, Object> mergePropertyData(DatasetVector des, FieldInfos srcFieldInfos, Map<String, Object> properties) {
+		HashMap<String, Object> results = new HashMap<>();
+		FieldInfos desFieldInfos = des.getFieldInfos();
+
+		for (int i = 0; i < desFieldInfos.getCount(); i++) {
+			FieldInfo desFieldInfo = desFieldInfos.get(i);
+
+			if (!desFieldInfo.isSystemField() && properties.containsKey(desFieldInfo.getName())) {
+				FieldInfo srcFieldInfo = srcFieldInfos.get(desFieldInfo.getName());
+
+				if (desFieldInfo.getType() == srcFieldInfo.getType()) {
+					// 如果要源字段和目标字段类型一致，直接做保存
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()));
+				} else if (desFieldInfo.getType() == FieldType.WTEXT || desFieldInfo.getType() == FieldType.TEXT) {
+
+					// 如果目标字段与源字段类型不一致，则只有目标字段是文本型字段时，将源字段值做 toString 处理
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()).toString());
+				}
+			}
+		}
 		return results;
 	}
 }
