@@ -16,7 +16,6 @@ import javax.swing.event.DocumentListener;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -126,6 +125,10 @@ public class JDialogGeometryConvert extends SmDialog {
 		return this.isNewDataset;
 	}
 
+	public String getNewDatasetName() {
+		return this.newDatasetName;
+	}
+
 	public boolean isRemoveSrc() {
 		return this.isRemoveSrc;
 	}
@@ -230,6 +233,9 @@ public class JDialogGeometryConvert extends SmDialog {
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
+
+		setSize(450, 200);
+		setLocationRelativeTo(null);
 	}
 
 	private void registerEvents() {
