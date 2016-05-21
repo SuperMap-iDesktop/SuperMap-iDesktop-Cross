@@ -254,6 +254,7 @@ public class JDialogGeometryConvert extends SmDialog {
 		this.checkBoxNewDataset.setSelected(this.isNewDataset);
 		this.checkBoxRemoveSrc.setSelected(this.isRemoveSrc);
 		this.textFieldNewDataset.setText(this.newDatasetName);
+		setComponentsEnabled();
 	}
 
 	private void initializeComboBoxDatasetValue() {

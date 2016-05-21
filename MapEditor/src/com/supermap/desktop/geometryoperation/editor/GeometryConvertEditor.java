@@ -62,7 +62,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 
 		try {
 			PrjCoordSys prj = null;
-			FieldInfo[] srcFieldInfos = null;
+			FieldInfos srcFieldInfos = null;
 
 			// 取选中的第一个图层的数据结构(即便选中了多个也只取第一个)
 			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
@@ -70,7 +70,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			for (Layer layer : layers) {
 				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 					DatasetVector dataset = (DatasetVector) layer.getDataset();
-					srcFieldInfos = dataset.getFieldInfos().toArray();
+					srcFieldInfos = dataset.getFieldInfos();
 					prj = dataset.getPrjCoordSys();
 					break;
 				}
@@ -86,8 +86,8 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			newDataset.setPrjCoordSys(prj);
 
 			// 初始化字段
-			for (int i = 0; i < srcFieldInfos.length; i++) {
-				FieldInfo fieldInfo = srcFieldInfos[i];
+			for (int i = 0; i < srcFieldInfos.getCount(); i++) {
+				FieldInfo fieldInfo = srcFieldInfos.get(i);
 
 				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
 					newDataset.getFieldInfos().add(fieldInfo);
