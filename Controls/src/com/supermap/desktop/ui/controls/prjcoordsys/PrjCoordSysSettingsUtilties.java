@@ -1,7 +1,5 @@
 package com.supermap.desktop.ui.controls.prjcoordsys;
 
-import java.text.MessageFormat;
-
 import com.supermap.data.Enum;
 import com.supermap.data.GeoCoordSys;
 import com.supermap.data.GeoCoordSysType;
@@ -14,12 +12,13 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings.CoordSysDefine;
 import com.supermap.desktop.utilties.PrjCoordSysUtilties;
 
+import java.text.MessageFormat;
+
 public class PrjCoordSysSettingsUtilties {
 
 	/**
 	 * 根据投影定义获取对应的投影对象
 	 * 
-	 * @param define
 	 * @return
 	 */
 	private PrjCoordSysSettingsUtilties() {
@@ -37,7 +36,7 @@ public class PrjCoordSysSettingsUtilties {
 					result = new PrjCoordSys(type);
 					result.setName(define.getCaption());
 				} else {
-					// 自定义投影暂缺，预留
+					result = define.getPrjCoordSys();
 				}
 			}
 		} catch (Exception e) {
@@ -62,7 +61,7 @@ public class PrjCoordSysSettingsUtilties {
 					result = new GeoCoordSys(type, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
 					result.setName(define.getCaption());
 				} else {
-					// 自定义投影暂缺，预留
+					result = define.getGeoCoordSys();
 				}
 			}
 		} catch (Exception e) {

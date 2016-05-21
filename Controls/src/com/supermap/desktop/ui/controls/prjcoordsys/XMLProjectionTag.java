@@ -4,7 +4,7 @@ public class XMLProjectionTag {
 	public static final String FILE_STARTUP_XML = "../Configuration/SuperMap.Desktop.Startup.xml";
 	public static final String PROJECTION = "projection";
 	public static final String DEFAULT = "default";
-	public static final String PROJECTION_XML = "Templates/Projection/Projection.xml";
+	public static final String PROJECTION_XML = "../Templates/Projection/Projection.xml";
 
 	public static final String NAMESPACEURL = "http://www.supermap.com/sml";
 	// 1
