@@ -85,6 +85,10 @@ public class JPanelGeoCoordSys extends JPanel {
 		});
 		//endregion
 
+		comboBoxType.setEditable(true);
+		comboBoxGeoSpheroidType.setEditable(true);
+		comboBoxCentralMeridianType.setEditable(true);
+
 		//region 大地参考系类型
 		Enum[] enumsGeoDatum = Enum.getEnums(GeoDatumType.class);
 		for (Enum anEnum : enumsGeoDatum) {
@@ -262,9 +266,18 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					geoCoordSys.setType((GeoCoordSysType) comboBoxType.getSelectedItem());
-					if (comboBoxType.getSelectedItem() != GeoCoordSysType.GCS_USER_DEFINE) {
+				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxType.getSelectedItem() != null) {
+					Object selectedItem = comboBoxType.getSelectedItem();
+					if (selectedItem instanceof GeoCoordSysType) {
+						geoCoordSys.setType((GeoCoordSysType) selectedItem);
+						geoCoordSys.setName(((GeoCoordSysType) selectedItem).name());
+					} else {
+						geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
+						if (selectedItem instanceof String) {
+							geoCoordSys.setName((String) selectedItem);
+						}
+					}
+					if (geoCoordSys.getType() != GeoCoordSysType.GCS_USER_DEFINE) {
 						lock = true;
 						comboBoxGeoDatumType.setSelectedItem(geoCoordSys.getGeoDatum().getType());
 						comboBoxCentralMeridianType.setSelectedItem(geoCoordSys.getGeoPrimeMeridian().getType());
@@ -277,12 +290,22 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxGeoDatumType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					geoCoordSys.getGeoDatum().setType((GeoDatumType) comboBoxGeoDatumType.getSelectedItem());
+				Object selectedItem = comboBoxGeoDatumType.getSelectedItem();
+				if (e.getStateChange() == ItemEvent.SELECTED && selectedItem != null) {
+					if (selectedItem instanceof GeoDatumType) {
+						geoCoordSys.getGeoDatum().setName(((GeoDatumType) selectedItem).name());
+						geoCoordSys.getGeoDatum().setType((GeoDatumType) selectedItem);
+
+					} else {
+						geoCoordSys.getGeoDatum().setType(GeoDatumType.DATUM_USER_DEFINED);
+						if (selectedItem instanceof String) {
+							geoCoordSys.setName((String) selectedItem);
+						}
+					}
 					if (!lock) {
 						comboBoxType.setSelectedItem(GeoCoordSysType.GCS_USER_DEFINE);
 					}
-					if (comboBoxGeoDatumType.getSelectedItem() != GeoDatumType.DATUM_USER_DEFINED) {
+					if (selectedItem != GeoDatumType.DATUM_USER_DEFINED) {
 						lockGeo = true;
 						comboBoxGeoSpheroidType.setSelectedItem(geoCoordSys.getGeoDatum().getGeoSpheroid().getType());
 						lockGeo = false;
@@ -294,12 +317,19 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxGeoSpheroidType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					geoCoordSys.getGeoDatum().getGeoSpheroid().setType((GeoSpheroidType) comboBoxGeoSpheroidType.getSelectedItem());
+				Object selectedItem = comboBoxGeoSpheroidType.getSelectedItem();
+				if (e.getStateChange() == ItemEvent.SELECTED && selectedItem != null) {
+					if (selectedItem instanceof GeoSpheroidType) {
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setType((GeoSpheroidType) selectedItem);
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setName(((GeoSpheroidType) selectedItem).name());
+					} else {
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setName((String) selectedItem);
+					}
 					if (!lockGeo) {
 						comboBoxGeoDatumType.setSelectedItem(GeoDatumType.DATUM_USER_DEFINED);
 					}
-					if (comboBoxGeoSpheroidType.getSelectedItem() != GeoSpheroidType.SPHEROID_USER_DEFINED) {
+					if (selectedItem != GeoSpheroidType.SPHEROID_USER_DEFINED) {
 						lockAxis = true;
 						textFieldAxis.setText(String.valueOf(geoCoordSys.getGeoDatum().getGeoSpheroid().getAxis()));
 						textFieldFlatten.setText(String.valueOf(geoCoordSys.getGeoDatum().getGeoSpheroid().getFlatten()));

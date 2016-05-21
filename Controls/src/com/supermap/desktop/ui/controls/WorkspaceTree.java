@@ -101,6 +101,7 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.JTreeUtilties;
 import com.supermap.desktop.controls.utilties.SceneUtilties;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
@@ -1696,31 +1697,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			int index = datasources.indexOf(datasource.getAlias().trim());
 			DefaultMutableTreeNode sourceDatasourceNode = (DefaultMutableTreeNode) treeNodeDatasources.getChildAt(index);
 			DefaultMutableTreeNode createdNode = addDataset(tempdatasets.get(event.getDatasetName()), sourceDatasourceNode);
-			locateNode(createdNode);
+			JTreeUtilties.locateNode(WorkspaceTree.this, createdNode);
 		}
 	}
 
-	/**
-	 * 定位到指定节点并选中
-	 *
-	 * @param node
-	 */
-	private void locateNode(DefaultMutableTreeNode node) {
-		if (node == null || node.getParent() == null || node.getRoot() == null) {
-			return;
-		}
-
-		// 获取新创建节点的 Path
-		TreePath treePath = new TreePath(node.getPath());
-		// 展开该节点的父节点
-		if (!isExpanded(treePath.getParentPath())) {
-			expandPath(treePath.getParentPath());
-		}
-		// 使新创建的节点可见
-		scrollPathToVisible(treePath);
-		// 选中新创建的节点
-		setSelectionPath(treePath);
-	}
 
 	private class WorkspaceTreeDatasetDeletedAllListener implements DatasetDeletedAllListener {
 		@Override
@@ -1746,7 +1726,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) datasourceNode.getChildAt(deleteingDatasetIndex);
 					treeModelTemp.removeNodeFromParent(datasetNode);
 				}
-				locateNode(datasourceNode);
+				JTreeUtilties.locateNode(WorkspaceTree.this, datasourceNode);
 			}
 		}
 	}
@@ -1766,7 +1746,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			DefaultMutableTreeNode addMapNode = new DefaultMutableTreeNode(newMapNodeData);
 
 			treeModelTemp.insertNodeInto(addMapNode, treeNodeMaps, treeNodeMaps.getChildCount());
-			locateNode(addMapNode);
+			JTreeUtilties.locateNode(WorkspaceTree.this, addMapNode);
 		}
 	}
 

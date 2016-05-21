@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.JTreeUtilties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
@@ -564,30 +565,9 @@ public class Layer3DsTree extends JTree {
 			Layer3DMap layer3DMap = (Layer3DMap) layer3D;
 			addLayer3DMapContent(itemNode, layer3DMap.getMap());
 		}
-		locateNode(itemNode);
+		JTreeUtilties.locateNode(Layer3DsTree.this, itemNode);
 	}
 
-	/**
-	 * 定位到指定节点并选中
-	 *
-	 * @param node
-	 */
-	private void locateNode(DefaultMutableTreeNode node) {
-		if (node == null || node.getParent() == null || node.getRoot() == null) {
-			return;
-		}
-
-		// 获取新创建节点的 Path
-		TreePath treePath = new TreePath(node.getPath());
-		// 展开该节点的父节点
-		if (!isExpanded(treePath.getParentPath())) {
-			expandPath(treePath.getParentPath());
-		}
-		// 使新创建的节点可见
-		scrollPathToVisible(treePath);
-		// 选中新创建的节点
-		setSelectionPath(treePath);
-	}
 
 	private void removeLayer3DsControlNode() {
 		TreePath[] paths = this.getSelectionPaths();
