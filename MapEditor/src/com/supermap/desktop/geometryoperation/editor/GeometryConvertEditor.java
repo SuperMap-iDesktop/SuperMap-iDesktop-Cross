@@ -137,6 +137,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 								// 执行转换
 								boolean isConverted = convert(desRecordset, geometry, desValues);
 
+								// 如果转换失败，就不移除源对象
 								if (isConverted && delete != null) {
 									delete.delete(recordset.getID());
 								}
