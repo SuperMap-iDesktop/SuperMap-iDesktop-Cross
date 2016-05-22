@@ -148,6 +148,38 @@ public class MutiTableModel extends AbstractTableModel {
 		contents.add(content);
 		rowTagContents.add(tag);
 	}
+	
+	/**
+	 * 添加指定数据的一行。<br>
+	 * 
+	 * @param data　数据
+	 * @throws Exception 抛出数据数不正确的异常
+	 */
+	public void addRow(Object[] data) {
+		if (null == data) {
+			return;
+		}
+
+		if (this.columnNames.size() != data.length) {
+			// 抛出数据数不正确的异常
+			try {
+				throw new Exception(ERROR_DATA_LENGTH);
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+
+		// 初始化内容存储
+		Vector<Object> content = new Vector<Object>(this.columnNames.size());
+
+		for (int i = 0; i < this.columnNames.size(); i++) {
+			// 添加数据
+			content.add(data[i]);
+		}
+
+		// 追加内容
+		contents.add(content);
+	}
 
 	/**
 	 * 删除指定的行。<br>
