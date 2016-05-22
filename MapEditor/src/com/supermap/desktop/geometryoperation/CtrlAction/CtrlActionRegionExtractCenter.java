@@ -3,11 +3,11 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
-import com.supermap.desktop.geometryoperation.editor.RegionExtractBorderEditor;
+import com.supermap.desktop.geometryoperation.editor.RegionExtractCenterEditor;
 
 public class CtrlActionRegionExtractCenter extends CtrlActionEditorBase {
 
-	private RegionExtractBorderEditor editor = new RegionExtractBorderEditor();
+	private RegionExtractCenterEditor editor = new RegionExtractCenterEditor();
 
 	public CtrlActionRegionExtractCenter(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);

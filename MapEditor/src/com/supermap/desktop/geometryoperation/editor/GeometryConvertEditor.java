@@ -21,6 +21,7 @@ import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.RecordsetUtilties;
 import com.supermap.mapping.Layer;
@@ -41,6 +42,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType());
 
 			if (dialog.showDialog() == DialogResult.OK) {
+				CursorUtilties.setWaitCursor(environment.getMapControl());
 				DatasetVector dataset = null;
 
 				if (dialog.isNewDataset()) {
@@ -54,6 +56,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.activateEditor(NullEditor.INSTANCE);
+			CursorUtilties.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
@@ -117,7 +120,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 				// @formatter:on
 					Recordset recordset = layer.getSelection().toRecordset();
 					RecordsetDelete delete = null;
-					if (isRemoveSrc) {
+					if (isRemoveSrc && layer.isEditable()) {
 						delete = new RecordsetDelete((DatasetVector) layer.getDataset(), environment.getMapControl().getEditHistory());
 					}
 
@@ -169,7 +172,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 
-			if (desDataset != null) {
+			if (desRecordset != null) {
 				desRecordset.close();
 				desRecordset.dispose();
 			}
