@@ -125,9 +125,9 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 			IGeometry geometry = DGeometryFactory.create(this.geoCompound.getPart(i));
 
 			if (geometry instanceof IReverse) {
-				geoCompound.addPart(((IReverse) geometry).reverse());
+				reverseCompound.addPart(((IReverse) geometry).reverse());
 			} else {
-				geoCompound.addPart(geometry.getGeometry().clone());
+				reverseCompound.addPart(geometry.getGeometry().clone());
 			}
 		}
 		return reverseCompound;

@@ -40,4 +40,6 @@ public class ControlsProperties extends Properties {
 	public static final String Label_Top = "String_LabelTop";
 	public static final String Label_Right = "String_LabelRight";
 	public static final String Label_Bottom = "String_LabelBottom";
+	public static final String Label_Max = "String_LabelMaxValue";
+	public static final String Label_Min = "String_LabelMinValue";
 }

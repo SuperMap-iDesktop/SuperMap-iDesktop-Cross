@@ -63,10 +63,15 @@ public class JDialogUserDefinePrjGeography extends SmDialog {
 	private void buttonOkClicked() {
 		// TODO: 2016/5/17
 		dialogResult = DialogResult.OK;
+		dispose();
 	}
 
 	public GeoCoordSys getGeoCoordSys() {
 		return panelGeoCoordSys.getGeoCoordSys();
+	}
+
+	public void setGeOCoordSys(GeoCoordSys geOCoordSys) {
+		panelGeoCoordSys.setGeoCoordSys(geOCoordSys);
 	}
 
 	//region 初始化布局

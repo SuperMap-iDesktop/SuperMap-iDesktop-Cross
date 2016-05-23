@@ -47,6 +47,7 @@ org.sonar.ide.eclipse.core.prefs
 /Core/lib/com.supermap.analyst.navigation.jar
 /Core/lib/com.supermap.analyst.networkanalyst.jar
 /Core/lib/com.supermap.analyst.spatialanalyst.jar
+/Core/lib/com.supermap.analyst.spatialstatistics.jar
 /Core/lib/com.supermap.analyst.terrainanalyst.jar
 /Core/lib/com.supermap.analyst.trafficanalyst.jar
 /Core/lib/com.supermap.chart.convertion.jar

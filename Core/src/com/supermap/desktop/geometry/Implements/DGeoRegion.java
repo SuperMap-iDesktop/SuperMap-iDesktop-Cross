@@ -12,6 +12,7 @@ import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.IReverse;
+import com.supermap.desktop.utilties.GeometryUtilties;
 
 public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, IRegionFeature, IRegionConvertor, ILineConvertor, IReverse {
 
@@ -107,12 +108,12 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 
 	@Override
 	public Geometry reverse() {
-		GeoRegion resultRegion = new GeoRegion();
+		GeoRegion reverseRegion = new GeoRegion();
 
 		for (int i = 0; i < this.geoRegion.getPartCount(); i++) {
-			Point2Ds point2Ds = this.geoRegion.getPart(i);
-			geoRegion.addPart(point2Ds);
+			Point2Ds point2Ds = GeometryUtilties.reverse(this.geoRegion.getPart(i));
+			reverseRegion.addPart(point2Ds);
 		}
-		return geoRegion;
+		return reverseRegion;
 	}
 }

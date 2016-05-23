@@ -1,18 +1,11 @@
 package com.supermap.desktop.controls.utilties;
 
-import java.text.NumberFormat;
-
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import javax.swing.JTextField;
-import javax.swing.text.NumberFormatter;
 
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.NumberUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 /**
@@ -99,10 +92,7 @@ public class ComponentFactory {
 
 				if (StringUtilties.isNumber(textFieldValue)) {
 					Double value = Double.valueOf(textFieldValue);
-
-					if (value >= minValue && value <= maxValue) {
-						result = true;
-					}
+					return value >= minValue && value <= maxValue;
 				}
 				return result;
 			}
