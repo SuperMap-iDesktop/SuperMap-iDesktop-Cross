@@ -27,7 +27,7 @@ public class CtrlActionThemeGuide extends CtrlAction {
 	@Override
 	public void run() {
 		JFrame frame = (JFrame) Application.getActiveApplication().getMainFrame();
-		ThemeGuidDialog themeGuidDialog = new ThemeGuidDialog(frame, true, isCadType,isGrid);
+		ThemeGuidDialog themeGuidDialog = new ThemeGuidDialog(frame, true, isCadType, isGrid);
 		themeGuidDialog.setVisible(true);
 	}
 
@@ -47,7 +47,7 @@ public class CtrlActionThemeGuide extends CtrlAction {
 		enableDatasetTypes.add(DatasetType.CAD);
 		enableDatasetTypes.add(DatasetType.GRID);
 
-		if (null != Application.getActiveApplication().getActiveForm()) {
+		if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			// 选择多个图层时，不能制造专题图
 			Layer[] layers = formMap.getActiveLayers();

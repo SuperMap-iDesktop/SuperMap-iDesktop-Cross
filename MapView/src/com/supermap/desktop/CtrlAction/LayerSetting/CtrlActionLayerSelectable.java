@@ -40,35 +40,38 @@ public class CtrlActionLayerSelectable extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		if (formMap != null) {
-			for (Layer layer : formMap.getActiveLayers()) {
-				if (layer.isVisible() && layer.getTheme() != null) {
-					if (layer.getTheme() instanceof ThemeUnique || layer.getTheme() instanceof ThemeRange || layer.getTheme() instanceof ThemeCustom) {
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap != null) {
+				for (Layer layer : formMap.getActiveLayers()) {
+					if (layer.isVisible() && layer.getTheme() != null) {
+						if (layer.getTheme() instanceof ThemeUnique || layer.getTheme() instanceof ThemeRange || layer.getTheme() instanceof ThemeCustom) {
+							enable = true;
+							break;
+						}
+					} else if (layer.isVisible() && layer.getDataset() instanceof DatasetVector) {
 						enable = true;
 						break;
 					}
-				} else if (layer.isVisible() && layer.getDataset() instanceof DatasetVector) {
-					enable = true;
-					break;
 				}
-			}
 
-			// 实现多选的可用控制
-			for (Layer layer : formMap.getActiveLayers()) {
-				if (layer.getDataset() == null) {
-					continue;
-				}
-				DatasetType type = layer.getDataset().getType();
-				if (layer.getDataset() != null && (type == DatasetType.GRID || type == DatasetType.IMAGE || type == DatasetType.GRIDCOLLECTION || type == DatasetType.IMAGECOLLECTION)
-						|| layer instanceof LayerGroup) {
-					enable = false;
-					break;
-				}
-				if (layer.getDataset() != null && layer.getTheme() != null && layer.getTheme().getType() != ThemeType.UNIQUE
-						&& layer.getTheme().getType() != ThemeType.RANGE && layer.getTheme().getType() != ThemeType.CUSTOM) {
-					enable = false;
-					break;
+				// 实现多选的可用控制
+				for (Layer layer : formMap.getActiveLayers()) {
+					if (layer.getDataset() == null) {
+						continue;
+					}
+					DatasetType type = layer.getDataset().getType();
+					if (layer.getDataset() != null
+							&& (type == DatasetType.GRID || type == DatasetType.IMAGE || type == DatasetType.GRIDCOLLECTION || type == DatasetType.IMAGECOLLECTION)
+							|| layer instanceof LayerGroup) {
+						enable = false;
+						break;
+					}
+					if (layer.getDataset() != null && layer.getTheme() != null && layer.getTheme().getType() != ThemeType.UNIQUE
+							&& layer.getTheme().getType() != ThemeType.RANGE && layer.getTheme().getType() != ThemeType.CUSTOM) {
+						enable = false;
+						break;
+					}
 				}
 			}
 		}
@@ -78,11 +81,12 @@ public class CtrlActionLayerSelectable extends CtrlAction {
 	@Override
 	public boolean check() {
 		boolean check = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		if (formMap.getActiveLayers()[0].isSelectable()) {
-			check = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap.getActiveLayers()[0].isSelectable()) {
+				check = true;
+			}
 		}
-
 		return check;
 	}
 }

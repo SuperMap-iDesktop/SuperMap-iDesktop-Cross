@@ -1,10 +1,8 @@
 package com.supermap.desktop.CtrlAction.property;
 
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JTable;
 
@@ -12,10 +10,14 @@ import net.infonode.util.Direction;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DockbarManager;
+import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.*;
@@ -27,7 +29,6 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	private Map map;
 	private IFormTabular tabular;
 	private HashMap<Map, IFormTabular> tabularMap = new HashMap<Map, IFormTabular>();
-	private List<DockingWindow> tabularList;
 	private DockingWindow newTabWindow;
 
 	private MouseMotionListener listMouseMotionListener = new ListMouseMotionListener();
@@ -35,6 +36,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 	private MouseAdapter tabularTableListener = new TabularTableListener();
 	private MapDrawingListener mapDrawingListener;
 	private ActiveFormChangedListener activeFormChangeListener = new LocalFormChangedListener();
+	int tabSize = 0;// 属性表个数
 
 	public CtrlActionGeometryPropertyBindWindow(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -48,50 +50,37 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				this.map = formMap.getMapControl().getMap();
 				TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-				DatasetVector activeDataset = (DatasetVector) Application.getActiveApplication().getActiveDatasets()[0];
-				this.tabular = TabularUtilties.openDatasetVectorFormTabular(activeDataset);
-				// 清空tabularMap保证一个map对应一个属性表，方便后续操作
+				Dataset dataset = map.getLayers().get(0).getDataset();
+				if (null!=dataset&&dataset instanceof DatasetVector) {
+					this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
+					TabularUtilties.refreshTabularForm((DatasetVector) dataset);
+				}
+				// 清空tabularMap保证一个map对应一个属性表
 				this.tabularMap.clear();
 				this.tabularMap.put(map, tabular);
-				newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
-				tabularList = new ArrayList<DockingWindow>();
-				tabularList.add(newTabWindow);
+				this.newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
+				this.tabSize += 1;
 				if (null == splitWindow) {
-					splitWindow = tabWindow.split(newTabWindow, Direction.RIGHT, 0.5f);
+					this.splitWindow = tabWindow.split(newTabWindow, Direction.RIGHT, 0.5f);
 				} else if (splitWindow.getChildWindowCount() > 0) {
-					((TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
+					((TabWindow) this.splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
 				}
 				this.tabularTable = tabular.getjTableTabular();
 				this.mapDrawingListener = new LocalMapDrawingListener(tabular);
-				this.map.addDrawingListener(this.mapDrawingListener);
 				registEvents();
-
 				this.formManager.addActiveFormChangedListener(this.activeFormChangeListener);
-				newTabWindow.addListener(new DockingWindowAdapter() {
+				this.newTabWindow.addListener(new DockingWindowAdapter() {
 
 					@Override
 					public void windowClosed(DockingWindow window) {
-						// 当前属性表关闭时移除属性表事件
+						// 当前属性表关闭时清空map
 						tabularMap.clear();
-						map.removeDrawingListener(mapDrawingListener);
-						removeEventes();
-						tabularList.remove(newTabWindow);
-						if (0 == tabularList.size()) {
+						tabSize -= 1;
+						if (0 == tabSize) {
 							splitWindow = null;
 						}
 					}
 
-				});
-				map.addMapClosedListener(new MapClosedListener() {
-
-					@Override
-					public void mapClosed(MapClosedEvent arg0) {
-						// 当前地图关闭时移除属性表事件
-						tabularMap.clear();
-						map.removeDrawingListener(mapDrawingListener);
-						mapDrawingListener = null;
-						removeEventes();
-					}
 				});
 			}
 		} catch (Exception e) {
@@ -101,12 +90,14 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 
 	private void registEvents() {
 		removeEventes();
+		this.map.addDrawingListener(mapDrawingListener);
 		this.tabularTable.addMouseListener(this.tabularTableListener);
 		this.tabular.getRowHeader().addMouseMotionListener(this.listMouseMotionListener);
 		this.tabular.getRowHeader().addMouseListener(this.listMouseListener);
 	}
 
 	private void removeEventes() {
+		this.map.removeDrawingListener(mapDrawingListener);
 		this.tabularTable.removeMouseListener(this.tabularTableListener);
 		this.tabular.getRowHeader().removeMouseMotionListener(this.listMouseMotionListener);
 		this.tabular.getRowHeader().removeMouseListener(this.listMouseListener);
@@ -127,10 +118,23 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				rows[i] = ((Feature) entry.getValue()).getID() - 1;
 				i++;
 			}
-			tabular.addRow(rows);
+			if (isRightRows(rows, tabular.getRowCount())) {
+				tabular.addRow(rows);
+			}
 			recordset.dispose();
 		}
 
+	}
+
+	private boolean isRightRows(int[] rows, int tableRowCount) {
+		boolean isRightRows = true;
+		for (int i = 0; i < rows.length; i++) {
+			if (rows[i] > tableRowCount) {
+				isRightRows = false;
+				break;
+			}
+		}
+		return isRightRows;
 	}
 
 	private void queryMap() {
@@ -139,25 +143,32 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		for (int i = 0; i < selectRows.length; i++) {
 			idRows[i] = selectRows[i] + 1;
 		}
-		DatasetVector dataset = (DatasetVector) map.getLayers().get(0).getDataset();
-		Recordset recordset = dataset.query(idRows, CursorType.STATIC);
-		Geometry geo = recordset.getGeometry();
-		Rectangle2D rectangle2d = Rectangle2D.getEMPTY();
-		if (map.isDynamicProjection()) {
-			// 当前地图窗口中地图的投影信息与数据源的投影信息不同时，利用地图动态投影显示可以将当前地图的投影信息转换为数据源的投影信息
-			unionRectangle(recordset, map.getPrjCoordSys(), rectangle2d);
-		} else if (null != geo) {
-			Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
-					new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop()) });
-			rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+		if (map.getLayers().getCount() > 0) {
+			DatasetVector dataset = (DatasetVector) map.getLayers().get(0).getDataset();
+			Recordset maxIdSet = dataset.query("SmId", CursorType.STATIC);
+			int idCount = (int) maxIdSet.statistic("SmId", StatisticMode.MAX);
+			if (!isRightRows(idRows, idCount)) {
+				return;
+			}
+			Recordset recordset = dataset.query(idRows, CursorType.STATIC);
+			Geometry geo = recordset.getGeometry();
+			Rectangle2D rectangle2d = Rectangle2D.getEMPTY();
+			if (map.isDynamicProjection()) {
+				// 当前地图窗口中地图的投影信息与数据源的投影信息不同时，利用地图动态投影显示可以将当前地图的投影信息转换为数据源的投影信息
+				unionRectangle(recordset, map.getPrjCoordSys(), rectangle2d);
+			} else if (null != geo) {
+				Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
+						new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop()) });
+				rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+			}
+			Selection selection = new Selection();
+			selection.fromRecordset(recordset);
+			map.getLayers().get(0).setSelection(selection);
+			map.setCenter(rectangle2d.getCenter());
+			map.refresh();
+			selection.clear();
+			recordset.dispose();
 		}
-		Selection selection = new Selection();
-		selection.fromRecordset(recordset);
-		map.getLayers().get(0).setSelection(selection);
-		map.setCenter(rectangle2d.getCenter());
-		map.refresh();
-		selection.clear();
-		recordset.dispose();
 	}
 
 	class TabularTableListener extends MouseAdapter {
@@ -165,6 +176,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			map.removeDrawingListener(mapDrawingListener);
+			mapDrawingListener = null;
 			queryMap();
 		}
 
@@ -202,6 +214,17 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
+			int formMapCount = 0;
+			for (int i = 0; i < formManager.getCount(); i++) {
+				if (formManager.get(i) instanceof IFormMap) {
+					// 遍历所有的窗口，如果为地图窗口则记录下来
+					formMapCount++;
+				}
+			}
+			if (0==formMapCount) {
+				// 地图窗口关闭时恢复dockwindow的w位置
+				splitWindow.setWindows(splitWindow.getChildWindow(1), null);
+			}
 			if (null == e.getNewActiveForm()) {
 				// 当所有地图关闭时将splitWindow设置为空，重新关联,并移除事件
 				splitWindow = null;
@@ -210,28 +233,18 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				map.removeDrawingListener(mapDrawingListener);
 				return;
 			}
-			if (e.getNewActiveForm() instanceof IFormMap) {
-				// 活动窗口为IFormMap时为地图添加事件
-				map = ((IFormMap) e.getNewActiveForm()).getMapControl().getMap();
-				if (null != tabularMap.get(map) && null == mapDrawingListener) {
-					mapDrawingListener = new LocalMapDrawingListener(tabularMap.get(map));
-					map.addDrawingListener(mapDrawingListener);
-				}
+			if (null != tabularMap.get(map) && e.getNewActiveForm() instanceof IFormMap
+					&& ((IFormMap) e.getNewActiveForm()).getMapControl().getMap().equals(map) && null != tabularMap.get(map) && null == mapDrawingListener) {
+				// 活动窗口为IFormMap,且活动地图为当前地图时添加事件
+				mapDrawingListener = new LocalMapDrawingListener(tabularMap.get(map));
+				map.addDrawingListener(mapDrawingListener);
 				return;
 			}
-			if (e.getNewActiveForm() instanceof IFormTabular && null != tabularMap.get(map) && tabularMap.get(map).equals(e.getNewActiveForm())) {
-				// 活动窗口为IFormTabular时，且活动窗口为与地图关联的属性表时添加属性表相关事件
-				registEvents();
-				return;
-			}
-			if (e.getNewActiveForm() instanceof IFormTabular && null != tabularMap.get(map) && !tabularMap.get(map).equals(e.getNewActiveForm())) {
-				// 活动窗口为IFormTabular时，且活动窗口不为与地图关联的属性表时移除属性表相关事件
+			if (null != tabularMap.get(map) && e.getNewActiveForm() instanceof IFormTabular) {
 				map.removeDrawingListener(mapDrawingListener);
 				mapDrawingListener = null;
-				removeEventes();
 				return;
 			}
-
 		}
 
 	}

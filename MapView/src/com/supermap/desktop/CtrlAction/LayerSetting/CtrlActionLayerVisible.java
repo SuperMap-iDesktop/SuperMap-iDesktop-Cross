@@ -38,17 +38,19 @@ public class CtrlActionLayerVisible extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		if (formMap != null && formMap.getActiveLayers().length > 0) {
-			enable = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap != null && formMap.getActiveLayers().length > 0) {
+				enable = true;
 
-			for (Layer layer : formMap.getActiveLayers()) {
-				if (layer.getDataset() == null && !(layer instanceof LayerGroup)) {
-					enable = false;
-					break;
+				for (Layer layer : formMap.getActiveLayers()) {
+					if (layer.getDataset() == null && !(layer instanceof LayerGroup)) {
+						enable = false;
+						break;
+					}
 				}
-			}
 
+			}
 		}
 		return enable;
 	}
@@ -56,10 +58,12 @@ public class CtrlActionLayerVisible extends CtrlAction {
 	@Override
 	public boolean check() {
 		boolean check = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		// 不支持三态，这里先简单的设置两个状态了
-		if ((formMap != null && formMap.getActiveLayers().length > 0) && (formMap.getActiveLayers()[0].isVisible())) {
-			check = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			// 不支持三态，这里先简单的设置两个状态了
+			if ((formMap != null && formMap.getActiveLayers().length > 0) && (formMap.getActiveLayers()[0].isVisible())) {
+				check = true;
+			}
 		}
 		return check;
 	}

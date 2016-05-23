@@ -811,4 +811,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		return labelShowLabelVertical;
 	}
 
+	public JComboBox<String> getComboBoxOffsetUnity() {
+		return comboBoxOffsetUnity;
+	}
 }
