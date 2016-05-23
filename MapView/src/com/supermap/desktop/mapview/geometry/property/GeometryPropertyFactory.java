@@ -1,17 +1,13 @@
 package com.supermap.desktop.mapview.geometry.property;
 
-import java.util.ArrayList;
-
-import com.supermap.data.DatasetVector;
 import com.supermap.data.Geometry;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.data.Recordset;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IProperty;
 
 public class GeometryPropertyFactory {
 	private static GeometrySpatialPropertyControl geometrySpatialPropertyControl;
 	private static GeometryRecordsetPropertyControl geometryRecordsetPropertyControl;
+	private static GeometryNodePropertyControl geometryNodePropertyControl;
 
 	private GeometryPropertyFactory() {
 		// 不提供构造函数
@@ -49,5 +45,14 @@ public class GeometryPropertyFactory {
 		}
 
 		return geometryRecordsetPropertyControl;
+	}
+
+	public static GeometryNodePropertyControl getGeometryNodePropertyControl(Recordset recordset) {
+		if (geometryNodePropertyControl == null) {
+			geometryNodePropertyControl = new GeometryNodePropertyControl(recordset);
+		} else {
+			geometryNodePropertyControl.setRecordset(recordset);
+		}
+		return geometryNodePropertyControl;
 	}
 }

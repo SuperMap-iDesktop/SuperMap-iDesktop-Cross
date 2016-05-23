@@ -81,7 +81,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -1403,6 +1402,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				ArrayList<IProperty> properties = new ArrayList<IProperty>();
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 				properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
+				properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(properties.toArray(new IProperty[properties.size()]));
 			} else {
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
