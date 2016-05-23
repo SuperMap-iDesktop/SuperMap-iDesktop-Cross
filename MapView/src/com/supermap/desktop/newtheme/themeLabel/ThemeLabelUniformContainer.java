@@ -2,6 +2,7 @@ package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.TextStyle;
+import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleContainer;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -18,10 +19,14 @@ import com.supermap.ui.MapControl;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 /**
  * 标签统一风格专题图
+ * 
  * @author xie
  *
  */
@@ -43,12 +48,15 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 
+	private ItemListener unityListener;
+
 	public ThemeLabelUniformContainer(Layer layer) {
 		this.themeLabelLayer = layer;
 		this.themeLabel = new ThemeLabel((ThemeLabel) layer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		this.textStyle = ((ThemeLabel) themeLabelLayer.getTheme()).getUniformStyle();
 		initComponents();
+		registActionListener();
 	}
 
 	/**
@@ -93,12 +101,37 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 
 	@Override
 	public void registActionListener() {
-		// do nothing
+		this.unityListener = new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					int itemCount = panelProperty.getComboBoxOffsetUnity().getSelectedIndex();
+					switch (itemCount) {
+					case 0:
+						panelAdvance.getLabelHorizontalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+						panelAdvance.getLabelVerticalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+						break;
+					case 1:
+						panelAdvance.getLabelHorizontalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+						panelAdvance.getLabelVerticalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		};
 		unregistActionListener();
+		this.panelProperty.getComboBoxOffsetUnity().addItemListener(this.unityListener);
+		panelProperty.registActionListener();
+		panelAdvance.registActionListener();
+		textStyleContainer.registActionListener();
 	}
 
 	@Override
 	public void unregistActionListener() {
+		this.panelProperty.getComboBoxOffsetUnity().removeItemListener(this.unityListener);
 		panelProperty.unregistActionListener();
 		panelAdvance.unregistActionListener();
 		textStyleContainer.unregistActionListener();

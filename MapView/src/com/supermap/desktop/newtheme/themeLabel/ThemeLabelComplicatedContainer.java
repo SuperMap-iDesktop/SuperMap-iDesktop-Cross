@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.TextStyle;
+import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -68,6 +69,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private FocusListener separatorCountFocusListener;
 	private MouseAdapter tableMouseListener;
 	private TableModelListener tableModelListener = new LocalTableModelListener();
+	private ItemListener unityListener;
 
 	public ThemeLabelComplicatedContainer(Layer layer) {
 		this.themeLabelLayer = layer;
@@ -215,6 +217,27 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 	@Override
 	public void registActionListener() {
+		this.unityListener = new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					int itemCount = panelProperty.getComboBoxOffsetUnity().getSelectedIndex();
+					switch (itemCount) {
+					case 0:
+						panelAdvance.getLabelHorizontalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+						panelAdvance.getLabelVerticalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+						break;
+					case 1:
+						panelAdvance.getLabelHorizontalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+						panelAdvance.getLabelVerticalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		};
 		this.separatorCountFocusListener = new FocusAdapter() {
 
 			@Override
@@ -238,6 +261,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 				}
 			}
 		};
+		this.panelProperty.getComboBoxOffsetUnity().addItemListener(this.unityListener);
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.comboBoxSeparatorMethod.addItemListener(this.separatorListener);
@@ -253,6 +277,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 	@Override
 	public void unregistActionListener() {
+		this.panelProperty.getComboBoxOffsetUnity().removeItemListener(this.unityListener);
 		this.panelProperty.removePropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.removePropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.comboBoxSeparatorMethod.removeItemListener(this.separatorListener);

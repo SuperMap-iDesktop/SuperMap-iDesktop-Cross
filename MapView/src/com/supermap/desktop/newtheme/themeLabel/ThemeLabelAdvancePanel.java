@@ -944,4 +944,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		return checkBoxOptimizeMutilineAlignment;
 	}
 
+	public JLabel getLabelHorizontalUnity() {
+		return labelHorizontalUnity;
+	}
+
+	public JLabel getLabelVerticalUnity() {
+		return labelVerticalUnity;
+	}
+
 }

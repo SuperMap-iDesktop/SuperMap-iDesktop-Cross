@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.supermap.data.DatasetType;
 import com.supermap.data.EditType;
 import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -29,8 +30,8 @@ public class ReverseEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.LINE, DatasetType.LINEM,
-						DatasetType.CAD, DatasetType.REGION, DatasetType.REGION3D, DatasetType.LINE3D);
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE,
+						GeometryType.GEOLINEM, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOLINE3D);
 	}
 
 	private void reverse(EditEnvironment environment) {

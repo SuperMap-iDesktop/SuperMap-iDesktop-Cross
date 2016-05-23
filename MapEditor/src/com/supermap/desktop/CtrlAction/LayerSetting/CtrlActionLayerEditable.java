@@ -50,34 +50,36 @@ public class CtrlActionLayerEditable extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = true;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 
-		if (formMap != null) {
-			for (Layer layer : formMap.getActiveLayers()) {
-				if (layer == null || !layer.isVisible()) {
-					enable = false;
-					break;
-				}
+			if (formMap != null) {
+				for (Layer layer : formMap.getActiveLayers()) {
+					if (layer == null || !layer.isVisible()) {
+						enable = false;
+						break;
+					}
 
-				// 丢失数据集的图层，不可编辑
-				boolean isDatasetNull = layer.getDataset() == null;
+					// 丢失数据集的图层，不可编辑
+					boolean isDatasetNull = layer.getDataset() == null;
 
-				boolean isDatasetVector = !isDatasetNull && layer.getDataset() instanceof DatasetVector;
+					boolean isDatasetVector = !isDatasetNull && layer.getDataset() instanceof DatasetVector;
 
-				// 只读数据源下的数据集以及只读数据集不可编辑
-				boolean isReadOnly = !isDatasetNull && (layer.getDataset().getDatasource().isReadOnly() || layer.getDataset().isReadOnly());
+					// 只读数据源下的数据集以及只读数据集不可编辑
+					boolean isReadOnly = !isDatasetNull && (layer.getDataset().getDatasource().isReadOnly() || layer.getDataset().isReadOnly());
 
-				// 海图数据集不可编辑
-				boolean isLayerChart = layer instanceof LayerChart;
+					// 海图数据集不可编辑
+					boolean isLayerChart = layer instanceof LayerChart;
 
-				// 标签、统计、等级符号专题图，不可选择，不可编辑，不可捕捉
-				boolean isInvalidThemeLayer = layer.getTheme() != null
-						&& (layer.getTheme().getType() == ThemeType.LABEL || layer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL || layer.getTheme()
-								.getType() == ThemeType.GRAPH);
+					// 标签、统计、等级符号专题图，不可选择，不可编辑，不可捕捉
+					boolean isInvalidThemeLayer = layer.getTheme() != null
+							&& (layer.getTheme().getType() == ThemeType.LABEL || layer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL || layer.getTheme()
+									.getType() == ThemeType.GRAPH);
 
-				if (isDatasetNull || isReadOnly || !isDatasetVector || isLayerChart || isInvalidThemeLayer) {
-					enable = false;
-					break;
+					if (isDatasetNull || isReadOnly || !isDatasetVector || isLayerChart || isInvalidThemeLayer) {
+						enable = false;
+						break;
+					}
 				}
 			}
 		}
@@ -87,11 +89,12 @@ public class CtrlActionLayerEditable extends CtrlAction {
 	@Override
 	public boolean check() {
 		boolean check = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		if (formMap.getActiveLayers()[0].isEditable()) {
-			check = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap.getActiveLayers()[0].isEditable()) {
+				check = true;
+			}
 		}
-
 		return check;
 	}
 }

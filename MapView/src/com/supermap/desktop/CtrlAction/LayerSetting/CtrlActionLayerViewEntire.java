@@ -53,6 +53,7 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 	public boolean enable() {
 		LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		Rectangle2D rectangle2D = null;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 
 		if (layersTree != null && layersTree.getSelectionPaths() != null && layersTree.getSelectionPaths().length == 1) {
@@ -70,6 +71,7 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 				}
 			}
 		}
+}
 		return rectangle2D != null;
 	}
 }

@@ -9,6 +9,7 @@ import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.mapping.Layer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -163,6 +164,19 @@ public class UICommonToolkit {
 		return layersManager;
 	}
 
+	
+	public static Layer getActiveLayer(Object lastPathComponent){
+		Layer result = null;
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastPathComponent;
+		Object obj = node.getUserObject();
+		TreeNodeData controlNodeData = (TreeNodeData) obj;
+		Object itemObj = controlNodeData.getData();
+		if (itemObj instanceof Layer) {
+			result = (Layer) itemObj;
+		}
+		return result;
+	}
+	
 	/**
 	 * 判断名称是否合法
 	 *

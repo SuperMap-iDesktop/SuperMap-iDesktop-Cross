@@ -3,13 +3,13 @@ package com.supermap.desktop.geometryoperation.CtrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
-import com.supermap.desktop.geometryoperation.editor.LineToRegionEditor;
+import com.supermap.desktop.geometryoperation.editor.RegionExtractBorderEditor;
 
-public class CtrlActionLineToRegion extends CtrlActionEditorBase {
+public class CtrlActionRegionExtractBorder extends CtrlActionEditorBase {
 
-	private LineToRegionEditor editor = new LineToRegionEditor();
+	private RegionExtractBorderEditor editor = new RegionExtractBorderEditor();
 
-	public CtrlActionLineToRegion(IBaseItem caller, IForm formClass) {
+	public CtrlActionRegionExtractBorder(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 		// TODO Auto-generated constructor stub
 	}

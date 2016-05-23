@@ -37,15 +37,17 @@ public class CtrlActionRenameLayer extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		if (formMap != null) {
-			LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-			if (layersTree != null && layersTree.getSelectionPaths().length == 1) {
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) layersTree.getSelectionPaths()[0].getLastPathComponent();
-				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
-				Layer layer = (Layer) selectedNodeData.getData();
-				if (layer != null && selectedNodeData.getType() != NodeDataType.WMSSUB_LAYER) {
-					enable = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap != null) {
+				LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
+				if (layersTree != null && layersTree.getSelectionPaths().length == 1) {
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) layersTree.getSelectionPaths()[0].getLastPathComponent();
+					TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+					Layer layer = (Layer) selectedNodeData.getData();
+					if (layer != null && selectedNodeData.getType() != NodeDataType.WMSSUB_LAYER) {
+						enable = true;
+					}
 				}
 			}
 		}
