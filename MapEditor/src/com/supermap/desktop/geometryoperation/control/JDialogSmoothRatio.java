@@ -1,37 +1,29 @@
 package com.supermap.desktop.geometryoperation.control;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.NumberFormat;
-
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import com.sun.xml.internal.ws.util.StringUtils;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilties.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilties.StringUtilties;
 
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * 光滑系数
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class JDialogSmoothRatio extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelSmoothRatio;
