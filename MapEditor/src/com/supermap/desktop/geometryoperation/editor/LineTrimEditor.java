@@ -497,13 +497,6 @@ public class LineTrimEditor extends AbstractEditor {
 			this.isExistPoint = isExistPoint;
 		}
 
-		public IntersectPoint(IntersectPoint intersectPoint) {
-			this.intersectPoint2D = intersectPoint.getIntersectPoint2D();
-			this.segment = intersectPoint.getSegment();
-			this.distance = intersectPoint.getDistance();
-			this.isExistPoint = intersectPoint.isExistPoint();
-		}
-
 		public Point2D getIntersectPoint2D() {
 			return this.intersectPoint2D;
 		}
