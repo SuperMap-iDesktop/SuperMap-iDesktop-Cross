@@ -182,7 +182,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.labelDesDatasource = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.labelMax = new JLabel(ControlsProperties.getString(ControlsProperties.Label_Max));
 		this.labelMin = new JLabel(ControlsProperties.getString(ControlsProperties.Label_Min));
-		this.labelNewDataset = new JLabel(ControlsProperties.getString("String_Label_NewDataset"));
+		this.labelNewDataset = new JLabel(ControlsProperties.getString("String_Label_TargetDataset"));
 		this.textFieldMax = ComponentFactory.createNumericTextField(30, this.min, Double.MAX_VALUE);
 		this.textFieldMin = ComponentFactory.createNumericTextField(0, 0, this.max);
 		this.comboBoxDatasource = new DatasourceComboBox();

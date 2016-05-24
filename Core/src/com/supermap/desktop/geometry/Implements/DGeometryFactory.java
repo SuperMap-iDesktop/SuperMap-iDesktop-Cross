@@ -15,6 +15,7 @@ import com.supermap.data.GeoLine3D;
 import com.supermap.data.GeoLineM;
 import com.supermap.data.GeoPie;
 import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoPoint3D;
 import com.supermap.data.GeoRectangle;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoRegion3D;
@@ -81,7 +82,7 @@ public class DGeometryFactory {
 				return new DGeoPoint((GeoPoint) geometry);
 			}
 			if (type == GeometryType.GEOPOINT3D) {
-				// 暂留
+				return new DGeoPoint3D((GeoPoint3D) geometry);
 			}
 			if (type == GeometryType.GEOLINE3D) {
 				return new DGeoLine3D((GeoLine3D) geometry);
