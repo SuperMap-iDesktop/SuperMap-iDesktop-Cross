@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction.property;
 
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.JTable;
 
@@ -10,14 +9,10 @@ import net.infonode.util.Direction;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.*;
@@ -109,14 +104,13 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 			Layer layer = event.getMap().getLayers().get(0);
 			Selection selection = layer.getSelection();
 			Recordset recordset = selection.toRecordset();
-			java.util.Map<Integer, Feature> featureMap = recordset.getAllFeatures();
-			int[] rows = new int[featureMap.size()];
-			Iterator<?> iterator = featureMap.entrySet().iterator();
+			int[] rows = new int[recordset.getAllFeatures().size()];
 			int i = 0;
-			while (iterator.hasNext()) {
-				java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
-				rows[i] = ((Feature) entry.getValue()).getID() - 1;
+			recordset.moveFirst();
+			while (!recordset.isEOF()) {
+				rows[i] = recordset.getID()-1;
 				i++;
+				recordset.moveNext();
 			}
 			if (isRightRows(rows, tabular.getRowCount())) {
 				tabular.addRow(rows);

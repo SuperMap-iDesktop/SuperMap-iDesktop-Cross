@@ -81,6 +81,11 @@ public class DGeoRegion3D extends AbstractGeometry implements IRegion3DFeature, 
 		return null;
 	}
 
+	@Override
+	public boolean setPart(int partIndex, Point3Ds part) {
+		return this.geoRegion3D != null && this.geoRegion3D.setPart(partIndex, part);
+	}
+
 	// @formatter:off
 	/*
 	 * 本类 segment 参数无效
