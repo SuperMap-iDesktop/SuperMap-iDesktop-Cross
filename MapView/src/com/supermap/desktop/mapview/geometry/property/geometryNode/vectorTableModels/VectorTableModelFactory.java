@@ -1,11 +1,13 @@
 package com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels;
 
 import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoPoint3D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.Point3Ds;
 import com.supermap.data.PointMs;
 import com.supermap.data.TextPart;
 import com.supermap.desktop.geometry.Implements.DGeoPoint;
+import com.supermap.desktop.geometry.Implements.DGeoPoint3D;
 
 /**
  * @author XiaJT
@@ -30,6 +32,9 @@ public class VectorTableModelFactory {
 		}
 		if (data instanceof DGeoPoint) {
 			return new TableModelPoint(((GeoPoint) ((DGeoPoint) data).getGeometry()));
+		}
+		if (data instanceof DGeoPoint3D) {
+			return new TableModelPoint3D(((GeoPoint3D) ((DGeoPoint3D) data).getGeometry()));
 		}
 		throw new UnsupportedOperationException(data.getClass().getName());
 	}

@@ -97,6 +97,6 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 
 	public void setModel(VectorTableModel vectorTableModel) {
 		this.vectorTableModel = vectorTableModel;
-		fireTableDataChanged();
+		fireTableStructureChanged();
 	}
 }
