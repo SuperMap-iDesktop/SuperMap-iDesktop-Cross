@@ -650,7 +650,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
 		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2)
 				+ Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
-		this.themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
+		if (themeGraph.getMaxGraphSize() / 10 < 10) {
+			this.themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
+		}
 		DecimalFormat decfmt = new DecimalFormat("#.######");
 		this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 		this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));

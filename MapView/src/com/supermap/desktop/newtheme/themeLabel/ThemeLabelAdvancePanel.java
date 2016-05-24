@@ -56,12 +56,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JTextField textFieldMinFontHeight = new JTextField();// 最小文本高度
 	private JLabel labelMinFontHeightUnity = new JLabel();
 	// panelFontWide
-	private JLabel labelMaxFontWidth = new JLabel();
-	private JTextField textFieldMaxFontWidth = new JTextField();// 最大文本宽度
-	private JLabel labelMaxFontWidthUnity = new JLabel();
-	private JLabel labelMinFontWidth = new JLabel();
-	private JTextField textFieldMinFontWidth = new JTextField();// 最小文本宽度
-	private JLabel labelMinFontWidthUnity = new JLabel();
+//	private JLabel labelMaxFontWidth = new JLabel();
+//	private JTextField textFieldMaxFontWidth = new JTextField();// 最大文本宽度
+//	private JLabel labelMaxFontWidthUnity = new JLabel();
+//	private JLabel labelMinFontWidth = new JLabel();
+//	private JTextField textFieldMinFontWidth = new JTextField();// 最小文本宽度
+//	private JLabel labelMinFontWidthUnity = new JLabel();
 	// panelTextExtentInflation
 	private JLabel labelHorizontal = new JLabel();
 	private JTextField textFieldHorizontal = new JTextField();// 横向
@@ -99,15 +99,15 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		JPanel panelFontHeight = new JPanel();
 		panelFontHeight.setBorder(new TitledBorder(null, MapViewProperties.getString("String_LimitedHeight"), TitledBorder.LEADING, TitledBorder.TOP, null,
 				null));
-		JPanel panelFontWide = new JPanel();
-		panelFontWide.setBorder(new TitledBorder(null, MapViewProperties.getString("String_WidthLimited"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+//		JPanel panelFontWide = new JPanel();
+//		panelFontWide.setBorder(new TitledBorder(null, MapViewProperties.getString("String_WidthLimited"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		JPanel panelTextExtentInflation = new JPanel();
 		panelTextExtentInflation.setBorder(new TitledBorder(null, MapViewProperties.getString("String_TextExtentInflation"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		initPanelRotateLabel();
 		initPanelTextFontSet(panelTextFontSet);
 		initPanelFontHeight(panelFontHeight);
-		initPanelFontWidth(panelFontWide);
+//		initPanelFontWidth(panelFontWide);
 		initPanelTextExtentInflation(panelTextExtentInflation);
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
@@ -122,8 +122,8 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		panelAdvanceContent.add(this.panelRotateLabel,         new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelAdvanceContent.add(panelTextFontSet,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelAdvanceContent.add(panelFontHeight,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelAdvanceContent.add(panelTextExtentInflation, new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+//		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(panelTextExtentInflation, new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -160,9 +160,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldHorizontal.setText(String.valueOf(size2d.getWidth()));
 		this.textFieldVertical.setText(String.valueOf(size2d.getHeight()));
 		this.textFieldMaxFontHeight.setText(String.valueOf(themeLabel.getMaxTextHeight()));
-		this.textFieldMaxFontWidth.setText(String.valueOf(themeLabel.getMaxTextWidth()));
+//		this.textFieldMaxFontWidth.setText(String.valueOf(themeLabel.getMaxTextWidth()));
 		this.textFieldMinFontHeight.setText(String.valueOf(themeLabel.getMinTextHeight()));
-		this.textFieldMinFontWidth.setText(String.valueOf(themeLabel.getMinTextWidth()));
+//		this.textFieldMinFontWidth.setText(String.valueOf(themeLabel.getMinTextWidth()));
 		this.textFieldRepeatInterval.setText(String.valueOf(themeLabel.getLabelRepeatInterval()));
 		this.spinnerFontCount.setValue(themeLabel.getMaxLabelLength());
 		this.spinnerFontSpace.setValue(themeLabel.getAlongLineSpaceRatio());
@@ -185,9 +185,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldRepeatInterval.addKeyListener(this.localKeyListener);
 		this.textFieldVertical.addKeyListener(this.localKeyListener);
 		this.textFieldMaxFontHeight.addKeyListener(this.localKeyListener);
-		this.textFieldMaxFontWidth.addKeyListener(this.localKeyListener);
+//		this.textFieldMaxFontWidth.addKeyListener(this.localKeyListener);
 		this.textFieldMinFontHeight.addKeyListener(this.localKeyListener);
-		this.textFieldMinFontWidth.addKeyListener(this.localKeyListener);
+//		this.textFieldMinFontWidth.addKeyListener(this.localKeyListener);
 		this.spinnerFontCount.addChangeListener(this.changedListener);
 		this.spinnerFontSpace.addChangeListener(this.changedListener);
 		this.spinnerFontSpace.getEditor().addKeyListener(this.localKeyListener);
@@ -210,9 +210,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldRepeatInterval.removeKeyListener(this.localKeyListener);
 		this.textFieldVertical.removeKeyListener(this.localKeyListener);
 		this.textFieldMaxFontHeight.removeKeyListener(this.localKeyListener);
-		this.textFieldMaxFontWidth.removeKeyListener(this.localKeyListener);
+//		this.textFieldMaxFontWidth.removeKeyListener(this.localKeyListener);
 		this.textFieldMinFontHeight.removeKeyListener(this.localKeyListener);
-		this.textFieldMinFontWidth.removeKeyListener(this.localKeyListener);
+//		this.textFieldMinFontWidth.removeKeyListener(this.localKeyListener);
 		this.spinnerFontCount.removeChangeListener(this.changedListener);
 		this.spinnerFontSpace.removeChangeListener(this.changedListener);
 		this.spinnerFontSpace.getEditor().removeKeyListener(this.localKeyListener);
@@ -240,10 +240,10 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.labelMinFontHeight.setText(MapViewProperties.getString("String_MinHeight"));
 		this.labelMinFontHeightUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 
-		this.labelMaxFontWidth.setText(MapViewProperties.getString("String_MaxWidth"));
-		this.labelMaxFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
-		this.labelMinFontWidth.setText(MapViewProperties.getString("String_MinHeight"));
-		this.labelMinFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+//		this.labelMaxFontWidth.setText(MapViewProperties.getString("String_MaxWidth"));
+//		this.labelMaxFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+//		this.labelMinFontWidth.setText(MapViewProperties.getString("String_MinHeight"));
+//		this.labelMinFontWidthUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
 
 		this.labelHorizontal.setText(MapViewProperties.getString("String_TextExtentWidth"));
 		this.labelHorizontalUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
@@ -334,25 +334,25 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	/**
-	 * 文本宽度限制界面布局
-	 *
-	 * @param panelFontWidth
-	 */
-	private void initPanelFontWidth(JPanel panelFontWidth) {
-		//@formatter:off
-		panelFontWidth.setLayout(new GridBagLayout());
-		this.textFieldMaxFontWidth.setPreferredSize(textFieldDimension);
-		this.textFieldMinFontWidth.setPreferredSize(textFieldDimension);
-		this.labelMaxFontWidthUnity.setPreferredSize(labelDimension);
-		this.labelMinFontWidthUnity.setPreferredSize(labelDimension);
-		panelFontWidth.add(this.labelMaxFontWidth,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWidth.add(this.textFieldMaxFontWidth,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWidth.add(this.labelMaxFontWidthUnity,     new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,0));
-		panelFontWidth.add(this.labelMinFontWidth,          new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWidth.add(this.textFieldMinFontWidth,      new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelFontWidth.add(this.labelMinFontWidthUnity,     new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,0));
-		//@formatter:on
-	}
+//	 * 文本宽度限制界面布局
+//	 *
+//	 * @param panelFontWidth
+//	 */
+//	private void initPanelFontWidth(JPanel panelFontWidth) {
+//		//@formatter:off
+//		panelFontWidth.setLayout(new GridBagLayout());
+//		this.textFieldMaxFontWidth.setPreferredSize(textFieldDimension);
+//		this.textFieldMinFontWidth.setPreferredSize(textFieldDimension);
+//		this.labelMaxFontWidthUnity.setPreferredSize(labelDimension);
+//		this.labelMinFontWidthUnity.setPreferredSize(labelDimension);
+//		panelFontWidth.add(this.labelMaxFontWidth,          new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+//		panelFontWidth.add(this.textFieldMaxFontWidth,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+//		panelFontWidth.add(this.labelMaxFontWidthUnity,     new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,0));
+//		panelFontWidth.add(this.labelMinFontWidth,          new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 0).setInsets(2,10,2,0).setFill(GridBagConstraints.HORIZONTAL));
+//		panelFontWidth.add(this.textFieldMinFontWidth,      new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+//		panelFontWidth.add(this.labelMinFontWidthUnity,     new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,10,2,0));
+//		//@formatter:on
+//	}
 
 	private void initComboBoxLineDirection() {
 		this.comboBoxLineDirection.setModel(new DefaultComboBoxModel<String>(new String[] {
@@ -698,47 +698,48 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			} else if (e.getSource() == textFieldMinFontHeight) {
 				// 设置最小文本高度
 				setMinFontHeight();
-			} else if (e.getSource() == textFieldMaxFontWidth) {
-				// 设置最大文本宽度
-				setMaxFontWidth();
-			} else if (e.getSource() == textFieldMinFontWidth) {
-				// 设置最小文本宽度
-				setMinFontWidth();
 			}
+//			else if (e.getSource() == textFieldMaxFontWidth) {
+//				// 设置最大文本宽度
+//				setMaxFontWidth();
+//			} else if (e.getSource() == textFieldMinFontWidth) {
+//				// 设置最小文本宽度
+//				setMinFontWidth();
+//			}
 			refreshAtOnce();
 		}
 
-		/**
-		 * 设置最小文本宽度
-		 */
-		private void setMinFontWidth() {
-			if (!textFieldMinFontWidth.getText().isEmpty()) {
-				String minFontWidth = textFieldMinFontWidth.getText();
-				if (StringUtilties.isNumber(minFontWidth) && minFontWidth.length() <= 8) {
-					int minTextWidth = Integer.parseInt(minFontWidth);
-					themeLabel.setMinTextWidth(minTextWidth);
-				}
-			} else {
-				textFieldMinFontWidth.setText("0");
-				themeLabel.setMinTextWidth(0);
-			}
-		}
-
-		/**
-		 * 设置最大文本宽度
-		 */
-		private void setMaxFontWidth() {
-			if (!textFieldMaxFontWidth.getText().isEmpty()) {
-				String maxFontWidth = textFieldMaxFontWidth.getText();
-				if (StringUtilties.isNumber(maxFontWidth) && maxFontWidth.length() <= 8) {
-					int maxTextWidth = Integer.parseInt(maxFontWidth);
-					themeLabel.setMaxTextWidth(maxTextWidth);
-				}
-			} else {
-				textFieldMaxFontWidth.setText("0");
-				themeLabel.setMaxTextWidth(0);
-			}
-		}
+//		/**
+//		 * 设置最小文本宽度
+//		 */
+//		private void setMinFontWidth() {
+//			if (!textFieldMinFontWidth.getText().isEmpty()) {
+//				String minFontWidth = textFieldMinFontWidth.getText();
+//				if (StringUtilties.isNumber(minFontWidth) && minFontWidth.length() <= 8) {
+//					int minTextWidth = Integer.parseInt(minFontWidth);
+//					themeLabel.setMinTextWidth(minTextWidth);
+//				}
+//			} else {
+//				textFieldMinFontWidth.setText("0");
+//				themeLabel.setMinTextWidth(0);
+//			}
+//		}
+//
+//		/**
+//		 * 设置最大文本宽度
+//		 */
+//		private void setMaxFontWidth() {
+//			if (!textFieldMaxFontWidth.getText().isEmpty()) {
+//				String maxFontWidth = textFieldMaxFontWidth.getText();
+//				if (StringUtilties.isNumber(maxFontWidth) && maxFontWidth.length() <= 8) {
+//					int maxTextWidth = Integer.parseInt(maxFontWidth);
+//					themeLabel.setMaxTextWidth(maxTextWidth);
+//				}
+//			} else {
+//				textFieldMaxFontWidth.setText("0");
+//				themeLabel.setMaxTextWidth(0);
+//			}
+//		}
 
 		/**
 		 * 设置最小文本高度
@@ -924,14 +925,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.themeLabelLayer = layer;
 	}
 
-	public JLabel getLabelFontCount() {
-		return labelFontCount;
-	}
-
-	public JSpinner getSpinnerFontCount() {
-		return spinnerFontCount;
-	}
-
 	public JLabel getLabelSplitSeparator() {
 		return labelSplitSeparator;
 	}
@@ -950,6 +943,22 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	public JLabel getLabelVerticalUnity() {
 		return labelVerticalUnity;
+	}
+
+	public JLabel getLabelAlignmentStyle() {
+		return labelAlignmentStyle;
+	}
+
+	public void setLabelAlignmentStyle(JLabel labelAlignmentStyle) {
+		this.labelAlignmentStyle = labelAlignmentStyle;
+	}
+
+	public JComboBox<String> getComboBoxAlignmentStyle() {
+		return comboBoxAlignmentStyle;
+	}
+
+	public void setComboBoxAlignmentStyle(JComboBox<String> comboBoxAlignmentStyle) {
+		this.comboBoxAlignmentStyle = comboBoxAlignmentStyle;
 	}
 
 }

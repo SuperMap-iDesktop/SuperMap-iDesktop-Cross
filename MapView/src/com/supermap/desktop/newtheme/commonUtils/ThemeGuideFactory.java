@@ -316,6 +316,7 @@ public class ThemeGuideFactory {
 		boolean success = false;
 		if (null != getDataset()) {
 			String expression = "SmID";
+			expression = hasJoinItems(layer, expression);
 			ThemeLabel themeLabel = new ThemeLabel();
 			success = true;
 			TextStyle[] textStyles = new TextStyle[4];
