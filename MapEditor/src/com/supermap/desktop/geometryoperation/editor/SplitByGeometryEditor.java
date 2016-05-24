@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 
 import com.supermap.data.CoordSysTransMethod;
@@ -38,6 +39,9 @@ import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ArrayUtilties;
+import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.GeometryUtilties;
+import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
@@ -49,13 +53,25 @@ import com.supermap.ui.TrackMode;
 public class SplitByGeometryEditor extends AbstractEditor {
 
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
-	private static final String g_strSplitLayer = "GeometrySplit";
+	private static final String TAG_SPLITBYGEOEMTRY = "GeometrySplit";
 
 	private IEditController splitByGeometryEditController = new EditControllerAdapter() {
 
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
+			CursorUtilties.setWaitCursor();
+			Geometry splitGeometry = null;
 
+			try {
+				splitGeometry = getSplitGeometry(environment);
+				SplitByGeometryEditor.this.splitByGeometry(environment, splitGeometry);
+			} finally {
+				environment.activateEditor(NullEditor.INSTANCE);
+				CursorUtilties.setDefaultCursor();
+				if (splitGeometry != null) {
+					splitGeometry.dispose();
+				}
+			}
 		}
 	};
 
@@ -75,6 +91,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
 		environment.getMapControl().setTrackMode(TrackMode.TRACK);
 		editModel.tip.bind(environment.getMapControl());
+		initializeSrcRegions(environment);
 	}
 
 	@Override
@@ -94,232 +111,274 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		}
 	}
 
-	private void splitByGeometry(EditEnvironment environment) {
+	/**
+	 * 初始化被分割几何对象
+	 * 
+	 * @param environment
+	 */
+	private void initializeSrcRegions(EditEnvironment environment) {
+		if (!(environment.getEditModel() instanceof SplitByGeometryEditModel)) {
+			return;
+		}
+
+		GeoStyle style = new GeoStyle();
+		style.setLineColor(Color.RED);
+		style.setFillOpaqueRate(0);
+
+		SplitByGeometryEditModel editModel = (SplitByGeometryEditModel) environment.getEditModel();
+		List<Layer> layers = MapUtilties.getLayers(environment.getMap());
+
+		for (Layer layer : layers) {
+			// 线面数据能作为被分割的对象
+			if (layer.isEditable()
+					&& layer.getDataset() != null
+					&& layer.getDataset() instanceof DatasetVector
+					&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)
+					&& layer.getSelection().getCount() > 0) {
+				Recordset recordset = layer.getSelection().toRecordset();
+
+				try {
+					if (!editModel.forEraseGeometryIDs.containsKey(layer)) {
+						editModel.forEraseGeometryIDs.put(layer, new ArrayList<Integer>());
+					}
+
+					while (!recordset.isEOF()) {
+						IGeometry geometry = DGeometryFactory.create(recordset.getGeometry());
+
+						if (geometry instanceof ILineFeature || geometry instanceof IRegionFeature) {
+							GeometryUtilties.setGeometryStyle(geometry.getGeometry(), style);
+							environment.getMap().getTrackingLayer().add(geometry.getGeometry(), TAG_SPLITBYGEOEMTRY);
+							editModel.forEraseGeometryIDs.get(layer).add(recordset.getID());
+						}
+
+						geometry.dispose();
+						geometry = null;
+						recordset.moveNext();
+					}
+				} catch (Exception ex) {
+					Application.getActiveApplication().getOutput().output(ex);
+				} finally {
+					if (recordset != null) {
+						recordset.close();
+						recordset.dispose();
+					}
+				}
+			}
+
+			environment.getMap().refreshTrackingLayer();
+		}
+	}
+
+	/**
+	 * 获取分割几何对象
+	 */
+	private Geometry getSplitGeometry(EditEnvironment environment) {
+		SplitByGeometryEditModel editModel = (SplitByGeometryEditModel) environment.getEditModel();
+		Geometry splitGeometry = null;
+
+		// 获取用于分割的对象
+		ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+
+		for (Layer layer : layers) {
+			if (layer.getSelection().getCount() == 1) {
+				Recordset selectrecordset = null;
+				IGeometry selecteometry = null;
+
+				selectrecordset = layer.getSelection().toRecordset();
+				selecteometry = DGeometryFactory.create(selectrecordset.getGeometry());// 单选
+
+				if (selecteometry instanceof IPointFeature) {
+					splitGeometry = selecteometry.getGeometry();
+				} else if (selecteometry instanceof ILineFeature) {
+					splitGeometry = ((ILineFeature) selecteometry).convertToLine(120);
+				} else if (selecteometry instanceof IRegionFeature) {
+					splitGeometry = ((IRegionFeature) selecteometry).convertToRegion(120);
+				} else {
+					splitGeometry = null;
+				}
+
+				if (splitGeometry != null) {
+					editModel.selectedLayer = layer;
+					break;
+				}
+			}
+		}
+		return splitGeometry;
+	}
+
+	private void splitByGeometry(EditEnvironment environment, Geometry splitGeometry) {
 		boolean result = false;
 		Recordset recordset = null;
 		SplitByGeometryEditModel editModel = (SplitByGeometryEditModel) environment.getEditModel();
 
 		try {
-			// 获取用于分割的对象
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
-			for (Layer layer : layers) {
-				if (layer.getSelection().getCount() == 1) {
-					Recordset selectrecordset = layer.getSelection().toRecordset();
-					IGeometry selecteometry = null;
+			environment.getMapControl().getEditHistory().batchBegin();
 
-					try {
-						selecteometry = DGeometryFactory.create(selectrecordset.getGeometry());// 单选
-						selectrecordset.close();
-						selectrecordset.dispose();
+			if (splitGeometry != null) {
+				Map<Geometry, Map<String, Object>> resultGeometrys = new HashMap<Geometry, Map<String, Object>>();
 
-						if (editModel.splitGeometry == null && selecteometry != null) {
-							if (selecteometry instanceof IPointFeature) {
-								editModel.splitGeometry = selecteometry.getGeometry();
-							} else if (selecteometry instanceof ILineFeature) {
-								editModel.splitGeometry = ((ILineFeature) selecteometry).convertToLine(120);
-							} else if (selecteometry instanceof IRegionFeature) {
-								editModel.splitGeometry = ((IRegionFeature) selecteometry).convertToRegion(120);
-							} else {
-								editModel.splitGeometry = null;
+				for (Layer layer : editModel.forEraseGeometryIDs.keySet()) {
+					resultGeometrys.clear();
+					DatasetVector datasetVector = (DatasetVector) layer.getDataset();
+					recordset = datasetVector.getRecordset(false, CursorType.DYNAMIC);
+					GeoStyle geoStyle = null;
+					RecordsetDelete delete = new RecordsetDelete(datasetVector, environment.getMapControl().getEditHistory());
+					delete.begin();
+
+					for (Integer id : editModel.forEraseGeometryIDs.get(layer)) {
+						// 如果不在一个图层上有可能ID一样的
+						if ((editModel.selectedLayer != layer) || id != splitGeometry.getID()) {
+							Geometry dynamicGeometry = null;
+							// 判断下地图是经过投影转换的，
+							// 当前图层的数据集投影和地图不一致，则需要将基线对象投影到被分割数据集一致才能进行分割
+							if (environment.getMap().isDynamicProjection()
+									&& !layer.getDataset().getPrjCoordSys().equals(editModel.selectedLayer.getDataset().getPrjCoordSys())) {
+								if (splitGeometry.getType() == GeometryType.GEOLINE) {
+									dynamicGeometry = new GeoLine((GeoLine) splitGeometry);
+								} else if (splitGeometry.getType() == GeometryType.GEOREGION) {
+									dynamicGeometry = new GeoRegion((GeoRegion) splitGeometry);
+								}
+
+								CoordSysTransParameter param = null;
+								try {
+									CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(), layer.getDataset()
+											.getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
+								} finally {
+									if (param != null) {
+										param.dispose();
+									}
+								}
 							}
 
-							if (editModel.splitGeometry != null) {
-								editModel.selectedLayer = layer;
-								break;
+							recordset.seekID(id);
+							Geometry geometry = recordset.getGeometry();
+							geoStyle = null;
+							// CAD上面弧面，弧线等，需要被转换成面线对象才能被分割
+							if (layer.getDataset().getType() == DatasetType.CAD)
+
+							{
+								Geometry oldGeo = geometry;
+								IGeometry dGeometry = DGeometryFactory.create(geometry);
+								if (dGeometry instanceof ILineFeature) {
+									geometry = ((ILineFeature) dGeometry).convertToLine(120);
+								} else if (dGeometry instanceof IRegionFeature) {
+									geometry = ((IRegionFeature) dGeometry).convertToRegion(120);
+								} else {
+									geometry = null;
+									geoStyle = null;
+								}
+								if (geometry != null) {
+									geoStyle = oldGeo.getStyle().clone();
+									if (geometry != oldGeo) {
+										oldGeo.dispose();// 转换前的几何对象应该及时释放掉。
+									}
+								}
+							}
+
+							if (geometry != null) {
+								Map<String, Object> values = new HashMap<>();
+								FieldInfos fieldInfos = recordset.getFieldInfos();
+								Object[] fieldValues = recordset.getValues();
+								for (int i = 0; i < fieldValues.length; i++) {
+									if (!fieldInfos.get(i).isSystemField()) {
+										values.put(fieldInfos.get(i).getName(), fieldValues[i]);
+									}
+								}
+
+								if (geometry.getType() == GeometryType.GEOREGION)// 面
+								{
+									if (dynamicGeometry != null) {
+										result = splitRegion((GeoRegion) geometry, dynamicGeometry, resultGeometrys, values, geoStyle);
+									} else {
+										result = splitRegion((GeoRegion) geometry, splitGeometry, resultGeometrys, values, geoStyle);
+									}
+
+									if (result) {
+										delete.delete(recordset.getID());
+									}
+								} else if (geometry.getType() == GeometryType.GEOLINE)// 线
+								{
+									if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
+										recordset.getDataset().getTolerance().setDefault();
+									}
+
+									if (dynamicGeometry != null) {
+										result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values, recordset.getDataset()
+												.getTolerance().getNodeSnap(), geoStyle);
+									} else {
+										result = splitLine(environment, (GeoLine) geometry, splitGeometry, resultGeometrys, values, recordset.getDataset()
+												.getTolerance().getNodeSnap(), geoStyle);
+									}
+
+									if (result) {
+										delete.delete(recordset.getID());
+									}
+								}
+							}
+							// 将临时投影的基线释放
+							if (dynamicGeometry != null) {
+								dynamicGeometry.dispose();
+								dynamicGeometry = null;
+							}
+
+							if (geometry != null) {
+								geometry.dispose();
+								geometry = null;
 							}
 						}
 					}
 
-					finally {
-						if (recordset != null) {
-							recordset.close();
-							recordset.dispose();
-						}
+					delete.update();
+					recordset.close();
+					recordset.dispose();
 
-						if (editModel.splitGeometry != selecteometry && selecteometry != null) {
-							selecteometry.dispose();
+					// 向数据集追加结果对象
+					if (resultGeometrys.size() > 0)
+
+					{
+						recordset = null;
+						layer.getSelection().clear();
+						List<Integer> addHistoryIDs = new ArrayList<Integer>();
+						recordset = ((DatasetVector) layer.getDataset()).getRecordset(true, CursorType.DYNAMIC);
+						RecordsetAddNew addNew = new RecordsetAddNew(recordset, environment.getMapControl().getEditHistory());
+						addNew.begin();
+						for (Geometry g : resultGeometrys.keySet()) {
+							// 对于分割线对象与被分割线对象邻接的情况，分割会成功但是分割的结果有一个空对象
+							// 追加要数据集失败，所有要判断一下结果对象是否能够追加
+							Boolean isCanApend = true;
+							Geometry geometryClone = g.clone();
+							if (geometryClone.getType() == GeometryType.GEOLINE) {
+								GeoLine geoLine = null;
+								try {
+									geoLine = (GeoLine) geometryClone;
+									if (geoLine != null) {
+										isCanApend = geoLine.getPartCount() > 0;
+									}
+								} finally {
+
+								}
+							}
+
+							if (isCanApend) {
+								addNew.addNew(g, resultGeometrys.get(g));
+							}
+						}
+						addNew.update();
+						addHistoryIDs = addNew.getAddHistoryIDs();
+						TabularUtilties.refreshTabularForm(recordset.getDataset());
+						if (addHistoryIDs.size() > 0) {
+							layer.getSelection().addRange(ArrayUtilties.convertToInt(addHistoryIDs.toArray(new Integer[addHistoryIDs.size()])));
 						}
 					}
 				}
-			}
+				if (recordset != null) {
+					recordset.dispose();
+				}
 
-			if (editModel.splitGeometry != null) {
-				try {
-					environment.getMapControl().getEditHistory().batchBegin();
-
-					Map<Geometry, Map<String, Object>> resultGeometrys = new HashMap<Geometry, Map<String, Object>>();
-					Geometry geometry;// 被分割的每一个对象
-					editModel.selectionCount = 0;
-
-					for (Layer layer : editModel.forEraseGeometryIDs.keySet()) {
-						resultGeometrys.clear();
-						DatasetVector datasetVector = (DatasetVector) layer.getDataset();
-						recordset = datasetVector.getRecordset(false, CursorType.DYNAMIC);
-						GeoStyle geoStyle = null;
-						RecordsetDelete delete = new RecordsetDelete(datasetVector, environment.getMapControl().getEditHistory());
-						delete.begin();
-
-						for (Integer id : editModel.forEraseGeometryIDs.get(layer)) {
-							// 如果不在一个图层上有可能ID一样的
-							if ((editModel.selectedLayer != layer) || id != editModel.splitGeometry.getID()) {
-								Geometry dynamicGeometry = null;
-								// 判断下地图是经过投影转换的，
-								// 当前图层的数据集投影和地图不一致，则需要将基线对象投影到被分割数据集一致才能进行分割
-								if (environment.getMap().isDynamicProjection()
-										&& !layer.getDataset().getPrjCoordSys().equals(editModel.selectedLayer.getDataset().getPrjCoordSys())) {
-									if (editModel.splitGeometry.getType() == GeometryType.GEOLINE) {
-										dynamicGeometry = new GeoLine((GeoLine) editModel.splitGeometry);
-									} else if (editModel.splitGeometry.getType() == GeometryType.GEOREGION) {
-										dynamicGeometry = new GeoRegion((GeoRegion) editModel.splitGeometry);
-									}
-
-									CoordSysTransParameter param = null;
-									try {
-										CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(),
-												layer.getDataset().getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
-									} finally {
-										if (param != null) {
-											param.dispose();
-										}
-									}
-								}
-
-								recordset.seekID(id);
-								geometry = recordset.getGeometry();
-								geoStyle = null;
-								// CAD上面弧面，弧线等，需要被转换成面线对象才能被分割
-								if (layer.getDataset().getType() == DatasetType.CAD)
-
-								{
-									Geometry oldGeo = geometry;
-									IGeometry dGeometry = DGeometryFactory.create(geometry);
-									if (dGeometry instanceof ILineFeature) {
-										geometry = ((ILineFeature) dGeometry).convertToLine(120);
-									} else if (dGeometry instanceof IRegionFeature) {
-										geometry = ((IRegionFeature) dGeometry).convertToRegion(120);
-									} else {
-										geometry = null;
-										geoStyle = null;
-									}
-									if (geometry != null) {
-										geoStyle = oldGeo.getStyle().clone();
-										if (geometry != oldGeo) {
-											oldGeo.dispose();// 转换前的几何对象应该及时释放掉。
-										}
-									}
-								}
-
-								if (geometry != null) {
-									Map<String, Object> values = new HashMap<>();
-									FieldInfos fieldInfos = recordset.getFieldInfos();
-									Object[] fieldValues = recordset.getValues();
-									for (int i = 0; i < fieldValues.length; i++) {
-										if (!fieldInfos.get(i).isSystemField()) {
-											values.put(fieldInfos.get(i).getName(), fieldValues[i]);
-										}
-									}
-
-									if (geometry.getType() == GeometryType.GEOREGION)// 面
-									{
-										if (dynamicGeometry != null) {
-											result = splitRegion((GeoRegion) geometry, dynamicGeometry, resultGeometrys, values, geoStyle);
-										} else {
-											result = splitRegion((GeoRegion) geometry, editModel.splitGeometry, resultGeometrys, values, geoStyle);
-										}
-
-										if (result) {
-											delete.delete(recordset.getID());
-										}
-									} else if (geometry.getType() == GeometryType.GEOLINE)// 线
-									{
-										if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
-											recordset.getDataset().getTolerance().setDefault();
-										}
-
-										if (dynamicGeometry != null) {
-											result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values,
-													recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
-										} else {
-											result = splitLine(environment, (GeoLine) geometry, editModel.splitGeometry, resultGeometrys, values,
-													recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
-										}
-
-										if (result) {
-											delete.delete(recordset.getID());
-										}
-									}
-								}
-								// 将临时投影的基线释放
-								if (dynamicGeometry != null) {
-									dynamicGeometry.dispose();
-									dynamicGeometry = null;
-								}
-
-								if (geometry != null) {
-									geometry.dispose();
-									geometry = null;
-								}
-							}
-						}
-
-						delete.update();
-						recordset.close();
-						recordset.dispose();
-
-						// 向数据集追加结果对象
-						if (resultGeometrys.size() > 0)
-
-						{
-							recordset = null;
-							layer.getSelection().clear();
-							List<Integer> addHistoryIDs = new ArrayList<Integer>();
-							recordset = ((DatasetVector) layer.getDataset()).getRecordset(true, CursorType.DYNAMIC);
-							RecordsetAddNew addNew = new RecordsetAddNew(recordset, environment.getMapControl().getEditHistory());
-							addNew.begin();
-							for (Geometry g : resultGeometrys.keySet()) {
-								// 对于分割线对象与被分割线对象邻接的情况，分割会成功但是分割的结果有一个空对象
-								// 追加要数据集失败，所有要判断一下结果对象是否能够追加
-								Boolean isCanApend = true;
-								Geometry geometryClone = g.clone();
-								if (geometryClone.getType() == GeometryType.GEOLINE) {
-									GeoLine geoLine = null;
-									try {
-										geoLine = (GeoLine) geometryClone;
-										if (geoLine != null) {
-											isCanApend = geoLine.getPartCount() > 0;
-										}
-									} finally {
-
-									}
-								}
-
-								if (isCanApend) {
-									addNew.addNew(g, resultGeometrys.get(g));
-								}
-							}
-							addNew.update();
-							addHistoryIDs = addNew.getAddHistoryIDs();
-							TabularUtilties.refreshTabularForm(recordset.getDataset());
-							if (addHistoryIDs.size() > 0) {
-								layer.getSelection().addRange(ArrayUtilties.convertToInt(addHistoryIDs.toArray(new Integer[addHistoryIDs.size()])));
-							}
-							editModel.selectionCount += addHistoryIDs.size();
-						}
-					}
-					environment.getMapControl().getEditHistory().batchEnd();
-					environment.getMap().refresh();
-					environment.getMapControl().refreshAtTracked();
-					if (recordset != null) {
-						recordset.dispose();
-					}
-
-					if (result) {
-						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Successed_Message"));
-					} else {
-						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
-					}
-				} catch (Exception ex) {
-					Application.getActiveApplication().getOutput().output(ex);
+				if (result) {
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Successed_Message"));
+				} else {
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
 				}
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
@@ -327,6 +386,9 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMap().refresh();
 		}
 	}
 
@@ -387,7 +449,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 					} else {
 						curLines[i].setStyle(style2);
 					}
-					environment.getMap().getTrackingLayer().add(curLines[i], g_strSplitLayer);
+					environment.getMap().getTrackingLayer().add(curLines[i], TAG_SPLITBYGEOEMTRY);
 
 					if (geoStyle != null) {
 						curLines[i].setStyle(geoStyle.clone());
@@ -405,13 +467,22 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return false;
+		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE,
+						DatasetType.CAD);
+	}
+
+	@Override
+	public boolean check(EditEnvironment environment) {
+		return environment.getEditor() instanceof SplitByGeometryEditor;
 	}
 
 	private void clear(EditEnvironment environment) {
 		if (environment.getEditModel() instanceof SplitByGeometryEditModel) {
 			((SplitByGeometryEditModel) environment.getEditModel()).clear();
 		}
+
+		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SPLITBYGEOEMTRY);
 	}
 
 	private class SplitByGeometryEditModel implements IEditModel {
@@ -419,16 +490,24 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		public Action oldMapControlAction = Action.SELECT2;
 		public TrackMode oldTrackMode = TrackMode.EDIT;
 
-		public Geometry splitGeometry = null;
 		public Layer selectedLayer = null;
 		public Map<Layer, List<Integer>> forEraseGeometryIDs = new HashMap<>();
-		public int selectionCount = 0;
 
 		public MapControlTip tip = new MapControlTip();
 		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_SplitByGeometry_SelectTarget"));
 
-		public void clear() {
+		public SplitByGeometryEditModel() {
+			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
+			this.tip.getContentPanel().add(this.labelTip);
+			this.tip.getContentPanel().setSize(200, 20);
+			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+		}
 
+		public void clear() {
+			this.oldMapControlAction = Action.SELECT2;
+			this.oldTrackMode = TrackMode.EDIT;
+
+			this.forEraseGeometryIDs.clear();
 		}
 	}
 }
