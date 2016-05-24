@@ -65,8 +65,9 @@ public class TableModelPoint3Ds extends VectorTableModel {
 		} else if (column == 3) {
 			item.setZ(Double.valueOf(((String) aValue)));
 			point3Ds.setItem(row, item);
+		} else {
+			throw new UnsupportedOperationException();
 		}
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

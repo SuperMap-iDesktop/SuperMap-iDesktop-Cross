@@ -86,6 +86,5 @@ public class TableModelTextPart extends VectorTableModel {
 	@Override
 	public void dispose() {
 		textPart.dispose();
-		textPartBase.dispose();
 	}
 }

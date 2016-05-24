@@ -3,8 +3,10 @@ package com.supermap.desktop.mapview.geometry.property.geometryNode;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModelFactory;
@@ -166,6 +168,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					currentTableModel.setModel(tableModels.get(comboBoxCurrentSubGeometry.getSelectedIndex()));
+					tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
 					textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
 				}
 			}
@@ -234,10 +237,10 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private int getMinRowCount() {
-		if (geometry instanceof ILineFeature) {
+		if (geometry instanceof ILineFeature || geometry instanceof ILine3DFeature) {
 			return 2;
 		}
-		if (geometry instanceof IRegionFeature) {
+		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
 			return 3;
 		}
 		return 1;
