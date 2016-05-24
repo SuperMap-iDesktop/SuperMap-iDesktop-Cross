@@ -5,19 +5,11 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-
 import com.supermap.data.GeoText;
-import com.supermap.data.QueryParameter;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -26,7 +18,7 @@ import com.supermap.desktop.controls.ControlsProperties;
  * 文本风格对话框
  * 
  * @author xuzw
- *
+ * modify by xie 2016-5-23
  */
 public class TextStyleDialog extends SmDialog {
 
@@ -46,7 +38,7 @@ public class TextStyleDialog extends SmDialog {
 		setSize(460, 350);
 		setModal(true);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
-		setResizable(false);
+//		setResizable(false);
 		getContentPane().add(getTextStylePanel(), BorderLayout.CENTER);
 		getContentPane().add(getPanelButton(), BorderLayout.SOUTH);
 		try {
@@ -221,6 +213,7 @@ public class TextStyleDialog extends SmDialog {
 		dialog.setGeoText(geoText);
 		dialog.setThemeText(isThemeText);
 		dialog.set3DText(is3DText);
+		dialog.setSampleText(geoText.getText());
 		DialogResult dialogResult = dialog.showDialog();
 		if (dialogResult.equals(DialogResult.OK)) {
 			result = dialog.getGeoText();
@@ -240,13 +233,14 @@ public class TextStyleDialog extends SmDialog {
 	 *            是否是三维文本
 	 * @return
 	 */
-	public static TextStyle showDialog(TextStyle textStyle, boolean isThemeText, boolean is3DText) {
+	public static TextStyle showDialog(TextStyle textStyle, boolean isThemeText, boolean is3DText,String smapleText) {
 		TextStyle result = null;
 
 		TextStyleDialog dialog = new TextStyleDialog();
 		dialog.setTextStyle(textStyle);
 		dialog.setThemeText(isThemeText);
 		dialog.set3DText(is3DText);
+		dialog.setSampleText(smapleText);
 		DialogResult dialogResult = dialog.showDialog();
 		if (dialogResult.equals(DialogResult.OK)) {
 			result = dialog.getTextStyle();

@@ -105,4 +105,12 @@ public class EditorUtilties {
 		}
 		return bResult;
 	}
+
+	static double compouteTwoPointDistance(Point2D pntStart, Point2D pntEnd) {
+		double dDistance = -1;
+		double dOffsetX = pntStart.getX() - pntEnd.getX();
+		double dOffsetY = pntStart.getY() - pntEnd.getY();
+		dDistance = Math.sqrt(dOffsetX * dOffsetX + dOffsetY * dOffsetY);
+		return dDistance;
+	}
 }
