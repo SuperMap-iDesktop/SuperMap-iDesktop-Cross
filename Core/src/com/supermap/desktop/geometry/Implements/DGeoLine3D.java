@@ -100,6 +100,11 @@ public class DGeoLine3D extends AbstractGeometry implements ILine3DFeature, IMul
 		return null;
 	}
 
+	@Override
+	public boolean setPart(int partIndex, Point3Ds part) {
+		return this.geoLine3D != null && this.geoLine3D.setPart(partIndex, part);
+	}
+
 	// @formatter:off
 	/*
 	 * 本类 segment 参数无效
