@@ -19,19 +19,18 @@ import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.HashMap;
 
 /**
  * 文本风格面板
  * 
- * @author xuzw
- * 
+ * @author xuzw modify by xie 2016-5-23
  */
 public class TextStylePanel extends JPanel {
 
@@ -49,10 +48,12 @@ public class TextStylePanel extends JPanel {
 	private JSpinner jSpinnerFontHeight;
 	private JSpinner jSpinnerFontWidth;
 	private JSpinner jSpinnerRotation;
-	private transient ControlButton jButtonBackgroundColor;
-	private transient ControlButton jButtonTextColor;
-	private transient DropDownColor jBackgroundColorDropDown;
-	private transient DropDownColor jTextColorDropDown;
+	// private transient ControlButton jButtonBackgroundColor;
+	// private transient ControlButton jButtonTextColor;
+	// private transient DropDownColor jBackgroundColorDropDown;
+	// private transient DropDownColor jTextColorDropDown;
+	private transient ColorSelectButton buttonBackgroundColor;
+	private transient ColorSelectButton buttonTextColor;
 
 	private JCheckBox jCheckBoxBold;
 	private JCheckBox jCheckBoxItalic;
@@ -142,7 +143,7 @@ public class TextStylePanel extends JPanel {
 
 	private String preFontSize = "";
 
-	private transient ColorSwatch m_colorSwatch;
+	// private transient ColorSwatch m_colorSwatch;
 
 	private transient MapDrawnListener mapDrawnListener = new MapDrawnListener() {
 		@Override
@@ -1085,32 +1086,62 @@ public class TextStylePanel extends JPanel {
 	 * 
 	 * @return
 	 */
-	protected DropDownColor getButtonTextColor() {
-		if (jButtonTextColor == null) {
-			jButtonTextColor = new ControlButton();
-			jButtonTextColor.setPreferredSize(new Dimension(134, 28));
-			final ColorSwatch colorSwatch = new ColorSwatch(tempTextStyle.getForeColor(), 20, 122);
-			jButtonTextColor.setIcon(colorSwatch);
+	protected ColorSelectButton getButtonTextColor() {
+		// if (jButtonTextColor == null) {
+		// jButtonTextColor = new ControlButton();
+		// jButtonTextColor.setPreferredSize(new Dimension(134, 28));
+		// final ColorSwatch colorSwatch = new ColorSwatch(tempTextStyle.getForeColor(), 20, 122);
+		// jButtonTextColor.setIcon(colorSwatch);
+		//
+		// jTextColorDropDown = new DropDownColor(jButtonTextColor);
+		// // 这里把期望宽度设置的略大一些，保证在网格中显示正确
+		// jTextColorDropDown.setPreferredSize(new Dimension(150, 33));
+		// jTextColorDropDown.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+		// @Override
+		// public void propertyChange(PropertyChangeEvent evt) {
+		// if (tempTextStyle != null && !isInInitialState) {
+		// Color color = jTextColorDropDown.getColor();
+		// if (color != null) {
+		// tempTextStyle.setForeColor(color);
+		// colorSwatch.setColor(color);
+		// jButtonTextColor.repaint();
+		// refreshPreViewMapControl();
+		// }
+		// }
+		// }
+		// });
+		// }
+		if (null == buttonTextColor && isOnlyTextStyle) {
+			buttonTextColor = new ColorSelectButton(getTextStyle().getForeColor());
+			buttonTextColor.setPreferredSize(new Dimension(150, 28));
+			buttonTextColor.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
 
-			jTextColorDropDown = new DropDownColor(jButtonTextColor);
-			// 这里把期望宽度设置的略大一些，保证在网格中显示正确
-			jTextColorDropDown.setPreferredSize(new Dimension(150, 33));
-			jTextColorDropDown.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
-					if (tempTextStyle != null && !isInInitialState) {
-						Color color = jTextColorDropDown.getColor();
-						if (color != null) {
-							tempTextStyle.setForeColor(color);
-							colorSwatch.setColor(color);
-							jButtonTextColor.repaint();
-							refreshPreViewMapControl();
-						}
+					Color color = buttonTextColor.getColor();
+					if (null != color) {
+						tempTextStyle.setForeColor(color);
+						refreshPreViewMapControl();
 					}
 				}
 			});
 		}
-		return jTextColorDropDown;
+		if (null == buttonTextColor && isGeoTextTextStyle) {
+			buttonTextColor = new ColorSelectButton(getGeoText().getTextStyle().getForeColor());
+			buttonTextColor.setPreferredSize(new Dimension(150, 28));
+			buttonTextColor.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					Color color = buttonTextColor.getColor();
+					if (null != color) {
+						tempGeoText.getTextStyle().setForeColor(color);
+						refreshPreViewMapControl();
+					}
+				}
+			});
+		}
+		return buttonTextColor;
 	}
 
 	/**
@@ -1118,37 +1149,67 @@ public class TextStylePanel extends JPanel {
 	 * 
 	 * @return
 	 */
-	protected DropDownColor getButtonBackgroundColor() {
-		if (jButtonBackgroundColor == null) {
-			jButtonBackgroundColor = new ControlButton();
-			jButtonBackgroundColor.setPreferredSize(new Dimension(134, 28));
-			jButtonBackgroundColor.setEnabled(!getCheckBoxBackOpaque().isSelected());
-			m_colorSwatch = new ColorSwatch(tempTextStyle.getBackColor(), 20, 122);
-			if (!tempTextStyle.getBackOpaque()) {
-				jButtonBackgroundColor.setIcon(null);
-			} else {
-				jButtonBackgroundColor.setIcon(m_colorSwatch);
-			}
-			jBackgroundColorDropDown = new DropDownColor(jButtonBackgroundColor);
-			jBackgroundColorDropDown.getArrowButton().setEnabled(!getCheckBoxBackOpaque().isSelected());
-			// 这里把期望宽度设置的略大一些，保证在网格中显示正确
-			jBackgroundColorDropDown.setPreferredSize(new Dimension(150, 33));
-			jBackgroundColorDropDown.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+	protected ColorSelectButton getButtonBackgroundColor() {
+		// if (jButtonBackgroundColor == null) {
+		// jButtonBackgroundColor = new ControlButton();
+		// jButtonBackgroundColor.setPreferredSize(new Dimension(134, 28));
+		// jButtonBackgroundColor.setEnabled(!getCheckBoxBackOpaque().isSelected());
+		// m_colorSwatch = new ColorSwatch(tempTextStyle.getBackColor(), 20, 122);
+		// if (!tempTextStyle.getBackOpaque()) {
+		// jButtonBackgroundColor.setIcon(null);
+		// } else {
+		// jButtonBackgroundColor.setIcon(m_colorSwatch);
+		// }
+		// jBackgroundColorDropDown = new DropDownColor(jButtonBackgroundColor);
+		// jBackgroundColorDropDown.getArrowButton().setEnabled(!getCheckBoxBackOpaque().isSelected());
+		// // 这里把期望宽度设置的略大一些，保证在网格中显示正确
+		// jBackgroundColorDropDown.setPreferredSize(new Dimension(150, 33));
+		// jBackgroundColorDropDown.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+		// @Override
+		// public void propertyChange(PropertyChangeEvent evt) {
+		// if (tempTextStyle != null && !isInInitialState) {
+		// Color color = jBackgroundColorDropDown.getColor();
+		// if (color != null) {
+		// tempTextStyle.setBackColor(color);
+		// m_colorSwatch.setColor(color);
+		// jButtonBackgroundColor.repaint();
+		// refreshPreViewMapControl();
+		// }
+		// }
+		// }
+		// });
+		// }
+		if (null == buttonBackgroundColor && isOnlyTextStyle) {
+			buttonBackgroundColor = new ColorSelectButton(getTextStyle().getBackColor());
+			buttonBackgroundColor.setPreferredSize(new Dimension(150, 28));
+			buttonBackgroundColor.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
-					if (tempTextStyle != null && !isInInitialState) {
-						Color color = jBackgroundColorDropDown.getColor();
-						if (color != null) {
-							tempTextStyle.setBackColor(color);
-							m_colorSwatch.setColor(color);
-							jButtonBackgroundColor.repaint();
-							refreshPreViewMapControl();
-						}
+					Color color = buttonBackgroundColor.getColor();
+					if (null != color) {
+						tempTextStyle.setBackColor(color);
+						refreshPreViewMapControl();
 					}
 				}
 			});
 		}
-		return jBackgroundColorDropDown;
+		if (null == buttonBackgroundColor && isGeoTextTextStyle) {
+			buttonBackgroundColor = new ColorSelectButton(getGeoText().getTextStyle().getBackColor());
+			buttonBackgroundColor.setPreferredSize(new Dimension(150, 28));
+			buttonBackgroundColor.addPropertyChangeListener("m_selectionColors", new PropertyChangeListener() {
+
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					Color color = buttonBackgroundColor.getColor();
+					if (null != color) {
+						tempGeoText.getTextStyle().setBackColor(color);
+						refreshPreViewMapControl();
+					}
+				}
+			});
+		}
+		return buttonBackgroundColor;
 	}
 
 	/**
@@ -1379,13 +1440,14 @@ public class TextStylePanel extends JPanel {
 				public void itemStateChanged(ItemEvent e) {
 					if (tempTextStyle != null && !isInInitialState) {
 						tempTextStyle.setBackOpaque(!jCheckBoxBackOpaque.isSelected());
-						jButtonBackgroundColor.setEnabled(!jCheckBoxBackOpaque.isSelected());
-						jBackgroundColorDropDown.getArrowButton().setEnabled(!jCheckBoxBackOpaque.isSelected());
-						if (jCheckBoxBackOpaque.isSelected()) {
-							jButtonBackgroundColor.setIcon(null);
-						} else {
-							jButtonBackgroundColor.setIcon(m_colorSwatch);
-						}
+						buttonBackgroundColor.setEnabled(!jCheckBoxBackOpaque.isSelected());
+						// jButtonBackgroundColor.setEnabled(!jCheckBoxBackOpaque.isSelected());
+						// jBackgroundColorDropDown.getArrowButton().setEnabled(!jCheckBoxBackOpaque.isSelected());
+						// if (jCheckBoxBackOpaque.isSelected()) {
+						// jButtonBackgroundColor.setIcon(null);
+						// } else {
+						// jButtonBackgroundColor.setIcon(m_colorSwatch);
+						// }
 						refreshPreViewMapControl();
 					}
 				}
