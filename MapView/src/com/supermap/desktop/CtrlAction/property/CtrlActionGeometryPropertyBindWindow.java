@@ -46,7 +46,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				this.map = formMap.getMapControl().getMap();
 				TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
 				Dataset dataset = map.getLayers().get(0).getDataset();
-				if (null!=dataset&&dataset instanceof DatasetVector) {
+				if (null != dataset && dataset instanceof DatasetVector) {
 					this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
 					TabularUtilties.refreshTabularForm((DatasetVector) dataset);
 				}
@@ -63,6 +63,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				this.tabularTable = tabular.getjTableTabular();
 				this.mapDrawingListener = new LocalMapDrawingListener(tabular);
 				registEvents();
+				formMap.actived();
 				this.formManager.addActiveFormChangedListener(this.activeFormChangeListener);
 				this.newTabWindow.addListener(new DockingWindowAdapter() {
 
@@ -108,7 +109,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 			int i = 0;
 			recordset.moveFirst();
 			while (!recordset.isEOF()) {
-				rows[i] = recordset.getID()-1;
+				rows[i] = recordset.getID() - 1;
 				i++;
 				recordset.moveNext();
 			}
@@ -215,9 +216,9 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 					formMapCount++;
 				}
 			}
-			if (0==formMapCount) {
+			if (0 == formMapCount) {
 				// 地图窗口关闭时恢复dockwindow的w位置
-				splitWindow.setWindows(splitWindow.getChildWindow(1), null);
+
 			}
 			if (null == e.getNewActiveForm()) {
 				// 当所有地图关闭时将splitWindow设置为空，重新关联,并移除事件

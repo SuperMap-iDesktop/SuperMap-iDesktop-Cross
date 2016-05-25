@@ -55,8 +55,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private JButton buttonSplit;// 拆分
 	private JButton buttonStyle;// 字体样式
 	private JTable tableComplicated;
-	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue")};
-//			,MapViewProperties.getString("String_SplitRange") };
+	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue") };
+	// ,MapViewProperties.getString("String_SplitRange") };
 	protected TextStyleDialog textStyleDialog;
 
 	private boolean isRefreshAtOnce;
@@ -218,7 +218,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	@Override
 	public void registActionListener() {
 		this.unityListener = new ItemListener() {
-			
+
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -396,10 +396,16 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 		private void splitSeparators() {
 			// 拆分项
-			// 当选择第一项时
-			if (mixedTextStyle.getSplitIndexes().length==0) {
-				
+			if (mixedTextStyle.getSplitIndexes().length == 0) {
+				//如果当前没有分段则添加一个默认分段
+				int[] newSplits = {2};
+				TextStyle[] newTextStyle = new TextStyle[2];
+				newTextStyle[0] = mixedTextStyle.getStyles()[0];
+				newTextStyle[1] = mixedTextStyle.getStyles()[0];
+				resetSplits(newSplits, newTextStyle);
+				return;
 			}
+			// 当选择第一项时
 			int selectedRow = tableComplicated.getSelectedRow();
 			int[] newSplits = new int[mixedTextStyle.getSplitIndexes().length + 1];
 			TextStyle[] newTextStyle = new TextStyle[newSplits.length + 1];
@@ -482,7 +488,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			int[] selectRows = tableComplicated.getSelectedRows();
 			int splitCount = mixedTextStyle.getSplitIndexes().length + 1;
 			int[] newSplits = new int[splitCount - selectRows.length];
-			TextStyle[] newTextStyles = new TextStyle[newSplits.length];
+			TextStyle[] newTextStyles = new TextStyle[newSplits.length + 1];
 
 			for (int i = 0; i < newSplits.length; i++) {
 				if (selectRows[0] > 0 && i < selectRows[0]) {
@@ -493,13 +499,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 					newTextStyles[i] = mixedTextStyle.getStyles()[i + selectRows.length - 1];
 				}
 			}
-			mixedTextStyle.setSplitIndexes(newSplits);
-			mixedTextStyle.setStyles(newTextStyles);
-			textFieldSeparatNumber.setText(String.valueOf(newSplits.length + 1));
-			getTable();
-			refreshAtOnce();
-			tableComplicated.setRowSelectionInterval(0, 0);
-			resetToolBarButtonState();
+			newTextStyles[newTextStyles.length - 1] = mixedTextStyle.getStyles()[mixedTextStyle.getStyles().length - 1];
+			resetSplits(newSplits, newTextStyles);
 		}
 
 		private void setDefualtStyle() {
@@ -514,7 +515,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		}
 	}
 
-	class LocalTableModelListener implements TableModelListener{
+	class LocalTableModelListener implements TableModelListener {
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			int selectRow = e.getFirstRow();
@@ -523,7 +524,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 				String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
 				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
 					int rangeValue = Integer.valueOf(rangeStr);
-					int nowValue = mixedTextStyle.getSplitIndexes()[selectRow];
+					int nowValue = mixedTextStyle.getSplitIndexes()[selectRow-1];
 					if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
 						mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
 					}
@@ -542,7 +543,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			tableComplicated.setRowSelectionInterval(selectRow, selectRow);
 		}
 	}
-	
+
 	protected void setTextStyle(int x, int y, int styleType) {
 		textStyleDialog.getTextStyleContainer().setTextStyleType(styleType);
 		textStyleDialog.getTextStyleContainer().addPropertyChangeListener("ThemeChange", new PropertyChangeListener() {
@@ -627,22 +628,22 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		for (int i = 0; i < splitsCount; i++) {
 			this.tableComplicated.setValueAt(MessageFormat.format(MapViewProperties.getString("String_SplitInfo"), i + 1), i, 0);
 			if (!mixedTextStyle.isSeparatorEnabled() && splits.length > 0) {
-//				String rangeInfo = "";
+				// String rangeInfo = "";
 				String rangeValue = "";
 				if (0 == i && splits.length > 0) {
-//					rangeInfo = "min < x <= " + splits[i];
+					// rangeInfo = "min < x <= " + splits[i];
 					rangeValue = String.valueOf(splits[i]);
 				}
 				if (i == splitsCount - 1) {
-//					rangeInfo = splits[i - 1] + " =< x < max";
+					// rangeInfo = splits[i - 1] + " =< x < max";
 					rangeValue = "max";
 				}
 				if (0 != i && i != splitsCount - 1) {
-//					rangeInfo = splits[i - 1] + " =< x < " + splits[i];
+					// rangeInfo = splits[i - 1] + " =< x < " + splits[i];
 					rangeValue = String.valueOf(splits[i]);
 				}
 				this.tableComplicated.setValueAt(rangeValue, i, 1);
-//				this.tableComplicated.setValueAt(rangeInfo, i, 2);
+				// this.tableComplicated.setValueAt(rangeInfo, i, 2);
 			}
 		}
 
