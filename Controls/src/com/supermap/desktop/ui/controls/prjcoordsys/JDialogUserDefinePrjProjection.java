@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
@@ -22,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 
 /**
@@ -109,15 +108,14 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	private PrjCoordSys prjCoordSys;
 	private boolean lock = false;
-	private String propertyName = "GeoCoordSysType";
-	private PropertyChangeListener propertyChangeListener;
+	private ISmTextFieldLegit fieldLegit;
 
 	public JDialogUserDefinePrjProjection() {
 		super();
+		this.setTitle(ControlsProperties.getString("String_UserDefined_PrjCoordSys"));
 		prjCoordSys = new PrjCoordSys();
 		componentList.add(buttonOK);
 		componentList.add(buttonCancle);
-//		prjCoordSys.setGeoCoordSys();
 		init();
 	}
 
@@ -148,7 +146,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends PrjCoordSysType> list, PrjCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(value.name());
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
 					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
@@ -169,7 +167,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends ProjectionType> list, ProjectionType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(value.name());
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
 					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
@@ -199,7 +197,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		comboBoxCoordSysUnit.setMaximumRowCount(units.length);
 		//endregion
 
-		textFieldFalseNorthing.setSmTextFieldLegit(new ISmTextFieldLegit() {
+		fieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
@@ -209,9 +207,6 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 					Double aDouble = Double.valueOf(textFieldValue);
 					if (aDouble < -100000000000d || aDouble > 100000000000d) {
 						return false;
-					}
-					if (!lock && !textFieldFalseNorthing.getBackUpValue().equals(textFieldValue)) {
-						setNameUserDefine();
 					}
 				} catch (Exception e) {
 					return false;
@@ -223,32 +218,9 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			public String getLegitValue(String currentValue, String backUpValue) {
 				return backUpValue;
 			}
-		});
-		textFieldFalseEasting.setSmTextFieldLegit(new ISmTextFieldLegit() {
-			@Override
-			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
-					return false;
-				}
-				try {
-					Double aDouble = Double.valueOf(textFieldValue);
-					if (aDouble < -100000000000d || aDouble > 100000000000d) {
-						return false;
-					}
-					if (!lock && !textFieldFalseEasting.getBackUpValue().equals(textFieldValue)) {
-						setNameUserDefine();
-					}
-				} catch (Exception e) {
-					return false;
-				}
-				return true;
-			}
-
-			@Override
-			public String getLegitValue(String currentValue, String backUpValue) {
-				return backUpValue;
-			}
-		});
+		};
+		textFieldFalseNorthing.setSmTextFieldLegit(fieldLegit);
+		textFieldFalseEasting.setSmTextFieldLegit(fieldLegit);
 		textFieldScaleFactor.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -259,9 +231,6 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 					Double aDouble = Double.valueOf(textFieldValue);
 					if (aDouble < 0d || aDouble > 1d) {
 						return false;
-					}
-					if (!lock && !textFieldScaleFactor.getBackUpValue().equals(textFieldValue)) {
-						setNameUserDefine();
 					}
 				} catch (Exception e) {
 					return false;
@@ -422,23 +391,28 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		comboBoxName.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				if (lock) {
+					return;
+				}
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					Object selectedItem = comboBoxName.getSelectedItem();
 					if (selectedItem != null && !(selectedItem instanceof String) && selectedItem != PrjCoordSysType.PCS_USER_DEFINED) {
-						prjCoordSys.setName(((PrjCoordSysType) selectedItem).name());
+						String describe = PrjCoordSysTypeUtilties.getDescribe(((PrjCoordSysType) selectedItem).name());
+						prjCoordSys.setName(describe);
 						prjCoordSys.setType((PrjCoordSysType) selectedItem);
 						lock = true;
 						comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
 						panelGeoCoordSys.setGeoCoordSys(prjCoordSys.getGeoCoordSys());
 						comboBoxCoordSysUnit.setSelectedItem(prjCoordSys.getCoordUnit());
-
 						resetProjectionTypeValues();
+						prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
+						comboBoxName.setSelectedItem(describe);
 						lock = false;
 					} else {
-						prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
-						if (selectedItem != null) {
-							prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());
+						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+							return;
 						}
+						prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());
 					}
 				}
 			}
@@ -448,40 +422,18 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					if (!lock) {
-						setNameUserDefine();
-						prjCoordSys.getProjection().setType((ProjectionType) comboBoxCoordType.getSelectedItem());
-					}
+					prjCoordSys.getProjection().setType((ProjectionType) comboBoxCoordType.getSelectedItem());
 				}
 			}
 		});
-		comboBoxCoordType.addItemListener(new ItemListener() {
+		comboBoxCoordSysUnit.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					if (!lock) {
-						setNameUserDefine();
-						prjCoordSys.setCoordUnit((Unit) comboBoxCoordType.getSelectedItem());
-					}
+					prjCoordSys.setCoordUnit((Unit) comboBoxCoordSysUnit.getSelectedItem());
 				}
 			}
 		});
-		propertyChangeListener = new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (!lock) {
-					setNameUserDefine();
-				}
-			}
-		};
-		panelGeoCoordSys.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelCentralMeridian.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelCentralParallel.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelStandardParallel1.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelStandardParallel2.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelFirstPointLongitude.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelSecondPointLongitude.addPropertyChangeListener(propertyName, propertyChangeListener);
-		panelAzimuth.addPropertyChangeListener(propertyName, propertyChangeListener);
 	}
 
 	private void resetProjectionTypeValues() {
@@ -497,30 +449,23 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		textFieldScaleFactor.setText(df.format(prjCoordSys.getPrjParameter().getScaleFactor()));
 	}
 
-	private void setNameUserDefine() {
-		if (!(comboBoxName.getSelectedItem() instanceof String) && comboBoxName.getSelectedItem() != PrjCoordSysType.PCS_USER_DEFINED) {
-			comboBoxName.setSelectedItem(PrjCoordSysType.PCS_USER_DEFINED);
-		}
-	}
 
 	private void initComponentState() {
 		radioButtonAngle.setSelected(true);
 	}
 
 	public PrjCoordSys getPrjCoordSys() {
-		if (prjCoordSys.getType() == PrjCoordSysType.PCS_USER_DEFINED) {
-			prjCoordSys.setGeoCoordSys(panelGeoCoordSys.getGeoCoordSys());
-			prjCoordSys.getPrjParameter().setCentralMeridian(panelCentralMeridian.getValue());
-			prjCoordSys.getPrjParameter().setCentralParallel(panelCentralParallel.getValue());
-			prjCoordSys.getPrjParameter().setStandardParallel1(panelStandardParallel1.getValue());
-			prjCoordSys.getPrjParameter().setStandardParallel2(panelStandardParallel2.getValue());
-			prjCoordSys.getPrjParameter().setFirstPointLongitude(panelFirstPointLongitude.getValue());
-			prjCoordSys.getPrjParameter().setSecondPointLongitude(panelSecondPointLongitude.getValue());
-			prjCoordSys.getPrjParameter().setAzimuth(panelAzimuth.getValue());
-			prjCoordSys.getPrjParameter().setFalseEasting(Double.valueOf(textFieldFalseEasting.getText()));
-			prjCoordSys.getPrjParameter().setFalseNorthing(Double.valueOf(textFieldFalseNorthing.getText()));
-			prjCoordSys.getPrjParameter().setScaleFactor(Double.valueOf(textFieldScaleFactor.getText()));
-		}
+		prjCoordSys.setGeoCoordSys(panelGeoCoordSys.getGeoCoordSys());
+		prjCoordSys.getPrjParameter().setCentralMeridian(panelCentralMeridian.getValue());
+		prjCoordSys.getPrjParameter().setCentralParallel(panelCentralParallel.getValue());
+		prjCoordSys.getPrjParameter().setStandardParallel1(panelStandardParallel1.getValue());
+		prjCoordSys.getPrjParameter().setStandardParallel2(panelStandardParallel2.getValue());
+		prjCoordSys.getPrjParameter().setFirstPointLongitude(panelFirstPointLongitude.getValue());
+		prjCoordSys.getPrjParameter().setSecondPointLongitude(panelSecondPointLongitude.getValue());
+		prjCoordSys.getPrjParameter().setAzimuth(panelAzimuth.getValue());
+		prjCoordSys.getPrjParameter().setFalseEasting(Double.valueOf(textFieldFalseEasting.getText()));
+		prjCoordSys.getPrjParameter().setFalseNorthing(Double.valueOf(textFieldFalseNorthing.getText()));
+		prjCoordSys.getPrjParameter().setScaleFactor(Double.valueOf(textFieldScaleFactor.getText()));
 
 		return prjCoordSys.clone();
 	}
@@ -530,12 +475,21 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			this.prjCoordSys.dispose();
 		}
 		this.prjCoordSys = prjCoordSys.clone();
+		this.prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
+		this.prjCoordSys.setName(prjCoordSys.getName());
 		panelGeoCoordSys.setGeoCoordSys(this.prjCoordSys.getGeoCoordSys());
-		comboBoxName.setSelectedItem(prjCoordSys.getType());
+		lock = true;
+		comboBoxName.setSelectedItem(prjCoordSys.getName());
 		comboBoxCoordSysUnit.setSelectedItem(prjCoordSys.getCoordUnit());
-		if (prjCoordSys.getType() == PrjCoordSysType.PCS_USER_DEFINED) {
-			comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
-			resetProjectionTypeValues();
+		comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
+		resetProjectionTypeValues();
+		lock = false;
+	}
+
+	public void clean() {
+		panelGeoCoordSys.dispose();
+		if (this.prjCoordSys != null) {
+			this.prjCoordSys.dispose();
 		}
 	}
 }
