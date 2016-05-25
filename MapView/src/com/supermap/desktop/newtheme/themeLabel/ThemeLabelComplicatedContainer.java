@@ -101,8 +101,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.panelProperty.getCheckBoxShowLabelVertical().setVisible(false);
 		this.panelProperty.getLabelShowLabelVertical().setVisible(false);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
-		this.panelAdvance.getLabelFontCount().setVisible(false);
-		this.panelAdvance.getSpinnerFontCount().setVisible(false);
+		this.panelAdvance.getLabelAlignmentStyle().setVisible(false);
+		this.panelAdvance.getComboBoxAlignmentStyle().setVisible(false);
 		this.panelAdvance.getLabelSplitSeparator().setVisible(false);
 		this.panelAdvance.getComboBoxSplitSeparator().setVisible(false);
 		this.panelAdvance.getCheckBoxOptimizeMutilineAlignment().setVisible(false);
@@ -397,6 +397,9 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		private void splitSeparators() {
 			// 拆分项
 			// 当选择第一项时
+			if (mixedTextStyle.getSplitIndexes().length==0) {
+				
+			}
 			int selectedRow = tableComplicated.getSelectedRow();
 			int[] newSplits = new int[mixedTextStyle.getSplitIndexes().length + 1];
 			TextStyle[] newTextStyle = new TextStyle[newSplits.length + 1];
