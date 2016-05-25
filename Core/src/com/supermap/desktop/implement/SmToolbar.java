@@ -86,7 +86,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			buttonMore.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					popupMenu.show(buttonMore.getParent(), (int) (buttonMore.getLocation().getX() + buttonMore.getPreferredSize().getWidth() * 0.5 - popupMenu.getPreferredSize().getWidth() * 0.5), 0);
+					popupMenu.show(buttonMore.getParent(), (int) (buttonMore.getLocation().getX() + buttonMore.getWidth() - popupMenu.getPreferredSize().getWidth() + 2), 0);
 
 				}
 
@@ -104,15 +104,16 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			};
 			popupMenu.setLayout(new GridBagLayout());
 			popupMenu.addPopupMenuListener(new PopupMenuListener() {
-
-
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					// FIXME: 2016/5/25 以后在自己实现ToolTipManager
+					ToolTipManager.sharedInstance().setEnabled(false);
 					checkButtonsState();
 				}
 
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+					ToolTipManager.sharedInstance().setEnabled(true);
 				}
 
 				@Override
@@ -591,4 +592,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			baseItem.setCtrlAction(ctrlAction);
 		}
 	}
+
+
 }
