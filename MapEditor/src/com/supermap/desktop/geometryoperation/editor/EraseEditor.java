@@ -122,7 +122,6 @@ public class EraseEditor extends AbstractEditor {
 		environment.getMapControl().setAction(MAP_CONTROL_ACTION);
 		environment.getMapControl().setTrackMode(TrackMode.TRACK);
 		editModel.tip.bind(environment.getMapControl());
-		environment.setEditController(this.eraseEditController);
 		getSrRegion(environment);
 		setIsEraseExternal(false, editModel);
 		Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_EraseEditor_EraseGeometry"));

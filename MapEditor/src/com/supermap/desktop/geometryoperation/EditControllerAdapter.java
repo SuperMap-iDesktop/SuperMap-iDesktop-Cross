@@ -6,6 +6,8 @@ import java.util.EventObject;
 
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackingEvent;
 
 public abstract class EditControllerAdapter implements IEditController {
 
@@ -74,4 +76,13 @@ public abstract class EditControllerAdapter implements IEditController {
 
 	}
 
+	@Override
+	public void tracking(EditEnvironment environment, TrackingEvent e) {
+
+	}
+
+	@Override
+	public void tracked(EditEnvironment environment, TrackedEvent e) {
+
+	}
 }
