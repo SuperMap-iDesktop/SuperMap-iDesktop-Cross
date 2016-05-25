@@ -54,6 +54,7 @@ public class JPanelGeoCoordSys extends JPanel {
 	private boolean lockGeo = false;
 	private boolean lockAxis = false;
 	private boolean lockCenter = false;
+	private Dimension labelPreferredSize = new Dimension(20, 23);
 
 	public JPanelGeoCoordSys() {
 		initComponents();
@@ -75,10 +76,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoCoordSysType> list, GeoCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -100,10 +104,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoDatumType> list, GeoDatumType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -121,10 +128,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoSpheroidType> list, GeoSpheroidType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -185,10 +195,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoPrimeMeridianType> list, GeoPrimeMeridianType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}

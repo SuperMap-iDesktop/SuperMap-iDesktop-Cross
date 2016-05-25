@@ -109,6 +109,8 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	private PrjCoordSys prjCoordSys;
 	private boolean lock = false;
 	private ISmTextFieldLegit fieldLegit;
+	private Dimension labelPreferredSize = new Dimension(20, 23);
+
 
 	public JDialogUserDefinePrjProjection() {
 		super();
@@ -146,10 +148,13 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends PrjCoordSysType> list, PrjCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -167,10 +172,13 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends ProjectionType> list, ProjectionType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -186,10 +194,13 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Unit> list, Unit value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
 				jLabel.setText(LengthUnit.convertForm(value).toString());
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
