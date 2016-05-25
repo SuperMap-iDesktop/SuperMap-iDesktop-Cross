@@ -11,6 +11,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
 import javax.swing.*;
@@ -53,6 +54,7 @@ public class JPanelGeoCoordSys extends JPanel {
 	private boolean lockGeo = false;
 	private boolean lockAxis = false;
 	private boolean lockCenter = false;
+	private Dimension labelPreferredSize = new Dimension(20, 23);
 
 	public JPanelGeoCoordSys() {
 		initComponents();
@@ -63,7 +65,6 @@ public class JPanelGeoCoordSys extends JPanel {
 	}
 
 	private void initComponents() {
-		// TODO: 2016/5/17 初始化
 		//region 类型
 		Enum[] enums = Enum.getEnums(GeoCoordSysType.class);
 
@@ -75,10 +76,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoCoordSysType> list, GeoCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(" " + value.name());
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -100,10 +104,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoDatumType> list, GeoDatumType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(" " + value.name());
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -121,10 +128,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoSpheroidType> list, GeoSpheroidType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(" " + value.name());
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -185,10 +195,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends GeoPrimeMeridianType> list, GeoPrimeMeridianType value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(" " + value.name());
+				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(labelPreferredSize);
+				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
 				if (isSelected) {
-					jLabel.setOpaque(true);
 					jLabel.setBackground(list.getSelectionBackground());
+				} else {
+					jLabel.setBackground(list.getBackground());
 				}
 				return jLabel;
 			}
@@ -222,12 +235,13 @@ public class JPanelGeoCoordSys extends JPanel {
 			return false;
 		}
 		if (!textFieldLongitude.getText().equals(textFieldLongitude.getBackUpValue())) {
-			if (!lockCenter) {
-				comboBoxCentralMeridianType.setSelectedItem(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
+			if (geoCoordSys.getGeoPrimeMeridian().getType() != GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED) {
+				String name = geoCoordSys.getGeoPrimeMeridian().getName();
+				geoCoordSys.getGeoPrimeMeridian().setType(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
+				geoCoordSys.getGeoPrimeMeridian().setName(name);
 			}
-			if (geoCoordSys.getGeoPrimeMeridian().getType() == GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED) {
-				geoCoordSys.getGeoPrimeMeridian().setLongitudeValue(value);
-			}
+			geoCoordSys.getGeoPrimeMeridian().setLongitudeValue(value);
+
 		}
 		return true;
 	}
@@ -237,12 +251,12 @@ public class JPanelGeoCoordSys extends JPanel {
 			return false;
 		}
 		if (!textFieldFlatten.getText().equals(textFieldFlatten.getBackUpValue())) {
-			if (!lockAxis) {
-				comboBoxGeoSpheroidType.setSelectedItem(GeoSpheroidType.SPHEROID_USER_DEFINED);
+			if (geoCoordSys.getGeoDatum().getGeoSpheroid().getType() != GeoSpheroidType.SPHEROID_USER_DEFINED) {
+				String name = geoCoordSys.getGeoDatum().getGeoSpheroid().getName();
+				geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
+				geoCoordSys.getGeoDatum().getGeoSpheroid().setName(name);
 			}
-			if (geoCoordSys.getGeoDatum().getGeoSpheroid().getType() == GeoSpheroidType.SPHEROID_USER_DEFINED) {
-				geoCoordSys.getGeoDatum().getGeoSpheroid().setFlatten(value);
-			}
+			geoCoordSys.getGeoDatum().getGeoSpheroid().setFlatten(value);
 		}
 		return true;
 	}
@@ -252,12 +266,16 @@ public class JPanelGeoCoordSys extends JPanel {
 			return false;
 		}
 		if (!textFieldAxis.getText().equals(textFieldAxis.getBackUpValue())) {
-			if (!lockAxis) {
-				comboBoxGeoSpheroidType.setSelectedItem(GeoSpheroidType.SPHEROID_USER_DEFINED);
+//			if (!lockAxis) {
+//				comboBoxGeoSpheroidType.setSelectedItem(GeoSpheroidType.SPHEROID_USER_DEFINED);
+//			}
+			if (geoCoordSys.getGeoDatum().getGeoSpheroid().getType() != GeoSpheroidType.SPHEROID_USER_DEFINED) {
+				String name = geoCoordSys.getGeoDatum().getGeoSpheroid().getName();
+				geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
+				geoCoordSys.getGeoDatum().getGeoSpheroid().setName(name);
 			}
-			if (geoCoordSys.getGeoDatum().getGeoSpheroid().getType() == GeoSpheroidType.SPHEROID_USER_DEFINED) {
-				geoCoordSys.getGeoDatum().getGeoSpheroid().setAxis(value);
-			}
+			geoCoordSys.getGeoDatum().getGeoSpheroid().setAxis(value);
+
 		}
 		return true;
 	}
@@ -267,21 +285,27 @@ public class JPanelGeoCoordSys extends JPanel {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxType.getSelectedItem() != null) {
+					if (lock) {
+						return;
+					}
 					Object selectedItem = comboBoxType.getSelectedItem();
 					if (selectedItem instanceof GeoCoordSysType) {
 						geoCoordSys.setType((GeoCoordSysType) selectedItem);
-						geoCoordSys.setName(((GeoCoordSysType) selectedItem).name());
-					} else {
-						geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
-						if (selectedItem instanceof String) {
-							geoCoordSys.setName((String) selectedItem);
-						}
-					}
-					if (geoCoordSys.getType() != GeoCoordSysType.GCS_USER_DEFINE) {
 						lock = true;
 						comboBoxGeoDatumType.setSelectedItem(geoCoordSys.getGeoDatum().getType());
 						comboBoxCentralMeridianType.setSelectedItem(geoCoordSys.getGeoPrimeMeridian().getType());
+						comboBoxType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(((GeoCoordSysType) selectedItem).name()));
+						geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
+						geoCoordSys.setName(PrjCoordSysTypeUtilties.getDescribe(((GeoCoordSysType) selectedItem).name()));
 						lock = false;
+					} else {
+						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+							return;
+						}
+						if (selectedItem instanceof String) {
+							geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
+							geoCoordSys.setName((String) selectedItem);
+						}
 					}
 					firePropertyChange("GeoCoordSysType", "", "");
 				}
@@ -290,25 +314,31 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxGeoDatumType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				if (lockGeo) {
+					return;
+				}
 				Object selectedItem = comboBoxGeoDatumType.getSelectedItem();
 				if (e.getStateChange() == ItemEvent.SELECTED && selectedItem != null) {
-					if (selectedItem instanceof GeoDatumType) {
-						geoCoordSys.getGeoDatum().setName(((GeoDatumType) selectedItem).name());
-						geoCoordSys.getGeoDatum().setType((GeoDatumType) selectedItem);
 
+					if (selectedItem instanceof GeoDatumType) {
+						if (geoCoordSys.getType() != GeoCoordSysType.GCS_USER_DEFINE) {
+							geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
+						}
+						geoCoordSys.getGeoDatum().setType((GeoDatumType) selectedItem);
+						lockGeo = true;
+						comboBoxGeoSpheroidType.setSelectedItem(geoCoordSys.getGeoDatum().getGeoSpheroid().getType());
+						comboBoxGeoDatumType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(((GeoDatumType) selectedItem).name()));
+						geoCoordSys.getGeoDatum().setType(GeoDatumType.DATUM_USER_DEFINED);
+						geoCoordSys.getGeoDatum().setName(PrjCoordSysTypeUtilties.getDescribe(((GeoDatumType) selectedItem).name()));
+						lockGeo = false;
 					} else {
+						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+							return;
+						}
 						geoCoordSys.getGeoDatum().setType(GeoDatumType.DATUM_USER_DEFINED);
 						if (selectedItem instanceof String) {
 							geoCoordSys.setName((String) selectedItem);
 						}
-					}
-					if (!lock) {
-						comboBoxType.setSelectedItem(GeoCoordSysType.GCS_USER_DEFINE);
-					}
-					if (selectedItem != GeoDatumType.DATUM_USER_DEFINED) {
-						lockGeo = true;
-						comboBoxGeoSpheroidType.setSelectedItem(geoCoordSys.getGeoDatum().getGeoSpheroid().getType());
-						lockGeo = false;
 					}
 				}
 			}
@@ -317,23 +347,26 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxGeoSpheroidType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				if (lockAxis) {
+					return;
+				}
 				Object selectedItem = comboBoxGeoSpheroidType.getSelectedItem();
 				if (e.getStateChange() == ItemEvent.SELECTED && selectedItem != null) {
 					if (selectedItem instanceof GeoSpheroidType) {
 						geoCoordSys.getGeoDatum().getGeoSpheroid().setType((GeoSpheroidType) selectedItem);
-						geoCoordSys.getGeoDatum().getGeoSpheroid().setName(((GeoSpheroidType) selectedItem).name());
-					} else {
-						geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
-						geoCoordSys.getGeoDatum().getGeoSpheroid().setName((String) selectedItem);
-					}
-					if (!lockGeo) {
-						comboBoxGeoDatumType.setSelectedItem(GeoDatumType.DATUM_USER_DEFINED);
-					}
-					if (selectedItem != GeoSpheroidType.SPHEROID_USER_DEFINED) {
 						lockAxis = true;
 						textFieldAxis.setText(String.valueOf(geoCoordSys.getGeoDatum().getGeoSpheroid().getAxis()));
 						textFieldFlatten.setText(String.valueOf(geoCoordSys.getGeoDatum().getGeoSpheroid().getFlatten()));
+						comboBoxGeoSpheroidType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(((GeoSpheroidType) selectedItem).name()));
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setName(PrjCoordSysTypeUtilties.getDescribe(((GeoSpheroidType) selectedItem).name()));
 						lockAxis = false;
+					} else {
+						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+							return;
+						}
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
+						geoCoordSys.getGeoDatum().getGeoSpheroid().setName((String) selectedItem);
 					}
 				}
 			}
@@ -342,16 +375,32 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxCentralMeridianType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+
+				if (lockCenter) {
+					return;
+				}
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					geoCoordSys.getGeoPrimeMeridian().setType((GeoPrimeMeridianType) comboBoxCentralMeridianType.getSelectedItem());
-					if (!lock) {
-						comboBoxType.setSelectedItem(GeoCoordSysType.GCS_USER_DEFINE);
-					}
-					if (comboBoxCentralMeridianType.getSelectedItem() != GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED) {
+					Object selectedItem = comboBoxCentralMeridianType.getSelectedItem();
+
+					if (selectedItem instanceof GeoPrimeMeridianType) {
+						if (geoCoordSys.getType() != GeoCoordSysType.GCS_USER_DEFINE) {
+							geoCoordSys.setType(GeoCoordSysType.GCS_USER_DEFINE);
+						}
+						geoCoordSys.getGeoPrimeMeridian().setType((GeoPrimeMeridianType) selectedItem);
 						lockCenter = true;
+						geoCoordSys.getGeoPrimeMeridian().setName(PrjCoordSysTypeUtilties.getDescribe(geoCoordSys.getGeoPrimeMeridian().getType().name()));
 						textFieldLongitude.setText(String.valueOf(geoCoordSys.getGeoPrimeMeridian().getLongitudeValue()));
+						comboBoxCentralMeridianType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(geoCoordSys.getGeoPrimeMeridian().getType().name()));
+						geoCoordSys.getGeoPrimeMeridian().setType(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
 						lockCenter = false;
+					} else {
+						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+							return;
+						}
+						geoCoordSys.getGeoPrimeMeridian().setType(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
+						geoCoordSys.getGeoPrimeMeridian().setName((String) selectedItem);
 					}
+
 				}
 			}
 		});
@@ -420,22 +469,16 @@ public class JPanelGeoCoordSys extends JPanel {
 		lockGeo = true;
 		lockAxis = true;
 		lockCenter = true;
-		comboBoxType.setSelectedItem(this.geoCoordSys.getType());
-		if (this.getGeoCoordSys().getType() == GeoCoordSysType.GCS_USER_DEFINE) {
-			comboBoxGeoDatumType.setSelectedItem(this.geoCoordSys.getGeoDatum().getType());
-			if (this.geoCoordSys.getGeoDatum().getType() == GeoDatumType.DATUM_USER_DEFINED) {
-				comboBoxGeoSpheroidType.setSelectedItem(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getType());
-				if (this.geoCoordSys.getGeoDatum().getGeoSpheroid().getType() == GeoSpheroidType.SPHEROID_USER_DEFINED) {
-					textFieldAxis.setText(String.valueOf(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getAxis()));
-					textFieldFlatten.setText(String.valueOf(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getFlatten()));
-				}
+		comboBoxType.setSelectedItem(this.geoCoordSys.getName());
+		comboBoxGeoDatumType.setSelectedItem(this.geoCoordSys.getGeoDatum().getType());
+		comboBoxGeoSpheroidType.setSelectedItem(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getName());
+		textFieldAxis.setText(String.valueOf(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getAxis()));
+		textFieldFlatten.setText(String.valueOf(this.geoCoordSys.getGeoDatum().getGeoSpheroid().getFlatten()));
 
-				comboBoxCentralMeridianType.setSelectedItem(this.geoCoordSys.getGeoPrimeMeridian().getType());
-				if (this.geoCoordSys.getGeoPrimeMeridian().getType() == GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED) {
-					textFieldLongitude.setText(String.valueOf(this.geoCoordSys.getGeoPrimeMeridian().getLongitudeValue()));
-				}
-			}
-		}
+		comboBoxCentralMeridianType.setSelectedItem(this.geoCoordSys.getGeoPrimeMeridian().getName());
+		textFieldLongitude.setText(String.valueOf(this.geoCoordSys.getGeoPrimeMeridian().getLongitudeValue()));
+
+
 		lock = false;
 		lockGeo = false;
 		lockAxis = false;
@@ -452,5 +495,11 @@ public class JPanelGeoCoordSys extends JPanel {
 		}
 		this.geoCoordSys = geoCoordSys.clone();
 		initComponentStates();
+	}
+
+	public void dispose() {
+		if (this.geoCoordSys != null) {
+			this.geoCoordSys.dispose();
+		}
 	}
 }

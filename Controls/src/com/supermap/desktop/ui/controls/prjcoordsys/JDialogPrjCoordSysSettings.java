@@ -181,6 +181,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	};
 	private JPopupMenu tablePopupmenu;
 	private CoordSysDefine currentRowData;
+	private CoordSysDefine rootDefine;
 
 	/**
 	 * Create the dialog.
@@ -197,6 +198,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			buildProjectionSystemDefines();
 			// 构建地理坐标系定义数据
 			buildGeographyCoordinateDefines();
+			bulidRootDefine();
 			// 构造显示投影系统结构的树
 			initializeTreePrjCoordSys();
 			registerEvents();
@@ -211,6 +213,17 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	/**
+	 * 初始化根节点
+	 */
+	private void bulidRootDefine() {
+		rootDefine = new CoordSysDefine(USER_DEFINED);
+		rootDefine.setCaption(ControlsProperties.getString("String_CoordSystem"));
+		rootDefine.add(noneEarth);
+		rootDefine.add(projectionSystem);
+		rootDefine.add(geographyCoordinate);
 	}
 
 	private void tableMouseRightClicked(MouseEvent e) {
@@ -642,7 +655,10 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			if (this.treePrjCoordSys.getSelectionPath() != null) {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treePrjCoordSys.getSelectionPath().getLastPathComponent();
 
-				if (selectedNode.getUserObject() instanceof CoordSysDefine) {
+				if (selectedNode == treePrjCoordSys.getModel().getRoot()) {
+					this.prjModel.setDefine(rootDefine);
+					this.currentPrjDefine = null;
+				} else if (selectedNode.getUserObject() instanceof CoordSysDefine) {
 					this.prjModel.setDefine((CoordSysDefine) selectedNode.getUserObject());
 					this.currentPrjDefine = (CoordSysDefine) selectedNode.getUserObject();
 				} else {
@@ -920,6 +936,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 									addProjToDocument(result);
 								}
 							}
+							dialogUserDefinePrjProjection.clean();
 						}
 					}
 				}
