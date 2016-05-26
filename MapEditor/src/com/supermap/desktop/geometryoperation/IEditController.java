@@ -9,6 +9,8 @@ import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackingEvent;
 
 /**
  * 用来解决单例多窗口事件响应的相关问题
@@ -77,4 +79,8 @@ public interface IEditController {
 	public void undone(EditEnvironment environment, EventObject arg0);
 
 	public void redone(EditEnvironment environment, EventObject arg0);
+
+	public void tracking(EditEnvironment environment, TrackingEvent e);
+
+	public void tracked(EditEnvironment environment, TrackedEvent e);
 }
