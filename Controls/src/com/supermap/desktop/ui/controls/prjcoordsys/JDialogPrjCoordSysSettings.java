@@ -46,6 +46,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,6 +183,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	private JPopupMenu tablePopupmenu;
 	private CoordSysDefine currentRowData;
 	private CoordSysDefine rootDefine;
+	private JMenuItem menuItemUserDefine;
+	private JMenuItem menuItemDelete;
 
 	/**
 	 * Create the dialog.
@@ -252,8 +255,6 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		currentRowData = prjModel.getRowData(tablePrjCoordSys.getSelectedRow());
 		if (currentRowData != null && currentRowData.size() == 0 && currentRowData.getCoordSysType() != JDialogPrjCoordSysSettings.CoordSysDefine.NONE_ERRTH) {
 			getTablePopupmenu().show(tablePrjCoordSys, e.getX(), e.getY());
-
-//			currentRowData.getCoordSysType()
 		}
 	}
 
@@ -891,8 +892,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	public JPopupMenu getTablePopupmenu() {
 		if (tablePopupmenu == null) {
 			tablePopupmenu = new JPopupMenu();
-			JMenuItem menuItem = new JMenuItem(ControlsProperties.getString("String_Button_NewCoordSys"));
-			menuItem.addActionListener(new ActionListener() {
+			menuItemUserDefine = new JMenuItem(ControlsProperties.getString("String_Button_NewCoordSys"));
+			menuItemUserDefine.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (currentRowData != null) {
@@ -941,7 +942,21 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 					}
 				}
 			});
-			tablePopupmenu.add(menuItem);
+			tablePopupmenu.add(menuItemUserDefine);
+
+			menuItemDelete = new JMenuItem(CommonProperties.getString(CommonProperties.Delete));
+			menuItemDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (currentRowData != null && currentRowData.getParent() != null && currentRowData.getCoordSysType() != CoordSysDefine.NONE_ERRTH) {
+						if (UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_DelSelectedItem_Warning")) == 0) {
+							removeCoordSysDefineFormDoc(currentRowData);
+							currentRowData.getParent().remove(currentRowData);
+						}
+					}
+				}
+			});
+			tablePopupmenu.add(menuItemDelete);
 		}
 		return tablePopupmenu;
 	}
@@ -1000,10 +1015,138 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			string = string.replaceAll("<!\\[CDATA\\[", "");
 			string = string.replaceAll("\\]\\]>", "");
 			FileUtilties.writeToFile(projectionConfigPath, string);
-//			XmlUtilties.saveXml(projectionConfigPath, projectionDoc, projectionDoc.getXmlEncoding());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	private void removeCoordSysDefineFormDoc(CoordSysDefine coordSysDefine) {
+		boolean isDel = false;
+		if (coordSysDefine.getCoordSysType() == CoordSysDefine.PROJECTION_SYSTEM) {
+			isDel = removeProjFormDoc(coordSysDefine);
+		} else {
+			isDel = removeGeoFormDoc(coordSysDefine);
+		}
+		if (isDel) {
+			save();
+			removeFormTree(coordSysDefine);
+			CoordSysDefine define = prjModel.getDefine();
+			if (define != coordSysDefine) {
+				if (define.size() > 0) {
+					prjModel.setDefine(define);
+				} else {
+					removeFormTree(define);
+					prjModel.setDefine(null);
+				}
+			} else {
+				prjModel.setDefine(null);
+			}
+			if (coordSysDefine.getParent() != null && coordSysDefine.getParent().size() <= 1) {
+				removeFormTree(coordSysDefine.getParent());
+				prjModel.setDefine(null);
+			}
+		}
+	}
+
+	private boolean removeProjFormDoc(CoordSysDefine coordSysDefine) {
+		NodeList parentNodes = this.projectionDoc.getElementsByTagName(XMLProjectionTag.PRJCOORDSYS_DEFINE);
+		boolean isGroup = false;
+		boolean isName = false;
+		for (int i = 0; i < parentNodes.getLength(); i++) {
+			Node parentNode = parentNodes.item(i);
+			if (parentNode != null && parentNode.getNodeType() == Node.ELEMENT_NODE) {
+				NodeList nodes = parentNode.getChildNodes();
+				for (int j = 0; j < nodes.getLength(); j++) {
+					Node node = nodes.item(j);
+					if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+						if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.PRJGROUP_CAPTION)) {
+							isGroup = node.getTextContent().equals(coordSysDefine.getParent().getCaption());
+						} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.PRJCOORDSYS_CAPTION)) {
+							isName = node.getTextContent().equals(coordSysDefine.getCaption());
+						}
+					}
+				}
+			}
+			if (isGroup && isName) {
+				parentNode.getParentNode().removeChild(parentNode);
+				return true;
+			}
+			isGroup = false;
+			isName = false;
+		}
+		return false;
+	}
+
+	private void removeFormTree(CoordSysDefine coordSysDefine) {
+		CoordSysDefine parent = getMiddleParent(coordSysDefine, null);
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePrjCoordSys.getModel().getRoot();
+		while (parent != coordSysDefine) {
+			parent = getMiddleParent(coordSysDefine, parent);
+			node = getNode(parent, node);
+		}
+		if (node != null) {
+			((DefaultMutableTreeNode) node.getParent()).remove(node);
+			treePrjCoordSys.updateUI();
+		}
+
+	}
+
+	private CoordSysDefine getMiddleParent(CoordSysDefine coordSysDefine, CoordSysDefine parent) {
+		while (coordSysDefine.getParent() != parent) {
+			coordSysDefine = coordSysDefine.getParent();
+		}
+		return coordSysDefine;
+	}
+
+	private DefaultMutableTreeNode getNode(CoordSysDefine parent, DefaultMutableTreeNode root) {
+		if (root.getUserObject() == parent) {
+			return root;
+		}
+		for (int k = 0; k < root.getChildCount(); k++) {
+			DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) root.getChildAt(k);
+			CoordSysDefine userObject = (CoordSysDefine) childAt.getUserObject();
+			if (userObject == parent) {
+				return childAt;
+			}
+		}
+		return null;
+	}
+
+	private void save() {
+		try {
+			XmlUtilties.saveXml(projectionConfigPath, projectionDoc, "UTF-8");
+		} catch (FileNotFoundException e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	private boolean removeGeoFormDoc(CoordSysDefine coordSysDefine) {
+		NodeList parentNodes = this.projectionDoc.getElementsByTagName(XMLProjectionTag.GEOCOORDSYS_DEFINE);
+		boolean isGroup = false;
+		boolean isName = false;
+		for (int i = 0; i < parentNodes.getLength(); i++) {
+			Node parentNode = parentNodes.item(i);
+			if (parentNode != null && parentNode.getNodeType() == Node.ELEMENT_NODE) {
+				NodeList nodes = parentNode.getChildNodes();
+				for (int j = 0; j < nodes.getLength(); j++) {
+					Node node = nodes.item(j);
+					if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+						if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.GEOGROUP_CATION)) {
+							isGroup = node.getTextContent().equals(coordSysDefine.getParent().getCaption());
+						} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.GEOCOORDSYS_CAPTION)) {
+							isName = node.getTextContent().equals(coordSysDefine.getCaption());
+						}
+					}
+				}
+			}
+			if (isGroup && isName) {
+				parentNode.getParentNode().removeChild(parentNode);
+				return true;
+			}
+			isGroup = false;
+			isName = false;
+		}
+		return false;
 	}
 
 	/**
@@ -1265,6 +1408,11 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			return list.toArray(new CoordSysDefine[list.size()]);
 		}
 
+		@Override
+		public String toString() {
+			return this.caption;
+		}
+
 		public void dispose() {
 			for (CoordSysDefine child : children) {
 				child.dispose();
@@ -1277,10 +1425,6 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			}
 		}
 
-		@Override
-		public String toString() {
-			return this.caption;
-		}
 	}
 
 	/**
