@@ -62,7 +62,6 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 				geometryNode.reset();
 			}
 		});
-
 	}
 
 	@Override
@@ -119,4 +118,13 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 		buttonReset.setEnabled(geometryNode.isModified());
 	}
 
+	@Override
+	public void dispose() {
+		geometryNode.dispose();
+	}
+
+	@Override
+	public void hidden() {
+		geometryNode.hidden();
+	}
 }

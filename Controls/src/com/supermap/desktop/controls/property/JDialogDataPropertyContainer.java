@@ -40,6 +40,7 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 		setModal(false);
 		this.controls = new ArrayList<AbstractPropertyControl>();
 		this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	@Override
@@ -51,6 +52,9 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 		}
 
 		this.setTitle(ControlsProperties.getString("String_Property"));
+		for (AbstractPropertyControl control : this.controls) {
+			control.hidden();
+		}
 		this.controls.clear();
 		this.getContentPane().removeAll();
 		this.tabbledPane.removeAll();
@@ -72,11 +76,14 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 	private void tabbledPaneChange() {
 		int selectedIndex = this.tabbledPane.getSelectedIndex();
 
-		if (selectedIndex > -1) {
-			Component component = this.tabbledPane.getComponentAt(selectedIndex);
-
-			if (component instanceof AbstractPropertyControl) {
-				((AbstractPropertyControl) component).refreshData();
+		for (int i = 0; i < tabbledPane.getTabCount(); i++) {
+			if (!(tabbledPane.getComponentAt(i) instanceof AbstractPropertyControl)) {
+				continue;
+			}
+			if (i != selectedIndex) {
+				((AbstractPropertyControl) tabbledPane.getComponentAt(i)).hidden();
+			} else {
+				((AbstractPropertyControl) tabbledPane.getComponentAt(i)).refreshData();
 			}
 		}
 	}
@@ -112,11 +119,15 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 				AbstractPropertyControl control = (AbstractPropertyControl) this.tabbledPane.getComponentAt(i);
 
 				if (control.getPropertyType() == property.getPropertyType()) {
+					if (i == tabbledPane.getSelectedIndex()) {
+						tabbledPaneChange();
+					}
 					this.tabbledPane.setSelectedIndex(i);
-					break;
+					return;
 				}
 			}
 		}
+		tabbledPaneChange();
 	}
 
 	@Override

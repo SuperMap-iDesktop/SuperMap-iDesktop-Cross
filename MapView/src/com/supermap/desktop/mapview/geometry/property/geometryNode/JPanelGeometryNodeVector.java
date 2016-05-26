@@ -1,6 +1,11 @@
 package com.supermap.desktop.mapview.geometry.property.geometryNode;
 
+import com.supermap.data.GeoLine;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.FormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
@@ -14,6 +19,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilties.GeometryTypeUtilties;
+import com.supermap.mapping.Map;
+import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -26,6 +33,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +73,10 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	private GeometryNodeVectorTableModel currentTableModel;
 	private java.util.List<VectorTableModel> tableModels;
 	private List<ModifiedChangedListener> listModifiedChangedListeners = new ArrayList<>();
+	private static final String tag = "NodeInfoTag";
+	private Map currentMap;
+	private Window parent = null;
+	private WindowAdapter windowAdapter;
 
 
 	public JPanelGeometryNodeVector(IGeometry geometry) {
@@ -85,6 +98,13 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private void initComponents() {
+		windowAdapter = new WindowAdapter() {
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				hideClean();
+			}
+		};
 		tableModels = new ArrayList<>();
 		if (geometry instanceof IMultiPartFeature) {
 			for (int i = 0; i < ((IMultiPartFeature) geometry).getPartCount(); i++) {
@@ -225,6 +245,11 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				int selectedRowCount = tableNodeInfo.getSelectedRowCount();
 				buttonDel.setEnabled(isButtonEnable() && selectedRowCount > 0 && currentTableModel.getRowCount() - selectedRowCount >= getMinRowCount());
 				buttonInsert.setEnabled(isButtonEnable() && selectedRowCount == 1);
+				if (selectedRowCount == 1) {
+					showPointInMap();
+				} else {
+					removeBeforeTag();
+				}
 			}
 		});
 
@@ -234,6 +259,40 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				fireModifiedChanged();
 			}
 		});
+
+	}
+
+	private void showPointInMap() {
+		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+			double x = (double) tableNodeInfo.getValueAt(tableNodeInfo.getSelectedRow(), 1);
+			double y = (double) tableNodeInfo.getValueAt(tableNodeInfo.getSelectedRow(), 2);
+			MapControl mapControl = ((FormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+			Point2Ds point2Ds = new Point2Ds();
+			double offset = mapControl.getMap().getViewBounds().getWidth() * 30 / mapControl.getSize().getWidth();
+			point2Ds.add(new Point2D(x - offset, y));
+			point2Ds.add(new Point2D(x + offset, y));
+			GeoLine paintLine = new GeoLine(point2Ds);
+			Point2Ds point2Ds1 = new Point2Ds();
+			point2Ds1.add(new Point2D(x, y - offset));
+			point2Ds1.add(new Point2D(x, y + offset));
+			paintLine.addPart(point2Ds1);
+			removeBeforeTag();
+			currentMap = mapControl.getMap();
+			currentMap.getTrackingLayer().add(paintLine, tag);
+			currentMap.refreshTrackingLayer();
+		}
+	}
+
+	private void removeBeforeTag() {
+		if (currentMap != null) {
+			for (int count = currentMap.getTrackingLayer().getCount() - 1; count >= 0; count--) {
+				if (currentMap.getTrackingLayer().getTag(count).equals(tag)) {
+					currentMap.getTrackingLayer().remove(count);
+				}
+			}
+			currentMap.refreshTrackingLayer();
+		}
+
 	}
 
 	private int getMinRowCount() {
@@ -309,7 +368,12 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		for (VectorTableModel tableModel : tableModels) {
 			tableModel.dispose();
 		}
+		hideClean();
 		geometry.dispose();
+	}
+
+	public void hideClean() {
+		removeBeforeTag();
 	}
 
 	@Override
@@ -354,5 +418,25 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		for (ModifiedChangedListener listModifiedChangedListener : listModifiedChangedListeners) {
 			listModifiedChangedListener.modified(isModified());
 		}
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		if (parent == null) {
+			initParent();
+		}
+		super.paint(g);
+	}
+
+
+	private void initParent() {
+		parent = SwingUtilities.getWindowAncestor(this);
+		parent.removeWindowListener(windowAdapter);
+		parent.addWindowListener(windowAdapter);
+	}
+
+	@Override
+	public void hidden() {
+		hideClean();
 	}
 }
