@@ -397,8 +397,8 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		private void splitSeparators() {
 			// 拆分项
 			if (mixedTextStyle.getSplitIndexes().length == 0) {
-				//如果当前没有分段则添加一个默认分段
-				int[] newSplits = {2};
+				// 如果当前没有分段则添加一个默认分段
+				int[] newSplits = { 2 };
 				TextStyle[] newTextStyle = new TextStyle[2];
 				newTextStyle[0] = mixedTextStyle.getStyles()[0];
 				newTextStyle[1] = mixedTextStyle.getStyles()[0];
@@ -524,7 +524,10 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 				String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
 				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
 					int rangeValue = Integer.valueOf(rangeStr);
-					int nowValue = mixedTextStyle.getSplitIndexes()[selectRow-1];
+					int nowValue = 0;
+					if (selectRow >= 1) {
+						nowValue = mixedTextStyle.getSplitIndexes()[selectRow - 1];
+					}
 					if (selectRow == tableComplicated.getRowCount() - 2 && rangeValue > nowValue) {
 						mixedTextStyle.getSplitIndexes()[selectRow] = rangeValue;
 					}

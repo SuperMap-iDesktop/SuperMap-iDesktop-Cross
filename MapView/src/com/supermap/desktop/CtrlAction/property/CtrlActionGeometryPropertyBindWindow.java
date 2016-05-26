@@ -209,17 +209,6 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
-			int formMapCount = 0;
-			for (int i = 0; i < formManager.getCount(); i++) {
-				if (formManager.get(i) instanceof IFormMap) {
-					// 遍历所有的窗口，如果为地图窗口则记录下来
-					formMapCount++;
-				}
-			}
-			if (0 == formMapCount) {
-				// 地图窗口关闭时恢复dockwindow的w位置
-
-			}
 			if (null == e.getNewActiveForm()) {
 				// 当所有地图关闭时将splitWindow设置为空，重新关联,并移除事件
 				splitWindow = null;
