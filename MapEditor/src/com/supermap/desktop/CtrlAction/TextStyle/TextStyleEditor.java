@@ -13,7 +13,8 @@ public class TextStyleEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean isEditable = false;
-		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap
+				&& ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers().length > 0) {
 			Layer activeLayer = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0];
 			if (activeLayer.isEditable()) {
 				isEditable = true;
@@ -24,5 +25,5 @@ public class TextStyleEditor extends AbstractEditor {
 				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
 
 	}
-	
+
 }

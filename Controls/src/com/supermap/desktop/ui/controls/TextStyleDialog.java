@@ -35,11 +35,22 @@ public class TextStyleDialog extends SmDialog {
 	 */
 	public TextStyleDialog() {
 		super();
+		initialize();
+		this.addWindowListener(new SetWindowListener());
+	}
+
+	public TextStyleDialog(String sampleText){
+		super();
+		initialize(sampleText);
+		this.addWindowListener(new SetWindowListener());
+	}
+	
+	private void initialize(String sampleText){
 		setSize(460, 350);
 		setModal(true);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
 //		setResizable(false);
-		getContentPane().add(getTextStylePanel(), BorderLayout.CENTER);
+		getContentPane().add(getTextStylePanel(sampleText), BorderLayout.CENTER);
 		getContentPane().add(getPanelButton(), BorderLayout.SOUTH);
 		try {
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -55,8 +66,10 @@ public class TextStyleDialog extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-
-		this.addWindowListener(new SetWindowListener());
+	}
+	
+	private void initialize() {
+		initialize(ControlsProperties.getString("String_SampleText"));
 	}
 
 	/**
@@ -236,11 +249,10 @@ public class TextStyleDialog extends SmDialog {
 	public static TextStyle showDialog(TextStyle textStyle, boolean isThemeText, boolean is3DText,String smapleText) {
 		TextStyle result = null;
 
-		TextStyleDialog dialog = new TextStyleDialog();
+		TextStyleDialog dialog = new TextStyleDialog(smapleText);
 		dialog.setTextStyle(textStyle);
 		dialog.setThemeText(isThemeText);
 		dialog.set3DText(is3DText);
-		dialog.setSampleText(smapleText);
 		DialogResult dialogResult = dialog.showDialog();
 		if (dialogResult.equals(DialogResult.OK)) {
 			result = dialog.getTextStyle();
@@ -311,9 +323,9 @@ public class TextStyleDialog extends SmDialog {
 	 * 
 	 * @return
 	 */
-	protected TextStylePanel getTextStylePanel() {
+	protected TextStylePanel getTextStylePanel(String sampleText) {
 		if (this.textStylePanel == null) {
-			this.textStylePanel = new TextStylePanel();
+			this.textStylePanel = new TextStylePanel(sampleText);
 		}
 		return this.textStylePanel;
 	}

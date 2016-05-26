@@ -23,15 +23,17 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 	@Override
 	public void run() {
 		List<Object> geometryTexts = getGeometryTexts();
-		GeoText geoText = null;
+		TextStyle textStyle = null;
 		EditEnvironment environment = EditEnvironment.createInstance((IFormMap) Application.getActiveApplication().getActiveForm());
 		if (ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
-			geoText = ((GeoText) getGeometryTexts().get(geometryTexts.size() - 1));
-			GeoText newGeoText = TextStyleDialog.showDialog(geoText, false, false);
-			if (null != newGeoText) {
+			textStyle = ((GeoText) getGeometryTexts().get(geometryTexts.size() - 1)).getTextStyle();
+			TextStyle newTextStyle = TextStyleDialog.showDialog(textStyle, false, false,((GeoText) getGeometryTexts().get(geometryTexts.size() - 1)).getText());
+			if (null != newTextStyle) {
 				Recordset recordset = getActiveRecordset();
 				recordset.moveFirst();
 				while (!recordset.isEOF()) {
+					Geometry newGeoText = recordset.getGeometry().clone();
+					((GeoText)newGeoText).setTextStyle(newTextStyle);
 					recordset.edit();
 					recordset.setGeometry(newGeoText);
 					recordset.update();
@@ -79,8 +81,7 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 	}
 
 	private Recordset getActiveRecordset() {
-		Layer activeLayer = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0];
-		Selection selection = activeLayer.getSelection();
+		Selection selection = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().findSelection(true)[0];
 		Recordset recordset = selection.toRecordset();
 		return recordset;
 	}
