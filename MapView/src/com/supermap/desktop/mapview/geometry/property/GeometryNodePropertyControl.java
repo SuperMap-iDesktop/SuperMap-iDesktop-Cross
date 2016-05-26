@@ -95,14 +95,16 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 
 	private void initComponent() {
 		this.geometryNode = GeometryNodeFactory.getGeometryNode(DGeometryFactory.create(recordset.getGeometry()));
-		geometryNode.addModifiedChangedListener(modifiedChangedListener);
+		if (geometryNode != null) {
+			geometryNode.addModifiedChangedListener(modifiedChangedListener);
+		}
 	}
 
 	//region 初始化布局
 	private void initLayout() {
 		this.removeAll();
 		this.setLayout(new GridBagLayout());
-		this.add(geometryNode.getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 0).setWeight(1, 1));
+		this.add(geometryNode == null ? new JPanel() : geometryNode.getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 0).setWeight(1, 1));
 		this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
 	}
 
@@ -114,17 +116,26 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	//endregion
 
 	private void initButtonStates() {
-		buttonApply.setEnabled(geometryNode.isModified());
-		buttonReset.setEnabled(geometryNode.isModified());
+		if (geometryNode != null) {
+			buttonApply.setEnabled(geometryNode.isModified());
+			buttonReset.setEnabled(geometryNode.isModified());
+		} else {
+			buttonApply.setEnabled(false);
+			buttonReset.setEnabled(false);
+		}
 	}
 
 	@Override
 	public void dispose() {
-		geometryNode.dispose();
+		if (geometryNode != null) {
+			geometryNode.dispose();
+		}
 	}
 
 	@Override
 	public void hidden() {
-		geometryNode.hidden();
+		if (geometryNode != null) {
+			geometryNode.hidden();
+		}
 	}
 }
