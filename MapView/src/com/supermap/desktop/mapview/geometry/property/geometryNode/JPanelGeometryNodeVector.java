@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -35,6 +36,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +79,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	private Map currentMap;
 	private Window parent = null;
 	private WindowAdapter windowAdapter;
+	private DecimalFormat df = new DecimalFormat("0.0000");
 
 
 	public JPanelGeometryNodeVector(IGeometry geometry) {
@@ -135,6 +138,15 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 					label.setBackground(list.getBackground());
 				}
 				return label;
+			}
+		});
+		tableNodeInfo.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				if (column != 0) {
+					value = df.format(value);
+				}
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			}
 		});
 	}
