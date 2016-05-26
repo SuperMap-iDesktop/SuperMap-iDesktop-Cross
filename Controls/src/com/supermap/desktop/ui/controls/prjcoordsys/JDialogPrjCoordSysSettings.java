@@ -252,7 +252,11 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		}
 
 		// 弹菜单
-		currentRowData = prjModel.getRowData(tablePrjCoordSys.getSelectedRow());
+		if (tablePrjCoordSys.getModel() instanceof SearchResultModel) {
+			currentRowData = ((SearchResultModel) tablePrjCoordSys.getModel()).getRowData(tablePrjCoordSys.getSelectedRow());
+		} else {
+			currentRowData = prjModel.getRowData(tablePrjCoordSys.getSelectedRow());
+		}
 		if (currentRowData != null && currentRowData.size() == 0 && currentRowData.getCoordSysType() != JDialogPrjCoordSysSettings.CoordSysDefine.NONE_ERRTH) {
 			getTablePopupmenu().show(tablePrjCoordSys, e.getX(), e.getY());
 		}
