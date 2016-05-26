@@ -1,14 +1,13 @@
 package com.supermap.desktop.controls.property;
 
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-
 import com.supermap.desktop.Interface.IProperty;
+
+import javax.swing.*;
 
 public abstract class AbstractPropertyControl extends JPanel implements IProperty {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private String propertyName = "";
@@ -31,4 +30,14 @@ public abstract class AbstractPropertyControl extends JPanel implements IPropert
 	 */
 	// @formatter:on
 	public abstract void refreshData();
+
+	public void dispose() {
+
+	}
+
+	public void hidden() {
+	}
+
+
+
 }

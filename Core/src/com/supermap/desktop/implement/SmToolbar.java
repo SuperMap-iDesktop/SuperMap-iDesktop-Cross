@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.XMLSeparator;
 import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -195,7 +196,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		int widthCount = 0;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
-				if (widthCount == -1) {
+				if (widthCount == -1) {                    // 已经放不下了 直接丢到弹出框里面
 					addToPopUpMenu((Component) item);
 				} else if (isCanPlaced(widthCount, item)) {
 					widthCount += ((Component) item).getPreferredSize().getWidth();
@@ -223,7 +224,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	 */
 	private boolean isCanPlaced(int widthCount, IBaseItem item) {
 		int lastWidth = this.getWidth() - widthCount;
-		int moreButtonSize = 30;
+		int moreButtonSize = 40;
 		if (lastWidth < ((Component) item).getPreferredSize().getWidth()) {
 			// 当前剩余长度已经不能放置
 			return false;
@@ -458,7 +459,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	}
 
 	public void initPreferredSize() {
-		int width = 0;
+		int width = SystemPropertyUtilties.isWindows() ? 0 : 12;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
 				width += ((Component) item).getPreferredSize().getWidth();

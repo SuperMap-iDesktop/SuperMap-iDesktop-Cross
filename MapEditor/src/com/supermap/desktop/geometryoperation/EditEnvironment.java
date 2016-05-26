@@ -49,6 +49,10 @@ import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.RedoneListener;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingEvent;
+import com.supermap.ui.TrackingListener;
 import com.supermap.ui.UndoneListener;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
@@ -200,6 +204,20 @@ public class EditEnvironment {
 			EditEnvironment.this.editController.undone(EditEnvironment.this, arg0);
 		}
 	};
+	private TrackingListener trackingListener = new TrackingListener() {
+
+		@Override
+		public void tracking(TrackingEvent arg0) {
+			EditEnvironment.this.editController.tracking(EditEnvironment.this, arg0);
+		}
+	};
+	private TrackedListener trackedListener = new TrackedListener() {
+
+		@Override
+		public void tracked(TrackedEvent arg0) {
+			EditEnvironment.this.editController.tracked(EditEnvironment.this, arg0);
+		}
+	};
 
 	private EditEnvironment(IFormMap formMap) {
 		this.formMap = formMap;
@@ -211,6 +229,8 @@ public class EditEnvironment {
 
 			this.formMap.getMapControl().addRedoneListener(this.redoneListener);
 			this.formMap.getMapControl().addUndoneListener(this.undoneListener);
+			this.formMap.getMapControl().addTrackingListener(this.trackingListener);
+			this.formMap.getMapControl().addTrackedListener(this.trackedListener);
 			// 选中对象状态改变
 			this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);

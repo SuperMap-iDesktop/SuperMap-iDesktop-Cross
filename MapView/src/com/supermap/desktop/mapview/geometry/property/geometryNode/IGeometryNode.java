@@ -24,4 +24,6 @@ public interface IGeometryNode {
 	void addModifiedChangedListener(ModifiedChangedListener modifiedChangedListener);
 
 	void removeModifiedChangedListener(ModifiedChangedListener modifiedChangedListener);
+
+	void hidden();
 }
