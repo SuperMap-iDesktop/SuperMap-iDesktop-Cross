@@ -99,7 +99,6 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 
 	private void initComponents() {
 		windowAdapter = new WindowAdapter() {
-
 			@Override
 			public void windowClosed(WindowEvent e) {
 				hideClean();
