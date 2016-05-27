@@ -33,12 +33,14 @@ public class CtrlActionGeometryViewEntire extends CtrlAction {
 	public boolean enable() {
 		boolean enable = false;
 		try {
-			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
-			for (Layer layer : layers) {
-				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
-					enable = true;
-					break;
+			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+				ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+				for (Layer layer : layers) {
+					if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+						enable = true;
+						break;
+					}
 				}
 			}
 		} catch (Exception ex) {

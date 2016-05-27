@@ -173,6 +173,12 @@ public class TextStylePanel extends JPanel {
 		sampleText = ControlsProperties.getString("String_SampleText");
 	}
 
+	public TextStylePanel(String sampleText) {
+		super();
+		isInInitialState = true;
+		this.sampleText = sampleText;
+	}
+
 	/**
 	 * 获取用户操作后的结果GeoText
 	 * 
@@ -1519,7 +1525,7 @@ public class TextStylePanel extends JPanel {
 		if (jPanelPreView == null) {
 			jPanelPreView = new JPanel();
 			jPanelPreView.setLayout(new BorderLayout());
-			jPanelPreView.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1), "预览",
+			jPanelPreView.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1), ControlsProperties.getString("String_Preview"),
 					TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.BLUE));
 			jPanelPreView.add(getPreViewMapControl(), BorderLayout.CENTER);
 		}
