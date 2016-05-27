@@ -8,6 +8,8 @@ import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
+import com.supermap.desktop.geometryoperation.control.MapControlTip;
 
 public class GeometryCopyEditor extends AbstractEditor {
 
@@ -34,7 +36,15 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		// 按需重写
+		try {
+			if (environment.getEditModel() instanceof GeometryCopyEditModel) {
+
+			}
+		} finally {
+
+		}
+		environment.setEditModel(null);
+		environment.setEditController(NullEditController.instance());
 	}
 
 	@Override
@@ -49,5 +59,10 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 	private class GeometryCopyEditModel implements IEditModel {
 
+		public MapControlTip tip;
+
+		public GeometryCopyEditModel() {
+			this.tip = new MapControlTip();
+		}
 	}
 }
