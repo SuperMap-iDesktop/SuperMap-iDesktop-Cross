@@ -1,17 +1,17 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.XmlUtilties;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,35 +20,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.PathUtilties;
 
 /**
  * 颜色选择面板
@@ -371,9 +345,7 @@ public class ColorSelectionPanel extends JPanel {
 //					xmlFile = UIEnvironment.getResourcePath() + "/xml/colorpicksXML/" + name;
 //				}
 				xmlFile = PathUtilties.getFullPathName(xmlFile, true);
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				DocumentBuilder db = dbf.newDocumentBuilder();
-				Document document = db.parse(xmlFile);
+				Document document = XmlUtilties.getDocument(xmlFile);
 				NodeList employees = document.getChildNodes();
 				m_ColorInt = -1;
 				m_colorName = new ArrayList<String>();
@@ -405,13 +377,7 @@ public class ColorSelectionPanel extends JPanel {
 				}
 //				File file = new File(fileTargetPath + name + ".xml");
 //				file.deleteOnExit();
-			} catch (FileNotFoundException ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} catch (ParserConfigurationException ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} catch (SAXException ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} catch (IOException ex) {
+			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			} finally {
 //				try {
