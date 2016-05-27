@@ -103,7 +103,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
-	};;
+	};
+	;
 	private JList rowHeader;
 	private MouseAdapter rowHeaderMouseMotionListener = new MouseAdapter() {
 
@@ -686,7 +687,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			tableClickedColumn = -1;
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
-
 	}
 	@Override
 	public JTable getjTableTabular() {

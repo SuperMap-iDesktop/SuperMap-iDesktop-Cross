@@ -11,6 +11,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilties.EnumComparator;
 import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -18,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 /**
  * @author XiaJT
@@ -55,6 +57,7 @@ public class JPanelGeoCoordSys extends JPanel {
 	private boolean lockAxis = false;
 	private boolean lockCenter = false;
 	private Dimension labelPreferredSize = new Dimension(20, 23);
+	private ListCellRenderer<Enum> renderer;
 
 	public JPanelGeoCoordSys() {
 		initComponents();
@@ -68,13 +71,15 @@ public class JPanelGeoCoordSys extends JPanel {
 		//region 类型
 		Enum[] enums = Enum.getEnums(GeoCoordSysType.class);
 
+		Arrays.sort(enums, 0, enums.length, new EnumComparator());
 		for (Enum anEnum : enums) {
-			if (anEnum instanceof GeoCoordSysType)
+			if (anEnum instanceof GeoCoordSysType) {
 				comboBoxType.addItem((GeoCoordSysType) anEnum);
+			}
 		}
-		comboBoxType.setRenderer(new ListCellRenderer<GeoCoordSysType>() {
+		renderer = new ListCellRenderer<Enum>() {
 			@Override
-			public Component getListCellRendererComponent(JList<? extends GeoCoordSysType> list, GeoCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
+			public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
 				jLabel.setOpaque(true);
 				jLabel.setPreferredSize(labelPreferredSize);
@@ -86,59 +91,38 @@ public class JPanelGeoCoordSys extends JPanel {
 				}
 				return jLabel;
 			}
-		});
+		};
+		comboBoxType.setRenderer(renderer);
 		//endregion
 
 		comboBoxType.setEditable(true);
+		comboBoxGeoDatumType.setEditable(true);
 		comboBoxGeoSpheroidType.setEditable(true);
 		comboBoxCentralMeridianType.setEditable(true);
 
 		//region 大地参考系类型
 		Enum[] enumsGeoDatum = Enum.getEnums(GeoDatumType.class);
+
+		Arrays.sort(enumsGeoDatum, 0, enumsGeoDatum.length, new EnumComparator());
+
 		for (Enum anEnum : enumsGeoDatum) {
 			if (anEnum instanceof GeoDatumType) {
 				comboBoxGeoDatumType.addItem((GeoDatumType) anEnum);
 			}
 		}
-		comboBoxGeoDatumType.setRenderer(new ListCellRenderer<GeoDatumType>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends GeoDatumType> list, GeoDatumType value, int index, boolean isSelected, boolean cellHasFocus) {
-				JLabel jLabel = new JLabel();
-				jLabel.setOpaque(true);
-				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
-				if (isSelected) {
-					jLabel.setBackground(list.getSelectionBackground());
-				} else {
-					jLabel.setBackground(list.getBackground());
-				}
-				return jLabel;
-			}
-		});
+		comboBoxGeoDatumType.setRenderer(renderer);
 		//endregion
 
 		//region 椭球参数类型
 		Enum[] enumsGeoSpheroid = Enum.getEnums(GeoSpheroidType.class);
+		Arrays.sort(enumsGeoSpheroid, 0, enumsGeoSpheroid.length, new EnumComparator());
+
 		for (Enum anEnum : enumsGeoSpheroid) {
 			if (anEnum instanceof GeoSpheroidType) {
 				comboBoxGeoSpheroidType.addItem((GeoSpheroidType) anEnum);
 			}
 		}
-		comboBoxGeoSpheroidType.setRenderer(new ListCellRenderer<GeoSpheroidType>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends GeoSpheroidType> list, GeoSpheroidType value, int index, boolean isSelected, boolean cellHasFocus) {
-				JLabel jLabel = new JLabel();
-				jLabel.setOpaque(true);
-				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
-				if (isSelected) {
-					jLabel.setBackground(list.getSelectionBackground());
-				} else {
-					jLabel.setBackground(list.getBackground());
-				}
-				return jLabel;
-			}
-		});
+		comboBoxGeoSpheroidType.setRenderer(renderer);
 		//endregion
 
 		//region 赤道半径
@@ -191,21 +175,7 @@ public class JPanelGeoCoordSys extends JPanel {
 			if (anEnum instanceof GeoPrimeMeridianType)
 				comboBoxCentralMeridianType.addItem((GeoPrimeMeridianType) anEnum);
 		}
-		comboBoxCentralMeridianType.setRenderer(new ListCellRenderer<GeoPrimeMeridianType>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends GeoPrimeMeridianType> list, GeoPrimeMeridianType value, int index, boolean isSelected, boolean cellHasFocus) {
-				JLabel jLabel = new JLabel();
-				jLabel.setOpaque(true);
-				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
-				if (isSelected) {
-					jLabel.setBackground(list.getSelectionBackground());
-				} else {
-					jLabel.setBackground(list.getBackground());
-				}
-				return jLabel;
-			}
-		});
+		comboBoxCentralMeridianType.setRenderer(renderer);
 		//endregion
 		//region 经度
 		textFieldLongitude.setSmTextFieldLegit(new ISmTextFieldLegit() {
@@ -388,10 +358,11 @@ public class JPanelGeoCoordSys extends JPanel {
 						}
 						geoCoordSys.getGeoPrimeMeridian().setType((GeoPrimeMeridianType) selectedItem);
 						lockCenter = true;
-						geoCoordSys.getGeoPrimeMeridian().setName(PrjCoordSysTypeUtilties.getDescribe(geoCoordSys.getGeoPrimeMeridian().getType().name()));
 						textFieldLongitude.setText(String.valueOf(geoCoordSys.getGeoPrimeMeridian().getLongitudeValue()));
-						comboBoxCentralMeridianType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(geoCoordSys.getGeoPrimeMeridian().getType().name()));
+						comboBoxCentralMeridianType.setSelectedItem(PrjCoordSysTypeUtilties.getDescribe(((GeoPrimeMeridianType) selectedItem).name()));
 						geoCoordSys.getGeoPrimeMeridian().setType(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
+						geoCoordSys.getGeoPrimeMeridian().setName(PrjCoordSysTypeUtilties.getDescribe(((GeoPrimeMeridianType) selectedItem).name()));
+
 						lockCenter = false;
 					} else {
 						if (StringUtilties.isNullOrEmptyString(selectedItem)) {

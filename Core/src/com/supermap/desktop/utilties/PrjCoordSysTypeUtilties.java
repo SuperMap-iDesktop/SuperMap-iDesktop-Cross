@@ -18,6 +18,7 @@ public class PrjCoordSysTypeUtilties {
 			builder.append(split[i].charAt(0));
 			builder.append(split[i].substring(1, split[i].length()).toLowerCase());
 		}
-		return builder.toString();
+		String s = builder.toString();
+		return s.equals("DealulPiscului1970StereoEalulPiscului1970Stereo70") ? "DealulPiscului1970Stereo70" : s;
 	}
 }
