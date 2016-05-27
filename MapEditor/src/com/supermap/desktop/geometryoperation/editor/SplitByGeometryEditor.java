@@ -1,6 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import com.supermap.data.CoordSysTransMethod;
 import com.supermap.data.CoordSysTransParameter;
@@ -71,6 +73,13 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				if (splitGeometry != null) {
 					splitGeometry.dispose();
 				}
+			}
+		}
+		
+		@Override
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+				environment.stopEditor();
 			}
 		}
 	};

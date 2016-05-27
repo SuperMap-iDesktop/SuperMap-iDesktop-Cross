@@ -295,14 +295,19 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private void removeBeforeTag() {
-		if (currentMap != null) {
-			for (int count = currentMap.getTrackingLayer().getCount() - 1; count >= 0; count--) {
-				if (currentMap.getTrackingLayer().getTag(count).equals(tag)) {
-					currentMap.getTrackingLayer().remove(count);
+		try {
+			if (currentMap != null) {
+				for (int count = currentMap.getTrackingLayer().getCount() - 1; count >= 0; count--) {
+					if (currentMap.getTrackingLayer().getTag(count).equals(tag)) {
+						currentMap.getTrackingLayer().remove(count);
+					}
 				}
+				currentMap.refreshTrackingLayer();
 			}
-			currentMap.refreshTrackingLayer();
+		} catch (Exception ignore) {
+			// map没有判断是否释放的接口
 		}
+
 
 	}
 
