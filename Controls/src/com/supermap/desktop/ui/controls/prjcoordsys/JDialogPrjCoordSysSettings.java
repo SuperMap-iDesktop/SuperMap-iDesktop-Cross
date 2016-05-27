@@ -185,6 +185,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	private CoordSysDefine rootDefine;
 	private JMenuItem menuItemUserDefine;
 	private JMenuItem menuItemDelete;
+	private String userDefineParentName = "UserDefine";
 
 	/**
 	 * Create the dialog.
@@ -930,14 +931,13 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 								result.setCoordSysCode(USER_DEFINED);
 								result.setPrjCoordSys(prjCoordSys);
 								result.setCaption(prjCoordSys.getName());
-								String userDefine1 = "UserDefine";
-								CoordSysDefine userDefine = projectionSystem.getChildByCaption(userDefine1);
+								CoordSysDefine userDefine = projectionSystem.getChildByCaption(userDefineParentName);
 								if (userDefine == null) {
-									userDefine = new CoordSysDefine(CoordSysDefine.PROJECTION_SYSTEM, projectionSystem, userDefine1);
+									userDefine = new CoordSysDefine(CoordSysDefine.PROJECTION_SYSTEM, projectionSystem, userDefineParentName);
 								}
 								if (userDefine.add(result)) {
 									String geoCoorSys = ControlsProperties.getString("String_PrjCoorSys");
-									addToTree(result, userDefine1, userDefine, geoCoorSys);
+									addToTree(result, userDefineParentName, userDefine, geoCoorSys);
 									addProjToDocument(result);
 								}
 							}
@@ -953,9 +953,17 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (currentRowData != null && currentRowData.getParent() != null && currentRowData.getCoordSysType() != CoordSysDefine.NONE_ERRTH) {
-						if (UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_DelSelectedItem_Warning")) == 0) {
-							removeCoordSysDefineFormDoc(currentRowData);
-							currentRowData.getParent().remove(currentRowData);
+						if (userDefineParentName.equals(currentRowData.getParent().getCaption())) {
+							if (UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_DelSelectedItem_Warning")) == 0) {
+								removeCoordSysDefineFormDoc(currentRowData);
+								if (currentRowData.size() <= 1) {
+									currentRowData.getParent().getParent().remove(currentRowData.getParent());
+								}
+								currentRowData.getParent().remove(currentRowData);
+
+							}
+						} else {
+							UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_SystemProDeleteError"));
 						}
 					}
 				}
