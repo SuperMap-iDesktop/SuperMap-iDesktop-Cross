@@ -2,11 +2,13 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -71,6 +73,13 @@ public class LineTrimEditor extends AbstractEditor {
 				} else {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
 				}
+			}
+		}
+		
+		@Override
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+				environment.stopEditor();
 			}
 		}
 	};

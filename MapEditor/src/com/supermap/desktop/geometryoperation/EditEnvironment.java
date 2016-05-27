@@ -110,11 +110,7 @@ public class EditEnvironment {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (SwingUtilities.isRightMouseButton(e)) {
-				activateEditor(NullEditor.INSTANCE);
-			} else {
-				EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
-			}
+			EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
 		}
 	};
 	private KeyListener keyListener = new KeyListener() {

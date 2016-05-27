@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,12 @@ public class CombinationEditor extends AbstractEditor {
 					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
 				CursorUtilties.setWaitCursor(environment.getMapControl());
+				MouseMotionListener[] listeners = environment.getMapControl().getMouseMotionListeners();
+				for (MouseMotionListener mouseMotionListener : listeners) {
+					if (mouseMotionListener.getClass().getSimpleName().equals("MapControl_this_mouseMotionAdapter")) {
+						environment.getMapControl().removeMouseMotionListener(mouseMotionListener);
+					}
+				}
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
 				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
@@ -53,7 +60,7 @@ public class CombinationEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			CursorUtilties.setDefaultCursor(environment.getMapControl());
-			
+
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
 		}

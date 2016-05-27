@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
@@ -64,6 +65,13 @@ public class MirrorEditor extends AbstractEditor {
 				editModel.setTipMessage(MapEditorProperties.getString("String_LeftClickToEnd"));
 			} else if (editModel.isTracking && e.getButton() == MouseEvent.BUTTON1) {
 				mirror(environment);
+				environment.stopEditor();
+			}
+		}
+		
+		@Override
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
 				environment.stopEditor();
 			}
 		}
