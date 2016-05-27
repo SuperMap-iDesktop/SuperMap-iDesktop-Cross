@@ -247,8 +247,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		// 再放一个控件后位置不够了需要看能不能把剩下的控件全放上
 		for (int i = start + 1; i < items.size(); i++) {
 			// 考虑剩下的项目长度比moreButton短的情况
-			moreButtonSize -= ((Component) items.get(i)).getPreferredSize().getWidth();
-			if (moreButtonSize < 0) {
+			lastWidth -= ((Component) items.get(i)).getPreferredSize().getWidth();
+			if (lastWidth < 0) {
 				return false;
 			}
 		}
