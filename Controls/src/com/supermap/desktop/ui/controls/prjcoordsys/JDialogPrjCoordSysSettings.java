@@ -1459,7 +1459,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		@Override
 		public String getColumnName(int column) {
 			if (column == CAPTION) {
-				return CommonProperties.getString(CommonProperties.Caption);
+				return CommonProperties.getString(CommonProperties.Name);
 			} else if (column == TYPE) {
 				return CommonProperties.getString(CommonProperties.Type);
 			} else if (column == GROUP) {

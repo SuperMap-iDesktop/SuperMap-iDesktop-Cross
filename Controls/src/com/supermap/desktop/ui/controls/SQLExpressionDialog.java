@@ -1,36 +1,18 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.*;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -412,7 +394,7 @@ public class SQLExpressionDialog extends SmDialog {
 					} else {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
-						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
+						fieldNameColumn = datasetVector.getName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
 					}
 					this.tableData[rowCount][0] = fieldCaptionColumn;
 					this.tableData[rowCount][1] = fieldNameColumn;
@@ -471,7 +453,7 @@ public class SQLExpressionDialog extends SmDialog {
 					} else {
 						fieldCaptionColumn = datasetVector.getFieldInfos().get(fieldCount).getCaption();
 						fieldTypeColumn = getFiledTypeChineseName(fieldType);
-						fieldNameColumn = datasetVector.getTableName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
+						fieldNameColumn = datasetVector.getName() + "." + datasetVector.getFieldInfos().get(fieldCount).getName();
 					}
 					this.tableData[rowCount][0] = fieldCaptionColumn;
 					this.tableData[rowCount][1] = fieldNameColumn;
