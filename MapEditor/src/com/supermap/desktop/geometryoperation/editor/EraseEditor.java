@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +99,13 @@ public class EraseEditor extends AbstractEditor {
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
 			EraseEditor.this.geometrySelected(environment, arg0);
+		}
+
+		@Override
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+				environment.stopEditor();
+			}
 		}
 	};
 
