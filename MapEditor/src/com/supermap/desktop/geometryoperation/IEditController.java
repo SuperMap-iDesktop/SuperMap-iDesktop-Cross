@@ -72,6 +72,11 @@ public interface IEditController {
 	 */
 	public void mouseExited(EditEnvironment environment, MouseEvent e);
 
+	/**
+	 * Invoked when the mouse cursor has been moved onto a component but no buttons have been pushed.
+	 */
+	public void mouseMoved(EditEnvironment environment, MouseEvent e);
+
 	public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0);
 
 	public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0);
