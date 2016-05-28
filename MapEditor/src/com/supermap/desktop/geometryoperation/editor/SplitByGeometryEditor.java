@@ -44,7 +44,6 @@ import com.supermap.desktop.utilties.ArrayUtilties;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
@@ -75,7 +74,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				}
 			}
 		}
-		
+
 		@Override
 		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
@@ -491,7 +490,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			((SplitByGeometryEditModel) environment.getEditModel()).clear();
 		}
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SPLITBYGEOEMTRY);
+		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_SPLITBYGEOEMTRY);
 	}
 
 	private class SplitByGeometryEditModel implements IEditModel {

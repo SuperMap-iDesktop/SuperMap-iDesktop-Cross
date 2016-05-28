@@ -4,6 +4,9 @@ import com.supermap.data.Geometrist;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
+import com.supermap.mapping.SnapMode;
+import com.supermap.mapping.SnappedElement;
+import com.supermap.ui.MapControl;
 
 public class EditorUtilties {
 
@@ -112,5 +115,46 @@ public class EditorUtilties {
 		double dOffsetY = pntStart.getY() - pntEnd.getY();
 		dDistance = Math.sqrt(dOffsetX * dOffsetX + dOffsetY * dOffsetY);
 		return dDistance;
+	}
+
+	/**
+	 * 获取鼠标捕捉点
+	 * 
+	 * @param mapControl
+	 * @return
+	 */
+	static Point2D getSnapModePoint(MapControl mapControl) {
+		Point2D snapPoint = Point2D.getEMPTY();
+
+		try {
+			SnappedElement[] snappedElements = mapControl.getSnappedElements();
+			// 一般都只能捕捉到一个线对象
+			if (snappedElements != null && snappedElements.length == 1) {
+				for (SnappedElement snappedElement : snappedElements) {
+					if (snappedElement.getSnapMode() == SnapMode.POINT_ON_ENDPOINT || snappedElement.getSnapMode() == SnapMode.POINT_ON_POINT) {
+						snapPoint = snappedElement.getSnappedPoints()[0];
+					} else if (snappedElement.getSnapMode() == SnapMode.LINE_WITH_FIXED_ANGLE
+							|| snappedElement.getSnapMode() == SnapMode.LINE_WITH_FIXED_LENGTH || snappedElement.getSnapMode() == SnapMode.LINE_WITH_PARALLEL
+							|| snappedElement.getSnapMode() == SnapMode.LINE_WITH_PERPENDICULAR) {
+						snapPoint = snappedElement.getSnappedPoints()[1];
+					} else if (snappedElement.getSnapMode() == SnapMode.POINT_ON_LINE || snappedElement.getSnapMode() == SnapMode.POINT_ON_MIDPOINT
+							|| snappedElement.getSnapMode() == SnapMode.POINT_ON_EXTENSION) {
+						snapPoint = snappedElement.getSnappedPoints()[2];
+					}
+				}
+			}
+
+			// 遇到两个捕捉到延长线的情况
+			if (snappedElements != null && snappedElements.length > 1) {
+				if (snappedElements[0].getSnapMode() == SnapMode.POINT_ON_EXTENSION && snappedElements[1].getSnapMode() == SnapMode.POINT_ON_EXTENSION) {
+					Point2D[] firstpoint2Ds = snappedElements[0].getSnappedPoints();
+					Point2D[] scondpoint2Ds = snappedElements[1].getSnappedPoints();
+					snapPoint = Geometrist.intersectLine(firstpoint2Ds[0], firstpoint2Ds[1], scondpoint2Ds[0], scondpoint2Ds[1], true);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return snapPoint;
 	}
 }

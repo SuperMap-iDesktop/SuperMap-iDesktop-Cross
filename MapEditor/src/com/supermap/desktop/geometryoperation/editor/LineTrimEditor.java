@@ -34,7 +34,6 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
@@ -75,7 +74,7 @@ public class LineTrimEditor extends AbstractEditor {
 				}
 			}
 		}
-		
+
 		@Override
 		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
@@ -373,7 +372,7 @@ public class LineTrimEditor extends AbstractEditor {
 	}
 
 	private void initialBaseLine(MapControl mapControl, LineTrimEditModel editModel) {
-		MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
+		MapUtilties.clearTrackingObjects(mapControl.getMap(), TAG_LINEEXTEND);
 		getBaseLine(mapControl, editModel);
 
 		if (editModel.baseLine != null) {
@@ -489,7 +488,7 @@ public class LineTrimEditor extends AbstractEditor {
 			((LineTrimEditModel) environment.getEditModel()).clear();
 		}
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_LINEEXTEND);
+		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_LINEEXTEND);
 	}
 
 	private class IntersectPoint {
