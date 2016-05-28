@@ -1,8 +1,7 @@
-package com.supermap.desktop.mapview.geometry.property.geometryNode;
+package com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels;
 
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
 import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.table.DefaultTableModel;

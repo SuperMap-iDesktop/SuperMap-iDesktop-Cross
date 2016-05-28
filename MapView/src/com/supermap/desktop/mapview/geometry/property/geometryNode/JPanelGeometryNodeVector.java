@@ -13,6 +13,8 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Implements.DGeoLineM;
+import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.GeometryNodeVectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModelFactory;
 import com.supermap.desktop.properties.CoreProperties;
@@ -200,21 +202,26 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					currentTableModel.setModel(tableModels.get(comboBoxCurrentSubGeometry.getSelectedIndex()));
 					tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
-					textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+					resetNodeCount();
 				}
 			}
 		});
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = tableNodeInfo.getSelectedRow();
-				if (selectedRow == -1) {
+				int selectedRow;
+				if (getMinRowCount() == 1) {
+					buttonAdd.setEnabled(false);
+					return;
+				} else if (getMinRowCount() == 2) {
 					selectedRow = tableNodeInfo.getRowCount() - 1;
+				} else {
+					selectedRow = tableNodeInfo.getRowCount() - 2;
 				}
 				currentTableModel.addPoint(selectedRow);
 				tableNodeInfo.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
 				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow + 1, 0, true));
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -228,7 +235,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				currentTableModel.insertPoint(selectedRow);
 				tableNodeInfo.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
 				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow + 1, 0, true));
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -244,9 +251,9 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 					selectedRow = tableNodeInfo.getRowCount() - 1;
 				}
 				tableNodeInfo.setRowSelectionInterval(selectedRow, selectedRow);
-				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(0, 0, true));
+				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow, 0, true));
 
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -271,6 +278,14 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			}
 		});
 
+	}
+
+	private void resetNodeCount() {
+		int count = 0;
+		for (VectorTableModel tableModel : tableModels) {
+			count += tableModel.getRowCount();
+		}
+		textFieldNodeCount.setText(String.valueOf(count));
 	}
 
 	private void showPointInMap() {
@@ -312,7 +327,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private int getMinRowCount() {
-		if (geometry instanceof ILineFeature || geometry instanceof ILine3DFeature) {
+		if (geometry instanceof ILineFeature || geometry instanceof ILine3DFeature || geometry instanceof DGeoLineM) {
 			return 2;
 		}
 		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
@@ -340,7 +355,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		buttonAdd.setEnabled(isButtonEnable());
 		textFieldGeometryType.setText(GeometryTypeUtilties.toString(geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(getSubPartCount()));
-		textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+		resetNodeCount();
 		tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
 		if (tableNodeInfo.getRowCount() > 0) {
 			tableNodeInfo.setRowSelectionInterval(0, 0);
@@ -405,6 +420,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	@Override
 	public void reset() {
 		currentTableModel.reset();
+		resetNodeCount();
 	}
 
 	@Override
