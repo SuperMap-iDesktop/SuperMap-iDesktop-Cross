@@ -31,6 +31,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -911,14 +913,13 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 								result.setCoordSysCode(USER_DEFINED);
 								result.setGeoCoordSys(geoCoordSys);
 								result.setCaption(geoCoordSys.getName());
-								String userDefine1 = "UserDefine";
-								CoordSysDefine userDefine = geographyCoordinate.getChildByCaption(userDefine1);
+								CoordSysDefine userDefine = geographyCoordinate.getChildByCaption(userDefineParentName);
 								if (userDefine == null) {
-									userDefine = new CoordSysDefine(CoordSysDefine.GEOGRAPHY_COORDINATE, geographyCoordinate, userDefine1);
+									userDefine = new CoordSysDefine(CoordSysDefine.GEOGRAPHY_COORDINATE, geographyCoordinate, userDefineParentName);
 								}
 								if (userDefine.add(result)) {
 									String geoCoorSys = ControlsProperties.getString("String_GeoCoordSys");
-									addToTree(result, userDefine1, userDefine, geoCoorSys);
+									addToTree(result, userDefineParentName, userDefine, geoCoorSys);
 									addGeoCoorSysToDocument(result);
 								}
 							}
@@ -952,15 +953,23 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			menuItemDelete.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (currentRowData != null && currentRowData.getParent() != null && currentRowData.getCoordSysType() != CoordSysDefine.NONE_ERRTH) {
+					if (isDeleteEnable()) {
 						if (userDefineParentName.equals(currentRowData.getParent().getCaption())) {
 							if (UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_DelSelectedItem_Warning")) == 0) {
-								removeCoordSysDefineFormDoc(currentRowData);
-								if (currentRowData.size() <= 1) {
-									currentRowData.getParent().getParent().remove(currentRowData.getParent());
+								int[] selectedRows = tablePrjCoordSys.getSelectedRows();
+								for (int i = selectedRows.length - 1; i >= 0; i--) {
+									CoordSysDefine rowData = prjModel.getRowData(selectedRows[i]);
+									if (rowData == null && tablePrjCoordSys.getModel() instanceof SearchResultModel) {
+										rowData = ((SearchResultModel) tablePrjCoordSys.getModel()).getRowData(selectedRows[i]);
+									}
+									if (rowData != null) {
+										removeCoordSysDefineFormDoc(rowData);
+										if (rowData.getParent().size() <= 1) {
+											rowData.getParent().getParent().remove(rowData.getParent());
+										}
+										rowData.getParent().remove(rowData);
+									}
 								}
-								currentRowData.getParent().remove(currentRowData);
-
 							}
 						} else {
 							UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_SystemProDeleteError"));
@@ -969,8 +978,28 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				}
 			});
 			tablePopupmenu.add(menuItemDelete);
+			tablePopupmenu.addPopupMenuListener(new PopupMenuListener() {
+				@Override
+				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					menuItemDelete.setEnabled(isDeleteEnable() && userDefineParentName.equals(currentRowData.getParent().getCaption()));
+				}
+
+				@Override
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+
+				}
+
+				@Override
+				public void popupMenuCanceled(PopupMenuEvent e) {
+
+				}
+			});
 		}
 		return tablePopupmenu;
+	}
+
+	private boolean isDeleteEnable() {
+		return currentRowData != null && currentRowData.getParent() != null && currentRowData.getCoordSysType() != CoordSysDefine.NONE_ERRTH;
 	}
 
 	private void addGeoCoorSysToDocument(CoordSysDefine result) {
