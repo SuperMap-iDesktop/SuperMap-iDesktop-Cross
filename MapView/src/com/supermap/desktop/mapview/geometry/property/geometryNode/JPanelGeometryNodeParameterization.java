@@ -95,4 +95,9 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	public void hidden() {
 
 	}
+
+	@Override
+	public void setIsCellEditable(boolean isCellEditable) {
+		// 不关我事
+	}
 }

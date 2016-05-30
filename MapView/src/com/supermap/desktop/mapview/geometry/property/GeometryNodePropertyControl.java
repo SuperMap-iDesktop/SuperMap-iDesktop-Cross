@@ -1,6 +1,9 @@
 package com.supermap.desktop.mapview.geometry.property;
 
 import com.supermap.data.Recordset;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.FormMap;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -9,8 +12,12 @@ import com.supermap.desktop.mapview.geometry.property.geometryNode.IGeometryNode
 import com.supermap.desktop.mapview.geometry.property.geometryNode.ModifiedChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +39,30 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	private JPanel panelButtons = new JPanel();
 	private SmButton buttonApply = new SmButton();
 	private SmButton buttonReset = new SmButton();
+	private FormMap currentForm;
+	private Layer currentLayer;
+	private LayerEditableChangedListener layerEditableChangedListener = new LayerEditableChangedListener() {
+		@Override
+		public void editableChanged(LayerEditableChangedEvent layerEditableChangedEvent) {
+			if (!SwingUtilities.getWindowAncestor(GeometryNodePropertyControl.this).isVisible()) {
+				currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
+				return;
+			}
+			if (layerEditableChangedEvent.getLayer() == currentLayer) {
+				boolean editable = currentLayer.isEditable();
+				if (!editable && geometryNode.isModified()) {
+					if (UICommonToolkit.showConfirmDialogYesNo(ControlsProperties.getString("String_PropertyInfo_Modifyed_Notify")) == JOptionPane.YES_OPTION) {
+						geometryNode.apply(recordset);
+					} else {
+						geometryNode.reset();
+					}
+				}
+				geometryNode.setIsCellEditable(editable);
+				buttonApply.setEnabled(geometryNode.isModified() && editable);
+				buttonReset.setEnabled(geometryNode.isModified() && editable);
+			}
+		}
+	};
 
 	public GeometryNodePropertyControl(Recordset recordset) {
 		super(CoreProperties.getString("String_NodeInfo"));
@@ -44,6 +75,7 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 
 	@Override
 	public void refreshData() {
+		addLayerEditableChangedListener();
 		if (geometryNode != null) {
 			geometryNode.refreshData();
 		}
@@ -83,6 +115,16 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void init() {
+		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+			currentForm = (FormMap) Application.getActiveApplication().getActiveForm();
+			for (Layer layer : currentForm.getActiveLayers()) {
+				if (layer.getDataset() == recordset.getDataset()) {
+					currentLayer = layer;
+					break;
+				}
+			}
+		}
+		addLayerEditableChangedListener();
 		initComponent();
 		initLayout();
 		initButtonStates();
@@ -113,12 +155,14 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 		panelButtons.add(buttonReset, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.EAST));
 		panelButtons.add(buttonApply, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 0, 0));
 	}
-	//endregion
 
 	private void initButtonStates() {
 		if (geometryNode != null) {
-			buttonApply.setEnabled(geometryNode.isModified());
-			buttonReset.setEnabled(geometryNode.isModified());
+			if (currentLayer != null) {
+				geometryNode.setIsCellEditable(currentLayer.isEditable());
+			}
+			buttonApply.setEnabled(geometryNode.isModified() && currentLayer.isEditable());
+			buttonReset.setEnabled(geometryNode.isModified() && currentLayer.isEditable());
 		} else {
 			buttonApply.setEnabled(false);
 			buttonReset.setEnabled(false);
@@ -130,10 +174,28 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 		if (geometryNode != null) {
 			geometryNode.dispose();
 		}
+		removeLayerEditableChangedListener();
+	}
+
+	//endregion
+	private void addLayerEditableChangedListener() {
+		if (currentLayer != null) {
+			currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
+			currentForm.getMapControl().getMap().getLayers().addLayerEditableChangedListener(layerEditableChangedListener);
+		}
+	}
+
+	private void removeLayerEditableChangedListener() {
+		try {
+			currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
+		} catch (Exception ignore) {
+			// map没有判断是否dispose的方法
+		}
 	}
 
 	@Override
 	public void hidden() {
+		removeLayerEditableChangedListener();
 		if (geometryNode != null) {
 			geometryNode.hidden();
 		}

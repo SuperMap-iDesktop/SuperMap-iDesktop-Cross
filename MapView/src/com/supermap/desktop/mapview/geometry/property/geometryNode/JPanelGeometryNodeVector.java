@@ -82,6 +82,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	private Window parent = null;
 	private WindowAdapter windowAdapter;
 	private DecimalFormat df = new DecimalFormat("0.0000");
+	private boolean isCellEditable = false;
 
 
 	public JPanelGeometryNodeVector(IGeometry geometry) {
@@ -110,6 +111,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			}
 		};
 		tableModels = new ArrayList<>();
+
 		if (geometry instanceof IMultiPartFeature) {
 			for (int i = 0; i < ((IMultiPartFeature) geometry).getPartCount(); i++) {
 				VectorTableModel vectorTableModel = VectorTableModelFactory.getVectorTableModel(((IMultiPartFeature) geometry).getPart(i));
@@ -123,7 +125,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		textFieldGeometryType.setEditable(false);
 		textFieldNodeCount.setEditable(false);
 		textFieldSubGeometryCount.setEditable(false);
-		currentTableModel = new GeometryNodeVectorTableModel();
+		currentTableModel = new GeometryNodeVectorTableModel(geometry);
 		tableNodeInfo.setModel(currentTableModel);
 		comboBoxCurrentSubGeometry.setRenderer(new ListCellRenderer<Object>() {
 			@Override
@@ -145,12 +147,41 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		tableNodeInfo.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				if (column != 0) {
+				if (column != 0 && !isSelected) {
 					value = df.format(value);
 				}
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			}
 		});
+	}
+
+	public void setIsCellEditable(boolean isCellEditable) {
+		this.isCellEditable = isCellEditable;
+		currentTableModel.setCellEditable(this.isCellEditable);
+		checkButtonState();
+	}
+
+	private void checkButtonState() {
+		buttonAdd.setEnabled(isButtonEnable());
+		int selectedRowCount = tableNodeInfo.getSelectedRowCount();
+		buttonDel.setEnabled(isButtonDelEnable(selectedRowCount));
+		buttonInsert.setEnabled(isButtonEnable() && selectedRowCount == 1);
+	}
+
+	private boolean isButtonDelEnable(int selectedRowCount) {
+		if (!isButtonEnable()) {
+			return false;
+		}
+		if (selectedRowCount <= 0) {
+			return false;
+		}
+		if (currentTableModel.getRowCount() - selectedRowCount < getMinRowCount()) {
+			return false;
+		}
+		if (getMinRowCount() == 4 && tableNodeInfo.getSelectedRows()[tableNodeInfo.getSelectedRowCount() - 1] == tableNodeInfo.getRowCount() - 1) {
+			return false;
+		}
+		return true;
 	}
 
 	//region 初始化布局
@@ -202,6 +233,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					currentTableModel.setModel(tableModels.get(comboBoxCurrentSubGeometry.getSelectedIndex()));
 					tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
+					tableNodeInfo.setRowSelectionInterval(0, 0);
 					resetNodeCount();
 				}
 			}
@@ -261,8 +293,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int selectedRowCount = tableNodeInfo.getSelectedRowCount();
-				buttonDel.setEnabled(isButtonEnable() && selectedRowCount > 0 && currentTableModel.getRowCount() - selectedRowCount >= getMinRowCount());
-				buttonInsert.setEnabled(isButtonEnable() && selectedRowCount == 1);
+				checkButtonState();
 				if (selectedRowCount == 1) {
 					showPointInMap();
 				} else {
@@ -331,7 +362,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			return 2;
 		}
 		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
-			return 3;
+			return 4;
 		}
 		return 1;
 	}
@@ -363,7 +394,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private boolean isButtonEnable() {
-		return getMinRowCount() > 1;
+		return getMinRowCount() > 1 && isCellEditable;
 	}
 
 	private int getSubPartCount() {

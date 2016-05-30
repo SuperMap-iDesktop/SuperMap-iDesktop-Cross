@@ -26,4 +26,6 @@ public interface IGeometryNode {
 	void removeModifiedChangedListener(ModifiedChangedListener modifiedChangedListener);
 
 	void hidden();
+
+	void setIsCellEditable(boolean isCellEditable);
 }
