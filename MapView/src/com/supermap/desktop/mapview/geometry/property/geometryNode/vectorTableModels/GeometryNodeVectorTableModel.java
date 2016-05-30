@@ -95,16 +95,19 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 	}
 
 	public void removeRows(int[] selectedRows) {
-		if (selectedRows[selectedRows.length - 1] == getRowCount() - 1) {
-			// 删除最后一行
-			if (selectedRows[0] == 0) {
-				//第一行也删了
-				int[] ints = new int[selectedRows.length - 1];
-				System.arraycopy(ints, 0, selectedRows, 0, selectedRows.length - 1);
-				selectedRows = ints;
-			} else {
-				System.arraycopy(selectedRows, 0, selectedRows, 1, selectedRows.length - 1);
-				selectedRows[0] = 0;
+		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
+			// 面需要单独处理
+			if (selectedRows[selectedRows.length - 1] == getRowCount() - 1) {
+				// 删除最后一行
+				if (selectedRows[0] == 0) {
+					//第一行也删了
+					int[] ints = new int[selectedRows.length - 1];
+					System.arraycopy(ints, 0, selectedRows, 0, selectedRows.length - 1);
+					selectedRows = ints;
+				} else {
+					System.arraycopy(selectedRows, 0, selectedRows, 1, selectedRows.length - 1);
+					selectedRows[0] = 0;
+				}
 			}
 		}
 		vectorTableModel.doRemoveRows(selectedRows);
