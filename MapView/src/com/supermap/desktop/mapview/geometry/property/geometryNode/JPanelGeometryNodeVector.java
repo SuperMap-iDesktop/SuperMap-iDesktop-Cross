@@ -178,9 +178,6 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		if (currentTableModel.getRowCount() - selectedRowCount < getMinRowCount()) {
 			return false;
 		}
-		if (getMinRowCount() == 4 && tableNodeInfo.getSelectedRows()[tableNodeInfo.getSelectedRowCount() - 1] == tableNodeInfo.getRowCount() - 1) {
-			return false;
-		}
 		return true;
 	}
 
