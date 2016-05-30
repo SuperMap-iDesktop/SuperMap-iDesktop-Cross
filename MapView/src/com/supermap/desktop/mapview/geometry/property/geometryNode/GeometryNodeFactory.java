@@ -22,6 +22,6 @@ public class GeometryNodeFactory {
 		if (geometry instanceof DGeoPoint3D || geometry instanceof DGeoPoint || geometry instanceof IMultiPartFeature) {
 			return new JPanelGeometryNodeVector(geometry);
 		}
-		return null;
+		return new JPanelGeometryNodeParameterization(geometry);
 	}
 }
