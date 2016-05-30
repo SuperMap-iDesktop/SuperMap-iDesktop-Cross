@@ -157,4 +157,17 @@ public class EditorUtilties {
 		}
 		return snapPoint;
 	}
+
+	static boolean isPntLeft(Point2D pntFrom, Point2D pntTo, Point2D pntTest) {
+		Boolean bLeft = false;
+
+		try {
+			if ((pntTest.getY() - pntTo.getY()) * (pntTo.getX() - pntFrom.getX()) > (pntTo.getY() - pntFrom.getY()) * (pntTest.getX() - pntTo.getX())) {
+				bLeft = true;
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return bLeft;
+	}
 }

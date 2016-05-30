@@ -14,6 +14,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometrist;
@@ -41,7 +42,7 @@ import com.supermap.ui.TrackMode;
 public class OffsetEditor extends AbstractEditor {
 
 	private static final String TAG_OFFSET = "Tag_offsetTracking";
-	private static final Action MAPCONTROL_ACTION = Action.CREATEPOINT;
+	private static final Action MAPCONTROL_ACTION = Action.SELECT;
 	private static final TrackMode MAPCONTROL_TRACKMODE = TrackMode.TRACK;
 
 	private IEditController offsetEditController = new EditControllerAdapter() {
@@ -51,7 +52,17 @@ public class OffsetEditor extends AbstractEditor {
 		}
 
 		public void mouseMoved(EditEnvironment environment, MouseEvent e) {
-			showPreview(environment, environment.getMapControl().getMap().pixelToMap(e.getPoint()));
+			OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
+
+			if (editModel.desDataset != null && editModel.desGeometry != null) {
+				showPreview(environment, environment.getMapControl().getMap().pixelToMap(e.getPoint()));
+			}
+		}
+
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+				environment.stopEditor();
+			}
 		}
 	};
 
@@ -157,7 +168,7 @@ public class OffsetEditor extends AbstractEditor {
 			if (desGeometry != null) {
 				Geometry region = null;
 
-				if (editModel.desGeometry instanceof GeoRegion)// 如果原来时面的话，还得从偏移后的线对象转回面对象。
+				if (editModel.desGeometry instanceof GeoRegion)// 如果原来是面的话，还得从偏移后的线对象转回面对象。
 				{
 					IRegionConvertor convertor = (IRegionConvertor) DGeometryFactory.create(desGeometry);
 					region = convertor.convertToRegion(((GeoRegion) editModel.desGeometry).getPartCount());
@@ -225,8 +236,17 @@ public class OffsetEditor extends AbstractEditor {
 			GeoLine tempLine = null;
 			if (editModel.desGeometry instanceof GeoLine) {
 				tempLine = (GeoLine) editModel.desGeometry;
+				if (!EditorUtilties.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
+					distance = -distance;
+				}
 			} else if (editModel.desGeometry instanceof GeoRegion) {
 				tempLine = ((GeoRegion) editModel.desGeometry).convertToLine();
+				GeoPoint mouseLocationGeometry = new GeoPoint(mouseLocation);
+
+				if (!Geometrist.isWithin(mouseLocationGeometry, editModel.desGeometry)) {
+					distance = -distance;
+				}
+				mouseLocationGeometry.dispose();
 			}
 			GeoLine resultLine = Geometrist.computeParallel(tempLine, distance);
 
@@ -239,6 +259,7 @@ public class OffsetEditor extends AbstractEditor {
 			}
 			resultGeometry.setStyle(getTrackingStyle());
 			environment.getMap().getTrackingLayer().add(resultGeometry, TAG_OFFSET);
+			environment.getMap().refreshTrackingLayer();
 			resultGeometry.dispose();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -280,7 +301,7 @@ public class OffsetEditor extends AbstractEditor {
 	}
 
 	private class OffsetEditModel implements IEditModel {
-		public MapControlTip tip;
+		public MapControlTip tip = new MapControlTip();
 		private JLabel label = new JLabel(MapEditorProperties.getString("String_Tip_SelectOffsetObject"));
 
 		public Geometry desGeometry;
