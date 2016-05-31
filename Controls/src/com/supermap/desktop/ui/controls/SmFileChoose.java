@@ -331,7 +331,7 @@ public class SmFileChoose extends JFileChooser {
 		// 当前文件过滤器为所有文件
 		if (this.getFileFilter() == this.getAcceptAllFileFilter()) {
 			if (moduleFileFilters != null && moduleFileFilters.length() > 0) {
-				String[] everyoneFileFilters = moduleFileFilters.split("\\#");
+				String[] everyoneFileFilters = moduleFileFilters.split("#");
 
 				StringBuilder allFileFilter = new StringBuilder();
 				for (int i = 0; i < everyoneFileFilters.length; i++) {
@@ -339,7 +339,7 @@ public class SmFileChoose extends JFileChooser {
 						continue;
 					}
 					allFileFilter.append(everyoneFileFilters[i].split("\\|"));
-					if (i != everyoneFileFilters.length) {
+					if (i != everyoneFileFilters.length - 1) {
 						allFileFilter.append("\\+");
 					}
 				}
