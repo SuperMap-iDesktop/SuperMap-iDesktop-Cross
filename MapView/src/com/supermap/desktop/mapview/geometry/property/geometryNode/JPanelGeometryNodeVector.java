@@ -272,15 +272,11 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = tableNodeInfo.getSelectedRow();
+				int beforeRowCount = tableNodeInfo.getRowCount();
 				currentTableModel.removeRows(tableNodeInfo.getSelectedRows());
-				if (selectedRow == -1 && tableNodeInfo.getRowCount() > 0) {
-					selectedRow = 0;
-
-				} else if (selectedRow >= tableNodeInfo.getRowCount()) {
-					selectedRow = tableNodeInfo.getRowCount() - 1;
-				}
+				selectedRow = getAfterDeleteSelectedRow(selectedRow, beforeRowCount);
 				tableNodeInfo.setRowSelectionInterval(selectedRow, selectedRow);
-				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow, 0, true));
+				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow == tableNodeInfo.getRowCount() - 2 ? tableNodeInfo.getRowCount() - 1 : selectedRow, 0, true));
 
 				resetNodeCount();
 			}
@@ -306,6 +302,31 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			}
 		});
 
+	}
+
+	private int getAfterDeleteSelectedRow(int selectedRow, int beforeRowCount) {
+		if (selectedRow == -1 && tableNodeInfo.getRowCount() > 0) {
+			return 0;
+		}
+
+		if (getMinRowCount() > 2) {
+			// 面对象的处理
+			if (selectedRow == beforeRowCount - 1) {
+				// 之前为最后一行，跳到第一行
+				selectedRow = 0;
+			} else if (selectedRow == beforeRowCount - 2) {
+				// 之前为倒数第二行
+				selectedRow = tableNodeInfo.getRowCount() - 2;
+			} else if (selectedRow >= tableNodeInfo.getRowCount()) {
+				selectedRow = tableNodeInfo.getRowCount() - 2;
+			}
+		} else {
+			if (selectedRow >= tableNodeInfo.getRowCount()) {
+				selectedRow = tableNodeInfo.getRowCount() - 1;
+			}
+		}
+
+		return selectedRow;
 	}
 
 	private void resetNodeCount() {
