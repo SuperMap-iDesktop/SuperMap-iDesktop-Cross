@@ -1,0 +1,27 @@
+package com.supermap.desktop.ui.controls.textStyle;
+
+import java.util.HashMap;
+
+import javax.swing.JComponent;
+
+import com.supermap.desktop.enums.TextPartType;
+
+public interface ITextPart extends IGeoTextStyle{
+	/**
+	 * 获取结果
+	 * @return
+	 */
+	public HashMap<TextPartType,Object> getResultMap();
+	
+	/**
+	 * 获取和TextStyleType类容对应的容器
+	 * @return
+	 */
+	public HashMap<TextPartType,JComponent> getComponentsMap();
+	
+	public void addTextPartChangeListener(TextPartChangeListener l);
+
+	public void removeTextPartChangeListener(TextPartChangeListener l);
+
+	 void fireTextPartChanged(TextPartType newValue);
+}

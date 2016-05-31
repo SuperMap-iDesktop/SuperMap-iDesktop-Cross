@@ -8,6 +8,7 @@ public class GeometryPropertyFactory {
 	private static GeometrySpatialPropertyControl geometrySpatialPropertyControl;
 	private static GeometryRecordsetPropertyControl geometryRecordsetPropertyControl;
 	private static GeometryNodePropertyControl geometryNodePropertyControl;
+	private static GeometryGeoTextPropertyControl geometryGeoTextPropertyControl;
 
 	private GeometryPropertyFactory() {
 		// 不提供构造函数
@@ -54,5 +55,14 @@ public class GeometryPropertyFactory {
 			geometryNodePropertyControl.setRecordset(recordset);
 		}
 		return geometryNodePropertyControl;
+	}
+
+	public static GeometryGeoTextPropertyControl getGeometryGeoTextPropertyControl(Recordset recordset) {
+		if (geometryGeoTextPropertyControl == null) {
+			geometryGeoTextPropertyControl = new GeometryGeoTextPropertyControl(recordset);
+		} else {
+			geometryGeoTextPropertyControl.setRecordset(recordset);
+		}
+		return geometryGeoTextPropertyControl;
 	}
 }

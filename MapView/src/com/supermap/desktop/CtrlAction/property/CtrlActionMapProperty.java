@@ -1,12 +1,8 @@
 package com.supermap.desktop.CtrlAction.property;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.IDockbar;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.mapview.map.propertycontrols.MapNullException;
 import com.supermap.desktop.mapview.map.propertycontrols.MapPropertyContainer;
 
 public class CtrlActionMapProperty extends CtrlAction {
