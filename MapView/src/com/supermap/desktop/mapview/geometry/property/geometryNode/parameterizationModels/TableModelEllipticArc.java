@@ -48,7 +48,7 @@ public class TableModelEllipticArc extends GeometryParameterModel {
 					return geometry.getSweepAngle();
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	@Override
