@@ -1,7 +1,9 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,6 +121,7 @@ public class OffsetEditor extends AbstractEditor {
 				initializeSrc(environment);
 			} else {
 				offset(environment);
+				environment.stopEditor();
 			}
 		}
 	}
@@ -173,7 +176,11 @@ public class OffsetEditor extends AbstractEditor {
 					IRegionConvertor convertor = (IRegionConvertor) DGeometryFactory.create(desGeometry);
 					region = convertor.convertToRegion(((GeoRegion) editModel.desGeometry).getPartCount());
 					if (region != null) {
-						desGeometry.dispose();
+
+						// 如果 desGeometry 是 GeoRegion，上面的转换操作返回的是它自己，不能释放
+						if (!(desGeometry instanceof GeoRegion)) {
+							desGeometry.dispose();
+						}
 						desGeometry = region;
 					}
 				}
@@ -215,6 +222,14 @@ public class OffsetEditor extends AbstractEditor {
 		}
 	}
 
+	// @formatter:off
+	/**
+	 * 平行线方法中的平行距离与线方向有关
+	 * 线方向的左边为正，线方向的右边为负
+	 * @param environment
+	 * @param mouseLocation
+	 */
+	// @formatter:on
 	private void showPreview(EditEnvironment environment, Point2D mouseLocation) {
 		OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
 
@@ -233,20 +248,16 @@ public class OffsetEditor extends AbstractEditor {
 				segment--;
 			}
 
+			if (!EditorUtilties.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
+				distance = -distance;
+			}
+			editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_OffsetDistance"), distance));
+
 			GeoLine tempLine = null;
 			if (editModel.desGeometry instanceof GeoLine) {
 				tempLine = (GeoLine) editModel.desGeometry;
-				if (!EditorUtilties.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
-					distance = -distance;
-				}
 			} else if (editModel.desGeometry instanceof GeoRegion) {
 				tempLine = ((GeoRegion) editModel.desGeometry).convertToLine();
-				GeoPoint mouseLocationGeometry = new GeoPoint(mouseLocation);
-
-				if (!Geometrist.isWithin(mouseLocationGeometry, editModel.desGeometry)) {
-					distance = -distance;
-				}
-				mouseLocationGeometry.dispose();
 			}
 			GeoLine resultLine = Geometrist.computeParallel(tempLine, distance);
 
@@ -318,6 +329,8 @@ public class OffsetEditor extends AbstractEditor {
 		public OffsetEditModel() {
 			this.tip.getContentPanel().setLayout(new BorderLayout());
 			this.tip.getContentPanel().add(this.label, BorderLayout.CENTER);
+			this.tip.getContentPanel().setSize(150, 20);
+			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
 		}
 
 		public void clear() {
