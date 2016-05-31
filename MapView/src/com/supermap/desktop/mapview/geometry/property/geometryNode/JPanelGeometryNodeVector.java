@@ -13,6 +13,8 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Implements.DGeoLineM;
+import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.GeometryNodeVectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModelFactory;
 import com.supermap.desktop.properties.CoreProperties;
@@ -80,6 +82,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	private Window parent = null;
 	private WindowAdapter windowAdapter;
 	private DecimalFormat df = new DecimalFormat("0.0000");
+	private boolean isCellEditable = false;
 
 
 	public JPanelGeometryNodeVector(IGeometry geometry) {
@@ -108,6 +111,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			}
 		};
 		tableModels = new ArrayList<>();
+
 		if (geometry instanceof IMultiPartFeature) {
 			for (int i = 0; i < ((IMultiPartFeature) geometry).getPartCount(); i++) {
 				VectorTableModel vectorTableModel = VectorTableModelFactory.getVectorTableModel(((IMultiPartFeature) geometry).getPart(i));
@@ -121,7 +125,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		textFieldGeometryType.setEditable(false);
 		textFieldNodeCount.setEditable(false);
 		textFieldSubGeometryCount.setEditable(false);
-		currentTableModel = new GeometryNodeVectorTableModel();
+		currentTableModel = new GeometryNodeVectorTableModel(geometry);
 		tableNodeInfo.setModel(currentTableModel);
 		comboBoxCurrentSubGeometry.setRenderer(new ListCellRenderer<Object>() {
 			@Override
@@ -143,12 +147,38 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		tableNodeInfo.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				if (column != 0) {
+				if (column != 0 && !isSelected) {
 					value = df.format(value);
 				}
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			}
 		});
+	}
+
+	public void setIsCellEditable(boolean isCellEditable) {
+		this.isCellEditable = isCellEditable;
+		currentTableModel.setCellEditable(this.isCellEditable);
+		checkButtonState();
+	}
+
+	private void checkButtonState() {
+		buttonAdd.setEnabled(isButtonEnable());
+		int selectedRowCount = tableNodeInfo.getSelectedRowCount();
+		buttonDel.setEnabled(isButtonDelEnable(selectedRowCount));
+		buttonInsert.setEnabled(isButtonEnable() && selectedRowCount == 1);
+	}
+
+	private boolean isButtonDelEnable(int selectedRowCount) {
+		if (!isButtonEnable()) {
+			return false;
+		}
+		if (selectedRowCount <= 0) {
+			return false;
+		}
+		if (currentTableModel.getRowCount() - selectedRowCount < getMinRowCount()) {
+			return false;
+		}
+		return true;
 	}
 
 	//region 初始化布局
@@ -200,21 +230,27 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					currentTableModel.setModel(tableModels.get(comboBoxCurrentSubGeometry.getSelectedIndex()));
 					tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
-					textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+					tableNodeInfo.setRowSelectionInterval(0, 0);
+					resetNodeCount();
 				}
 			}
 		});
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = tableNodeInfo.getSelectedRow();
-				if (selectedRow == -1) {
+				int selectedRow;
+				if (getMinRowCount() == 1) {
+					buttonAdd.setEnabled(false);
+					return;
+				} else if (getMinRowCount() == 2) {
 					selectedRow = tableNodeInfo.getRowCount() - 1;
+				} else {
+					selectedRow = tableNodeInfo.getRowCount() - 2;
 				}
 				currentTableModel.addPoint(selectedRow);
 				tableNodeInfo.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
 				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow + 1, 0, true));
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -228,7 +264,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				currentTableModel.insertPoint(selectedRow);
 				tableNodeInfo.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
 				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow + 1, 0, true));
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -236,17 +272,13 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = tableNodeInfo.getSelectedRow();
+				int beforeRowCount = tableNodeInfo.getRowCount();
 				currentTableModel.removeRows(tableNodeInfo.getSelectedRows());
-				if (selectedRow == -1 && tableNodeInfo.getRowCount() > 0) {
-					selectedRow = 0;
-
-				} else if (selectedRow >= tableNodeInfo.getRowCount()) {
-					selectedRow = tableNodeInfo.getRowCount() - 1;
-				}
+				selectedRow = getAfterDeleteSelectedRow(selectedRow, beforeRowCount);
 				tableNodeInfo.setRowSelectionInterval(selectedRow, selectedRow);
-				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(0, 0, true));
+				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow == tableNodeInfo.getRowCount() - 2 ? tableNodeInfo.getRowCount() - 1 : selectedRow, 0, true));
 
-				textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+				resetNodeCount();
 			}
 		});
 
@@ -254,8 +286,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int selectedRowCount = tableNodeInfo.getSelectedRowCount();
-				buttonDel.setEnabled(isButtonEnable() && selectedRowCount > 0 && currentTableModel.getRowCount() - selectedRowCount >= getMinRowCount());
-				buttonInsert.setEnabled(isButtonEnable() && selectedRowCount == 1);
+				checkButtonState();
 				if (selectedRowCount == 1) {
 					showPointInMap();
 				} else {
@@ -271,6 +302,39 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			}
 		});
 
+	}
+
+	private int getAfterDeleteSelectedRow(int selectedRow, int beforeRowCount) {
+		if (selectedRow == -1 && tableNodeInfo.getRowCount() > 0) {
+			return 0;
+		}
+
+		if (getMinRowCount() > 2) {
+			// 面对象的处理
+			if (selectedRow == beforeRowCount - 1) {
+				// 之前为最后一行，跳到第一行
+				selectedRow = 0;
+			} else if (selectedRow == beforeRowCount - 2) {
+				// 之前为倒数第二行
+				selectedRow = tableNodeInfo.getRowCount() - 2;
+			} else if (selectedRow >= tableNodeInfo.getRowCount()) {
+				selectedRow = tableNodeInfo.getRowCount() - 2;
+			}
+		} else {
+			if (selectedRow >= tableNodeInfo.getRowCount()) {
+				selectedRow = tableNodeInfo.getRowCount() - 1;
+			}
+		}
+
+		return selectedRow;
+	}
+
+	private void resetNodeCount() {
+		int count = 0;
+		for (VectorTableModel tableModel : tableModels) {
+			count += tableModel.getRowCount();
+		}
+		textFieldNodeCount.setText(String.valueOf(count));
 	}
 
 	private void showPointInMap() {
@@ -312,11 +376,11 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private int getMinRowCount() {
-		if (geometry instanceof ILineFeature || geometry instanceof ILine3DFeature) {
+		if (geometry instanceof ILineFeature || geometry instanceof ILine3DFeature || geometry instanceof DGeoLineM) {
 			return 2;
 		}
 		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
-			return 3;
+			return 4;
 		}
 		return 1;
 	}
@@ -340,7 +404,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		buttonAdd.setEnabled(isButtonEnable());
 		textFieldGeometryType.setText(GeometryTypeUtilties.toString(geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(getSubPartCount()));
-		textFieldNodeCount.setText(String.valueOf(currentTableModel.getRowCount()));
+		resetNodeCount();
 		tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);
 		if (tableNodeInfo.getRowCount() > 0) {
 			tableNodeInfo.setRowSelectionInterval(0, 0);
@@ -348,7 +412,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	}
 
 	private boolean isButtonEnable() {
-		return getMinRowCount() > 1;
+		return getMinRowCount() > 1 && isCellEditable;
 	}
 
 	private int getSubPartCount() {
@@ -405,6 +469,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	@Override
 	public void reset() {
 		currentTableModel.reset();
+		resetNodeCount();
 	}
 
 	@Override

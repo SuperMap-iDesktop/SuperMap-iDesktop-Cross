@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilties.FileUtilties;
 import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.desktop.utilties.XmlUtilties;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -163,6 +164,15 @@ public class SmFileChoose extends JFileChooser {
 		return bufferFileFilter.toString();
 	}
 
+	/**
+	 * 添加一个文件选择器
+	 *
+	 * @param fileFilters 过滤器
+	 * @param lastPath    默认的最后路径
+	 * @param title       选择器的标题
+	 * @param moduleName  模块名称
+	 * @param type        类型
+	 */
 	public static void addNewNode(String fileFilters, String lastPath, String title, String moduleName, String type) {
 		getDocumentFileChoose();
 		Element element = documentFileChoose.createElement("LastFilePath");
@@ -320,18 +330,21 @@ public class SmFileChoose extends JFileChooser {
 		String[] fileFilters = null;
 		// 当前文件过滤器为所有文件
 		if (this.getFileFilter() == this.getAcceptAllFileFilter()) {
-			String[] everyoneFileFilters = {""};
 			if (moduleFileFilters != null && moduleFileFilters.length() > 0) {
-				everyoneFileFilters = moduleFileFilters.split("\\#");
-			}
-			StringBuilder allFileFilter = new StringBuilder();
-			for (int i = 0; i < everyoneFileFilters.length; i++) {
-				allFileFilter.append(everyoneFileFilters[i].split("\\|"));
-				if (i != everyoneFileFilters.length) {
-					allFileFilter.append("\\+");
+				String[] everyoneFileFilters = moduleFileFilters.split("#");
+
+				StringBuilder allFileFilter = new StringBuilder();
+				for (int i = 0; i < everyoneFileFilters.length; i++) {
+					if (StringUtilties.isNullOrEmpty(everyoneFileFilters[i])) {
+						continue;
+					}
+					allFileFilter.append(everyoneFileFilters[i].split("\\|"));
+					if (i != everyoneFileFilters.length - 1) {
+						allFileFilter.append("\\+");
+					}
 				}
+				fileFilters = allFileFilter.toString().split("\\+");
 			}
-			fileFilters = allFileFilter.toString().split("\\+");
 		} else if (this.getFileFilter() instanceof FileNameExtensionFilter) {
 			fileFilters = ((FileNameExtensionFilter) this.getFileFilter()).getExtensions();
 		}

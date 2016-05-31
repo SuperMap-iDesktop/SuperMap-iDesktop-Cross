@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.EnumComparator;
 import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -24,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * @author XiaJT
@@ -110,6 +112,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	private boolean lock = false;
 	private ISmTextFieldLegit fieldLegit;
 	private Dimension labelPreferredSize = new Dimension(20, 23);
+	private ListCellRenderer<Enum> renderer;
 
 
 	public JDialogUserDefinePrjProjection() {
@@ -130,6 +133,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	}
 
 	private void initComponents() {
+
 		setSize(500, 550);
 		setLocationRelativeTo(null);
 		textFieldScaleFactor.setPreferredSize(new Dimension(50, 23));
@@ -139,14 +143,17 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		buttonGroup.add(radioButtonAngle);
 
 		//region 名称
-		for (Enum anEnum : Enum.getEnums(PrjCoordSysType.class)) {
+		Enum[] enums = Enum.getEnums(PrjCoordSysType.class);
+		Arrays.sort(enums, 0, enums.length, new EnumComparator());
+		for (Enum anEnum : enums) {
 			if (anEnum instanceof PrjCoordSysType && anEnum != PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE && anEnum != PrjCoordSysType.PCS_NON_EARTH) {
 				comboBoxName.addItem((PrjCoordSysType) anEnum);
 			}
 		}
-		comboBoxName.setRenderer(new ListCellRenderer<PrjCoordSysType>() {
+
+		renderer = new ListCellRenderer<Enum>() {
 			@Override
-			public Component getListCellRendererComponent(JList<? extends PrjCoordSysType> list, PrjCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
+			public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
 				jLabel.setOpaque(true);
 				jLabel.setPreferredSize(labelPreferredSize);
@@ -158,31 +165,21 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 				}
 				return jLabel;
 			}
-		});
+		};
+		comboBoxName.setRenderer(renderer);
 		comboBoxName.setEditable(true);
 		//endregion
 
 		//region 投影方式
-		for (Enum anEnum : Enum.getEnums(ProjectionType.class)) {
+		Enum[] enums1 = Enum.getEnums(ProjectionType.class);
+		Arrays.sort(enums1, 0, enums1.length, new EnumComparator());
+		for (Enum anEnum : enums1) {
 			if (anEnum instanceof ProjectionType) {
 				comboBoxCoordType.addItem((ProjectionType) anEnum);
 			}
 		}
-		comboBoxCoordType.setRenderer(new ListCellRenderer<ProjectionType>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends ProjectionType> list, ProjectionType value, int index, boolean isSelected, boolean cellHasFocus) {
-				JLabel jLabel = new JLabel();
-				jLabel.setOpaque(true);
-				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
-				if (isSelected) {
-					jLabel.setBackground(list.getSelectionBackground());
-				} else {
-					jLabel.setBackground(list.getBackground());
-				}
-				return jLabel;
-			}
-		});
+
+		comboBoxCoordType.setRenderer(renderer);
 
 		//endregion
 

@@ -35,7 +35,6 @@ import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.Layer;
@@ -68,7 +67,7 @@ public class MirrorEditor extends AbstractEditor {
 				environment.stopEditor();
 			}
 		}
-		
+
 		@Override
 		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
 			if (SwingUtilities.isRightMouseButton(e)) {
@@ -131,7 +130,7 @@ public class MirrorEditor extends AbstractEditor {
 		MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
 
 		try {
-			MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_MIRROR);
+			MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 			GeoLine geoLine = (GeoLine) e.getGeometry();
 			// 判断一下，当前绘制的线长度为0时，不执行镜像
 			editModel.point1 = geoLine.getPart(0).getItem(0);
@@ -177,7 +176,7 @@ public class MirrorEditor extends AbstractEditor {
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
 			editModel.setTipMessage(MapEditorProperties.getString("String_GeometryOperation_MirrorInfo"));
-			MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_MIRROR);
+			MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 
 			if (editModel.point1 != Point2D.getEMPTY() && editModel.point2 != Point2D.getEMPTY() && !editModel.point1.equals(editModel.point2)) {
 				List<Layer> layers = MapUtilties.getLayers(environment.getMap());
@@ -247,7 +246,7 @@ public class MirrorEditor extends AbstractEditor {
 		MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
 		editModel.clear();
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_MIRROR);
+		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 	}
 
 	private class MirrorEditModel implements IEditModel {
@@ -270,9 +269,8 @@ public class MirrorEditor extends AbstractEditor {
 		}
 
 		public void setTipMessage(String tipMessage) {
-			MirrorEditModel.this.tipLabel.setText(tipMessage);
-			MirrorEditModel.this.tipLabel.repaint();
-			MirrorEditModel.this.tip.getContentPanel().repaint();
+			this.tipLabel.setText(tipMessage);
+			this.tipLabel.repaint();
 		}
 
 		public void clear() {

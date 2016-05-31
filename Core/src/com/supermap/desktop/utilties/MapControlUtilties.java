@@ -34,22 +34,4 @@ public class MapControlUtilties {
 				|| mapControl.getAction() == Action.CREATEPOLYLINE || mapControl.getAction() == Action.CREATERECTANGLE
 				|| mapControl.getAction() == Action.CREATETEXT;
 	}
-
-	/**
-	 * 移除 mapControl 的 TrackingLayer 上指定 tag 的所有对象
-	 * 
-	 * @param mapControl
-	 * @param tag
-	 */
-	public static void clearTrackingObjects(MapControl mapControl, String tag) {
-		if (mapControl != null && !StringUtilties.isNullOrEmpty(tag)) {
-			TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-
-			int index = trackingLayer.indexOf(tag);
-			while (index >= 0) {
-				trackingLayer.remove(index);
-				index = trackingLayer.indexOf(tag);
-			}
-		}
-	}
 }

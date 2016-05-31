@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -113,6 +114,19 @@ public class EditEnvironment {
 			EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
 		}
 	};
+	private MouseMotionListener mouseMotionListener = new MouseMotionListener() {
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			EditEnvironment.this.editController.mouseMoved(EditEnvironment.this, e);
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+	};
 	private KeyListener keyListener = new KeyListener() {
 
 		@Override
@@ -220,6 +234,7 @@ public class EditEnvironment {
 
 		if (this.formMap != null) {
 			this.formMap.getMapControl().addMouseListener(this.mouseListener);
+			this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
 			this.formMap.getMapControl().addKeyListener(this.keyListener);
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
 

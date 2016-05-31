@@ -35,7 +35,7 @@ import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilties.GeometryUtilties;
 import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapControlUtilties;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
@@ -485,7 +485,7 @@ public class EraseEditor extends AbstractEditor {
 		EraseEditModel editModel = (EraseEditModel) environment.getEditModel();
 		editModel.clear();
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_SOURCE);
+		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_SOURCE);
 	}
 
 	private class EraseEditModel implements IEditModel {

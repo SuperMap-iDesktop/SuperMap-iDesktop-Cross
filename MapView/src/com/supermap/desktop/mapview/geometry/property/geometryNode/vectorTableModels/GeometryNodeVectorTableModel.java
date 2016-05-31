@@ -1,8 +1,10 @@
-package com.supermap.desktop.mapview.geometry.property.geometryNode;
+package com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels;
 
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.table.DefaultTableModel;
@@ -11,10 +13,12 @@ import javax.swing.table.DefaultTableModel;
  * @author XiaJT
  */
 public class GeometryNodeVectorTableModel extends DefaultTableModel {
+	private IGeometry geometry;
 	private VectorTableModel vectorTableModel = null;
+	private boolean isCellEditable = false;
 
-	public GeometryNodeVectorTableModel() {
-
+	public GeometryNodeVectorTableModel(IGeometry geometry) {
+		this.geometry = geometry;
 	}
 
 
@@ -29,6 +33,15 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
 		vectorTableModel.doSetValueAt(aValue, row, column);
+		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
+			// 面图形，第一个点和最后一个点是相同的
+			if (row == 0) {
+				vectorTableModel.doSetValueAt(aValue, getRowCount() - 1, column);
+			}
+			if (row == getRowCount() - 1) {
+				vectorTableModel.doSetValueAt(aValue, 0, column);
+			}
+		}
 		fireTableDataChanged();
 	}
 
@@ -43,7 +56,7 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		return column != 0;
+		return column != 0 && isCellEditable;
 	}
 
 	@Override
@@ -70,6 +83,7 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 	}
 
 	public void addPoint(int selectedRow) {
+		// TODO: 2016/5/30
 		vectorTableModel.doAddPoint(selectedRow);
 		fireTableDataChanged();
 	}
@@ -81,7 +95,29 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 	}
 
 	public void removeRows(int[] selectedRows) {
+		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
+			// 面需要单独处理
+			if (selectedRows[selectedRows.length - 1] == getRowCount() - 1) {
+				// 删除最后一行
+				if (selectedRows[0] == 0) {
+					//第一行也删了
+					int[] ints = new int[selectedRows.length - 1];
+					System.arraycopy(ints, 0, selectedRows, 0, selectedRows.length - 1);
+					selectedRows = ints;
+				} else {
+					System.arraycopy(selectedRows, 0, selectedRows, 1, selectedRows.length - 1);
+					selectedRows[0] = 0;
+				}
+			}
+		}
 		vectorTableModel.doRemoveRows(selectedRows);
+		if (geometry instanceof IRegionFeature || geometry instanceof IRegion3DFeature) {
+			if (selectedRows[0] == 0) {
+				for (int i = 1; i < vectorTableModel.getColumnCount() + 1; i++) {
+					vectorTableModel.doSetValueAt(String.valueOf(vectorTableModel.getValueAt(0, i)), vectorTableModel.getRowCount() - 1, i);
+				}
+			}
+		}
 		fireTableDataChanged();
 	}
 
@@ -98,5 +134,9 @@ public class GeometryNodeVectorTableModel extends DefaultTableModel {
 	public void setModel(VectorTableModel vectorTableModel) {
 		this.vectorTableModel = vectorTableModel;
 		fireTableStructureChanged();
+	}
+
+	public void setCellEditable(boolean cellEditable) {
+		isCellEditable = cellEditable;
 	}
 }
