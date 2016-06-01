@@ -34,6 +34,15 @@ sidebar:
     SQLQueryDia: SQL 查询
     SQLQueryDiaFuction: SQL函数运算符
     SQLSupporttedType: SQL查询引擎支持
+    Objects: 对象操作
+    AboutCreateGeometry: 对象绘制概述
+    Point: 绘制点
+    DrawCurve: 绘制线
+    DrawQuadRangle: 绘制面
+    Text: 绘制文本
+    PolygonEdit: 面对象编辑
+    LineEdit: 线对象编辑
+    VertexEdit: 节点编辑
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
@@ -44,5 +53,7 @@ sidebar:
     Style: 设置图层风格
     LayerSetting: 图层属性
     Measuregroup: 地图量算
+    MapSetting_Basic: 地图属性-基本
+    MapSetting_Range: 地图属性-范围
     Scene: 三维场景
     SceneDia: 场景概述

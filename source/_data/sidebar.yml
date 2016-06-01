@@ -14,6 +14,15 @@ docs:
     SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
     SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
     SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
+  Objects:
+    AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
+    Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
+    DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
+    DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
+    Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
+    PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
+    LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
+    VertexEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/VertexEdit.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html
@@ -24,6 +33,8 @@ docs:
     Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
     Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
     LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
+    MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
+    MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
 
