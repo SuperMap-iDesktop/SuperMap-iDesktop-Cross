@@ -3,6 +3,9 @@ package com.supermap.desktop.mapview.geometry.property.geometryNode;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Implements.DGeoBSpline;
+import com.supermap.desktop.geometry.Implements.DGeoCardinal;
+import com.supermap.desktop.geometry.Implements.DGeoCurve;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels.GeometryNodeParameterTableModel;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.GeometryTypeUtilties;
@@ -25,6 +28,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	private JTable table = new JTable();
 	private GeometryNodeParameterTableModel tableModel;
 	private DecimalFormat df = new DecimalFormat("0.0000");
+	private JLabel labelControlInfo = new JLabel();
 	private DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -68,6 +72,11 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 		textFieldGeometryType.setMinimumSize(new Dimension(250, 23));
 		textFieldGeometryType.setPreferredSize(new Dimension(250, 23));
 		textFieldGeometryType.setEditable(false);
+		labelControlInfo.setVisible(isLabelControlVisible());
+	}
+
+	private boolean isLabelControlVisible() {
+		return geometry instanceof DGeoBSpline || geometry instanceof DGeoCardinal || geometry instanceof DGeoCurve;
 	}
 
 	private void initTable() {
@@ -88,11 +97,12 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 
 	private void initLayout() {
 		this.setLayout(new GridBagLayout());
-		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(10, 10, 0, 0));
-		this.add(textFieldGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(10, 5, 0, 0));
-		this.add(new JPanel(), new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(10, 0, 0, 10));
+		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(10, 10, 5, 0));
+		this.add(textFieldGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(10, 20, 5, 0));
+		this.add(new JPanel(), new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(10, 0, 5, 10));
 
-		this.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 0, 10));
+		this.add(labelControlInfo, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(15, 10, 0, 10));
+		this.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(0, 10, 0, 10));
 
 	}
 
@@ -106,6 +116,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	}
 
 	private void initResources() {
+		labelControlInfo.setText(ControlsProperties.getString("String_labelControlPointsInfo"));
 		labelGeometryType.setText(ControlsProperties.getString("String_LabelGeometryType"));
 	}
 
