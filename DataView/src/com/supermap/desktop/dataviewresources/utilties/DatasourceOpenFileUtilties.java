@@ -21,6 +21,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilties.CursorUtilties;
 import com.supermap.desktop.utilties.DatasourceUtilties;
+import com.supermap.desktop.utilties.LogUtilties;
 import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
@@ -271,11 +272,13 @@ public class DatasourceOpenFileUtilties {
 					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
 
 					for (int i = 0; i < errorInfos.length; i++) {
-						if (errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORD"))
-								|| errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
+						String marker = errorInfos[i].getMarker();
+						LogUtilties.outPut(MessageFormat.format(DataViewProperties.getString("String_OpenDatasourceFailedCode"), marker));
+						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
+								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
 							isPasswordWrong = true;
 							break;
-						} else if ("-100".equalsIgnoreCase(errorInfos[i].getMarker()) && "sit".equalsIgnoreCase(fileType)) {
+						} else if ("-100".equalsIgnoreCase(marker) && "sit".equalsIgnoreCase(fileType)) {
 							isPasswordWrong = true;
 							break;
 						}
