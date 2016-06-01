@@ -678,8 +678,13 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				if (this.tablePrjCoordSys.getModel() != this.prjModel) {
 					this.tablePrjCoordSys.setModel(this.prjModel);
 				}
-				refreshStates();
-				setControlsEnabled();
+				if (tablePrjCoordSys.getRowCount() > 0) {
+					tablePrjCoordSys.setRowSelectionInterval(0, 0);
+				} else {
+					refreshStates();
+					setControlsEnabled();
+				}
+
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
