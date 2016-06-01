@@ -8,6 +8,8 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.GeoTextEPS;
 import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
@@ -81,6 +83,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -1404,6 +1407,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 				properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
 				properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
+				if (geometry instanceof GeoText||geometry instanceof GeoText3D) {
+					properties.add(GeometryPropertyFactory.getGeometryGeoTextPropertyControl(recordset));
+				}
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(properties.toArray(new IProperty[properties.size()]));
 			} else {
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);

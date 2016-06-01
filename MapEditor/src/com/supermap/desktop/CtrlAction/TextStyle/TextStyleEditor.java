@@ -16,6 +16,7 @@ public class TextStyleEditor extends AbstractEditor {
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap
 				&& ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers().length > 0) {
 			Layer activeLayer = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0];
+
 			if (activeLayer != null && !activeLayer.isDisposed() && activeLayer.isEditable()) {
 				isEditable = true;
 			}

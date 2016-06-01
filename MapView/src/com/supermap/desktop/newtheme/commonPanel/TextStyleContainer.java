@@ -15,16 +15,8 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
+import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -34,19 +26,9 @@ import com.supermap.data.TextAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
-import com.supermap.desktop.ui.controls.FontComboBox;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapDrawnEvent;
-import com.supermap.mapping.MapDrawnListener;
-import com.supermap.mapping.MixedTextStyle;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeLabel;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilties.*;
+import com.supermap.mapping.*;
 
 public class TextStyleContainer extends ThemeChangePanel {
 
@@ -670,7 +652,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (height > 0) {
 				textStyle.setFontHeight(height);
 			}
-
 		}
 
 		/**

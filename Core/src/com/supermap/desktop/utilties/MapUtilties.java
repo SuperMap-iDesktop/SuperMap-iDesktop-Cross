@@ -27,7 +27,37 @@ public class MapUtilties {
 	private MapUtilties() {
 		// 工具类不提供构造函数
 	}
+	
+	/**
+	 * 获取MapControl
+	 *
+	 * @return
+	 */
+	public static MapControl getMapControl() {
+		MapControl mapControl = null;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (null != formMap.getMapControl()) {
+				mapControl = formMap.getMapControl();
+			}
+		}
+		return mapControl;
+	}
 
+	/**
+	 * 获取当前地图
+	 * @return
+	 */
+	public static Map getActiveMap(){
+		return getMapControl().getMap();
+	}
+	
+	/**
+	 * 通过图层表达式获取当前地图
+	 * @param map
+	 * @param caption
+	 * @return
+	 */
 	public static Layer findLayerByCaption(Map map, String caption) {
 		Layer resultLayer = null;
 		try {

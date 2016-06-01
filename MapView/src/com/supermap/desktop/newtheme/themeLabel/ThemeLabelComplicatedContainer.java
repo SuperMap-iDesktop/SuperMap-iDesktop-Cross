@@ -105,6 +105,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		this.panelAdvance.getComboBoxAlignmentStyle().setVisible(false);
 		this.panelAdvance.getLabelSplitSeparator().setVisible(false);
 		this.panelAdvance.getComboBoxSplitSeparator().setVisible(false);
+		this.panelAdvance.getComboBoxOverLength().removeItemAt(1);
 		this.panelAdvance.getCheckBoxOptimizeMutilineAlignment().setVisible(false);
 		this.panelStyle = new JPanel();
 		this.tabbedPane.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
@@ -466,23 +467,6 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			}
 		}
 
-		private void resetSplits(int[] newSplits, TextStyle[] newTextStyle) {
-			TextStyle[] tempTextStyles = newTextStyle.clone();
-			// 由于setStyles()方法会重置newTextStyle且出现错误结果故采用新建的方式来得到正确结果
-			TextStyle defaultStyle = mixedTextStyle.getDefaultStyle();
-			String separator = mixedTextStyle.getSeparator();
-			boolean isSeparatorEnable = mixedTextStyle.isSeparatorEnabled();
-			mixedTextStyle = new MixedTextStyle(tempTextStyles, newSplits);
-			mixedTextStyle.setDefaultStyle(defaultStyle);
-			mixedTextStyle.setSeparator(separator);
-			mixedTextStyle.setSeparatorEnabled(isSeparatorEnable);
-			textFieldSeparatNumber.setText(String.valueOf(newSplits.length + 1));
-			getTable();
-			refreshAtOnce();
-			tableComplicated.setRowSelectionInterval(0, 0);
-			resetToolBarButtonState();
-		}
-
 		private void mergeSeparators() {
 			// 合并项
 			int[] selectRows = tableComplicated.getSelectedRows();
@@ -515,6 +499,23 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		}
 	}
 
+	private void resetSplits(int[] newSplits, TextStyle[] newTextStyle) {
+		TextStyle[] tempTextStyles = newTextStyle.clone();
+		// 由于setStyles()方法会重置newTextStyle且出现错误结果故采用新建的方式来得到正确结果
+		TextStyle defaultStyle = mixedTextStyle.getDefaultStyle();
+		String separator = mixedTextStyle.getSeparator();
+		boolean isSeparatorEnable = mixedTextStyle.isSeparatorEnabled();
+		mixedTextStyle = new MixedTextStyle(tempTextStyles, newSplits);
+		mixedTextStyle.setDefaultStyle(defaultStyle);
+		mixedTextStyle.setSeparator(separator);
+		mixedTextStyle.setSeparatorEnabled(isSeparatorEnable);
+		textFieldSeparatNumber.setText(String.valueOf(newSplits.length + 1));
+		getTable();
+		refreshAtOnce();
+		tableComplicated.setRowSelectionInterval(0, 0);
+		resetToolBarButtonState();
+	}
+
 	class LocalTableModelListener implements TableModelListener {
 		@Override
 		public void tableChanged(TableModelEvent e) {
@@ -522,7 +523,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			int selectColumn = e.getColumn();
 			if (selectColumn == 1 && selectRow != tableComplicated.getRowCount() - 1) {
 				String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
-				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr)) {
+				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr) && Integer.valueOf(rangeStr) > 0) {
 					int rangeValue = Integer.valueOf(rangeStr);
 					int nowValue = 0;
 					if (selectRow >= 1) {
@@ -565,24 +566,31 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		String separatNumber = textFieldSeparatNumber.getText();
 		if (!StringUtilties.isNullOrEmptyString(separatNumber)) {
 			int sparatorCount = Integer.parseInt(separatNumber);
-			int[] splits = new int[sparatorCount - 1];
-			splits[0] = 1;
-			for (int i = 1; i < sparatorCount - 1; i++) {
-				splits[i] = splits[i - 1] + 2;
-			}
-			mixedTextStyle.setSplitIndexes(splits);
-			TextStyle[] tempTextStyles = new TextStyle[sparatorCount];
-			for (int j = 0; j < sparatorCount; j++) {
-				if (j <= mixedTextStyle.getStyles().length - 1) {
-					tempTextStyles[j] = mixedTextStyle.getStyles()[j];
-				} else {
-					tempTextStyles[j] = mixedTextStyle.getStyles()[mixedTextStyle.getStyles().length - 1];
+			int[] splits ;
+			if (Integer.parseInt(separatNumber) <= 1) {
+				splits = new int[0];
+				mixedTextStyle.setSplitIndexes(splits);
+				TextStyle[] tempTextStyles = new TextStyle[1];
+				tempTextStyles[0] = mixedTextStyle.getStyles()[0];
+				resetSplits(splits, tempTextStyles);
+				return;
+			} else {
+				splits = new int[sparatorCount - 1];
+				splits[0] = 1;
+				for (int i = 1; i < sparatorCount - 1; i++) {
+					splits[i] = splits[i - 1] + 2;
 				}
+				TextStyle[] tempTextStyles = new TextStyle[sparatorCount];
+				for (int j = 0; j < sparatorCount; j++) {
+					if (j <= mixedTextStyle.getStyles().length - 1) {
+						tempTextStyles[j] = mixedTextStyle.getStyles()[j];
+					} else {
+						tempTextStyles[j] = mixedTextStyle.getStyles()[mixedTextStyle.getStyles().length - 1];
+					}
+				}
+				resetSplits(splits, tempTextStyles);
+				return;
 			}
-			mixedTextStyle.setStyles(tempTextStyles);
-			getTable();
-			tableComplicated.setRowSelectionInterval(0, 0);
-			refreshAtOnce();
 		}
 	}
 

@@ -1,12 +1,10 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.DatasetType;
-import com.supermap.data.Size2D;
-import com.supermap.data.StringAlignment;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonPanel.*;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -467,9 +465,9 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	}
 
 	private void initComboBoxAlignmentStyle() {
-		this.comboBoxAlignmentStyle.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_AlignLeft"),
-				MapViewProperties.getString("String_AlignCenter"), MapViewProperties.getString("String_AlignRight"),
-				MapViewProperties.getString("String_AlignDistributed") }));
+		this.comboBoxAlignmentStyle.setModel(new DefaultComboBoxModel<String>(new String[] { ControlsProperties.getString("String_AlignLeft"),
+				ControlsProperties.getString("String_AlignCenter"), ControlsProperties.getString("String_AlignRight"),
+				ControlsProperties.getString("String_AlignDistributed") }));
 		this.comboBoxAlignmentStyle.setEnabled(false);
 	}
 
@@ -949,16 +947,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		return labelAlignmentStyle;
 	}
 
-	public void setLabelAlignmentStyle(JLabel labelAlignmentStyle) {
-		this.labelAlignmentStyle = labelAlignmentStyle;
-	}
-
 	public JComboBox<String> getComboBoxAlignmentStyle() {
 		return comboBoxAlignmentStyle;
 	}
 
-	public void setComboBoxAlignmentStyle(JComboBox<String> comboBoxAlignmentStyle) {
-		this.comboBoxAlignmentStyle = comboBoxAlignmentStyle;
+	public JComboBox<String> getComboBoxOverLength() {
+		return comboBoxOverLength;
 	}
 
 }
