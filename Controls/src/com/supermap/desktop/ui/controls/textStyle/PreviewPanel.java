@@ -110,7 +110,7 @@ public class PreviewPanel extends JPanel implements IPreview {
 			}
 			if (geoText instanceof GeoText3D && ((GeoText3D) geoText).getPartCount() > 0) {
 				text = ((GeoText3D) geoText).getPart(0).getText();
-				refresh(text, ((GeoText3D) geoText).getTextStyle(),0.0);
+				refresh(text, ((GeoText3D) geoText).getTextStyle(), 0.0);
 				return mapControl;
 			}
 		}

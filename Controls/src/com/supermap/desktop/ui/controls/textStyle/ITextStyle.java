@@ -4,9 +4,12 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.TextStyleType;
 
 public interface ITextStyle extends IGeoTextStyle {
+	
+	public void setInitInfo(TextStyle textStyle, boolean isProperty,boolean unityVisible);
 	/**
 	 * 返回设置结果
 	 * @return

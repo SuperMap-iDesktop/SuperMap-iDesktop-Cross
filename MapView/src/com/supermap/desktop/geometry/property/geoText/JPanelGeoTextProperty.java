@@ -65,7 +65,15 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 					textStyle.setFontHeight((double) panelBasicSet.getResultMap().get(TextStyleType.FONTHEIGHT));
 					fireGeoTextChanged(true);
 					return;
-				} else {
+				}
+				if (newValue.equals(TextStyleType.FONTWIDTH)) {
+					// 设置字宽时不刷新预览界面，但需要设置计算出的字宽
+					textStyle.setFontWidth((double) panelBasicSet.getResultMap().get(newValue));
+					fireGeoTextChanged(true);
+					return;
+				}
+				if (!newValue.equals(TextStyleType.FIXEDSIZE) || !newValue.equals(TextStyleType.FONTWIDTH)) {
+
 					ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newTextStyleValue);
 					fireGeoTextChanged(true);
 					double rotation = 0.0;
@@ -78,6 +86,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		};
 		this.textpartListener = new TextPartChangeListener() {
 			double newRotation = ((GeoText) geometry).getPart((int) panelTextPart.getResultMap().get(TextPartType.INFO)).getRotation();
+
 			@Override
 			public void modify(TextPartType newValue) {
 				Object newTextPartValue = panelTextPart.getResultMap().get(newValue);
@@ -87,7 +96,12 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 					return;
 				}
 				boolean isApply = checkboxApplyForTextPart.isSelected();
-				if (newValue.equals(TextPartType.ROTATION) && geometry instanceof GeoText && isApply) {
+				if (newValue.equals(TextPartType.INFO)) {
+					panelPreview.refresh(text, textStyle, newRotation);
+					return;
+				}
+
+				if (newValue.equals(TextPartType.ROTATION) && geometry instanceof GeoText) {
 					newRotation = (double) newTextPartValue;
 					panelPreview.refresh(text, textStyle, (double) newTextPartValue);
 					fireGeoTextChanged(true);
@@ -110,6 +124,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				panelTextPart.enabled(checkboxApplyForTextPart.isSelected());
+				panelTextPart.setSubobjectEnabled(checkboxApplyForTextPart.isSelected());
+				panelTextPart.enabled(checkboxApplyForTextPart.isSelected());
 			}
 		};
 		removeEvents();
@@ -129,7 +145,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		panelPreview = new PreviewPanel(geometry);
 		panelTextPart = new TextPartPanel(geometry);
 		if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
-			panelBasicSet = new TextBasicPanel(this.textStyle, true);
+			panelBasicSet = new TextBasicPanel();
+			panelBasicSet.setInitInfo(this.textStyle, true, false);
 			this.setLayout(new GridBagLayout());
 			this.add(initLeftPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH)
 					.setInsets(2).setWeight(1, 1));
@@ -159,7 +176,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 						.setWeight(1, 0));
 		leftPanel.add(this.panelPreview.getPanel(),
 				new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(1, 1));
-		leftPanel.setMinimumSize(new Dimension(260,200));
+		leftPanel.setMinimumSize(new Dimension(260, 200));
 		return leftPanel;
 	}
 
@@ -169,7 +186,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 	}
 
 	@Override
-	public void reset() {
+	public void reset(Recordset recordset) {
+		this.geometry = recordset.getGeometry();
 		if (this.geometry instanceof GeoText) {
 			this.textStyle = ((GeoText) this.geometry).getTextStyle().clone();
 		}
@@ -177,6 +195,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			this.textStyle = ((GeoText3D) this.geometry).getTextStyle().clone();
 		}
 		initComponents();
+		initResources();
 		removeEvents();
 		registEvents();
 		this.updateUI();
@@ -199,6 +218,14 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 				textPart.setText((String) panelTextPart.getResultMap().get(TextPartType.TEXT));
 			}
 		}
+		if (geometry instanceof GeoText && !checkboxApplyForTextPart.isSelected()) {
+			((GeoText) geometry).setTextStyle(textStyle);
+			if (null != panelTextPart.getResultMap().get(TextPartType.ROTATION)) {
+				for (int i = 0; i < ((GeoText) geometry).getPartCount(); i++) {
+					((GeoText) geometry).getPart(i).setRotation((double) panelTextPart.getResultMap().get(TextPartType.ROTATION));
+				}
+			}
+		}
 		if (geometry instanceof GeoText3D && checkboxApplyForTextPart.isSelected()) {
 			((GeoText3D) geometry).setTextStyle(textStyle);
 			TextPart3D textPart = ((GeoText3D) geometry).getPart((int) panelTextPart.getResultMap().get(TextPartType.INFO));
@@ -216,6 +243,13 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 	public void enabled(boolean enabled) {
 		this.panelBasicSet.enabled(enabled);
 		this.panelTextPart.enabled(enabled);
+		this.panelTextPart.setRotationEnabled(enabled);
+		if (checkboxApplyForTextPart.isSelected() && enabled) {
+			this.panelTextPart.enabled(true);
+		} else {
+			this.panelTextPart.enabled(false);
+		}
+		this.checkboxApplyForTextPart.setEnabled(enabled);
 	}
 
 	@Override
