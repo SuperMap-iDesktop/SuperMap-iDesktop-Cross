@@ -15,6 +15,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -23,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -40,7 +42,6 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	private SmButton buttonApply = new SmButton();
 	private SmButton buttonReset = new SmButton();
 	private FormMap currentForm;
-	private Layer currentLayer;
 	private LayerEditableChangedListener layerEditableChangedListener = new LayerEditableChangedListener() {
 		@Override
 		public void editableChanged(LayerEditableChangedEvent layerEditableChangedEvent) {
@@ -48,8 +49,8 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 				currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
 				return;
 			}
-			if (layerEditableChangedEvent.getLayer() == currentLayer) {
-				boolean editable = currentLayer.isEditable();
+			if (layerEditableChangedEvent.getLayer().getDataset() == recordset.getDataset()) {
+				boolean editable = isEditable();
 				if (!editable && geometryNode.isModified()) {
 					if (UICommonToolkit.showConfirmDialogYesNo(ControlsProperties.getString("String_PropertyInfo_Modifyed_Notify")) == JOptionPane.YES_OPTION) {
 						geometryNode.apply(recordset);
@@ -63,6 +64,20 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 			}
 		}
 	};
+
+	private boolean isEditable() {
+		try {
+			ArrayList<Layer> layers = MapUtilties.getLayers(currentForm.getMapControl().getMap());
+			for (Layer layer : layers) {
+				if (layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
+					return true;
+				}
+			}
+		} catch (Exception ignore) {
+			// 地图dispose没接口判断
+		}
+		return false;
+	}
 
 	public GeometryNodePropertyControl(Recordset recordset) {
 		super(CoreProperties.getString("String_NodeInfo"));
@@ -117,12 +132,6 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	private void init() {
 		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
 			currentForm = (FormMap) Application.getActiveApplication().getActiveForm();
-			for (Layer layer : currentForm.getActiveLayers()) {
-				if (layer.getDataset() == recordset.getDataset()) {
-					currentLayer = layer;
-					break;
-				}
-			}
 		}
 		addLayerEditableChangedListener();
 		initComponent();
@@ -158,11 +167,9 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 
 	private void initButtonStates() {
 		if (geometryNode != null) {
-			if (currentLayer != null) {
-				geometryNode.setIsCellEditable(currentLayer.isEditable());
-			}
-			buttonApply.setEnabled(geometryNode.isModified() && currentLayer.isEditable());
-			buttonReset.setEnabled(geometryNode.isModified() && currentLayer.isEditable());
+			geometryNode.setIsCellEditable(isEditable());
+			buttonApply.setEnabled(geometryNode.isModified() && isEditable());
+			buttonReset.setEnabled(geometryNode.isModified() && isEditable());
 		} else {
 			buttonApply.setEnabled(false);
 			buttonReset.setEnabled(false);
@@ -179,10 +186,8 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 
 	//endregion
 	private void addLayerEditableChangedListener() {
-		if (currentLayer != null) {
-			currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
-			currentForm.getMapControl().getMap().getLayers().addLayerEditableChangedListener(layerEditableChangedListener);
-		}
+		currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
+		currentForm.getMapControl().getMap().getLayers().addLayerEditableChangedListener(layerEditableChangedListener);
 	}
 
 	private void removeLayerEditableChangedListener() {

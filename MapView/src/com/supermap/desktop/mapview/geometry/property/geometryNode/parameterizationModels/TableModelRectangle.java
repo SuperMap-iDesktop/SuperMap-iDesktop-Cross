@@ -10,7 +10,7 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 public class TableModelRectangle extends GeometryParameterModel {
 	private GeoRectangle geometry;
 	private static final String[] rows = new String[]{
-			ControlsProperties.getString("String_GeoEllipse_Center"),
+			ControlsProperties.getString("String_Geometry_Center"),
 			"  X",
 			"  Y",
 			ControlsProperties.getString("String_Geometry_Rotation"),

@@ -159,7 +159,7 @@ public class JDialogGeometryConvert extends SmDialog {
 			for (int i = 0; i < this.desDatasource.getDatasets().getCount(); i++) {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
-				if (dataset.getType() == this.datasetType) {
+				if (dataset.getType() == this.datasetType || dataset.getType() == DatasetType.CAD) {
 					this.desDataset = (DatasetVector) dataset;
 					break;
 				}
@@ -259,12 +259,23 @@ public class JDialogGeometryConvert extends SmDialog {
 
 	private void initializeComboBoxDatasetValue() {
 		this.comboBoxDataset.removeAllItems();
+		int cadCount = 0;
 
 		if (this.desDatasource != null) {
 			for (int i = 0; i < this.desDatasource.getDatasets().getCount(); i++) {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
 				if (dataset.getType() == this.datasetType) {
+					DataCell cell = new DataCell();
+					cell.initDatasetType(dataset);
+					this.comboBoxDataset.addItem(cell);
+				}
+			}
+
+			for (int i = 0; i < this.desDatasource.getDatasets().getCount(); i++) {
+				Dataset dataset = this.desDatasource.getDatasets().get(i);
+
+				if (dataset.getType() == DatasetType.CAD) {
 					DataCell cell = new DataCell();
 					cell.initDatasetType(dataset);
 					this.comboBoxDataset.addItem(cell);
