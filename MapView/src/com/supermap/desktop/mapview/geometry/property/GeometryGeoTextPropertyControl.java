@@ -15,7 +15,6 @@ import com.supermap.desktop.properties.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.mapping.*;
 
 public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 	private static final long serialVersionUID = 1L;
@@ -37,7 +36,7 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			panelGeoTextProperty.reset();
+			panelGeoTextProperty.reset(recordset);
 			initButtonStates(false);
 		}
 	};

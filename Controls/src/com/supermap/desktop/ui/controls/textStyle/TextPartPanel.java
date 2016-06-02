@@ -74,6 +74,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					int selectItem = comboBoxSubobject.getSelectedIndex();
 					if (selectItem >= 0 && geomerty instanceof GeoText) {
+						spinnerRotation.setValue(((TextPart) enumMap.get(selectItem)).getRotation());
 						textFieldText.setText(((TextPart) enumMap.get(selectItem)).getText());
 					}
 					if (selectItem >= 0 && geomerty instanceof GeoText3D) {
@@ -147,6 +148,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			for (int i = 0; i < ((GeoText) geomerty).getPartCount(); i++) {
 				this.comboBoxSubobject.addItem(MessageFormat.format(ControlsProperties.getString("String_TheNumberSubObject"), i + 1));
 				this.enumMap.put(i, ((GeoText) geomerty).getPart(i));
+				
 			}
 			textPartTypeMap.put(TextPartType.INFO, 0);
 			textPartTypeMap.put(TextPartType.ROTATION, ((GeoText) geomerty).getPart(0).getRotation());
@@ -163,16 +165,6 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			this.textFieldText.setText(((GeoText3D) geomerty).getPart(0).getText());
 		}
 
-	}
-
-	@Override
-	public void enabled(boolean enabled) {
-		this.labelRotation.setEnabled(enabled);
-		this.labelSubobject.setEnabled(enabled);
-		this.labelText.setEnabled(enabled);
-		this.spinnerRotation.setEnabled(enabled);
-		this.comboBoxSubobject.setEnabled(enabled);
-		this.textFieldText.setEnabled(enabled);
 	}
 
 	@Override
@@ -232,4 +224,23 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			fireTextPartChanged(TextPartType.TEXT);
 		}
 	}
+	@Override
+	public void enabled(boolean enabled) {
+		this.labelText.setEnabled(enabled);
+		this.textFieldText.setEnabled(enabled);
+	}
+
+	
+	@Override
+	public void setSubobjectEnabled(boolean enabled) {
+		this.labelSubobject.setEnabled(enabled);
+		this.comboBoxSubobject.setEnabled(enabled);
+	}
+
+	@Override
+	public void setRotationEnabled(boolean enabled) {
+		this.labelRotation.setEnabled(enabled);
+		this.spinnerRotation.setEnabled(enabled);
+	}
+
 }

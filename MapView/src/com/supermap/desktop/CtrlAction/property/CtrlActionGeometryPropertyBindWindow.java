@@ -45,10 +45,14 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				this.map = formMap.getMapControl().getMap();
 				TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-				Dataset dataset = map.getLayers().get(0).getDataset();
+				//获取当前活动图层对应的数据集
+				Dataset dataset = formMap.getActiveLayers()[0].getDataset();
 				if (null != dataset && dataset instanceof DatasetVector) {
+					Recordset recordset = ((DatasetVector)dataset).getRecordset(false, CursorType.DYNAMIC);
+					// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
 					this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
-					TabularUtilties.refreshTabularForm((DatasetVector) dataset);
+					this.tabular.setText(dataset.getName()+"@"+dataset.getDatasource().getAlias());
+					this.tabular.setRecordset(recordset);
 				}
 				// 清空tabularMap保证一个map对应一个属性表
 				this.tabularMap.clear();

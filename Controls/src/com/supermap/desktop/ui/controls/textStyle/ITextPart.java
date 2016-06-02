@@ -13,6 +13,10 @@ public interface ITextPart extends IGeoTextStyle{
 	 */
 	public HashMap<TextPartType,Object> getResultMap();
 	
+	public void setSubobjectEnabled(boolean enabled);
+	
+	public void setRotationEnabled(boolean enabled);
+	
 	/**
 	 * 获取和TextStyleType类容对应的容器
 	 * @return

@@ -38,7 +38,11 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.StringUtilties;
 import com.supermap.mapping.Map;
-
+/**
+ * 固定比例尺控件
+ * @author xie
+ *
+ */
 public class ScaleEnabledContainer extends SmDialog {
 	/**
 	 * 
