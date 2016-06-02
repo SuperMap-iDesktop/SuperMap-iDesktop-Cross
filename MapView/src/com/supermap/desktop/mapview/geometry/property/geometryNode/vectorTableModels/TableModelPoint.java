@@ -80,7 +80,6 @@ public class TableModelPoint extends VectorTableModel {
 
 	@Override
 	public void dispose() {
-		geoPointBase.dispose();
 		geoPoint.dispose();
 	}
 }
