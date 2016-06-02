@@ -449,7 +449,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			tableModel.dispose();
 		}
 		hideClean();
-		geometry.dispose();
+//		geometry.dispose();
 	}
 
 	public void hideClean() {
