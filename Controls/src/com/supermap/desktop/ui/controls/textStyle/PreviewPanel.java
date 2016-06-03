@@ -37,36 +37,36 @@ public class PreviewPanel extends JPanel implements IPreview {
 		mapControl.setInteractionMode(InteractionMode.CUSTOMALL);
 		Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
 		MapControl.Cursors.setArrow(cursor);
-
-		mapControl.getMap().getTrackingLayer().clear();
 		Geometry sourceGeoText = null;
 		GeoPoint geoPoint = new GeoPoint();
 		GeoStyle style = new GeoStyle();
 		style.setLineColor(Color.red);
 		style.setMarkerSize(new Size2D(3, 3));
 		geoPoint.setStyle(style);
+		Geometry tempGeoText = null;
 		if (geoText instanceof GeoText) {
 			sourceGeoText = (GeoText) geoText.clone();
-			GeoText tempGeoText = getPreViewGeoText(text, rotation);
-			tempGeoText.setTextStyle(tempTextStyle);
+			tempGeoText = getPreViewGeoText(text, rotation);
+			((GeoText) tempGeoText).setTextStyle(tempTextStyle);
 			geoPoint.setX(tempGeoText.getInnerPoint().getX());
 			geoPoint.setY(tempGeoText.getInnerPoint().getY());
-			mapControl.getMap().getTrackingLayer().add(geoPoint, "GeoPoint");
-			mapControl.getMap().getTrackingLayer().add(tempGeoText, "GeoText");
-			mapControl.getMap().refreshTrackingLayer();
-			return;
 		}
 		if (geoText instanceof GeoText3D) {
 			sourceGeoText = (GeoText3D) geoText.clone();
-			GeoText3D tempGeoText = getPreViewGeoText3D(text, ((GeoText3D) sourceGeoText).getPart(0).getAnchorPoint());
-			tempGeoText.setTextStyle(tempTextStyle);
+			tempGeoText = getPreViewGeoText3D(text, ((GeoText3D) sourceGeoText).getPart(0).getAnchorPoint());
+			((GeoText3D) tempGeoText).setTextStyle(tempTextStyle);
 			geoPoint.setX(tempGeoText.getInnerPoint().getX());
 			geoPoint.setY(tempGeoText.getInnerPoint().getY());
+		}
+		if (mapControl.getMap().getTrackingLayer().getCount() > 0 && null != mapControl.getMap().getTrackingLayer().get(0)
+				&& null != mapControl.getMap().getTrackingLayer().get(1)) {
+			mapControl.getMap().getTrackingLayer().set(0, geoPoint);
+			mapControl.getMap().getTrackingLayer().set(1, tempGeoText);
+		} else {
 			mapControl.getMap().getTrackingLayer().add(geoPoint, "GeoPoint");
 			mapControl.getMap().getTrackingLayer().add(tempGeoText, "GeoText");
-			mapControl.getMap().refreshTrackingLayer();
-			return;
 		}
+		mapControl.getMap().refreshTrackingLayer();
 	}
 
 	@Override

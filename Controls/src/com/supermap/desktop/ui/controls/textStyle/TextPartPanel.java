@@ -90,6 +90,9 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				double rotation = (double) spinnerRotation.getValue();
+				if (enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+					((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).setRotation(rotation);
+				}
 				textPartTypeMap.put(TextPartType.ROTATION, rotation);
 				fireTextPartChanged(TextPartType.ROTATION);
 			}
@@ -148,7 +151,6 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			for (int i = 0; i < ((GeoText) geomerty).getPartCount(); i++) {
 				this.comboBoxSubobject.addItem(MessageFormat.format(ControlsProperties.getString("String_TheNumberSubObject"), i + 1));
 				this.enumMap.put(i, ((GeoText) geomerty).getPart(i));
-				
 			}
 			textPartTypeMap.put(TextPartType.INFO, 0);
 			textPartTypeMap.put(TextPartType.ROTATION, ((GeoText) geomerty).getPart(0).getRotation());
@@ -217,20 +219,27 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	public HashMap<TextPartType, JComponent> getComponentsMap() {
 		return this.componentsMap;
 	}
+
 	private void resetText() {
 		String text = textFieldText.getText();
-		if (!StringUtilties.isNullOrEmptyString(text)) {
+		String textPartText = "";
+		if (this.enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+			textPartText = ((TextPart) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).getText();
+		} else {
+			textPartText = ((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).getText();
+		}
+		if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
 			textPartTypeMap.put(TextPartType.TEXT, text);
 			fireTextPartChanged(TextPartType.TEXT);
 		}
 	}
+
 	@Override
 	public void enabled(boolean enabled) {
 		this.labelText.setEnabled(enabled);
 		this.textFieldText.setEnabled(enabled);
 	}
 
-	
 	@Override
 	public void setSubobjectEnabled(boolean enabled) {
 		this.labelSubobject.setEnabled(enabled);

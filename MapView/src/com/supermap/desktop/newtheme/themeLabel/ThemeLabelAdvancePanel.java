@@ -117,7 +117,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		initCheckBoxState();
 		initTextFieldAndSpinnerValue();
 		initCheckBoxRotateLabel();
-		panelAdvanceContent.add(this.panelRotateLabel,         new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelAdvanceContent.add(this.panelRotateLabel,    new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelAdvanceContent.add(panelTextFontSet,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelAdvanceContent.add(panelFontHeight,          new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 //		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
