@@ -1374,6 +1374,44 @@ public class LayersTree extends JTree {
 
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
+			JTree tree = LayersTree.this;
+			JViewport vp = (JViewport) tree.getParent();
+
+			Point vpMousePosition = dtde.getLocation();
+			vpMousePosition = SwingUtilities.convertPoint(tree, vpMousePosition, vp.getParent());
+			Rectangle treeVisibleRectangle = tree.getVisibleRect();
+
+			if (vpMousePosition != null) {
+				Integer newY = null;
+
+				// Make sure we aren't already scrolled all the way down
+				if (tree.getHeight() - treeVisibleRectangle.y != vp.getHeight()) {
+					/*
+					 * Get Y coordinate for scrolling down
+					 */
+					if (vp.getHeight() - vpMousePosition.y < 30 && vp.getHeight() - vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y + (30 + vpMousePosition.y - vp.getHeight()) * 2;
+					}
+				}
+
+				// Make sure we aren't already scrolled all the way up
+				if (newY == null && treeVisibleRectangle.y != 0) {
+					/*
+					 * Get Y coordinate for scrolling up
+					 */
+					if (30 > vpMousePosition.y && vpMousePosition.y > 0) {
+						newY = treeVisibleRectangle.y - (30 - vpMousePosition.y) * 2;
+					}
+				}
+
+				// Do the scroll
+				if (newY != null) {
+					Rectangle treeNewVisibleRectangle = new Rectangle(treeVisibleRectangle.x, newY, treeVisibleRectangle.width, treeVisibleRectangle.height);
+					tree.scrollRectToVisible(treeNewVisibleRectangle);
+				}
+			}
+
+
 			Point dragPoint = dtde.getLocation();
 			if (dragPoint == null)
 				return;
