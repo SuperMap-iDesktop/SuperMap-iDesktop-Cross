@@ -106,4 +106,12 @@ public class ComponentFactory {
 
 		return textField;
 	}
+
+	public static SmTextFieldLegit createNumericTextField(double defaultValue, ISmTextFieldLegit smTextFieldLegit) {
+		SmTextFieldLegit textField = new SmTextFieldLegit();
+		textField.setSmTextFieldLegit(smTextFieldLegit);
+		textField.setText(String.valueOf(defaultValue));
+
+		return textField;
+	}
 }

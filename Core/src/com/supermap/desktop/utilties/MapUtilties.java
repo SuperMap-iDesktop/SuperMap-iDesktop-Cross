@@ -3,6 +3,12 @@ package com.supermap.desktop.utilties;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -19,7 +25,6 @@ import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -543,5 +548,31 @@ public class MapUtilties {
 				index = trackingLayer.indexOf(tag);
 			}
 		}
+	}
+
+	/**
+	 * 获取高亮的对象
+	 *
+	 * @param geometry 需要高亮的对象
+	 * @return 高亮风格的对象
+	 */
+	public static Geometry getHeightGeometry(Geometry geometry) {
+		geometry = geometry.clone();
+		if (geometry instanceof Geometry3D) {
+			if (!(geometry instanceof GeoText3D)) {
+				GeoStyle3D geoStyle3D = new GeoStyle3D();
+				geoStyle3D.setLineColor(Color.RED);
+				geoStyle3D.setLineWidth(1);
+				((Geometry3D) geometry).setStyle3D(geoStyle3D);
+			}
+		} else {
+			if (!(geometry instanceof GeoText)) {
+				GeoStyle geoStyle = new GeoStyle();
+				geoStyle.setLineColor(Color.RED);
+				geoStyle.setLineWidth(1);
+				geometry.setStyle(geoStyle);
+			}
+		}
+		return geometry;
 	}
 }

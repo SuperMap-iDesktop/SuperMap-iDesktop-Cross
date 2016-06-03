@@ -16,8 +16,7 @@ public class GeometryNodeFactory {
 
 	public static IGeometryNode getGeometryNode(IGeometry geometry) {
 		if (geometry instanceof DGeoCompound) {
-			// FIXME: 2016/5/23
-			return null;
+			return new JPanelGeometryCompound(geometry);
 		}
 		if (geometry instanceof DGeoPoint3D || geometry instanceof DGeoPoint || geometry instanceof IMultiPartFeature) {
 			return new JPanelGeometryNodeVector(geometry);

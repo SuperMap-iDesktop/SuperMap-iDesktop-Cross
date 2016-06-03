@@ -6,12 +6,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoStyle3D;
-import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
-import com.supermap.data.Geometry3D;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Application;
@@ -36,7 +31,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +44,7 @@ import java.util.HashMap;
 
 public class JDialogFieldOperationSetting extends SmDialog implements ItemListener, ActionListener, ListSelectionListener {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String TrackingLayerTag = "Tag_OperationTypeGeometry";
@@ -99,7 +93,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 获取字段操作的属性数据
-	 * 
+	 *
 	 * @return
 	 */
 	public java.util.Map<String, Object> getPropertyData() {
@@ -205,7 +199,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 设置地图数据，初始化图层选择控件（ComboBoxEditLayer），而后触发相应事件，回调 comboBoxEditLayerSelectChanged 进入下一步的设置
-	 * 
+	 *
 	 * @param map
 	 */
 	public void setMap(Map map) {
@@ -370,7 +364,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 设置选中的可编辑图层，刷新 Table，设置默认选中行，触发相应事件，回调 tableSelectionChanged 进入下一步的设置
-	 * 
+	 *
 	 * @param layer
 	 */
 	private void setEditLayer(Layer layer) {
@@ -441,21 +435,21 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			}
 
 			switch (operationType) {
-			case OperationType.NULL:
-				this.radioButtonNull.setSelected(true);
-				break;
-			case OperationType.AVG:
-				this.radioButtonAVG.setSelected(true);
-				break;
-			case OperationType.SUM:
-				this.radioButtonSum.setSelected(true);
-				break;
-			case OperationType.GEOMETRY:
-				this.radioButtonGeometry.setSelected(true);
-				break;
-			default:
-				// 默认 NONE，就什么都不选
-				break;
+				case OperationType.NULL:
+					this.radioButtonNull.setSelected(true);
+					break;
+				case OperationType.AVG:
+					this.radioButtonAVG.setSelected(true);
+					break;
+				case OperationType.SUM:
+					this.radioButtonSum.setSelected(true);
+					break;
+				case OperationType.GEOMETRY:
+					this.radioButtonGeometry.setSelected(true);
+					break;
+				default:
+					// 默认 NONE，就什么都不选
+					break;
 			}
 		}
 		setControlsEnabled(fieldOperations);
@@ -503,7 +497,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 判断可用类型（availableType）是否包含指定类型（type）
-	 * 
+	 *
 	 * @param availableType
 	 * @param type
 	 * @return
@@ -715,7 +709,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 在 ComboBoxGeometryItem 上显示指定 fieldName 的 fieldValue
-	 * 
+	 *
 	 * @param fieldName
 	 */
 	private void refreshComboBoxGeometryItems(String fieldName, String fieldCaption) {
@@ -789,7 +783,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 更新选中字段的操作数据
-	 * 
+	 *
 	 * @param operationData
 	 */
 	private void updateSelectedOperationsData(IOperationData operationData) {
@@ -802,7 +796,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 在地图上高亮显示指定 id 的几何对象
-	 * 
+	 *
 	 * @param id
 	 */
 	private void highlightGeometry(int id) {
@@ -817,21 +811,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			recordset.seekID(id);
 			geometry = recordset.getGeometry();
 
-			if (geometry instanceof Geometry3D) {
-				if (!(geometry instanceof GeoText3D)) {
-					GeoStyle3D geoStyle3D = new GeoStyle3D();
-					geoStyle3D.setLineColor(Color.RED);
-					geoStyle3D.setLineWidth(1);
-					((Geometry3D) geometry).setStyle3D(geoStyle3D);
-				}
-			} else {
-				if (!(geometry instanceof GeoText)) {
-					GeoStyle geoStyle = new GeoStyle();
-					geoStyle.setLineColor(Color.RED);
-					geoStyle.setLineWidth(1);
-					geometry.setStyle(geoStyle);
-				}
-			}
+			geometry = MapUtilties.getHeightGeometry(geometry);
 			trackingLayer.add(geometry, TrackingLayerTag);
 			this.map.refresh();
 		} catch (Exception e) {
@@ -843,6 +823,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			}
 		}
 	}
+
+
 
 	private void removeTrackingTags() {
 		TrackingLayer trackingLayer = this.map.getTrackingLayer();
@@ -865,7 +847,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private class FieldOperationTableModel extends AbstractTableModel {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		private static final int FIELD_NAME = 0;
@@ -993,7 +975,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		/**
 		 * 可用的字段操作类型。仅数值型字段（double,float,short,int,long）支持加权平均。
-		 * 
+		 *
 		 * @return
 		 */
 		public int getAvailableOperationType() {
@@ -1048,9 +1030,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 可用的字段操作类型。
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private class OperationType {
 		public static final int NONE = 0;
@@ -1062,29 +1043,29 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 	/**
 	 * 对应不同操作类型的附加数据。比如 AVG 有加权平均的字段选择，保存对象有对象的选择等。
-	 * 
-	 * @author highsad
 	 *
+	 * @author highsad
 	 */
 	private interface IOperationData {
 
 		/**
 		 * 获取对应的字段操作类型。
-		 * 
+		 *
 		 * @return
 		 */
 		int getOperationType();
 
 		/**
 		 * 获取该数据的字符串表述。
-		 * 
+		 *
 		 * @return
 		 */
 		String getDescription();
 	}
 
 	private class DefaultOperationData implements IOperationData {
-		private int operationType = OperationType.NONE;;
+		private int operationType = OperationType.NONE;
+		;
 		private String description;
 
 		public DefaultOperationData(int operationType, String description) {
