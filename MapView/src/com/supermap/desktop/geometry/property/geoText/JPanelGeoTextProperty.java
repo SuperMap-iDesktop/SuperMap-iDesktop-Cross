@@ -66,13 +66,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 					fireGeoTextChanged(true);
 					return;
 				}
-				if (newValue.equals(TextStyleType.FONTWIDTH)) {
-					// 设置字宽时不刷新预览界面，但需要设置计算出的字宽
-					textStyle.setFontWidth((double) panelBasicSet.getResultMap().get(newValue));
-					fireGeoTextChanged(true);
-					return;
-				}
-				if (!newValue.equals(TextStyleType.FIXEDSIZE) || !newValue.equals(TextStyleType.FONTWIDTH)) {
+				if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
 
 					ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newTextStyleValue);
 					fireGeoTextChanged(true);
@@ -146,7 +140,10 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		panelTextPart = new TextPartPanel(geometry);
 		if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
 			panelBasicSet = new TextBasicPanel();
-			panelBasicSet.setInitInfo(this.textStyle, true, false);
+			panelBasicSet.setTextStyle(textStyle);
+			panelBasicSet.setProperty(true);
+			panelBasicSet.setUnityVisible(false);
+			panelBasicSet.initTextBasicPanel();
 			this.setLayout(new GridBagLayout());
 			this.add(initLeftPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH)
 					.setInsets(2).setWeight(1, 1));
