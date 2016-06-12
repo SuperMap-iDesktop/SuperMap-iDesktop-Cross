@@ -59,6 +59,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
+		this.textStyleContainer.setTheme(themeLabel);
 		this.textStyleContainer.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);

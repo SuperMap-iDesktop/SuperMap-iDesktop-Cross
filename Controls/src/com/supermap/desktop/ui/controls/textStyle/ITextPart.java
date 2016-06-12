@@ -18,10 +18,15 @@ public interface ITextPart extends IGeoTextStyle{
 	public void setRotationEnabled(boolean enabled);
 	
 	/**
-	 * 获取和TextStyleType类容对应的容器
+	 * 获取和TextStyleType内容对应的容器
 	 * @return
 	 */
 	public HashMap<TextPartType,JComponent> getComponentsMap();
+	/**
+	 * 获取TextPart容器
+	 * @return
+	 */
+	public HashMap<Integer, Object> getTextPartInfo();
 	
 	public void addTextPartChangeListener(TextPartChangeListener l);
 

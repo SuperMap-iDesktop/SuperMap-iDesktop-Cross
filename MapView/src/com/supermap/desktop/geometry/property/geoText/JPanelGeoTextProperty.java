@@ -55,7 +55,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			@Override
 			public void modify(TextStyleType newValue) {
 				Object newTextStyleValue = panelBasicSet.getResultMap().get(newValue);
-				String text = ((JTextField) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
+				String text = ((JTextArea) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
 				if (null == newTextStyleValue || StringUtilties.isNullOrEmptyString(text)) {
 					return;
 				}
@@ -84,7 +84,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			@Override
 			public void modify(TextPartType newValue) {
 				Object newTextPartValue = panelTextPart.getResultMap().get(newValue);
-				String text = ((JTextField) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
+				String text = ((JTextArea) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
 
 				if (null == newTextPartValue || StringUtilties.isNullOrEmptyString(text)) {
 					return;
@@ -207,12 +207,11 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		// 设置子对象参数
 		if (geometry instanceof GeoText && checkboxApplyForTextPart.isSelected()) {
 			((GeoText) geometry).setTextStyle(textStyle);
-			TextPart textPart = ((GeoText) geometry).getPart((int) panelTextPart.getResultMap().get(TextPartType.INFO));
 			if (null != panelTextPart.getResultMap().get(TextPartType.ROTATION)) {
-				textPart.setRotation((double) panelTextPart.getResultMap().get(TextPartType.ROTATION));
-			}
-			if (null != panelTextPart.getResultMap().get(TextPartType.TEXT)) {
-				textPart.setText((String) panelTextPart.getResultMap().get(TextPartType.TEXT));
+				for (int i = 0; i < ((GeoText) geometry).getPartCount(); i++) {
+					((GeoText) geometry).getPart(i).setRotation(((TextPart)panelTextPart.getTextPartInfo().get(i)).getRotation());
+					((GeoText) geometry).getPart(i).setText(((TextPart)panelTextPart.getTextPartInfo().get(i)).getText());
+				}
 			}
 		}
 		if (geometry instanceof GeoText && !checkboxApplyForTextPart.isSelected()) {
