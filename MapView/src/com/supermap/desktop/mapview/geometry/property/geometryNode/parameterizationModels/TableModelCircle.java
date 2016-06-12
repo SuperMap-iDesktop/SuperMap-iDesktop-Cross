@@ -12,8 +12,8 @@ public class TableModelCircle extends GeometryParameterModel {
 	private GeoCircle geometry;
 	private static final String[] rows = new String[]{
 			ControlsProperties.getString("String_GeoEllipse_Center"),
-			"  X",
-			"  Y",
+			"X",
+			"Y",
 			ControlsProperties.getString("String_GeoCircle_Radius"),
 	};
 

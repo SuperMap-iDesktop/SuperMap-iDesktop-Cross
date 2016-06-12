@@ -6,6 +6,7 @@ import com.supermap.data.Point3Ds;
 import com.supermap.data.PointMs;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.JTreeUtilties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPoint3DFeature;
@@ -41,6 +42,8 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 
 	private JTree tree = new JTree();
 	private JPanel panelSubGeometry = new JPanel();
+	private boolean isSubPanel = false;
+	private JScrollPane scrolPanel;
 
 
 	public JPanelGeometryCompound(IGeometry geometry) {
@@ -69,6 +72,7 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 	}
 
 	private void initLayout() {
+		this.removeAll();
 		this.setLayout(new GridBagLayout());
 		this.add(labelSubGeometryCount, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0).setAnchor(GridBagConstraints.WEST));
 		this.add(textFieldSubGeometryCount, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 5).setWeight(0, 0));
@@ -79,11 +83,17 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 		this.add(labelNodeCount, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setWeight(0, 0).setAnchor(GridBagConstraints.WEST));
 		this.add(textFieldNodeCount, new GridBagConstraintsHelper(1, 2, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 5).setWeight(0, 0));
 
-		this.add(new JScrollPane(tree), new GridBagConstraintsHelper(0, 3, 2, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 5, 5).setWeight(0, 1));
+		if (!isSubPanel()) {
+			this.scrolPanel = new JScrollPane(tree);
+			this.add(scrolPanel, new GridBagConstraintsHelper(0, 3, 2, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 5, 5).setWeight(0, 1));
 
-		panelSubGeometry.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_Label_CurrentPartInfo")));
-		panelSubGeometry.setLayout(new GridBagLayout());
-		this.add(panelSubGeometry, new GridBagConstraintsHelper(2, 0, 1, 4).setFill(GridBagConstraints.BOTH).setInsets(10, 5, 0, 10).setWeight(1, 1));
+			panelSubGeometry.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_Label_CurrentPartInfo")));
+			panelSubGeometry.setLayout(new GridBagLayout());
+			this.add(panelSubGeometry, new GridBagConstraintsHelper(2, 0, 1, 4).setFill(GridBagConstraints.BOTH).setInsets(10, 5, 0, 10).setWeight(1, 1));
+		} else {
+			this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 2, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 5, 5).setWeight(0, 1));
+			this.add(new JPanel(), new GridBagConstraintsHelper(2, 0, 1, 4).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(10, 5, 0, 10));
+		}
 	}
 
 	private void initListeners() {
@@ -98,9 +108,11 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 					}
 					subGeometryNode = GeometryNodeFactory.getGeometryNode(((GeometryCompoundTreeNode) lastSelectedPathComponent).getGeometry());
 					if (subGeometryNode != null && subGeometryNode != JPanelGeometryCompound.this) {
-
 						panelSubGeometry.removeAll();
 						panelSubGeometry.add(subGeometryNode.getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+						if (subGeometryNode instanceof JPanelGeometryCompound) {
+							((JPanelGeometryCompound) subGeometryNode).setSubPanel(true);
+						}
 						Window windowAncestor = SwingUtilities.getWindowAncestor(JPanelGeometryCompound.this);
 						if (windowAncestor != null) {
 							windowAncestor.repaint();
@@ -121,6 +133,7 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 	private void initComponentState() {
 		if (tree.getRowCount() > 0) {
 			tree.setSelectionRow(0);
+			JTreeUtilties.expandTree(tree, true);
 		}
 		textFieldGeometryType.setText(GeometryTypeUtilties.toString(this.geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(this.geometry.getPartCount()));
@@ -208,5 +221,16 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 	@Override
 	public void setIsCellEditable(boolean isCellEditable) {
 		// 不能修改
+	}
+
+	public boolean isSubPanel() {
+		return isSubPanel;
+	}
+
+	public void setSubPanel(boolean isSubPanel) {
+		if (this.isSubPanel != isSubPanel) {
+			this.isSubPanel = isSubPanel;
+			initLayout();
+		}
 	}
 }

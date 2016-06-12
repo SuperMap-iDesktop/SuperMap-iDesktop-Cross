@@ -11,8 +11,8 @@ public class TableModelEllipse extends GeometryParameterModel {
 	private GeoEllipse geometry;
 	private static final String[] rows = new String[]{
 			ControlsProperties.getString("String_GeoEllipse_Center"),
-			"  X",
-			"  Y",
+			"X",
+			"Y",
 			ControlsProperties.getString("String_Geometry_Rotation"),
 			ControlsProperties.getString("String_Geometry_SemimajorAxis"),
 			ControlsProperties.getString("String_Geometry_SemiminorAxis"),

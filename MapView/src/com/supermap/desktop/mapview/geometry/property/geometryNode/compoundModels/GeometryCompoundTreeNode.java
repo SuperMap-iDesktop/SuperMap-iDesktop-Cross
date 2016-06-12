@@ -80,6 +80,9 @@ public class GeometryCompoundTreeNode extends DefaultMutableTreeNode {
 
 	@Override
 	public Enumeration children() {
+		if (childrens == null) {
+			childrens = new ArrayList<>();
+		}
 		return new IteratorEnumerationAdapter<>(childrens.iterator());
 	}
 

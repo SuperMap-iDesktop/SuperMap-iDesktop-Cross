@@ -11,8 +11,8 @@ public class TableModelRoundRectangle extends GeometryParameterModel {
 	private GeoRoundRectangle geometry;
 	private static final String[] rows = new String[]{
 			ControlsProperties.getString("String_Geometry_Center"),
-			"  X",
-			"  Y",
+			"X",
+			"Y",
 			ControlsProperties.getString("String_Geometry_Rotation"),
 			ControlsProperties.getString("String_Geometry_Height"),
 			ControlsProperties.getString("String_Geometry_Width"),
