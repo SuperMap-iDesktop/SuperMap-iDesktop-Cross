@@ -10,12 +10,15 @@ import com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizat
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilties.GeometryTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
+import org.jdesktop.swingx.JXTreeTable;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 /**
@@ -25,7 +28,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	private IGeometry geometry;
 	private JLabel labelGeometryType = new JLabel();
 	private JTextField textFieldGeometryType = new JTextField();
-	private JTable table = new JTable();
+	private JXTreeTable table;
 	private GeometryNodeParameterTableModel tableModel;
 	private DecimalFormat df = new DecimalFormat("0.0000");
 	private JLabel labelControlInfo = new JLabel();
@@ -67,7 +70,9 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 
 	private void initComponents() {
 		tableModel = new GeometryNodeParameterTableModel(geometry);
-		table.setModel(tableModel);
+		table = new JXTreeTable(tableModel);
+		table.setRootVisible(false);
+		table.setShowsRootHandles(true);
 		initTable();
 		textFieldGeometryType.setMinimumSize(new Dimension(250, 23));
 		textFieldGeometryType.setPreferredSize(new Dimension(250, 23));
@@ -85,10 +90,6 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 			defaultTableCellRenderer.setPreferredSize(new Dimension(0, 0));
 			table.getTableHeader().setDefaultRenderer(defaultTableCellRenderer);
 		}
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.setRowHeight(23);
-		table.setColumnSelectionAllowed(true);
-		table.setRowSelectionAllowed(true);
 		table.setDefaultRenderer(Double.class, cellRenderer);
 		if (table.getColumnCount() > 2) {
 			table.getColumnModel().getColumn(0).setMaxWidth(120);
@@ -111,6 +112,19 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				initTable();
+			}
+		});
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Point point = e.getPoint();
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && table.rowAtPoint(point) == 0 && table.columnAtPoint(point) == 0) {
+					if (table.isExpanded(0)) {
+						table.collapseRow(0);
+					} else {
+						table.expandRow(0);
+					}
+				}
 			}
 		});
 	}

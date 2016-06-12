@@ -45,7 +45,7 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 	private LayerEditableChangedListener layerEditableChangedListener = new LayerEditableChangedListener() {
 		@Override
 		public void editableChanged(LayerEditableChangedEvent layerEditableChangedEvent) {
-			if (!SwingUtilities.getWindowAncestor(GeometryNodePropertyControl.this).isVisible()) {
+			if (SwingUtilities.getWindowAncestor(GeometryNodePropertyControl.this) == null || !SwingUtilities.getWindowAncestor(GeometryNodePropertyControl.this).isVisible()) {
 				currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
 				return;
 			}

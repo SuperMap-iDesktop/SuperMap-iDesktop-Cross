@@ -12,8 +12,8 @@ public class TableModelArc extends GeometryParameterModel {
 	private GeoArc geometry;
 	private static final String[] rows = new String[]{
 			ControlsProperties.getString("String_GeoEllipse_Center"),
-			"  X",
-			"  Y",
+			"X",
+			"Y",
 			ControlsProperties.getString("String_GeoCircle_Radius"),
 			ControlsProperties.getString("String_GeoCircle_StartAngle"),
 			ControlsProperties.getString("String_GeoCircle_SweepAngle")
