@@ -6,7 +6,6 @@ import com.supermap.data.TextPart;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 
@@ -69,5 +68,10 @@ public class DGeoText extends AbstractGeometry implements ITextFeature, IMultiPa
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean setPart(int partIndex, TextPart part) {
+		return this.geoText != null && this.geoText.setPart(partIndex, part);
 	}
 }

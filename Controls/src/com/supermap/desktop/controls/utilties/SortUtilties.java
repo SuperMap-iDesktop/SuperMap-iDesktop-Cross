@@ -3,6 +3,7 @@ package com.supermap.desktop.controls.utilties;
 import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.Enum;
 import com.supermap.desktop.ui.controls.DataCell;
 
 import java.awt.*;
@@ -73,7 +74,7 @@ public class SortUtilties {
 			if (o1 instanceof Number) {
 				return compare((Number) o1, (Number) o2);
 			} else if (o1 instanceof String) {
-				return ((String) o1).compareTo((String) o2);
+				return compare((String) o1, (String) o2);
 			} else if (o1 instanceof Date) {
 				return compare((Date) o1, (Date) o2);
 			} else if (o1 instanceof Boolean) {
@@ -86,10 +87,17 @@ public class SortUtilties {
 				return compare((Datasource) o1, (Datasource) o2);
 			} else if (o1 instanceof Colors) {
 				return compare((Colors) o1, (Colors) o2);
+			} else if (o1 instanceof Enum) {
+				return compare(((Enum) o1), ((Enum) o2));
 			} else {
 				return String.valueOf(o1).compareTo(String.valueOf(o2));
 			}
+
 		}
+	}
+
+	private static int compare(String o1, String o2) {
+		return o1.compareTo(o2);
 	}
 
 	private static int compare(Colors o1, Colors o2) {
@@ -182,5 +190,9 @@ public class SortUtilties {
 		} else {
 			return -1;
 		}
+	}
+
+	private static int compare(Enum b1, Enum b2) {
+		return compare(b1.name(), b2.name());
 	}
 }

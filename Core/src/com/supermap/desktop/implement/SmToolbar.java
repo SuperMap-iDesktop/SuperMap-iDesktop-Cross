@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.XMLSeparator;
 import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilties.SystemPropertyUtilties;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -86,7 +87,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			buttonMore.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					popupMenu.show(buttonMore.getParent(), (int) (buttonMore.getLocation().getX() + buttonMore.getPreferredSize().getWidth() * 0.5 - popupMenu.getPreferredSize().getWidth() * 0.5), 0);
+					popupMenu.show(buttonMore.getParent(), (int) (buttonMore.getLocation().getX() + buttonMore.getWidth() - popupMenu.getPreferredSize().getWidth() + 2), 0);
 
 				}
 
@@ -104,15 +105,16 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			};
 			popupMenu.setLayout(new GridBagLayout());
 			popupMenu.addPopupMenuListener(new PopupMenuListener() {
-
-
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					// FIXME: 2016/5/25 以后在自己实现ToolTipManager
+					ToolTipManager.sharedInstance().setEnabled(false);
 					checkButtonsState();
 				}
 
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+					ToolTipManager.sharedInstance().setEnabled(true);
 				}
 
 				@Override
@@ -194,7 +196,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		int widthCount = 0;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
-				if (widthCount == -1) {
+				if (widthCount == -1) {                    // 已经放不下了 直接丢到弹出框里面
 					addToPopUpMenu((Component) item);
 				} else if (isCanPlaced(widthCount, item)) {
 					widthCount += ((Component) item).getPreferredSize().getWidth();
@@ -222,7 +224,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	 */
 	private boolean isCanPlaced(int widthCount, IBaseItem item) {
 		int lastWidth = this.getWidth() - widthCount;
-		int moreButtonSize = 30;
+		int moreButtonSize = 40;
 		if (lastWidth < ((Component) item).getPreferredSize().getWidth()) {
 			// 当前剩余长度已经不能放置
 			return false;
@@ -245,8 +247,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		// 再放一个控件后位置不够了需要看能不能把剩下的控件全放上
 		for (int i = start + 1; i < items.size(); i++) {
 			// 考虑剩下的项目长度比moreButton短的情况
-			moreButtonSize -= ((Component) items.get(i)).getPreferredSize().getWidth();
-			if (moreButtonSize < 0) {
+			lastWidth -= ((Component) items.get(i)).getPreferredSize().getWidth();
+			if (lastWidth < 0) {
 				return false;
 			}
 		}
@@ -457,7 +459,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	}
 
 	public void initPreferredSize() {
-		int width = 0;
+		int width = SystemPropertyUtilties.isWindows() ? 0 : 12;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
 				width += ((Component) item).getPreferredSize().getWidth();
@@ -591,4 +593,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			baseItem.setCtrlAction(ctrlAction);
 		}
 	}
+
+
 }

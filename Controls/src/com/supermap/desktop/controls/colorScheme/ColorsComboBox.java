@@ -10,8 +10,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 /**
@@ -51,13 +50,15 @@ public class ColorsComboBox extends JComboBox {
 
 	private ColorsCellRenderer colorsCellRenderer;
 
-	private transient ActionListener customColorsListener;
 
 	private transient Colors customColors;
 
 	private static final String defaultColorName = "DefaultGrid";
 
 	private int selectCount;
+	private boolean isAddItem = false;
+	private boolean isSelectedUserDefineItem = false;
+	private int lastSelectedIndex;
 
 
 	/**
@@ -67,24 +68,19 @@ public class ColorsComboBox extends JComboBox {
 		super();
 		colorsCellRenderer = new ColorsCellRenderer(this);
 		this.setRenderer(colorsCellRenderer);
-		customColorsListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (getSelectedIndex() != -1 && getSelectedIndex() == getItemCount() - 1) {
-					ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
-					if (dialog.showDialog() == DialogResult.OK) {
-						ColorSchemeManager.getColorSchemeManager().addColorScheme(dialog.getColorScheme());
-						setSelectedIndex(getItemCount() - 2);
-					}
-				}
-			}
-
-		};
 
 		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
 		initComboBox();
 		this.setMaximumRowCount(20);
 		this.setSelectedIndex(selectCount);
+	}
+
+	private void showUserDefineDialog() {
+		ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
+		if (dialog.showDialog() == DialogResult.OK) {
+			ColorSchemeManager.getColorSchemeManager().addColorScheme(dialog.getColorScheme());
+			setSelectedIndex(getItemCount() - 2);
+		}
 	}
 
 	/**
@@ -114,7 +110,6 @@ public class ColorsComboBox extends JComboBox {
 			this.removeAllItems();
 			ItemListener[] itemListeners = this.getItemListeners();
 			removeItemListeners(itemListeners);
-			this.removeActionListener(customColorsListener);
 			ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
 			java.util.List<ColorScheme> colorSchemeList = colorSchemeManager.getColorSchemeList();
 			for (int i = 0; i < colorSchemeList.size(); i++) {
@@ -125,7 +120,6 @@ public class ColorsComboBox extends JComboBox {
 			}
 			customColors = Colors.makeGradient(32, ColorGradientType.RAINBOW, false);
 			this.addItem(customColors);
-			this.addActionListener(customColorsListener);
 			addItemListeners(itemListeners);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -162,6 +156,37 @@ public class ColorsComboBox extends JComboBox {
 		removeColorChangedListener();
 		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
 	}
+
+	@Override
+	public void addItem(Object item) {
+		isAddItem = true;
+		super.addItem(item);
+		isAddItem = false;
+	}
+
+	@Override
+	protected void fireItemStateChanged(ItemEvent e) {
+		if (isSelectedUserDefineItem) {
+			// 选中最后一项时置空，这个时候不发送改变事件
+			return;
+		}
+		if (isAddItem || e.getStateChange() == ItemEvent.DESELECTED || e.getItem() != getItemAt(getItemCount() - 1)) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				lastSelectedIndex = getSelectedIndex();
+			}
+			super.fireItemStateChanged(e);
+		} else {
+			isSelectedUserDefineItem = true;
+			if (getItemCount() > lastSelectedIndex) {
+				this.setSelectedIndex(lastSelectedIndex);
+			} else {
+				this.setSelectedIndex(-1);
+			}
+			this.setPopupVisible(false);
+			showUserDefineDialog();
+			isSelectedUserDefineItem = false;
+		}
+	}
 }
 
 class ColorsCellRenderer extends JLabel implements ListCellRenderer {
@@ -188,8 +213,6 @@ class ColorsCellRenderer extends JLabel implements ListCellRenderer {
 		} else {
 			colorsLabel.setBorder(new LineBorder(Color.white, 1, false));
 		}
-
-
 		return colorsLabel;
 	}
 }

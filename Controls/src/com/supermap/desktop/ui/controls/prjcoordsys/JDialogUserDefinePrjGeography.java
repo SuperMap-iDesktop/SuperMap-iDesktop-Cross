@@ -99,4 +99,7 @@ public class JDialogUserDefinePrjGeography extends SmDialog {
 
 	}
 
+	public void clean() {
+		panelGeoCoordSys.dispose();
+	}
 }

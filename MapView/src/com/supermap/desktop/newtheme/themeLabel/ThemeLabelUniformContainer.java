@@ -1,20 +1,12 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.DatasetVector;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.newtheme.commonPanel.TextStyleContainer;
-import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
+import com.supermap.desktop.newtheme.commonPanel.*;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeType;
-import com.supermap.ui.MapControl;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 
@@ -67,6 +59,7 @@ public class ThemeLabelUniformContainer extends ThemeChangePanel {
 		this.panelProperty = new ThemeLabelPropertyPanel(themeLabelLayer);
 		this.panelAdvance = new ThemeLabelAdvancePanel(themeLabelLayer);
 		this.textStyleContainer = new TextStyleContainer(textStyle, map, themeLabelLayer);
+		this.textStyleContainer.setTheme(themeLabel);
 		this.textStyleContainer.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelProperty.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);
 		this.panelAdvance.addPropertyChangeListener("ThemeChange", this.propertyChangeListener);

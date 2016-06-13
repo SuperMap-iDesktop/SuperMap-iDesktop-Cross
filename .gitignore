@@ -68,3 +68,4 @@ org.sonar.ide.eclipse.core.prefs
 /Configuration/Products.xml
 /Configuration/URL.config
 /log
+/Templates/Projection/Projection.xml

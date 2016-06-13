@@ -81,7 +81,7 @@ public class JPanelFormat extends JPanel {
 			this.smTextFieldA.setText(String.valueOf(a));
 			int m = (int) Math.floor((Math.abs(value) - Math.abs(a)) * 60);
 			this.smTextFieldM.setText(String.valueOf(m));
-			double s = Math.floor((Math.abs(value) - Math.abs(a) - m * 60) * 60);
+			double s = Math.floor((Math.abs(value) - Math.abs(a) - (double) m / 60) * 3600);
 			this.smTextFieldS.setText(String.valueOf(s));
 		}
 	}

@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction.property;
 
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.JTable;
 
@@ -10,14 +9,10 @@ import net.infonode.util.Direction;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.utilties.TabularUtilties;
 import com.supermap.mapping.*;
@@ -50,10 +45,14 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				this.map = formMap.getMapControl().getMap();
 				TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-				Dataset dataset = map.getLayers().get(0).getDataset();
-				if (null!=dataset&&dataset instanceof DatasetVector) {
+				//获取当前活动图层对应的数据集
+				Dataset dataset = formMap.getActiveLayers()[0].getDataset();
+				if (null != dataset && dataset instanceof DatasetVector) {
+					Recordset recordset = ((DatasetVector)dataset).getRecordset(false, CursorType.DYNAMIC);
+					// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
 					this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
-					TabularUtilties.refreshTabularForm((DatasetVector) dataset);
+					this.tabular.setText(dataset.getName()+"@"+dataset.getDatasource().getAlias());
+					this.tabular.setRecordset(recordset);
 				}
 				// 清空tabularMap保证一个map对应一个属性表
 				this.tabularMap.clear();
@@ -68,6 +67,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				this.tabularTable = tabular.getjTableTabular();
 				this.mapDrawingListener = new LocalMapDrawingListener(tabular);
 				registEvents();
+				formMap.actived();
 				this.formManager.addActiveFormChangedListener(this.activeFormChangeListener);
 				this.newTabWindow.addListener(new DockingWindowAdapter() {
 
@@ -109,14 +109,13 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 			Layer layer = event.getMap().getLayers().get(0);
 			Selection selection = layer.getSelection();
 			Recordset recordset = selection.toRecordset();
-			java.util.Map<Integer, Feature> featureMap = recordset.getAllFeatures();
-			int[] rows = new int[featureMap.size()];
-			Iterator<?> iterator = featureMap.entrySet().iterator();
+			int[] rows = new int[recordset.getAllFeatures().size()];
 			int i = 0;
-			while (iterator.hasNext()) {
-				java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
-				rows[i] = ((Feature) entry.getValue()).getID() - 1;
+			recordset.moveFirst();
+			while (!recordset.isEOF()) {
+				rows[i] = recordset.getID() - 1;
 				i++;
+				recordset.moveNext();
 			}
 			if (isRightRows(rows, tabular.getRowCount())) {
 				tabular.addRow(rows);
@@ -214,17 +213,6 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
-			int formMapCount = 0;
-			for (int i = 0; i < formManager.getCount(); i++) {
-				if (formManager.get(i) instanceof IFormMap) {
-					// 遍历所有的窗口，如果为地图窗口则记录下来
-					formMapCount++;
-				}
-			}
-			if (0==formMapCount) {
-				// 地图窗口关闭时恢复dockwindow的w位置
-				splitWindow.setWindows(splitWindow.getChildWindow(1), null);
-			}
 			if (null == e.getNewActiveForm()) {
 				// 当所有地图关闭时将splitWindow设置为空，重新关联,并移除事件
 				splitWindow = null;

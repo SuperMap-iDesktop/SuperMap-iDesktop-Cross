@@ -71,6 +71,7 @@ public class JDialogRotateParams extends SmDialog {
 	}
 
 	private void initializeComponents(Point2D center) {
+		setTitle(MapEditorProperties.getString("String_GeometryOperation_Rotate_Title"));
 		this.labelCenterX = new JLabel(MapEditorProperties.getString("String_GeometryOperation_Rotate_CenterPointX"));
 		this.labelCenterY = new JLabel(MapEditorProperties.getString("String_GeometryOperation_Rotate_CenterPointY"));
 		this.labelAngle = new JLabel(MapEditorProperties.getString("String_GeometryOperation_Rotate_Parameter"));

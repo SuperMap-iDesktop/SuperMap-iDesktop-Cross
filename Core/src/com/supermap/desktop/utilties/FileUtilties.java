@@ -116,6 +116,7 @@ public class FileUtilties {
 	public static boolean writeToFile(File file, String value) {
 		try {
 			if (!file.exists()) {
+				new File(file.getParent()).mkdirs();
 				file.createNewFile();
 			}
 			if (file.exists()) {

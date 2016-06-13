@@ -3,6 +3,12 @@ package com.supermap.desktop.utilties;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -15,6 +21,7 @@ import com.supermap.mapping.LayerSettingVector;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -25,7 +32,37 @@ public class MapUtilties {
 	private MapUtilties() {
 		// 工具类不提供构造函数
 	}
+	
+	/**
+	 * 获取MapControl
+	 *
+	 * @return
+	 */
+	public static MapControl getMapControl() {
+		MapControl mapControl = null;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (null != formMap.getMapControl()) {
+				mapControl = formMap.getMapControl();
+			}
+		}
+		return mapControl;
+	}
 
+	/**
+	 * 获取当前地图
+	 * @return
+	 */
+	public static Map getActiveMap(){
+		return getMapControl().getMap();
+	}
+	
+	/**
+	 * 通过图层表达式获取当前地图
+	 * @param map
+	 * @param caption
+	 * @return
+	 */
 	public static Layer findLayerByCaption(Map map, String caption) {
 		Layer resultLayer = null;
 		try {
@@ -139,7 +176,6 @@ public class MapUtilties {
 		return result;
 	}
 
-
 	/**
 	 * 获取地图的所有子图层
 	 * 
@@ -244,31 +280,31 @@ public class MapUtilties {
 		return layers;
 	}
 
-	//有点问题，不是根图层时返回空字符串
-//	/**
-//	 * 获取可用的图层的标题
-//	 *
-//	 * @param map
-//	 *            地图
-//	 * @param parent
-//	 *            所在的分组，如果是根图层，则为null
-//	 * @param caption
-//	 *            指定的图层标题
-//	 * @return
-//	 */
-//	public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
-//		String layerCaption = "";
-//
-//		try {
-//			if (parent == null) {
-//				layerCaption = map.getLayers().getAvailableCaption(caption);
-//			}
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//
-//		return layerCaption;
-//	}
+	// 有点问题，不是根图层时返回空字符串
+	// /**
+	// * 获取可用的图层的标题
+	// *
+	// * @param map
+	// * 地图
+	// * @param parent
+	// * 所在的分组，如果是根图层，则为null
+	// * @param caption
+	// * 指定的图层标题
+	// * @return
+	// */
+	// public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
+	// String layerCaption = "";
+	//
+	// try {
+	// if (parent == null) {
+	// layerCaption = map.getLayers().getAvailableCaption(caption);
+	// }
+	// } catch (Exception ex) {
+	// Application.getActiveApplication().getOutput().output(ex);
+	// }
+	//
+	// return layerCaption;
+	// }
 
 	/**
 	 * 添加指定数据集到地图中
@@ -316,46 +352,38 @@ public class MapUtilties {
 		return layer;
 	}
 
-// 直接添加到LayerGroup中在对网络数据集操作时子数据集图层没有移动
-// /**
-//	 * 添加指定数据集到地图中
-//	 *
-//	 * @param map
-//	 * @param dataset
-//	 * @param parent
-//	 * @param addToHead
-//	 * @return
-//	 */
-//	public static Layer addDatasetToMap(Map map, Dataset dataset, LayerGroup parent, boolean addToHead) {
-//		Layer layer = null;
-//		try {
-//			if (dataset != null) {
-//				layer = addDatasetToMap(map, dataset, addToHead);
-//
-//				// 将图层移动到分组中
-//				if (parent != null) {
-//					parent.add(layer);
-//				}
-//			}
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//
-//		return layer;
-//	}
+	// 直接添加到LayerGroup中在对网络数据集操作时子数据集图层没有移动
+	// /**
+	// * 添加指定数据集到地图中
+	// *
+	// * @param map
+	// * @param dataset
+	// * @param parent
+	// * @param addToHead
+	// * @return
+	// */
+	// public static Layer addDatasetToMap(Map map, Dataset dataset, LayerGroup parent, boolean addToHead) {
+	// Layer layer = null;
+	// try {
+	// if (dataset != null) {
+	// layer = addDatasetToMap(map, dataset, addToHead);
+	//
+	// // 将图层移动到分组中
+	// if (parent != null) {
+	// parent.add(layer);
+	// }
+	// }
+	// } catch (Exception ex) {
+	// Application.getActiveApplication().getOutput().output(ex);
+	// }
+	//
+	// return layer;
+	// }
 
-/*没有使用
-public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
-		try {
-			if (parent == null) {
-				map.getLayers().add(layer);
-			} else {
-				parent.add(layer);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}*/
+	/*
+	 * 没有使用 public static void AddLayer(Map map, LayerGroup parent, Layer layer) { try { if (parent == null) { map.getLayers().add(layer); } else {
+	 * parent.add(layer); } } catch (Exception ex) { Application.getActiveApplication().getOutput().output(ex); } }
+	 */
 
 	public static void deleteMaps(String... mapNames) {
 		try {
@@ -472,8 +500,10 @@ public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 	/**
 	 * 根据数据集查找非标签专题图的图层
 	 *
-	 * @param map     查找的地图
-	 * @param dataset 结果数据集
+	 * @param map
+	 *            查找的地图
+	 * @param dataset
+	 *            结果数据集
 	 * @return 找到的图层
 	 */
 	public static Layer findLayerByDatasetWithoutLabelTheme(Map map, Dataset dataset) {
@@ -500,5 +530,49 @@ public static void AddLayer(Map map, LayerGroup parent, Layer layer) {
 		double x = Math.abs(pnt1.getX() - pnt2.getX());
 		double y = Math.abs(pnt1.getY() - pnt2.getY());
 		return Math.sqrt(x * x + y * y);
+	}
+
+	/**
+	 * 移除 map 的 TrackingLayer 上指定 tag 的所有对象
+	 * 
+	 * @param map
+	 * @param tag
+	 */
+	public static void clearTrackingObjects(Map map, String tag) {
+		if (map != null && !StringUtilties.isNullOrEmpty(tag)) {
+			TrackingLayer trackingLayer = map.getTrackingLayer();
+
+			int index = trackingLayer.indexOf(tag);
+			while (index >= 0) {
+				trackingLayer.remove(index);
+				index = trackingLayer.indexOf(tag);
+			}
+		}
+	}
+
+	/**
+	 * 获取高亮的对象
+	 *
+	 * @param geometry 需要高亮的对象
+	 * @return 高亮风格的对象
+	 */
+	public static Geometry getHeightGeometry(Geometry geometry) {
+		geometry = geometry.clone();
+		if (geometry instanceof Geometry3D) {
+			if (!(geometry instanceof GeoText3D)) {
+				GeoStyle3D geoStyle3D = new GeoStyle3D();
+				geoStyle3D.setLineColor(Color.RED);
+				geoStyle3D.setLineWidth(1);
+				((Geometry3D) geometry).setStyle3D(geoStyle3D);
+			}
+		} else {
+			if (!(geometry instanceof GeoText)) {
+				GeoStyle geoStyle = new GeoStyle();
+				geoStyle.setLineColor(Color.RED);
+				geoStyle.setLineWidth(1);
+				geometry.setStyle(geoStyle);
+			}
+		}
+		return geometry;
 	}
 }

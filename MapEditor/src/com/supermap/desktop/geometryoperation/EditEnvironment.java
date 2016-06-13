@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -49,6 +50,10 @@ import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.RedoneListener;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingEvent;
+import com.supermap.ui.TrackingListener;
 import com.supermap.ui.UndoneListener;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
@@ -106,11 +111,20 @@ public class EditEnvironment {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (SwingUtilities.isRightMouseButton(e)) {
-				activateEditor(NullEditor.INSTANCE);
-			} else {
-				EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
-			}
+			EditEnvironment.this.editController.mouseClicked(EditEnvironment.this, e);
+		}
+	};
+	private MouseMotionListener mouseMotionListener = new MouseMotionListener() {
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			EditEnvironment.this.editController.mouseMoved(EditEnvironment.this, e);
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 	};
 	private KeyListener keyListener = new KeyListener() {
@@ -200,17 +214,34 @@ public class EditEnvironment {
 			EditEnvironment.this.editController.undone(EditEnvironment.this, arg0);
 		}
 	};
+	private TrackingListener trackingListener = new TrackingListener() {
+
+		@Override
+		public void tracking(TrackingEvent arg0) {
+			EditEnvironment.this.editController.tracking(EditEnvironment.this, arg0);
+		}
+	};
+	private TrackedListener trackedListener = new TrackedListener() {
+
+		@Override
+		public void tracked(TrackedEvent arg0) {
+			EditEnvironment.this.editController.tracked(EditEnvironment.this, arg0);
+		}
+	};
 
 	private EditEnvironment(IFormMap formMap) {
 		this.formMap = formMap;
 
 		if (this.formMap != null) {
 			this.formMap.getMapControl().addMouseListener(this.mouseListener);
+			this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
 			this.formMap.getMapControl().addKeyListener(this.keyListener);
 			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
 
 			this.formMap.getMapControl().addRedoneListener(this.redoneListener);
 			this.formMap.getMapControl().addUndoneListener(this.undoneListener);
+			this.formMap.getMapControl().addTrackingListener(this.trackingListener);
+			this.formMap.getMapControl().addTrackedListener(this.trackedListener);
 			// 选中对象状态改变
 			this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);

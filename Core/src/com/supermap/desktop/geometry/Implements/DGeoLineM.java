@@ -22,8 +22,7 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 	}
 
 	/**
-	 * @param segment
-	 *            本类本参数无效
+	 * @param segment 本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -32,8 +31,7 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 	}
 
 	/**
-	 * @param segment
-	 *            本类本参数无效
+	 * @param segment 本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -91,8 +89,13 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 	}
 
 	@Override
+	public boolean setPart(int partIndex, PointMs part) {
+		return this.geoLineM != null && this.geoLineM.setPart(partIndex, part);
+	}
+
+	@Override
 	public Geometry reverse() {
-		GeoLineM reverseLineM = (GeoLineM) this.geoLineM.clone();
+		GeoLineM reverseLineM = this.geoLineM.clone();
 		reverseLineM.reverse();
 		return reverseLineM;
 	}

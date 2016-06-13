@@ -356,9 +356,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化数值文本精度下拉框
 	 */
 	private void initComboBoxTextPrecision() {
-		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<>(new String[] { "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
+		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<>(new String[] { "", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
 				"0.0000001", "0.00000001", "0.000000001", "0.0000000001" }));
-		this.comboBoxTextPrecision.setSelectedItem(themeLabel.getNumericPrecision());
+		this.comboBoxTextPrecision.setSelectedItem(themeLabel.getNumericPrecision() + 1);
 	}
 
 	/**
@@ -482,7 +482,12 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 */
 		private void setTextPrecision() {
 			int textPrecision = comboBoxTextPrecision.getSelectedIndex();
-			themeLabel.setNumericPrecision(textPrecision);
+			if (0 == textPrecision) {
+				return;
+			} else {
+				themeLabel.setNumericPrecision(textPrecision - 1);
+			}
+
 		}
 
 		/**
@@ -583,7 +588,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				// 控制数值文本精度下拉框的可使用性
 				if (null != fieldInfo && null != fieldInfo.getType()) {
 					if (fieldInfo.getType() == FieldType.DOUBLE || fieldInfo.getType() == FieldType.INT16 || fieldInfo.getType() == FieldType.INT32
-							|| fieldInfo.getType() == FieldType.INT64 || fieldInfo.getType() == FieldType.LONGBINARY) {
+							|| fieldInfo.getType() == FieldType.INT64 || fieldInfo.getType() == FieldType.SINGLE) {
 						comboBoxTextPrecision.setEnabled(true);
 					} else {
 						comboBoxTextPrecision.setEnabled(false);

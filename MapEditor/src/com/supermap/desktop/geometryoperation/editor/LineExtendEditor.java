@@ -2,11 +2,11 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
@@ -31,7 +31,6 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.MapControlUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
@@ -41,7 +40,7 @@ import com.supermap.ui.TrackMode;
 
 public class LineExtendEditor extends AbstractEditor {
 
-	private static final String TAG_LINEEXTEND = "Tag_ExtendLineEditorBase";
+	private static final String TAG_LINEEXTEND = "Tag_ExtendLineEditorBase"; // 基线 tracking
 	private static final Action MAP_CONTROL_ACTION = Action.SELECT;
 
 	private IEditController lineExtendEditController = new EditControllerAdapter() {
@@ -70,6 +69,13 @@ public class LineExtendEditor extends AbstractEditor {
 				} else {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_NotEditable"));
 				}
+			}
+		}
+
+		@Override
+		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+			if (SwingUtilities.isRightMouseButton(e)) {
+				environment.stopEditor();
 			}
 		}
 	};
@@ -131,14 +137,6 @@ public class LineExtendEditor extends AbstractEditor {
 		return style;
 	}
 
-	private double compouteTwoPointDistance(Point2D pntStart, Point2D pntEnd) {
-		double dDistance = -1;
-		double dOffsetX = pntStart.getX() - pntEnd.getX();
-		double dOffsetY = pntStart.getY() - pntEnd.getY();
-		dDistance = Math.sqrt(dOffsetX * dOffsetX + dOffsetY * dOffsetY);
-		return dDistance;
-	}
-
 	private void getBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		try {
 			List<Layer> layers = MapUtilties.getLayers(mapControl.getMap());
@@ -185,6 +183,7 @@ public class LineExtendEditor extends AbstractEditor {
 	private GeoLine getDesLine(Layer activeEditableLayer, LineExtendEditModel editModel) {
 		GeoLine desLine = null;
 		Recordset recordset = null;
+
 		try {
 			// 获取目标线
 			recordset = activeEditableLayer.getSelection().toRecordset();
@@ -225,12 +224,11 @@ public class LineExtendEditor extends AbstractEditor {
 				recordset.dispose();
 			}
 		}
-
 		return desLine;
 	}
 
 	private void initialBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
-		MapControlUtilties.clearTrackingObjects(mapControl, TAG_LINEEXTEND);
+		MapUtilties.clearTrackingObjects(mapControl.getMap(), TAG_LINEEXTEND);
 		getBaseLine(mapControl, editModel);
 
 		if (editModel.baseLine != null) {
@@ -238,8 +236,6 @@ public class LineExtendEditor extends AbstractEditor {
 			mapControl.getMap().getTrackingLayer().add(editModel.baseLine, TAG_LINEEXTEND);
 			mapControl.getMap().refreshTrackingLayer();
 			editModel.labelTip.setText(MapEditorProperties.getString("String_LineEditor_SelectExtendLine"));
-		} else {
-
 		}
 	}
 
@@ -291,9 +287,9 @@ public class LineExtendEditor extends AbstractEditor {
 			boolean bExtendFirstPart = true;
 			double dForeLength = 0.0;
 			for (int i = 0; i < segment; i++) {
-				dForeLength += compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
+				dForeLength += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
 			}
-			dForeLength += compouteTwoPointDistance(desLinePoints.getItem(segment), perpendicularFoot);
+			dForeLength += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(segment), perpendicularFoot);
 			double dTotalLength = desLine.getLength();
 			if ((dForeLength >= (dTotalLength / 2.0))) {
 				// 记录后半段的最后一段线段的两个端点点号
@@ -345,8 +341,8 @@ public class LineExtendEditor extends AbstractEditor {
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
-					dTemp1 = compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
-					dTemp2 = compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
+					dTemp1 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
+					dTemp2 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
 					if (dTemp1 < dTemp2 && dDistance > dTemp1) {
 						dDistance = dTemp1;
 						nKey = i;
@@ -361,8 +357,8 @@ public class LineExtendEditor extends AbstractEditor {
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
-					dTemp1 = compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
-					dTemp2 = compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
+					dTemp1 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
+					dTemp2 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
 					if (dTemp1 > dTemp2 && dDistance > dTemp2) {
 						dDistance = dTemp1;
 						nKey = i;
@@ -373,7 +369,6 @@ public class LineExtendEditor extends AbstractEditor {
 				}
 			}
 
-			// ////////////////////////////////////////////////////////////////////////
 			if (nKey != -1) {
 				// 延伸线对象
 				GeoLine newLine = new GeoLine(desLinePoints);
@@ -407,7 +402,7 @@ public class LineExtendEditor extends AbstractEditor {
 			((LineExtendEditModel) environment.getEditModel()).clear();
 		}
 
-		MapControlUtilties.clearTrackingObjects(environment.getMapControl(), TAG_LINEEXTEND);
+		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_LINEEXTEND);
 	}
 
 	private class LineExtendEditModel implements IEditModel {

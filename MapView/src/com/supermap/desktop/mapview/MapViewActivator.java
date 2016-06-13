@@ -1,12 +1,5 @@
 package com.supermap.desktop.mapview;
 
-import java.awt.Cursor;
-
-import javax.swing.JFrame;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.FormMap;
@@ -14,11 +7,15 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilties.MapUtilties;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class MapViewActivator implements BundleActivator {
 

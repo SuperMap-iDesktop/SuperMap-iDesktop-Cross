@@ -26,6 +26,7 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilties.StringUtilties;
 
@@ -135,6 +136,44 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		}
 	};
 
+	private ISmTextFieldLegit smMaxTextFieldLegit = new ISmTextFieldLegit() {
+
+		@Override
+		public boolean isTextFieldValueLegit(String textFieldValue) {
+			boolean result = false;
+
+			if (StringUtilties.isNumber(textFieldValue)) {
+				Double value = Double.valueOf(textFieldValue);
+				return value >= JDialogRegionExtractCenter.this.min && value <= Double.MAX_VALUE;
+			}
+			return result;
+		}
+
+		@Override
+		public String getLegitValue(String currentValue, String backUpValue) {
+			return backUpValue;
+		}
+	};
+
+	private ISmTextFieldLegit smMinTextFieldLegit = new ISmTextFieldLegit() {
+
+		@Override
+		public boolean isTextFieldValueLegit(String textFieldValue) {
+			boolean result = false;
+
+			if (StringUtilties.isNumber(textFieldValue)) {
+				Double value = Double.valueOf(textFieldValue);
+				return value >= 0d && value <= JDialogRegionExtractCenter.this.max;
+			}
+			return result;
+		}
+
+		@Override
+		public String getLegitValue(String currentValue, String backUpValue) {
+			return backUpValue;
+		}
+	};
+
 	public JDialogRegionExtractCenter() {
 		initializeDatas();
 		initializeComponents();
@@ -182,9 +221,9 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.labelDesDatasource = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.labelMax = new JLabel(ControlsProperties.getString(ControlsProperties.Label_Max));
 		this.labelMin = new JLabel(ControlsProperties.getString(ControlsProperties.Label_Min));
-		this.labelNewDataset = new JLabel(ControlsProperties.getString("String_Label_NewDataset"));
-		this.textFieldMax = ComponentFactory.createNumericTextField(30, this.min, Double.MAX_VALUE);
-		this.textFieldMin = ComponentFactory.createNumericTextField(0, 0, this.max);
+		this.labelNewDataset = new JLabel(ControlsProperties.getString("String_Label_TargetDataset"));
+		this.textFieldMax = ComponentFactory.createNumericTextField(30, this.smMaxTextFieldLegit);
+		this.textFieldMin = ComponentFactory.createNumericTextField(0, this.smMinTextFieldLegit);
 		this.comboBoxDatasource = new DatasourceComboBox();
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));

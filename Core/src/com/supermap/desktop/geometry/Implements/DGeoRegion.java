@@ -24,8 +24,7 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 	}
 
 	/**
-	 * @param segment
-	 *            本类本参数无效
+	 * @param segment 本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -35,9 +34,8 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 
 	/**
 	 * 返回自己
-	 * 
-	 * @param segment
-	 *            本类本参数无效
+	 *
+	 * @param segment 本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -97,9 +95,14 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 		return null;
 	}
 
+	@Override
+	public boolean setPart(int partIndex, Point2Ds part) {
+		return this.geoRegion != null && this.geoRegion.setPart(partIndex, part);
+	}
+
 	/**
 	 * 保护性分解，维持岛洞关系
-	 * 
+	 *
 	 * @return
 	 */
 	public Geometry[] protectedDivide() {
