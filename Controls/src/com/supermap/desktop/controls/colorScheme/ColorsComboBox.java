@@ -57,6 +57,8 @@ public class ColorsComboBox extends JComboBox {
 
 	private int selectCount;
 	private boolean isAddItem = false;
+	private boolean isSelectedUserDefineItem = false;
+	private int lastSelectedIndex;
 
 
 	/**
@@ -164,11 +166,25 @@ public class ColorsComboBox extends JComboBox {
 
 	@Override
 	protected void fireItemStateChanged(ItemEvent e) {
+		if (isSelectedUserDefineItem) {
+			// 选中最后一项时置空，这个时候不发送改变事件
+			return;
+		}
 		if (isAddItem || e.getStateChange() == ItemEvent.DESELECTED || e.getItem() != getItemAt(getItemCount() - 1)) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				lastSelectedIndex = getSelectedIndex();
+			}
 			super.fireItemStateChanged(e);
 		} else {
+			isSelectedUserDefineItem = true;
+			if (getItemCount() > lastSelectedIndex) {
+				this.setSelectedIndex(lastSelectedIndex);
+			} else {
+				this.setSelectedIndex(-1);
+			}
 			this.setPopupVisible(false);
 			showUserDefineDialog();
+			isSelectedUserDefineItem = false;
 		}
 	}
 }
