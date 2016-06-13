@@ -75,7 +75,7 @@ public abstract class SymbolDialog extends SmDialog {
 	/**
 	 * 精度
 	 */
-	protected double pow = 1;
+	protected double pow = 2;
 
 	public SymbolDialog() {
 		init();
