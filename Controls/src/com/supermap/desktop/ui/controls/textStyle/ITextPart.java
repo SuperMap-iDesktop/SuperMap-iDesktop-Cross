@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.swing.JComponent;
 
+import com.supermap.data.Geometry;
 import com.supermap.desktop.enums.TextPartType;
 
 public interface ITextPart extends IGeoTextStyle{
@@ -33,4 +34,6 @@ public interface ITextPart extends IGeoTextStyle{
 	public void removeTextPartChangeListener(TextPartChangeListener l);
 
 	 void fireTextPartChanged(TextPartType newValue);
+	 
+	 public void resetGeometry(Geometry geometry);
 }

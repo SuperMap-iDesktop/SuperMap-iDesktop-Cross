@@ -34,6 +34,7 @@ public class ResetTextStyleUtil {
 			textStyle.setForeColor((Color) newTextStyleValue);
 			break;
 		case BACKCOLOR:
+			textStyle.setBackOpaque(true);
 			textStyle.setBackColor((Color) newTextStyleValue);
 			break;
 		case ROTATION:
