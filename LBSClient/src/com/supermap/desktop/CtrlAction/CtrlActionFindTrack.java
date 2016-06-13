@@ -1,34 +1,12 @@
 package com.supermap.desktop.CtrlAction;
 
-
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.CtrlAction.JDialogFindTrack.WorkThead;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.dialog.JDialogFindTrack;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Properties;
-
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 public class CtrlActionFindTrack extends CtrlAction {
 
@@ -63,8 +41,8 @@ public class CtrlActionFindTrack extends CtrlAction {
 		@Override
 		public void run() {
 			try {
-				lbsResultConsumer consumer = new lbsResultConsumer();
-				consumer.doWork(topicNameRespond);
+//				lbsResultConsumer consumer = new lbsResultConsumer();
+//				consumer.doWork(topicNameRespond);
 			} finally {
 			}
 		}

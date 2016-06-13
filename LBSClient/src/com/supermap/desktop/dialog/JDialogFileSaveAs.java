@@ -1,8 +1,9 @@
-package com.supermap.desktop.CtrlAction;
+package com.supermap.desktop.dialog;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -21,23 +22,35 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.table.AbstractTableModel;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.webHDFS.HDFSDefine;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.http.DownloadInfo;
+import com.supermap.desktop.http.DownloadProgressCallable;
+import com.supermap.desktop.http.DownloadUtils;
+import com.supermap.desktop.http.FileManager;
+import com.supermap.desktop.http.FileManagerContainer;
+import com.supermap.desktop.http.HttpRequest;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilties.CursorUtilties;
 
 public class JDialogFileSaveAs extends SmDialog {
 
-	public static void main(String[] args) {
-		JDialogFileSaveAs f = new JDialogFileSaveAs();
-		f.showDialog();
-	}
+//	public static void main(String[] args) {
+//		JDialogFileSaveAs f = new JDialogFileSaveAs();
+//		f.showDialog();
+//	}
 	
+	public static final String FILE_MANAGER_CONTROL_CLASS = "com.supermap.desktop.http.FileManagerContainer";
+
 	private JLabel labelServerURL;
 	private JTextField textServerURL;
 	private JButton buttonBrowser;
@@ -51,20 +64,10 @@ public class JDialogFileSaveAs extends SmDialog {
 	private String webURL;
 	private String webFile;
 	private String localPath;
+	private long fileSize;
 	
 	public JDialogFileSaveAs() {
 		initializeComponents();
-	}
-	
-	class WorkThead extends Thread {
-
-		@Override
-		public void run() {
-			try {
-				webHDFS.getFile(getWebFilePath(), localPath);
-			} finally {
-			}
-		}
 	}
 	
 	private String getWebFilePath() {
@@ -74,7 +77,6 @@ public class JDialogFileSaveAs extends SmDialog {
 	
 	public void initializeComponents() {
 		this.setSize(600, 150);
-		this.setLocation(400, 300);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		this.labelServerURL = new JLabel("服务器地址:");
@@ -125,8 +127,7 @@ public class JDialogFileSaveAs extends SmDialog {
 								.addComponent(this.textServerURL)
 								.addGroup(gLayout.createSequentialGroup()
 										.addComponent(this.textLocalPath, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-										.addComponent(this.buttonBrowser, 30, 30, 30))
-								))
+										.addComponent(this.buttonBrowser, 30, 30, 30))))
 				.addGroup(gLayout.createSequentialGroup()
 						.addGap(10, 10, Short.MAX_VALUE)
 						.addComponent(this.buttonOK, 75, 75, 75)
@@ -142,7 +143,9 @@ public class JDialogFileSaveAs extends SmDialog {
 				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));
-		// @formatter:on
+		// @formatter:on		
+
+		this.setLocationRelativeTo(null);
 	}
 
 	public String getWebURL() {
@@ -167,6 +170,14 @@ public class JDialogFileSaveAs extends SmDialog {
 		}
 	}
 	
+	public long getFileSize() {
+		return this.fileSize;
+	}
+	
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+	
 	public String getLocalPath() {
 		return this.localPath;
 	}
@@ -180,17 +191,13 @@ public class JDialogFileSaveAs extends SmDialog {
 	
 	private void buttonBrowserActionPerformed() {
 		try {	
-			String moduleName = ControlsProperties.getString("String_SmFileChooseName_WorkpaceSaveAsFile");
-			if (!SmFileChoose.isModuleExist(moduleName)) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
-						SmFileChoose.createFileFilter(ControlsProperties.getString("String_WorkspaceSMWUFilterName"),
-								ControlsProperties.getString("String_WorkspaceSMWUFilters")),
-						SmFileChoose.createFileFilter(ControlsProperties.getString("String_WorkspaceSXWUFilterName"),
-								ControlsProperties.getString("String_WorkspaceSXWUFilters")));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						ControlsProperties.getString("String_Title_WorkSpaceSaveAs"), moduleName, "SaveOne");
+			String modelName = "HDFSFileDownload";
+			if (!SmFileChoose.isModuleExist(modelName)) {
+				SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"),
+						"选择文件", modelName, "SaveOne");
 			}
-			SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+			SmFileChoose smFileChoose = new SmFileChoose(this.webFile);
+			smFileChoose.setAcceptAllFileFilterUsed(true);
 
 			int state = smFileChoose.showDefaultDialog();
 			if (state == JFileChooser.APPROVE_OPTION) {
@@ -202,18 +209,39 @@ public class JDialogFileSaveAs extends SmDialog {
 			CursorUtilties.setDefaultCursor();
 		}
 	}
-	
+
 	/**
 	 * 确定按钮点击事件
 	 */
 	private void buttonOKActionPerformed() {
 		try {
-			this.localPath = this.textLocalPath.getText();			
-			WorkThead thread = new WorkThead();
-			thread.start();
+//			this.localPath = this.textLocalPath.getText();				
+//			webHDFS.getFile(getWebFilePath(), localPath);		
 			
-//			this.dispose();
-//			this.dialogResult = DialogResult.OK;
+			IDockbar dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
+					.get(Class.forName(FILE_MANAGER_CONTROL_CLASS));
+			
+			
+			FileManagerContainer fileManagerContainer  = null;			
+			if (dockbarPropertyContainer != null) {
+				fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getComponent();
+				dockbarPropertyContainer.setVisible(true);
+				dockbarPropertyContainer.active();
+			}
+			
+			if (fileManagerContainer != null) {
+				File file = new File(this.textLocalPath.getText());	
+				DownloadInfo downloadInfo = new DownloadInfo(getWebFilePath(), file.getName(),  file.getParentFile().getPath(), this.getFileSize(), 1, true);
+				
+				FileManager fileManager = new FileManager(downloadInfo);
+				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo);
+				fileManager.doWork(downloadProgressCallable);
+				
+				fileManagerContainer.addItem(fileManager);
+			}
+						
+			this.dispose();
+			this.dialogResult = DialogResult.OK;
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {

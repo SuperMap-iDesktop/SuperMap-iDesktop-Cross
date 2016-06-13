@@ -9,10 +9,6 @@ import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
@@ -22,6 +18,7 @@ import com.supermap.desktop.CtrlAction.CtrlActionFindTrack.WorkThead;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.dialog.JDialogHeatMap;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
@@ -61,8 +58,8 @@ public class CtrlActionHeatMap extends CtrlAction {
 		@Override
 		public void run() {
 			try {
-				lbsResultConsumer consumer = new lbsResultConsumer();
-				consumer.doWork(topicNameRespond);
+//				lbsResultConsumer consumer = new lbsResultConsumer();
+//				consumer.doWork(topicNameRespond);
 			} finally {
 			}
 		}

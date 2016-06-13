@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction;
+package com.supermap.desktop.dialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +24,7 @@ import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.Datasources;
 import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -33,9 +34,6 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilties.CursorUtilties;
 
 public class JDialogBoundsQuery extends SmDialog {
-	
-	String topicName = "SpatialQuery";
-	String topicNameRespond = "SpatialQuery_Respond";
 	/**
 	 * Create the frame.
 	 */
@@ -259,45 +257,45 @@ public class JDialogBoundsQuery extends SmDialog {
 	}
 
 	String[] args = new String[3];
-	private void doWork() {		
-
-//		String[] args = new String[3];
-		args[0] = "192.168.14.240:9092"; // brokers
-		args[1] = topicName; // topic
-
-		// copy bounds dataset to temp folder
-		String udbName = "SpatialQuery";// + System.currentTimeMillis();
-		String tempPath = "/home/huchenpu/demo-4.29/temp/";
-		String udbFullPath = String.format("%s%s.udb", tempPath, udbName);
-		DatasourceConnectionInfo info = new DatasourceConnectionInfo(udbFullPath, udbName, "");
-		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().create(info);
-		DatasetVector dataset = (DatasetVector)this.comboBoxDataset.getSelectedDataset();
-		Dataset boundsDataset = datasource.copyDataset(dataset, dataset.getName(), dataset.getEncodeType());				
-		String boundDatasetParm = boundsDataset.getName() + "@192.168.14.227:" + udbFullPath;
-		datasource.close();
-		
-//		String resultDatasetParm = this.textDatasetName.getText() + "@192.168.14.227:" + topicName + ".udb";	
-		String resultDatasetParm = "/home/demo-4.29/SpatialQuery.json";
-		
-		String resultPath = "192.168.14.227:/home/huchenpu/demo-4.29/result/";
-//		SpatialQuery <spark> <csv> <json/dataset> <resultjson>
-		String parmSpark = String.format("sh %s --class %s --master %s %s %s", 
-				"/home/spark-1.5.2-bin-hadoop2.6/bin/spark-submit", 
-				"com.supermap.spark.test.SpatialQuery", 
-				"spark://192.168.12.103:7077", 
-				"demo-lbsjava-0.0.1-SNAPSHOT.jar",
-				"local[1]");
-//		JDialogHDFSFiles.webFile = "mobile0426095637.csv";
-		String parmCSV = webHDFS.getHDFSFilePath();
-		String parmQuery = String.format("%s %s", boundDatasetParm, resultDatasetParm);
-		args[2] = String.format("%s %s %s %s %s %s", parmSpark, parmCSV, parmQuery, args[0], topicNameRespond, resultPath);
-
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置日期格式
-		Application.getActiveApplication().getOutput().output(df.format(new Date()) + "  发送请求..."); //new Date()为获取当前系统时间	
-//		Application.getActiveApplication().getOutput().output(args[0]);
-//		Application.getActiveApplication().getOutput().output(args[1]);
-//		Application.getActiveApplication().getOutput().output(args[2]);
-		lbsCommandProducer.commandProducer(args);	
+	private void doWork() {
+//		// copy bounds dataset to temp folder
+//		String udbName = "SpatialQuery";// + System.currentTimeMillis();
+//		String tempPath = "/home/huchenpu/demo-4.29/temp/";
+//		String udbFullPath = String.format("%s%s.udb", tempPath, udbName);
+//		DatasourceConnectionInfo info = new DatasourceConnectionInfo(udbFullPath, udbName, "");
+//		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().create(info);
+//		DatasetVector dataset = (DatasetVector)this.comboBoxDataset.getSelectedDataset();
+//		Dataset boundsDataset = datasource.copyDataset(dataset, dataset.getName(), dataset.getEncodeType());				
+//		String boundDatasetParm = boundsDataset.getName() + "@192.168.14.227:" + udbFullPath;
+//		datasource.close();
+//		
+////		String resultDatasetParm = this.textDatasetName.getText() + "@192.168.14.227:" + topicName + ".udb";	
+//		String resultDatasetParm = "/home/demo-4.29/SpatialQuery.json";
+//		
+//		String resultPath = "192.168.14.227:/home/huchenpu/demo-4.29/result/";
+////		SpatialQuery <spark> <csv> <json/dataset> <resultjson>
+//		String parmSpark = String.format("sh %s --class %s --master %s %s %s", 
+//				"/home/spark-1.5.2-bin-hadoop2.6/bin/spark-submit", 
+//				"com.supermap.spark.test.SpatialQuery", 
+//				"spark://192.168.12.103:7077", 
+//				"demo-lbsjava-0.0.1-SNAPSHOT.jar",
+//				"local[1]");
+//
+//		String parmQuery = String.format("%s %s %s", webHDFS.getHDFSFilePath(), boundDatasetParm, resultDatasetParm);
+//		args[2] = String.format("%s %s %s %s", parmSpark, parmQuery, MessageBusType.SpatialQuery.toString(), resultPath);
+//
+////		Runnable outPutRun = new Runnable() {
+////		@Override
+////		public void run() {
+//			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置日期格式
+//			Application.getActiveApplication().getOutput().output(df.format(new Date()) + "  发送请求..."); //new Date()为获取当前系统时间	
+//			Application.getActiveApplication().getOutput().output(args[0]);
+//			Application.getActiveApplication().getOutput().output(args[1]);
+//			Application.getActiveApplication().getOutput().output(args[2]);
+////		}
+////	};
+//			
+//		lbsCommandProducer.commandProducer(args);	
 	}
 	
 	/**

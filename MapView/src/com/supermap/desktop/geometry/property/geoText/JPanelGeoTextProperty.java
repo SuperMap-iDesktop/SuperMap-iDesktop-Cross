@@ -157,11 +157,12 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		this.checkboxApplyForTextPart = new JCheckBox();
 		this.checkboxApplyForTextPart.setSelected(true);
 		rightPanel.setLayout(new GridBagLayout());
+		this.panelTextPart.getPanel().setPreferredSize(new Dimension(160,200));
 		rightPanel.add(this.panelBasicSet.getEffectPanel(),
 				new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 1));
 		rightPanel.add(this.checkboxApplyForTextPart, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
 		rightPanel.add(this.panelTextPart.getPanel(),
-				new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 2));
+				new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 2).setIpad(0, 15));
 		return rightPanel;
 	}
 
@@ -192,6 +193,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			this.textStyle = ((GeoText3D) this.geometry).getTextStyle().clone();
 		}
 		initComponents();
+		panelBasicSet.enabled(true);
 		initResources();
 		removeEvents();
 		registEvents();
@@ -231,6 +233,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		}
 		recordset.edit();
 		recordset.setGeometry(geometry);
+		panelTextPart.resetGeometry(geometry);
 		recordset.update();
 		MapUtilties.getActiveMap().refresh();
 	}

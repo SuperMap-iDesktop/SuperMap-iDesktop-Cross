@@ -483,7 +483,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		private void setTextPrecision() {
 			int textPrecision = comboBoxTextPrecision.getSelectedIndex();
 			if (0 == textPrecision) {
-				return;
+				themeLabel.setNumericPrecision(11);
 			} else {
 				themeLabel.setNumericPrecision(textPrecision - 1);
 			}

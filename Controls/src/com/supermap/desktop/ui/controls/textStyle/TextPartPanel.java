@@ -41,6 +41,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	private ChangeListener rotationListener;
 	private Vector<TextPartChangeListener> textPartChangedListeners;
 	private DocumentListener textAreaListener;
+	private MouseAdapter spinnerMouseListener;
 
 	public TextPartPanel(Geometry geometry) {
 		this.geomerty = geometry;
@@ -55,6 +56,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
+					spinnerRotation.removeChangeListener(rotationListener);
 					int selectItem = comboBoxSubobject.getSelectedIndex();
 					if (selectItem >= 0 && geomerty instanceof GeoText) {
 						spinnerRotation.setValue(((TextPart) enumMap.get(selectItem)).getRotation());
@@ -72,6 +74,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
+
 				double rotation = (double) spinnerRotation.getValue();
 				if (enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
 					((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).setRotation(rotation);
@@ -97,9 +100,18 @@ public class TextPartPanel extends JPanel implements ITextPart {
 				resetText();
 			}
 		};
+		this.spinnerMouseListener = new MouseAdapter() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				spinnerRotation.addChangeListener(rotationListener);
+			}
+
+		};
 		removeEvents();
 		this.comboBoxSubobject.addItemListener(subObjectListener);
 		this.textArea.getDocument().addDocumentListener(textAreaListener);
+		this.spinnerRotation.getComponent(0).addMouseListener(spinnerMouseListener);
 		this.spinnerRotation.addChangeListener(rotationListener);
 	}
 
@@ -130,7 +142,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		panelPartInfo.add(this.labelSubobject,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelPartInfo.add(this.comboBoxSubobject,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(2,10,2,10));
 		panelPartInfo.add(this.labelText,           new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelPartInfo.add(scrollPane, new GridBagConstraintsHelper(0, 2, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(2, 2).setInsets(2,10,2,10));
+		panelPartInfo.add(scrollPane, new GridBagConstraintsHelper(0, 2, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(2, 0).setIpad(0, 40).setInsets(2,10,2,10));
 		//@formatter:on
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setViewportView(textArea);
@@ -184,6 +196,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public void removeEvents() {
 		this.comboBoxSubobject.removeItemListener(subObjectListener);
+		this.spinnerRotation.getComponent(0).removeMouseListener(spinnerMouseListener);
 		this.spinnerRotation.removeChangeListener(rotationListener);
 		this.textArea.getDocument().removeDocumentListener(textAreaListener);
 	}
@@ -230,6 +243,13 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			textPartText = ((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).getText();
 		}
 		if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+			if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+				if (this.enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+					((TextPart) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).setText(text);
+				} else {
+					((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).setText(text);
+				}
+			}
 			textPartTypeMap.put(TextPartType.TEXT, text);
 			fireTextPartChanged(TextPartType.TEXT);
 		}
@@ -256,6 +276,22 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public HashMap<Integer, Object> getTextPartInfo() {
 		return enumMap;
+	}
+
+	@Override
+	public void resetGeometry(Geometry geometry) {
+		this.geomerty = geometry;
+		this.enumMap.clear();
+		if (geomerty instanceof GeoText && ((GeoText) geomerty).getPartCount() > 0) {
+			for (int i = 0; i < ((GeoText) geomerty).getPartCount(); i++) {
+				this.enumMap.put(i, ((GeoText) geomerty).getPart(i));
+			}
+		}
+		if (geomerty instanceof GeoText3D && ((GeoText3D) geomerty).getPartCount() > 0) {
+			for (int i = 0; i < ((GeoText3D) geomerty).getPartCount(); i++) {
+				this.enumMap.put(i, ((GeoText3D) geomerty).getPart(i));
+			}
+		}
 	}
 
 }

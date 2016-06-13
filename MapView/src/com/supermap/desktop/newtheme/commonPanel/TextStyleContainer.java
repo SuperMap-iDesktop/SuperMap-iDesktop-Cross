@@ -173,9 +173,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 	}
 
 	private void resetMixedTextStyles(TextStyleType newValue) {
-		for (int i = 0; i < mixedTextStyle.getStyles().length; i++) {
-			resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getStyles()[i]);
-			ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getStyles()[i], textStylePanel.getResultMap().get(newValue));
+		for (int i = 0; i < selectRow.length; i++) {
+			resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getStyles()[selectRow[i]]);
+			ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getStyles()[selectRow[i]], textStylePanel.getResultMap().get(newValue));
 		}
 	}
 
