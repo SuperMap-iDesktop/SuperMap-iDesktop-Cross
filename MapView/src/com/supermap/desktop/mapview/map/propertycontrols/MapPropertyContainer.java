@@ -55,6 +55,7 @@ public class MapPropertyContainer extends JPanel {
 			setMap(arg0.getMap());
 		}
 	};
+	
 	private MapClosedListener mapClosedListener = new MapClosedListener() {
 		@Override
 		public void mapClosed(MapClosedEvent arg0) {

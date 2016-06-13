@@ -18,6 +18,7 @@ import com.supermap.desktop.CtrlAction.CtrlActionFindTrack.WorkThead;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.dialog.JDialogHDFSFiles;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
@@ -57,8 +58,8 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 		@Override
 		public void run() {
 			try {
-				lbsResultConsumer consumer = new lbsResultConsumer();
-				consumer.doWork(topicNameRespond);
+//				lbsResultConsumer consumer = new lbsResultConsumer();
+//				consumer.doWork(topicNameRespond);
 			} finally {
 			}
 		}
