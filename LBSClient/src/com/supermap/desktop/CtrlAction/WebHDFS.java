@@ -66,9 +66,9 @@ public class WebHDFS {
 	private static Boolean getFileResult = false;
 	public static Boolean getFile(String urlPath, String localPath) {
 		getFileResult = false;
-		// éœ€è¦å®ç°æ–­ç‚¹ç»­ä¼ 
-		// è·å–æ–‡ä»¶æ€»å¤§å°ï¼Œè®¡ç®—ç»™å‡ºè¿›åº¦
-		// æä¾›ç•Œé¢ï¼Œç»™å‡ºé»˜è®¤åå­—ï¼Œå…è®¸ç”¨æˆ·æ”¹åå­—
+		// ĞèÒªÊµÏÖ¶ÏµãĞø´«
+		// »ñÈ¡ÎÄ¼ş×Ü´óĞ¡£¬¼ÆËã¸ø³ö½ø¶È
+		// Ìá¹©½çÃæ£¬¸ø³öÄ¬ÈÏÃû×Ö£¬ÔÊĞíÓÃ»§¸ÄÃû×Ö
 		getFileResult = HttpRequest.saveFileToDisk(urlPath, "op=OPEN&offset=0&length=1024", localPath);		
 		
 		SwingUtilities.invokeLater(new Runnable() {
@@ -92,8 +92,8 @@ public class WebHDFS {
 		}
 
 		int itemsCount = 26;
-		// å¼€å§‹ï¼šæœ€å‰é¢ä¸€ä¸ªèŠ‚ç‚¹ {"FileStatus":[
-		// ç»“å°¾ï¼š]}}
+		// ¿ªÊ¼£º×îÇ°ÃæÒ»¸ö½Úµã {"FileStatus":[
+		// ½áÎ²£º]}}
 		results.remove(0);
 		// "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
 		// "owner":"root","pathSuffix":"data","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"
@@ -159,8 +159,8 @@ public class WebHDFS {
 				}
 			}
 
-			// å¼€å§‹ï¼šæœ€å‰é¢ä¸¤ä¸ªèŠ‚ç‚¹ {"FileStatuses":{"FileStatus":[
-			// ç»“å°¾ï¼š]}}
+			// ¿ªÊ¼£º×îÇ°ÃæÁ½¸ö½Úµã {"FileStatuses":{"FileStatus":[
+			// ½áÎ²£º]}}
 			results.remove(1);
 			results.remove(0);
 			// "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
