@@ -559,25 +559,24 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		 * 设置超长处理方式
 		 */
 		private void setOverLength() {
-			int overLength = comboBoxOverLength.getSelectedIndex();
-			switch (overLength) {
-			case 0:
+			String overLengthMode = comboBoxOverLength.getSelectedItem().toString();
+			if (overLengthMode.equals(MapViewProperties.getString("String_OverLengthLabelMode_NONE"))) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NONE);
 				resetPanelTextFontStation(false);
-				break;
-			case 1:
+				return;
+			}
+			if (overLengthMode.equals(MapViewProperties.getString("String_OverLengthLabelMode_NewLine"))) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.NEWLINE);
 				resetPanelTextFontStation(true);
-				break;
-			case 2:
+				return;
+			}
+			if (overLengthMode.equals(MapViewProperties.getString("String_OverLengthLabelMode_Omit"))) {
 				themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
 				spinnerFontCount.setEnabled(true);
 				comboBoxSplitSeparator.setEnabled(false);
 				comboBoxAlignmentStyle.setEnabled(false);
 				checkBoxOptimizeMutilineAlignment.setEnabled(false);
-				break;
-			default:
-				break;
+				return;
 			}
 		}
 
