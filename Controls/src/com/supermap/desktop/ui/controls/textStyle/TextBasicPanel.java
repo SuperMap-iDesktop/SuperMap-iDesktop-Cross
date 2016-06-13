@@ -250,6 +250,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			}
 			if (e.getSource().equals(checkBoxOutline)) {
 				boolean isOutLine = checkBoxOutline.isSelected();
+				sliderOutLineWidth.setEnabled(true);
 				// 控制背景颜色按钮的可显示
 				resetBGColorEnabled();
 				textStyleTypeMap.put(TextStyleType.OUTLINE, isOutLine);
@@ -703,6 +704,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		}
 	}
 
+	/**
+	 * 设置面板可用性，组合类需要使用该方法来设置checkbox的初始状态
+	 */
 	@Override
 	public void enabled(boolean enabled) {
 		initCheckBoxState();

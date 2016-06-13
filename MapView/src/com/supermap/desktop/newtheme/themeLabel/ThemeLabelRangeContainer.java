@@ -495,7 +495,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			} else if (e.getSource() == buttonStyle) {
 				// 批量修文本风格
 				setItemTextSytle();
-				getTable();
 			}
 		}
 
@@ -648,6 +647,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				textStyleDialog.setLocation(x, y);
 				textStyleDialog.setVisible(true);
 			}
+			getTable();
 			for (int i = 0; i < selectedRow.length; i++) {
 				tableLabelInfo.addRowSelectionInterval(selectedRow[i], selectedRow[i]);
 			}

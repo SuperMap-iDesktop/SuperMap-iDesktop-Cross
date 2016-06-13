@@ -12,8 +12,6 @@ import com.supermap.desktop.ui.controls.TextStyleDialog;
 import com.supermap.desktop.utilties.ListUtilties;
 import com.supermap.desktop.utilties.MapUtilties;
 import com.supermap.mapping.*;
-import com.supermap.ui.GeometrySelectChangedEvent;
-import com.supermap.ui.GeometrySelectChangedListener;
 
 public class CtrlActionTextStyle extends CtrlActionEditorBase {
 
