@@ -29,9 +29,13 @@ public class WorkspaceTreeTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		if (c instanceof WorkspaceTree) {
 			source = (WorkspaceTree) c;
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) source.getLastSelectedPathComponent();
-			TreeNodeData data = (TreeNodeData) treeNode.getUserObject();
-			return new TransferableTreeNode(data);
+			if (null != source.getLastSelectedPathComponent()) {
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) source.getLastSelectedPathComponent();
+				if (null != treeNode && null != treeNode.getUserObject()) {
+					TreeNodeData data = (TreeNodeData) treeNode.getUserObject();
+					return new TransferableTreeNode(data);
+				}
+			}
 		}
 		return null;
 	}

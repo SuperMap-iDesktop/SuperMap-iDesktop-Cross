@@ -34,7 +34,6 @@ public class ResetTextStyleUtil {
 			textStyle.setForeColor((Color) newTextStyleValue);
 			break;
 		case BACKCOLOR:
-			textStyle.setBackOpaque(true);
 			textStyle.setBackColor((Color) newTextStyleValue);
 			break;
 		case ROTATION:
@@ -61,7 +60,7 @@ public class ResetTextStyleUtil {
 		case FIXEDSIZE:
 			textStyle.setSizeFixed((boolean) newTextStyleValue);
 			break;
-		case OPAQUERATE:
+		case BACKOPAQUE:
 			textStyle.setBackOpaque((boolean) newTextStyleValue);
 			break;
 		case OUTLINE:

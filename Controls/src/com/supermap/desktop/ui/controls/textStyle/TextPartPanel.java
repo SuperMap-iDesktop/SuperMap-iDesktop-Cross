@@ -101,12 +101,10 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			}
 		};
 		this.spinnerMouseListener = new MouseAdapter() {
-
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseEntered(MouseEvent e){
 				spinnerRotation.addChangeListener(rotationListener);
-			}
-
+			} 
 		};
 		removeEvents();
 		this.comboBoxSubobject.addItemListener(subObjectListener);
@@ -155,7 +153,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		this.enumMap = new HashMap<Integer, Object>();
 		this.labelRotation = new JLabel();
 		this.spinnerRotation = new JSpinner();
-		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), null, null, new Double(0.1)));
+		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), new Double(0.0), new Double(360.0), new Double(1.0)));
 		this.labelSubobject = new JLabel();
 		this.comboBoxSubobject = new JComboBox<String>();
 		this.labelText = new JLabel();
