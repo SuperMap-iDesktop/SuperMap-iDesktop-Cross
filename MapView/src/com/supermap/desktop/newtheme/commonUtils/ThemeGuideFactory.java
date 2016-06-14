@@ -335,6 +335,7 @@ public class ThemeGuideFactory {
 			textStyle.setSplitIndexes(splitIndexes);
 			themeLabel.setUniformMixedStyle(textStyle);
 			themeLabel.setLabelExpression(expression);
+			themeLabel.setMaxLabelLength(8);
 			Layer themeLabelComplicatedLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeLabel);
 			ThemeChangePanel themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer(themeLabelComplicatedLayer);
 			setDockbarActive(themeLabelComplicatedLayer, themeLabelComplicatedContainer);
