@@ -123,7 +123,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 		ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
 
 		for (Layer layer : layers) {
-			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+			if (layer.isEditable() && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 				editModel.copyGeometries.put(layer, new ArrayList<Integer>());
 				Recordset recordset = layer.getSelection().toRecordset();
 
