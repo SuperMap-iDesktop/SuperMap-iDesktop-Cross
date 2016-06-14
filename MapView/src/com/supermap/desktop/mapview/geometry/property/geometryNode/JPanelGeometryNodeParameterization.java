@@ -28,7 +28,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	private IGeometry geometry;
 	private JLabel labelGeometryType = new JLabel();
 	private JTextField textFieldGeometryType = new JTextField();
-	private JXTreeTable table;
+	private JTable table;
 	private GeometryNodeParameterTableModel tableModel;
 	private DecimalFormat df = new DecimalFormat("0.0000");
 	private JLabel labelControlInfo = new JLabel();
@@ -70,9 +70,15 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 
 	private void initComponents() {
 		tableModel = new GeometryNodeParameterTableModel(geometry);
-		table = new JXTreeTable(tableModel);
-		table.setRootVisible(false);
-		table.setShowsRootHandles(true);
+		if (isLabelControlVisible()) {
+			table = new JTable(tableModel);
+		} else {
+			JXTreeTable jxTreeTable = new JXTreeTable(tableModel);
+			jxTreeTable.setRootVisible(false);
+			jxTreeTable.setShowsRootHandles(true);
+			table = jxTreeTable;
+		}
+
 		initTable();
 		textFieldGeometryType.setMinimumSize(new Dimension(250, 23));
 		textFieldGeometryType.setPreferredSize(new Dimension(250, 23));
@@ -114,19 +120,21 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 				initTable();
 			}
 		});
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Point point = e.getPoint();
-				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && table.rowAtPoint(point) == 0 && table.columnAtPoint(point) == 0) {
-					if (table.isExpanded(0)) {
-						table.collapseRow(0);
-					} else {
-						table.expandRow(0);
+		if (table instanceof JXTreeTable) {
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Point point = e.getPoint();
+					if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && table.rowAtPoint(point) == 0 && table.columnAtPoint(point) == 0) {
+						if (((JXTreeTable) table).isExpanded(0)) {
+							((JXTreeTable) table).collapseRow(0);
+						} else {
+							((JXTreeTable) table).expandRow(0);
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private void initResources() {

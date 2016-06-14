@@ -70,7 +70,7 @@ public class SymbolDialogLine extends SymbolDialog {
 		labelLineColor = new JLabel();
 		buttonSymbolColor = new ButtonColorSelector();
 
-		SymbolSpinnerUtilties.initSpinners(0.1, 20, 0.1, "##0.0", spinnerLineWidth);
+		SymbolSpinnerUtilties.initSpinners(0.05, 20, 0.1, "##0.0", spinnerLineWidth);
 	}
 
 	private void lineAddListener() {
