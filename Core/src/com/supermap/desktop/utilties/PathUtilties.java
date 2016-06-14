@@ -14,6 +14,7 @@ public class PathUtilties {
 	 */
 	public static String getRootPathName() {
 		String rootPath = Application.getActiveApplication().getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		rootPath = "F:\\ideaWorkspcae\\SuperMap-iDesktop-Cross\\Core";
 		rootPath = getParentPath(rootPath);
 		rootPath += "Bin/";
 		return rootPath;
