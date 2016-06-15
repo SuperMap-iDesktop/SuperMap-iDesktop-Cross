@@ -36,6 +36,7 @@ public class ColorsComboBox extends JComboBox {
 					for (int i = 0; i < getItemCount(); i++) {
 						if (ColorsUtilties.isEqualsColors((Colors) getItemAt(i), selectedItem)) {
 							setSelectedIndex(i);
+							addItemListeners(itemListeners);
 							return;
 						}
 					}
@@ -183,8 +184,8 @@ public class ColorsComboBox extends JComboBox {
 				this.setSelectedIndex(-1);
 			}
 			this.setPopupVisible(false);
-			showUserDefineDialog();
 			isSelectedUserDefineItem = false;
+			showUserDefineDialog();
 		}
 	}
 }
