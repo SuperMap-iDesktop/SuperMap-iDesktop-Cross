@@ -88,7 +88,7 @@ public class BindWindow implements IBindWindow {
 
 	@Override
 	public void refreshFormTabular(int[] addRows) {
-		if (BindUtilties.isRightRows(addRows, formTabular.getjTableTabular().getRowCount()) && dataset.equals(formTabular.getRecordset().getDataset())) {
+		if (BindUtilties.isRightRows(addRows, formTabular.getjTableTabular().getRowCount())) {
 			this.formTabular.addRow(addRows);
 		}
 	}

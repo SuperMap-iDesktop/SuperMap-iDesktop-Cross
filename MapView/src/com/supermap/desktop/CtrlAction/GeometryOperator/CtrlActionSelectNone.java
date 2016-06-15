@@ -16,6 +16,7 @@ import com.supermap.mapping.Layer;
 
 public class CtrlActionSelectNone extends CtrlAction {
 	private final int SELECT_NUMBER = 1;
+
 	public CtrlActionSelectNone(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 		// TODO Auto-generated constructor stub
@@ -35,12 +36,14 @@ public class CtrlActionSelectNone extends CtrlAction {
 	public boolean enable() {
 		boolean enable = false;
 		try {
-			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
-			for (Layer layer : layers) {
-				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
-					enable = true;
-					break;
+			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+				ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+				for (Layer layer : layers) {
+					if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+						enable = true;
+						break;
+					}
 				}
 			}
 		} catch (Exception ex) {

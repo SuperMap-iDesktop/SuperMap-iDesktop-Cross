@@ -24,15 +24,17 @@ public class CtrlActionGoToNext extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean flag = false;
-		if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 1) {
-			flag = true;
-		}
-		if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectedRow() == ((IFormTabular) Application.getActiveApplication()
-				.getActiveForm()).getRowCount() - 1) {
-			flag = false;
-		}
-		if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount() == 0) {
-			flag = false;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormTabular) {
+			if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 1) {
+				flag = true;
+			}
+			if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectedRow() == ((IFormTabular) Application.getActiveApplication()
+					.getActiveForm()).getRowCount() - 1) {
+				flag = false;
+			}
+			if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount() == 0) {
+				flag = false;
+			}
 		}
 		return flag;
 	}

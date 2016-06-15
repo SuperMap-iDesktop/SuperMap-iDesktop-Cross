@@ -41,12 +41,13 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
 				// 获取当前活动图层对应的数据集
 				Dataset dataset = formMap.getActiveLayers()[0].getDataset();
-				if (null != dataset && dataset instanceof DatasetVector) {
+				if (null != dataset && dataset instanceof DatasetVector && map.findSelection(true).length > 0) {
+					Recordset tempRecordset = map.findSelection(true)[0].toRecordset();
+					openTabular(dataset, tempRecordset);
+				} 
+				if (null != dataset && dataset instanceof DatasetVector && map.findSelection(true).length <= 0) {
 					Recordset recordset = ((DatasetVector) dataset).getRecordset(false, CursorType.DYNAMIC);
-					// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
-					this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
-					this.tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
-					this.tabular.setRecordset(recordset);
+					openTabular(dataset, recordset);
 				}
 				this.newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
 				this.tabSize += 1;
@@ -59,7 +60,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				propertyBindWindow = new PropertyBindWindow();
 				propertyBindWindow.setFormMap(formMap);
 				propertyBindWindow.setBindProperty(new BindProperty(map));
-				propertyBindWindow.setBindWindow(new BindWindow(tabular),dataset);
+				propertyBindWindow.setBindWindow(new BindWindow(tabular), dataset);
 				propertyBindWindow.registEvents();
 				this.newTabWindow.addListener(new DockingWindowAdapter() {
 
@@ -79,6 +80,13 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void openTabular(Dataset dataset, Recordset recordset) {
+		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
+		this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
+		this.tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
+		this.tabular.setRecordset(recordset);
 	}
 
 	class LocalFormChangedListener implements ActiveFormChangedListener {
