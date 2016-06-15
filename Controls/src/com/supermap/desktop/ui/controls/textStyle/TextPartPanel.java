@@ -109,7 +109,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		removeEvents();
 		this.comboBoxSubobject.addItemListener(subObjectListener);
 		this.textArea.getDocument().addDocumentListener(textAreaListener);
-		this.spinnerRotation.getComponent(0).addMouseListener(spinnerMouseListener);
+		this.spinnerRotation.addMouseListener(spinnerMouseListener);
 		this.spinnerRotation.addChangeListener(rotationListener);
 	}
 
@@ -194,7 +194,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public void removeEvents() {
 		this.comboBoxSubobject.removeItemListener(subObjectListener);
-		this.spinnerRotation.getComponent(0).removeMouseListener(spinnerMouseListener);
+		this.spinnerRotation.removeMouseListener(spinnerMouseListener);
 		this.spinnerRotation.removeChangeListener(rotationListener);
 		this.textArea.getDocument().removeDocumentListener(textAreaListener);
 	}

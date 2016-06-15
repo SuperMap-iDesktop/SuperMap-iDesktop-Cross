@@ -33,7 +33,11 @@ public class CtrlActionStatisticAnalystCountOfValue extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		int tabularSelectNumberCount = ((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount();
-		return tabularSelectNumberCount > 0 ? true : false;
+		boolean enable = false;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormTabular) {
+			int tabularSelectNumberCount = ((IFormTabular) Application.getActiveApplication().getActiveForm()).getSelectColumnCount();
+			enable = tabularSelectNumberCount > 0 ? true : false;
+		}
+		return enable;
 	}
 }

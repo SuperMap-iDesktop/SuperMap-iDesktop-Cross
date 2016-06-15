@@ -58,24 +58,29 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 
 	@Override
 	public void removeEvents() {
-		formMap.getMapControl().removeMouseListener(formMapMouseListener);
-		bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
-		bindWindow.removeMapSelectionChangeListener(selectionChangeListener);
+		if (null != formMap.getMapControl()) {
+			formMap.getMapControl().removeMouseListener(formMapMouseListener);
+			bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
+			bindWindow.removeMapSelectionChangeListener(selectionChangeListener);
+		}
 	}
 
 	@Override
 	public IBindWindow getBindWindow() {
 		return bindWindow;
 	}
+
 	@Override
-	public void setBindWindow(IBindWindow bindWindow,Dataset dataset) {
+	public void setBindWindow(IBindWindow bindWindow, Dataset dataset) {
 		this.bindWindow = bindWindow;
 		this.bindWindow.setActiveDataset(dataset);
 	}
+
 	@Override
 	public IBindProperty getBindProperty() {
 		return bindProperty;
 	}
+
 	@Override
 	public void setBindProperty(IBindProperty bindProperty) {
 		this.bindProperty = bindProperty;
