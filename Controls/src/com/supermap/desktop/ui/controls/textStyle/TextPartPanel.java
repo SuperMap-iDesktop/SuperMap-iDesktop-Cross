@@ -41,7 +41,6 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	private ChangeListener rotationListener;
 	private Vector<TextPartChangeListener> textPartChangedListeners;
 	private DocumentListener textAreaListener;
-	private MouseAdapter spinnerMouseListener;
 
 	public TextPartPanel(Geometry geometry) {
 		this.geomerty = geometry;
@@ -56,7 +55,6 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					spinnerRotation.removeChangeListener(rotationListener);
 					int selectItem = comboBoxSubobject.getSelectedIndex();
 					if (selectItem >= 0 && geomerty instanceof GeoText) {
 						spinnerRotation.setValue(((TextPart) enumMap.get(selectItem)).getRotation());
@@ -76,11 +74,11 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			public void stateChanged(ChangeEvent e) {
 
 				double rotation = (double) spinnerRotation.getValue();
-				if (enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+				if (Double.compare(rotation, ((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).getRotation()) != 0) {
 					((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).setRotation(rotation);
+					textPartTypeMap.put(TextPartType.ROTATION, rotation);
+					fireTextPartChanged(TextPartType.ROTATION);
 				}
-				textPartTypeMap.put(TextPartType.ROTATION, rotation);
-				fireTextPartChanged(TextPartType.ROTATION);
 			}
 		};
 		this.textAreaListener = new DocumentListener() {
@@ -100,16 +98,9 @@ public class TextPartPanel extends JPanel implements ITextPart {
 				resetText();
 			}
 		};
-		this.spinnerMouseListener = new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e){
-				spinnerRotation.addChangeListener(rotationListener);
-			} 
-		};
 		removeEvents();
 		this.comboBoxSubobject.addItemListener(subObjectListener);
 		this.textArea.getDocument().addDocumentListener(textAreaListener);
-		this.spinnerRotation.addMouseListener(spinnerMouseListener);
 		this.spinnerRotation.addChangeListener(rotationListener);
 	}
 
@@ -194,7 +185,6 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public void removeEvents() {
 		this.comboBoxSubobject.removeItemListener(subObjectListener);
-		this.spinnerRotation.removeMouseListener(spinnerMouseListener);
 		this.spinnerRotation.removeChangeListener(rotationListener);
 		this.textArea.getDocument().removeDocumentListener(textAreaListener);
 	}
