@@ -5,8 +5,6 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
 
 public class CtrlActionMapSave extends CtrlAction {
 
@@ -17,16 +15,18 @@ public class CtrlActionMapSave extends CtrlAction {
 
 	@Override
 	public void run() {
-		IFormMap formMap = (IFormMap)Application.getActiveApplication().getActiveForm();
-        formMap.save();
+		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+		formMap.save();
 	}
 
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		IFormMap formMap = (IFormMap)Application.getActiveApplication().getActiveForm();
-		if (formMap != null && formMap.getMapControl().getMap().isModified()) {
-			enable = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (formMap != null && formMap.getMapControl().getMap().isModified()) {
+				enable = true;
+			}
 		}
 		return enable;
 	}

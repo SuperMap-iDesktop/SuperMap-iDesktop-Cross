@@ -3,7 +3,8 @@ package com.supermap.desktop.ui.controls;
 import java.awt.*;
 import java.awt.Toolkit;
 import java.awt.event.*;
-import javax.swing.JPanel;
+
+import javax.swing.JButton;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,8 +13,8 @@ import java.util.Map.Entry;
 
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilties.ComponentFactory;
 import com.supermap.desktop.enums.TextStyleType;
-import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.textStyle.*;
 import com.supermap.desktop.utilties.MapUtilties;
 
@@ -25,11 +26,10 @@ import com.supermap.desktop.utilties.MapUtilties;
 public class TextStyleDialog extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
-	private transient SmButton buttonCancel;
-	private transient SmButton buttonConfirm;
+	
+	private transient JButton buttonClose;
 
 	private transient ITextStyle textBasicPanel;
-	private transient IPreview previewPanel;
 
 	private Geometry geometry;
 	private String text;
@@ -38,8 +38,7 @@ public class TextStyleDialog extends SmDialog {
 	private List<Geometry> geometries;
 	private Recordset recordset;
 	private transient TextStyleChangeListener textStyleChangeListener;
-	private ActionListener buttonCancelListener;
-	private ActionListener buttonConfirmListener;
+	private ActionListener buttonCloseListener;
 
 	public TextStyleDialog() {
 		super();
@@ -71,15 +70,14 @@ public class TextStyleDialog extends SmDialog {
 		this.textBasicPanel.setProperty(false);
 		this.textBasicPanel.initTextBasicPanel();
 		this.textBasicPanel.enabled(true);
-		this.previewPanel = new PreviewPanel(geometry);
 		this.getContentPane().setLayout(new GridBagLayout());
+		this.buttonClose = ComponentFactory.createButtonClose();
 		//@formatter:off
-		this.getContentPane().add(initLeftPanel(),                   new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0).setWeight(1, 1));
-		this.getContentPane().add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 0, 0, 0).setWeight(1, 1));
-		this.getContentPane().add(initButtonPanel(),                 new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
+		this.getContentPane().add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+		this.getContentPane().add(textBasicPanel.getEffectPanel(),   new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+		this.getContentPane().add(this.buttonClose,                  new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 1).setInsets(5, 10, 10, 10));
 		//@formatter:on
-		initResources();
-		this.setSize(500, 360);
+		this.setSize(360, 480);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = this.getSize();
@@ -92,29 +90,6 @@ public class TextStyleDialog extends SmDialog {
 		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 	}
 
-	private JPanel initButtonPanel() {
-		JPanel panelButtons = new JPanel();
-		this.buttonCancel = new SmButton();
-		this.buttonConfirm = new SmButton();
-		panelButtons.setLayout(new GridBagLayout());
-		panelButtons.setLayout(new GridBagLayout());
-		//@formatter:off
-		panelButtons.add(buttonCancel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.EAST));
-		panelButtons.add(buttonConfirm,new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 0, 0));
-		//@formatter:on
-		return panelButtons;
-	}
-
-	private Component initLeftPanel() {
-		JPanel panelLeft = new JPanel();
-		//@formatter:off
-		panelLeft.setLayout(new GridBagLayout());
-		panelLeft.add(this.previewPanel.getPanel(),        new GridBagConstraintsHelper(0, 0, 1, 3).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 3));
-		panelLeft.add(this.textBasicPanel.getEffectPanel(),new GridBagConstraintsHelper(0, 3, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
-		return panelLeft;
-		//@formatter:on
-	}
-
 	public void registEvents() {
 		this.textStyleChangeListener = new TextStyleChangeListener() {
 
@@ -122,23 +97,15 @@ public class TextStyleDialog extends SmDialog {
 			public void modify(TextStyleType newValue) {
 				if (!newValue.equals(TextStyleType.FIXEDSIZE) && !newValue.equals(TextStyleType.FONTWIDTH)) {
 					ResetTextStyleUtil.resetTextStyle(newValue, tempTextStyle, textBasicPanel.getResultMap().get(newValue));
-					previewPanel.refresh(text, tempTextStyle, rotation);
 				}
 			}
 		};
 
-		this.buttonCancelListener = new ActionListener() {
+		this.buttonCloseListener = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TextStyleDialog.this.dispose();
-			}
-		};
-		this.buttonConfirmListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonConfirmClicked();
 			}
 		};
 		this.addWindowListener(new WindowAdapter() {
@@ -150,8 +117,6 @@ public class TextStyleDialog extends SmDialog {
 			
 		});
 		removeEvents();
-		this.buttonConfirm.addActionListener(this.buttonConfirmListener);
-		this.buttonCancel.addActionListener(this.buttonCancelListener);
 		this.textBasicPanel.addTextStyleChangeListener(this.textStyleChangeListener);
 	};
 
@@ -192,13 +157,8 @@ public class TextStyleDialog extends SmDialog {
 	}
 	
 	private void removeEvents(){
-		this.buttonConfirm.removeActionListener(this.buttonConfirmListener);
-		this.buttonCancel.removeActionListener(this.buttonCancelListener);
+		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
 	}
 
-	public void initResources() {
-		this.buttonCancel.setText(ControlsProperties.getString("String_Button_Cancel"));
-		this.buttonConfirm.setText(ControlsProperties.getString("String_Button_Ok"));
-	}
 }

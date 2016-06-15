@@ -41,11 +41,13 @@ public class CtrlActionSelectAll extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean result = false;
-		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-		ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
-		for (Layer layer : layers) {
-			if (layer.isVisible() && layer.isSelectable()) {
-				result = true;
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			for (Layer layer : layers) {
+				if (layer.isVisible() && layer.isSelectable()) {
+					result = true;
+				}
 			}
 		}
 		return result;

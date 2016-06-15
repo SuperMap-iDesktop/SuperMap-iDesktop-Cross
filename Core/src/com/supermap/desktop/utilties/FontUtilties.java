@@ -8,6 +8,7 @@ import com.supermap.mapping.Map;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class FontUtilties {
 
@@ -184,8 +185,10 @@ public class FontUtilties {
 	/**
 	 * 获得字符串在指定字体下的高度
 	 *
-	 * @param str  需要计算字符串
-	 * @param font 字体
+	 * @param str
+	 *            需要计算字符串
+	 * @param font
+	 *            字体
 	 * @return 高度
 	 */
 	public static int getStringHeight(String str, Font font) {
@@ -199,8 +202,10 @@ public class FontUtilties {
 	/**
 	 * 获得字符串在指定字体下的宽度
 	 *
-	 * @param str  需要计算字符串
-	 * @param font 字体
+	 * @param str
+	 *            需要计算字符串
+	 * @param font
+	 *            字体
 	 * @return 宽度
 	 */
 	public static int getStringWidth(String str, Font font) {
@@ -208,5 +213,21 @@ public class FontUtilties {
 			return 0;
 		}
 		return (int) font.getStringBounds(str, frc).getWidth();
+	}
+
+	/**
+	 * 获取字符串在指定字体下的 Bounds
+	 * 
+	 * @param str
+	 *            需要计算字符串
+	 * @param font
+	 *            字体
+	 * @return Bounds
+	 */
+	public static Rectangle2D getStringBounds(String str, Font font) {
+		if (str == null || str.isEmpty() || font == null) {
+			return null;
+		}
+		return font.getStringBounds(str, frc);
 	}
 }

@@ -37,6 +37,17 @@ public class ComponentFactory {
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		return buttonCancel;
 	}
+	
+	/**
+	 * 生产一个Close按钮
+	 * 
+	 * @return
+	 */
+	public static JButton createButtonClose() {
+		SmButton buttonClose = new SmButton();
+		buttonClose.setText(CommonProperties.getString(CommonProperties.Close));
+		return buttonClose;
+	}
 
 	/**
 	 * 生产一个整型限制的输入控件

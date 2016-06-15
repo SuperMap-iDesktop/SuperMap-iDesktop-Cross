@@ -101,17 +101,15 @@ public class TextPartPanel extends JPanel implements ITextPart {
 			}
 		};
 		this.spinnerMouseListener = new MouseAdapter() {
-
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseEntered(MouseEvent e){
 				spinnerRotation.addChangeListener(rotationListener);
-			}
-
+			} 
 		};
 		removeEvents();
 		this.comboBoxSubobject.addItemListener(subObjectListener);
 		this.textArea.getDocument().addDocumentListener(textAreaListener);
-		this.spinnerRotation.getComponent(0).addMouseListener(spinnerMouseListener);
+		this.spinnerRotation.addMouseListener(spinnerMouseListener);
 		this.spinnerRotation.addChangeListener(rotationListener);
 	}
 
@@ -155,7 +153,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		this.enumMap = new HashMap<Integer, Object>();
 		this.labelRotation = new JLabel();
 		this.spinnerRotation = new JSpinner();
-		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), null, null, new Double(0.1)));
+		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), new Double(0.0), new Double(360.0), new Double(1.0)));
 		this.labelSubobject = new JLabel();
 		this.comboBoxSubobject = new JComboBox<String>();
 		this.labelText = new JLabel();
@@ -196,7 +194,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public void removeEvents() {
 		this.comboBoxSubobject.removeItemListener(subObjectListener);
-		this.spinnerRotation.getComponent(0).removeMouseListener(spinnerMouseListener);
+		this.spinnerRotation.removeMouseListener(spinnerMouseListener);
 		this.spinnerRotation.removeChangeListener(rotationListener);
 		this.textArea.getDocument().removeDocumentListener(textAreaListener);
 	}
