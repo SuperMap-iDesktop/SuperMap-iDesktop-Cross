@@ -123,7 +123,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 		ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
 
 		for (Layer layer : layers) {
-			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+			if (layer.isEditable() && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 				editModel.copyGeometries.put(layer, new ArrayList<Integer>());
 				Recordset recordset = layer.getSelection().toRecordset();
 
@@ -158,7 +158,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 				if (editModel.trackingGeoCompound != null) {
 					editModel.trackingGeoCompound.offset(offsetX, offsetY);
-					GeoStyleUtilties.setGeometryStyle(editModel.trackingGeoCompound, getTrackingStyle());
+					GeoStyleUtilties.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilties.getTrackingLineStyle());
 
 					int index = environment.getMap().getTrackingLayer().indexOf(TAG_GEOMETRYCOPY);
 					if (index >= 0) {
@@ -235,13 +235,6 @@ public class GeometryCopyEditor extends AbstractEditor {
 		}
 	}
 
-	private GeoStyle getTrackingStyle() {
-		GeoStyle trackingStyle = new GeoStyle();
-		trackingStyle.setLineSymbolID(2);
-		trackingStyle.setFillOpaqueRate(0);
-		return trackingStyle;
-	}
-
 	/**
 	 * 获取当前鼠标在地图上的坐标点，如果有捕捉，返回捕捉点坐标，没有捕捉，返回鼠标点对应的地图坐标
 	 * 
@@ -280,7 +273,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 			this.tip = new MapControlTip();
 			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
 			this.tip.getContentPanel().add(this.labelMsg);
-			this.tip.getContentPanel().setSize(120, 21);
+			this.tip.getContentPanel().setSize(150, 21);
 			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
 		}
 
