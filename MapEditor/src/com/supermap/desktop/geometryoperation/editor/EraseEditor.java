@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
@@ -157,7 +158,9 @@ public class EraseEditor extends AbstractEditor {
 		return environment.getMapControl().getEditableLayers().length > 0
 				&& environment.getEditProperties().getSelectedGeometryCount() > 0
 				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
-						ICompoundFeature.class);
+						ICompoundFeature.class)
+				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.LINE, DatasetType.REGION,
+						DatasetType.CAD);
 	}
 
 	@Override
