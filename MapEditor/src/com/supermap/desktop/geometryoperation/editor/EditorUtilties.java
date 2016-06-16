@@ -1,6 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
@@ -185,6 +186,13 @@ public class EditorUtilties {
 		trackingStyle.setLineWidth(0.6);
 		trackingStyle.setLineSymbolID(1);
 		trackingStyle.setFillOpaqueRate(0);
+		return trackingStyle;
+	}
+
+	static GeoStyle3D getTrackingLineStyle3D() {
+		GeoStyle3D trackingStyle = new GeoStyle3D();
+		trackingStyle.setLineWidth(0.6);
+		trackingStyle.setLineSymbolID(1);
 		return trackingStyle;
 	}
 }

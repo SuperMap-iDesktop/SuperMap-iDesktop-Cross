@@ -5,9 +5,11 @@ import java.util.Random;
 
 import com.supermap.data.GeoCompound;
 import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
 import com.supermap.data.GeoText;
 import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
 import com.supermap.desktop.Application;
 
 public class GeoStyleUtilties {
@@ -102,6 +104,34 @@ public class GeoStyleUtilties {
 
 					for (int i = 0; i < compound.getPartCount(); i++) {
 						setGeometryStyle(compound.getPart(i), geoStyle);
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	/**
+	 * 设置指定几何对象的风格
+	 * 
+	 * @param geometry
+	 * @param geoStyle
+	 */
+	public static void setGeometryStyle(Geometry geometry, GeoStyle geoStyle, GeoStyle3D geoStyle3D) {
+		try {
+			if (!(geometry instanceof GeoText) && !(geometry instanceof GeoText3D)) {
+				if (geometry instanceof Geometry3D) {
+					((Geometry3D) geometry).setStyle3D(geoStyle3D);
+				} else if (geometry instanceof Geometry) {
+					geometry.setStyle(geoStyle);
+				}
+
+				if (geometry instanceof GeoCompound) {
+					GeoCompound compound = (GeoCompound) geometry;
+
+					for (int i = 0; i < compound.getPartCount(); i++) {
+						setGeometryStyle(compound.getPart(i), geoStyle, geoStyle3D);
 					}
 				}
 			}
