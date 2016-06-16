@@ -93,7 +93,9 @@ public class BindWindow implements IBindWindow {
 				tempRows[i] = this.formTabular.getIdMap().get(addRows[i]);
 			}
 		}
-		this.formTabular.addRow(tempRows);
+		if (this.formTabular.getRowCount() > 0) {
+			this.formTabular.addRow(tempRows);
+		}
 	}
 
 	public boolean isSelectionHasChanged() {
