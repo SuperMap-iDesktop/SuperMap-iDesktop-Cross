@@ -8,7 +8,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Recordset;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -18,10 +18,11 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -225,7 +226,7 @@ public class JDialogTopoAdvance extends SmDialog {
 			}
 			if (0 < this.comboBoxNotCutting.getItemCount()) {
 				String datasetName = this.comboBoxNotCutting.getSelectItem();
-				DatasetVector dataset = (DatasetVector) DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
+				DatasetVector dataset = (DatasetVector) DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 				Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
 				this.topologyProcessingOptions.setVertexFilterRecordset(recordset);
 				recordset.dispose();

@@ -6,7 +6,8 @@ import com.supermap.desktop.ui.XMLMenus;
 import com.supermap.desktop.ui.XMLStatusbars;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.XMLToolbars;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

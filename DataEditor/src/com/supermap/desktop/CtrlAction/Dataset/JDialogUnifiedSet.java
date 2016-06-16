@@ -21,11 +21,12 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

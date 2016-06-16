@@ -11,8 +11,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.SelectionModeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.SelectionModeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.SelectionMode;
 

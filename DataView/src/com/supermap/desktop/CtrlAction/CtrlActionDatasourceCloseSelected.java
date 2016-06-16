@@ -10,11 +10,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 public class CtrlActionDatasourceCloseSelected extends CtrlAction {
 
@@ -42,7 +42,7 @@ public class CtrlActionDatasourceCloseSelected extends CtrlAction {
 					resultInfo = DataViewProperties.getString("String_CloseDatasourseFailed");
 				}
 				Application.getActiveApplication().getOutput().output(resultInfo);
-				ToolbarUtilties.updataToolbarsState();
+				ToolbarUIUtilities.updataToolbarsState();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

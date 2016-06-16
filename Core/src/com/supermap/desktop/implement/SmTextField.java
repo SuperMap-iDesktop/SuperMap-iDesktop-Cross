@@ -5,9 +5,10 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.ui.XMLCommand;
-import com.supermap.desktop.utilties.CtrlActionUtilities;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;

@@ -8,14 +8,14 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.RecordsetFinalizer;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FieldTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -851,7 +852,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 					}
 					this.recordset.update();
 				}
-				MapViewUtilties.refreshCurrentMap();
+				MapViewUIUtilities.refreshCurrentMap();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

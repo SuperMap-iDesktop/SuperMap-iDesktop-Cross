@@ -40,7 +40,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 public class JDialogFileSaveAs extends SmDialog {
 

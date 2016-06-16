@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 public class CtrlActionWorkspaceClose extends CtrlAction {
 

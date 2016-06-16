@@ -15,7 +15,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.ui.docking.OperationAbortedException;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
-import com.supermap.desktop.utilties.FieldTypeUtilities;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
 

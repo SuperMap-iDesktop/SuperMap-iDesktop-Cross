@@ -13,8 +13,8 @@ import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
-import com.supermap.desktop.utilties.DatasetUtilities;
-import com.supermap.desktop.utilties.PropertyManagerUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.PropertyManagerUtilities;
 
 import java.text.MessageFormat;
 

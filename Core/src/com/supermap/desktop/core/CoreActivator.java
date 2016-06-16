@@ -4,8 +4,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.exception.SmUncaughtExceptionHandler;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LogUtilities;
-import com.supermap.desktop.utilties.SplashScreenUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.SplashScreenUtilities;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

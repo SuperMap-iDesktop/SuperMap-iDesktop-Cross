@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.topology.TopologyPreprocessOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
@@ -18,13 +18,14 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -365,7 +366,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 					DataCell datasourceCell = (DataCell) tableModel.getRowValue(i).get(2);
 					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceCell.toString());
 					temp[COLUMN_INDEX_DATASET] = datasetCell;
-					Dataset dataset = DatasetUtilties.getDatasetFromDatasource(datasetCell.toString(), datasource);
+					Dataset dataset = DatasetUIUtilities.getDatasetFromDatasource(datasetCell.toString(), datasource);
 					datasetTypes.add(dataset.getType());
 					temp[COLUMN_INDEX_DATASOURCE] = datasourceCell;
 					datas[i] = temp;

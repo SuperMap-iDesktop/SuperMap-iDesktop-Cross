@@ -13,7 +13,7 @@ import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
 import com.supermap.desktop.ui.controls.textStyle.ResetTextStyleUtil;
 import com.supermap.desktop.ui.controls.textStyle.TextBasicPanel;
 import com.supermap.desktop.ui.controls.textStyle.TextStyleChangeListener;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 
 public class TextStyleContainer extends ThemeChangePanel {

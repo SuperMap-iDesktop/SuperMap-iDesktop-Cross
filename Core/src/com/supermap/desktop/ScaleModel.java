@@ -1,8 +1,8 @@
 package com.supermap.desktop;
 
 import com.supermap.desktop.exception.InvalidScaleException;
-import com.supermap.desktop.utilties.DoubleUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 

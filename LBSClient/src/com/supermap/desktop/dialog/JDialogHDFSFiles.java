@@ -35,7 +35,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 public class JDialogHDFSFiles extends SmDialog {
 

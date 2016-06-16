@@ -22,8 +22,8 @@ import org.apache.http.HttpStatus;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class HttpPostFile {
 	private static final String POST = "POST";

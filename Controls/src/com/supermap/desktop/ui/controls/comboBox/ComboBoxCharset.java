@@ -2,7 +2,7 @@ package com.supermap.desktop.ui.controls.comboBox;
 
 import com.supermap.data.Charset;
 import com.supermap.data.Enum;
-import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
 
 import javax.swing.*;
 

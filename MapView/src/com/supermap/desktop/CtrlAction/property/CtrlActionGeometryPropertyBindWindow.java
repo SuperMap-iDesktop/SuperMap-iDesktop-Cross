@@ -13,7 +13,7 @@ import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.docking.*;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.*;
 
 public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {

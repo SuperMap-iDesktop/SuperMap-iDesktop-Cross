@@ -6,12 +6,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 public class CtrlActionWorkspaceSave extends CtrlAction {
 
@@ -24,7 +24,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 		public void saveWorkspace(SaveWorkspaceEvent event) {
 			try {
 				abstraSaveWorkspace(event);
-				ToolbarUtilties.updataToolbarsState();
+				ToolbarUIUtilities.updataToolbarsState();
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			}
@@ -105,7 +105,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		}
 
 		return dialogResult;

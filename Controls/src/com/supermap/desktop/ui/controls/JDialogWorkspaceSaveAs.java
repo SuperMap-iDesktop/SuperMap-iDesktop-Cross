@@ -9,8 +9,8 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.PropertyManagerUtilities;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.PropertyManagerUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

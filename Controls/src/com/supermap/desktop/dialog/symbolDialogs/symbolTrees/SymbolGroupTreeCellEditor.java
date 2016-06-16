@@ -2,12 +2,13 @@ package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;

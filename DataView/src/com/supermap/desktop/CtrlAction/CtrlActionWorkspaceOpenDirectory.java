@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 public class CtrlActionWorkspaceOpenDirectory extends CtrlAction {
 

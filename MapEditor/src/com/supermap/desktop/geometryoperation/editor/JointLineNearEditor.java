@@ -6,7 +6,7 @@ import com.supermap.data.GeoLine;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 
 public class JointLineNearEditor extends JointLineEditorBase {
 

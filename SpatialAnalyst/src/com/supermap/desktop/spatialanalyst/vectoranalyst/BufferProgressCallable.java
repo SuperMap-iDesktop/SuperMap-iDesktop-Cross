@@ -15,12 +15,12 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -122,7 +122,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
-			MapViewUtilties.addDatasetsToMap(map, datasets, false);
+			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
 		}
 	}
 

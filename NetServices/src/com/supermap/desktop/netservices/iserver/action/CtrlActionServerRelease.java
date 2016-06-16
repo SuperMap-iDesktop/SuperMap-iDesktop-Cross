@@ -12,10 +12,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 
 public class CtrlActionServerRelease extends CtrlAction {

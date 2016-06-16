@@ -31,7 +31,7 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 /**
  * 打开数据库型数据源

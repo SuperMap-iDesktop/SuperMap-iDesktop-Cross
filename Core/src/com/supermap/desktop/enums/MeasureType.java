@@ -1,7 +1,7 @@
 package com.supermap.desktop.enums;
 
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 import java.text.MessageFormat;
 

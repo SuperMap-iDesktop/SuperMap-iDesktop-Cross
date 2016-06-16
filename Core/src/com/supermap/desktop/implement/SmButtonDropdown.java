@@ -8,12 +8,13 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLButtonDropdown;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.CtrlActionUtilities;
-import com.supermap.desktop.utilties.JOptionPaneUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalComboBoxIcon;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

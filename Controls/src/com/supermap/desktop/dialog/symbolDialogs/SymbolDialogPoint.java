@@ -13,12 +13,13 @@ import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.DoubleUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;

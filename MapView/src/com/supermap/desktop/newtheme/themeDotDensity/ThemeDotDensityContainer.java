@@ -11,7 +11,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.supermap.data.*;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.symbolDialogs.*;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -19,7 +19,7 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 
 /**

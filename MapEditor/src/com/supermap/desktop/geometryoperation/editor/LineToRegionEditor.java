@@ -10,7 +10,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 
 public class LineToRegionEditor extends GeometryConvertEditor {
 

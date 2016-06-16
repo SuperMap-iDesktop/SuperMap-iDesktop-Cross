@@ -1,11 +1,12 @@
 package com.supermap.desktop.Action;
 
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.util.HashMap;
 

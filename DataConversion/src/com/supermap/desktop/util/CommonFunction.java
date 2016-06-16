@@ -78,7 +78,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 /**
  * @author Administrator 通用的方法类包括右边界面刷新，初始化右边界面等方法

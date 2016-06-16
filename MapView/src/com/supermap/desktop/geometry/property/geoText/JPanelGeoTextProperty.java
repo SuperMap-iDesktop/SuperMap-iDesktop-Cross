@@ -13,7 +13,7 @@ import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 
 public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 

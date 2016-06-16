@@ -9,7 +9,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 

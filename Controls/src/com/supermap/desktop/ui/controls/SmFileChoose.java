@@ -3,10 +3,11 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,6 +16,7 @@ import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;

@@ -14,8 +14,8 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import java.io.File;
 import java.text.MessageFormat;

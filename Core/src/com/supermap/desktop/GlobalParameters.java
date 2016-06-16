@@ -1,11 +1,12 @@
 package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
-import com.supermap.desktop.utilties.AltitudeModeUtilities;
-import com.supermap.desktop.utilties.DoubleUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.AltitudeModeUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

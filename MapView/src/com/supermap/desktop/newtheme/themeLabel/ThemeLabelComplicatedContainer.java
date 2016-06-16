@@ -20,7 +20,7 @@ import com.supermap.desktop.newtheme.commonPanel.TextStyleDialog;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 
 /**

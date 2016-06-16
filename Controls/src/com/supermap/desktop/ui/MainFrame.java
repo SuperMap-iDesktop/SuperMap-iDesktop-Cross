@@ -1,7 +1,7 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;

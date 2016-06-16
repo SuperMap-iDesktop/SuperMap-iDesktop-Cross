@@ -19,7 +19,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -28,7 +28,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class JDialogRegionExtractCenter extends SmDialog {
 

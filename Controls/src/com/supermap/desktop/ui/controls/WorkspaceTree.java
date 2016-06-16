@@ -101,17 +101,17 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.JTreeUtilties;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.DatasetUtilities;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.LayoutUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.LayoutUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -294,7 +294,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		}
 	};
 	// WorkspaceTree里面注册了Deleting事件等，用户用代码而非界面操作删除数据集等，也弹出提示框来
@@ -1577,10 +1577,10 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 							sceneNames.add(selectedNodeData.getData().toString());
 						}
-						SceneUtilties.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+						SceneUIUtilities.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
 					}
 				}
-				ToolbarUtilties.updataToolbarsState();
+				ToolbarUIUtilities.updataToolbarsState();
 			}
 		}
 
@@ -1699,7 +1699,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			int index = datasources.indexOf(datasource.getAlias().trim());
 			DefaultMutableTreeNode sourceDatasourceNode = (DefaultMutableTreeNode) treeNodeDatasources.getChildAt(index);
 			DefaultMutableTreeNode createdNode = addDataset(tempdatasets.get(event.getDatasetName()), sourceDatasourceNode);
-			JTreeUtilties.locateNode(WorkspaceTree.this, createdNode);
+			JTreeUIUtilities.locateNode(WorkspaceTree.this, createdNode);
 		}
 	}
 
@@ -1728,7 +1728,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) datasourceNode.getChildAt(deleteingDatasetIndex);
 					treeModelTemp.removeNodeFromParent(datasetNode);
 				}
-				JTreeUtilties.locateNode(WorkspaceTree.this, datasourceNode);
+				JTreeUIUtilities.locateNode(WorkspaceTree.this, datasourceNode);
 			}
 		}
 	}
@@ -1748,7 +1748,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			DefaultMutableTreeNode addMapNode = new DefaultMutableTreeNode(newMapNodeData);
 
 			treeModelTemp.insertNodeInto(addMapNode, treeNodeMaps, treeNodeMaps.getChildCount());
-			JTreeUtilties.locateNode(WorkspaceTree.this, addMapNode);
+			JTreeUIUtilities.locateNode(WorkspaceTree.this, addMapNode);
 		}
 	}
 

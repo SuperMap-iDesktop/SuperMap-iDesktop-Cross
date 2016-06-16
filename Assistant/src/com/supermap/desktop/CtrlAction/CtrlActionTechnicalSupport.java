@@ -10,7 +10,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.utilties.BrowseUtilities;
+import com.supermap.desktop.utilities.BrowseUtilities;
 
 public class CtrlActionTechnicalSupport extends CtrlAction {
 	

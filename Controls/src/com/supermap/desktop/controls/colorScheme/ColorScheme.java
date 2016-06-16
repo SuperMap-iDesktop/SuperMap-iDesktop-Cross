@@ -4,11 +4,12 @@ import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ColorsUtilties;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.controls.utilities.ColorsUIUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,6 +19,7 @@ import org.w3c.dom.Text;
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -127,7 +129,7 @@ public class ColorScheme implements ICloneable {
 		if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT)) {
 			colors = Colors.makeGradient((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
 		} else if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM)) {
-			colors = ColorsUtilties.buildRandom((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
+			colors = ColorsUIUtilities.buildRandom((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
 		}
 		return colors;
 	}

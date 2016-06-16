@@ -16,14 +16,15 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.ColorsUtilities;
-import com.supermap.desktop.utilties.PixelFormatUtilities;
+import com.supermap.desktop.utilities.ColorsUtilities;
+import com.supermap.desktop.utilities.PixelFormatUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;

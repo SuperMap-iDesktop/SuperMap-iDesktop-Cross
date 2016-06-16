@@ -1,10 +1,11 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.text.ParseException;
 
 public class SMFormattedTextField extends JFormattedTextField implements DocumentListener {

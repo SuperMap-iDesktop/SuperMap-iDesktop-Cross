@@ -7,11 +7,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

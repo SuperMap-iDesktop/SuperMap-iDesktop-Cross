@@ -10,7 +10,7 @@ import com.supermap.data.Environment;
 import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.dialog.JDialogGetPassword;
@@ -19,12 +19,13 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.LogUtilities;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -122,7 +123,7 @@ public class DatasourceOpenFileUtilties {
 				}
 			}
 		}
-		ToolbarUtilties.updataToolbarsState();
+		ToolbarUIUtilities.updataToolbarsState();
 		return successCount;
 	}
 
@@ -151,7 +152,7 @@ public class DatasourceOpenFileUtilties {
 	 */
 	public static Datasource openFileDatasource(File file) {
 		Datasource datasource = openDatasourceFile(file, false);
-		ToolbarUtilties.updataToolbarsState();
+		ToolbarUIUtilities.updataToolbarsState();
 		return datasource;
 	}
 

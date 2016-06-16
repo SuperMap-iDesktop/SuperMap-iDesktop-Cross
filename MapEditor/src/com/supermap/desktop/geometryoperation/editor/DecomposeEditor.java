@@ -15,10 +15,10 @@ import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ArrayUtilities;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.RecordsetUtilities;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.RecordsetUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 

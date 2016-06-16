@@ -24,7 +24,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 

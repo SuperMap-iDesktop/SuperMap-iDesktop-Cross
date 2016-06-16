@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 public class DataConversionActivator implements BundleActivator {
 

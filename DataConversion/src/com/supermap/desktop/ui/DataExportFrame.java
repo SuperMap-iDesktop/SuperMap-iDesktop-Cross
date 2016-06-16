@@ -26,7 +26,7 @@ import com.supermap.desktop.util.DataExportCallable;
 import com.supermap.desktop.util.DatasetUtil;
 import com.supermap.desktop.util.ExportFunction;
 import com.supermap.desktop.util.ExportModel;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

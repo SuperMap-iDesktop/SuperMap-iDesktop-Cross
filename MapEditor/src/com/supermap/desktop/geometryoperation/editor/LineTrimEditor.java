@@ -34,7 +34,7 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;

@@ -8,15 +8,16 @@ import com.supermap.data.FieldType;
 import com.supermap.data.JoinItems;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.SortUtilties;
+import com.supermap.desktop.controls.utilities.SortUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.FieldTypeUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -248,7 +249,7 @@ public class FieldInfoTable extends SortTable {
 				for (int i = 0; iterator.hasNext(); i++) {
 					result[i] = iterator.next();
 				}
-				SortUtilties.sortList(result);
+				SortUIUtilities.sortList(result);
 				return result;
 			}
 		}

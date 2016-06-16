@@ -3,7 +3,7 @@ package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolLibrary;
 import com.supermap.data.SymbolType;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 /**
  * 符号工厂类

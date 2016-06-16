@@ -14,9 +14,9 @@ import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
-import com.supermap.desktop.utilties.DatasetTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

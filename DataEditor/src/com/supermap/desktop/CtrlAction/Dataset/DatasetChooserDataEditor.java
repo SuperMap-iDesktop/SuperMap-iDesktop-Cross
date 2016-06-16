@@ -15,10 +15,11 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.utilties.CharsetUtilities;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.util.List;
 

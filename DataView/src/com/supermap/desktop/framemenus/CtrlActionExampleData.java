@@ -8,9 +8,9 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.implement.SmMenuItem;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 public class CtrlActionExampleData extends CtrlAction {
 

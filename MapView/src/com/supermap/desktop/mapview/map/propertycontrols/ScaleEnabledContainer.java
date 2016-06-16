@@ -36,7 +36,7 @@ import com.supermap.desktop.mapview.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 /**
  * 固定比例尺控件

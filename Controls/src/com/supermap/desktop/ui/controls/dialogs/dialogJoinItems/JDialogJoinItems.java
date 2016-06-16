@@ -9,8 +9,8 @@ import com.supermap.data.JoinItem;
 import com.supermap.data.JoinItems;
 import com.supermap.data.JoinType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
@@ -21,13 +21,14 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -460,10 +461,10 @@ public class JDialogJoinItems extends SmDialog {
 
 	private void initToolbar() {
 		this.toolBar.add(buttonAdd);
-		this.toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		this.toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		this.toolBar.add(buttonSelectAll);
 		this.toolBar.add(buttonReverse);
-		this.toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		this.toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		this.toolBar.add(buttonDel);
 	}
 
@@ -555,7 +556,7 @@ public class JDialogJoinItems extends SmDialog {
 						return joinItems.get(row).getName();
 					case 2:
 						// 外接表
-						return DatasetUtilties.getDatasetFromDatasource(joinItems.get(row).getForeignTable(), currentDataset.getDatasource());
+						return DatasetUIUtilities.getDatasetFromDatasource(joinItems.get(row).getForeignTable(), currentDataset.getDatasource());
 					case 3:
 						// 本表字段
 						return StringUtilities.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0]

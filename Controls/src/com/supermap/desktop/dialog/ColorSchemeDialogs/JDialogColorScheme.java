@@ -5,23 +5,24 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.controls.colorScheme.ColorSchemeEditorDialog;
 import com.supermap.desktop.controls.colorScheme.ColorSchemeManager;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -100,13 +101,13 @@ public class JDialogColorScheme extends SmDialog {
 	private void initToolBarLayout() {
 		toolBar.add(buttonAdd);
 		toolBar.add(buttonEdit);
-		toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonRevert);
 		toolBar.add(buttonDel);
-		toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonSelectAll);
 		toolBar.add(buttonSelectInvert);
-		toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonImport);
 		toolBar.add(buttonExport);
 		toolBar.setFloatable(false);

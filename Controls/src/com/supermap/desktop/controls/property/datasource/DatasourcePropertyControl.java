@@ -14,8 +14,8 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DatasetTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -24,6 +24,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

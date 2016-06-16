@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import com.supermap.data.*;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -21,8 +21,8 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 /**

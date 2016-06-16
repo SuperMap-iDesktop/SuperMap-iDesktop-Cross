@@ -9,12 +9,13 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
-import com.supermap.desktop.utilties.PrjCoordSysUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.plaf.metal.MetalBorders;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;

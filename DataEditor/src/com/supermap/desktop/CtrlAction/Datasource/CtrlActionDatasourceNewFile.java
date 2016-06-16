@@ -20,7 +20,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 public class CtrlActionDatasourceNewFile extends CtrlAction {
 

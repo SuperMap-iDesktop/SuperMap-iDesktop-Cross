@@ -3,7 +3,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerChart;
 import com.supermap.mapping.LayerGroup;

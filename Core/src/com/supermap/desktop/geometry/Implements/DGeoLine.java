@@ -12,7 +12,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.GeometryUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
 
 public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, ILineFeature, IRegionConvertor, ILineConvertor, IReverse {
 

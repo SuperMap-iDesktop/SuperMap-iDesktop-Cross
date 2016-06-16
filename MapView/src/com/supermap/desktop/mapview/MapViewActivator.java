@@ -10,11 +10,13 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 public class MapViewActivator implements BundleActivator {

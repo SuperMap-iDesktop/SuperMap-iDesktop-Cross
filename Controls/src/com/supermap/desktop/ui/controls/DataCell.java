@@ -5,9 +5,10 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.utilties.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.net.URL;
 

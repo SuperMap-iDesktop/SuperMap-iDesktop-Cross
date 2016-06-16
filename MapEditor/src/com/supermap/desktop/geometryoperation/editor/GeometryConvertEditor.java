@@ -21,9 +21,9 @@ import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.RecordsetUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.RecordsetUtilities;
 import com.supermap.mapping.Layer;
 
 public abstract class GeometryConvertEditor extends AbstractEditor {

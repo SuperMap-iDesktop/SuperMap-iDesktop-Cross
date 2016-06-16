@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * 封装 JSpinner，使得每一次敲击键盘，都提交编辑，如果输入不合法则恢复上一次合法的值

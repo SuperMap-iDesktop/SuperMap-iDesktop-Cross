@@ -5,9 +5,10 @@ import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolGroup;
 import com.supermap.desktop.dialog.symbolDialogs.WrapLayout;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

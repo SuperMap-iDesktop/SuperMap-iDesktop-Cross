@@ -9,13 +9,14 @@ import com.supermap.desktop.ui.XMLMenu;
 import com.supermap.desktop.ui.XMLMenuButton;
 import com.supermap.desktop.ui.XMLMenuButtonDropdown;
 import com.supermap.desktop.ui.XMLMenuGroup;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;

@@ -16,7 +16,7 @@ import com.supermap.desktop.geometry.Abstract.IRegion3DConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.GeometryUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
 
 public class DGeoRegion3D extends AbstractGeometry implements IRegion3DFeature, IMultiPartFeature<Point3Ds>, IRegion3DConvertor, IRegionConvertor,
 		ILine3DConvertor, ILineConvertor, IReverse {

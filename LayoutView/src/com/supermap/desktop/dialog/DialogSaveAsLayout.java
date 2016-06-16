@@ -8,7 +8,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.LayoutUtilities;
+import com.supermap.desktop.utilities.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;

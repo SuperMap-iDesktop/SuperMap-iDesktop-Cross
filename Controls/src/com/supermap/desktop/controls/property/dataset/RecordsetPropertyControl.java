@@ -16,9 +16,9 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FieldTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

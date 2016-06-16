@@ -16,9 +16,9 @@ import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogRotateParams;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.DoubleUtilities;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class RotateEditor extends AbstractEditor {

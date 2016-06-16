@@ -19,7 +19,7 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;

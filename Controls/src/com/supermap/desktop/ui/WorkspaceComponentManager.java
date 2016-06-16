@@ -15,14 +15,14 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 
@@ -558,12 +558,12 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					MapViewUtilties.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
+					MapViewUIUtilities.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
 				} else if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {
 						nodeText = ((TreeNodeData) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject()).getData().toString();
-						MapViewUtilties.openMap(nodeText);
+						MapViewUIUtilities.openMap(nodeText);
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();

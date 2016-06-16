@@ -6,7 +6,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetTypeCellRender;
@@ -18,14 +18,15 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
-import com.supermap.desktop.utilties.CharsetUtilities;
-import com.supermap.desktop.utilties.EncodeTypeUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.EncodeTypeUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -166,9 +167,9 @@ public class JDialogDatasetNew extends SmDialog {
 	private void initToolBar() {
 		toolBar.add(buttonSelectAll);
 		toolBar.add(buttonSelectInvert);
-		toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonDelete);
-		toolBar.add(ToolbarUtilties.getVerticalSeparator());
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonSetting);
 	}
 

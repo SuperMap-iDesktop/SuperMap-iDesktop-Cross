@@ -4,7 +4,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -13,14 +13,15 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;

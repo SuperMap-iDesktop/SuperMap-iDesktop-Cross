@@ -4,12 +4,13 @@ import com.supermap.data.Colors;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
-import com.supermap.desktop.utilties.FontUtilities;
+import com.supermap.desktop.utilities.FontUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.util.List;
 

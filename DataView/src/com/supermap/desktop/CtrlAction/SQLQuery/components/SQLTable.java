@@ -2,11 +2,12 @@ package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.desktop.CtrlAction.SQLQuery.SqlUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;

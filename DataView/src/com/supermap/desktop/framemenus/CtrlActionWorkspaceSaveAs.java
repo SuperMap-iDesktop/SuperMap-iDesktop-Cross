@@ -6,12 +6,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
 
@@ -25,7 +25,7 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 	public void run() {
 		try {
 			run(null);
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

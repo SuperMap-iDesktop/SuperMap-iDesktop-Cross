@@ -2,7 +2,7 @@ package com.supermap.desktop.core;
 
 import java.math.BigDecimal;
 
-import com.supermap.desktop.utilties.MathUtilities;
+import com.supermap.desktop.utilities.MathUtilities;
 
 public class FileSize {
 	public double size = 0.0;

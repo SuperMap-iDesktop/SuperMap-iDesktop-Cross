@@ -5,7 +5,7 @@ import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.ui.MapControl;
 
 import java.text.MessageFormat;

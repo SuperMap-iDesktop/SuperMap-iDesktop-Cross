@@ -28,9 +28,9 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class PanelFolderSelector extends JPanel {
 

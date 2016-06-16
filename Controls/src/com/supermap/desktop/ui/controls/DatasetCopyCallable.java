@@ -7,9 +7,9 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CharsetUtilities;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 import java.util.List;

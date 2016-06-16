@@ -12,12 +12,12 @@ import javax.swing.event.DocumentListener;
 
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class JDialogRotateParams extends SmDialog {
 

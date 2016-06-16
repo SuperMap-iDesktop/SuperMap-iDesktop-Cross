@@ -10,10 +10,10 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class CtrlActionDeleteImagePyramid extends CtrlAction {
 		List<Dataset> datasets = new ArrayList<>();
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 		Collections.addAll(datasets, activeDatasets);
-		datasets = DatasetUtilties.sureDatasetClosed(datasets);
+		datasets = DatasetUIUtilities.sureDatasetClosed(datasets);
 		deleteImagePyramid(datasets);
 	}
 

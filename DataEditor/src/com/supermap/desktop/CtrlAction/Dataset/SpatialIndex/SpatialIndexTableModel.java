@@ -5,13 +5,13 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.SpatialIndexTypeUtilities;
+import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -152,7 +152,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 		for (SpatialIndexTableModelBean data : datas) {
 			datasets.add(data.getDataset());
 		}
-		List<Dataset> datasetsClosed = DatasetUtilties.sureDatasetClosed(datasets);
+		List<Dataset> datasetsClosed = DatasetUIUtilities.sureDatasetClosed(datasets);
 
 		if (datasetsClosed.size() <= 0) {
 			return false;

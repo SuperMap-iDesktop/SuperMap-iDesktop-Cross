@@ -2,7 +2,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.data.GeometryType;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.ui.Action;
 
 public class ModifyNodeEditor extends AbstractEditor {

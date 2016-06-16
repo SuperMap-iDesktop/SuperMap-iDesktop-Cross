@@ -7,7 +7,7 @@ import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -19,16 +19,17 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.SpatialIndexInfoUtilities;
-import com.supermap.desktop.utilties.SpatialIndexTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.TableUtilities;
+import com.supermap.desktop.utilities.SpatialIndexInfoUtilities;
+import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -517,7 +518,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			selectedDatasets.add((Dataset) this.spatialIndexTableModel.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
 
-		this.panelGraphIndex.setFieldModel(DatasetUtilties.getCommonFields(selectedDatasets));
+		this.panelGraphIndex.setFieldModel(DatasetUIUtilities.getCommonFields(selectedDatasets));
 
 		String spatialIndexInfoTileField = SpatialIndexInfoUtilities.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
 		this.panelGraphIndex.setField(spatialIndexInfoTileField);

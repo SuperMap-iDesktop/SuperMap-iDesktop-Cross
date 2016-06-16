@@ -27,7 +27,7 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -35,6 +35,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

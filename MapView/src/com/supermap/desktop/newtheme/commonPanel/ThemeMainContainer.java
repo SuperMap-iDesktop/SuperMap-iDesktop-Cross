@@ -41,7 +41,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;

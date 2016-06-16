@@ -22,10 +22,10 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 

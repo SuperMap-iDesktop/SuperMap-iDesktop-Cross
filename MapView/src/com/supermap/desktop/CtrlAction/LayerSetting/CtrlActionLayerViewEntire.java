@@ -10,7 +10,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.LayerUtilities;
+import com.supermap.desktop.utilities.LayerUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 

@@ -14,12 +14,13 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DoubleUtilities;
-import com.supermap.desktop.utilties.PixelFormatUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.PixelFormatUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

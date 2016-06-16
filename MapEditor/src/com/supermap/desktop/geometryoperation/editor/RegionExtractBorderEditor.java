@@ -10,7 +10,7 @@ import com.supermap.desktop.geometry.Abstract.ILineConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 
 public class RegionExtractBorderEditor extends GeometryConvertEditor {
 

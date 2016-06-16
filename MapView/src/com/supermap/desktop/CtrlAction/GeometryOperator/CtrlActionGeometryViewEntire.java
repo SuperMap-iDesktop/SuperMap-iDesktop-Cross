@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class CtrlActionGeometryViewEntire extends CtrlAction {

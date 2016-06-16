@@ -6,11 +6,12 @@ import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLCommand;
-import com.supermap.desktop.utilties.CtrlActionUtilities;
-import com.supermap.desktop.utilties.JOptionPaneUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

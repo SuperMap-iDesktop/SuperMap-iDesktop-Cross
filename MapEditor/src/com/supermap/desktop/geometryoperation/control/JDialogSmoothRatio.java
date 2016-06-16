@@ -1,17 +1,18 @@
 package com.supermap.desktop.geometryoperation.control;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

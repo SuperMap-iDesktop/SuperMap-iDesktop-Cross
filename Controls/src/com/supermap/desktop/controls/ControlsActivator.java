@@ -3,7 +3,8 @@ package com.supermap.desktop.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.CoreServiceTracker;
 import com.supermap.desktop.dialog.OptionPaneImpl;
-import com.supermap.desktop.utilties.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

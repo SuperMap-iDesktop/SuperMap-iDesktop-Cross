@@ -16,11 +16,12 @@ import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.JSearchComboBox;
 import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
-import com.supermap.desktop.utilties.EnumComparator;
-import com.supermap.desktop.utilties.PrjCoordSysTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.EnumComparator;
+import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

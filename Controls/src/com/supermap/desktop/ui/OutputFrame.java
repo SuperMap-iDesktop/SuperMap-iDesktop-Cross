@@ -4,9 +4,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

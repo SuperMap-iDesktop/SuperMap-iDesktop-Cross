@@ -17,9 +17,10 @@ import com.supermap.desktop.core.http.HttpPostEvent;
 import com.supermap.desktop.core.http.HttpPostFile;
 import com.supermap.desktop.core.http.HttpPostListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -34,6 +35,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import javax.swing.event.EventListenerList;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;

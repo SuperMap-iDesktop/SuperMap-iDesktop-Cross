@@ -22,7 +22,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Map;
 
 /**

@@ -1,10 +1,11 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.text.DecimalFormat;

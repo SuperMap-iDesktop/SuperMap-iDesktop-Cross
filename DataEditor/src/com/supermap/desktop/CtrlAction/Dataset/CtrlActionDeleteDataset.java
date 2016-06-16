@@ -9,8 +9,8 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 import javax.swing.*;
 

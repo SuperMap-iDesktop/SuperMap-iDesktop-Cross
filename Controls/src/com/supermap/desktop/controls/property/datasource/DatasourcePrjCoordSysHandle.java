@@ -13,12 +13,12 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
-import com.supermap.desktop.controls.utilties.WorkspaceTreeManagerUtilties;
+import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.CursorUtilities;
-import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 import javax.swing.*;
 
@@ -168,7 +168,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 						}
 					}
 				}
-				WorkspaceTreeManagerUtilties.refreshNode(this.datasource);
+				WorkspaceTreeManagerUIUtilities.refreshNode(this.datasource);
 			} catch (Exception e) {
 				result = false;
 				Application.getActiveApplication().getOutput().output(e);

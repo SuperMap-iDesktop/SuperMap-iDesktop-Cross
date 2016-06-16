@@ -5,7 +5,7 @@ import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.ui.controls.InternalToolkitControl;
-import com.supermap.desktop.utilties.FontUtilities;
+import com.supermap.desktop.utilities.FontUtilities;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

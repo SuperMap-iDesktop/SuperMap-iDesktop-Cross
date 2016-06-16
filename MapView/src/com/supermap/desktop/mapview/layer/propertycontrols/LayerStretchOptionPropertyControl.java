@@ -8,11 +8,12 @@ import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
-import com.supermap.desktop.utilties.ImageStretchTypeUtilities;
+import com.supermap.desktop.utilities.ImageStretchTypeUtilities;
 import com.supermap.mapping.ImageStretchType;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;

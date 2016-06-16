@@ -13,7 +13,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 public class CtrlActionDatasourcesCloseAll extends CtrlAction {
 

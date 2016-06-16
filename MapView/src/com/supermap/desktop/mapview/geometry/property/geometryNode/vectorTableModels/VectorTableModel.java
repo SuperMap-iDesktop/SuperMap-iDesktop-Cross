@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * @author XiaJT

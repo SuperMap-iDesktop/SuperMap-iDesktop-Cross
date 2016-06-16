@@ -7,6 +7,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.table.AbstractTableModel;
 

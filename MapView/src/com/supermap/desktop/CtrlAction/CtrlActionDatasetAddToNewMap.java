@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 
 public class CtrlActionDatasetAddToNewMap extends CtrlAction {
@@ -18,7 +18,7 @@ public class CtrlActionDatasetAddToNewMap extends CtrlAction {
 	public void run() {
 		try {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			MapViewUtilties.addDatasetsToNewWindow(datasets, true);
+			MapViewUIUtilities.addDatasetsToNewWindow(datasets, true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

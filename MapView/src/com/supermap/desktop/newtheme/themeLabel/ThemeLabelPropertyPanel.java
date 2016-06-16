@@ -8,7 +8,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -20,8 +20,8 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.LabelBackShape;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
@@ -30,6 +30,7 @@ import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

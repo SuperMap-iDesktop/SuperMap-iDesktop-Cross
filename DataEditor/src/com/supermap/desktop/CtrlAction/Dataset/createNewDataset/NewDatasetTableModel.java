@@ -12,14 +12,15 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.utilties.CharsetUtilities;
-import com.supermap.desktop.utilties.EncodeTypeUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.EncodeTypeUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
 import javax.swing.table.DefaultTableModel;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;

@@ -15,8 +15,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FontUtilities;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
@@ -24,6 +24,7 @@ import com.supermap.ui.TrackingEvent;
 import com.supermap.ui.TrackingListener;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

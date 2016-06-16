@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
@@ -55,7 +55,7 @@ public class CtrlActionLayer3DSelectable extends CtrlAction {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) layer3DsTree.getSelectionPaths()[i].getLastPathComponent();
 					TreeNodeData data = (TreeNodeData) node.getUserObject();
 					Layer3D layer3D = (Layer3D) data.getData();
-					if (this.isLayer3DSurpportSelect(layer3D) && SceneUtilties.getObjectVisitble(data)) {
+					if (this.isLayer3DSurpportSelect(layer3D) && SceneUIUtilities.getObjectVisitble(data)) {
 						enable = true;
 						break;
 					}

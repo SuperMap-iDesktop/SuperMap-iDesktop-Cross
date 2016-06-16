@@ -20,8 +20,8 @@ import com.supermap.desktop.Interface.IStatusbarManager;
 import com.supermap.desktop.Interface.IToolbarManager;
 import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.property.JDialogDataPropertyContainer;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -29,9 +29,9 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.docking.TabWindow;
-import com.supermap.desktop.utilties.DatasetUtilities;
-import com.supermap.desktop.utilties.DatasourceUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 
@@ -175,7 +175,7 @@ public class FormBase extends JFrame implements IFormMain {
 			if (outputDockbar != null && outputDockbar.getComponent() instanceof OutputFrame) {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getComponent());
 			}
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 
 			initLayout(dockbar);
 			FormBase.this.setVisible(true);
@@ -331,7 +331,7 @@ public class FormBase extends JFrame implements IFormMain {
 							Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 							if (0 < datasets.length) {
 								if (Application.getActiveApplication().getActiveForm() == null || Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-									MapViewUtilties.addDatasetsToNewWindow(datasets, true);
+									MapViewUIUtilities.addDatasetsToNewWindow(datasets, true);
 								}
 							} else {
 								WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
@@ -341,7 +341,7 @@ public class FormBase extends JFrame implements IFormMain {
 									String name = (String) selectedNodeData.getData();
 									if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 										// 节点对应的数据为地图，直接拖拽打开地图
-										MapViewUtilties.openMap(name);
+										MapViewUIUtilities.openMap(name);
 									} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 										// 节点对应的数据为场景，直接拖拽打开场景
 										openScence(name);

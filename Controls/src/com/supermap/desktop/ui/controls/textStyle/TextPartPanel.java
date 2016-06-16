@@ -13,7 +13,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * 子对象面板

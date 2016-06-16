@@ -1,7 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;

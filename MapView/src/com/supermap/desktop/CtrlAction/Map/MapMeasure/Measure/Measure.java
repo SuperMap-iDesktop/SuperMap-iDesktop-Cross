@@ -7,7 +7,7 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -19,6 +19,7 @@ import com.supermap.ui.TrackingListener;
 import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

@@ -2,7 +2,7 @@ package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 /**
  * @author XiaJt

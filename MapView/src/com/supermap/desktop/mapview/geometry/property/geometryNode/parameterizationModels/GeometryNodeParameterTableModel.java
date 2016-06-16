@@ -1,7 +1,8 @@
 package com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels;
 
 import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+
 import org.jdesktop.swingx.treetable.TreeTableModel;
 
 import javax.swing.event.TreeModelListener;

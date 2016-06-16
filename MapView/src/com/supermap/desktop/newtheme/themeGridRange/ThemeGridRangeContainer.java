@@ -11,13 +11,14 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;

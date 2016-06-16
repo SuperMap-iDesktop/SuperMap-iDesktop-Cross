@@ -11,7 +11,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.implement.SmLabel;
 import com.supermap.desktop.implement.SmStatusbar;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class CtrlActionSelectNone extends CtrlAction {

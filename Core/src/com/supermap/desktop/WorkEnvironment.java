@@ -3,8 +3,9 @@ package com.supermap.desktop;
 import java.io.File;
 
 import org.w3c.dom.Element;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 
 public class WorkEnvironment {
 

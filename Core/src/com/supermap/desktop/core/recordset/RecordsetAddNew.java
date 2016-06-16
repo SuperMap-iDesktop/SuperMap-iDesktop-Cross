@@ -10,7 +10,7 @@ import com.supermap.data.EditType;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilties.ArrayUtilities;
+import com.supermap.desktop.utilities.ArrayUtilities;
 
 // 时间紧迫，先这样，理应有更为严谨美观的结构
 public class RecordsetAddNew {

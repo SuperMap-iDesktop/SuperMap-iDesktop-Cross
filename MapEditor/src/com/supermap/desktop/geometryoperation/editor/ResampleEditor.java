@@ -13,8 +13,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogResample;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class ResampleEditor extends AbstractEditor {

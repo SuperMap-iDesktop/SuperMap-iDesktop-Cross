@@ -4,7 +4,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

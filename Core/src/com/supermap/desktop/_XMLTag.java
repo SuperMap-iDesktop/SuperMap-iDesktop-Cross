@@ -1,6 +1,6 @@
 package com.supermap.desktop;
 
-import com.supermap.desktop.utilties.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 public class _XMLTag {
 

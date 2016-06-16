@@ -4,10 +4,11 @@ package com.supermap.desktop.ui.controls.comboBox;
  * @author XiaJT
  */
 
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;

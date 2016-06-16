@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class DatasetUtil {
 

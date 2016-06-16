@@ -7,9 +7,10 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.FontUtilities;
+import com.supermap.desktop.utilities.FontUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.text.MessageFormat;

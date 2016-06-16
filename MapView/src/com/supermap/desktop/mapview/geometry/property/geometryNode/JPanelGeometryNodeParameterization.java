@@ -8,14 +8,16 @@ import com.supermap.desktop.geometry.Implements.DGeoCardinal;
 import com.supermap.desktop.geometry.Implements.DGeoCurve;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels.GeometryNodeParameterTableModel;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.GeometryTypeUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.GeometryTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+
 import org.jdesktop.swingx.JXTreeTable;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

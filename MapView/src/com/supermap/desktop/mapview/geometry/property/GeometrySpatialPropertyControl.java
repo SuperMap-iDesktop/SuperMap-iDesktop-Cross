@@ -42,8 +42,8 @@ import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
-import com.supermap.desktop.utilties.GeoTypeUtilities;
-import com.supermap.desktop.utilties.PrjCoordSysUtilities;
+import com.supermap.desktop.utilities.GeoTypeUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
 public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 

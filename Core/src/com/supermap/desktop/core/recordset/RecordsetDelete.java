@@ -9,7 +9,7 @@ import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilties.ArrayUtilities;
+import com.supermap.desktop.utilities.ArrayUtilities;
 
 // 时间紧迫，先这样，理应有更为严谨美观的结构
 // 批量撤销记录集的时候，需要query子记录集添加到EditHistory。

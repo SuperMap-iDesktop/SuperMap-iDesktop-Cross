@@ -8,13 +8,13 @@ import javax.swing.tree.TreePath;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 public class CtrlActionMapDelete extends CtrlAction {
 
@@ -33,7 +33,7 @@ public class CtrlActionMapDelete extends CtrlAction {
 			mapNames.add(selectedNodeData.getData().toString());
 		}
 		MapUtilities.deleteMaps(mapNames.toArray(new String[mapNames.size()]));
-		ToolbarUtilties.updataToolbarsState();
+		ToolbarUIUtilities.updataToolbarsState();
 	}
 
 	@Override

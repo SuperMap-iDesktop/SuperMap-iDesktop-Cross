@@ -18,9 +18,9 @@ import org.apache.http.TruncatedChunkException;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.ListUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * 封装文件/文件夹的压缩，提供进度信息的支持（目前仅实现 zip）

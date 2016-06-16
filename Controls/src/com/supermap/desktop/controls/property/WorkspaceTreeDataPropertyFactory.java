@@ -20,7 +20,7 @@ import com.supermap.desktop.controls.property.dataset.VectorPropertyControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
 import com.supermap.desktop.controls.property.workspace.WorkspacePropertyControl;
-import com.supermap.desktop.controls.utilties.NodeDataTypeUtilties;
+import com.supermap.desktop.controls.utilities.NodeDataTypeUtilities;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 
@@ -53,7 +53,7 @@ public class WorkspaceTreeDataPropertyFactory {
 					boolean covert = tempDatasource != null && !tempDatasource.isReadOnly();
 					properties.add(getDatasourcePropertyControl((Datasource) data.getData()));
 					properties.add(getPrjCoordSysPropertyControl(new DatasourcePrjCoordSysHandle((Datasource) data.getData()), covert));
-				} else if (NodeDataTypeUtilties.isNodeDataset(data.getType()) && data.getData() instanceof Dataset) {
+				} else if (NodeDataTypeUtilities.isNodeDataset(data.getType()) && data.getData() instanceof Dataset) {
 					properties.add(getDatasetPropertyControl((Dataset) data.getData()));
 					if (data.getType() == NodeDataType.DATASET_VECTOR) {
 						properties.add(getVectorPropertyControl((DatasetVector) data.getData()));

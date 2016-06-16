@@ -8,8 +8,8 @@ import com.supermap.desktop.newtheme.commonPanel.*;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;

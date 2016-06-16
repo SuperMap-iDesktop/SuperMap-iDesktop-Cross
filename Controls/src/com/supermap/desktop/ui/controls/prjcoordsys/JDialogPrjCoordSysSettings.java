@@ -8,17 +8,18 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.JTreeUtilties;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFieldSearch;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.StringUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,6 +42,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1225,7 +1227,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			if (parentNode == null) {
 				parentNode = createNode(parentValue);
 				((DefaultTreeModel) treePrjCoordSys.getModel()).insertNodeInto(parentNode, grandParentNode, grandParentNode.getChildCount());
-				JTreeUtilties.locateNode(treePrjCoordSys, (DefaultMutableTreeNode) parentNode.getChildAt(0));
+				JTreeUIUtilities.locateNode(treePrjCoordSys, (DefaultMutableTreeNode) parentNode.getChildAt(0));
 			} else {
 				java.util.List<String> names = new ArrayList<>();
 				for (int i = 0; i < parentNode.getChildCount(); i++) {
@@ -1235,7 +1237,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				value.setCaption(getSingletonName(value.getCaption(), names));
 				DefaultMutableTreeNode node = createNode(value);
 				((DefaultTreeModel) treePrjCoordSys.getModel()).insertNodeInto(node, parentNode, parentNode.getChildCount());
-				JTreeUtilties.locateNode(treePrjCoordSys, node);
+				JTreeUIUtilities.locateNode(treePrjCoordSys, node);
 			}
 		}
 	}

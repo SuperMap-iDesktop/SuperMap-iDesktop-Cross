@@ -22,7 +22,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 public class TabularViewActivator implements BundleActivator {
 

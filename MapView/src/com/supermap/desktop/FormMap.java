@@ -21,8 +21,8 @@ import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
@@ -47,11 +47,11 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.ActionUtilities;
-import com.supermap.desktop.utilties.DoubleUtilities;
-import com.supermap.desktop.utilties.MapControlUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
-import com.supermap.desktop.utilties.TabularUtilities;
+import com.supermap.desktop.utilities.ActionUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.MapControlUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -397,7 +397,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				@Override
 				public void run() {
 					// 先挂起，最后刷新工具条
-					ToolbarUtilties.updataToolbarsState();
+					ToolbarUIUtilities.updataToolbarsState();
 				}
 			});
 		}
@@ -407,7 +407,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		}
 	};
 
@@ -1319,21 +1319,21 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	public void clearSelection() {
-		mapControlGeometrySelected(MapViewUtilties.clearAllSelection(this));
+		mapControlGeometrySelected(MapViewUIUtilities.clearAllSelection(this));
 	}
 
 	/**
 	 * 全选
 	 */
 	public void selectAll() {
-		mapControlGeometrySelected(MapViewUtilties.selectAllGeometry(this));
+		mapControlGeometrySelected(MapViewUIUtilities.selectAllGeometry(this));
 	}
 
 	/**
 	 * 反选
 	 */
 	public void reverseSelection() {
-		mapControlGeometrySelected(MapViewUtilties.reverseSelection(this));
+		mapControlGeometrySelected(MapViewUIUtilities.reverseSelection(this));
 	}
 
 	private void mapControlGeometrySelected(int selectGeometryCount) {
@@ -1352,7 +1352,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	@Override
 	public void updataSelectNumber() {
-		((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(MapViewUtilties.calculateSelectNumber(this)));
+		((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(MapViewUIUtilities.calculateSelectNumber(this)));
 		updataLayersTreeSelection();
 	}
 
@@ -1485,7 +1485,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 						Map map = formMap.getMapControl().getMap();
-						MapViewUtilties.addDatasetsToMap(map, datasets, true);
+						MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
 					}
 				}
 			} catch (Exception e) {

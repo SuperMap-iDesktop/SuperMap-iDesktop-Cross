@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.mapping.Layer;
 
 public class TextStyleEditor extends AbstractEditor {

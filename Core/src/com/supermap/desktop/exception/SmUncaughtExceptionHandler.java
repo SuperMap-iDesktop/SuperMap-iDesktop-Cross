@@ -1,7 +1,7 @@
 package com.supermap.desktop.exception;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 
 /**
  * Created by Administrator on 2016/3/22.

@@ -31,7 +31,7 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 public class JDialogBoundsQuery extends SmDialog {
 	/**

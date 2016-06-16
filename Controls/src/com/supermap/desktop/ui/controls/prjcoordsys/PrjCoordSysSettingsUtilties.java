@@ -11,8 +11,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings.CoordSysDefine;
-import com.supermap.desktop.utilties.PrjCoordSysTypeUtilities;
-import com.supermap.desktop.utilties.PrjCoordSysUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
 import javax.swing.*;
 

@@ -4,12 +4,13 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.ui.Action;
 
 import javax.swing.*;
+
 import java.util.List;
 
 public class DatasetChooserNewMap {
@@ -39,7 +40,7 @@ public class DatasetChooserNewMap {
 		try {
 			List<Dataset> datasetsToMap = datasetChooser.getSelectedDatasets();
 
-			MapViewUtilties.addDatasetsToMap(this.formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), true);
+			MapViewUIUtilities.addDatasetsToMap(this.formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), true);
 			// 新建的地图窗口，修改默认的Action为漫游
 			formMap.getMapControl().setAction(Action.PAN);
 		} catch (Exception ex) {

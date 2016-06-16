@@ -9,11 +9,11 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.DatasetUtilities;
-import com.supermap.desktop.utilties.LayoutUtilities;
-import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.LayoutUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -206,7 +206,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String sceneName = (String) data;
 					if (sceneName.equals(stringTextField)) {
 						// 点错了
-					} else if (SceneUtilties.checkAvailableSceneName(stringTextField, sceneName)) {
+					} else if (SceneUIUtilities.checkAvailableSceneName(stringTextField, sceneName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
 							if (formManager.get(i) instanceof IFormScene && formManager.get(i).getText().equals(sceneName)) {

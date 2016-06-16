@@ -11,10 +11,11 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilties.LogUtilities;
-import com.supermap.desktop.utilties.WorkspaceUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 
 public class CtrlActionWorkspaceOpenFile extends CtrlAction {

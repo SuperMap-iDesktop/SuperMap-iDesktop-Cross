@@ -1,7 +1,8 @@
 package com.supermap.desktop;
 
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 

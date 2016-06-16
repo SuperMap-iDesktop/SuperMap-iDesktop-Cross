@@ -9,7 +9,7 @@ import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
 
 public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<Geometry>, IReverse {
 

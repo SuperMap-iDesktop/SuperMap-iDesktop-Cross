@@ -1,9 +1,10 @@
 package com.supermap.desktop.controls.colorScheme;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.FileUtilities;
-import com.supermap.desktop.utilties.PathUtilities;
-import com.supermap.desktop.utilties.XmlUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
