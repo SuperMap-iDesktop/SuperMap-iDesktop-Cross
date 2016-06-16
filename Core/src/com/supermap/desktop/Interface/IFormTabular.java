@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import java.util.HashMap;
+
 import javax.swing.JList;
 import javax.swing.JTable;
 
@@ -106,4 +108,14 @@ public interface IFormTabular extends IForm {
 	 * @return
 	 */
 	public JList getRowHeader();
+	/**
+	 * 获取属性表中和行数对应的ID
+	 * @return
+	 */
+	public HashMap<Integer, Object> getRowIndexMap();
+	/**
+	 * 获取属性表中和ID对应的行数
+	 * @return
+	 */
+	public HashMap<Object, Integer> getIdMap();
 }
