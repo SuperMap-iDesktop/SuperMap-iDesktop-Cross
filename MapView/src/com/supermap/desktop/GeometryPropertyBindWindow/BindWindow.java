@@ -1,6 +1,9 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import java.awt.event.*;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -66,15 +69,11 @@ public class BindWindow implements IBindWindow {
 		int[] selectRows = tabularTable.getSelectedRows();
 		int[] idRows = new int[selectRows.length];
 		for (int i = 0; i < selectRows.length; i++) {
-			idRows[i] = selectRows[i] + 1;
+			// idRows[i] = selectRows[i] + 1;
+			idRows[i] = (int) this.formTabular.getRowIndexMap().get(selectRows[i]);
 		}
 		if (null != this.dataset) {
 			DatasetVector datasetVector = (DatasetVector) this.dataset;
-			Recordset maxIdSet = datasetVector.query("SmId", CursorType.STATIC);
-			int idCount = (int) maxIdSet.statistic("SmId", StatisticMode.MAX);
-			if (!BindUtilties.isRightRows(idRows, idCount)) {
-				return;
-			}
 			Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
 			Selection selection = new Selection();
 			selection.fromRecordset(recordset);
@@ -88,9 +87,13 @@ public class BindWindow implements IBindWindow {
 
 	@Override
 	public void refreshFormTabular(int[] addRows) {
-		if (BindUtilties.isRightRows(addRows, formTabular.getjTableTabular().getRowCount())) {
-			this.formTabular.addRow(addRows);
+		int[] tempRows = new int[addRows.length];
+		for (int i = 0; i < tempRows.length; i++) {
+			if (null != this.formTabular.getIdMap().get(addRows[i])) {
+				tempRows[i] = this.formTabular.getIdMap().get(addRows[i]);
+			}
 		}
+		this.formTabular.addRow(tempRows);
 	}
 
 	public boolean isSelectionHasChanged() {

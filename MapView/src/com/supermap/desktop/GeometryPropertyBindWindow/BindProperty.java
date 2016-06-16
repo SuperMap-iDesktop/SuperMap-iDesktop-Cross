@@ -39,7 +39,7 @@ public class BindProperty implements IBindProperty {
 			int i = 0;
 			recordset.moveFirst();
 			while (!recordset.isEOF()) {
-				rows[i] = recordset.getID() - 1;
+				rows[i] = recordset.getID();
 				i++;
 				recordset.moveNext();
 			}

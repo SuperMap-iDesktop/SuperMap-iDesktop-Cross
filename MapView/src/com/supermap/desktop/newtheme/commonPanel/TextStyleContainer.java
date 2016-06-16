@@ -2,7 +2,10 @@ package com.supermap.desktop.newtheme.commonPanel;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
+
 import javax.swing.*;
+
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.*;
@@ -35,7 +38,8 @@ public class TextStyleContainer extends ThemeChangePanel {
 	private boolean isUniformStyle;
 	private boolean isRefreshAtOnce;
 	private ITextStyle textStylePanel;
-	private TextStyleChangeListener textStyleChangeListener;
+	private transient TextStyleChangeListener textStyleChangeListener;
+	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
 
 	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
 		this.textStyle = textStyle.clone();
@@ -116,6 +120,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 			@Override
 			public void modify(TextStyleType newValue) {
+				if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+					textStyle.setSizeFixed((boolean) textStylePanel.getResultMap().get(newValue));
+				}
 				if (null != theme && theme instanceof ThemeLabel && isUniformStyle) {
 					resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getUniformStyle());
 					ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeLabel) theme).getUniformStyle(), textStylePanel.getResultMap().get(newValue));
@@ -163,7 +170,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 			}
 
 		};
+		unregistActionListener();
 		this.textStylePanel.addTextStyleChangeListener(textStyleChangeListener);
+		this.map.addDrawnListener(this.mapDrawnListener);
 	}
 
 	private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
@@ -179,6 +188,43 @@ public class TextStyleContainer extends ThemeChangePanel {
 		}
 	}
 
+	class LocalMapDrawnListener implements MapDrawnListener {
+
+		@Override
+		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
+			changeFontSizeWithMapObject();
+		}
+	}
+	private void changeFontSizeWithMapObject() {
+
+		try {
+			// 非固定文本大小
+			
+
+			if (!textStyle.isSizeFixed()) {
+				// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
+				// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
+				Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+				DecimalFormat decimalFormat = new DecimalFormat("0.0");
+				String numeric = "0.00";
+				if (Double.compare(size, size.intValue()) > 0) {
+					((JTextField)textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
+				} else {
+					decimalFormat = new DecimalFormat("0");
+					((JTextField)textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
+				}
+				if (((JTextField)textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
+					((JTextField)textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(new DecimalFormat(numeric).format(size / 0.283));
+				}
+			} else {
+				// 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
+
+
+			}
+		} catch (Exception e) {
+
+		}
+	}
 	@Override
 	public void unregistActionListener() {
 		this.textStylePanel.removeTextStyleChangeListener(this.textStyleChangeListener);

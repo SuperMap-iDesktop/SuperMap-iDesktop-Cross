@@ -16,7 +16,6 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
@@ -158,7 +157,8 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 				if (editModel.trackingGeoCompound != null) {
 					editModel.trackingGeoCompound.offset(offsetX, offsetY);
-					GeoStyleUtilties.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilties.getTrackingLineStyle());
+					GeoStyleUtilties.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilties.getTrackingLineStyle(),
+							EditorUtilties.getTrackingLineStyle3D());
 
 					int index = environment.getMap().getTrackingLayer().indexOf(TAG_GEOMETRYCOPY);
 					if (index >= 0) {
@@ -168,6 +168,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 					}
 					editModel.trackingGeoCompound.offset(-1 * offsetX, -1 * offsetY);
 					environment.getMap().refreshTrackingLayer();
+					environment.getMapControl().repaint();
 				}
 			}
 		} catch (Exception ex) {

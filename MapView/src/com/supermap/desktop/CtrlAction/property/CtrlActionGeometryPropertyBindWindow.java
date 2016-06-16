@@ -52,7 +52,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 				this.newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
 				this.tabSize += 1;
 				if (null == splitWindow) {
-					this.splitWindow = tabWindow.split(newTabWindow, Direction.RIGHT, 0.5f);
+					this.splitWindow = tabWindow.split(newTabWindow, Direction.DOWN, 0.5f);
 				} else if (splitWindow.getChildWindowCount() > 0) {
 					((TabWindow) this.splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
 				}
@@ -86,6 +86,8 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
 		this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
 		this.tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
+		this.tabular.getIdMap().clear();
+		this.tabular.getRowIndexMap().clear();
 		this.tabular.setRecordset(recordset);
 	}
 

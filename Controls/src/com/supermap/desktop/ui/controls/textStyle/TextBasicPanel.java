@@ -498,6 +498,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.componentsMap.put(TextStyleType.UNDERLINE, this.checkBoxUnderline);
 		this.sliderOutLineWidth = new JSlider(0, 4, this.textStyle.getOutlineWidth() - 1);
 		this.componentsMap.put(TextStyleType.OUTLINEWIDTH, this.sliderOutLineWidth);
+		this.componentsMap.put(TextStyleType.FONTSIZE, textFieldFontSize);
+		this.componentsMap.put(TextStyleType.FONTHEIGHT, this.textFieldFontHeight);
 		this.labelStringAlignment = new JLabel();
 		this.comboBoxStringAlignment = new JComboBox<String>();
 		this.comboBoxStringAlignment.setModel(new DefaultComboBoxModel<String>(new String[] { ControlsProperties.getString("String_AlignLeft"),
