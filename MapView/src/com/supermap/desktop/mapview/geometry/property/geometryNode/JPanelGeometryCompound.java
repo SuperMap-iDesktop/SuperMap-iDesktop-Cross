@@ -15,7 +15,7 @@ import com.supermap.desktop.geometry.Implements.DGeoCompound;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.compoundModels.GeometryCompoundTreeNode;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.GeometryTypeUtilties;
+import com.supermap.desktop.utilties.GeometryTypeUtilities;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -135,7 +135,7 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 			tree.setSelectionRow(0);
 			JTreeUtilties.expandTree(tree, true);
 		}
-		textFieldGeometryType.setText(GeometryTypeUtilties.toString(this.geometry.getGeometry().getType()));
+		textFieldGeometryType.setText(GeometryTypeUtilities.toString(this.geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(this.geometry.getPartCount()));
 		textFieldNodeCount.setText(String.valueOf(getNodeCount(null)));
 	}

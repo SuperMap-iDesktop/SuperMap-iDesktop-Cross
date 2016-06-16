@@ -107,10 +107,11 @@ import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.LayoutUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.LayoutUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -122,6 +123,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -1499,7 +1501,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				TreeNodeData currentNodeData = (TreeNodeData) userObject;
 				Object data = currentNodeData.getData();
 				if (data instanceof Workspace) {
-					WorkspaceUtilties.closeWorkspace();
+					WorkspaceUtilities.closeWorkspace();
 				} else if (data instanceof Datasource) {
 					try {
 						String message = MessageFormat.format(ControlsProperties.getString("String_CloseDatasourseInfo"), Application.getActiveApplication()
@@ -1510,7 +1512,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 								// 关闭选中的数据源下的数据集
 								Datasource activeDatasource = activeDatasources[i];
 								Datasets datasets = activeDatasource.getDatasets();
-								CommonToolkit.DatasetWrap.CloseDataset(datasets);
+								DatasetUtilities.closeDataset(datasets);
 								// 关闭数据源
 								String datasourceAlias = activeDatasource.getAlias();
 								boolean flag = Application.getActiveApplication().getWorkspace().getDatasources().close(datasourceAlias);
@@ -1541,7 +1543,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 						message = MessageFormat.format(ControlsProperties.getString("String_DelectManyDataset"), datasets.length);
 					}
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
-						CommonToolkit.DatasetWrap.CloseDataset(datasets);
+						DatasetUtilities.closeDataset(datasets);
 						for (int i = 0; i < datasets.length; i++) {
 							String resultInfo = MessageFormat.format(ControlsProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
 									.getDatasource().getAlias(), datasets[i].getName());
@@ -1559,7 +1561,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 							layoutNames.add(selectedNodeData.getData().toString());
 						}
-						LayoutUtilties.deleteMapLayout(layoutNames.toArray(new String[layoutNames.size()]));
+						LayoutUtilities.deleteMapLayout(layoutNames.toArray(new String[layoutNames.size()]));
 					} else if (type.equals(NodeDataType.MAP_NAME)) {
 						ArrayList<String> mapNames = new ArrayList<String>();
 						for (TreePath treePath : getSelectionPaths()) {
@@ -1567,7 +1569,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 							mapNames.add(selectedNodeData.getData().toString());
 						}
-						MapUtilties.deleteMaps(mapNames.toArray(new String[mapNames.size()]));
+						MapUtilities.deleteMaps(mapNames.toArray(new String[mapNames.size()]));
 					} else if (type.equals(NodeDataType.SCENE_NAME)) {
 						ArrayList<String> sceneNames = new ArrayList<String>();
 						for (TreePath treePath : getSelectionPaths()) {
@@ -2043,12 +2045,12 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			for (Dataset dataset : datasets) {
 				if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
 					if (formMap == null) {
-						String name = MapUtilties.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
+						String name = MapUtilities.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
 						formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 					}
 					if (formMap != null) {
 						Map map = formMap.getMapControl().getMap();
-						MapUtilties.addDatasetToMap(map, dataset, true);
+						MapUtilities.addDatasetToMap(map, dataset, true);
 //						map.refresh();
 						UICommonToolkit.getLayersManager().setMap(map);
 						// 新建的地图窗口，修改默认的Action为漫游
@@ -2237,15 +2239,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 									Datasources datasourcestemp = Application.getActiveApplication().getWorkspace().getDatasources();
 									for (int j = 0; j < datasourcestemp.getCount(); j++) {
 										Datasets datasets = datasourcestemp.get(j).getDatasets();
-										CommonToolkit.DatasetWrap.CloseDataset(datasets);
+										DatasetUtilities.closeDataset(datasets);
 									}
 									// 关闭当前工作空间
 									WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-									WorkspaceUtilties.openWorkspace(connectionInfo, false);
+									WorkspaceUtilities.openWorkspace(connectionInfo, false);
 								}
 								// 打开数据源类型的文件
 								if (datasourceType == getFileType(file)) {
-									DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, true);
+									DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, true);
 								}
 							}
 							dtde.dropComplete(true);// 指示拖拽操作已完成

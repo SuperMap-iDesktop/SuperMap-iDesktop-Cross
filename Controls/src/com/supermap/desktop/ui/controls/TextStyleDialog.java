@@ -16,7 +16,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.ComponentFactory;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.textStyle.*;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 
 /**
  * 文本风格对话框
@@ -144,7 +144,7 @@ public class TextStyleDialog extends SmDialog {
 			recordset.moveNext();
 		}
 		recordset.dispose();
-		MapUtilties.getActiveMap().refresh();
+		MapUtilities.getActiveMap().refresh();
 		TextStyleDialog.this.dispose();
 	}
 

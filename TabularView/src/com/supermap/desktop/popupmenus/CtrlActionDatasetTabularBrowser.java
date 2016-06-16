@@ -11,7 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.WorkspaceComponentManager;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.TabularUtilities;
 
 public class CtrlActionDatasetTabularBrowser extends CtrlAction {
 
@@ -29,7 +29,7 @@ public class CtrlActionDatasetTabularBrowser extends CtrlAction {
 				if (selectedNodeData.getData() instanceof Dataset) {
 					DatasetVector dataset = (DatasetVector) selectedNodeData.getData();
 					if (dataset != null) {
-						TabularUtilties.openDatasetVectorFormTabular(dataset);
+						TabularUtilities.openDatasetVectorFormTabular(dataset);
 					}
 				}
 			}

@@ -12,10 +12,10 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.utilties.CharsetUtilties;
-import com.supermap.desktop.utilties.EncodeTypeUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilties.EncodeTypeUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -100,9 +100,9 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			return datasetBeans.get(row).getDatasetName();
 		} else if (column == COLUMN_INDEX_EncodeType) {
-			return EncodeTypeUtilties.toString(datasetBeans.get(row).getEncodeType());
+			return EncodeTypeUtilities.toString(datasetBeans.get(row).getEncodeType());
 		} else if (column == COLUMN_INDEX_Charset) {
-			return CharsetUtilties.toString(datasetBeans.get(row).getCharset());
+			return CharsetUtilities.toString(datasetBeans.get(row).getCharset());
 		} else if (column == COLUMN_INDEX_WindowMode) {
 			return AddToWindowMode.toString(datasetBeans.get(row).getAddToWindowMode());
 		}
@@ -127,9 +127,9 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			setDatasetName(row, (String) aValue);
 		} else if (column == COLUMN_INDEX_EncodeType) {
-			datasetBeans.get(row).setEncodeType(EncodeTypeUtilties.valueOf((String) aValue));
+			datasetBeans.get(row).setEncodeType(EncodeTypeUtilities.valueOf((String) aValue));
 		} else if (column == COLUMN_INDEX_Charset) {
-			datasetBeans.get(row).setCharset(CharsetUtilties.valueOf((String) aValue));
+			datasetBeans.get(row).setCharset(CharsetUtilities.valueOf((String) aValue));
 		} else if (column == COLUMN_INDEX_WindowMode) {
 			datasetBeans.get(row).setAddToWindowMode(AddToWindowMode.getWindowMode((String) aValue));
 		}
@@ -138,7 +138,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 	private void checkCurrentName(int row) {
 		String datasetName = datasetBeans.get(row).getDatasetName();
-		if (StringUtilties.isNullOrEmpty(datasetName) || isDefaultDatasetName(datasetName)) {
+		if (StringUtilities.isNullOrEmpty(datasetName) || isDefaultDatasetName(datasetName)) {
 			setValueAt("", row, COLUMN_INDEX_DatasetName);
 		} else {
 			setValueAt(datasetName, row, COLUMN_INDEX_DatasetName);
@@ -155,7 +155,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	}
 
 	private void setDatasetName(int row, String aValue) {
-		if (StringUtilties.isNullOrEmpty(aValue)) {
+		if (StringUtilities.isNullOrEmpty(aValue)) {
 			setDatasetName(row, getDefaultDatasetName(datasetBeans.get(row).getDatasetType()));
 			return;
 		}
@@ -179,7 +179,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 	private String getUsableDatasetName(String source, Datasource datasource, List<String> datasetNames, int i) {
 //		return CommonToolkit.DatasetWrap.getAvailableDatasetName(datasource, source,datasetNames.toArray(new String[datasetNames.size()]));
-		if (StringUtilties.isNullOrEmpty(source)) {
+		if (StringUtilities.isNullOrEmpty(source)) {
 			throw new UnsupportedOperationException("name should not null");
 		}
 		String currentDataset = source;
@@ -305,7 +305,7 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		}
 
 		if (!addToNewWindow.isEmpty()) {
-			String name = MapUtilties.getAvailableMapName(MessageFormat.format("{0}@{1}", addToNewWindow.get(0).getName(), addToNewWindow.get(0).getDatasource().getAlias()), true);
+			String name = MapUtilities.getAvailableMapName(MessageFormat.format("{0}@{1}", addToNewWindow.get(0).getName(), addToNewWindow.get(0).getDatasource().getAlias()), true);
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 
 			if (formMap != null) {

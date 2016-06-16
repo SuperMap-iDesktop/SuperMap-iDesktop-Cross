@@ -13,8 +13,8 @@ import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.FieldTypeUtilities;
 
 import javax.swing.*;
 import java.text.MessageFormat;
@@ -117,7 +117,7 @@ public class FieldInfoTable extends SortTable {
 				count = this.dataset.getFieldCount() + 1;
 				if (joinItems != null && joinItems.getCount() > 0) {
 					for (int i = 0; i < joinItems.getCount(); i++) {
-						DatasetVector dataset = (DatasetVector) DatasourceUtilties.getDataset(joinItems.get(i).getForeignTable(), this.dataset.getDatasource());
+						DatasetVector dataset = (DatasetVector) DatasourceUtilities.getDataset(joinItems.get(i).getForeignTable(), this.dataset.getDatasource());
 						if (dataset != null) {
 							FieldInfos fieldInfos = dataset.getFieldInfos();
 							count += fieldInfos.getCount();
@@ -181,12 +181,12 @@ public class FieldInfoTable extends SortTable {
 //						result = formatString(this.dataset.getName(), datasetFieldInfos.get(row - 1).getName());
 						result = datasetFieldInfos.get(row - 1).getName();
 					} else {
-						result = FieldTypeUtilties.getFieldTypeName(datasetFieldInfos.get(row - 1).getType());
+						result = FieldTypeUtilities.getFieldTypeName(datasetFieldInfos.get(row - 1).getType());
 					}
 				} else {
 					row -= datasetFieldInfos.getCount();
 					for (int i = 0; i < joinItems.getCount(); i++) {
-						DatasetVector datasetVector = (DatasetVector) DatasourceUtilties.getDataset(joinItems.get(i).getForeignTable(), dataset.getDatasource());
+						DatasetVector datasetVector = (DatasetVector) DatasourceUtilities.getDataset(joinItems.get(i).getForeignTable(), dataset.getDatasource());
 						if (datasetVector == null) {
 							continue;
 						}
@@ -197,7 +197,7 @@ public class FieldInfoTable extends SortTable {
 							} else if (column == 1) {
 								result = formatString(datasetVector.getName(), fieldInfos.get(row - 1).getName());
 							} else {
-								result = FieldTypeUtilties.getFieldTypeName(fieldInfos.get(row - 1).getType());
+								result = FieldTypeUtilities.getFieldTypeName(fieldInfos.get(row - 1).getType());
 							}
 							break;
 						}

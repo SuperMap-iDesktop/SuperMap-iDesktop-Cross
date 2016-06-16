@@ -20,7 +20,7 @@ import com.supermap.desktop.controls.utilties.DatasetUtilties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.Layer;
 
 /**
@@ -113,7 +113,7 @@ public class ThemeUtil {
 		comboBoxExpression.setEditable(true);
 		comboBoxExpression.removeAllItems();
 		getFieldComboBox(comboBoxExpression, datasetVector, joinItems, comboBoxArray, isDataType);
-		if (StringUtilties.isNullOrEmpty(tempExpression)) {
+		if (StringUtilities.isNullOrEmpty(tempExpression)) {
 			tempExpression = "";
 		}
 		comboBoxExpression.setSelectedItem(tempExpression);
@@ -239,7 +239,7 @@ public class ThemeUtil {
 			}
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-				if (!StringUtilties.isNullOrEmpty(filter)) {
+				if (!StringUtilities.isNullOrEmpty(filter)) {
 					if (!comboBoxArray.contains(filter) && !filter.equals(expression)) {
 						jComboBoxField.insertItemAt(filter, allItems - 1);
 						jComboBoxField.setSelectedIndex(allItems - 1);

@@ -15,7 +15,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -225,7 +225,7 @@ public class JDialogPyramidManager extends SmDialog {
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.invertSelection(tableDatasets);
+				TableUtilities.invertSelection(tableDatasets);
 			}
 		});
 

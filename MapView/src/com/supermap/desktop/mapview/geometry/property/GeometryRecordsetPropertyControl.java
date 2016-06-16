@@ -14,8 +14,8 @@ import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.FieldTypeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -490,7 +490,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				} else if (columnIndex == FIELD_CAPTION) {
 					return fieldDataInfo.getCaption();
 				} else if (columnIndex == FIELD_TYPE) {
-					return FieldTypeUtilties.getFieldTypeName(fieldDataInfo.getType());
+					return FieldTypeUtilities.getFieldTypeName(fieldDataInfo.getType());
 				} else if (columnIndex == IS_REQUIRED) {
 					return fieldDataInfo.isRequired();
 				} else if (columnIndex == FIELD_VALUE) {
@@ -533,7 +533,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			FieldData fieldData = this.fieldDataInfos.get(rowIndex);
 			FieldType fieldType = fieldData.getType();
 			try {
-				if (aValue == null || StringUtilties.isNullOrEmpty(aValue.toString())) {
+				if (aValue == null || StringUtilities.isNullOrEmpty(aValue.toString())) {
 					if (!fieldData.getFieldInfo().isRequired()) {
 						fieldData.setFieldValue(null);
 					}
@@ -831,7 +831,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				// 二进制字段当做系统字段处理
 				if (!this.isSystemField && this.getType() != FieldType.LONGBINARY) {
 					this.recordset.edit();
-					if (this.getFieldValue() == null || StringUtilties.isNullOrEmpty(this.getFieldValue().toString())) {
+					if (this.getFieldValue() == null || StringUtilities.isNullOrEmpty(this.getFieldValue().toString())) {
 						if (!this.getFieldInfo().isRequired()) {
 							this.recordset.setFieldValueNull(this.getName());
 						}

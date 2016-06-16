@@ -2,8 +2,8 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -344,8 +344,8 @@ public class ColorSelectionPanel extends JPanel {
 //				} else {
 //					xmlFile = UIEnvironment.getResourcePath() + "/xml/colorpicksXML/" + name;
 //				}
-				xmlFile = PathUtilties.getFullPathName(xmlFile, true);
-				Document document = XmlUtilties.getDocument(xmlFile);
+				xmlFile = PathUtilities.getFullPathName(xmlFile, true);
+				Document document = XmlUtilities.getDocument(xmlFile);
 				NodeList employees = document.getChildNodes();
 				m_ColorInt = -1;
 				m_colorName = new ArrayList<String>();

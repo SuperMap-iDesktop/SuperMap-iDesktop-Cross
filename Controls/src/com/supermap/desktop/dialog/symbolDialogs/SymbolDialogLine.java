@@ -9,7 +9,7 @@ import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedCha
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.DoubleUtilties;
+import com.supermap.desktop.utilties.DoubleUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -86,7 +86,7 @@ public class SymbolDialogLine extends SymbolDialog {
 					textFieldLineWidth.setForeground(defaultColor);
 				}
 				double lineWidth = Double.valueOf(text);
-				if (!DoubleUtilties.equals(lineWidth, currentGeoStyle.getLineWidth(), pow)) {
+				if (!DoubleUtilities.equals(lineWidth, currentGeoStyle.getLineWidth(), pow)) {
 					currentGeoStyle.setLineWidth(lineWidth);
 					geoStylePropertyChange.propertyChange();
 				}

@@ -11,7 +11,7 @@ import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerAddedEvent;
 import com.supermap.mapping.LayerAddedListener;
@@ -1251,7 +1251,7 @@ public class LayersTree extends JTree {
 		GeoStyle result = null;
 		SymbolDialog symbolDialog = null;
 		try {
-			CursorUtilties.setWaitCursor();
+			CursorUtilities.setWaitCursor();
 			symbolDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
 			DialogResult dialogResult = symbolDialog.showDialog(beforeStyle, symbolApply);
 			if (dialogResult == DialogResult.OK) {
@@ -1260,7 +1260,7 @@ public class LayersTree extends JTree {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 		return result;
 	}

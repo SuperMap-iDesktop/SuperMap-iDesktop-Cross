@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilties.MapViewUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Map;
 
 public class CtrlActionDatasetAddToCurrentMap extends CtrlAction {

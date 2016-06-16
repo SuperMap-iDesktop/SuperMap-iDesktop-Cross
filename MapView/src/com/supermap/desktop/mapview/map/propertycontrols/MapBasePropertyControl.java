@@ -7,8 +7,8 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.MapColorModeUtilties;
+import com.supermap.desktop.utilties.DoubleUtilities;
+import com.supermap.desktop.utilties.MapColorModeUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapColorMode;
 import com.supermap.mapping.MapOverlapDisplayedOptions;
@@ -420,7 +420,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.textFieldMapName.setText(this.name);
 		this.textFieldAngle.setValue(this.angle);
 		fillComboBoxColorMode();
-		this.comboBoxColorMode.setSelectedItem(MapColorModeUtilties.toString(this.colorMode));
+		this.comboBoxColorMode.setSelectedItem(MapColorModeUtilities.toString(this.colorMode));
 		this.buttonBackgroundColor.setColor(this.backgroundColor);
 		this.textFieldMinVisibleTextSize.setValue(this.minVisibleTextSize);
 		this.textFieldMaxVisibleTextSize.setValue(this.maxVisibleTextSize);
@@ -467,7 +467,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		Enum[] colorModes = Enum.getEnums(MapColorMode.class);
 
 		for (Enum enum1 : colorModes) {
-			this.comboBoxColorMode.addItem(MapColorModeUtilties.toString((MapColorMode) enum1));
+			this.comboBoxColorMode.addItem(MapColorModeUtilities.toString((MapColorMode) enum1));
 		}
 	}
 
@@ -528,7 +528,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private void comboBoxColorModeSelectedchange(ItemEvent e) {
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
-				this.colorMode = MapColorModeUtilties.valueOf((String) e.getItem());
+				this.colorMode = MapColorModeUtilities.valueOf((String) e.getItem());
 				verify();
 			}
 		} catch (Exception e2) {

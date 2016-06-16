@@ -18,7 +18,7 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalToolkitControl;
-import com.supermap.desktop.utilties.FillGradientModeUtilties;
+import com.supermap.desktop.utilties.FillGradientModeUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -330,7 +330,7 @@ public class SymbolDialogFill extends SymbolDialog {
 				labelAngle.setEnabled(isSelected);
 				spinnerAngle.setEnabled(isSelected);
 				labelAngleUnit.setEnabled(isSelected);
-				currentGeoStyle.setFillGradientMode(isSelected ? FillGradientModeUtilties.getFillGradientMode(String.valueOf(comboBoxFillType.getSelectedItem())) : FillGradientMode.NONE);
+				currentGeoStyle.setFillGradientMode(isSelected ? FillGradientModeUtilities.getFillGradientMode(String.valueOf(comboBoxFillType.getSelectedItem())) : FillGradientMode.NONE);
 				geoStylePropertyChange.propertyChange();
 			}
 		});
@@ -339,7 +339,7 @@ public class SymbolDialogFill extends SymbolDialog {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					currentGeoStyle.setFillGradientMode(FillGradientModeUtilties.getFillGradientMode(String.valueOf(comboBoxFillType.getSelectedItem())));
+					currentGeoStyle.setFillGradientMode(FillGradientModeUtilities.getFillGradientMode(String.valueOf(comboBoxFillType.getSelectedItem())));
 					geoStylePropertyChange.propertyChange();
 				}
 			}
@@ -430,7 +430,7 @@ public class SymbolDialogFill extends SymbolDialog {
 		buttonLineType.setIcon(getLineIcon());
 		spinnerOpaque.setValue(Double.valueOf(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate())));//不转Double，linux抛异常
 		checkBoxFill.setSelected(currentGeoStyle.getFillGradientMode() != FillGradientMode.NONE);
-		comboBoxFillType.setSelectedItem(FillGradientModeUtilties.getFillGradientMode(currentGeoStyle.getFillGradientMode()));
+		comboBoxFillType.setSelectedItem(FillGradientModeUtilities.getFillGradientMode(currentGeoStyle.getFillGradientMode()));
 		spinnerHorizontal.setValue(currentGeoStyle.getFillGradientOffsetRatioX());
 		spinnerVertical.setValue(currentGeoStyle.getFillGradientOffsetRatioY());
 		spinnerAngle.setValue(currentGeoStyle.getFillGradientAngle());

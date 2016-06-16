@@ -15,10 +15,10 @@ import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ArrayUtilties;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.RecordsetUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.ArrayUtilities;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.RecordsetUtilities;
+import com.supermap.desktop.utilties.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -26,12 +26,12 @@ public class DecomposeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		CursorUtilties.setWaitCursor(environment.getMapControl());
+		CursorUtilities.setWaitCursor(environment.getMapControl());
 
 		try {
 			decompose(environment);
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
@@ -70,7 +70,7 @@ public class DecomposeEditor extends AbstractEditor {
 								if (multiPartFeature.getPartCount() > 1) {
 
 									// 获取字段值
-									Map<String, Object> fieldValues = RecordsetUtilties.getFieldValues(recordset);
+									Map<String, Object> fieldValues = RecordsetUtilities.getFieldValues(recordset);
 
 									// 删除字段
 									delete.delete(id);
@@ -105,9 +105,9 @@ public class DecomposeEditor extends AbstractEditor {
 					// 清空选择集，选中新增对象
 					editLayer.getSelection().clear();
 					if (addNew.getAddHistoryIDs().size() > 0) {
-						int[] ids = ArrayUtilties.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()]));
+						int[] ids = ArrayUtilities.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()]));
 						editLayer.getSelection().addRange(ids);
-						TabularUtilties.refreshTabularForm((DatasetVector) editLayer.getDataset());
+						TabularUtilities.refreshTabularForm((DatasetVector) editLayer.getDataset());
 						Application
 								.getActiveApplication()
 								.getOutput()

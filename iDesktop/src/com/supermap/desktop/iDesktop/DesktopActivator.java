@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilties.LogUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -29,7 +29,7 @@ public class DesktopActivator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 
 		System.out.println("Hello SuperMap === iDesktop!!");
-		LogUtilties.outPut(CoreProperties.getString("String_DesktopStartFinished"));
+		LogUtilities.outPut(CoreProperties.getString("String_DesktopStartFinished"));
 		DesktopActivator.setContext(bundleContext);
 
 

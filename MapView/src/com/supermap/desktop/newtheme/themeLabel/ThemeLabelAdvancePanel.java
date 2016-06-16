@@ -8,8 +8,8 @@ import com.supermap.desktop.newtheme.commonPanel.*;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -744,7 +744,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setMinFontHeight() {
 			if (!textFieldMinFontHeight.getText().isEmpty()) {
 				String minFontHeight = textFieldMinFontHeight.getText();
-				if (StringUtilties.isNumber(minFontHeight) && minFontHeight.length() <= 8) {
+				if (StringUtilities.isNumber(minFontHeight) && minFontHeight.length() <= 8) {
 					int minTextHeight = Integer.parseInt(minFontHeight);
 					themeLabel.setMinTextHeight(minTextHeight);
 				}
@@ -760,7 +760,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setMaxFontHeight() {
 			if (!textFieldMaxFontHeight.getText().isEmpty()) {
 				String maxFontHeight = textFieldMaxFontHeight.getText();
-				if (StringUtilties.isNumber(maxFontHeight) && maxFontHeight.length() <= 8) {
+				if (StringUtilities.isNumber(maxFontHeight) && maxFontHeight.length() <= 8) {
 					int maxTextHeight = Integer.parseInt(maxFontHeight);
 					themeLabel.setMaxTextHeight(maxTextHeight);
 				}
@@ -777,7 +777,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 			if (!textFieldHorizontal.getText().isEmpty() && !textFieldVertical.getText().isEmpty()) {
 				String horizontal = textFieldHorizontal.getText();
 				String vertical = textFieldVertical.getText();
-				if (StringUtilties.isNumber(vertical) && StringUtilties.isNumber(vertical)) {
+				if (StringUtilities.isNumber(vertical) && StringUtilities.isNumber(vertical)) {
 					double textHorizontal = Double.parseDouble(horizontal);
 					double textVertical = Double.parseDouble(vertical);
 					Size2D size2d = new Size2D();
@@ -790,7 +790,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				Size2D size2d = new Size2D();
 				size2d.setWidth(0);
 				String vertical = textFieldVertical.getText();
-				if (StringUtilties.isNumber(vertical)) {
+				if (StringUtilities.isNumber(vertical)) {
 					double textVertical = Double.parseDouble(vertical);
 					size2d.setHeight(textVertical);
 					themeLabel.setTextExtentInflation(size2d);
@@ -800,7 +800,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 				Size2D size2d = new Size2D();
 				size2d.setHeight(0);
 				String horizontal = textFieldHorizontal.getText();
-				if (StringUtilties.isNumber(horizontal)) {
+				if (StringUtilities.isNumber(horizontal)) {
 					double textHorizontal = Double.parseDouble(horizontal);
 					size2d.setWidth(textHorizontal);
 					themeLabel.setTextExtentInflation(size2d);
@@ -814,7 +814,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setTextRepeatInterval() {
 			if (!textFieldRepeatInterval.getText().isEmpty()) {
 				String lineSpaceRatio = textFieldRepeatInterval.getText();
-				if (!StringUtilties.isNullOrEmpty(lineSpaceRatio) && StringUtilties.isNumber(lineSpaceRatio)) {
+				if (!StringUtilities.isNullOrEmpty(lineSpaceRatio) && StringUtilities.isNumber(lineSpaceRatio)) {
 					double labelRepeatIntervalTemp = Double.parseDouble(lineSpaceRatio);
 					if (labelRepeatIntervalTemp - 100000.0 > 0) {
 						themeLabel.setLabelRepeatInterval(0.0);
@@ -890,7 +890,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.themeLabelLayer = MapUtilties.findLayerByName(this.map, layerName);
+		this.themeLabelLayer = MapUtilities.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themeLabelLayer.getTheme();
 		themeLabelTemp.setAlongLine(this.themeLabel.isAlongLine());
 		themeLabelTemp.setAngleFixed(this.themeLabel.isAngleFixed());

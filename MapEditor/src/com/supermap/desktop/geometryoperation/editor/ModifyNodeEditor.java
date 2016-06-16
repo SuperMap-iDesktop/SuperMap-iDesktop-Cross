@@ -2,7 +2,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.data.GeometryType;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
 import com.supermap.ui.Action;
 
 public class ModifyNodeEditor extends AbstractEditor {
@@ -20,7 +20,7 @@ public class ModifyNodeEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getSelectedGeometryCount() == 1
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOLINE3D,
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOLINE3D,
 						GeometryType.GEOREGION);
 	}
 

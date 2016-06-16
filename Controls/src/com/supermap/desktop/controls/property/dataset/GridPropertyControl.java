@@ -16,8 +16,8 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.ColorsUtilties;
-import com.supermap.desktop.utilties.PixelFormatUtilties;
+import com.supermap.desktop.utilties.ColorsUtilities;
+import com.supermap.desktop.utilties.PixelFormatUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
@@ -386,7 +386,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void fillComponents() {
-		this.textFieldPixelFormat.setText(PixelFormatUtilties.toString(this.datasetGrid.getPixelFormat()));
+		this.textFieldPixelFormat.setText(PixelFormatUtilities.toString(this.datasetGrid.getPixelFormat()));
 		this.textFieldX.setText(BigDecimal.valueOf(this.datasetGrid.getBounds().getWidth() / this.datasetGrid.getWidth()).toString());
 		this.textFieldY.setText(BigDecimal.valueOf(this.datasetGrid.getBounds().getHeight() / this.datasetGrid.getHeight()).toString());
 		this.textFieldNoValue.setValue(this.noValue);
@@ -410,7 +410,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private boolean verifyChange() {
-		return Double.compare(this.noValue, this.datasetGrid.getNoValue()) != 0 || !ColorsUtilties.isColorsEqual(this.colors, this.datasetGrid.getColorTable());
+		return Double.compare(this.noValue, this.datasetGrid.getNoValue()) != 0 || !ColorsUtilities.isColorsEqual(this.colors, this.datasetGrid.getColorTable());
 	}
 
 	private void textFieldNoValueValueChange(PropertyChangeEvent e) {

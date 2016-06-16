@@ -16,9 +16,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.ActionChangedListener;
@@ -56,7 +56,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 
 				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.pixelLength(formMap.getMapControl()));
+				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 				TextPart textPart = new TextPart();
 				textPart.setText(text);
 				geoText.addPart(textPart);
@@ -148,7 +148,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			panelButton = new JPanel();
 			buttonOk = new SmButton();
 			buttonCancel = new SmButton();
-			this.setSize((int) (360 * SystemPropertyUtilties.getSystemSizeRate()), (int) (120 * SystemPropertyUtilties.getSystemSizeRate()));
+			this.setSize((int) (360 * SystemPropertyUtilities.getSystemSizeRate()), (int) (120 * SystemPropertyUtilities.getSystemSizeRate()));
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			this.buttonOk.setEnabled(false);
@@ -194,7 +194,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 		}
 
 		private void updateText() {
-			if (StringUtilties.isNullOrEmpty(getText().trim())) {
+			if (StringUtilities.isNullOrEmpty(getText().trim())) {
 				buttonOk.setEnabled(false);
 				removeTrackingObject();
 			} else {
@@ -204,7 +204,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				geoText.getTextStyle().setFontName("");
 				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilties.pixelLength(formMap.getMapControl()));
+				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 
 				for (int i = 0; i < formMap.getMapControl().getMap().getTrackingLayer().getCount(); i++) {
 					if (CreateAlongLineTextTracing.equals(formMap.getMapControl().getMap().getTrackingLayer().getTag(i))) {

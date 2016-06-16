@@ -7,9 +7,9 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CharsetUtilties;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -71,13 +71,13 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			String encodingType = vector.get(COLUMN_INDEX_EncodeType).toString();
 			String charset = vector.get(COLUMN_INDEX_Charset).toString();
 			Datasource currentDatasource = workspace.getDatasources().get(currentDatasourceStr);
-			Dataset dataset = DatasourceUtilties.getDataset(datasetStr, currentDatasource);
+			Dataset dataset = DatasourceUtilities.getDataset(datasetStr, currentDatasource);
 			if (!isSupportEngineType(dataset.getDatasource().getEngineType())) {
 				break;
 			}
 			datasource = workspace.getDatasources().get(targetDatasourceStr);
 			Dataset resultDataset = null;
-			if (StringUtilties.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
+			if (StringUtilities.isNullOrEmpty(targetDatasetName) || !isAviliableName(targetDatasetName)
 					|| !datasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
 				targetDatasetName = datasource.getDatasets().getAvailableDatasetName(targetDatasetName);
 			}
@@ -85,9 +85,9 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			if (!datasource.isReadOnly()) {
 				percentListener = new PercentListener(i, count, targetDatasetName);
 				datasource.addSteppedListener(percentListener);
-				if (null != CharsetUtilties.valueOf(charset)) {
+				if (null != CharsetUtilities.valueOf(charset)) {
 					resultDataset = datasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType),
-							CharsetUtilties.valueOf(charset));
+							CharsetUtilities.valueOf(charset));
 				} else {
 					resultDataset = datasource.copyDataset(dataset, targetDatasetName, CommonToolkit.EncodeTypeWrap.findType(encodingType));
 				}

@@ -14,7 +14,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 
 public class CtrlActionMapDelete extends CtrlAction {
 
@@ -32,7 +32,7 @@ public class CtrlActionMapDelete extends CtrlAction {
 			TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 			mapNames.add(selectedNodeData.getData().toString());
 		}
-		MapUtilties.deleteMaps(mapNames.toArray(new String[mapNames.size()]));
+		MapUtilities.deleteMaps(mapNames.toArray(new String[mapNames.size()]));
 		ToolbarUtilties.updataToolbarsState();
 	}
 

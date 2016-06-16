@@ -31,7 +31,7 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
@@ -139,7 +139,7 @@ public class LineExtendEditor extends AbstractEditor {
 
 	private void getBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
 		try {
-			List<Layer> layers = MapUtilties.getLayers(mapControl.getMap());
+			List<Layer> layers = MapUtilities.getLayers(mapControl.getMap());
 
 			for (Layer layer : layers) {
 
@@ -228,7 +228,7 @@ public class LineExtendEditor extends AbstractEditor {
 	}
 
 	private void initialBaseLine(MapControl mapControl, LineExtendEditModel editModel) {
-		MapUtilties.clearTrackingObjects(mapControl.getMap(), TAG_LINEEXTEND);
+		MapUtilities.clearTrackingObjects(mapControl.getMap(), TAG_LINEEXTEND);
 		getBaseLine(mapControl, editModel);
 
 		if (editModel.baseLine != null) {
@@ -402,7 +402,7 @@ public class LineExtendEditor extends AbstractEditor {
 			((LineExtendEditModel) environment.getEditModel()).clear();
 		}
 
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_LINEEXTEND);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_LINEEXTEND);
 	}
 
 	private class LineExtendEditModel implements IEditModel {

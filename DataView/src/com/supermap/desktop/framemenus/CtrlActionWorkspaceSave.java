@@ -11,7 +11,7 @@ import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 
 public class CtrlActionWorkspaceSave extends CtrlAction {
 
@@ -52,7 +52,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 
 			if (newWorkspaceConnectionInfo != null) {
 				// 打开工作空间
-				WorkspaceUtilties.openWorkspace(newWorkspaceConnectionInfo, false);
+				WorkspaceUtilities.openWorkspace(newWorkspaceConnectionInfo, false);
 			}
 		} else {
 			event.setHandled(false);
@@ -64,7 +64,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 		if (!isInited) {
 			isInited = true;
 			newWorkspaceConnectionInfo = null;
-			WorkspaceUtilties.addSaveWorkspaceListener(saveWorkspaceListener);
+			WorkspaceUtilities.addSaveWorkspaceListener(saveWorkspaceListener);
 		}
 	}
 
@@ -95,7 +95,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 			if (workspaceType == WorkspaceType.DEFAULT) {
 				dialogResult = CtrlActionWorkspaceSaveAs.saveAs(info);
 			} else {
-				if (!WorkspaceUtilties.isWorkspaceReadonly()) {
+				if (!WorkspaceUtilities.isWorkspaceReadonly()) {
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 						CommonToolkit.FormWrap.saveAllOpenedWindows();
 					}
@@ -113,6 +113,6 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return WorkspaceUtilties.isWorkspaceModified();
+		return WorkspaceUtilities.isWorkspaceModified();
 	}
 }

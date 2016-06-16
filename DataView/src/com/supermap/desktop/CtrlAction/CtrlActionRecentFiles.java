@@ -14,8 +14,8 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -37,7 +37,7 @@ public class CtrlActionRecentFiles extends CtrlAction {
 					if (isWorkSpaceFile(file)) {
 						final WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
 
-						OpenWorkspaceResult result = WorkspaceUtilties.openWorkspace(connectionInfo, true);
+						OpenWorkspaceResult result = WorkspaceUtilities.openWorkspace(connectionInfo, true);
 						if (result == OpenWorkspaceResult.SUCCESSED) {
 							if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 								Application.getActiveApplication().getMainFrame().getFormManager().closeAll();
@@ -48,7 +48,7 @@ public class CtrlActionRecentFiles extends CtrlAction {
 									@Override
 									public boolean isRightPassword(String password) {
 										connectionInfo.setPassword(password);
-										return WorkspaceUtilties.openWorkspace(connectionInfo, false) != OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
+										return WorkspaceUtilities.openWorkspace(connectionInfo, false) != OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
 									}
 								};
 								if (dialogGetPassword.showDialog() == DialogResult.OK) {
@@ -79,9 +79,9 @@ public class CtrlActionRecentFiles extends CtrlAction {
 					// 提示文件不存在，删除最近文件项
 					UICommonToolkit.showMessageDialog(DataViewProperties.getString("String_FileDonotExist"));
 					if (isWorkSpaceFile(file)) {
-						WorkspaceUtilties.removeRecentFile(filePath);
+						WorkspaceUtilities.removeRecentFile(filePath);
 					} else {
-						DatasourceUtilties.removeRecentFile(filePath);
+						DatasourceUtilities.removeRecentFile(filePath);
 					}
 				}
 			}

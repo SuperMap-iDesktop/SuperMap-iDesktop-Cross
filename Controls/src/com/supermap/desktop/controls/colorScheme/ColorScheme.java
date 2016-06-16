@@ -5,10 +5,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilties.ColorsUtilties;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.FileUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -316,8 +316,8 @@ public class ColorScheme implements ICloneable {
 	}
 
 	public String getColorSchemePath() {
-		if (StringUtilties.isNullOrEmpty(colorSchemePath)) {
-			colorSchemePath = getDefaultFilePath(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
+		if (StringUtilities.isNullOrEmpty(colorSchemePath)) {
+			colorSchemePath = getDefaultFilePath(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
 			save();
 		}
 		return colorSchemePath;
@@ -325,7 +325,7 @@ public class ColorScheme implements ICloneable {
 
 	public void save() {
 		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
+			colorSchemePath = getDefaultFilePath(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
 		}
 		saveAsFilePath(colorSchemePath);
 	}
@@ -339,12 +339,12 @@ public class ColorScheme implements ICloneable {
 		try {
 			File file = new File(defaultFilePath);
 			if (file.exists()) {
-				FileUtilties.delete(file);
+				FileUtilities.delete(file);
 			}
 			if (file.createNewFile()) {
 				String s = this.toXML();
 				if (s != null) {
-					FileUtilties.writeToFile(file, s);
+					FileUtilities.writeToFile(file, s);
 				}
 			}
 		} catch (Exception e) {
@@ -369,7 +369,7 @@ public class ColorScheme implements ICloneable {
 	}
 
 	private String getFileName(int i, String fileName) {
-		String name = StringUtilties.isNullOrEmpty(fileName) || !isLegitName(fileName) ? "ColorScheme" : fileName;
+		String name = StringUtilities.isNullOrEmpty(fileName) || !isLegitName(fileName) ? "ColorScheme" : fileName;
 		if (i == 0) {
 			return name + ".scs";
 		}
@@ -489,7 +489,7 @@ public class ColorScheme implements ICloneable {
 				dataBlock.appendChild(keyColor);
 			}
 			colorScheme.appendChild(dataBlock);
-			xml = XmlUtilties.nodeToString(colorScheme, "UTF-8");
+			xml = XmlUtilities.nodeToString(colorScheme, "UTF-8");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -517,7 +517,7 @@ public class ColorScheme implements ICloneable {
 			Node nodeColorScheme = document.getChildNodes().item(0);
 			result = fromXML(nodeColorScheme);
 		} catch (Exception e) {
-			if (!StringUtilties.isNullOrEmpty(xmlFile.getAbsolutePath()) && isNeedOutPutException) {
+			if (!StringUtilities.isNullOrEmpty(xmlFile.getAbsolutePath()) && isNeedOutPutException) {
 				String message = MessageFormat.format(ControlsProperties.getString("String_ColorSchemeBreak"), xmlFile.getAbsolutePath());
 				Application.getActiveApplication().getOutput().output(message);
 			}

@@ -16,9 +16,9 @@ import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogRotateParams;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.DoubleUtilities;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class RotateEditor extends AbstractEditor {
@@ -41,7 +41,7 @@ public class RotateEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ICompoundFeature.class,
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ICompoundFeature.class,
 						ITextFeature.class, IPointFeature.class, IRegionFeature.class, ILineFeature.class);
 	}
 
@@ -62,14 +62,14 @@ public class RotateEditor extends AbstractEditor {
 
 			// 多个对象，取所有对象外接矩形的中心点，作为旋转基点
 			Rectangle2D bounds = new Rectangle2D(0, 0, 0, 0);
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.isEditable() && layer.getSelection().getCount() > 0) {
 					Recordset recordset = layer.getSelection().toRecordset();
 
 					try {
-						if (DoubleUtilties.equals(bounds.getWidth(), 0d, 8)) {
+						if (DoubleUtilities.equals(bounds.getWidth(), 0d, 8)) {
 							bounds = recordset.getBounds();
 						} else {
 							bounds.union(recordset.getBounds());
@@ -88,7 +88,7 @@ public class RotateEditor extends AbstractEditor {
 		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.isEditable() && layer.getSelection().getCount() > 0) {

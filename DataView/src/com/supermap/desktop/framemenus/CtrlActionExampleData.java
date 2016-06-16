@@ -8,9 +8,9 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.implement.SmMenuItem;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 
 public class CtrlActionExampleData extends CtrlAction {
 
@@ -23,13 +23,13 @@ public class CtrlActionExampleData extends CtrlAction {
 		try {
 			if (this.getCaller() instanceof SmMenuItem) {
 				String filePath = ((SmMenuItem) this.getCaller()).getToolTipText();
-				String configFile = PathUtilties.getFullPathName(filePath, false);
+				String configFile = PathUtilities.getFullPathName(filePath, false);
 				File file = new File(configFile);
 				if (isWorkSpaceFile(file)) {
 					WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-					WorkspaceUtilties.openWorkspace(connectionInfo, true);
+					WorkspaceUtilities.openWorkspace(connectionInfo, true);
 				} else {
-					DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, false);
+					DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false);
 				}
 
 			}
@@ -53,7 +53,7 @@ public class CtrlActionExampleData extends CtrlAction {
 	public boolean enable() {
 		boolean result = false;
 		String filePath = ((SmMenuItem) this.getCaller()).getToolTipText();
-		String configFile = PathUtilties.getFullPathName(filePath, false);
+		String configFile = PathUtilities.getFullPathName(filePath, false);
 		File file = new File(configFile);
 		if (file.exists()) {
 			result = true;

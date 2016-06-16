@@ -8,8 +8,8 @@ import com.supermap.desktop.geometry.Implements.DGeoCardinal;
 import com.supermap.desktop.geometry.Implements.DGeoCurve;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels.GeometryNodeParameterTableModel;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.GeometryTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.GeometryTypeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import org.jdesktop.swingx.JXTreeTable;
 
 import javax.swing.*;
@@ -91,7 +91,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	}
 
 	private void initTable() {
-		if (StringUtilties.isNullOrEmpty(table.getColumnName(0))) {
+		if (StringUtilities.isNullOrEmpty(table.getColumnName(0))) {
 			DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
 			defaultTableCellRenderer.setPreferredSize(new Dimension(0, 0));
 			table.getTableHeader().setDefaultRenderer(defaultTableCellRenderer);
@@ -143,7 +143,7 @@ public class JPanelGeometryNodeParameterization extends JPanel implements IGeome
 	}
 
 	private void initComponentState() {
-		textFieldGeometryType.setText(GeometryTypeUtilties.toString(geometry.getGeometry().getType()));
+		textFieldGeometryType.setText(GeometryTypeUtilities.toString(geometry.getGeometry().getType()));
 	}
 
 	@Override

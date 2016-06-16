@@ -22,7 +22,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.TabularUtilities;
 
 public class TabularViewActivator implements BundleActivator {
 
@@ -78,7 +78,7 @@ public class TabularViewActivator implements BundleActivator {
 
 			if (form == null) {
 				if (newName == null || newName.length() == 0)
-					newName = TabularUtilties.getTabularName();
+					newName = TabularUtilities.getTabularName();
 
 				formTabular = new FormTabular(newName);
 				if (formManager.getActiveForm() != null) {

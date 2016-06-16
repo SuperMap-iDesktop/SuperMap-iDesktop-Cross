@@ -6,7 +6,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -115,7 +115,7 @@ public class JDialogSmoothRatio extends SmDialog {
 		} else {
 			this.buttonOK.setEnabled(false);
 
-			if (!StringUtilties.isNullOrEmpty(this.textFieldSmoothRatio.getText())) {
+			if (!StringUtilities.isNullOrEmpty(this.textFieldSmoothRatio.getText())) {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_Smooth_RatioError"));
 			}
 		}

@@ -35,7 +35,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
 
 public class JDialogHDFSFiles extends SmDialog {
 
@@ -333,7 +333,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 
@@ -380,7 +380,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 	
@@ -404,7 +404,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}		
 	}
 	
@@ -432,7 +432,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 	
@@ -473,7 +473,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 

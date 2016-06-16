@@ -14,9 +14,9 @@ import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.DatasetTypeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -417,7 +417,7 @@ public class DatasetChooser extends SmDialog {
 
 	private boolean isAllowedDatasetName(String name) {
 		String text = this.textFieldSearch.getText().toLowerCase();
-		return StringUtilties.isNullOrEmpty(text) || name.toLowerCase().contains(text);
+		return StringUtilities.isNullOrEmpty(text) || name.toLowerCase().contains(text);
 	}
 
 	/**
@@ -489,7 +489,7 @@ public class DatasetChooser extends SmDialog {
 				}
 			} else if (c == DatasetChooser.this.buttonInvertSelect) {
 				// 反选
-				TableUtilties.invertSelection(DatasetChooser.this.table);
+				TableUtilities.invertSelection(DatasetChooser.this.table);
 			} else if (c == DatasetChooser.this.buttonCancel) {
 				// 关闭
 				cancelButtonClicked();
@@ -525,7 +525,7 @@ public class DatasetChooser extends SmDialog {
 				case COLUMN_DATASOURCE:
 					return dataset.getDatasource();
 				case COLUMN_DATASET_TYPE:
-					return DatasetTypeUtilties.toString(dataset.getType());
+					return DatasetTypeUtilities.toString(dataset.getType());
 				default:
 					return null;
 			}

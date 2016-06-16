@@ -13,7 +13,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 /**
  * 子对象面板
@@ -230,8 +230,8 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		} else {
 			textPartText = ((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).getText();
 		}
-		if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
-			if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+		if (!StringUtilities.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+			if (!StringUtilities.isNullOrEmptyString(text) && !text.equals(textPartText)) {
 				if (this.enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
 					((TextPart) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).setText(text);
 				} else {

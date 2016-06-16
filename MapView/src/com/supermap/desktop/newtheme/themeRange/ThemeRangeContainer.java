@@ -225,7 +225,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		this.comboBoxOffsetX.addItem("0");
 		String offsetX = this.themeRange.getOffsetX();
-		if (StringUtilties.isNullOrEmpty(offsetX)) {
+		if (StringUtilities.isNullOrEmpty(offsetX)) {
 			offsetX = "0";
 		}
 		this.comboBoxOffsetX.setSelectedItem(offsetX);
@@ -241,7 +241,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private void initComboBoxOffsetY() {
 		this.comboBoxOffsetY.addItem("0");
 		String offsetY = this.themeRange.getOffsetY();
-		if (StringUtilties.isNullOrEmpty(offsetY)) {
+		if (StringUtilities.isNullOrEmpty(offsetY)) {
 			offsetY = "0";
 		}
 		this.comboBoxOffsetY.setSelectedItem(offsetY);
@@ -596,7 +596,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		public void propertyChange(PropertyChangeEvent evt) {
 			int[] selectRows = tableRangeInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
-			themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+			themeRangeLayer = MapUtilities.findLayerByName(map, layerName);
 			if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme() instanceof ThemeRange) {
 				datasetVector = (DatasetVector) themeRangeLayer.getDataset();
 				themeRange = new ThemeRange((ThemeRange) themeRangeLayer.getTheme());
@@ -784,7 +784,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				} else if (selectedRows.length >= 2) {
 					buttonSplit.setEnabled(false);
 				}
-				if (selectedRows.length >= 2 && MathUtilties.isContinuouslyArray(selectedRows)) {
+				if (selectedRows.length >= 2 && MathUtilities.isContinuouslyArray(selectedRows)) {
 					buttonMerge.setEnabled(true);
 				} else {
 					buttonMerge.setEnabled(false);
@@ -910,7 +910,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 
 		private void setRangeCount() {
-			if (!StringUtilties.isNullOrEmptyString(comboBoxRangeCount.getSelectedItem().toString())) {
+			if (!StringUtilities.isNullOrEmptyString(comboBoxRangeCount.getSelectedItem().toString())) {
 				rangeCount = Integer.valueOf(comboBoxRangeCount.getSelectedItem().toString());
 				resetThemeInfo();
 			}
@@ -1153,13 +1153,13 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			int selectRow = arg0.getFirstRow();
 			int selectColumn = arg0.getColumn();
 			try {
-				if (selectColumn == TABLE_COLUMN_RANGEVALUE && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
+				if (selectColumn == TABLE_COLUMN_RANGEVALUE && !StringUtilities.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String rangeValue = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
-					if (StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
+					if (StringUtilities.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) {
 						// 如果输入为数值且段值合法时修改段值
 						setRangeValue(selectRow, rangeValue);
 					}
-				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
+				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilities.isNullOrEmptyString(tableRangeInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableRangeInfo.getValueAt(selectRow, selectColumn).toString();
 					themeRange.getItem(selectRow).setCaption(caption);
 				}
@@ -1182,7 +1182,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			themeRange.getItem(selectRow).setEnd(Double.parseDouble(tempStr));
 			String caption = themeRange.getItem(selectRow).getCaption();
 			// 替换当前行的标题
-			if (StringUtilties.isNumber(endString)) {
+			if (StringUtilities.isNumber(endString)) {
 				caption = caption.replace(endString, tempStr);
 				themeRange.getItem(selectRow).setCaption(caption);
 			}
@@ -1350,7 +1350,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeRangeLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeRangeLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.RANGE) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();
 			nowThemeRange.clear();

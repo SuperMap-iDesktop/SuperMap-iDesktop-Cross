@@ -16,10 +16,10 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxItemT;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.RecordsetUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.FieldTypeUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.RecordsetUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
@@ -141,7 +141,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		Object result = null;
 
 		// 字符串型直接做连接
-		if (FieldTypeUtilties.isString(fieldType)) {
+		if (FieldTypeUtilities.isString(fieldType)) {
 			recordset.moveFirst();
 			while (!recordset.isEOF()) {
 				Object value = recordset.getObject(fieldName);
@@ -156,7 +156,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				recordset.moveNext();
 			}
 		} else {
-			result = RecordsetUtilties.sum(recordset, fieldName, fieldType);
+			result = RecordsetUtilities.sum(recordset, fieldName, fieldType);
 		}
 		return result;
 	}
@@ -164,7 +164,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	private Object getAVGData(Recordset recordset, String fieldName, FieldType fieldType, AVGOperationData operationData) {
 		Object result = null;
 
-		if (FieldTypeUtilties.isNumber(fieldType)) {
+		if (FieldTypeUtilities.isNumber(fieldType)) {
 			if (operationData.getFieldInfo() != null) {
 				double weightSum = recordset.statistic(operationData.getFieldInfo().getName(), StatisticMode.SUM);
 
@@ -208,7 +208,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				this.map = map;
 
 				this.comboBoxEditLayer.removeAllItems();
-				ArrayList<Layer> layers = MapUtilties.getLayers(this.map);
+				ArrayList<Layer> layers = MapUtilities.getLayers(this.map);
 				for (Layer layer : layers) {
 					if (layer.isEditable() && (layer.getDataset().getType() == this.resultDatasetType || layer.getDataset().getType() == DatasetType.CAD)) {
 						this.comboBoxEditLayer.addItem(new ComboBoxItemT<Layer>(layer, layer.getCaption()));
@@ -521,7 +521,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				FieldInfo fieldInfo = fieldInfos.get(i);
 
-				if (FieldTypeUtilties.isNumber(fieldInfo.getType())) {
+				if (FieldTypeUtilities.isNumber(fieldInfo.getType())) {
 					this.comboBoxWeight.addItem(new AVGOperationData(fieldInfo));
 				}
 			}
@@ -724,7 +724,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 					// 设置字段名
 					data.setFieldName(fieldCaption);
 					// 设置字段值
-					if (!StringUtilties.isNullOrEmpty(fieldName)) {
+					if (!StringUtilities.isNullOrEmpty(fieldName)) {
 						recordset.seekID(data.getID());
 						data.setFieldValue(recordset.getFieldValue(fieldName));
 					} else {
@@ -811,7 +811,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			recordset.seekID(id);
 			geometry = recordset.getGeometry();
 
-			geometry = MapUtilties.getHeightGeometry(geometry);
+			geometry = MapUtilities.getHeightGeometry(geometry);
 			trackingLayer.add(geometry, TrackingLayerTag);
 			this.map.refresh();
 		} catch (Exception e) {
@@ -874,7 +874,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 				if (columnIndex == FIELD_NAME) {
 					return data.getFieldCaption();
 				} else if (columnIndex == FIELD_TYPE) {
-					return FieldTypeUtilties.getFieldTypeName(data.getFieldType());
+					return FieldTypeUtilities.getFieldTypeName(data.getFieldType());
 				} else if (columnIndex == FIELD_OPERATION) {
 					return data.toString();
 				}
@@ -1005,7 +1005,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 			try {
 				if (getOperationType() == OperationType.GEOMETRY) {
-					if (!StringUtilties.isNullOrEmpty(this.fieldName) && this.operationData instanceof GeometryOperationData) {
+					if (!StringUtilities.isNullOrEmpty(this.fieldName) && this.operationData instanceof GeometryOperationData) {
 						recordset = this.datasetVector.getRecordset(false, CursorType.STATIC);
 						int id = ((GeometryOperationData) this.operationData).getID();
 						recordset.seekID(id);
@@ -1166,7 +1166,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		@Override
 		public String getDescription() {
-			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
+			if (!StringUtilities.isNullOrEmpty(this.fieldName)) {
 				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometryDescription"), String.valueOf(this.id), this.fieldName,
 						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
 			} else {
@@ -1176,7 +1176,7 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		@Override
 		public String toString() {
-			if (!StringUtilties.isNullOrEmpty(this.fieldName)) {
+			if (!StringUtilities.isNullOrEmpty(this.fieldName)) {
 				return MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_TheGeometry"), String.valueOf(this.id), this.fieldName,
 						this.fieldValue == null ? "NULL" : this.fieldValue.toString());
 			} else {

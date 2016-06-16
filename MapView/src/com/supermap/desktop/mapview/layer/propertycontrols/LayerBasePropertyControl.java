@@ -11,7 +11,7 @@ import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -264,20 +264,20 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 	}
 
 	private void textFieldLayerCaptionTextChanged() {
-		if (!StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+		if (!StringUtilities.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
 			getModifiedLayerPropertyModel().setCaption(this.textFieldLayerCaption.getText());
 			checkChanged();
 		}
 	}
 
 	private void textFieldLayerCaptionAction() {
-		if (StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+		if (StringUtilities.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
 			this.textFieldLayerCaption.setText(getModifiedLayerPropertyModel().getCaption());
 		}
 	}
 
 	private void textFieldLayerCaptionLostFocus() {
-		if (StringUtilties.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
+		if (StringUtilities.isNullOrEmpty(this.textFieldLayerCaption.getText().trim())) {
 			this.textFieldLayerCaption.setText(getModifiedLayerPropertyModel().getCaption());
 		}
 	}
@@ -371,7 +371,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 
 				if (selectedString.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
 					scale = getLayerPropertyModel().getFormMap().getMapControl().getMap().getScale();
-				} else if (StringUtilties.isNullOrEmpty(selectedString) || selectedString.equalsIgnoreCase(CoreProperties.getString(CoreProperties.Clear))) {
+				} else if (StringUtilities.isNullOrEmpty(selectedString) || selectedString.equalsIgnoreCase(CoreProperties.getString(CoreProperties.Clear))) {
 					scale = ScaleModel.NONE_SCALE;
 				} else {
 					ScaleModel scaleModel = new ScaleModel(selectedString);

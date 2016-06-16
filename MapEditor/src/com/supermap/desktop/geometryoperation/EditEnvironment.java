@@ -27,8 +27,8 @@ import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.geometryoperation.editor.NullEditor;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -275,7 +275,7 @@ public class EditEnvironment {
 	 * @return
 	 */
 	public List<Layer> getAllLayers() {
-		return MapUtilties.getLayers(this.formMap.getMapControl().getMap());
+		return MapUtilities.getLayers(this.formMap.getMapControl().getMap());
 	}
 
 	public IFormMap getFormMap() {
@@ -434,13 +434,13 @@ public class EditEnvironment {
 			}
 
 			this.properties.setSelectedGeometryCount(this.properties.getSelectedGeometryCount() + selection.getCount());
-			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
-			ListUtilties.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
+			ListUtilities.addArraySingle(this.properties.getSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
+			ListUtilities.addArraySingle(this.properties.getSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
 				this.properties.setEditableSelectedMaxPartCount(Math.max(this.properties.getEditableSelectedMaxPartCount(), editableSelectedMaxPartCount));
-				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
-				ListUtilties.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
+				ListUtilities.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
+				ListUtilities.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

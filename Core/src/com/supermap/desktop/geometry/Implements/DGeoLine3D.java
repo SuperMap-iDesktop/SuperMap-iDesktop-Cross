@@ -16,7 +16,7 @@ import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegion3DConvertor;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.GeometryUtilties;
+import com.supermap.desktop.utilties.GeometryUtilities;
 
 public class DGeoLine3D extends AbstractGeometry implements ILine3DFeature, IMultiPartFeature<Point3Ds>, IRegion3DConvertor, IRegionConvertor,
 		ILine3DConvertor, ILineConvertor, IReverse {
@@ -146,7 +146,7 @@ public class DGeoLine3D extends AbstractGeometry implements ILine3DFeature, IMul
 		GeoLine3D reverseLine3D = new GeoLine3D();
 
 		for (int i = 0; i < this.geoLine3D.getPartCount(); i++) {
-			Point3Ds point3Ds = GeometryUtilties.reverse(this.geoLine3D.getPart(i));
+			Point3Ds point3Ds = GeometryUtilities.reverse(this.geoLine3D.getPart(i));
 			reverseLine3D.addPart(point3Ds);
 		}
 		return reverseLine3D;

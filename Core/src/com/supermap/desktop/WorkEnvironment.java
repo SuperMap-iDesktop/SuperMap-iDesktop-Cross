@@ -3,8 +3,8 @@ package com.supermap.desktop;
 import java.io.File;
 
 import org.w3c.dom.Element;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 
 public class WorkEnvironment {
 
@@ -109,17 +109,17 @@ public class WorkEnvironment {
 	public void initializePluginInfos() {
 		this.pluginInfos.clear();
 		// 查找所有默认工作场景下的插件配置文件
-		String workEnvironmentPath = PathUtilties.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
+		String workEnvironmentPath = PathUtilities.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
 		String[] pathPrams = new String[] { workEnvironmentPath, getName() };
-		workEnvironmentPath = PathUtilties.combinePath(pathPrams, true);
+		workEnvironmentPath = PathUtilities.combinePath(pathPrams, true);
 
 		File file = new File(workEnvironmentPath);
 		File[] childFiles = file.listFiles();
 		for (int j = 0; j < childFiles.length; j++) {
 			// 读取配置文件字符串也用XML的接口去读，同时也要有我们的命名空间
 			pathPrams = new String[] { workEnvironmentPath, childFiles[j].getName() };
-			String configFile = PathUtilties.combinePath(pathPrams, false);
-			Element pluginElement = XmlUtilties.getRootNode(configFile);
+			String configFile = PathUtilities.combinePath(pathPrams, false);
+			Element pluginElement = XmlUtilities.getRootNode(configFile);
 
 			if (pluginElement != null) {
 				try {

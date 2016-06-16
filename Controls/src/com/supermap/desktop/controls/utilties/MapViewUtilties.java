@@ -18,9 +18,9 @@ import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.ImagePyramidUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.ImagePyramidUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
@@ -52,7 +52,7 @@ public class MapViewUtilties {
 		JDialogConfirm dialogConfirm = new JDialogConfirm();
 
 		for (Dataset dataset : datasets) {
-			if (ImagePyramidUtilties.isNeedBuildPyramid(dataset)) {
+			if (ImagePyramidUtilities.isNeedBuildPyramid(dataset)) {
 				dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_IsBuildPyramid"), dataset.getName()));
 				if (!isUsedAsDefault) {
 					dialogConfirm.showDialog();
@@ -74,7 +74,7 @@ public class MapViewUtilties {
 		// 添加到地图
 		for (Dataset dataset : datasets) {
 			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-				MapUtilties.addDatasetToMap(map, dataset, addToHead);
+				MapUtilities.addDatasetToMap(map, dataset, addToHead);
 			}
 		}
 		// 更新地图属性面板
@@ -95,7 +95,7 @@ public class MapViewUtilties {
 		for (Dataset dataset : datasets) {
 			if (dataset.getType() == DatasetType.TABULAR) {
 				// 如果带有纯属性数据集，在单独的属性窗口中打开
-				TabularUtilties.openDatasetVectorFormTabular(dataset);
+				TabularUtilities.openDatasetVectorFormTabular(dataset);
 			} else if (dataset.getType() == DatasetType.LINKTABLE) {
 				// todo 暂时什么都不做
 			} else if (dataset.getType() == DatasetType.TOPOLOGY) {
@@ -106,7 +106,7 @@ public class MapViewUtilties {
 		}
 
 		if (!datasetsToMap.isEmpty()) {
-			String name = MapUtilties.getAvailableMapName(
+			String name = MapUtilities.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", datasetsToMap.get(0).getName(), datasetsToMap.get(0).getDatasource().getAlias()), true);
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 			addDatasetsToMap(formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), addToHead);
@@ -155,7 +155,7 @@ public class MapViewUtilties {
 		int count = 0;
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
 
 			for (Layer layer : layers) {
 				if (layer.isVisible() && layer.isSelectable()) {
@@ -178,7 +178,7 @@ public class MapViewUtilties {
 		int count = 0;
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
 				if (layer.isVisible() && layer.isSelectable() && layer.getSelection() != null) {
 					Recordset preRecordset = layer.getSelection().toRecordset();
@@ -204,7 +204,7 @@ public class MapViewUtilties {
 
 	public static int clearAllSelection(IFormMap formMap) {
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
 				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 					layer.getSelection().clear();
@@ -218,7 +218,7 @@ public class MapViewUtilties {
 	}
 
 	public static int calculateSelectNumber(IFormMap formMap) {
-		ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+		ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
 		int count = 0;
 		for (Layer layer : layers) {
 			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {

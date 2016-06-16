@@ -1,11 +1,11 @@
 package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
-import com.supermap.desktop.utilties.AltitudeModeUtilties;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.AltitudeModeUtilities;
+import com.supermap.desktop.utilties.DoubleUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -439,11 +439,11 @@ public class GlobalParameters {
 		if (resources != null) {
 			return;
 		}
-		String startupXml = PathUtilties.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+		String startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
 		if (startupXml == null) {
 			return;
 		}
-		Document startupDoc = XmlUtilties.getDocument(startupXml);
+		Document startupDoc = XmlUtilities.getDocument(startupXml);
 		if (resources != null) {
 			resources.clear();
 		}
@@ -468,7 +468,7 @@ public class GlobalParameters {
 					addResources(info, childNodes.item(i));
 				}
 			}
-		} else if (!StringUtilties.isNullOrEmpty(node.getNodeName()) && node.getNodeType() == Node.ELEMENT_NODE) {
+		} else if (!StringUtilities.isNullOrEmpty(node.getNodeName()) && node.getNodeType() == Node.ELEMENT_NODE) {
 			resources.put(info, node.getAttributes());
 		}
 	}
@@ -523,7 +523,7 @@ public class GlobalParameters {
 	private static void init() {
 		// 日志路径
 		String value = getValue("_startup_log", "logFolder");
-		setLogFolder(PathUtilties.getFullPathName(value, false));
+		setLogFolder(PathUtilities.getFullPathName(value, false));
 		boolean booleanValue;
 
 		// 日志是否输出
@@ -553,28 +553,28 @@ public class GlobalParameters {
 	private static void initCamera() {
 		String value;
 		value = getValue("_startup_camera", "altitude");
-		if (value != null && DoubleUtilties.isDouble(value)) {
+		if (value != null && DoubleUtilities.isDouble(value)) {
 			setCameraAltitude(Double.valueOf(value));
 		}
 		value = getValue("_startup_camera", "altitudeMode");
 		if (value != null) {
-			setCameraAltitudeMode(AltitudeModeUtilties.getAltitudeMode(value));
+			setCameraAltitudeMode(AltitudeModeUtilities.getAltitudeMode(value));
 		}
 		value = getValue("_startup_camera", "heading");
 		if (value != null) {
 			setCameraHeading(Double.valueOf(value));
 		}
 		value = getValue("_startup_camera", "latitude");
-		if (value != null && DoubleUtilties.isDouble(value)) {
+		if (value != null && DoubleUtilities.isDouble(value)) {
 			setCameraLatitude(Double.valueOf(value));
 		}
 		value = getValue("_startup_camera", "longitude");
-		if (value != null && DoubleUtilties.isDouble(value)) {
+		if (value != null && DoubleUtilities.isDouble(value)) {
 			setCameraLongitude(Double.valueOf(value));
 		}
 
 		value = getValue("_startup_camera", "tilt");
-		if (value != null && DoubleUtilties.isDouble(value)) {
+		if (value != null && DoubleUtilities.isDouble(value)) {
 			setCameraTilt(Double.valueOf(value));
 		}
 	}

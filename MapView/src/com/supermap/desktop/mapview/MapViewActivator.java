@@ -10,7 +10,7 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -73,7 +73,7 @@ public class MapViewActivator implements BundleActivator {
 
 			if (form == null) {
 				if (nameTemp == null || nameTemp.length() == 0) {
-					nameTemp = MapUtilties.getAvailableMapName(CoreProperties.getString("String_WorkspaceNodeCaptionMap"), true);
+					nameTemp = MapUtilities.getAvailableMapName(CoreProperties.getString("String_WorkspaceNodeCaptionMap"), true);
 				}
 
 				formMap = new FormMap(nameTemp);

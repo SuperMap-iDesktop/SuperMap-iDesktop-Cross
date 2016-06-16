@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 /**
  * @author XiaJT
@@ -46,7 +46,7 @@ public abstract class VectorTableModel {
 	public abstract Object getValueAt(int row, int column);
 
 	public void doSetValueAt(Object aValue, int row, int column) {
-		if (StringUtilties.isNullOrEmptyString(aValue) || ((String) aValue).contains("d")) {
+		if (StringUtilities.isNullOrEmptyString(aValue) || ((String) aValue).contains("d")) {
 			return;
 		}
 		try {

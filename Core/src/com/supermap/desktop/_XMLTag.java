@@ -1,6 +1,6 @@
 package com.supermap.desktop;
 
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 public class _XMLTag {
 
@@ -188,7 +188,7 @@ public class _XMLTag {
 
 	public static String getG_strWorkEnvironment() {
 		if (_XMLTag.g_strWorkEnvironment == null) {
-			if (SystemPropertyUtilties.isWindows()) {
+			if (SystemPropertyUtilities.isWindows()) {
 				_XMLTag.g_strWorkEnvironment = "Default";
 			} else {
 				_XMLTag.g_strWorkEnvironment = "Linux";

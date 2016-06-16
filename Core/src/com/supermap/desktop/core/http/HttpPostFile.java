@@ -22,8 +22,8 @@ import org.apache.http.HttpStatus;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.FileUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 public class HttpPostFile {
 	private static final String POST = "POST";
@@ -80,7 +80,7 @@ public class HttpPostFile {
 		this.url = url;
 		this.fileName = fileName;
 		this.boundary = boundary;
-		if (!StringUtilties.isNullOrEmpty(hostName) && port >= 0) {
+		if (!StringUtilities.isNullOrEmpty(hostName) && port >= 0) {
 			this.proxy = new Proxy(Type.HTTP, new InetSocketAddress(hostName, port));
 		}
 	}
@@ -96,8 +96,8 @@ public class HttpPostFile {
 
 		try {
 			long totalSize = file.length();
-			if (StringUtilties.isNullOrEmpty(this.fileName)) {
-				this.fileName = FileUtilties.getFileNameWithoutExtension(file);
+			if (StringUtilities.isNullOrEmpty(this.fileName)) {
+				this.fileName = FileUtilities.getFileNameWithoutExtension(file);
 			}
 
 			// 这会用到请求体里，作为换行符使用，协议规定的请求体应该是平台无关的，因此换行符也是指定的，否则 Linux 上的换行符会导致请求正文解析失败

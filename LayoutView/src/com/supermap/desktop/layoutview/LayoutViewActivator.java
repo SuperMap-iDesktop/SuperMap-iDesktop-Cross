@@ -10,7 +10,7 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LayoutUtilties;
+import com.supermap.desktop.utilties.LayoutUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -69,7 +69,7 @@ public class LayoutViewActivator implements BundleActivator {
 
 			if (form == null) {
 				if (currentName == null || currentName.length() == 0) {
-					currentName = LayoutUtilties.getAvailableLayoutName(CoreProperties.getString("String_WorkspaceNodeCaptionLayout"), true);
+					currentName = LayoutUtilities.getAvailableLayoutName(CoreProperties.getString("String_WorkspaceNodeCaptionLayout"), true);
 				}
 
 				formLayout = new FormLayout(currentName);

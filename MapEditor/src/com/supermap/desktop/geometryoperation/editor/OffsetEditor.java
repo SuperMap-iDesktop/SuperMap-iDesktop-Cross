@@ -34,9 +34,9 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.TabularUtilities;
 import com.supermap.mapping.Selection;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -105,7 +105,7 @@ public class OffsetEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.LINE, DatasetType.REGION, DatasetType.CAD);
+		return ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.LINE, DatasetType.REGION, DatasetType.CAD);
 	}
 
 	@Override
@@ -207,8 +207,8 @@ public class OffsetEditor extends AbstractEditor {
 				for (Selection selection : selections) {
 					selection.clear();
 				}
-				MapUtilties.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
-				TabularUtilties.refreshTabularForm(recordset.getDataset());
+				MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+				TabularUtilities.refreshTabularForm(recordset.getDataset());
 
 				environment.getMap().refresh();
 			}
@@ -261,7 +261,7 @@ public class OffsetEditor extends AbstractEditor {
 			}
 			GeoLine resultLine = Geometrist.computeParallel(tempLine, distance);
 
-			MapUtilties.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+			MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
 			Geometry resultGeometry = null;
 			if (editModel.desGeometry instanceof GeoLine) {
 				resultGeometry = resultLine;
@@ -308,7 +308,7 @@ public class OffsetEditor extends AbstractEditor {
 	private void clear(EditEnvironment environment) {
 		OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
 		editModel.clear();
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
 	}
 
 	private class OffsetEditModel implements IEditModel {

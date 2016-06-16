@@ -17,7 +17,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.ResampleTypeUtilties;
+import com.supermap.desktop.utilties.ResampleTypeUtilities;
 
 public class JDialogResample extends SmDialog {
 
@@ -40,7 +40,7 @@ public class JDialogResample extends SmDialog {
 	}
 
 	public ResampleType getResampleType() {
-		return ResampleTypeUtilties.valueOf(this.comboBoxResampleType.getSelectedItem().toString());
+		return ResampleTypeUtilities.valueOf(this.comboBoxResampleType.getSelectedItem().toString());
 	}
 
 	public double getParameter() {
@@ -52,8 +52,8 @@ public class JDialogResample extends SmDialog {
 		this.labelResampleType = new JLabel(MapEditorProperties.getString("String_Label_ResampleType"));
 		this.labelParameter = new JLabel(MapEditorProperties.getString("String_GeometryOperation_Resample_Parameter"));
 		this.comboBoxResampleType = new JComboBox<>();
-		this.comboBoxResampleType.addItem(ResampleTypeUtilties.toString(ResampleType.RTBEND));
-		this.comboBoxResampleType.addItem(ResampleTypeUtilties.toString(ResampleType.RTGENERAL));
+		this.comboBoxResampleType.addItem(ResampleTypeUtilities.toString(ResampleType.RTBEND));
+		this.comboBoxResampleType.addItem(ResampleTypeUtilities.toString(ResampleType.RTGENERAL));
 		this.comboBoxResampleType.setSelectedIndex(0);
 		this.textFieldParameter = ComponentFactory.createNumericTextField(DEFAULT_PARAMETER, 0, Double.MAX_VALUE);
 

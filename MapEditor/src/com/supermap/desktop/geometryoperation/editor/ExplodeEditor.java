@@ -22,16 +22,16 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.TabularUtilities;
 import com.supermap.mapping.Layer;
 
 public class ExplodeEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		CursorUtilties.setWaitCursor(environment.getMapControl());
+		CursorUtilities.setWaitCursor(environment.getMapControl());
 
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
@@ -82,7 +82,7 @@ public class ExplodeEditor extends AbstractEditor {
 											.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_ExplodeLineOutput"),
 													layer.getName(), id, resultGeoLines.get(id).size()));
 								}
-								TabularUtilties.refreshTabularForm(recordset.getDataset());
+								TabularUtilities.refreshTabularForm(recordset.getDataset());
 							}
 						}
 					} finally {
@@ -100,7 +100,7 @@ public class ExplodeEditor extends AbstractEditor {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 			
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
@@ -109,7 +109,7 @@ public class ExplodeEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ILineFeature.class);
+		return ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ILineFeature.class);
 	}
 
 	private void setStyle(GeoStyle style, ArrayList<GeoLine> lines) {

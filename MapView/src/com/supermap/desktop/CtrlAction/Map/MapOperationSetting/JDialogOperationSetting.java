@@ -11,8 +11,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.SelectionModeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.SelectionModeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.SelectionMode;
 
@@ -50,8 +50,8 @@ public class JDialogOperationSetting extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	private static final String[] SELECTION_MODE_STRINGS = new String[] { SelectionModeUtilties.toString(SelectionMode.CONTAIN_INNER_POINT),
-			SelectionModeUtilties.toString(SelectionMode.CONTAIN_OBJECT), SelectionModeUtilties.toString(SelectionMode.INTERSECT) };
+	private static final String[] SELECTION_MODE_STRINGS = new String[] { SelectionModeUtilities.toString(SelectionMode.CONTAIN_INNER_POINT),
+			SelectionModeUtilities.toString(SelectionMode.CONTAIN_OBJECT), SelectionModeUtilities.toString(SelectionMode.INTERSECT) };
 	private WindowAdapter windowAdapter;
 	private ActionListener actionListener;
 	private ActionListener buttonOkListener;
@@ -113,7 +113,7 @@ public class JDialogOperationSetting extends SmDialog {
 		this.textFieldSelectionLerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (!StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
 					try {
 						Double aDouble = Double.valueOf(textFieldValue);
 						return aDouble >= 0;
@@ -126,7 +126,7 @@ public class JDialogOperationSetting extends SmDialog {
 
 			@Override
 			public String getLegitValue(String currentValue, String backUpValue) {
-				if (StringUtilties.isNullOrEmpty(currentValue)) {
+				if (StringUtilities.isNullOrEmpty(currentValue)) {
 					return "0";
 				}
 				return backUpValue;
@@ -251,7 +251,7 @@ public class JDialogOperationSetting extends SmDialog {
 			// todo 导航条
 			mapControl.setRefreshInInvalidArea(this.checkBoxRefreshInInvalidArea.isSelected());
 			mapControl.setRefreshAtTracked(this.checkBoxRefreshAtTracked.isSelected());
-			SelectionMode selectionMode = SelectionModeUtilties.getValue(String.valueOf(comboBoxSelectionMode.getSelectedItem()));
+			SelectionMode selectionMode = SelectionModeUtilities.getValue(String.valueOf(comboBoxSelectionMode.getSelectedItem()));
 			if (selectionMode != null) {
 				mapControl.setSelectionMode(selectionMode);
 			}
@@ -274,7 +274,7 @@ public class JDialogOperationSetting extends SmDialog {
 			this.checkBoxShowNavigationBar.setVisible(false);
 			this.checkBoxRefreshInInvalidArea.setSelected(mapControl.refreshInInvalidArea());// 局部刷新
 			this.checkBoxRefreshAtTracked.setSelected(mapControl.refreshAtTracked());// 编辑实时更新
-			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilties.toString(mapControl.getSelectionMode()));// 选择模式
+			this.comboBoxSelectionMode.setSelectedItem(SelectionModeUtilities.toString(mapControl.getSelectionMode()));// 选择模式
 			this.textFieldSelectionLerance.setText(String.valueOf(mapControl.getSelectionTolerance()));// 点选容限
 
 		}

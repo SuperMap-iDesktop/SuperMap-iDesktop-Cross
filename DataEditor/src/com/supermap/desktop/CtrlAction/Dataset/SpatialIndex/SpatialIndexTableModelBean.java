@@ -10,7 +10,7 @@ import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -153,7 +153,7 @@ public class SpatialIndexTableModelBean {
 	}
 
 	public void updateValue(String propertyName, Object value) {
-		if (StringUtilties.isNullOrEmpty(String.valueOf(value))) {
+		if (StringUtilities.isNullOrEmpty(String.valueOf(value))) {
 			value = "0";
 		}
 

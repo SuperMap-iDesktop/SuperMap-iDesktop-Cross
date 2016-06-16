@@ -5,7 +5,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class JPanelGraphIndex extends JPanel {
 		ISmTextFieldLegit smTextFieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return true;
 				}
 				Double aDouble;
@@ -190,7 +190,7 @@ public class JPanelGraphIndex extends JPanel {
 
 		try {
 			isFireListener = false;
-			if (StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+			if (StringUtilities.isNullOrEmpty(spatialIndexInfoTileField)) {
 				this.comboBoxFieldIndex.setSelectedIndex(-1);
 			} else {
 				this.comboBoxFieldIndex.setSelectedItem(spatialIndexInfoTileField);

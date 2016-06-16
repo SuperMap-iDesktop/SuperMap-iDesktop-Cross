@@ -17,9 +17,9 @@ import com.supermap.desktop.core.http.HttpPostEvent;
 import com.supermap.desktop.core.http.HttpPostFile;
 import com.supermap.desktop.core.http.HttpPostListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.FileUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -172,7 +172,7 @@ public class ServerRelease {
 		String workDirectory = "";
 		File file = new File(this.workspacePath);
 
-		if (!StringUtilties.isNullOrEmpty(this.workspacePath) && file.exists()) {
+		if (!StringUtilities.isNullOrEmpty(this.workspacePath) && file.exists()) {
 			workDirectory = file.getParent();
 		}
 
@@ -192,7 +192,7 @@ public class ServerRelease {
 
 				// 校验用户名和密码是否正确
 				String token = getToken();
-				if (StringUtilties.isNullOrEmpty(token)) {
+				if (StringUtilities.isNullOrEmpty(token)) {
 					return false;
 				}
 
@@ -215,8 +215,8 @@ public class ServerRelease {
 	}
 
 	public static void clearTmp() {
-		File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
-		FileUtilties.delete(zipCacheDirectory);
+		File zipCacheDirectory = new File(PathUtilities.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
+		FileUtilities.delete(zipCacheDirectory);
 	}
 
 	public void addFunctionProgressListener(FunctionProgressListener listener) {
@@ -240,13 +240,13 @@ public class ServerRelease {
 			}
 			String dataPath = zipWorkspaceData();
 			fireFunctionProgress(0, 49, "...", NetServicesProperties.getString("String_ZipCompleted"));// 正在进行上传预处理
-			if (!StringUtilties.isNullOrEmpty(dataPath)) {
+			if (!StringUtilities.isNullOrEmpty(dataPath)) {
 				// 创建一个上传任务
 				if (this.isCancel) {
 					return false;
 				}
 				String uploadURL = createUploadTask();
-				if (!StringUtilties.isNullOrEmpty(uploadURL)) {
+				if (!StringUtilities.isNullOrEmpty(uploadURL)) {
 					// 开始上传
 					if (this.isCancel) {
 						return false;
@@ -278,7 +278,7 @@ public class ServerRelease {
 			httpPostFile = new HttpPostFile(MessageFormat.format("{0}.Json?overwrite=true&unzip=true&toFile={1}&token={2}", uploadURL, fileName, getToken()));
 			httpPostFile.addHttpPostListener(this.httpPostListener);
 			String response = httpPostFile.post(dataFile);
-			if (!StringUtilties.isNullOrEmpty(response)) {
+			if (!StringUtilities.isNullOrEmpty(response)) {
 				JSONObject responseJson = JSONObject.parseObject(response);
 
 				String dataDirectory = responseJson.getString("filePath");
@@ -315,12 +315,12 @@ public class ServerRelease {
 
 		try {
 			Application.getActiveApplication().getOutput().output(NetServicesProperties.getString("String_ZippingData"));
-			File zipCacheDirectory = new File(PathUtilties.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
+			File zipCacheDirectory = new File(PathUtilities.getFullPathName(CLOUDY_CACHE + File.separator + "iServerZipCache", true));
 			if (!zipCacheDirectory.exists() || !zipCacheDirectory.isDirectory()) {
 				zipCacheDirectory.mkdirs();
 			}
 
-			String workspaceName = FileUtilties.getFileNameWithoutExtension(new File(this.workspacePath)) + new Date().hashCode();
+			String workspaceName = FileUtilities.getFileNameWithoutExtension(new File(this.workspacePath)) + new Date().hashCode();
 
 			Compressor compressor = new Compressor(this.getWorkDirectory(), zipCacheDirectory.getPath(), workspaceName, this.files, false);
 			compressor.addCompressingListener(this.compressListener);
@@ -408,11 +408,11 @@ public class ServerRelease {
 			if (responseStatus.getStatusCode() == HttpStatus.SC_OK || responseStatus.getStatusCode() == HttpStatus.SC_CREATED
 					|| responseStatus.getStatusCode() == HttpStatus.SC_ACCEPTED) {
 				this.resultURL = responseText;
-				if (!StringUtilties.isNullOrEmpty(this.resultURL)) {
+				if (!StringUtilities.isNullOrEmpty(this.resultURL)) {
 					result = true;
 				}
 			} else {
-				if (!StringUtilties.isNullOrEmpty(responseText)) {
+				if (!StringUtilities.isNullOrEmpty(responseText)) {
 					Object obj = JSON.parse(responseText);
 
 					if (obj instanceof JSONObject) {
@@ -538,7 +538,7 @@ public class ServerRelease {
 				} else {
 					filePath = this.remoteFilePath.replace(File.separator, "/");
 				}
-				if (StringUtilties.isNullOrEmpty(this.connectionInfo.getPassword())) {
+				if (StringUtilities.isNullOrEmpty(this.connectionInfo.getPassword())) {
 					workspaceConnection.append(filePath);
 				} else {
 					workspaceConnection.append("server=" + filePath);

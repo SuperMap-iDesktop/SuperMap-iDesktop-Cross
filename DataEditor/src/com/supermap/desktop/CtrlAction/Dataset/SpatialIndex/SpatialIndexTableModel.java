@@ -11,7 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
+import com.supermap.desktop.utilties.SpatialIndexTypeUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -71,9 +71,9 @@ public class SpatialIndexTableModel extends SortableTableModel {
 			case COLUMN_DATASOURCE:
 				return spatialIndexTableModelBean.getDataset().getDatasource();
 			case COLUMN_CURRENT_SPATIAL_INDEX_TYPE:
-				return SpatialIndexTypeUtilties.toString(((DatasetVector) spatialIndexTableModelBean.getDataset()).getSpatialIndexType());
+				return SpatialIndexTypeUtilities.toString(((DatasetVector) spatialIndexTableModelBean.getDataset()).getSpatialIndexType());
 			case COLUMN_DEAL_INDEX_TYPE:
-				return SpatialIndexTypeUtilties.toString(spatialIndexTableModelBean.getSpatialIndexType());
+				return SpatialIndexTypeUtilities.toString(spatialIndexTableModelBean.getSpatialIndexType());
 			default:
 				return null;
 		}
@@ -85,7 +85,7 @@ public class SpatialIndexTableModel extends SortableTableModel {
 		if (column != COLUMN_DEAL_INDEX_TYPE) {
 			return;
 		}
-		SpatialIndexType spatialIndexType = SpatialIndexTypeUtilties.valueOf(String.valueOf(aValue));
+		SpatialIndexType spatialIndexType = SpatialIndexTypeUtilities.valueOf(String.valueOf(aValue));
 		this.datas.get(row).setSpatialIndexType(spatialIndexType);
 		fireTableCellUpdated(row, column);
 	}

@@ -21,8 +21,8 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.*;
 
 /**
@@ -515,7 +515,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				}
 				if (e.getSource() == comboBoxOffsetX) {
 					String offsetXExpression = themeGraduatedSymbol.getOffsetX();
-					if (StringUtilties.isNullOrEmpty(offsetXExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetXExpression)) {
 						offsetXExpression = "0";
 					}
 					boolean itemChangedForOffsetX = ThemeUtil.getSqlExpression(comboBoxOffsetX, tempDatasets, comboBoxArrayForOffsetX, offsetXExpression, true);
@@ -526,7 +526,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				}
 				if (e.getSource() == comboBoxOffsetY) {
 					String offsetYExpression = themeGraduatedSymbol.getOffsetY();
-					if (StringUtilties.isNullOrEmpty(offsetYExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetYExpression)) {
 						offsetYExpression = "0";
 					}
 					boolean itemChangedForOffsetX = ThemeUtil.getSqlExpression(comboBoxOffsetY, tempDatasets, comboBoxArrayForOffsetY, offsetYExpression, true);
@@ -594,7 +594,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	private void resetBaseValue() {
 		String strBaseValue = textFieldBaseValue.getText();
-		if (!StringUtilties.isNullOrEmpty(strBaseValue) && StringUtilties.isNumber(strBaseValue)) {
+		if (!StringUtilities.isNullOrEmpty(strBaseValue) && StringUtilities.isNumber(strBaseValue)) {
 
 			double newBaseValue = Double.parseDouble(strBaseValue);
 			if (Double.compare(newBaseValue, 0.0) == 0) {
@@ -780,7 +780,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeGraduatedSymbolLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeGraduatedSymbolLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeGraduatedSymbolLayer && null != themeGraduatedSymbolLayer.getTheme()
 				&& themeGraduatedSymbolLayer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL) {
 			ThemeGraduatedSymbol nowThemeGraduatedSymbol = ((ThemeGraduatedSymbol) this.themeGraduatedSymbolLayer.getTheme());

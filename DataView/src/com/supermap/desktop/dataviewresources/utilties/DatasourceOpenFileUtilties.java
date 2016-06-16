@@ -19,10 +19,10 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.LogUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.LogUtilities;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,13 +75,13 @@ public class DatasourceOpenFileUtilties {
 			String fileFilterUdb = getTypedSupportFileExtensions(EngineType.UDB) == null || getTypedSupportFileExtensions(EngineType.UDB).length <= 0 ? null
 					: SmFileChoose.createFileFilter(UDBDescribe, "udb");
 
-			String ImageDescribe = SystemPropertyUtilties.isWindows() ? DataViewProperties.getString("String_FileFilters_ImagePlugins_Win")
+			String ImageDescribe = SystemPropertyUtilities.isWindows() ? DataViewProperties.getString("String_FileFilters_ImagePlugins_Win")
 					: DataViewProperties.getString("String_FileFilters_ImagePlugins_Linux");
 			String fileFilterImagePlugin = getTypedSupportFileExtensions(EngineType.IMAGEPLUGINS) == null
 					|| getTypedSupportFileExtensions(EngineType.IMAGEPLUGINS).length <= 0 ? null : SmFileChoose.createFileFilter(ImageDescribe,
 					getTypedSupportFileExtensions(EngineType.IMAGEPLUGINS));
 
-			String VectorDescribe = SystemPropertyUtilties.isWindows() ? DataViewProperties.getString("String_FileFilters_Vector_Win") : DataViewProperties
+			String VectorDescribe = SystemPropertyUtilities.isWindows() ? DataViewProperties.getString("String_FileFilters_Vector_Win") : DataViewProperties
 					.getString("String_FileFilters_Vector_Linux");
 			String fileFilterVector = getTypedSupportFileExtensions(EngineType.VECTORFILE) == null
 					|| getTypedSupportFileExtensions(EngineType.VECTORFILE).length <= 0 ? null : SmFileChoose.createFileFilter(VectorDescribe,
@@ -243,26 +243,26 @@ public class DatasourceOpenFileUtilties {
 			Datasource resultDatasource = DatasourceOpenFileUtilties.isDatasourceOpened(filePath);
 			if (null != resultDatasource) {
 				UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-				DatasourceUtilties.addDatasourceToRecentFile(resultDatasource);
+				DatasourceUtilities.addDatasourceToRecentFile(resultDatasource);
 				return resultDatasource;
 			} else {
 				// 数据源没打开，老实自己打开吧。
 				final DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
 				connectionInfo.setServer(filePath);
-				connectionInfo.setAlias(DatasourceUtilties.getAvailableDatasourceAlias(file.getName().substring(0, file.getName().lastIndexOf(".")), 0));
+				connectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias(file.getName().substring(0, file.getName().lastIndexOf(".")), 0));
 				connectionInfo.setEngineType(engineType);
 				connectionInfo.setReadOnly(isReadOnlyOpenTemp);
 				try {
-					CursorUtilties.setWaitCursor();
+					CursorUtilities.setWaitCursor();
 					resultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().open(connectionInfo);
 				} catch (Exception e) {
 					// 有可能密码错误，这里先不输出
 				} finally {
-					CursorUtilties.setDefaultCursor();
+					CursorUtilities.setDefaultCursor();
 				}
 				if (resultDatasource != null) {
 					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-					DatasourceUtilties.addDatasourceToRecentFile(resultDatasource);
+					DatasourceUtilities.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
 				} else {
 					// 判断是否为密码错误
@@ -273,7 +273,7 @@ public class DatasourceOpenFileUtilties {
 
 					for (int i = 0; i < errorInfos.length; i++) {
 						String marker = errorInfos[i].getMarker();
-						LogUtilties.outPut(MessageFormat.format(DataViewProperties.getString("String_OpenDatasourceFailedCode"), marker));
+						LogUtilities.outPut(MessageFormat.format(DataViewProperties.getString("String_OpenDatasourceFailedCode"), marker));
 						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
 								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
 							isPasswordWrong = true;
@@ -306,7 +306,7 @@ public class DatasourceOpenFileUtilties {
 									return false;
 								} else {
 									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-									DatasourceUtilties.addDatasourceToRecentFile(datasource);
+									DatasourceUtilities.addDatasourceToRecentFile(datasource);
 									return true;
 								}
 							}

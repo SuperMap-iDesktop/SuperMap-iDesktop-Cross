@@ -13,10 +13,10 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.FontUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -196,7 +196,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		this.textFieldColorCount.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
@@ -331,8 +331,8 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		jButtonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(tableColorsTable);
-				TableUtilties.invertSelection(tableColorsTable);
+				TableUtilities.stopEditing(tableColorsTable);
+				TableUtilities.invertSelection(tableColorsTable);
 			}
 
 		});
@@ -594,7 +594,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	private void buttonImportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
-			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+			SmFileChoose.addNewNode(fileFilters, PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					ControlsProperties.getString("String_ImportColorScheme"), "ColorSchemeImport", "OpenMany");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
@@ -609,13 +609,13 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	private void buttonExportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExportSingle")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
-			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+			SmFileChoose.addNewNode(fileFilters, PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					ControlsProperties.getString("String_ExportColorScheme"), "ColorSchemeExportSingle", "SaveOne");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExportSingle");
 		int result = fileChooser.showDefaultDialog();
 		String filePath = fileChooser.getFilePath();
-		if (result == JFileChooser.APPROVE_OPTION && !StringUtilties.isNullOrEmpty(filePath)) {
+		if (result == JFileChooser.APPROVE_OPTION && !StringUtilities.isNullOrEmpty(filePath)) {
 			colorScheme.saveAsFilePath(filePath);
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"), filePath));
 		}
@@ -707,7 +707,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 
 			});
 			TableColumn column = tableColorsTable.getColumnModel().getColumn(0);
-			int indexWidth = FontUtilties.getStringWidth(ControlsProperties.getString("String_identifier"), tableColorsTable.getTableHeader().getFont()) + 30;
+			int indexWidth = FontUtilities.getStringWidth(ControlsProperties.getString("String_identifier"), tableColorsTable.getTableHeader().getFont()) + 30;
 			column.setMaxWidth(indexWidth);
 			column.setPreferredWidth(indexWidth);
 			column.setMinWidth(indexWidth);

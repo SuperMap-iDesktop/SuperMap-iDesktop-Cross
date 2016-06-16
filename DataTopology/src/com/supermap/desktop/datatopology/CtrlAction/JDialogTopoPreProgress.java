@@ -18,8 +18,8 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -174,7 +174,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		textFieldTolerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return true;
 				} else {
 					try {
@@ -335,7 +335,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 				}
 			} else if (c == buttonInvertSelect) {
 				// 反选
-				TableUtilties.invertSelection(table);
+				TableUtilities.invertSelection(table);
 			} else if (c == buttonDelete) {
 				deleteFromTable();
 			} else if (c == buttonSure) {
@@ -409,7 +409,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		TopologyPreprocessOptions options = new TopologyPreprocessOptions();
 		// 容限值
 		String text = textFieldTolerance.getText();
-		if (StringUtilties.isNullOrEmpty(text)) {
+		if (StringUtilities.isNullOrEmpty(text)) {
 			text = "0";
 		}
 		double tolerance = Double.parseDouble(text);

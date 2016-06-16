@@ -2,7 +2,7 @@ package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellEditor;
@@ -66,7 +66,7 @@ public class SymbolGroupTreeCellEditor extends DefaultTreeCellEditor {
 			return false;
 		}
 		// 当前输入不为空
-		if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+		if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 			return false;
 		}
 		// 不包含非法字符

@@ -32,9 +32,9 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 import com.supermap.mapping.Layer;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -945,7 +945,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 				if (smFileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
 					String filePath = smFileChoose.getFilePath();
-					Document document = XmlUtilties.getDocument(filePath);
+					Document document = XmlUtilities.getDocument(filePath);
 					NodeList childNodes = document.getChildNodes();
 					for (int i = 0; i < childNodes.getLength(); i++) {
 						Node node = childNodes.item(i);
@@ -1154,7 +1154,7 @@ public class JDialogSQLQuery extends SmDialog {
 				resultRecord = currentDatasetVector.query(queryParameter);
 				// 判断是否有查询结果，没有查询结果给出提示
 				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-					if (StringUtilties.isNullOrEmpty(queryFields)) {
+					if (StringUtilities.isNullOrEmpty(queryFields)) {
 						resultRecord.dispose();
 						resultRecord = null;
 					}
@@ -1227,7 +1227,7 @@ public class JDialogSQLQuery extends SmDialog {
 	private void SaveQueryResult(Recordset resultRecord) {
 		Datasource resultDatasource = panelSaveSearchResult.getSelectDatasouce();
 		String datasetName = panelSaveSearchResult.getDatasetName();
-		if (resultDatasource != null && !StringUtilties.isNullOrEmpty(datasetName)) {
+		if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
 			DatasetVector resultDataset = null;
 			try {
 				resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
@@ -1271,15 +1271,15 @@ public class JDialogSQLQuery extends SmDialog {
 		// }
 		// 新地图打开
 		if (formMap == null) {
-			String name = MapUtilties.getAvailableMapName(
+			String name = MapUtilities.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource().getAlias()), true);
 			formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 		}
 
 		if (formMap != null) {
-			Layer layer = MapUtilties.findLayerByDatasetWithoutLabelTheme(formMap.getMapControl().getMap(), currentDatasetVector);
+			Layer layer = MapUtilities.findLayerByDatasetWithoutLabelTheme(formMap.getMapControl().getMap(), currentDatasetVector);
 			if (layer == null || layer.isDisposed()) {
-				layer = MapUtilties.addDatasetToMap(formMap.getMapControl().getMap(), currentDatasetVector, true);
+				layer = MapUtilities.addDatasetToMap(formMap.getMapControl().getMap(), currentDatasetVector, true);
 			}
 			if (layer != null && !layer.isDisposed()) {
 				layer.getSelection().clear();

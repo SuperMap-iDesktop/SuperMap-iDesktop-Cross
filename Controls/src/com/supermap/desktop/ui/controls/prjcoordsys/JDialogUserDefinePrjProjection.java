@@ -15,8 +15,8 @@ import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilties.EnumComparator;
-import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.PrjCoordSysTypeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -157,7 +157,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 				JLabel jLabel = new JLabel();
 				jLabel.setOpaque(true);
 				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
+				jLabel.setText(" " + PrjCoordSysTypeUtilities.getDescribe(value.name()));
 				if (isSelected) {
 					jLabel.setBackground(list.getSelectionBackground());
 				} else {
@@ -208,7 +208,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		fieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {
@@ -232,7 +232,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		textFieldScaleFactor.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {
@@ -405,7 +405,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					Object selectedItem = comboBoxName.getSelectedItem();
 					if (selectedItem != null && !(selectedItem instanceof String) && selectedItem != PrjCoordSysType.PCS_USER_DEFINED) {
-						String describe = PrjCoordSysTypeUtilties.getDescribe(((PrjCoordSysType) selectedItem).name());
+						String describe = PrjCoordSysTypeUtilities.getDescribe(((PrjCoordSysType) selectedItem).name());
 						prjCoordSys.setName(describe);
 						prjCoordSys.setType((PrjCoordSysType) selectedItem);
 						lock = true;
@@ -417,7 +417,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 						comboBoxName.setSelectedItem(describe);
 						lock = false;
 					} else {
-						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+						if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 							return;
 						}
 						prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());

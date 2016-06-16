@@ -20,6 +20,11 @@ public class ToolbarUtilties {
 	 * 刷新工具条
 	 */
 	public static void updataToolbarsState() {
+		if (Application.getActiveApplication() == null || Application.getActiveApplication().getMainFrame() == null
+				|| Application.getActiveApplication().getMainFrame().getToolbarManager() == null) {
+			return;
+		}
+
 		ToolbarManager toolbarManager = (ToolbarManager) Application.getActiveApplication().getMainFrame().getToolbarManager();
 		for (int toolbarIndex = 0; toolbarIndex < toolbarManager.getCount(); toolbarIndex++) {
 			IToolbar toolbar = toolbarManager.get(toolbarIndex);
@@ -28,9 +33,9 @@ public class ToolbarUtilties {
 					IBaseItem item = toolbar.getAt(itemIndex);
 					if (item.getCtrlAction() != null) {
 						item.getCtrlAction().setCaller(item);
-//						if (item instanceof SmButtonDropdown) {
-//							// 默认实现
-//						}
+						// if (item instanceof SmButtonDropdown) {
+						// // 默认实现
+						// }
 						item.getCtrlAction().getCaller().setEnabled(item.getCtrlAction().enable());
 						item.getCtrlAction().getCaller().setChecked(item.getCtrlAction().check());
 					}

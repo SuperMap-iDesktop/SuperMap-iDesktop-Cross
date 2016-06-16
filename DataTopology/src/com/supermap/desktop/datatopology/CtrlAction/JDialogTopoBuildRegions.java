@@ -21,7 +21,7 @@ import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -74,7 +74,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			String datasourceName = comboBoxResultDatasource.getSelectItem();
-			if (!StringUtilties.isNullOrEmpty(datasourceName)) {
+			if (!StringUtilities.isNullOrEmpty(datasourceName)) {
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				if (!datasource.getDatasets().isAvailableDatasetName(textFieldResultDataset.getText())) {
 					buttonOk.setEnabled(false);

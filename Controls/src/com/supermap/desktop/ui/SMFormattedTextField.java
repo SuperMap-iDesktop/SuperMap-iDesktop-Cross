@@ -1,6 +1,6 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -61,7 +61,7 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 		Object lastValue = getValue();
 
 		try {
- 			if (!StringUtilties.isNullOrEmpty(getText()) && StringUtilties.isNumber(getText())) {
+ 			if (!StringUtilities.isNullOrEmpty(getText()) && StringUtilities.isNumber(getText())) {
 				commitEdit();
 			}
 		} catch (ParseException e1) {

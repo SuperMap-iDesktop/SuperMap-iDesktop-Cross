@@ -6,9 +6,9 @@ import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLCommand;
-import com.supermap.desktop.utilties.CtrlActionUtilties;
-import com.supermap.desktop.utilties.JOptionPaneUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilties.CtrlActionUtilities;
+import com.supermap.desktop.utilties.JOptionPaneUtilities;
+import com.supermap.desktop.utilties.PathUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +23,8 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 
 	public SmCtrlActionButton(IForm formClass, XMLCommand xmlCommand, JComponent parent) {
 		super.setToolTipText(xmlCommand.getTooltip());
-		String[] pathPrams = new String[] { PathUtilties.getRootPathName(), xmlCommand.getImageFile() };
-		String path = PathUtilties.combinePath(pathPrams, false);
+		String[] pathPrams = new String[] { PathUtilities.getRootPathName(), xmlCommand.getImageFile() };
+		String path = PathUtilities.combinePath(pathPrams, false);
 		File file = new File(path);
 		if (file.exists() && file.isFile()) {
 			this.setIcon(new ImageIcon(path));
@@ -41,7 +41,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilities.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {
@@ -77,7 +77,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 				this.getCtrlAction().run();
 			} else {
 				Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
-				JOptionPaneUtilties.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
+				JOptionPaneUtilities.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

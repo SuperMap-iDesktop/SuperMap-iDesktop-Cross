@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.ThemeLabel;
 
@@ -218,7 +218,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 			}
 
 			if (this.propertyEnabled.get(DISPLAY_ORDER_FIELD)) {
-				if (StringUtilties.isNullOrEmpty(this.displayOrderField)) {
+				if (StringUtilities.isNullOrEmpty(this.displayOrderField)) {
 					layer.getDisplayFilter().setOrderBy(null);
 				} else {
 					layer.getDisplayFilter().setOrderBy(new String[] { MessageFormat.format("{0} {1}", this.displayOrderField, this.isDesc ? DESC : ASC) });
@@ -226,7 +226,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 			}
 
 			if (this.propertyEnabled.get(DISPLAY_ATTRIBUTE_FILTER)) {
-				if (StringUtilties.isNullOrEmpty(this.displayAttributeFilter)) {
+				if (StringUtilities.isNullOrEmpty(this.displayAttributeFilter)) {
 					layer.getDisplayFilter().setAttributeFilter("");
 				} else {
 					layer.getDisplayFilter().setAttributeFilter(this.displayAttributeFilter);
@@ -333,7 +333,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 					hashMapTmp.put(DISPLAY_ATTRIBUTE_FILTER, false);
 				}
 
-				if (!hashMapTmp.get(DISPLAY_ORDER_FIELD) || StringUtilties.isNullOrEmpty(this.displayOrderField)) {
+				if (!hashMapTmp.get(DISPLAY_ORDER_FIELD) || StringUtilities.isNullOrEmpty(this.displayOrderField)) {
 					hashMapTmp.put(IS_DESC, false);
 				}
 
@@ -401,7 +401,7 @@ public class LayerVectorParamPropertyModel extends LayerPropertyModel {
 		Object[] parts = new Object[2];
 
 		String orderBy = getLayerOrderBy(layer);
-		if (StringUtilties.isNullOrEmpty(orderBy)) {
+		if (StringUtilities.isNullOrEmpty(orderBy)) {
 			parts[ORDERFIELD_TAG] = null;
 			parts[ISDESC_TAG] = false;
 		} else {

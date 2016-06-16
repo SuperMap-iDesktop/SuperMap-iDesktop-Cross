@@ -29,13 +29,15 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.docking.TabWindow;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -141,8 +143,8 @@ public class FormBase extends JFrame implements IFormMain {
 			this.loadFrameMenu(workEnvironment);
 
 			// 初始化最近文件列表
-			WorkspaceUtilties.initRecentFileMenu();
-			DatasourceUtilties.initRecentFileMenu();
+			WorkspaceUtilities.initRecentFileMenu();
+			DatasourceUtilities.initRecentFileMenu();
 
 //			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
 			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
@@ -308,15 +310,15 @@ public class FormBase extends JFrame implements IFormMain {
 							Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 							for (int i = 0; i < datasources.getCount(); i++) {
 								Datasets datasets = datasources.get(i).getDatasets();
-								CommonToolkit.DatasetWrap.CloseDataset(datasets);
+								DatasetUtilities.closeDataset(datasets);
 							}
 							// 关闭当前工作空间
 							WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
-							WorkspaceUtilties.openWorkspace(connectionInfo, false);
+							WorkspaceUtilities.openWorkspace(connectionInfo, false);
 						}
 						// 打开数据源类型的文件
 						if (datasourceType == getFileType(file)) {
-							DatasourceUtilties.openFileDatasource(file.getAbsolutePath(), null, true);
+							DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, true);
 						}
 					}
 					dtde.dropComplete(true);// 指示拖拽操作已完成

@@ -10,7 +10,7 @@ import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings.CoordSysDefine;
-import com.supermap.desktop.utilties.PrjCoordSysUtilties;
+import com.supermap.desktop.utilties.PrjCoordSysUtilities;
 
 import java.text.MessageFormat;
 
@@ -96,7 +96,7 @@ public class PrjCoordSysSettingsUtilties {
 					}
 
 					if (prjCoordSys != null) {
-						description = PrjCoordSysUtilties.getDescription(prjCoordSys);
+						description = PrjCoordSysUtilities.getDescription(prjCoordSys);
 					}
 				} else {
 					// 如果当前选中的投影定义有子项，那么就是某一类投影的集合

@@ -15,7 +15,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -67,7 +67,7 @@ public class GeometryNodePropertyControl extends AbstractPropertyControl {
 
 	private boolean isEditable() {
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(currentForm.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(currentForm.getMapControl().getMap());
 			for (Layer layer : layers) {
 				if (layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
 					return true;

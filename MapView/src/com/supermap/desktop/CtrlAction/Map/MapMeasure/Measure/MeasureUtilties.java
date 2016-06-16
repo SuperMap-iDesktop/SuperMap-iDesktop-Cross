@@ -5,7 +5,7 @@ import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilties.LogUtilities;
 import com.supermap.ui.MapControl;
 
 import java.text.MessageFormat;
@@ -75,7 +75,7 @@ public class MeasureUtilties {
 			measureInstance.setMapControl(mapControl);
 			measureInstance.startMeasure();
 		} else {
-			LogUtilties.debug(MessageFormat.format(MapViewProperties.getString("Log_MeasureCreateNewMeasureFailed"), formMap.getText(), measureType.toString()));
+			LogUtilities.debug(MessageFormat.format(MapViewProperties.getString("Log_MeasureCreateNewMeasureFailed"), formMap.getText(), measureType.toString()));
 		}
 
 	}

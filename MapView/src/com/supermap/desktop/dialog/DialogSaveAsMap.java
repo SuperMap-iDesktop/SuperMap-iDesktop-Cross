@@ -8,7 +8,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -110,7 +110,7 @@ public class DialogSaveAsMap extends SmDialog {
 	public void setMapName(String name, boolean isNewWindow) {
 		this.myMapName = name;
 		if (!isNewWindow) {
-			this.textFieldMapName.setText(MapUtilties.getAvailableMapName(myMapName, true));
+			this.textFieldMapName.setText(MapUtilities.getAvailableMapName(myMapName, true));
 		} else {
 			this.textFieldMapName.setText(myMapName);
 		}
@@ -168,7 +168,7 @@ public class DialogSaveAsMap extends SmDialog {
 	private void okButton_Click() {
 		try {
 			DialogResult dialogResult = DialogResult.NO;
-			if (MapUtilties.checkAvailableMapName(this.textFieldMapName.getText(), myMapName)) {
+			if (MapUtilities.checkAvailableMapName(this.textFieldMapName.getText(), myMapName)) {
 				dialogResult = DialogResult.YES;
 			} else {
 				String message = String.format(MapViewProperties.getString("String_SaveAsMap_ExistName"), this.textFieldMapName.getText());

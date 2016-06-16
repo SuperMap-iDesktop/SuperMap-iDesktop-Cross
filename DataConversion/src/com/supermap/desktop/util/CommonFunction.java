@@ -78,7 +78,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 /**
  * @author Administrator 通用的方法类包括右边界面刷新，初始化右边界面等方法
@@ -102,7 +102,7 @@ public class CommonFunction {
 	 */
 	public static void setTableInfo(DataImportFrame dataImportFrame, List<JPanel> panels, FileInfoModel model) {
 		if (!SmFileChoose.isModuleExist("CommonFunction")) {
-			if (SystemPropertyUtilties.isWindows()) {
+			if (SystemPropertyUtilities.isWindows()) {
 				String fileFilters = SmFileChoose.bulidFileFilters(
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[0], FileTypeLocale.getExtensionsnew()),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[1], "dxf", "dwg"),

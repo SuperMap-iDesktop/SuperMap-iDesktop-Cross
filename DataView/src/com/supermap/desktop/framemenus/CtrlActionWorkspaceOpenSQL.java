@@ -7,7 +7,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceOpenSQL;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 public class CtrlActionWorkspaceOpenSQL extends CtrlAction {
 
@@ -30,7 +30,7 @@ public class CtrlActionWorkspaceOpenSQL extends CtrlAction {
 	@Override
 	public boolean enable() {
 		// TODO Auto-generated method stub
-		return SystemPropertyUtilties.isWindows();
+		return SystemPropertyUtilities.isWindows();
 	}
 
 }

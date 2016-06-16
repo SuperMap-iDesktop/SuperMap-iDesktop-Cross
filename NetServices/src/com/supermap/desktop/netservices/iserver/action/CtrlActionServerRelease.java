@@ -12,8 +12,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 
 import javax.swing.*;
 import java.text.MessageFormat;
@@ -55,8 +55,8 @@ public class CtrlActionServerRelease extends CtrlAction {
 		Boolean closed = Application.getActiveApplication().getMainFrame().getFormManager().closeAll(true);
 		Boolean isContinue = true;
 		if (closed) {
-			if (DatasourceUtilties.isContainMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
-				String[] datasources = DatasourceUtilties.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
+			if (DatasourceUtilities.isContainMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
+				String[] datasources = DatasourceUtilities.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
 				String datasourcesName = "";
 				for (int i = 0; i < datasources.length - 1; i++) {
 					datasourcesName += datasources[i] + "、";
@@ -67,11 +67,11 @@ public class CtrlActionServerRelease extends CtrlAction {
 				if (result == JOptionPane.NO_OPTION) {
 					isContinue = false;
 				} else {
-					DatasourceUtilties.closeMemoryDatasource();
+					DatasourceUtilities.closeMemoryDatasource();
 				}
 			}
 			if (isContinue) {
-				if (WorkspaceUtilties.isWorkspaceModified()) {
+				if (WorkspaceUtilities.isWorkspaceModified()) {
 					int result = UICommonToolkit.showConfirmDialog(CoreProperties.getString("String_SaveWorkspacePrompt"),
 							CoreProperties.getString("String_SaveWorkspace"));
 

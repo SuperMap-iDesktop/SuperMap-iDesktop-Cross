@@ -15,7 +15,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -498,7 +498,7 @@ public class DialogSaveChildForms extends SmDialog {
 		private boolean isMapNameDuplicated(int row, String newName) {
 			boolean result = false;
 
-			if (!StringUtilties.isNullOrEmpty(newName)) {
+			if (!StringUtilities.isNullOrEmpty(newName)) {
 
 				// 判断工作空间中的已有地图是否有重复的命名
 				result = Application.getActiveApplication().getWorkspace().getMaps().indexOf(newName) > -1;
@@ -527,7 +527,7 @@ public class DialogSaveChildForms extends SmDialog {
 		private boolean isNewMapNameDuplicated(int row, String newName) {
 			boolean result = false;
 
-			if (!StringUtilties.isNullOrEmpty(newName) && row > -1) {
+			if (!StringUtilities.isNullOrEmpty(newName) && row > -1) {
 				for (int i = 0; i < this.contents.size(); i++) {
 					if (row != i) {
 						String mapName = (String) getValueAt(i, NAME);

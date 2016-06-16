@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 public class CtrlActionWorkspaceOpenDirectory extends CtrlAction {
 
@@ -23,7 +23,7 @@ public class CtrlActionWorkspaceOpenDirectory extends CtrlAction {
 			String path = Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer();
 			File file = new File(path);
 			if (file.exists()) {
-				if (SystemPropertyUtilties.isWindows()) {
+				if (SystemPropertyUtilities.isWindows()) {
 					Runtime.getRuntime().exec("explorer.exe /select, " + path);
 				} else {
 					Application.getActiveApplication().getOutput()

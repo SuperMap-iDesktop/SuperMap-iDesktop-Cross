@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
+import com.supermap.desktop.utilties.DatasetTypeUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -237,7 +237,7 @@ public class DataCell extends JPanel {
 			}
 		}
 		if (datasetType != null && name == null) {
-			initDatasetType(datasetType, DatasetTypeUtilties.toString(datasetType));
+			initDatasetType(datasetType, DatasetTypeUtilities.toString(datasetType));
 		}
 	}
 	// endregion

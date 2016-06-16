@@ -77,7 +77,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.themeLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != theme && theme instanceof ThemeLabel && this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(((ThemeLabel) theme).getUniformStyle());
 			this.map.refresh();
@@ -204,7 +204,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 			if (!textStyle.isSizeFixed()) {
 				// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
 				// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-				Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+				Double size = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
 				DecimalFormat decimalFormat = new DecimalFormat("0.0");
 				String numeric = "0.00";
 				if (Double.compare(size, size.intValue()) > 0) {

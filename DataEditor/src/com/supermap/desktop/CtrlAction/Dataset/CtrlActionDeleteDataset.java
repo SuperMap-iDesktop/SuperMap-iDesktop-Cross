@@ -4,15 +4,16 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.DatasetUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 
 public class CtrlActionDeleteDataset extends CtrlAction {
@@ -44,8 +45,8 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 				}
 				if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 					try {
-						CursorUtilties.setWaitCursor();
-						CommonToolkit.DatasetWrap.CloseDataset(datasets);
+						CursorUtilities.setWaitCursor();
+						DatasetUtilities.closeDataset(datasets);
 						for (int i = 0; i < datasets.length; i++) {
 							String resultInfo = MessageFormat.format(DataEditorProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
 									.getDatasource().getAlias(), datasets[i].getName());
@@ -55,7 +56,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 						}
 						Application.getActiveApplication().setActiveDatasets(null);
 					} finally {
-						CursorUtilties.setDefaultCursor();
+						CursorUtilities.setDefaultCursor();
 					}
 				}
 			} else {
@@ -85,7 +86,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 			}
 		}
 		Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-		if (datasets != null && datasets.length>0 &&datasets[0] instanceof DatasetVector && ((DatasetVector) datasets[0]).getParentDataset() != null) {
+		if (datasets != null && datasets.length > 0 && datasets[0] instanceof DatasetVector && ((DatasetVector) datasets[0]).getParentDataset() != null) {
 			enable = false;
 		}
 		return enable;

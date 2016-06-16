@@ -25,8 +25,8 @@ import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -91,7 +91,7 @@ public class GeometryEditBak {
 	 * @return
 	 */
 	public List<Layer> getAllLayers() {
-		return MapUtilties.getLayers(this.formMap.getMapControl().getMap());
+		return MapUtilities.getLayers(this.formMap.getMapControl().getMap());
 	}
 
 	public IFormMap getFormMap() {
@@ -276,24 +276,24 @@ public class GeometryEditBak {
 
 	public boolean isEraseEnable() {
 		return this.editableSelectedGeometryCount > 0
-				&& ListUtilties.isListContainAny(this.editableSelectedGeometryFeatures, ILineFeature.class, IRegionFeature.class, ICompoundFeature.class);
+				&& ListUtilities.isListContainAny(this.editableSelectedGeometryFeatures, ILineFeature.class, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	public boolean isEraseOutPartEnable() {
-		return this.selectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, IRegionFeature.class, ICompoundFeature.class);
+		return this.selectedGeometryCount == 1 && ListUtilities.isListContainAny(this.selectedGeometryFeatures, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	public boolean isEditLineMEnable() {
-		return this.editableSelectedGeometryCount == 1 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
+		return this.editableSelectedGeometryCount == 1 && ListUtilities.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
 	}
 
 	public boolean isDeleteLineMvalueEnable() {
-		return this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
+		return this.editableSelectedGeometryCount > 0 && ListUtilities.isListContainAny(this.selectedGeometryFeatures, GeoLineM.class);
 
 	}
 
 	public boolean isSmoothEnable() {
-		return ListUtilties.isListContainAny(this.editableSelectedGeometryTypes, GeometryType.GEOLINE,
+		return ListUtilities.isListContainAny(this.editableSelectedGeometryTypes, GeometryType.GEOLINE,
 		// GeometryType.GeoLineM,
 				GeometryType.GEOREGION); // 排除参数化曲线
 	}
@@ -302,7 +302,7 @@ public class GeometryEditBak {
 		Boolean enable = false;
 		if (this.selectedGeometryCount > 1 && // 选中数至少2个
 				// (this.has2DGeometrySelected != this.has3DGeometrySelected) && // 不能即有二维对象又有三维对象
-				ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class, ILineFeature.class))// 只支持面
+				ListUtilities.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class, ILineFeature.class))// 只支持面
 		{
 			// 是会否存在可编辑的“可操作保存”图层
 			DatasetType datasetType = DatasetType.CAD;
@@ -313,7 +313,7 @@ public class GeometryEditBak {
 				datasetType = DatasetType.REGION;
 			}
 
-			if (this.editableDatasetTypes.size() > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, datasetType)) {
+			if (this.editableDatasetTypes.size() > 0 && ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, datasetType)) {
 				enable = true;
 			}
 		}
@@ -321,35 +321,35 @@ public class GeometryEditBak {
 	}
 
 	public boolean isSplitByRegionEnable() {
-		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+		return (this.editableSelectedGeometryCount > 0 && ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
 				DatasetType.CAD));
 	}
 
 	public boolean isSplitByLineEnable() {
-		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+		return (this.editableSelectedGeometryCount > 0 && ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
 				DatasetType.CAD));
 	}
 
 	public boolean isSplitByGeometryEnable() {
-		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
+		return (this.editableSelectedGeometryCount > 0 && ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.REGION, DatasetType.LINE,
 				DatasetType.CAD));
 	}
 
 	public boolean isRotateEnable() {
-		return (this.editableSelectedGeometryCount > 0 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class,
+		return (this.editableSelectedGeometryCount > 0 && ListUtilities.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class,
 				ITextFeature.class, IPointFeature.class, IRegionFeature.class, ILineFeature.class));
 	}
 
 	public boolean isReshapeEnable() {
-		return (this.editableSelectedGeometryCount == 1 && ListUtilties.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class));
+		return (this.editableSelectedGeometryCount == 1 && ListUtilities.isListOnlyContain(this.editableSelectedGeometryFeatures, ICompoundFeature.class));
 	}
 
 	public boolean isResampleEnable() {
-		return ListUtilties.isListOnlyContain(this.editableSelectedGeometryTypes, GeometryType.GEOLINE, GeometryType.GEOREGION);
+		return ListUtilities.isListOnlyContain(this.editableSelectedGeometryTypes, GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	public boolean isOffsetEnable() {
-		return ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD);
+		return ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.REGION, DatasetType.CAD);
 	}
 
 	// public boolean isMirrorEnable() {
@@ -358,7 +358,7 @@ public class GeometryEditBak {
 	// }
 
 	public boolean isPartialUpdateEnable() {
-		return ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION, DatasetType.LINE);
+		return ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION, DatasetType.LINE);
 	}
 
 	public boolean isMoveObjEnable() {
@@ -366,11 +366,11 @@ public class GeometryEditBak {
 	}
 
 	public boolean isPointsAvgErrorEnable() {
-		return ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.CAD);
+		return ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.CAD);
 	}
 
 	public boolean isLineReverseEnable() {
-		return ListUtilties.isListContainAny(this.editableSelectedGeometryTypes, GeometryType.GEOLINE, GeometryType.GEOLINEM);
+		return ListUtilities.isListContainAny(this.editableSelectedGeometryTypes, GeometryType.GEOLINE, GeometryType.GEOLINEM);
 	}
 
 	public boolean isFilletEnable() {
@@ -498,8 +498,8 @@ public class GeometryEditBak {
 
 	public boolean isJointLineEnable() {
 		Boolean result = false;
-		if (ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.LINE) && this.selectedGeometryCount > 1) {
-			if (ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, ILineFeature.class)) {
+		if (ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.LINE) && this.selectedGeometryCount > 1) {
+			if (ListUtilities.isListOnlyContain(this.selectedGeometryFeatures, ILineFeature.class)) {
 				result = true;
 			}
 		}
@@ -512,8 +512,8 @@ public class GeometryEditBak {
 
 	public boolean isHolyRegionEnable() {
 		Boolean result = false;
-		if (ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION) && this.selectedGeometryCount > 1) {
-			if (ListUtilties.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class)) {
+		if (ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.CAD, DatasetType.REGION) && this.selectedGeometryCount > 1) {
+			if (ListUtilities.isListOnlyContain(this.selectedGeometryFeatures, IRegionFeature.class)) {
 				result = true;
 			}
 		}
@@ -562,8 +562,8 @@ public class GeometryEditBak {
 	public boolean isBreakEnable() {
 		Boolean enable = false;
 		try {
-			if (ListUtilties.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.LINEM, DatasetType.CAD)
-					&& ListUtilties.isListOnlyContain(this.selectedGeometryTypes, GeometryType.GEOLINE)) {
+			if (ListUtilities.isListContainAny(this.editableDatasetTypes, DatasetType.LINE, DatasetType.LINEM, DatasetType.CAD)
+					&& ListUtilities.isListOnlyContain(this.selectedGeometryTypes, GeometryType.GEOLINE)) {
 				enable = true;
 			}
 		} catch (Exception ex) {

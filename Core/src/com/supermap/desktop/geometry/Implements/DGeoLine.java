@@ -12,7 +12,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.GeometryUtilties;
+import com.supermap.desktop.utilties.GeometryUtilities;
 
 public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Point2Ds>, ILineFeature, IRegionConvertor, ILineConvertor, IReverse {
 
@@ -108,7 +108,7 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 		GeoLine reverseLine = new GeoLine();
 
 		for (int i = 0; i < this.geoLine.getPartCount(); i++) {
-			Point2Ds point2Ds = GeometryUtilties.reverse(this.geoLine.getPart(i));
+			Point2Ds point2Ds = GeometryUtilities.reverse(this.geoLine.getPart(i));
 			reverseLine.addPart(point2Ds);
 		}
 		return reverseLine;

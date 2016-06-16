@@ -2,15 +2,13 @@ package com.supermap.desktop.CtrlAction.Dataset;
 
 import javax.swing.JOptionPane;
 
-import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
+import com.supermap.desktop.utilties.DatasetUtilities;
 
 public class CtrlActionCloseDataset extends CtrlAction {
 
@@ -21,7 +19,7 @@ public class CtrlActionCloseDataset extends CtrlAction {
 	@Override
 	public void run() {
 		if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(DataEditorProperties.getString("String_CloseDatasetMessage"))) {
-			CommonToolkit.DatasetWrap.CloseDataset(Application.getActiveApplication().getActiveDatasets());
+			DatasetUtilities.closeDataset(Application.getActiveApplication().getActiveDatasets());
 		}
 	}
 

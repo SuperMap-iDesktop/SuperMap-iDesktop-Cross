@@ -1,7 +1,7 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -43,7 +43,7 @@ public class SymbolSpinnerUtilties {
 	}
 
 	public static boolean isLegitNumber(double min, double max, String value) {
-		if (StringUtilties.isNullOrEmpty(value)) {
+		if (StringUtilities.isNullOrEmpty(value)) {
 			return false;
 		}
 		if (value.contains("d")) {
@@ -61,7 +61,7 @@ public class SymbolSpinnerUtilties {
 	}
 
 	public static boolean isLegitNumber(int min, int max, String value) {
-		if (StringUtilties.isNullOrEmpty(value)) {
+		if (StringUtilities.isNullOrEmpty(value)) {
 			return false;
 		}
 		if (value.contains("d")) {

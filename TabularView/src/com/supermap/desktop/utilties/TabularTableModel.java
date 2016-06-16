@@ -203,9 +203,9 @@ public class TabularTableModel extends AbstractTableModel {
 			result = String.class;
 		} else {
 			if (recordset.getRecordCount() > 0) {
-				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					result = Boolean.class;
-				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					return Time.class;
 				} else {
 					result = String.class;

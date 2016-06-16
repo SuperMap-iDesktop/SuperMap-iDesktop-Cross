@@ -21,8 +21,8 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -387,7 +387,7 @@ public class JDialogJoinItems extends SmDialog {
 	}
 
 	private void reverse() {
-		TableUtilties.invertSelection(joinItemsTable);
+		TableUtilities.invertSelection(joinItemsTable);
 	}
 
 	private void delete() {
@@ -438,7 +438,7 @@ public class JDialogJoinItems extends SmDialog {
 	public JoinItems getJoinItems() {
 		JoinItems joinItems = this.joinItemsTable.getJoinItems();
 		for (int i = joinItems.getCount() - 1; i >= 0; i--) {
-			if (StringUtilties.isNullOrEmpty(joinItems.get(i).getForeignTable())) {
+			if (StringUtilities.isNullOrEmpty(joinItems.get(i).getForeignTable())) {
 				joinItems.remove(i);
 			}
 		}
@@ -558,11 +558,11 @@ public class JDialogJoinItems extends SmDialog {
 						return DatasetUtilties.getDatasetFromDatasource(joinItems.get(row).getForeignTable(), currentDataset.getDatasource());
 					case 3:
 						// 本表字段
-						return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0]
+						return StringUtilities.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[0]
 								.split("\\.")[1];
 					case 4:
 						// 外接表字段
-						return StringUtilties.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[1]
+						return StringUtilities.isNullOrEmpty(joinItems.get(row).getJoinFilter()) ? "" : joinItems.get(row).getJoinFilter().split("=")[1]
 								.split("\\.")[1];
 					case 5:
 						// 关联表达式
@@ -590,11 +590,11 @@ public class JDialogJoinItems extends SmDialog {
 			if (aValue == null) {
 				value = "";
 			}
-			if (StringUtilties.isNullOrEmpty(value) && column != 1) {
+			if (StringUtilities.isNullOrEmpty(value) && column != 1) {
 				return;
 			}
 			JoinItem joinItem = joinItems.get(row);
-			if (StringUtilties.isNullOrEmpty(joinItem.getForeignTable()) && column != 1) {
+			if (StringUtilities.isNullOrEmpty(joinItem.getForeignTable()) && column != 1) {
 				return;
 			}
 			switch (column) {

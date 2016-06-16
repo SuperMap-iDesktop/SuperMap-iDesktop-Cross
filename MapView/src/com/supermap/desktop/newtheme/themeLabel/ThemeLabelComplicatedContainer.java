@@ -351,7 +351,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		int[] selectRows = tableComplicated.getSelectedRows();
 		int tableRows = tableComplicated.getRowCount();
 		// 选中连续的选项时可以合并
-		this.buttonMerge.setEnabled(MathUtilties.isContinuouslyArray(selectRows));
+		this.buttonMerge.setEnabled(MathUtilities.isContinuouslyArray(selectRows));
 		// 1.只能选中一条数据 2.选中第一项时,判断第一项区间为min<x<1时不能拆分
 		// 3.选中非第一项且不是最后一项时，区间差不能小于1可以拆分。4.选中最后一项默认添加2可以拆分
 		if (selectRows.length == 1) {
@@ -523,7 +523,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			int selectColumn = e.getColumn();
 			if (selectColumn == 1 && selectRow != tableComplicated.getRowCount() - 1) {
 				String rangeStr = tableComplicated.getValueAt(selectRow, selectColumn).toString();
-				if (!StringUtilties.isNullOrEmptyString(rangeStr) && StringUtilties.isNumeric(rangeStr) && Integer.valueOf(rangeStr) > 0) {
+				if (!StringUtilities.isNullOrEmptyString(rangeStr) && StringUtilities.isNumeric(rangeStr) && Integer.valueOf(rangeStr) > 0) {
 					int rangeValue = Integer.valueOf(rangeStr);
 					int nowValue = 0;
 					if (selectRow >= 1) {
@@ -564,7 +564,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
 	private void setSeparatorCount() {
 		String separatNumber = textFieldSeparatNumber.getText();
-		if (!StringUtilties.isNullOrEmptyString(separatNumber)) {
+		if (!StringUtilities.isNullOrEmptyString(separatNumber)) {
 			int sparatorCount = Integer.parseInt(separatNumber);
 			int[] splits ;
 			if (Integer.parseInt(separatNumber) <= 1) {
@@ -682,7 +682,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeLabelLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme().getType() == ThemeType.LABEL) {
 			((ThemeLabel) this.themeLabelLayer.getTheme()).setUniformMixedStyle(this.mixedTextStyle);
 			this.map.refresh();

@@ -6,10 +6,10 @@ import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.FieldInfos;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilties.DatasetUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class DatasetUtilties {
 
 		JDialogConfirm dialogConfirm = new JDialogConfirm();
 		for (Dataset dataset : datasets) {
-			if (CommonToolkit.DatasetWrap.isDatasetOpened(dataset)) {
+			if (DatasetUtilities.isDatasetOpened(dataset)) {
 				// 如果数据集打开
 				if (!isShowDialog) {
 					// 不弹出提示框
@@ -59,7 +59,7 @@ public class DatasetUtilties {
 				resultDataset.add(dataset);
 			}
 		}
-		CommonToolkit.DatasetWrap.CloseDataset((Dataset[]) resultDataset.toArray(new Dataset[resultDataset.size()]));
+		DatasetUtilities.closeDataset((Dataset[]) resultDataset.toArray(new Dataset[resultDataset.size()]));
 
 		return resultDataset;
 	}
@@ -72,7 +72,6 @@ public class DatasetUtilties {
 		for (int i = 0; i < selectedDatasets.size(); i++) {
 			if (i == 0) {
 				FieldInfos fieldInfos = ((DatasetVector) selectedDatasets.get(i)).getFieldInfos();
-				List<String> datasetField = new ArrayList<>();
 				for (int j = 0; j < fieldInfos.getCount(); j++) {
 					if (!fieldInfos.get(j).isSystemField()) {
 						fieldNames.add(fieldInfos.get(j).getName());

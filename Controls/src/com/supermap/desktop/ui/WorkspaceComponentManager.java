@@ -22,7 +22,7 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 
@@ -79,7 +79,7 @@ public class WorkspaceComponentManager extends JComponent {
 		this.workspaceTree.setShowsRootHandles(true);
 		this.workspaceTree.setTransferHandler(new WorkspaceTreeTransferHandler());
 		this.workspaceTree.setLayoutsNodeVisible(false);
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			this.workspaceTree.setScenesNodeVisible(true);
 		} else {
 			this.workspaceTree.setScenesNodeVisible(false);

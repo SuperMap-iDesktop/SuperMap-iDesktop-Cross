@@ -18,7 +18,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -220,7 +220,7 @@ public class JDialogTopoAdvance extends SmDialog {
 	private void setTopologyInfo() {
 		try {
 			String arcFilterString = this.textFieldFilterExpression.getText();
-			if (!StringUtilties.isNullOrEmpty(arcFilterString)) {
+			if (!StringUtilities.isNullOrEmpty(arcFilterString)) {
 				this.topologyProcessingOptions.setArcFilterString(arcFilterString);
 			}
 			if (0 < this.comboBoxNotCutting.getItemCount()) {

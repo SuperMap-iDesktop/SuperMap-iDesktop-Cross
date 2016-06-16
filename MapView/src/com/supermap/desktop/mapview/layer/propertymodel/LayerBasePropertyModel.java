@@ -3,7 +3,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerChart;
 import com.supermap.mapping.LayerGroup;
@@ -143,7 +143,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 		LayerBasePropertyModel basePropertyModel = (LayerBasePropertyModel) model;
 		return super.equals(basePropertyModel) && this.isVisible == basePropertyModel.isVisible() && this.isEditable == basePropertyModel.isEditable()
 				&& this.isSelectable == basePropertyModel.isSelectable() && this.isSnapable == basePropertyModel.isSnapable()
-				&& (StringUtilties.stringEquals(this.propertyCaption, basePropertyModel.getCaption()))
+				&& (StringUtilities.stringEquals(this.propertyCaption, basePropertyModel.getCaption()))
 				&& this.propertyTransparence == basePropertyModel.getTransparence()
 				&& Double.compare(this.minVisibleScale, basePropertyModel.getMinVisibleScale()) == 0
 				&& Double.compare(this.maxVisibleScale, basePropertyModel.getMaxVisibleScale()) == 0;
@@ -167,7 +167,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 			layer.setSnapable(this.isSnapable);
 		}
 
-		if (this.propertyEnabled.get(CAPTION) && !StringUtilties.isNullOrEmpty(this.propertyCaption)) {
+		if (this.propertyEnabled.get(CAPTION) && !StringUtilities.isNullOrEmpty(this.propertyCaption)) {
 			layer.setCaption(this.propertyCaption);
 		}
 

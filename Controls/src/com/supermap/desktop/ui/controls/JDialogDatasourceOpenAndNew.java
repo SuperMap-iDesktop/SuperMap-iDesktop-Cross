@@ -4,7 +4,7 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilties.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -196,7 +196,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		kingBaseDataCell.initDatasourceType(EngineType.KINGBASE, ControlsProperties.getString("String_KingBase"));
 		DataCell mySqlDataCell = new DataCell();
 		mySqlDataCell.initDatasourceType(EngineType.MYSQL, ControlsProperties.getString("String_MySQL"));
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			listModel.addElement(sqlDataCell);
 			listModel.addElement(oracleDataCell);
 			listModel.addElement(oracleSpatialDataCell);
@@ -292,7 +292,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private EngineType getEngineType(int index) {
 		EngineType engineType = null;
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			switch (index) {
 			case 0: // SQL
 				engineType = EngineType.SQLPLUS;

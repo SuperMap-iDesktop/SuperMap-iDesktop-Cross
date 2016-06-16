@@ -18,9 +18,9 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
-import com.supermap.desktop.utilties.CharsetUtilties;
-import com.supermap.desktop.utilties.EncodeTypeUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilties.CharsetUtilities;
+import com.supermap.desktop.utilties.EncodeTypeUtilities;
+import com.supermap.desktop.utilties.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -198,7 +198,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(table);
+				TableUtilities.stopEditing(table);
 				createDataset();
 				dialogResult = DialogResult.OK;
 				if (checkboxAutoClose.isSelected()) {
@@ -216,7 +216,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(table);
+				TableUtilities.stopEditing(table);
 				table.getSelectionModel().setSelectionInterval(0, table.getRowCount() - 1);
 			}
 		});
@@ -224,15 +224,15 @@ public class JDialogDatasetNew extends SmDialog {
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(table);
-				TableUtilties.invertSelection(table);
+				TableUtilities.stopEditing(table);
+				TableUtilities.invertSelection(table);
 			}
 		});
 
 		this.buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(table);
+				TableUtilities.stopEditing(table);
 				int[] selectedRows = table.getSelectedRows();
 				for (int i = selectedRows.length - 1; i >= 0; i--) {
 					newDatasetTableModel.removeRow(selectedRows[i]);
@@ -308,35 +308,35 @@ public class JDialogDatasetNew extends SmDialog {
 			super(new JComboBox());
 			this.setClickCountToStart(2);
 			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.OEM));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.THAI));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.RUSSIAN));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.BALTIC));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ARABIC));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HEBREW));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.VIETNAMESE));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.TURKISH));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GREEK));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CHINESEBIG5));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.JOHAB));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.HANGEUL));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SHIFTJIS));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.MAC));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.SYMBOL));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.DEFAULT));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.ANSI));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF8));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UTF7));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.WINDOWS1252));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.KOREAN));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.UNICODE));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.CYRILLIC));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5GERMAN));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5SWEDISH));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.XIA5NORWEGIAN));
-			tempcharsharsetes.add(CharsetUtilties.toString(Charset.GB18030));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.OEM));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.EASTEUROPE));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.THAI));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.RUSSIAN));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.BALTIC));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.ARABIC));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.HEBREW));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.VIETNAMESE));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.TURKISH));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.GREEK));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.CHINESEBIG5));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.JOHAB));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.HANGEUL));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.SHIFTJIS));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.MAC));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.SYMBOL));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.DEFAULT));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.ANSI));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.UTF8));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.UTF7));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.WINDOWS1252));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.KOREAN));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.UNICODE));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.CYRILLIC));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5GERMAN));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5SWEDISH));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5NORWEGIAN));
+			tempcharsharsetes.add(CharsetUtilities.toString(Charset.GB18030));
 			comboboxCharsetType.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
 		}
 
@@ -368,12 +368,12 @@ public class JDialogDatasetNew extends SmDialog {
 
 			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
 			ArrayList<String> tempEncodeType = new ArrayList<>();
-			tempEncodeType.add(EncodeTypeUtilties.toString(EncodeType.NONE));
+			tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 			if (DatasetType.LINE == datasetType || DatasetType.REGION == datasetType) {
-				tempEncodeType.add(EncodeTypeUtilties.toString(EncodeType.BYTE));
-				tempEncodeType.add(EncodeTypeUtilties.toString(EncodeType.INT16));
-				tempEncodeType.add(EncodeTypeUtilties.toString(EncodeType.INT24));
-				tempEncodeType.add(EncodeTypeUtilties.toString(EncodeType.INT32));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.BYTE));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT16));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT24));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT32));
 			}
 			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
 			comboboxEncodingType.setSelectedItem(value);

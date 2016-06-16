@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import com.supermap.desktop.geometryoperation.editor.EraseEditor;
-import com.supermap.desktop.utilties.MapControlUtilties;
+import com.supermap.desktop.utilties.MapControlUtilities;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;

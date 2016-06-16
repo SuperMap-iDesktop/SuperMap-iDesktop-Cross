@@ -8,7 +8,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.LayoutUtilties;
+import com.supermap.desktop.utilties.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -165,7 +165,7 @@ public class DialogSaveAsLayout extends SmDialog {
 		try {
 			DialogResult dialogResult = DialogResult.NO;
 
-			if (LayoutUtilties.checkAvailableLayoutName(this.textFieldLayoutName.getText(), oldLayoutName)) {
+			if (LayoutUtilities.checkAvailableLayoutName(this.textFieldLayoutName.getText(), oldLayoutName)) {
 				dialogResult = DialogResult.YES;
 			} else {
 				String message = String.format(LayoutViewProperties.getString("String_SaveAsLayout_ExistName"), this.textFieldLayoutName.getText());

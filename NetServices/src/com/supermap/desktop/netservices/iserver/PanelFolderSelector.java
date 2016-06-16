@@ -28,9 +28,9 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.FileUtilities;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 public class PanelFolderSelector extends JPanel {
 
@@ -214,7 +214,7 @@ public class PanelFolderSelector extends JPanel {
 						result = file.isDirectory() ? CommonProperties.getString(CommonProperties.Directory) : CommonProperties
 								.getString(CommonProperties.File);
 					} else if (columnIndex == SIZE) {
-						FileSize fileSize = new FileSize(FileUtilties.getFileSize(file), FileSizeType.BYTE);
+						FileSize fileSize = new FileSize(FileUtilities.getFileSize(file), FileSizeType.BYTE);
 						result = fileSize.ToStringClever();
 					} else if (columnIndex == LASTMODIFIED) {
 						result = DateFormat.getDateTimeInstance().format(new Date(file.lastModified()));

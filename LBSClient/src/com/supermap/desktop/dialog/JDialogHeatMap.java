@@ -39,7 +39,7 @@ import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
@@ -317,7 +317,7 @@ public class JDialogHeatMap extends SmDialog {
 	 */
 	private void buttonOKActionPerformed() {
 		try {
-			CursorUtilties.setWaitCursor();		
+			CursorUtilities.setWaitCursor();		
 			
 			WorkThead thread = new WorkThead();
 			thread.start();	
@@ -326,7 +326,7 @@ public class JDialogHeatMap extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 

@@ -1,18 +1,20 @@
 package com.supermap.desktop.CtrlAction;
 
 import java.text.MessageFormat;
+
 import javax.swing.JOptionPane;
+
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.utilties.ToolbarUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilties.DatasetUtilities;
 
 public class CtrlActionDatasourcesCloseAll extends CtrlAction {
 
@@ -42,7 +44,7 @@ public class CtrlActionDatasourcesCloseAll extends CtrlAction {
 				for (int i = 0; i < datasources.getCount(); i++) {
 					Datasource tempDatasource = datasources.get(i);
 					Datasets tempDatasets = tempDatasource.getDatasets();
-					CommonToolkit.DatasetWrap.CloseDataset(tempDatasets);
+					DatasetUtilities.closeDataset(tempDatasets);
 				}
 				// 关闭数据源
 				datasources.closeAll();

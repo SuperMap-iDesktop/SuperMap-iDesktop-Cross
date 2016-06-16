@@ -18,7 +18,7 @@ import com.supermap.desktop.implement.SmLabel;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.StatusbarManager;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilties.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
@@ -43,7 +43,7 @@ public class CtrlActionSelectAll extends CtrlAction {
 		boolean result = false;
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			ArrayList<Layer> layers = MapUtilties.getLayers(formMap.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
 			for (Layer layer : layers) {
 				if (layer.isVisible() && layer.isSelectable()) {
 					result = true;

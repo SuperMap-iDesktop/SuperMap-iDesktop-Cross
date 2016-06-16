@@ -40,12 +40,12 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ArrayUtilties;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.GeometryUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilties.ArrayUtilities;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.GeometryUtilities;
+import com.supermap.desktop.utilties.ListUtilities;
+import com.supermap.desktop.utilties.MapUtilities;
+import com.supermap.desktop.utilties.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
@@ -60,7 +60,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
-			CursorUtilties.setWaitCursor();
+			CursorUtilities.setWaitCursor();
 			Geometry splitGeometry = null;
 
 			try {
@@ -68,7 +68,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				SplitByGeometryEditor.this.splitByGeometry(environment, splitGeometry);
 			} finally {
 				environment.activateEditor(NullEditor.INSTANCE);
-				CursorUtilties.setDefaultCursor();
+				CursorUtilities.setDefaultCursor();
 				if (splitGeometry != null) {
 					splitGeometry.dispose();
 				}
@@ -134,7 +134,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		style.setFillOpaqueRate(0);
 
 		SplitByGeometryEditModel editModel = (SplitByGeometryEditModel) environment.getEditModel();
-		List<Layer> layers = MapUtilties.getLayers(environment.getMap());
+		List<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 		for (Layer layer : layers) {
 			// 线面数据能作为被分割的对象
@@ -154,7 +154,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 						IGeometry geometry = DGeometryFactory.create(recordset.getGeometry());
 
 						if (geometry instanceof ILineFeature || geometry instanceof IRegionFeature) {
-							GeometryUtilties.setGeometryStyle(geometry.getGeometry(), style);
+							GeometryUtilities.setGeometryStyle(geometry.getGeometry(), style);
 							environment.getMap().getTrackingLayer().add(geometry.getGeometry(), TAG_SPLITBYGEOEMTRY);
 							editModel.forEraseGeometryIDs.get(layer).add(recordset.getID());
 						}
@@ -185,7 +185,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		Geometry splitGeometry = null;
 
 		// 获取用于分割的对象
-		ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+		ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 		for (Layer layer : layers) {
 			if (layer.getSelection().getCount() == 1) {
@@ -373,9 +373,9 @@ public class SplitByGeometryEditor extends AbstractEditor {
 						}
 						addNew.update();
 						addHistoryIDs = addNew.getAddHistoryIDs();
-						TabularUtilties.refreshTabularForm(recordset.getDataset());
+						TabularUtilities.refreshTabularForm(recordset.getDataset());
 						if (addHistoryIDs.size() > 0) {
-							layer.getSelection().addRange(ArrayUtilties.convertToInt(addHistoryIDs.toArray(new Integer[addHistoryIDs.size()])));
+							layer.getSelection().addRange(ArrayUtilities.convertToInt(addHistoryIDs.toArray(new Integer[addHistoryIDs.size()])));
 						}
 					}
 				}
@@ -476,7 +476,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE,
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE,
 						DatasetType.CAD);
 	}
 
@@ -490,7 +490,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			((SplitByGeometryEditModel) environment.getEditModel()).clear();
 		}
 
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_SPLITBYGEOEMTRY);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_SPLITBYGEOEMTRY);
 	}
 
 	private class SplitByGeometryEditModel implements IEditModel {

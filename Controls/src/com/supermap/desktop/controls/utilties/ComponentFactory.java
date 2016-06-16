@@ -6,7 +6,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 /**
  * 控件构造工厂
@@ -69,7 +69,7 @@ public class ComponentFactory {
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				boolean result = false;
 
-				if (StringUtilties.isPositiveInteger(textFieldValue)) {
+				if (StringUtilities.isPositiveInteger(textFieldValue)) {
 					Integer value = Integer.valueOf(textFieldValue);
 
 					if (value >= minValue && value <= maxValue) {
@@ -101,7 +101,7 @@ public class ComponentFactory {
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				boolean result = false;
 
-				if (StringUtilties.isNumber(textFieldValue)) {
+				if (StringUtilities.isNumber(textFieldValue)) {
 					Double value = Double.valueOf(textFieldValue);
 					return value >= minValue && value <= maxValue;
 				}

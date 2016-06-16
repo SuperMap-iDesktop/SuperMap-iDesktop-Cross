@@ -21,9 +21,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
-import com.supermap.desktop.utilties.GeoStyleUtilties;
-import com.supermap.desktop.utilties.JOptionPaneUtilties;
+import com.supermap.desktop.utilties.DatasetTypeUtilities;
+import com.supermap.desktop.utilties.GeoStyleUtilities;
+import com.supermap.desktop.utilties.JOptionPaneUtilities;
 import com.supermap.realspace.Camera;
 import com.supermap.realspace.Feature3D;
 import com.supermap.realspace.Feature3Ds;
@@ -82,16 +82,16 @@ public class SceneUtilties {
 			if (dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.REGION3D
 					|| dataset.getType() == DatasetType.PARAMETRICREGION) {
 				Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-				setting.getStyle().setFillForeColor(GeoStyleUtilties.getFillColor());
-				setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+				setting.getStyle().setFillForeColor(GeoStyleUtilities.getFillColor());
+				setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
 			} else if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D
 					|| dataset.getType() == DatasetType.PARAMETRICLINE || dataset.getType() == DatasetType.LINEM
 					|| dataset.getType() == DatasetType.LINE3D) {
 				Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-				setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+				setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
 			} else if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
 				Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-				setting.getStyle().setLineColor(GeoStyleUtilties.getLineColor());
+				setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
 			}
 			// 网络数据集和三维网络数据集添加到场景上，同时添加点图层
 			if (dataset instanceof DatasetVector && (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D)) {
@@ -120,7 +120,7 @@ public class SceneUtilties {
 			}
 			if (dataset instanceof DatasetImageCollection || dataset instanceof DatasetGridCollection || dataset.getType() == DatasetType.TABULAR
 					|| dataset.getType() == DatasetType.LINKTABLE) {
-				String message = MessageFormat.format(ControlsProperties.getString("String_Scene_NotSuportedDatasetType"), DatasetTypeUtilties.toString(dataset.getType()));
+				String message = MessageFormat.format(ControlsProperties.getString("String_Scene_NotSuportedDatasetType"), DatasetTypeUtilities.toString(dataset.getType()));
 				Application.getActiveApplication().getOutput().output(message);
 				continue;
 			}
@@ -256,7 +256,7 @@ public class SceneUtilties {
 			} else {
 				message = message + System.lineSeparator() + String.format(CoreProperties.getString("String_SceneDelete_Confirm_Multi"), sceneNames.length);
 			}
-			if (JOptionPaneUtilties.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
+			if (JOptionPaneUtilities.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
 				for (String sceneName : sceneNames) {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int i = formManager.getCount() - 1; i >= 0; i--) {

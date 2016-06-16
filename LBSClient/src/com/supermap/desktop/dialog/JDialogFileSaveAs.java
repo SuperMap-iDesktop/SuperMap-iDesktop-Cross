@@ -40,7 +40,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
 
 public class JDialogFileSaveAs extends SmDialog {
 
@@ -206,7 +206,7 @@ public class JDialogFileSaveAs extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 
@@ -245,7 +245,7 @@ public class JDialogFileSaveAs extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 

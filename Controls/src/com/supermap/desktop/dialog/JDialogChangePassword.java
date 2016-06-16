@@ -6,7 +6,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -272,14 +272,14 @@ public class JDialogChangePassword extends SmDialog {
 		}
 
 		// 新密码与校验密码不同时为空，不能继续
-		if (!StringUtilties.stringEquals(this.newPassword, this.confirmPassword, this.isIgnoreCase)) {
+		if (!StringUtilities.stringEquals(this.newPassword, this.confirmPassword, this.isIgnoreCase)) {
 			this.buttonOk.setToolTipText(ControlsProperties.getString("String_NewPasswordDiff"));
 			setButtonOKEnabledInEDT(false);
 			return;
 		}
 
 		// 新密码与旧密码相同，不能继续
-		if (StringUtilties.stringEquals(this.newPassword, this.oldPassword, this.isIgnoreCase)) {
+		if (StringUtilities.stringEquals(this.newPassword, this.oldPassword, this.isIgnoreCase)) {
 			this.buttonOk.setToolTipText(ControlsProperties.getString("String_NewPasswordNeedChange"));
 			setButtonOKEnabledInEDT(false);
 			return;

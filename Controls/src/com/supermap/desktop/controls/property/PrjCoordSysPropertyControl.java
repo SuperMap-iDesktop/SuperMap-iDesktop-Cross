@@ -7,7 +7,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysTranslator;
-import com.supermap.desktop.utilties.PrjCoordSysUtilties;
+import com.supermap.desktop.utilties.PrjCoordSysUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -169,7 +169,7 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 	private void fillComponents() {
 		this.textFieldName.setText(this.prjHandle.getPrj().getName());
 		this.textFieldCoordUnit.setText(this.prjHandle.getPrj().getCoordUnit().toString());
-		this.textAreaCoordInfo.setText(PrjCoordSysUtilties.getDescription(this.prjHandle.getPrj()));
+		this.textAreaCoordInfo.setText(PrjCoordSysUtilities.getDescription(this.prjHandle.getPrj()));
 		setControlsEnabled();
 	}
 

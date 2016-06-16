@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Element;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilties.PathUtilities;
+import com.supermap.desktop.utilties.XmlUtilities;
 
 public class WorkEnvironmentManager {
 
@@ -25,7 +25,7 @@ public class WorkEnvironmentManager {
 		Boolean result = false;
 		try {
 			// 遍历所有工作环境
-			String workEnvironmentPath = PathUtilties.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
+			String workEnvironmentPath = PathUtilities.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
 			File file = new File(workEnvironmentPath);
 			File[] files = file.listFiles();
 			for (int i = 0; i < files.length; i++) {
@@ -34,14 +34,14 @@ public class WorkEnvironmentManager {
 
 				if (files[i].isDirectory()) {
 					String[] pathPrams = new String[] { workEnvironmentPath, files[i].getName() };
-					String workEnvironmentPathTemp = PathUtilties.combinePath(pathPrams, true);
+					String workEnvironmentPathTemp = PathUtilities.combinePath(pathPrams, true);
 
 					File[] childFiles = files[i].listFiles();
 					for (int j = 0; j < childFiles.length; j++) {
 						// 读取配置文件字符串也用XML的接口去读，同时也要有我们的命名空间
 						pathPrams = new String[] { workEnvironmentPathTemp, childFiles[j].getName() };
-						String configFile = PathUtilties.combinePath(pathPrams, false);
-						Element pluginElement = XmlUtilties.getRootNode(configFile);
+						String configFile = PathUtilities.combinePath(pathPrams, false);
+						Element pluginElement = XmlUtilities.getRootNode(configFile);
 						if (pluginElement != null) {
 							PluginInfo pluginInfo = new PluginInfo(pluginElement);
 							if (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.LBSClient") != -1)

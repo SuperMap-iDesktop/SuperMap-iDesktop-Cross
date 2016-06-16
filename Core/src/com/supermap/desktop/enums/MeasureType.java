@@ -1,7 +1,7 @@
 package com.supermap.desktop.enums;
 
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilties.LogUtilities;
 
 import java.text.MessageFormat;
 
@@ -22,7 +22,7 @@ public enum MeasureType {
 		} else if (this == Angle) {
 			return CoreProperties.getString("String_AngleMeasure");
 		}
-		LogUtilties.debug(MessageFormat.format(CoreProperties.getString("Log_AddedMeasureNeedAddToString"), this));
+		LogUtilities.debug(MessageFormat.format(CoreProperties.getString("Log_AddedMeasureNeedAddToString"), this));
 		return super.toString();
 	}
 }

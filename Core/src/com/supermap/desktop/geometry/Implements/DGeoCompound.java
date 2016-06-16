@@ -9,7 +9,7 @@ import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IReverse;
-import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
 
 public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<Geometry>, IReverse {
 
@@ -77,7 +77,7 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 				IGeometry geometry = DGeometryFactory.create(temp[i]);
 
 				if (geometry instanceof IMultiPartFeature<?>) {
-					ListUtilties.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
+					ListUtilities.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
 				} else {
 					geometries.add(geometry.getGeometry());
 				}
@@ -103,9 +103,9 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 
 				if (geometry instanceof IMultiPartFeature<?>) {
 					if (geometry instanceof DGeoRegion) {
-						ListUtilties.addArray(geometries, ((DGeoRegion) geometry).protectedDivide());
+						ListUtilities.addArray(geometries, ((DGeoRegion) geometry).protectedDivide());
 					} else {
-						ListUtilties.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
+						ListUtilities.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
 					}
 				} else {
 					geometries.add(geometry.getGeometry());

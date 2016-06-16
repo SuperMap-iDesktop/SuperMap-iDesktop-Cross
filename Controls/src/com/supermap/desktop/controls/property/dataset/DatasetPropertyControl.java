@@ -6,9 +6,9 @@ import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
-import com.supermap.desktop.utilties.EncodeTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilties.DatasetTypeUtilities;
+import com.supermap.desktop.utilties.EncodeTypeUtilities;
+import com.supermap.desktop.utilties.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -301,9 +301,9 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 
 	private void fillComponents() {
 		this.textFieldName.setText(this.dataset.getName());
-		this.textFieldDatasetType.setText(DatasetTypeUtilties.toString(this.dataset.getType()));
+		this.textFieldDatasetType.setText(DatasetTypeUtilities.toString(this.dataset.getType()));
 		this.textFieldRecordsetName.setText(this.dataset.getTableName());
-		this.textFieldEncoding.setText(EncodeTypeUtilties.toString(this.dataset.getEncodeType()));
+		this.textFieldEncoding.setText(EncodeTypeUtilities.toString(this.dataset.getEncodeType()));
 		this.textFieldLeft.setText(BigDecimal.valueOf(this.dataset.getBounds().getLeft()).toString());
 		this.textFieldTop.setText(BigDecimal.valueOf(this.dataset.getBounds().getTop()).toString());
 		this.textFieldRight.setText(BigDecimal.valueOf(this.dataset.getBounds().getRight()).toString());
@@ -320,15 +320,15 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private boolean verifyChange() {
-		if (StringUtilties.isNullOrEmpty(this.description) && StringUtilties.isNullOrEmpty(this.dataset.getDescription())) {
+		if (StringUtilities.isNullOrEmpty(this.description) && StringUtilities.isNullOrEmpty(this.dataset.getDescription())) {
 			return false;
 		}
 
-		if (!StringUtilties.isNullOrEmpty(this.description) && StringUtilties.isNullOrEmpty(this.dataset.getDescription())) {
+		if (!StringUtilities.isNullOrEmpty(this.description) && StringUtilities.isNullOrEmpty(this.dataset.getDescription())) {
 			return true;
 		}
 
-		if (StringUtilties.isNullOrEmpty(this.description) && !StringUtilties.isNullOrEmpty(this.dataset.getDescription())) {
+		if (StringUtilities.isNullOrEmpty(this.description) && !StringUtilities.isNullOrEmpty(this.dataset.getDescription())) {
 			return true;
 		}
 

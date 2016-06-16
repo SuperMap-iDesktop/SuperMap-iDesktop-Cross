@@ -4,7 +4,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.DoubleUtilties;
+import com.supermap.desktop.utilties.DoubleUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -121,7 +121,7 @@ public class JPanelDynamicIndex extends JPanel {
 		ISmTextFieldLegit smTextFieldLegitPoint = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				return DoubleUtilties.isDoubleWithoutD(textFieldValue);
+				return DoubleUtilities.isDoubleWithoutD(textFieldValue);
 			}
 
 			@Override

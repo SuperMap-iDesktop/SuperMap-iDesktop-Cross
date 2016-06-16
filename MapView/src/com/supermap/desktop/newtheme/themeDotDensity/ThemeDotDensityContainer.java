@@ -224,7 +224,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 
 	private void resetValue() {
 		String strValue = textFieldValue.getText();
-		if (!StringUtilties.isNullOrEmpty(strValue) && StringUtilties.isNumber(strValue)) {
+		if (!StringUtilities.isNullOrEmpty(strValue) && StringUtilities.isNumber(strValue)) {
 			themeDotDensity.setValue(Double.parseDouble(strValue));
 			double newValue = maxValue / themeDotDensity.getValue();
 			// 为了触发spinner的ChangeListener事件而设置两次
@@ -356,7 +356,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeDotDensityLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeDotDensityLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeDotDensityLayer && null != themeDotDensityLayer.getTheme() && themeDotDensityLayer.getTheme().getType() == ThemeType.DOTDENSITY) {
 			ThemeDotDensity nowThemeDotDensity = ((ThemeDotDensity) this.themeDotDensityLayer.getTheme());
 			nowThemeDotDensity.fromXML(themeDotDensity.toXML());

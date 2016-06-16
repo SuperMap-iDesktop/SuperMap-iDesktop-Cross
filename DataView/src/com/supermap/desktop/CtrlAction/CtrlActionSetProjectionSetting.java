@@ -5,7 +5,6 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -14,7 +13,8 @@ import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
-import com.supermap.desktop.utilties.PropertyManagerUtilties;
+import com.supermap.desktop.utilties.DatasetUtilities;
+import com.supermap.desktop.utilties.PropertyManagerUtilities;
 
 import java.text.MessageFormat;
 
@@ -76,7 +76,8 @@ public class CtrlActionSetProjectionSetting extends CtrlAction {
 
 					if (!isDontAskSetToAllDatasets) {
 						// 提示是否设置到所有数据集
-						JDialogConfirm dialogConfirm = new JDialogConfirm(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), datasource.getAlias()), true);
+						JDialogConfirm dialogConfirm = new JDialogConfirm(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"),
+								datasource.getAlias()), true);
 						dialogConfirm.showDialogWithYesNoOpition();
 						isDontAskSetToAllDatasets = dialogConfirm.isUsedAsDefault();
 						if (dialogConfirm.getDialogResult() == DialogResult.OK) {
@@ -87,10 +88,10 @@ public class CtrlActionSetProjectionSetting extends CtrlAction {
 					}
 
 					if (isSetToAllDatasets) {
-						//先判断数据集是否打开
+						// 先判断数据集是否打开
 						boolean isDatasetOpened = false;
 						for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-							if (CommonToolkit.DatasetWrap.isDatasetOpened(datasource.getDatasets().get(i))) {
+							if (DatasetUtilities.isDatasetOpened(datasource.getDatasets().get(i))) {
 								isDatasetOpened = true;
 								break;
 							}
@@ -98,23 +99,23 @@ public class CtrlActionSetProjectionSetting extends CtrlAction {
 						if (isDatasetOpened) {
 							if (!isDontAskCloseDatasets) {
 								// 有数据集打开,提示是否关闭数据集
-								JDialogConfirm dialogConfirm = new JDialogConfirm(MessageFormat.format(
-										ControlsProperties.getString("String_DatasetNotClosed"), datasource.getAlias()), true);
+								JDialogConfirm dialogConfirm = new JDialogConfirm(MessageFormat.format(ControlsProperties.getString("String_DatasetNotClosed"),
+										datasource.getAlias()), true);
 								dialogConfirm.showDialog();
 								isDontAskCloseDatasets = dialogConfirm.isUsedAsDefault();
 								if (dialogConfirm.getDialogResult() == DialogResult.OK) {
 									isCloseDatasets = true;
-								}else {
+								} else {
 									isCloseDatasets = false;
 								}
 							}
 
-							if(isCloseDatasets){
-								//关闭数据集
-								CommonToolkit.DatasetWrap.CloseDataset(datasource.getDatasets());
+							if (isCloseDatasets) {
+								// 关闭数据集
+								DatasetUtilities.closeDataset(datasource.getDatasets());
 							}
 						}
-						if(!isDatasetOpened){
+						if (!isDatasetOpened) {
 							// 数据集关闭或本来就没打开
 							for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
 								datasource.getDatasets().get(i).setPrjCoordSys(newPrjCoordSys);
@@ -130,13 +131,13 @@ public class CtrlActionSetProjectionSetting extends CtrlAction {
 				}
 			}
 			// TODO 刷新属性
-			PropertyManagerUtilties.refreshPropertyManager();
+			PropertyManagerUtilities.refreshPropertyManager();
 		}
 	}
 
 	@Override
 	public boolean enable() {
-		if (null!=Application.getActiveApplication().getActiveDatasets()&&null!=Application.getActiveApplication().getActiveDatasources()) {
+		if (null != Application.getActiveApplication().getActiveDatasets() && null != Application.getActiveApplication().getActiveDatasources()) {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 			Datasource[] datasources = Application.getActiveApplication().getActiveDatasources();
 			// 选中数据集且存在不为属性表的数据集

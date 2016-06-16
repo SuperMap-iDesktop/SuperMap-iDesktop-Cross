@@ -10,7 +10,7 @@ import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilties.ListUtilities;
 
 public class LineToRegionEditor extends GeometryConvertEditor {
 
@@ -50,6 +50,6 @@ public class LineToRegionEditor extends GeometryConvertEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class);
+		return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class);
 	}
 }

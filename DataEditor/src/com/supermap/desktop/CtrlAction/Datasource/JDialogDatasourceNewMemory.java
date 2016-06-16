@@ -13,7 +13,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DatasourceUtilties;
+import com.supermap.desktop.utilties.DatasourceUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -145,7 +145,7 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 			info.setServer(":memory:");
 			String alias = jTextFieldAlias.getText();
 			if (null != alias && !alias.isEmpty() && "" != alias) {
-				alias = DatasourceUtilties.getAvailableDatasourceAlias(alias, 0);
+				alias = DatasourceUtilities.getAvailableDatasourceAlias(alias, 0);
 				info.setAlias(alias);
 				result = Application.getActiveApplication().getWorkspace().getDatasources().create(info);
 			} else {

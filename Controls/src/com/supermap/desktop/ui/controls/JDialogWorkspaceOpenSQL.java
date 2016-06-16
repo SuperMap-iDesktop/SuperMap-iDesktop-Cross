@@ -7,8 +7,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilties.CursorUtilities;
+import com.supermap.desktop.utilties.WorkspaceUtilities;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
@@ -408,11 +408,11 @@ public class JDialogWorkspaceOpenSQL extends SmDialog {
 		Info.setPassword(jPasswordFieldPasswordTemp);
 		Info.setName(jComboBoxWorkspaceNameTemp);
 		try {
-			CursorUtilties.setWaitCursor();
+			CursorUtilities.setWaitCursor();
 			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			Workspace workspaceTemp = new Workspace();
 			boolean openResult = workspaceTemp.open(Info);
-			if (openResult && WorkspaceUtilties.closeWorkspace()) {
+			if (openResult && WorkspaceUtilities.closeWorkspace()) {
 				Application.getActiveApplication().getWorkspace().open(Info);
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenWorkspaceSuccessful"));
 				DialogExit();
@@ -424,7 +424,7 @@ public class JDialogWorkspaceOpenSQL extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
