@@ -61,7 +61,6 @@ public class JDialogUserDefinePrjGeography extends SmDialog {
 	}
 
 	private void buttonOkClicked() {
-		// TODO: 2016/5/17
 		dialogResult = DialogResult.OK;
 		dispose();
 	}

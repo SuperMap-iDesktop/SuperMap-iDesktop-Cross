@@ -9,13 +9,19 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings.CoordSysDefine;
+import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.PrjCoordSysUtilties;
 
+import javax.swing.*;
+import java.awt.*;
 import java.text.MessageFormat;
 
 public class PrjCoordSysSettingsUtilties {
-
+	private static Dimension labelPreferredSize = new Dimension(20, 23);
+	private static ListCellRenderer<Enum> enumComboBoxItemRender = null;
+	private static SearchItemValueGetter<Enum> searchItemValueGetter = null;
 	/**
 	 * 根据投影定义获取对应的投影对象
 	 * 
@@ -108,5 +114,38 @@ public class PrjCoordSysSettingsUtilties {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return description;
+	}
+
+	public static ListCellRenderer<Enum> getEnumComboBoxItemRender() {
+		if (enumComboBoxItemRender == null) {
+			enumComboBoxItemRender = new ListCellRenderer<Enum>() {
+				@Override
+				public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
+					JLabel jLabel = new JLabel();
+					jLabel.setOpaque(true);
+					jLabel.setPreferredSize(labelPreferredSize);
+					jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
+					if (isSelected) {
+						jLabel.setBackground(list.getSelectionBackground());
+					} else {
+						jLabel.setBackground(list.getBackground());
+					}
+					return jLabel;
+				}
+			};
+		}
+		return enumComboBoxItemRender;
+	}
+
+	public static SearchItemValueGetter<Enum> getSearchItemValueGetter() {
+		if (searchItemValueGetter == null) {
+			searchItemValueGetter = new SearchItemValueGetter<Enum>() {
+				@Override
+				public String getSearchString(Enum item) {
+					return PrjCoordSysTypeUtilties.getDescribe(item.name());
+				}
+			};
+		}
+		return searchItemValueGetter;
 	}
 }

@@ -11,6 +11,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.comboBox.JSearchComboBox;
+import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.utilties.EnumComparator;
 import com.supermap.desktop.utilties.PrjCoordSysTypeUtilties;
 import com.supermap.desktop.utilties.StringUtilties;
@@ -27,17 +29,17 @@ import java.util.Arrays;
 public class JPanelGeoCoordSys extends JPanel {
 
 	private JLabel labelType = new JLabel();
-	private JComboBox<GeoCoordSysType> comboBoxType = new JComboBox<>();
+	private JSearchComboBox<GeoCoordSysType> comboBoxType = new JSearchComboBox<>();
 
 	// 大地参考系
 	private JPanel panelGeoDatum = new JPanel();
 	private JLabel labelGeoDatumType = new JLabel();
-	private JComboBox<GeoDatumType> comboBoxGeoDatumType = new JComboBox<>();
+	private JSearchComboBox<GeoDatumType> comboBoxGeoDatumType = new JSearchComboBox<>();
 
 	// 椭球参数
 	private JPanel panelGeoSpheroid = new JPanel();
 	private JLabel labelGeoSpheroidType = new JLabel();
-	private JComboBox<GeoSpheroidType> comboBoxGeoSpheroidType = new JComboBox<>();
+	private JSearchComboBox<GeoSpheroidType> comboBoxGeoSpheroidType = new JSearchComboBox<>();
 	private JLabel labelAxis = new JLabel();
 	private SmTextFieldLegit textFieldAxis = new SmTextFieldLegit();
 	private JLabel labelFlatten = new JLabel();
@@ -46,7 +48,7 @@ public class JPanelGeoCoordSys extends JPanel {
 	// 中央经线
 	private JPanel panelCentralMeridian = new JPanel();
 	private JLabel labelCentralMeridianType = new JLabel();
-	private JComboBox<GeoPrimeMeridianType> comboBoxCentralMeridianType = new JComboBox<>();
+	private JSearchComboBox<GeoPrimeMeridianType> comboBoxCentralMeridianType = new JSearchComboBox<>();
 	private JLabel labelLongitude = new JLabel();
 	private SmTextFieldLegit textFieldLongitude = new SmTextFieldLegit();
 
@@ -56,7 +58,6 @@ public class JPanelGeoCoordSys extends JPanel {
 	private boolean lockGeo = false;
 	private boolean lockAxis = false;
 	private boolean lockCenter = false;
-	private Dimension labelPreferredSize = new Dimension(20, 23);
 	private ListCellRenderer<Enum> renderer;
 
 	public JPanelGeoCoordSys() {
@@ -69,6 +70,8 @@ public class JPanelGeoCoordSys extends JPanel {
 
 	private void initComponents() {
 		//region 类型
+		SearchItemValueGetter<Enum> searchItemValueGetter = PrjCoordSysSettingsUtilties.getSearchItemValueGetter();
+		comboBoxType.setSearchItemValueGetter(searchItemValueGetter);
 		Enum[] enums = Enum.getEnums(GeoCoordSysType.class);
 
 		Arrays.sort(enums, 0, enums.length, new EnumComparator());
@@ -77,21 +80,7 @@ public class JPanelGeoCoordSys extends JPanel {
 				comboBoxType.addItem((GeoCoordSysType) anEnum);
 			}
 		}
-		renderer = new ListCellRenderer<Enum>() {
-			@Override
-			public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
-				JLabel jLabel = new JLabel();
-				jLabel.setOpaque(true);
-				jLabel.setPreferredSize(labelPreferredSize);
-				jLabel.setText(" " + PrjCoordSysTypeUtilties.getDescribe(value.name()));
-				if (isSelected) {
-					jLabel.setBackground(list.getSelectionBackground());
-				} else {
-					jLabel.setBackground(list.getBackground());
-				}
-				return jLabel;
-			}
-		};
+		renderer = PrjCoordSysSettingsUtilties.getEnumComboBoxItemRender();
 		comboBoxType.setRenderer(renderer);
 		//endregion
 
@@ -102,7 +91,7 @@ public class JPanelGeoCoordSys extends JPanel {
 
 		//region 大地参考系类型
 		Enum[] enumsGeoDatum = Enum.getEnums(GeoDatumType.class);
-
+		comboBoxGeoDatumType.setSearchItemValueGetter(searchItemValueGetter);
 		Arrays.sort(enumsGeoDatum, 0, enumsGeoDatum.length, new EnumComparator());
 
 		for (Enum anEnum : enumsGeoDatum) {
@@ -115,8 +104,8 @@ public class JPanelGeoCoordSys extends JPanel {
 
 		//region 椭球参数类型
 		Enum[] enumsGeoSpheroid = Enum.getEnums(GeoSpheroidType.class);
+		comboBoxGeoSpheroidType.setSearchItemValueGetter(searchItemValueGetter);
 		Arrays.sort(enumsGeoSpheroid, 0, enumsGeoSpheroid.length, new EnumComparator());
-
 		for (Enum anEnum : enumsGeoSpheroid) {
 			if (anEnum instanceof GeoSpheroidType) {
 				comboBoxGeoSpheroidType.addItem((GeoSpheroidType) anEnum);
@@ -170,7 +159,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		//endregion
 		//region 中央经线
 		Enum[] enumsCenter = Enum.getEnums(GeoPrimeMeridianType.class);
-
+		comboBoxCentralMeridianType.setSearchItemValueGetter(searchItemValueGetter);
 		for (Enum anEnum : enumsCenter) {
 			if (anEnum instanceof GeoPrimeMeridianType)
 				comboBoxCentralMeridianType.addItem((GeoPrimeMeridianType) anEnum);
