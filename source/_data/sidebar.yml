@@ -23,6 +23,8 @@ docs:
     PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
     LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
     VertexEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/VertexEdit.html
+    ObjectsConversion: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/ObjectsConversion.html
+    OtherEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/OtherEdit.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html

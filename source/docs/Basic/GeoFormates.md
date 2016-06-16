@@ -15,7 +15,7 @@ title: 类型转换支持的数据格式
  ArcGis 数据   | \*.e00 、\*.shp、\*.gdb、\*.txt     | 简单数据集 
  MapInfo 数据 | \*.tab、\*.mif、\*.wor | CAD、简单数据集 
  MapGIS 数据 | \*.wat、\*.wal、\*.wap、\*.wan | CAD、简单数据集 
- Microsoft 文件| \*.csv | 属性表数据集 |
+ Microsoft 文件| \*.csv | 属性表数据集
  影像位图文件 | \*.sit、\*.img、\*.tif、\*.tiff、\*.bmp、\*.png、\*.gif、\*.jpg、\*.jpeg | 影像、栅格数据集 
  栅格数据 | \*.dem、\*.bil、\*.raw、\*.bsq、\*.bip、\*.sid、\*.b | 栅格数据集
  Google KML 文件 | \*.kml、\*.kmz | CAD、简单数据集    

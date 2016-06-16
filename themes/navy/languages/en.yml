@@ -43,6 +43,8 @@ sidebar:
     PolygonEdit: 面对象编辑
     LineEdit: 线对象编辑
     VertexEdit: 节点编辑
+    ObjectsConversion: 对象类型转换
+    OtherEdit: 其他编辑
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
