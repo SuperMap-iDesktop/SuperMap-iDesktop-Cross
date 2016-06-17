@@ -1,18 +1,18 @@
 menu:
-  docs: Docs
+  docs: 帮助文档
   api: API
-  news: News
+  news: 新特性
 #  plugins: Plugins
 #  themes: Themes
   search: Search
 
 index:
-  get_started: Get started
+  get_started: 开始使用
 
 page:
   contents: 本页目录
-  back_to_top: Top
-  improve: Improve this doc
+  back_to_top: 回到顶部
+  improve: 获取本页源文件
   prev: 前一页
   next: 后一页
   last_updated: "Last updated: %s"
