@@ -15,8 +15,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogSmoothRatio;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class SmoothEditor extends AbstractEditor {
@@ -36,13 +36,13 @@ public class SmoothEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
+		return ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	private void smooth(EditEnvironment environment, int smoothRatio) {
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMapControl().getMap());
 
 			for (Layer layer : layers) {
 				if (layer.isEditable() && layer.getSelection().getCount() > 0 && layer.getDataset().getType() != DatasetType.POINT

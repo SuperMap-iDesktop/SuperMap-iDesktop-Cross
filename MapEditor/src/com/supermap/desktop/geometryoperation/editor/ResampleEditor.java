@@ -13,8 +13,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogResample;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class ResampleEditor extends AbstractEditor {
@@ -36,13 +36,13 @@ public class ResampleEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilties.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
+		return ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	private void resample(EditEnvironment environment, double tolerance, ResampleType resampleType) {
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.getDataset().getType() != DatasetType.POINT && layer.getDataset().getType() != DatasetType.TEXT) {

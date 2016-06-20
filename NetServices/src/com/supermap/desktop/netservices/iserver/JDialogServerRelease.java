@@ -14,13 +14,14 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -418,7 +419,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 	private boolean canRemoteRelease() {
 		Boolean canRemoteRelease = true;
 		try {
-			if (!StringUtilties.isNullOrEmpty(this.workspaceInfo.getWorkspacePath())) {
+			if (!StringUtilities.isNullOrEmpty(this.workspaceInfo.getWorkspacePath())) {
 				File workspaceDirectory = new File(workspaceInfo.getWorkspacePath()).getParentFile(); // 工作空间所在路径
 
 				ArrayList<String> datasourcesPath = this.workspaceInfo.getDatasourcesPath();
@@ -462,7 +463,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 					this.servicesType = this.servicesType | ServiceType.RESTREALSPACE;
 				}
 
-				if (ListUtilties.isListContainAny(this.workspaceInfo.getContainTypes(), DatasetType.CAD, DatasetType.GRID, DatasetType.LINE, DatasetType.LINEM,
+				if (ListUtilities.isListContainAny(this.workspaceInfo.getContainTypes(), DatasetType.CAD, DatasetType.GRID, DatasetType.LINE, DatasetType.LINEM,
 						DatasetType.NETWORK, DatasetType.POINT, DatasetType.REGION, DatasetType.TABULAR)) {
 					this.servicesType = this.servicesType | ServiceType.RESTSPATIALANALYST;
 				}
@@ -564,9 +565,9 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 	private void setButtonReleaseEnabled() {
 		try {
-			if (!this.canRelease || this.servicesType == ServiceType.NONE || StringUtilties.isNullOrEmpty(this.adminName)
-					|| StringUtilties.isNullOrEmpty(this.adminPassword) || StringUtilties.isNullOrEmpty(this.port)
-					|| (this.hostType == HostType.REMOTE && StringUtilties.isNullOrEmpty(this.remoteHost))) {
+			if (!this.canRelease || this.servicesType == ServiceType.NONE || StringUtilities.isNullOrEmpty(this.adminName)
+					|| StringUtilities.isNullOrEmpty(this.adminPassword) || StringUtilities.isNullOrEmpty(this.port)
+					|| (this.hostType == HostType.REMOTE && StringUtilities.isNullOrEmpty(this.remoteHost))) {
 				this.buttonRelease.setEnabled(false);
 			} else {
 				this.buttonRelease.setEnabled(true);
@@ -834,11 +835,11 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 	}
 
 	private void buttonReleaseClicked() {
-		CursorUtilties.setWaitCursor();
+		CursorUtilities.setWaitCursor();
 		try {
 			ServerRelease serverRelease = FillServerRelease();
 			// 需要打包上传，需要展示将要打包的数据
-			if (!StringUtilties.isNullOrEmpty(serverRelease.getWorkspacePath()) && serverRelease.getHostType() == HostType.REMOTE) {
+			if (!StringUtilities.isNullOrEmpty(serverRelease.getWorkspacePath()) && serverRelease.getHostType() == HostType.REMOTE) {
 				ArrayList<SelectableFile> files = new ArrayList<>();
 				File workDirectory = new File(serverRelease.getWorkDirectory());
 				File[] childFiles = workDirectory.listFiles();
@@ -886,7 +887,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 

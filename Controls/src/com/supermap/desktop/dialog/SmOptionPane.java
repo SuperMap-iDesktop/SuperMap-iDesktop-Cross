@@ -5,9 +5,10 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,8 +34,8 @@ public class SmOptionPane extends SmDialog {
 	private int result = JOptionPane.CLOSED_OPTION;
 	private String defaultTitle = CoreProperties.getString("String_MessageBox_Title");
 
-	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilties.getSystemSizeRate()),
-			(int) (160 * SystemPropertyUtilties.getSystemSizeRate()));
+	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilities.getSystemSizeRate()),
+			(int) (160 * SystemPropertyUtilities.getSystemSizeRate()));
 
 	public SmOptionPane() {
 		init();

@@ -12,7 +12,7 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -24,6 +24,7 @@ import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -132,7 +133,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 		Dimension dimension = new Dimension(200, 20);
 
 		panelSelectTargetInfo = new JPanel();
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			panelSelectTargetInfo.setSize(220, 30);
 		} else {
 			panelSelectTargetInfo.setSize(280, 30);

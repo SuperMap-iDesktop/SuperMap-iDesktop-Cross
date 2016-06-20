@@ -14,12 +14,13 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.PixelFormatUtilties;
+import com.supermap.desktop.utilities.PixelFormatUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -320,7 +321,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 			tableModel.removeRow(i);
 		}
 		for (int i = 0; i < this.datasetImage.getBandCount(); i++) {
-			tableModel.addRow(new Object[]{i, this.datasetImage.get(i), PixelFormatUtilties.toString(this.datasetImage.getPixelFormat(i))});
+			tableModel.addRow(new Object[]{i, this.datasetImage.get(i), PixelFormatUtilities.toString(this.datasetImage.getPixelFormat(i))});
 		}
 	}
 

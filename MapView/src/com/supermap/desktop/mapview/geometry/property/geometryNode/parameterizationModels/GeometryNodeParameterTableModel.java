@@ -1,7 +1,8 @@
 package com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels;
 
 import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
+
 import org.jdesktop.swingx.treetable.TreeTableModel;
 
 import javax.swing.event.TreeModelListener;
@@ -27,12 +28,18 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 
 	private void initRoot() {
 		root = new DefaultMutableTreeNode();
-		DefaultMutableTreeNode firstNode = new DefaultMutableTreeNode(geometryParameterModel.getValue(0, 0));
-		firstNode.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(1, 0)));
-		firstNode.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(2, 0)));
-		root.add(firstNode);
-		for (int i = 3; i < geometryParameterModel.getRowCount(); i++) {
-			root.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(i, 0)));
+		if (geometryParameterModel instanceof TableModelPoints) {
+			for (int i = 0; i < geometryParameterModel.getRowCount(); i++) {
+				root.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(i, 0)));
+			}
+		} else {
+			DefaultMutableTreeNode firstNode = new DefaultMutableTreeNode(geometryParameterModel.getValue(0, 0));
+			firstNode.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(1, 0)));
+			firstNode.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(2, 0)));
+			root.add(firstNode);
+			for (int i = 3; i < geometryParameterModel.getRowCount(); i++) {
+				root.add(new DefaultMutableTreeNode(geometryParameterModel.getValue(i, 0)));
+			}
 		}
 	}
 
@@ -45,6 +52,13 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 		init();
 	}
 
+	@Override
+	public int getRowCount() {
+		if (geometryParameterModel == null) {
+			return 0;
+		}
+		return geometryParameterModel.getRowCount();
+	}
 
 	@Override
 	public int getColumnCount() {
@@ -86,7 +100,7 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 
 	private int getRow(Object node) {
 		String userObject = (String) ((DefaultMutableTreeNode) node).getUserObject();
-		if (StringUtilties.isNullOrEmpty(userObject)) {
+		if (StringUtilities.isNullOrEmpty(userObject)) {
 			return 0;
 		}
 		for (int i = 0; i < geometryParameterModel.getRowCount(); i++) {
@@ -100,6 +114,11 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 
 	@Override
 	public boolean isCellEditable(Object node, int column) {
+		return false;
+	}
+
+	@Override
+	public boolean isCellEditable(int row, int column) {
 		return false;
 	}
 
@@ -168,4 +187,6 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 	public void removeTreeModelListener(TreeModelListener l) {
 
 	}
+
+
 }

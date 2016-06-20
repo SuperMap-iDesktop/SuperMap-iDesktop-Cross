@@ -11,7 +11,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -69,7 +69,7 @@ public class CtrlActionLoadMapTemplate extends CtrlAction {
 					map.refresh();
 					formMap.getMapControl().setAction(Action.PAN);
 					// 手动触发刷新面板
-					String availableMapName = MapUtilties.getAvailableMapName(map.getName(), true);
+					String availableMapName = MapUtilities.getAvailableMapName(map.getName(), true);
 					formMap.setText(availableMapName);
 					formMap.getMapControl().getMap().setName(availableMapName);
 					Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();

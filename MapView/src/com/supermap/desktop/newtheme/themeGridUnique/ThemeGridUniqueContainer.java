@@ -12,7 +12,7 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.themeUnique.AddItemPanel;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -22,6 +22,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -271,7 +272,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			this.tableUniqueInfo.setValueAt(ThemeItemLabelDecorator.buildColorIcon(datasetGrid, color), i, TABLE_COLUMN_GEOSTYLE);
 			DecimalFormat format = new DecimalFormat("0.######");
 			String unique = format.format(uniqueItem.getUnique());
-			if (StringUtilties.isNumber(uniqueItem.getCaption())) {
+			if (StringUtilities.isNumber(uniqueItem.getCaption())) {
 				String caption = format.format(Double.parseDouble(uniqueItem.getCaption()));
 				this.tableUniqueInfo.setValueAt(caption, i, TABLE_COLUMN_CAPTION);
 			} else {
@@ -289,7 +290,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		public void propertyChange(PropertyChangeEvent evt) {
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
-			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			themeUniqueLayer = MapUtilities.findLayerByName(map, layerName);
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeGridUnique) {
 				datasetGrid = (DatasetGrid) themeUniqueLayer.getDataset();
 				themeUnique = new ThemeGridUnique((ThemeGridUnique) themeUniqueLayer.getTheme());
@@ -471,12 +472,12 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 			try {
 				int selectColumn = e.getColumn();
 				int selectRow = e.getFirstRow();
-				if (selectColumn == TABLE_COLUMN_UNIQUE && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))
-						&& StringUtilties.isNumber(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString())) {
+				if (selectColumn == TABLE_COLUMN_UNIQUE && !StringUtilities.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))
+						&& StringUtilities.isNumber(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString())) {
 					setUniqueItemUnique(Double.valueOf(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString()));
 					setUniqueItemCaption(tableUniqueInfo.getValueAt(selectRow, selectColumn).toString());
 				}
-				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
+				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilities.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableUniqueInfo.getValueAt(selectRow, selectColumn).toString();
 					setUniqueItemCaption(caption);
 				}
@@ -797,7 +798,7 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeUniqueLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme().getType() == ThemeType.GRIDUNIQUE) {
 			((ThemeGridUnique) this.themeUniqueLayer.getTheme()).clear();
 			this.themeUniqueLayer.getTheme().fromXML(this.themeUnique.toXML());

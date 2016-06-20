@@ -6,7 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IPasswordCheck;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.JDialogChangePassword;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
@@ -19,6 +19,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -251,7 +252,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 				this.workspace.changePassword(workspace.getConnectionInfo().getPassword(), this.newPassword);
 			}
 			Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_ChangeWorkspacePassword_Success"));
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		}
 	}
 
@@ -263,7 +264,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 		}
 		setButtonResetEnabledInEDT(false);
 		setButtonApplyEnabledInEDT(false);
-		ToolbarUtilties.updataToolbarsState();
+		ToolbarUIUtilities.updataToolbarsState();
 	}
 
 	private void buttonResetClick() {

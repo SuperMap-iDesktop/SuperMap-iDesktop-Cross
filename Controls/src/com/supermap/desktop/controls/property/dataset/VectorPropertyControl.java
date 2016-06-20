@@ -15,11 +15,12 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
-import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
+import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.text.NumberFormatter;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -325,7 +326,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 	private void fillComponents() {
 		this.textFieldRecordCount.setText(Integer.toString(this.datasetVector.getRecordCount()));
-		this.textFieldSpatialIndexType.setText(SpatialIndexTypeUtilties.toString(this.datasetVector.getSpatialIndexType()));
+		this.textFieldSpatialIndexType.setText(SpatialIndexTypeUtilities.toString(this.datasetVector.getSpatialIndexType()));
 		this.comboBoxCharset.setSelectedItem(this.charset);
 		this.checkBoxIsReadOnly.setSelected(this.isReadOnly);
 		this.checkBoxIsFileCache.setSelected(this.isFileCache);

@@ -3,10 +3,11 @@ package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 import com.supermap.data.SymbolGroup;
 import com.supermap.data.SymbolGroups;
 import com.supermap.desktop.core.IteratorEnumerationAdapter;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,7 +23,7 @@ public class SymbolGroupTreeNode extends DefaultMutableTreeNode {
 
 	public SymbolGroupTreeNode(SymbolGroupTreeNode parentNode, SymbolGroup symbolGroup) {
 		if (symbolGroup == null) {
-			LogUtilties.debug("symbolGroup is empty");
+			LogUtilities.debug("symbolGroup is empty");
 			return;
 		}
 		this.parentNode = parentNode;

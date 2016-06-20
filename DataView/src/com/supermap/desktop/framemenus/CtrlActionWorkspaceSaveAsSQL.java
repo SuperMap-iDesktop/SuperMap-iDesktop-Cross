@@ -7,7 +7,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 public class CtrlActionWorkspaceSaveAsSQL extends CtrlAction {
 
@@ -22,6 +22,6 @@ public class CtrlActionWorkspaceSaveAsSQL extends CtrlAction {
 	}
 	
 	public boolean enable(){
-		return SystemPropertyUtilties.isWindows();
+		return SystemPropertyUtilities.isWindows();
 	}
 }

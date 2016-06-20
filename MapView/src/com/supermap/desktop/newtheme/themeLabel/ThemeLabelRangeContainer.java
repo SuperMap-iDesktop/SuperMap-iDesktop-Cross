@@ -17,9 +17,9 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.MathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.MathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -452,7 +452,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		public void propertyChange(PropertyChangeEvent evt) {
 			int[] selectRows = tableLabelInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
-			themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
+			themeLabelLayer = MapUtilities.findLayerByName(map, layerName);
 			if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme() instanceof ThemeLabel) {
 				datasetVector = (DatasetVector) themeLabelLayer.getDataset();
 				themeLabel = new ThemeLabel((ThemeLabel) themeLabelLayer.getTheme());
@@ -665,7 +665,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				buttonSplit.setEnabled(false);
 			}
 
-			if (selectedRows.length >= 2 && MathUtilties.isContinuouslyArray(selectedRows)) {
+			if (selectedRows.length >= 2 && MathUtilities.isContinuouslyArray(selectedRows)) {
 				buttonMerge.setEnabled(true);
 			} else {
 				buttonMerge.setEnabled(false);
@@ -1044,13 +1044,13 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			int selectRow = arg0.getFirstRow();
 			int selectColumn = arg0.getColumn();
 			try {
-				if (selectColumn == TABLE_COLUMN_RANGEVALUE && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
+				if (selectColumn == TABLE_COLUMN_RANGEVALUE && !StringUtilities.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String rangeValue = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
-					if ((StringUtilties.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) && (selectRow != tableLabelInfo.getRowCount() - 1)) {
+					if ((StringUtilities.isNumber(rangeValue) && isRightRangeValue(rangeValue, selectRow)) && (selectRow != tableLabelInfo.getRowCount() - 1)) {
 						// 如果输入为数值且段值合法时修改段值
 						setLabelRangeValue(selectRow, rangeValue);
 					}
-				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
+				} else if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilities.isNullOrEmptyString(tableLabelInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableLabelInfo.getValueAt(selectRow, selectColumn).toString();
 					themeLabel.getItem(selectRow).setCaption(caption);
 				}
@@ -1071,7 +1071,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			double rangeEnd = Double.parseDouble(rangeValue);
 			rangeValue = format.format(rangeEnd);
 			// 替换当前行的标题
-			if (StringUtilties.isNumber(end)) {
+			if (StringUtilities.isNumber(end)) {
 				caption = caption.replace(end, rangeValue);
 				themeLabel.getItem(selectRow).setCaption(caption);
 			}
@@ -1131,7 +1131,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeLabelLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeLabelLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme().getType() == ThemeType.LABEL) {
 			ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());
 			nowThemeLabel.clear();

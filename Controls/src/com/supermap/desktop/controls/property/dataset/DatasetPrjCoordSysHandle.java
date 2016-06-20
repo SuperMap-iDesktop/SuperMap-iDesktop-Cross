@@ -15,7 +15,7 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
-import com.supermap.desktop.controls.utilties.WorkspaceTreeManagerUtilties;
+import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -134,7 +134,7 @@ public class DatasetPrjCoordSysHandle extends PrjCoordSysHandle {
 					}
 
 					// 这种转换方式主要针对非矢量数据，转换之后会生成新的数据集，但是树的显示状态很诡异，这里对目标数据源的节点进行一次刷新
-					WorkspaceTreeManagerUtilties.refreshNode(this.dataset.getDatasource());
+					WorkspaceTreeManagerUIUtilities.refreshNode(this.dataset.getDatasource());
 				}
 			} catch (Exception e) {
 				result = false;

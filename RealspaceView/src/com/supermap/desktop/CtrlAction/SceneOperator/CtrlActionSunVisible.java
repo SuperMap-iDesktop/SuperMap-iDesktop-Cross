@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 
 public class CtrlActionSunVisible extends CtrlActionSceneActionBase {
 
@@ -20,7 +20,7 @@ public class CtrlActionSunVisible extends CtrlActionSceneActionBase {
 				boolean visible = formScene.getSceneControl().getScene().getSun().isVisible();
 				formScene.getSceneControl().getScene().getSun().setVisible(!visible);
 			}
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

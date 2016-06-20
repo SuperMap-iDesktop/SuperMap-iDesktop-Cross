@@ -1,17 +1,27 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.supermap.data.*;
+import javax.swing.JPanel;
+
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.CtrlAction.CtrlActionEditorBase;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.ui.controls.TextStyleDialog;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.mapping.*;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Selection;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
 
 public class CtrlActionTextStyle extends CtrlActionEditorBase {
 
@@ -24,11 +34,24 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 	@Override
 	public void run() {
 		EditEnvironment environment = EditEnvironment.createInstance((IFormMap) Application.getActiveApplication().getActiveForm());
-		if (ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
-			final TextStyleDialog dialog = new TextStyleDialog();
-			if (null!=getActiveRecordset()) {
-				dialog.showDialog(getActiveRecordset(),getGeometryTexts());
+		if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
+			final TextStyleDialog dialog = TextStyleDialog.createInstance();
+			if (null != getActiveRecordset()) {
+				dialog.showDialog(getActiveRecordset());
 			}
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addGeometrySelectChangedListener(
+					new GeometrySelectChangedListener() {
+
+						@Override
+						public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
+							if (null != dialog && null != getActiveRecordset()) {
+								dialog.showDialog(getActiveRecordset());
+							} else if (null == getActiveRecordset()) {
+								((JPanel) dialog.getContentPane()).removeAll();
+								((JPanel) dialog.getContentPane()).updateUI();
+							}
+						}
+					});
 		}
 	}
 
@@ -42,7 +65,7 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 		Recordset recordset = getActiveRecordset();
 		recordset.moveFirst();
 		while (!recordset.isEOF()) {
-			result.add((GeoText)recordset.getGeometry());
+			result.add((GeoText) recordset.getGeometry());
 			recordset.moveNext();
 		}
 		return result;
@@ -50,8 +73,8 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 
 	private Recordset getActiveRecordset() {
 		Recordset recordset = null;
-		if ( MapUtilties.getActiveMap().findSelection(true).length>0) {
-			Selection selection = MapUtilties.getActiveMap().findSelection(true)[0];
+		if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
+			Selection selection = MapUtilities.getActiveMap().findSelection(true)[0];
 			recordset = selection.toRecordset();
 		}
 		return recordset;

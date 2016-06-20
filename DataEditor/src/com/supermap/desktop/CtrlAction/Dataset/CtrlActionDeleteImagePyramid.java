@@ -10,10 +10,10 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class CtrlActionDeleteImagePyramid extends CtrlAction {
 		List<Dataset> datasets = new ArrayList<>();
 		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 		Collections.addAll(datasets, activeDatasets);
-		datasets = DatasetUtilties.sureDatasetClosed(datasets);
+		datasets = DatasetUIUtilities.sureDatasetClosed(datasets);
 		deleteImagePyramid(datasets);
 	}
 
@@ -41,7 +41,7 @@ public class CtrlActionDeleteImagePyramid extends CtrlAction {
 //			FormProgressTotal formProgressTotal = new FormProgressTotal(ControlsProperties.getString("String_DeleteDatasetPyramid"));
 //			formProgressTotal.doWork(new DeleteImagePyramidCallable(datasets.toArray(new Dataset[datasets.size()])));
 			//endregion
-			CursorUtilties.setWaitCursor();
+			CursorUtilities.setWaitCursor();
 			boolean isSucceeded = false;
 
 			for (Dataset dataset : datasets) {
@@ -77,7 +77,7 @@ public class CtrlActionDeleteImagePyramid extends CtrlAction {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 

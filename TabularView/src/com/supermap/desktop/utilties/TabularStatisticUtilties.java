@@ -4,12 +4,13 @@ import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 
 /**
@@ -118,6 +119,6 @@ public class TabularStatisticUtilties {
 			((JTextField)smStatusbar.get(FIELD_NAME)).setText(formTabular.getSelectColumnName(columnIndex));
 		}
 
-		ToolbarUtilties.updataToolbarsState();
+		ToolbarUIUtilities.updataToolbarsState();
 	}
 }

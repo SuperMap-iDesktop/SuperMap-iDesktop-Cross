@@ -16,7 +16,6 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
@@ -28,11 +27,11 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ArrayUtilties;
-import com.supermap.desktop.utilties.GeoStyleUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.RecordsetUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.GeoStyleUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.RecordsetUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -120,10 +119,10 @@ public class GeometryCopyEditor extends AbstractEditor {
 	private void initializeSrc(EditEnvironment environment) {
 		GeometryCopyEditModel editModel = (GeometryCopyEditModel) environment.getEditModel();
 		editModel.trackingGeoCompound = new GeoCompound();
-		ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+		ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 		for (Layer layer : layers) {
-			if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
+			if (layer.isEditable() && layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 				editModel.copyGeometries.put(layer, new ArrayList<Integer>());
 				Recordset recordset = layer.getSelection().toRecordset();
 
@@ -158,7 +157,8 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 				if (editModel.trackingGeoCompound != null) {
 					editModel.trackingGeoCompound.offset(offsetX, offsetY);
-					GeoStyleUtilties.setGeometryStyle(editModel.trackingGeoCompound, getTrackingStyle());
+					GeoStyleUtilities.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilties.getTrackingLineStyle(),
+							EditorUtilties.getTrackingLineStyle3D());
 
 					int index = environment.getMap().getTrackingLayer().indexOf(TAG_GEOMETRYCOPY);
 					if (index >= 0) {
@@ -168,6 +168,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 					}
 					editModel.trackingGeoCompound.offset(-1 * offsetX, -1 * offsetY);
 					environment.getMap().refreshTrackingLayer();
+					environment.getMapControl().repaint();
 				}
 			}
 		} catch (Exception ex) {
@@ -192,7 +193,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 					List<Integer> selectionIDs = new ArrayList<Integer>();
 					List<Integer> selectedDs = editModel.copyGeometries.get(layer);
 					Recordset recordset = ((DatasetVector) layer.getDataset()).query(
-							ArrayUtilties.convertToInt(selectedDs.toArray(new Integer[selectedDs.size()])), CursorType.DYNAMIC);
+							ArrayUtilities.convertToInt(selectedDs.toArray(new Integer[selectedDs.size()])), CursorType.DYNAMIC);
 
 					for (Integer id : selectedDs) {
 						recordset.seekID(id);
@@ -200,7 +201,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 						if (geometry != null) {
 							geometry.offset(offsetX, offsetY);
 
-							Map<String, Object> values = RecordsetUtilties.getFieldValues(recordset);
+							Map<String, Object> values = RecordsetUtilities.getFieldValues(recordset);
 
 							if (recordset.addNew(geometry, values)) {
 								recordset.update();
@@ -213,14 +214,14 @@ public class GeometryCopyEditor extends AbstractEditor {
 					recordset.dispose();
 
 					if (selectionIDs.size() > 0) {
-						int[] toSelected = ArrayUtilties.convertToInt(selectionIDs.toArray(new Integer[selectionIDs.size()]));
+						int[] toSelected = ArrayUtilities.convertToInt(selectionIDs.toArray(new Integer[selectionIDs.size()]));
 						layer.getSelection().clear();
 						layer.getSelection().addRange(toSelected);
 						Recordset toSelectedRecordset = ((DatasetVector) layer.getDataset()).query(toSelected, CursorType.DYNAMIC);
 						environment.getMapControl().getEditHistory().add(EditType.ADDNEW, toSelectedRecordset, false);
 
 						// 刷新一下桌面的属性表窗口
-						TabularUtilties.refreshTabularForm(toSelectedRecordset.getDataset());
+						TabularUtilities.refreshTabularForm(toSelectedRecordset.getDataset());
 						toSelectedRecordset.close();
 						toSelectedRecordset.dispose();
 					}
@@ -233,13 +234,6 @@ public class GeometryCopyEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 		}
-	}
-
-	private GeoStyle getTrackingStyle() {
-		GeoStyle trackingStyle = new GeoStyle();
-		trackingStyle.setLineSymbolID(2);
-		trackingStyle.setFillOpaqueRate(0);
-		return trackingStyle;
 	}
 
 	/**
@@ -262,7 +256,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 	private void clear(EditEnvironment environment) {
 		GeometryCopyEditModel editModel = (GeometryCopyEditModel) environment.getEditModel();
 		editModel.clear();
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_GEOMETRYCOPY);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_GEOMETRYCOPY);
 	}
 
 	private class GeometryCopyEditModel implements IEditModel {
@@ -280,7 +274,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 			this.tip = new MapControlTip();
 			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
 			this.tip.getContentPanel().add(this.labelMsg);
-			this.tip.getContentPanel().setSize(120, 21);
+			this.tip.getContentPanel().setSize(150, 21);
 			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
 		}
 

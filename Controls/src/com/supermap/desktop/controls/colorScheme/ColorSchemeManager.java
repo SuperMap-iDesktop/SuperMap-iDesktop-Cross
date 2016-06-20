@@ -1,9 +1,10 @@
 package com.supermap.desktop.controls.colorScheme;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -55,14 +56,14 @@ public class ColorSchemeManager {
 		defaultColorSchemeList = new ArrayList<>();
 		version = 60000;
 		initDefaultColorSchemes(defaultColorSchemeList);
-		if (!new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true)).exists()) {
-			new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true)).mkdirs();
+		if (!new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true)).exists()) {
+			new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true)).mkdirs();
 		}
-		if (!new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true)).exists()) {
-			new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true)).mkdirs();
+		if (!new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true)).exists()) {
+			new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true)).mkdirs();
 		}
-		if (new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false)).exists()) {
-			formXML(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false));
+		if (new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false)).exists()) {
+			formXML(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false));
 		}
 		if (colorSchemeList.size() == 0) {
 			initDefaultColorSchemes(colorSchemeList);
@@ -71,7 +72,7 @@ public class ColorSchemeManager {
 
 	private void formXML(String filePath) {
 		colorSchemeList.clear();
-		Document document = XmlUtilties.getDocument(filePath);
+		Document document = XmlUtilities.getDocument(filePath);
 		NodeList childNodes = document.getChildNodes().item(0).getChildNodes();
 		for (int i = 0; i < childNodes.getLength(); i++) {
 			if (childNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
@@ -100,7 +101,7 @@ public class ColorSchemeManager {
 	}
 
 	public void save() {
-		FileUtilties.writeToFile(new File(PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false)), toXML(colorSchemeList));
+		FileUtilities.writeToFile(new File(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeManagerFilePath"), false)), toXML(colorSchemeList));
 	}
 
 	private String toXML(List<ColorScheme> colorSchemeList) {
@@ -141,9 +142,9 @@ public class ColorSchemeManager {
 
 	public void initDefaultColorSchemes(List<ColorScheme> schemeList) {
 		InputStream in = this.getClass().getResourceAsStream("/com/supermap/desktop/controlsresources/ColorScheme/DefaultColorScheme.xml");
-		String baseDirectory = PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true);
+		String baseDirectory = PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true);
 		if (in != null) {
-			Document defaultColorScheme = XmlUtilties.getDocument(in);
+			Document defaultColorScheme = XmlUtilities.getDocument(in);
 			NodeList childNodes = defaultColorScheme.getChildNodes().item(0).getChildNodes();
 			for (int i = 0; i < childNodes.getLength(); i++) {
 				if (childNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {

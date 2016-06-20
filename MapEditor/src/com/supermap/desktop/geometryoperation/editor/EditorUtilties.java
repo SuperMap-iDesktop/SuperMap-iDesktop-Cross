@@ -1,5 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
@@ -158,6 +160,14 @@ public class EditorUtilties {
 		return snapPoint;
 	}
 
+	/**
+	 * 判断点是否在指定线段的左边（沿线方向）
+	 * 
+	 * @param pntFrom
+	 * @param pntTo
+	 * @param pntTest
+	 * @return
+	 */
 	static boolean isPntLeft(Point2D pntFrom, Point2D pntTo, Point2D pntTest) {
 		Boolean bLeft = false;
 
@@ -169,5 +179,20 @@ public class EditorUtilties {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return bLeft;
+	}
+
+	static GeoStyle getTrackingLineStyle() {
+		GeoStyle trackingStyle = new GeoStyle();
+		trackingStyle.setLineWidth(0.6);
+		trackingStyle.setLineSymbolID(1);
+		trackingStyle.setFillOpaqueRate(0);
+		return trackingStyle;
+	}
+
+	static GeoStyle3D getTrackingLineStyle3D() {
+		GeoStyle3D trackingStyle = new GeoStyle3D();
+		trackingStyle.setLineWidth(0.6);
+		trackingStyle.setLineSymbolID(1);
+		return trackingStyle;
 	}
 }

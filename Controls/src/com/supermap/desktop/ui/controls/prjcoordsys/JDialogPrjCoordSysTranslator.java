@@ -10,10 +10,11 @@ import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.CoordSysTransMethodUtilties;
+import com.supermap.desktop.utilities.CoordSysTransMethodUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -293,13 +294,13 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 	private void fillComboBoxMethod() {
 		this.comboBoxMethod.removeAllItems();
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION));
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_MOLODENSKY));
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_MOLODENSKY_ABRIDGED));
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_POSITION_VECTOR));
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_COORDINATE_FRAME));
-		this.comboBoxMethod.addItem(CoordSysTransMethodUtilties.toString(CoordSysTransMethod.MTH_BURSA_WOLF));
-		this.comboBoxMethod.setSelectedItem(CoordSysTransMethodUtilties.toString(this.method));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_MOLODENSKY));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_MOLODENSKY_ABRIDGED));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_POSITION_VECTOR));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_COORDINATE_FRAME));
+		this.comboBoxMethod.addItem(CoordSysTransMethodUtilities.toString(CoordSysTransMethod.MTH_BURSA_WOLF));
+		this.comboBoxMethod.setSelectedItem(CoordSysTransMethodUtilities.toString(this.method));
 	}
 
 	private void buttonSetPrjClicked() {
@@ -312,7 +313,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void comboBoxMethodSelectedChange() {
-		this.method = CoordSysTransMethodUtilties.valueOf(this.comboBoxMethod.getSelectedItem().toString());
+		this.method = CoordSysTransMethodUtilities.valueOf(this.comboBoxMethod.getSelectedItem().toString());
 		setComponentsEnabled();
 	}
 
@@ -352,7 +353,7 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void buttonOKClicked() {
-		this.method = CoordSysTransMethodUtilties.valueOf(this.comboBoxMethod.getSelectedItem().toString());
+		this.method = CoordSysTransMethodUtilities.valueOf(this.comboBoxMethod.getSelectedItem().toString());
 		this.parameter.setScaleDifference(Double.valueOf(this.textFieldScaleDifference.getValue().toString()));
 		getRotationParameter();
 		this.parameter.setTranslateX(Double.valueOf(this.textFieldTranslateX.getValue().toString()));

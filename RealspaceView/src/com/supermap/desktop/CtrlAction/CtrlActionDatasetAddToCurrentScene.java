@@ -7,7 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.realspace.Scene;
 
@@ -24,7 +24,7 @@ public class CtrlActionDatasetAddToCurrentScene extends CtrlAction {
 			IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 			Scene scene = formScene.getSceneControl().getScene();
 
-			SceneUtilties.addDatasetToScene(scene, datasets);
+			SceneUIUtilities.addDatasetToScene(scene, datasets);
 
 			scene.refresh();
 

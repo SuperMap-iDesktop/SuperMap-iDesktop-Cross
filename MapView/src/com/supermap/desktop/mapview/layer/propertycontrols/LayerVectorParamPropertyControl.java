@@ -20,14 +20,15 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -130,7 +131,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 				if (dialogResult == DialogResult.OK) {
 					String filter = sqlDialog.getQueryParameter().getAttributeFilter();
 
-					if (StringUtilties.isNullOrEmpty(filter)) {
+					if (StringUtilities.isNullOrEmpty(filter)) {
 						filter = "";
 					}
 					textFieldDisplayFilter.setText(filter);
@@ -280,11 +281,11 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 					for (int i = 0; i < getLayerPropertyModel().getDataset().getFieldCount(); i++) {
 						FieldInfo fieldInfo = getLayerPropertyModel().getDataset().getFieldInfos().get(i);
 
-						if (FieldTypeUtilties.isNumber(fieldInfo.getType())) {
+						if (FieldTypeUtilities.isNumber(fieldInfo.getType())) {
 							this.comboBoxOrder.addItem(getLayerPropertyModel().getDataset().getName()+"."+fieldInfo.getName());
 						}
 					}
-					if (StringUtilties.isNullOrEmpty(getLayerPropertyModel().getDisplayOrderField())) {
+					if (StringUtilities.isNullOrEmpty(getLayerPropertyModel().getDisplayOrderField())) {
 						this.comboBoxOrder.setSelectedIndex(0);
 					} else {
 						this.comboBoxOrder.setSelectedItem(getLayerPropertyModel().getDisplayOrderField());
@@ -318,7 +319,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void setDisplayAttributeFilterValue() {
 		String attributeFilter = textFieldDisplayFilter.getText() == null ? "" : textFieldDisplayFilter.getText();
-		if (!StringUtilties.isNullOrEmpty(textFieldDisplayFilter.getText())) {
+		if (!StringUtilities.isNullOrEmpty(textFieldDisplayFilter.getText())) {
 			getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
 			checkChanged();
 		}
@@ -410,7 +411,7 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	private void comboBoxOrderSelectedItemChanged(ItemEvent e) {
 		Object displayOrderField = e.getItem();
 
-		if (StringUtilties.isNullOrEmptyString(displayOrderField)) {
+		if (StringUtilities.isNullOrEmptyString(displayOrderField)) {
 			getModifiedLayerPropertyModel().setDisplayOrderField(null);
 		} else {
 			getModifiedLayerPropertyModel().setDisplayOrderField((String) displayOrderField);

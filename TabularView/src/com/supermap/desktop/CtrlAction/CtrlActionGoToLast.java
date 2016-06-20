@@ -19,7 +19,8 @@ public class CtrlActionGoToLast extends CtrlAction {
 
 	public boolean enable() {
 		boolean flag = false;
-		if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 0) {
+		if (Application.getActiveApplication().getActiveForm() instanceof IFormTabular
+				&& ((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 0) {
 			flag = true;
 		}
 		return flag;

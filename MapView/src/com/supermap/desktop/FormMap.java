@@ -21,8 +21,8 @@ import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.AreaUnit;
@@ -47,11 +47,11 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.ActionUtilties;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.MapControlUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.ActionUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.MapControlUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
@@ -240,7 +240,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			setMapcontrolMouseClick(e);
 			// 绘制几何对象时，如果地图是地理坐标，进行超范围提示
 
-			if ((e.getButton() == MouseEvent.BUTTON1 && MapControlUtilties.isCreateGeometry(FormMap.this.mapControl))
+			if ((e.getButton() == MouseEvent.BUTTON1 && MapControlUtilities.isCreateGeometry(FormMap.this.mapControl))
 					&& (FormMap.this.mapControl.getMap().getPrjCoordSys() != null && FormMap.this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
 				Point2D mousePosition = FormMap.this.mapControl.getMap().pixelToMap(e.getPoint());
 
@@ -338,6 +338,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
+			refreshOpenedTabularForms();
 		}
 	};
 
@@ -352,6 +353,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
+			refreshOpenedTabularForms();
 		}
 	};
 
@@ -387,7 +389,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void editableChanged(LayerEditableChangedEvent layerEditableChangedEvent) {
 			if (layerEditableChangedEvent.isEditable()) {
-				if (!ActionUtilties.isSupportDatasetType(mapControl.getAction(), layerEditableChangedEvent.getLayer().getDataset().getType())) {
+				if (!ActionUtilities.isSupportDatasetType(mapControl.getAction(), layerEditableChangedEvent.getLayer().getDataset().getType())) {
 					mapControl.setAction(Action.SELECT2);
 				}
 			} else {
@@ -397,7 +399,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				@Override
 				public void run() {
 					// 先挂起，最后刷新工具条
-					ToolbarUtilties.updataToolbarsState();
+					ToolbarUIUtilities.updataToolbarsState();
 				}
 			});
 		}
@@ -407,7 +409,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
-			ToolbarUtilties.updataToolbarsState();
+			ToolbarUIUtilities.updataToolbarsState();
 		}
 	};
 
@@ -640,8 +642,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	private void pointFieldValueChanged() {
-		pointXField.setForeground(DoubleUtilties.isDoubleWithoutD(pointXField.getText()) ? Color.black : Color.RED);
-		pointYField.setForeground(DoubleUtilties.isDoubleWithoutD(pointYField.getText()) ? Color.black : Color.RED);
+		pointXField.setForeground(DoubleUtilities.isDoubleWithoutD(pointXField.getText()) ? Color.black : Color.RED);
+		pointYField.setForeground(DoubleUtilities.isDoubleWithoutD(pointYField.getText()) ? Color.black : Color.RED);
 	}
 
 	private void scaleChanged() {
@@ -665,7 +667,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			String pointXFieldText = pointXField.getText();
 			String pointYFieldText = pointYField.getText();
-			if (DoubleUtilties.isDoubleWithoutD(pointXFieldText) && DoubleUtilties.isDoubleWithoutD(pointYFieldText)) {
+			if (DoubleUtilities.isDoubleWithoutD(pointXFieldText) && DoubleUtilities.isDoubleWithoutD(pointYFieldText)) {
 				double pointX = Double.parseDouble(pointXFieldText);
 				double pointY = Double.parseDouble(pointYFieldText);
 				Point2D point2d = new Point2D(pointX, pointY);
@@ -1091,7 +1093,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				|| nodeDataType == NodeDataType.THEME_LABEL_ITEM || nodeDataType == NodeDataType.THEME_UNIQUE_ITEM
 				|| nodeDataType == NodeDataType.THEME_RANGE_ITEM || nodeDataType == NodeDataType.LAYER_GROUP
 				|| nodeDataType == NodeDataType.DATASET_IMAGE_COLLECTION || nodeDataType == NodeDataType.DATASET_GRID_COLLECTION
-				||nodeDataType==NodeDataType.THEME_CUSTOM;
+				|| nodeDataType == NodeDataType.THEME_CUSTOM;
 	}
 
 	private void showPopupMenu(MouseEvent e) {
@@ -1099,7 +1101,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			boolean selected = false;
 			Selection selection = null;
-			ArrayList<Layer> layers = MapUtilties.getLayers(this.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(this.getMapControl().getMap());
 			for (Layer layer : layers) {
 				selection = layer.getSelection();
 				if (selection != null && selection.getCount() > 0) {
@@ -1224,7 +1226,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				if (result == JOptionPane.OK_OPTION) {
 					for (Layer layer : layers) {
 						if (layer instanceof LayerGroup) {
-							ArrayList<Layer> childLayers = MapUtilties.getLayers((LayerGroup) layer);
+							ArrayList<Layer> childLayers = MapUtilities.getLayers((LayerGroup) layer);
 							for (Layer childLayer : childLayers) {
 								Dataset dataset = childLayer.getDataset();
 								if (dataset == null) {
@@ -1259,7 +1261,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					}
 
 					for (int i = 0; i < removingLayers.size(); i++) {
-						MapUtilties.removeLayer(this.getMapControl().getMap(), removingLayers.get(i));
+						MapUtilities.removeLayer(this.getMapControl().getMap(), removingLayers.get(i));
 					}
 
 					this.getMapControl().getMap().refresh();
@@ -1274,7 +1276,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		try {
 			Recordset recordset = null;
 			Rectangle2D rect = Rectangle2D.getEMPTY();
-			ArrayList<Layer> layers = MapUtilties.getLayers(this.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(this.getMapControl().getMap());
 			for (Layer layer : layers) {
 				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
 					recordset = layer.getSelection().toRecordset();
@@ -1319,21 +1321,21 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	public void clearSelection() {
-		mapControlGeometrySelected(MapViewUtilties.clearAllSelection(this));
+		mapControlGeometrySelected(MapViewUIUtilities.clearAllSelection(this));
 	}
 
 	/**
 	 * 全选
 	 */
 	public void selectAll() {
-		mapControlGeometrySelected(MapViewUtilties.selectAllGeometry(this));
+		mapControlGeometrySelected(MapViewUIUtilities.selectAllGeometry(this));
 	}
 
 	/**
 	 * 反选
 	 */
 	public void reverseSelection() {
-		mapControlGeometrySelected(MapViewUtilties.reverseSelection(this));
+		mapControlGeometrySelected(MapViewUIUtilities.reverseSelection(this));
 	}
 
 	private void mapControlGeometrySelected(int selectGeometryCount) {
@@ -1352,7 +1354,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	@Override
 	public void updataSelectNumber() {
-		((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(MapViewUtilties.calculateSelectNumber(this)));
+		((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).setText(String.valueOf(MapViewUIUtilities.calculateSelectNumber(this)));
 		updataLayersTreeSelection();
 	}
 
@@ -1403,14 +1405,21 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				DatasetVector datasetVector = selection.getDataset();
 				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
 				Geometry geometry = recordset.getGeometry();
-				ArrayList<IProperty> properties = new ArrayList<IProperty>();
-				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
-				properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
-				properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
-				if (geometry instanceof GeoText||geometry instanceof GeoText3D) {
-					properties.add(GeometryPropertyFactory.getGeometryGeoTextPropertyControl(recordset));
+
+				if (geometry != null) {
+					ArrayList<IProperty> properties = new ArrayList<IProperty>();
+					properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
+					properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
+					properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
+					if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
+						properties.add(GeometryPropertyFactory.getGeometryGeoTextPropertyControl(recordset));
+					}
+					Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(properties.toArray(new IProperty[properties.size()]));
+				} else {
+
+					// 如果在 GeometrySelected 事件里删除了被选中对象，执行到这里 geometry 就是 null，此时应清空对象属性面板
+					Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 				}
-				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(properties.toArray(new IProperty[properties.size()]));
 			} else {
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 			}
@@ -1436,7 +1445,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (activeLayers != null && activeLayers.length > 0) {
 			for (int i = 0; i < activeLayers.length; i++) {
 				if (activeLayers[i].getDataset() instanceof DatasetVector) {
-					TabularUtilties.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
+					TabularUtilities.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
 				}
 			}
 		}
@@ -1478,7 +1487,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 						Map map = formMap.getMapControl().getMap();
-						MapViewUtilties.addDatasetsToMap(map, datasets, true);
+						MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
 					}
 				}
 			} catch (Exception e) {

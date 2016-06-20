@@ -16,7 +16,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 public class CtrlActionDatasourceOpenDirectory extends CtrlAction {
 
@@ -36,7 +36,7 @@ public class CtrlActionDatasourceOpenDirectory extends CtrlAction {
 			String path = datasource.getConnectionInfo().getServer();
 			File file = new File(path);
 			if (file.exists()) {
-				if (SystemPropertyUtilties.isWindows()) {
+				if (SystemPropertyUtilities.isWindows()) {
 					Runtime.getRuntime().exec("explorer.exe /select, " + file.getPath());
 				} else {
 					Application.getActiveApplication().getOutput()

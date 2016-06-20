@@ -15,10 +15,10 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.GeometryUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -35,14 +35,14 @@ public class UnionEditor extends AbstractEditor {
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
 					.getMapControl().getMap(), datasetType);
 			if (form.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor(environment.getMapControl());
+				CursorUtilities.setWaitCursor(environment.getMapControl());
 				union(environment, form.getEditLayer(), form.getPropertyData());
-				TabularUtilties.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 			
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
@@ -53,9 +53,9 @@ public class UnionEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean enable = false;
 		if (environment.getEditProperties().getSelectedGeometryCount() > 1 // 选中数至少2个
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)
 				&& environment.getEditProperties().getEditableDatasetTypes().size() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)) {
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)) {
 			enable = true;
 		}
 		return enable;
@@ -73,7 +73,7 @@ public class UnionEditor extends AbstractEditor {
 
 			for (Layer layer : selectedLayers) {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
-					result = GeometryUtilties.union(result, GeometryUtilties.union(layer), true);
+					result = GeometryUtilities.union(result, GeometryUtilities.union(layer), true);
 				}
 			}
 

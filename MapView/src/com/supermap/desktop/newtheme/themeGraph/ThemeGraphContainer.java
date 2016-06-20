@@ -8,7 +8,7 @@ import com.supermap.data.Point2D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -19,8 +19,8 @@ import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -585,7 +585,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			int selectColumn = e.getColumn();
 			if (selectColumn == TABLE_COLUMN_CAPTION) {
 				String caption = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-				if (!StringUtilties.isNullOrEmptyString(caption)) {
+				if (!StringUtilities.isNullOrEmptyString(caption)) {
 					// 如果输入为数值且段值合法时修改段值
 					setGraphItemCaption(selectRow, caption);
 				} else {
@@ -596,7 +596,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			if (selectColumn == TABLE_COLUMN_EXPRESSION) {
 				String graphExpression = themeGraph.getItem(selectRow).getGraphExpression();
 				String expression = tableGraphInfo.getValueAt(selectRow, selectColumn).toString();
-				if (!StringUtilties.isNullOrEmptyString(expression) && !expression.equalsIgnoreCase(graphExpression)) {
+				if (!StringUtilities.isNullOrEmptyString(expression) && !expression.equalsIgnoreCase(graphExpression)) {
 					ThemeGraphItem item = themeGraph.getItem(selectRow);
 					item.setGraphExpression(expression);
 					item.setCaption(expression);
@@ -1201,7 +1201,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				String tempOffsetY = themeGraph.getOffsetY();
-				if (StringUtilties.isNullOrEmptyString(tempOffsetY)) {
+				if (StringUtilities.isNullOrEmptyString(tempOffsetY)) {
 					tempOffsetY = "0";
 				}
 				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
@@ -1218,7 +1218,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				String tempOffsetX = themeGraph.getOffsetX();
-				if (StringUtilties.isNullOrEmptyString(tempOffsetX)) {
+				if (StringUtilities.isNullOrEmptyString(tempOffsetX)) {
 					tempOffsetX = "0";
 				}
 				Dataset[] datasets = ThemeUtil.getDatasets(themeGraphLayer, datasetVector);
@@ -1262,7 +1262,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	class GraphSizeChangeListener implements DocumentListener {
 		private void setGraphMaxValue() {
 			String maxValue = textFieldMaxValue.getText();
-			if (StringUtilties.isNumber(maxValue) && Double.compare(Double.parseDouble(maxValue), 0.0) > 0) {
+			if (StringUtilities.isNumber(maxValue) && Double.compare(Double.parseDouble(maxValue), 0.0) > 0) {
 				themeGraph.setMaxGraphSize(Double.parseDouble(maxValue));
 				refreshMapAtOnce();
 			}
@@ -1270,7 +1270,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 
 		private void setGraphMinValue() {
 			String minValue = textFieldMinValue.getText();
-			if (StringUtilties.isNumber(minValue) && Double.compare(Double.parseDouble(minValue), 0.0) > 0) {
+			if (StringUtilities.isNumber(minValue) && Double.compare(Double.parseDouble(minValue), 0.0) > 0) {
 				themeGraph.setMinGraphSize(Double.parseDouble(minValue));
 				refreshMapAtOnce();
 			}
@@ -1594,7 +1594,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		public void propertyChange(PropertyChangeEvent evt) {
 			int[] selectRows = tableGraphInfo.getSelectedRows();
 			map = ThemeGuideFactory.getMapControl().getMap();
-			themeGraphLayer = MapUtilties.findLayerByName(map, layerName);
+			themeGraphLayer = MapUtilities.findLayerByName(map, layerName);
 			if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme() instanceof ThemeGraph) {
 				datasetVector = (DatasetVector) themeGraphLayer.getDataset();
 				themeGraph = new ThemeGraph((ThemeGraph) themeGraphLayer.getTheme());
@@ -1708,7 +1708,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeGraphLayer = MapUtilties.findLayerByName(this.map, this.layerName);
+		this.themeGraphLayer = MapUtilities.findLayerByName(this.map, this.layerName);
 		if (null != themeGraphLayer && null != themeGraphLayer.getTheme() && themeGraphLayer.getTheme().getType() == ThemeType.GRAPH) {
 			ThemeGraph nowGraph = ((ThemeGraph) this.themeGraphLayer.getTheme());
 			nowGraph.clear();

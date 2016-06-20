@@ -20,8 +20,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
@@ -196,7 +196,7 @@ public class MeasureDistance extends Measure {
 
 
 			labelTextBoxCurrent.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureCurrentDistance"), decimalFormat.format(curLength), unitName));
-			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 5 + getSystemLength()) * SystemPropertyUtilities.getSystemSizeRate()), 23);
 			mapControl.add(labelTextBoxCurrent);
 			labelTextBoxCurrent.setVisible(true);
 			Point point = mapControl.getMap().mapToPixel(new Point2D(trackingEvent.getX(), trackingEvent.getY()));
@@ -216,7 +216,7 @@ public class MeasureDistance extends Measure {
 
 			Point pntTemp3 = new Point(((int) x), ((int) y));
 			labelTextBoxTotle.setText(MessageFormat.format(CoreProperties.getString("String_Map_MeasureTotalDistance"), decimalFormat.format(totalLength), unitName));
-			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			labelTextBoxTotle.setSize((int) (((labelTextBoxTotle.getText().length() << 3) + 8 + getSystemLength()) * SystemPropertyUtilities.getSystemSizeRate()), 23);
 			labelTextBoxTotle.setLocation(pntTemp3);
 			mapControl.add(labelTextBoxTotle);
 			labelTextBoxTotle.setVisible(true);
@@ -264,7 +264,7 @@ public class MeasureDistance extends Measure {
 				GeoText geotext = new GeoText(part);
 
 				TextStyle textStyle = geotext.getTextStyle();
-				textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
+				textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight * 0.283,
 						mapControl.getMap(), textStyle.isSizeFixed()));
 				textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
 				if (isDrawing) {

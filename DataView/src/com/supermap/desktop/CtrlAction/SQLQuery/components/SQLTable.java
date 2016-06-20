@@ -2,11 +2,12 @@ package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.desktop.CtrlAction.SQLQuery.SqlUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -153,7 +154,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 	public String getSQLExpression() {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < this.getModel().getRowCount(); i++) {
-			if (!StringUtilties.isNullOrEmpty(this.getValueAt(i, 0).toString()) && !StringUtilties.isNullOrEmpty(this.getValueAt(i, 1).toString())) {
+			if (!StringUtilities.isNullOrEmpty(this.getValueAt(i, 0).toString()) && !StringUtilities.isNullOrEmpty(this.getValueAt(i, 1).toString())) {
 				stringBuilder.append(this.getValueAt(i, 0).toString());
 				stringBuilder.append(" ");
 				stringBuilder.append(SqlUtilties.covert(this.getValueAt(i, 1).toString()));
@@ -218,7 +219,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1 && !StringUtilties.isNullOrEmpty(this.getValueAt(rowIndex, columnIndex).toString());
+			return columnIndex == 1 && !StringUtilities.isNullOrEmpty(this.getValueAt(rowIndex, columnIndex).toString());
 		}
 
 		@Override
@@ -235,7 +236,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			if (columnIndex == 0) {
-				if (StringUtilties.isNullOrEmpty(tableDatas.get(rowIndex).getName())) {
+				if (StringUtilities.isNullOrEmpty(tableDatas.get(rowIndex).getName())) {
 					tableDatas.get(rowIndex).setSort("asc");
 				}
 				tableDatas.get(rowIndex).setName(aValue.toString());
@@ -250,7 +251,7 @@ public class SQLTable extends JTable implements ISQLBuildComponent {
 		}
 
 		public void addValue(String data, String sort) {
-			if (tableDatas.size() > 0 && StringUtilties.isNullOrEmpty(tableDatas.get(0).getName())) {
+			if (tableDatas.size() > 0 && StringUtilities.isNullOrEmpty(tableDatas.get(0).getName())) {
 				tableDatas.get(0).setName(data);
 				tableDatas.get(0).setSort(sort);
 			} else {

@@ -13,7 +13,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * 子对象面板
@@ -72,12 +72,13 @@ public class TextPartPanel extends JPanel implements ITextPart {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
+
 				double rotation = (double) spinnerRotation.getValue();
-				if (enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+				if (Double.compare(rotation, ((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).getRotation()) != 0) {
 					((TextPart) enumMap.get(comboBoxSubobject.getSelectedIndex())).setRotation(rotation);
+					textPartTypeMap.put(TextPartType.ROTATION, rotation);
+					fireTextPartChanged(TextPartType.ROTATION);
 				}
-				textPartTypeMap.put(TextPartType.ROTATION, rotation);
-				fireTextPartChanged(TextPartType.ROTATION);
 			}
 		};
 		this.textAreaListener = new DocumentListener() {
@@ -130,7 +131,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		panelPartInfo.add(this.labelSubobject,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
 		panelPartInfo.add(this.comboBoxSubobject,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(2,10,2,10));
 		panelPartInfo.add(this.labelText,           new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(2,10,2,10));
-		panelPartInfo.add(scrollPane, new GridBagConstraintsHelper(0, 2, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(2, 2).setInsets(2,10,2,10));
+		panelPartInfo.add(scrollPane, new GridBagConstraintsHelper(0, 2, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(2, 0).setIpad(0, 40).setInsets(2,10,2,10));
 		//@formatter:on
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setViewportView(textArea);
@@ -143,7 +144,7 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		this.enumMap = new HashMap<Integer, Object>();
 		this.labelRotation = new JLabel();
 		this.spinnerRotation = new JSpinner();
-		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), null, null, new Double(0.1)));
+		this.spinnerRotation.setModel(new SpinnerNumberModel(new Double(0.0), new Double(0.0), new Double(360.0), new Double(1.0)));
 		this.labelSubobject = new JLabel();
 		this.comboBoxSubobject = new JComboBox<String>();
 		this.labelText = new JLabel();
@@ -229,7 +230,14 @@ public class TextPartPanel extends JPanel implements ITextPart {
 		} else {
 			textPartText = ((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).getText();
 		}
-		if (!StringUtilties.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+		if (!StringUtilities.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+			if (!StringUtilities.isNullOrEmptyString(text) && !text.equals(textPartText)) {
+				if (this.enumMap.get(comboBoxSubobject.getSelectedIndex()) instanceof TextPart) {
+					((TextPart) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).setText(text);
+				} else {
+					((TextPart3D) this.enumMap.get(comboBoxSubobject.getSelectedIndex())).setText(text);
+				}
+			}
 			textPartTypeMap.put(TextPartType.TEXT, text);
 			fireTextPartChanged(TextPartType.TEXT);
 		}
@@ -256,6 +264,22 @@ public class TextPartPanel extends JPanel implements ITextPart {
 	@Override
 	public HashMap<Integer, Object> getTextPartInfo() {
 		return enumMap;
+	}
+
+	@Override
+	public void resetGeometry(Geometry geometry) {
+		this.geomerty = geometry;
+		this.enumMap.clear();
+		if (geomerty instanceof GeoText && ((GeoText) geomerty).getPartCount() > 0) {
+			for (int i = 0; i < ((GeoText) geomerty).getPartCount(); i++) {
+				this.enumMap.put(i, ((GeoText) geomerty).getPart(i));
+			}
+		}
+		if (geomerty instanceof GeoText3D && ((GeoText3D) geomerty).getPartCount() > 0) {
+			for (int i = 0; i < ((GeoText3D) geomerty).getPartCount(); i++) {
+				this.enumMap.put(i, ((GeoText3D) geomerty).getPart(i));
+			}
+		}
 	}
 
 }

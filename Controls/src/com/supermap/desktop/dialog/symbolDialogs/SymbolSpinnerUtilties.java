@@ -1,18 +1,22 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 /**
  * @author XiaJt
  */
 public class SymbolSpinnerUtilties {
+	private static DecimalFormat df = new DecimalFormat("0.0");
+
 	private static final FocusAdapter selectAllFocusAdapter = new FocusAdapter() {
 		@Override
 		public void focusGained(final FocusEvent e) {
@@ -29,7 +33,7 @@ public class SymbolSpinnerUtilties {
 
 	public static void initSpinners(double min, double max, double step, String applyPattern, JSpinner... spinners) {
 		for (JSpinner spinner : spinners) {
-			spinner.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_Range"), min, max));
+			spinner.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_Range"), df.format(min), max));
 			SpinnerNumberModel model = new SpinnerNumberModel(min, min, max, step);
 			spinner.setModel(model);
 			JSpinner.NumberEditor numberEditor = (JSpinner.NumberEditor) spinner.getEditor();
@@ -40,7 +44,7 @@ public class SymbolSpinnerUtilties {
 	}
 
 	public static boolean isLegitNumber(double min, double max, String value) {
-		if (StringUtilties.isNullOrEmpty(value)) {
+		if (StringUtilities.isNullOrEmpty(value)) {
 			return false;
 		}
 		if (value.contains("d")) {
@@ -58,7 +62,7 @@ public class SymbolSpinnerUtilties {
 	}
 
 	public static boolean isLegitNumber(int min, int max, String value) {
-		if (StringUtilties.isNullOrEmpty(value)) {
+		if (StringUtilities.isNullOrEmpty(value)) {
 			return false;
 		}
 		if (value.contains("d")) {

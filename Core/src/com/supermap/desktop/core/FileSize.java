@@ -2,7 +2,7 @@ package com.supermap.desktop.core;
 
 import java.math.BigDecimal;
 
-import com.supermap.desktop.utilties.MathUtilties;
+import com.supermap.desktop.utilities.MathUtilities;
 
 public class FileSize {
 	public double size = 0.0;
@@ -34,8 +34,8 @@ public class FileSize {
 		FileSize fileSize = new FileSize(this.size, this.sizeType);
 		if (targetType != this.sizeType) {
 			fileSize.setSizeType(targetType);
-			int targetRatio = Double.valueOf(MathUtilties.log(targetType.getValue(), 2)).intValue();
-			int sourceRatio = Double.valueOf(MathUtilties.log(this.sizeType.getValue(), 2)).intValue();
+			int targetRatio = Double.valueOf(MathUtilities.log(targetType.getValue(), 2)).intValue();
+			int sourceRatio = Double.valueOf(MathUtilities.log(this.sizeType.getValue(), 2)).intValue();
 			int minusRatio = sourceRatio - targetRatio;
 			fileSize.setSize(Math.pow(1024, minusRatio) * this.size);
 		}
@@ -86,8 +86,8 @@ public class FileSize {
 		} else {
 			right.setSizeType(left.getSizeType());
 
-			int targetRatio = Double.valueOf(MathUtilties.log(left.getSizeType().getValue(), 2)).intValue();
-			int sourceRatio = Double.valueOf(MathUtilties.log(right.getSizeType().getValue(), 2)).intValue();
+			int targetRatio = Double.valueOf(MathUtilities.log(left.getSizeType().getValue(), 2)).intValue();
+			int sourceRatio = Double.valueOf(MathUtilities.log(right.getSizeType().getValue(), 2)).intValue();
 			int minusRatio = sourceRatio - targetRatio;
 
 			right.setSize(Math.pow(1024, minusRatio) * left.getSize());

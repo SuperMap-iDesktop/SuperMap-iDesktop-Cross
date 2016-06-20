@@ -8,7 +8,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -21,10 +21,11 @@ import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,7 +75,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			String datasourceName = comboBoxResultDatasource.getSelectItem();
-			if (!StringUtilties.isNullOrEmpty(datasourceName)) {
+			if (!StringUtilities.isNullOrEmpty(datasourceName)) {
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				if (!datasource.getDatasets().isAvailableDatasetName(textFieldResultDataset.getText())) {
 					buttonOk.setEnabled(false);
@@ -433,7 +434,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			String targetDatasourceName = this.comboBoxDatasource.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasourceName);
 			Datasource resultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(resultDatasourceName);
-			Dataset dataset = DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
+			Dataset dataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 			// 进度条实现
 			FormProgress progress = new FormProgress();
 			progress.setTitle(DataTopologyProperties.getString("String_TopoRegionTitle"));
@@ -457,7 +458,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				String datasetName = this.comboBoxDataset.getSelectItem();
 				String datasourceName = this.comboBoxDatasource.getSelectItem();
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-				Dataset targetDataset = DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
+				Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 				JDialogTopoAdvance advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
 				advance.setVisible(true);
 			}

@@ -7,9 +7,12 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.table.AbstractTableModel;
+
 import java.sql.Time;
+import java.util.HashMap;
 
 /**
  * 属性表的TableModel
@@ -23,9 +26,11 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient FieldInfos fieldInfos;
 	private transient FieldInfos fieldInfosDataset;
 	private int nowRow = 0;
-//	private TabularCache tabularCache = new TabularCache();
-
-
+	// private TabularCache tabularCache = new TabularCache();
+	//用于存放行值和recordset的ID之间的关系
+	private HashMap<Integer, Object> rowIndexMap = new HashMap<Integer, Object>();
+	//用于存放行值和ID与行值之间的关系
+	private HashMap<Object,Integer> idMap = new HashMap<Object,Integer>();
 	public TabularTableModel(Recordset recordset) {
 		setRecordset(recordset);
 	}
@@ -71,19 +76,19 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-//		return 0;
+		// return 0;
 		if (recordset == null || recordset.isClosed()) {
 			return null;
 		}
 		// 缓存用处效果不明显
-//		int key = getKey(rowIndex, columnIndex);
-//		Object value = tabularCache.getValue(key);
-//		if (null == value) {
+		// int key = getKey(rowIndex, columnIndex);
+		// Object value = tabularCache.getValue(key);
+		// if (null == value) {
 		Object value = null;
 		moveToRow(rowIndex);
 		value = recordset.getFieldValue(columnIndex);
-//			tabularCache.updateValue(key, value);
-//		}
+		// tabularCache.updateValue(key, value);
+		// }
 		return value;
 	}
 
@@ -134,6 +139,15 @@ public class TabularTableModel extends AbstractTableModel {
 			this.recordset = null;
 		}
 		this.recordset = recordset;
+		recordset.moveFirst();
+		int count = 0;
+		while (!recordset.isEOF()) {
+			Object value = recordset.getFieldValue(0);
+			rowIndexMap.put(count, value);
+			idMap.put(value, count);
+			recordset.moveNext();
+			count++;
+		}
 		init();
 		fireTableStructureChanged();
 	}
@@ -142,34 +156,42 @@ public class TabularTableModel extends AbstractTableModel {
 		return this.recordset;
 	}
 
-//	public void updateData(int row, int column, Object data) {
-//		if (recordset == null) {
-//			return;
-//		}
-//
-//		moveToRow(row);
-//		try {
-//			// 判断Data是否为空
-//			boolean isDataNull = false;
-//			if (data == null)
-//				isDataNull = true;
-//			else if (data instanceof String && ((String) data).length() <= 0) {
-//				isDataNull = true;
-//			}
-//
-//			if ((!isDataNull || recordset.getFieldInfos().get(column).isRequired()) && (recordset.getFieldValue(column) == null
-//					|| !recordset.getFieldValue(column).equals(data))) {
-//
-//				recordset.edit();
-//				if (recordset.setFieldValue(column, data)) {
-//					recordset.update();
-//				}
-//			}
-//		} catch (Exception e) {
-//			deadException(e);
-//			// everything will be fine
-//		}
-//	}
+	// public void updateData(int row, int column, Object data) {
+	// if (recordset == null) {
+	// return;
+	// }
+	//
+	// moveToRow(row);
+	// try {
+	// // 判断Data是否为空
+	// boolean isDataNull = false;
+	// if (data == null)
+	// isDataNull = true;
+	// else if (data instanceof String && ((String) data).length() <= 0) {
+	// isDataNull = true;
+	// }
+	//
+	// if ((!isDataNull || recordset.getFieldInfos().get(column).isRequired()) && (recordset.getFieldValue(column) == null
+	// || !recordset.getFieldValue(column).equals(data))) {
+	//
+	// recordset.edit();
+	// if (recordset.setFieldValue(column, data)) {
+	// recordset.update();
+	// }
+	// }
+	// } catch (Exception e) {
+	// deadException(e);
+	// // everything will be fine
+	// }
+	// }
+
+	public HashMap<Integer, Object> getRowIndexMap() {
+		return rowIndexMap;
+	}
+
+	public HashMap<Object, Integer> getIdMap() {
+		return idMap;
+	}
 
 	@Override
 	public Class getColumnClass(int c) {
@@ -182,10 +204,9 @@ public class TabularTableModel extends AbstractTableModel {
 			result = String.class;
 		} else {
 			if (recordset.getRecordCount() > 0) {
-				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					result = Boolean.class;
-				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(
-						FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					return Time.class;
 				} else {
 					result = String.class;

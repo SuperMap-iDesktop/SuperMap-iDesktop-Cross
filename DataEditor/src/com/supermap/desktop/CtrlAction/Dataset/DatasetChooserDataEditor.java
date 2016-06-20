@@ -15,10 +15,11 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.utilties.CharsetUtilties;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -74,10 +75,10 @@ public class DatasetChooserDataEditor {
 		@Override
 		public void run() {
 			try {
-				CursorUtilties.setWaitCursor();
+				CursorUtilities.setWaitCursor();
 				deleteFromDatasource();
 			} finally {
-				CursorUtilties.setDefaultCursor();
+				CursorUtilities.setDefaultCursor();
 			}
 		}
 	}
@@ -143,9 +144,9 @@ public class DatasetChooserDataEditor {
 				temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
 				temp[COLUMN_INDEX_CODINGTYPE] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
 				if (dataset instanceof DatasetVector) {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.toString(((DatasetVector) dataset).getCharset());
+					temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(((DatasetVector) dataset).getCharset());
 				} else {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilties.toString(null);
+					temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(null);
 				}
 				datasetCopyTable.addRow(temp);
 			}

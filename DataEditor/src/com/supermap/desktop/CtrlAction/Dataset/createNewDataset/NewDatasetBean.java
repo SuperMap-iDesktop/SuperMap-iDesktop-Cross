@@ -9,7 +9,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 
@@ -91,7 +91,7 @@ public class NewDatasetBean {
 
 	public boolean createDataset() {
 		boolean result = false;
-		if (!StringUtilties.isNullOrEmpty(datasetName)) {
+		if (!StringUtilities.isNullOrEmpty(datasetName)) {
 			DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
 			info.setEncodeType(encodeType);
 			Dataset dataset = null;

@@ -15,7 +15,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.ui.docking.OperationAbortedException;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
 
@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -37,6 +38,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
@@ -103,8 +105,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
-	};
-	;
+	};;
 	private JList rowHeader;
 	private MouseAdapter rowHeaderMouseMotionListener = new MouseAdapter() {
 
@@ -601,7 +602,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public String getSelectColumnType(int column) {
 		FieldType fieldType = recordset.getFieldInfos().get(column).getType();
-		return FieldTypeUtilties.getFieldTypeName(fieldType);
+		return FieldTypeUtilities.getFieldTypeName(fieldType);
 	}
 
 	@Override
@@ -688,11 +689,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	}
+
 	@Override
 	public JTable getjTableTabular() {
 		return jTableTabular;
 	}
-
 
 	class TableDefaultCellEditor extends DefaultCellEditor {
 
@@ -709,5 +710,21 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			}
 			return tableCellEditorComponent;
 		}
+	}
+	@Override
+	public HashMap<Integer, Object> getRowIndexMap() {
+		HashMap<Integer, Object> result = new HashMap<Integer, Object>();
+		if (this.tabularTableModel != null) {
+			result = this.tabularTableModel.getRowIndexMap();
+		}
+		return result;
+	}
+	@Override
+	public HashMap<Object, Integer> getIdMap() {
+		HashMap<Object, Integer> result = new HashMap<Object, Integer>();
+		if (this.tabularTableModel != null) {
+			result = this.tabularTableModel.getIdMap();
+		}
+		return result;
 	}
 }

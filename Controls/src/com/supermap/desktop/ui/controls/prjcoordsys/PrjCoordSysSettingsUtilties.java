@@ -9,12 +9,20 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings.CoordSysDefine;
-import com.supermap.desktop.utilties.PrjCoordSysUtilties;
+import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
+import javax.swing.*;
+
+import java.awt.*;
 import java.text.MessageFormat;
 
 public class PrjCoordSysSettingsUtilties {
+	private static Dimension labelPreferredSize = new Dimension(20, 23);
+	private static ListCellRenderer<Enum> enumComboBoxItemRender = null;
+	private static SearchItemValueGetter<Enum> searchItemValueGetter = null;
 
 	/**
 	 * 根据投影定义获取对应的投影对象
@@ -96,7 +104,7 @@ public class PrjCoordSysSettingsUtilties {
 					}
 
 					if (prjCoordSys != null) {
-						description = PrjCoordSysUtilties.getDescription(prjCoordSys);
+						description = PrjCoordSysUtilities.getDescription(prjCoordSys);
 					}
 				} else {
 					// 如果当前选中的投影定义有子项，那么就是某一类投影的集合
@@ -108,5 +116,38 @@ public class PrjCoordSysSettingsUtilties {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return description;
+	}
+
+	public static ListCellRenderer<Enum> getEnumComboBoxItemRender() {
+		if (enumComboBoxItemRender == null) {
+			enumComboBoxItemRender = new ListCellRenderer<Enum>() {
+				@Override
+				public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
+					JLabel jLabel = new JLabel();
+					jLabel.setOpaque(true);
+					jLabel.setPreferredSize(labelPreferredSize);
+					jLabel.setText(" " + PrjCoordSysTypeUtilities.getDescribe(value.name()));
+					if (isSelected) {
+						jLabel.setBackground(list.getSelectionBackground());
+					} else {
+						jLabel.setBackground(list.getBackground());
+					}
+					return jLabel;
+				}
+			};
+		}
+		return enumComboBoxItemRender;
+	}
+
+	public static SearchItemValueGetter<Enum> getSearchItemValueGetter() {
+		if (searchItemValueGetter == null) {
+			searchItemValueGetter = new SearchItemValueGetter<Enum>() {
+				@Override
+				public String getSearchString(Enum item) {
+					return PrjCoordSysTypeUtilities.getDescribe(item.name());
+				}
+			};
+		}
+		return searchItemValueGetter;
 	}
 }

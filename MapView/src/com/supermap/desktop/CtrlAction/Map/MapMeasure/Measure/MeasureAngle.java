@@ -15,8 +15,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AngleUnit;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
@@ -24,6 +24,7 @@ import com.supermap.ui.TrackingEvent;
 import com.supermap.ui.TrackingListener;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -253,7 +254,7 @@ public class MeasureAngle extends Measure {
 			}
 			textBox.setLocation(location);
 			textBox.setText(text);
-			textBox.setSize((int) (((textBox.getText().length() << 3) + defaultLength) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+			textBox.setSize((int) (((textBox.getText().length() << 3) + defaultLength) * SystemPropertyUtilities.getSystemSizeRate()), 23);
 			textBox.setVisible(true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -343,7 +344,7 @@ public class MeasureAngle extends Measure {
 					GeoText geotext = new GeoText(part);
 
 					TextStyle textStyle = geotext.getTextStyle();
-					textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
+					textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight * 0.283,
 							mapControl.getMap(), textStyle.isSizeFixed()));
 					textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
 					mapControl.getMap().getTrackingLayer().add(geotext, tag);

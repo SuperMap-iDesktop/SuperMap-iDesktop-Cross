@@ -14,11 +14,12 @@ import com.supermap.desktop.ui.XMLSeparator;
 import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -459,7 +460,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	}
 
 	public void initPreferredSize() {
-		int width = SystemPropertyUtilties.isWindows() ? 0 : 12;
+		int width = SystemPropertyUtilities.isWindows() ? 0 : 12;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
 				width += ((Component) item).getPreferredSize().getWidth();

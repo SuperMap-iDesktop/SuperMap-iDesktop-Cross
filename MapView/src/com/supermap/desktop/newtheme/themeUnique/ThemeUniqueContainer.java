@@ -4,7 +4,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -13,14 +13,15 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
@@ -154,7 +155,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
 			// 属性修改后原有的map，themeUniqueLayer,themeUnique已经不存在，需要重新赋值
 			map = ThemeGuideFactory.getMapControl().getMap();
-			themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+			themeUniqueLayer = MapUtilities.findLayerByName(map, layerName);
 			if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme() instanceof ThemeUnique) {
 				datasetVector = (DatasetVector) themeUniqueLayer.getDataset();
 				themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
@@ -604,7 +605,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					}
 				} else if (e.getSource() == comboBoxOffsetX) {
 					String offsetXExpression = themeUnique.getOffsetX();
-					if (StringUtilties.isNullOrEmpty(offsetXExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetXExpression)) {
 						offsetXExpression = "0";
 					}
 					boolean itemChangedForOffsetX = ThemeUtil.getSqlExpression(comboBoxOffsetX, datasets, comboBoxArrayForOffsetX, offsetXExpression, true);
@@ -614,7 +615,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					}
 				} else if (e.getSource() == comboBoxOffsetY) {
 					String offsetYExpression = themeUnique.getOffsetY();
-					if (StringUtilties.isNullOrEmpty(offsetYExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetYExpression)) {
 						offsetYExpression = "0";
 					}
 					boolean itemChangedForOffsetY = ThemeUtil.getSqlExpression(comboBoxOffsetY, datasets, comboBoxArrayForOffsetY, offsetYExpression, true);
@@ -732,7 +733,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					setUniqueItemUnique(uniqueValue);
 					setUniqueItemCaption(uniqueValue);
 				}
-				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilties.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
+				if (selectColumn == TABLE_COLUMN_CAPTION && !StringUtilities.isNullOrEmptyString(tableUniqueInfo.getValueAt(selectRow, selectColumn))) {
 					String caption = tableUniqueInfo.getValueAt(selectRow, selectColumn).toString();
 					setUniqueItemCaption(caption);
 				}
@@ -1112,7 +1113,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeUniqueLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeUniqueLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeUniqueLayer && null != themeUniqueLayer.getTheme() && themeUniqueLayer.getTheme().getType() == ThemeType.UNIQUE) {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
 			nowThemeUnique.fromXML(themeUnique.toXML());

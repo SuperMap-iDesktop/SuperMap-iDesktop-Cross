@@ -26,7 +26,7 @@ import com.supermap.desktop.util.DataExportCallable;
 import com.supermap.desktop.util.DatasetUtil;
 import com.supermap.desktop.util.ExportFunction;
 import com.supermap.desktop.util.ExportModel;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -578,7 +578,7 @@ public class DataExportFrame extends SmDialog {
 				int state = fileChooserc.showDefaultDialog();
 				String tempfilePath = fileChooserc.getFilePath();
 				File file = null;
-				if (StringUtilties.isNullOrEmpty(tempfilePath)) {
+				if (StringUtilities.isNullOrEmpty(tempfilePath)) {
 					file = new File(fileChooserc.getFilePath());
 				}
 				if (state == JFileChooser.APPROVE_OPTION && null != file) {

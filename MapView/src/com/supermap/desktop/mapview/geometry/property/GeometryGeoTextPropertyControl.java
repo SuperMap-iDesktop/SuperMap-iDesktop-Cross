@@ -53,6 +53,10 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			if (((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable()==false) {
+				panelGeoTextProperty.reset(recordset);
+				initButtonStates(false);
+			}
 			panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
 		}
 	};

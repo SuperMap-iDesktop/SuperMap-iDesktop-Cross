@@ -41,11 +41,20 @@ public class CtrlActionEditorBase extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return getEditor().enble(PluginEnvironment.getGeometryEditManager().instance());
+		boolean flag = false;
+		if (null!=PluginEnvironment.getGeometryEditManager().instance()) {
+			flag = this.getEditor().enble(PluginEnvironment.getGeometryEditManager().instance());
+		}
+		return flag;
+		
 	}
 
 	@Override
 	public boolean check() {
-		return this.getEditor().check(PluginEnvironment.getGeometryEditManager().instance());
+		boolean flag = false;
+		if (null!=PluginEnvironment.getGeometryEditManager().instance()) {
+			flag = this.getEditor().enble(PluginEnvironment.getGeometryEditManager().instance());
+		}
+		return flag;
 	}
 }

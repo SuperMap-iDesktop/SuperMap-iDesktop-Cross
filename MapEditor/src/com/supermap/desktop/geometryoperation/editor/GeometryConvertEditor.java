@@ -21,9 +21,9 @@ import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.RecordsetUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.RecordsetUtilities;
 import com.supermap.mapping.Layer;
 
 public abstract class GeometryConvertEditor extends AbstractEditor {
@@ -42,7 +42,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType());
 
 			if (dialog.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor(environment.getMapControl());
+				CursorUtilities.setWaitCursor(environment.getMapControl());
 				DatasetVector dataset = null;
 
 				if (dialog.isNewDataset()) {
@@ -56,7 +56,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.activateEditor(NullEditor.INSTANCE);
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
@@ -68,7 +68,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			FieldInfos srcFieldInfos = null;
 
 			// 取选中的第一个图层的数据结构(即便选中了多个也只取第一个)
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.getSelection() != null && layer.getSelection().getCount() > 0) {
@@ -110,7 +110,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			desRecordset = desDataset.getRecordset(false, CursorType.DYNAMIC);
 			desRecordset.getBatch().setMaxRecordCount(2000);
 			desRecordset.getBatch().begin();
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				// @formatter:off
@@ -132,7 +132,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 								geometry = DGeometryFactory.create(recordset.getGeometry());
 
 								// 获取当前对象自身的属性
-								Map<String, Object> currentValues = RecordsetUtilties.getFieldValues(recordset);
+								Map<String, Object> currentValues = RecordsetUtilities.getFieldValues(recordset);
 
 								// 拿目标数据集的属性结构来和当前对象属性进行合并处理，相同的字段赋值，目标数据集没有的字段不要
 								Map<String, Object> desValues = mergePropertyData(desDataset, recordset.getFieldInfos(), currentValues);
