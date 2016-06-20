@@ -338,6 +338,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
+			refreshOpenedTabularForms();
 		}
 	};
 
@@ -352,6 +353,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				setSelectedGeometryProperty();
 			}
+			refreshOpenedTabularForms();
 		}
 	};
 
