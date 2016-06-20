@@ -18,6 +18,7 @@ import java.io.File;
 
 public class SmCtrlActionButton extends JButton implements IBaseItem {
 	private static final long serialVersionUID = 1L;
+	private final Dimension preferredSize = new Dimension(31, 31);
 	private transient IForm formClass = null;
 	private transient XMLCommand xmlCommand = null;
 
@@ -31,7 +32,9 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 		} else {
 			this.setText(xmlCommand.getLabel());
 		}
-		this.setPreferredSize(new Dimension(31, 31));
+		this.setMinimumSize(preferredSize);
+		this.setMaximumSize(preferredSize);
+		this.setPreferredSize(preferredSize);
 		this.formClass = formClass;
 		this.xmlCommand = xmlCommand;
 
@@ -151,5 +154,11 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 	@Override
 	public void setCtrlAction(ICtrlAction ctrlAction) {
 		this.xmlCommand.setCtrlAction(ctrlAction);
+	}
+
+
+	@Override
+	public Dimension getPreferredSize() {
+		return preferredSize;
 	}
 }
