@@ -42,8 +42,8 @@ import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
-import com.supermap.desktop.utilties.GeoTypeUtilties;
-import com.supermap.desktop.utilties.PrjCoordSysUtilties;
+import com.supermap.desktop.utilities.GeoTypeUtilities;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
 public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
@@ -252,7 +252,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void updateBasicInfo(Geometry geometry) {
-		this.textFieldGeometryType.setText(GeoTypeUtilties.toString(this.geometry.getType()));
+		this.textFieldGeometryType.setText(GeoTypeUtilities.toString(this.geometry.getType()));
 		this.textFieldLength.setText(BigDecimal.valueOf(this.length.getValue()).toString());
 		this.textFieldPerimeter.setText(BigDecimal.valueOf(this.perimeter.getValue()).toString());
 		this.textFieldArea.setText(BigDecimal.valueOf(this.area.getValue()).toString());
@@ -412,7 +412,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 		try {
 			if (geoLine != null && prjCoordSys != null && prjCoordSys.getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
-				PrjCoordSysUtilties.convertGeoLine(geoLine, prjCoordSys.getGeoCoordSys());
+				PrjCoordSysUtilities.convertGeoLine(geoLine, prjCoordSys.getGeoCoordSys());
 			}
 
 			line = new GeoLine();
@@ -447,7 +447,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 		try {
 			if (geoRegion != null && prjCoordSys != null && prjCoordSys.getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
-				PrjCoordSysUtilties.convertGeoRegion(geoRegion, prjCoordSys.getGeoCoordSys());
+				PrjCoordSysUtilities.convertGeoRegion(geoRegion, prjCoordSys.getGeoCoordSys());
 			}
 
 			region = new GeoRegion();

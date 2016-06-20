@@ -4,9 +4,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.text.DecimalFormat;
 
@@ -90,7 +91,7 @@ public class JPanelFormat extends JPanel {
 		smTextFieldAngle.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
@@ -109,7 +110,7 @@ public class JPanelFormat extends JPanel {
 		smTextFieldA.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
@@ -128,7 +129,7 @@ public class JPanelFormat extends JPanel {
 		smTextFieldM.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
@@ -147,7 +148,7 @@ public class JPanelFormat extends JPanel {
 		smTextFieldS.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {

@@ -3,10 +3,11 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,6 +16,7 @@ import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -82,20 +84,20 @@ public class SmFileChoose extends JFileChooser {
 	 */
 
 	public static Document getDocumentFileChoose() {
-		File file = new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
+		File file = new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
 		if (!file.exists()) {
 			try {
 				if (file.createNewFile()) {
-					FileUtilties.writeToFile(file, ControlsProperties.getString("String_InitRecntFileString"));
+					FileUtilities.writeToFile(file, ControlsProperties.getString("String_InitRecntFileString"));
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
 		}
-		if (SmFileChoose.getFileLastModifiedTime() != new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
+		if (SmFileChoose.getFileLastModifiedTime() != new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
 				.lastModified()) {
-			documentFileChoose = XmlUtilties.getDocument(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
-			SmFileChoose.setFileLastModifiedTime(new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
+			documentFileChoose = XmlUtilities.getDocument(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
+			SmFileChoose.setFileLastModifiedTime(new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
 					.lastModified());
 		}
 		return documentFileChoose;
@@ -194,9 +196,9 @@ public class SmFileChoose extends JFileChooser {
 		getLastPathsNode();
 		lastPathsNode.appendChild(element);
 		try {
-			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
+			XmlUtilities.saveXml(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
 					getEncodingType());
-			SmFileChoose.setFileLastModifiedTime(new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
+			SmFileChoose.setFileLastModifiedTime(new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true))
 					.lastModified());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -335,7 +337,7 @@ public class SmFileChoose extends JFileChooser {
 
 				StringBuilder allFileFilter = new StringBuilder();
 				for (int i = 0; i < everyoneFileFilters.length; i++) {
-					if (StringUtilties.isNullOrEmpty(everyoneFileFilters[i])) {
+					if (StringUtilities.isNullOrEmpty(everyoneFileFilters[i])) {
 						continue;
 					}
 					allFileFilter.append(everyoneFileFilters[i].split("\\|"));
@@ -497,9 +499,9 @@ public class SmFileChoose extends JFileChooser {
 		nowNode.getAttributes().getNamedItem("LastPath").setNodeValue(menuPath);
 		getEncodingType();
 		try {
-			XmlUtilties.saveXml(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
+			XmlUtilities.saveXml(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true), documentFileChoose,
 					encodingType);
-			setFileLastModifiedTime(new File(PathUtilties.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true)).lastModified());
+			setFileLastModifiedTime(new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true)).lastModified());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

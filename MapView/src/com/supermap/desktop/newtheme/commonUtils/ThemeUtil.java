@@ -16,11 +16,11 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
 /**
@@ -113,7 +113,7 @@ public class ThemeUtil {
 		comboBoxExpression.setEditable(true);
 		comboBoxExpression.removeAllItems();
 		getFieldComboBox(comboBoxExpression, datasetVector, joinItems, comboBoxArray, isDataType);
-		if (StringUtilties.isNullOrEmpty(tempExpression)) {
+		if (StringUtilities.isNullOrEmpty(tempExpression)) {
 			tempExpression = "";
 		}
 		comboBoxExpression.setSelectedItem(tempExpression);
@@ -239,7 +239,7 @@ public class ThemeUtil {
 			}
 			if (dialogResult == DialogResult.OK) {
 				String filter = sqlDialog.getQueryParameter().getAttributeFilter();
-				if (!StringUtilties.isNullOrEmpty(filter)) {
+				if (!StringUtilities.isNullOrEmpty(filter)) {
 					if (!comboBoxArray.contains(filter) && !filter.equals(expression)) {
 						jComboBoxField.insertItemAt(filter, allItems - 1);
 						jComboBoxField.setSelectedIndex(allItems - 1);
@@ -279,7 +279,7 @@ public class ThemeUtil {
 			datasets[0] = datasetVector;
 			for (int i = 1; i < datasets.length; i++) {
 				String tableName = layer.getDisplayFilter().getJoinItems().get(i - 1).getForeignTable();
-				datasets[i] = DatasetUtilties.getDatasetFromDatasource(tableName, datasetVector.getDatasource());
+				datasets[i] = DatasetUIUtilities.getDatasetFromDatasource(tableName, datasetVector.getDatasource());
 			}
 		}
 		return datasets;

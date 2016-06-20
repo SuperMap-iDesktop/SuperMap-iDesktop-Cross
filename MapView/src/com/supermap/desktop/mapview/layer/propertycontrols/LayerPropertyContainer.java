@@ -12,7 +12,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.LayerUtilties;
+import com.supermap.desktop.utilities.LayerUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerCaptionChangedEvent;
 import com.supermap.mapping.LayerCaptionChangedListener;
@@ -28,6 +28,7 @@ import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -336,7 +337,7 @@ public class LayerPropertyContainer extends JPanel {
 	private boolean isActiveLayersContain() {
 		try {
 			for (Layer activedLayer : activedLayers) {
-				if (LayerUtilties.isContainLayer(formMap.getMapControl().getMap().getLayers(), activedLayer)) {
+				if (LayerUtilities.isContainLayer(formMap.getMapControl().getMap().getLayers(), activedLayer)) {
 					return true;
 				}
 			}

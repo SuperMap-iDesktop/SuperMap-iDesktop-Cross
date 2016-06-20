@@ -2,10 +2,11 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
 import javax.swing.event.EventListenerList;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -173,7 +174,7 @@ public abstract class LayerPropertyModel implements Cloneable {
 	protected abstract void apply(Layer layer);
 
 	protected final void checkPropertyEnabled(String propertyName, boolean enabled) throws InvalidPropertyException {
-		if (StringUtilties.isNullOrEmpty(propertyName)) {
+		if (StringUtilities.isNullOrEmpty(propertyName)) {
 			throw new InvalidPropertyException();
 		}
 

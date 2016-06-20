@@ -11,16 +11,17 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit.DatasetWrap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
-import com.supermap.desktop.controls.utilties.WorkspaceTreeManagerUtilties;
+import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 import javax.swing.*;
+
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
@@ -34,7 +35,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 
 	@Override
 	public void change(PrjCoordSys targetPrj) {
-		CursorUtilties.setWaitCursor();
+		CursorUtilities.setWaitCursor();
 		try {
 			this.prj = targetPrj;
 			this.datasource.setPrjCoordSys(this.prj);
@@ -42,7 +43,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 			if (isApplyToDatasets()) {
 				boolean isDatasetOpened = false;
 				for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-					if (DatasetWrap.isDatasetOpened(datasource.getDatasets().get(i))) {
+					if (DatasetUtilities.isDatasetOpened(datasource.getDatasets().get(i))) {
 						isDatasetOpened = true;
 						break;
 					}
@@ -50,7 +51,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 				if ((isDatasetOpened && JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
 						ControlsProperties.getString("String_DatasetNotClosed"), datasource.getAlias())))
 						|| !isDatasetOpened) {
-					DatasetWrap.CloseDataset(datasource.getDatasets());
+					DatasetUtilities.closeDataset(datasource.getDatasets());
 					for (int i = 0; i < this.datasource.getDatasets().getCount(); i++) {
 						this.datasource.getDatasets().get(i).setPrjCoordSys(this.prj);
 					}
@@ -59,7 +60,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 
@@ -70,14 +71,14 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 			// 关闭数据集
 			boolean isDatasetOpened = false;
 			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-				if (DatasetWrap.isDatasetOpened(datasource.getDatasets().get(i))) {
+				if (DatasetUtilities.isDatasetOpened(datasource.getDatasets().get(i))) {
 					isDatasetOpened = true;
 				}
 			}
 			if ((isDatasetOpened && JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(MessageFormat.format(
 					ControlsProperties.getString("String_DatasetNotClosed"), datasource.getAlias())))
 					|| !isDatasetOpened) {
-				DatasetWrap.CloseDataset(datasource.getDatasets());
+				DatasetUtilities.closeDataset(datasource.getDatasets());
 				FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.doWork(new ConvertProgressCallable(this.datasource, method, parameter, targetPrj));
 			}
@@ -86,7 +87,8 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 	}
 
 	private boolean isApplyToDatasets() {
-		return UICommonToolkit.showConfirmDialogYesNo(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), this.datasource.getAlias())) == 0;
+		return UICommonToolkit
+				.showConfirmDialogYesNo(MessageFormat.format(ControlsProperties.getString("String_ApplyPrjCoordSys"), this.datasource.getAlias())) == 0;
 	}
 
 	private class ConvertProgressCallable extends UpdateProgressCallable {
@@ -166,7 +168,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 						}
 					}
 				}
-				WorkspaceTreeManagerUtilties.refreshNode(this.datasource);
+				WorkspaceTreeManagerUIUtilities.refreshNode(this.datasource);
 			} catch (Exception e) {
 				result = false;
 				Application.getActiveApplication().getOutput().output(e);

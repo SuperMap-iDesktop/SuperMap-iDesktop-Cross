@@ -11,8 +11,8 @@ import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
@@ -26,6 +26,7 @@ import com.supermap.ui.TrackedListener;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -191,7 +192,7 @@ public class CreateTextAction {
 			this.editingGeoText = (GeoText) e.getGeometry();
 			this.editingGeoText.getTextStyle().setSizeFixed(false);
 			// DEFAULT_INPUT_HEIGHT / 2 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilties.pixelLength(this.mapControl));
+			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilities.pixelLength(this.mapControl));
 
 			// 获取 GeoText 的位置，将文本编辑控件显示到那个位置
 			Point2D centerPointMap = this.editingGeoText.getInnerPoint();
@@ -223,7 +224,7 @@ public class CreateTextAction {
 					// 表明有待提交的编辑
 					if (this.editingGeoText != null) {
 						String text = this.textFieldInput.getText();
-						if (!StringUtilties.isNullOrEmpty(text)) {
+						if (!StringUtilities.isNullOrEmpty(text)) {
 							TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
 							this.editingGeoText.setPart(0, textPart);
 							recordset.addNew(this.editingGeoText);

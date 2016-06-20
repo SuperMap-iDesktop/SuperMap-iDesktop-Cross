@@ -15,7 +15,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.ui.docking.OperationAbortedException;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
 
@@ -602,7 +602,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public String getSelectColumnType(int column) {
 		FieldType fieldType = recordset.getFieldInfos().get(column).getType();
-		return FieldTypeUtilties.getFieldTypeName(fieldType);
+		return FieldTypeUtilities.getFieldTypeName(fieldType);
 	}
 
 	@Override

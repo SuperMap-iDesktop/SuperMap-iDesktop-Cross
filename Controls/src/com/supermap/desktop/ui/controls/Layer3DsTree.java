@@ -3,7 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.JTreeUtilties;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
@@ -43,6 +43,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -565,7 +566,7 @@ public class Layer3DsTree extends JTree {
 			Layer3DMap layer3DMap = (Layer3DMap) layer3D;
 			addLayer3DMapContent(itemNode, layer3DMap.getMap());
 		}
-		JTreeUtilties.locateNode(Layer3DsTree.this, itemNode);
+		JTreeUIUtilities.locateNode(Layer3DsTree.this, itemNode);
 	}
 
 

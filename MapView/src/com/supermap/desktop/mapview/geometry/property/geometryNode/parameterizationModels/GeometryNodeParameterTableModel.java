@@ -1,7 +1,8 @@
 package com.supermap.desktop.mapview.geometry.property.geometryNode.parameterizationModels;
 
 import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
+
 import org.jdesktop.swingx.treetable.TreeTableModel;
 
 import javax.swing.event.TreeModelListener;
@@ -99,7 +100,7 @@ public class GeometryNodeParameterTableModel extends DefaultTableModel implement
 
 	private int getRow(Object node) {
 		String userObject = (String) ((DefaultMutableTreeNode) node).getUserObject();
-		if (StringUtilties.isNullOrEmpty(userObject)) {
+		if (StringUtilities.isNullOrEmpty(userObject)) {
 			return 0;
 		}
 		for (int i = 0; i < geometryParameterModel.getRowCount(); i++) {

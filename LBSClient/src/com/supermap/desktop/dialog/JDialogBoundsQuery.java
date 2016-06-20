@@ -31,7 +31,7 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 public class JDialogBoundsQuery extends SmDialog {
 	/**
@@ -303,7 +303,7 @@ public class JDialogBoundsQuery extends SmDialog {
 	 */
 	private void buttonOKActionPerformed() {
 		try {
-			CursorUtilties.setWaitCursor();
+			CursorUtilities.setWaitCursor();
 			
 			String datasetName = this.textDatasetName.getText();
 			String temp = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -318,7 +318,7 @@ public class JDialogBoundsQuery extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 	

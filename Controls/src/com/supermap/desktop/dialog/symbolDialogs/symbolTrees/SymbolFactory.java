@@ -3,7 +3,7 @@ package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 import com.supermap.data.Resources;
 import com.supermap.data.SymbolLibrary;
 import com.supermap.data.SymbolType;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
 
 /**
  * 符号工厂类
@@ -24,7 +24,7 @@ public class SymbolFactory {
 		} else if (symbolType == SymbolType.FILL) {
 			return resources.getFillLibrary();
 		}
-		LogUtilties.debug("unSupport symbol type :" + symbolType.name());
+		LogUtilities.debug("unSupport symbol type :" + symbolType.name());
 		return null;
 	}
 }

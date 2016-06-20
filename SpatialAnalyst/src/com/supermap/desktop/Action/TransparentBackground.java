@@ -1,11 +1,12 @@
 package com.supermap.desktop.Action;
 
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.util.HashMap;
 
@@ -29,7 +30,7 @@ public class TransparentBackground extends JPanel {
 		this.setBackground(new Color(255, 255, 255, 220));
 		initResources();
 		initComponents();
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			this.setSize(230, 200);
 		} else {
 			this.setSize(268, 220);

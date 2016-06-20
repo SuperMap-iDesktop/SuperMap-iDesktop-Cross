@@ -14,8 +14,8 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DatasetTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -24,6 +24,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -296,7 +297,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		for (int i = 0; i < enums.length; i++) {
 			DatasetType datasetType = (DatasetType) enums[i];
 			if (datasetType != DatasetType.TEXTURE && datasetType != DatasetType.VOLUME) {
-				strDatasetTypeMap.put(datasetType, DatasetTypeUtilties.toString(datasetType));
+				strDatasetTypeMap.put(datasetType, DatasetTypeUtilities.toString(datasetType));
 				statisticMap.put(datasetType, 0);
 			}
 		}
@@ -356,7 +357,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 
 			@Override
 			public boolean checkPassword(String password) {
-				return StringUtilties.stringEquals(newPassword, password);
+				return StringUtilities.stringEquals(newPassword, password);
 			}
 		});
 		dialog.setVisible(true);

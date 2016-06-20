@@ -15,12 +15,12 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
@@ -106,12 +106,12 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			Dataset dataset = (Dataset) this.resultDatasetVector;
 			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
 				if (formMap == null) {
-					String name = MapUtilties.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
+					String name = MapUtilities.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
 					formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
 				}
 				if (formMap != null) {
 					Map map = formMap.getMapControl().getMap();
-					MapUtilties.addDatasetToMap(map, dataset, true);
+					MapUtilities.addDatasetToMap(map, dataset, true);
 					map.refresh();
 					UICommonToolkit.getLayersManager().setMap(map);
 					// 新建的地图窗口，修改默认的Action为漫游
@@ -122,7 +122,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
-			MapViewUtilties.addDatasetsToMap(map, datasets, false);
+			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
 		}
 	}
 

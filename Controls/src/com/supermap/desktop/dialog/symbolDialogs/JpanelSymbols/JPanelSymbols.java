@@ -5,9 +5,10 @@ import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolGroup;
 import com.supermap.desktop.dialog.symbolDialogs.WrapLayout;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -220,7 +221,7 @@ public abstract class JPanelSymbols extends JPanel {
 
 	private void search() {
 		for (int i = 0; i < this.getComponentCount(); i++) {
-			this.getComponent(i).setVisible(StringUtilties.isNullOrEmpty(searchString)
+			this.getComponent(i).setVisible(StringUtilities.isNullOrEmpty(searchString)
 					|| ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase())
 					|| String.valueOf(((SymbolPanel) this.getComponent(i)).getSymbolID()).toLowerCase().contains(searchString.toLowerCase()));
 		}

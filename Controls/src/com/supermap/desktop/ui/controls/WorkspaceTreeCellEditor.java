@@ -4,16 +4,16 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit.DatasetWrap;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.LayoutUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.LayoutUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -56,7 +57,6 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		} else {
 			offset = renderer.getIconTextGap();
 		}
-
 
 	}
 
@@ -145,12 +145,12 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_IllegalDatasetName"));
 				} else {
 					boolean isClosed = true;
-					if (DatasetWrap.isDatasetOpened(dataset)) {
+					if (DatasetUtilities.isDatasetOpened(dataset)) {
 						// show dialog
 						int dialogResult = UICommonToolkit.showConfirmDialog(MessageFormat.format(
 								ControlsProperties.getString("String_DatasetOpenWhileRename"), dataset.getName()));
 						if (dialogResult == JOptionPane.OK_OPTION) {
-							DatasetWrap.CloseDataset(dataset);
+							DatasetUtilities.closeDataset(dataset);
 						} else {
 							isClosed = false;
 						}
@@ -167,7 +167,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String layoutName = (String) data;
 					if (layoutName.equals(stringTextField)) {
 						// 点错了！
-					} else if (LayoutUtilties.checkAvailableLayoutName(stringTextField, layoutName)) {
+					} else if (LayoutUtilities.checkAvailableLayoutName(stringTextField, layoutName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
 							if (formManager.get(i) instanceof IFormLayout && formManager.get(i).getText().equals(layoutName)) {
@@ -187,7 +187,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String mapName = (String) data;
 					if (mapName.equals(stringTextField)) {
 						// 点错了！
-					} else if (MapUtilties.checkAvailableMapName(stringTextField, mapName)) {
+					} else if (MapUtilities.checkAvailableMapName(stringTextField, mapName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
 							if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
@@ -206,7 +206,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 					String sceneName = (String) data;
 					if (sceneName.equals(stringTextField)) {
 						// 点错了
-					} else if (SceneUtilties.checkAvailableSceneName(stringTextField, sceneName)) {
+					} else if (SceneUIUtilities.checkAvailableSceneName(stringTextField, sceneName)) {
 						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 						for (int i = 0; i < formManager.getCount(); i++) {
 							if (formManager.get(i) instanceof IFormScene && formManager.get(i).getText().equals(sceneName)) {
@@ -364,110 +364,49 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 				}
 			}
 		}
-/*		DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) value;
-		TreeNodeData tempNodeData = (TreeNodeData) defaultMutableTreeNode.getUserObject();
-		Object data = tempNodeData.getData();
-		if (data instanceof Workspace) {
-//			editingIcon = InternalImageIconFactory.WORKSPACE;
-			if ("UntitledWorkspace".equals(currentWorkspace.getCaption())) {
-				stringTextField = ControlsProperties.getString(ControlsProperties.WorkspaceNodeDefaultName);
-			} else {
-				stringTextField = currentWorkspace.getCaption();
-			}
-		} else if (data instanceof Datasources) {
-//			editingIcon = InternalImageIconFactory.DATASOURCES;
-			stringTextField = ControlsProperties.getString(ControlsProperties.DatasourcesNodeName);
-		} else if (data instanceof Datasource) {
-			Datasource tempDatasource = (Datasource) tempNodeData.getData();
-			EngineType engineType = tempDatasource.getEngineType();
-			if (engineType.equals(EngineType.SQLPLUS)) {
-//				editingIcon = InternalImageIconFactory.DATASOURCE_SQL;
-			} else if (engineType.equals(EngineType.IMAGEPLUGINS)) {
-//				editingIcon = InternalImageIconFactory.DATASOURCE_IMAGEPLUGINS;
-			} else if (engineType.equals(EngineType.OGC)) {
-//				editingIcon = InternalImageIconFactory.DATASOURCE_OGC;
-			} else if (engineType.equals(EngineType.ORACLEPLUS)) {
-//				editingIcon = InternalImageIconFactory.DATASOURCE_ORACLE;
-			} else if (engineType.equals(EngineType.UDB)) {
-//				editingIcon = InternalImageIconFactory.DATASOURCE_UDB;
-			}
-			stringTextField = tempDatasource.getAlias();
-		} else if (data instanceof Dataset) {
-			Dataset tempDataset = (Dataset) tempNodeData.getData();
-			DatasetType instanceDatasetType = tempDataset.getType();
-			if (instanceDatasetType.equals(DatasetType.POINT)) {
-//				editingIcon = InternalImageIconFactory.DT_POINT;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.LINE)) {
-//				editingIcon = InternalImageIconFactory.DT_LINE;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.LINEM)) {
-//				editingIcon = InternalImageIconFactory.DT_LINEM;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.REGION)) {
-				//			editingIcon = InternalImageIconFactory.DT_REGION;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.CAD)) {
-//				editingIcon = InternalImageIconFactory.DT_CAD;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.GRID)) {
-//				editingIcon = InternalImageIconFactory.DT_GRID;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.IMAGE)) {
-//				editingIcon = InternalImageIconFactory.DT_IMAGE;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.LINKTABLE)) {
-//				editingIcon = InternalImageIconFactory.DT_LINKTABLE;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.NETWORK)) {
-//				editingIcon = InternalImageIconFactory.DT_NETWORK;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.TABULAR)) {
-//				editingIcon = InternalImageIconFactory.DT_TABULAR;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.TEXT)) {
-//				editingIcon = InternalImageIconFactory.DT_TEXT;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.TOPOLOGY)) {
-//				editingIcon = InternalImageIconFactory.DT_TOPOLOGY;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.WCS)) {
-//				editingIcon = InternalImageIconFactory.DT_WCS;
-				stringTextField = tempDataset.getName();
-			} else if (instanceDatasetType.equals(DatasetType.WMS)) {
-//				editingIcon = InternalImageIconFactory.DT_WMS;
-				stringTextField = tempDataset.getName();
-			}
-		} else if (data instanceof Maps) {
-//			editingIcon = InternalImageIconFactory.MAPS;
-			stringTextField = ControlsProperties.getString(ControlsProperties.MapsNodeName);
-		} else if (tempNodeData.getType().equals(NodeDataType.MAP_NAME)) {
-//			editingIcon = InternalImageIconFactory.MAP;
-			stringTextField = tempNodeData.getData().toString().trim();
-		} else if (data instanceof Scenes) {
-//			editingIcon = InternalImageIconFactory.SCENES;
-			stringTextField = ControlsProperties.getString(ControlsProperties.ScenesNodeName);
-		} else if (tempNodeData.getType().equals(NodeDataType.SCENE_NAME)) {
-//			editingIcon = InternalImageIconFactory.SCENE;
-			stringTextField = tempNodeData.getData().toString().trim();
-		} else if (data instanceof Layouts) {
-//			editingIcon = InternalImageIconFactory.LAYOUTS;
-			stringTextField = ControlsProperties.getString(ControlsProperties.LayoutsNodeName);
-		} else if (tempNodeData.getType().equals(NodeDataType.LAYOUT_NAME)) {
-//			editingIcon = InternalImageIconFactory.LAYOUT;
-			stringTextField = tempNodeData.getData().toString().trim();
-		} else if (data instanceof Resources) {
-//			editingIcon = InternalImageIconFactory.RESOURCES;
-			stringTextField = ControlsProperties.getString(ControlsProperties.ResourcesNodeName);
-		} else if (data instanceof SymbolMarkerLibrary) {
-//			editingIcon = InternalImageIconFactory.SYMBOLMARKERLIB;
-			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolMarkerLibNodeName);
-		} else if (data instanceof SymbolLineLibrary) {
-//			editingIcon = InternalImageIconFactory.SYMBOLLINELIB;
-			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolLineLibNodeName);
-		} else if (data instanceof SymbolFillLibrary) {
-//			editingIcon = InternalImageIconFactory.SYMBOLFillLIB;
-			stringTextField = ControlsProperties.getString(ControlsProperties.SymbolFillLibNodeName);
-		}*/
+		/*
+		 * DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) value; TreeNodeData tempNodeData = (TreeNodeData)
+		 * defaultMutableTreeNode.getUserObject(); Object data = tempNodeData.getData(); if (data instanceof Workspace) { // editingIcon =
+		 * InternalImageIconFactory.WORKSPACE; if ("UntitledWorkspace".equals(currentWorkspace.getCaption())) { stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.WorkspaceNodeDefaultName); } else { stringTextField = currentWorkspace.getCaption(); } } else if
+		 * (data instanceof Datasources) { // editingIcon = InternalImageIconFactory.DATASOURCES; stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.DatasourcesNodeName); } else if (data instanceof Datasource) { Datasource tempDatasource =
+		 * (Datasource) tempNodeData.getData(); EngineType engineType = tempDatasource.getEngineType(); if (engineType.equals(EngineType.SQLPLUS)) { //
+		 * editingIcon = InternalImageIconFactory.DATASOURCE_SQL; } else if (engineType.equals(EngineType.IMAGEPLUGINS)) { // editingIcon =
+		 * InternalImageIconFactory.DATASOURCE_IMAGEPLUGINS; } else if (engineType.equals(EngineType.OGC)) { // editingIcon =
+		 * InternalImageIconFactory.DATASOURCE_OGC; } else if (engineType.equals(EngineType.ORACLEPLUS)) { // editingIcon =
+		 * InternalImageIconFactory.DATASOURCE_ORACLE; } else if (engineType.equals(EngineType.UDB)) { // editingIcon = InternalImageIconFactory.DATASOURCE_UDB;
+		 * } stringTextField = tempDatasource.getAlias(); } else if (data instanceof Dataset) { Dataset tempDataset = (Dataset) tempNodeData.getData();
+		 * DatasetType instanceDatasetType = tempDataset.getType(); if (instanceDatasetType.equals(DatasetType.POINT)) { // editingIcon =
+		 * InternalImageIconFactory.DT_POINT; stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.LINE)) { // editingIcon
+		 * = InternalImageIconFactory.DT_LINE; stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.LINEM)) { //
+		 * editingIcon = InternalImageIconFactory.DT_LINEM; stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.REGION))
+		 * { // editingIcon = InternalImageIconFactory.DT_REGION; stringTextField = tempDataset.getName(); } else if
+		 * (instanceDatasetType.equals(DatasetType.CAD)) { // editingIcon = InternalImageIconFactory.DT_CAD; stringTextField = tempDataset.getName(); } else if
+		 * (instanceDatasetType.equals(DatasetType.GRID)) { // editingIcon = InternalImageIconFactory.DT_GRID; stringTextField = tempDataset.getName(); } else
+		 * if (instanceDatasetType.equals(DatasetType.IMAGE)) { // editingIcon = InternalImageIconFactory.DT_IMAGE; stringTextField = tempDataset.getName(); }
+		 * else if (instanceDatasetType.equals(DatasetType.LINKTABLE)) { // editingIcon = InternalImageIconFactory.DT_LINKTABLE; stringTextField =
+		 * tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.NETWORK)) { // editingIcon = InternalImageIconFactory.DT_NETWORK;
+		 * stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.TABULAR)) { // editingIcon =
+		 * InternalImageIconFactory.DT_TABULAR; stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.TEXT)) { //
+		 * editingIcon = InternalImageIconFactory.DT_TEXT; stringTextField = tempDataset.getName(); } else if (instanceDatasetType.equals(DatasetType.TOPOLOGY))
+		 * { // editingIcon = InternalImageIconFactory.DT_TOPOLOGY; stringTextField = tempDataset.getName(); } else if
+		 * (instanceDatasetType.equals(DatasetType.WCS)) { // editingIcon = InternalImageIconFactory.DT_WCS; stringTextField = tempDataset.getName(); } else if
+		 * (instanceDatasetType.equals(DatasetType.WMS)) { // editingIcon = InternalImageIconFactory.DT_WMS; stringTextField = tempDataset.getName(); } } else
+		 * if (data instanceof Maps) { // editingIcon = InternalImageIconFactory.MAPS; stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.MapsNodeName); } else if (tempNodeData.getType().equals(NodeDataType.MAP_NAME)) { // editingIcon =
+		 * InternalImageIconFactory.MAP; stringTextField = tempNodeData.getData().toString().trim(); } else if (data instanceof Scenes) { // editingIcon =
+		 * InternalImageIconFactory.SCENES; stringTextField = ControlsProperties.getString(ControlsProperties.ScenesNodeName); } else if
+		 * (tempNodeData.getType().equals(NodeDataType.SCENE_NAME)) { // editingIcon = InternalImageIconFactory.SCENE; stringTextField =
+		 * tempNodeData.getData().toString().trim(); } else if (data instanceof Layouts) { // editingIcon = InternalImageIconFactory.LAYOUTS; stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.LayoutsNodeName); } else if (tempNodeData.getType().equals(NodeDataType.LAYOUT_NAME)) { //
+		 * editingIcon = InternalImageIconFactory.LAYOUT; stringTextField = tempNodeData.getData().toString().trim(); } else if (data instanceof Resources) { //
+		 * editingIcon = InternalImageIconFactory.RESOURCES; stringTextField = ControlsProperties.getString(ControlsProperties.ResourcesNodeName); } else if
+		 * (data instanceof SymbolMarkerLibrary) { // editingIcon = InternalImageIconFactory.SYMBOLMARKERLIB; stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.SymbolMarkerLibNodeName); } else if (data instanceof SymbolLineLibrary) { // editingIcon =
+		 * InternalImageIconFactory.SYMBOLLINELIB; stringTextField = ControlsProperties.getString(ControlsProperties.SymbolLineLibNodeName); } else if (data
+		 * instanceof SymbolFillLibrary) { // editingIcon = InternalImageIconFactory.SYMBOLFillLIB; stringTextField =
+		 * ControlsProperties.getString(ControlsProperties.SymbolFillLibNodeName); }
+		 */
 	}
 }

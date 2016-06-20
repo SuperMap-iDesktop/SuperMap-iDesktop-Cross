@@ -8,7 +8,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -21,6 +21,7 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -251,7 +252,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			String datasetName = this.comboBoxDataset.getSelectItem();
 			String datasourceName = this.comboBoxDatasource.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
-			Dataset targetDataset = DatasetUtilties.getDatasetFromDatasource(datasetName, datasource);
+			Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 			JDialogTopoAdvance advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
 			advance.setVisible(true);
 		} catch (Exception e) {

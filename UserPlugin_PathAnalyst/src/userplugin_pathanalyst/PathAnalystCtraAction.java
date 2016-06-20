@@ -24,7 +24,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
@@ -51,7 +51,7 @@ public class PathAnalystCtraAction extends CtrlAction {
 	public void run() {
 		Application.getActiveApplication().getOutput().output(PathAnalystProperties.getString("String_PathAnalyst_Start"));
 		String rootPath = Application.getActiveApplication().getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		rootPath = PathUtilties.getParentPath(rootPath);
+		rootPath = PathUtilities.getParentPath(rootPath);
 		Application.getActiveApplication().getOutput().output(PathAnalystProperties.getString("String_PathAnalyst_CurrentPath") + rootPath);
 
 		try {

@@ -4,9 +4,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -155,7 +156,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	@Override
 	public void output(Exception exception) {
 		try {
-			LogUtilties.error(exception.getMessage(), exception);
+			LogUtilities.error(exception.getMessage(), exception);
 			output(exception.getMessage(), InfoType.Exception);
 			StackTraceElement[] elements = exception.getStackTrace();
 			for (StackTraceElement element : elements) {
@@ -168,7 +169,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(Throwable e) {
-		LogUtilties.error(e.getMessage(), e);
+		LogUtilities.error(e.getMessage(), e);
 		output(e.getMessage(), InfoType.Exception);
 		StackTraceElement[] elements = e.getStackTrace();
 		for (StackTraceElement element : elements) {
@@ -184,7 +185,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	 */
 	private void output(String message, boolean isOutputLog) {
 		if (isOutputLog) {
-			LogUtilties.outPut(message);
+			LogUtilities.outPut(message);
 		}
 		String messageTemp = message;
 		try {

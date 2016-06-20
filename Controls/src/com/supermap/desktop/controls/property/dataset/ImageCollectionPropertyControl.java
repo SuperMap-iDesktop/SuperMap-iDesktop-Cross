@@ -14,12 +14,13 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.PixelFormatUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.PixelFormatUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,7 +96,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				String currentNoValue = smTextFieldNoValue.getText();
-				if (StringUtilties.isNullOrEmpty(currentNoValue)) {
+				if (StringUtilities.isNullOrEmpty(currentNoValue)) {
 					return false;
 				}
 				if (currentNoValue.contains("d")) {
@@ -193,10 +194,10 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 
 	private void fillComponents() {
 		this.smTextFieldBandCount.setText(Integer.toString(this.datasetImageCollection.getBandCount()));
-		this.smTextFieldNoValue.setText(DoubleUtilties.toString(noValue, 6));
+		this.smTextFieldNoValue.setText(DoubleUtilities.toString(noValue, 6));
 		this.smTextFieldHasPyramid.setText(CommonProperties.getString(this.datasetImageCollection.getHasPyramid() ? CommonProperties.True : CommonProperties.False));
 		this.smTextFieldDatasetCount.setText(String.valueOf(datasetImageCollection.getCount()));
-		this.smTextFieldPixelType.setText(PixelFormatUtilties.toString(datasetImageCollection.getPixelFormat()));
+		this.smTextFieldPixelType.setText(PixelFormatUtilities.toString(datasetImageCollection.getPixelFormat()));
 
 	}
 

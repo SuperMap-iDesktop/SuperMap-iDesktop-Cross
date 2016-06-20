@@ -16,9 +16,9 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FieldTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -219,7 +220,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		JComboBox<String> fieldTypeEditorControl = new JComboBox<String>();
 		Enum[] values = FieldType.getEnums(FieldType.class);
 		for (Enum value : values) {
-			fieldTypeEditorControl.addItem(FieldTypeUtilties.getFieldTypeName((FieldType) value));
+			fieldTypeEditorControl.addItem(FieldTypeUtilities.getFieldTypeName((FieldType) value));
 		}
 		DefaultCellEditor fieldTypeEditor = new DefaultCellEditor(fieldTypeEditorControl);
 		this.tableRecordset.setDefaultEditor(FieldType.class, fieldTypeEditor);
@@ -390,7 +391,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			tableModel.removeAllRows();
 			tableModel.intializeRows(this.datasetVector.getFieldInfos());
 
-			TabularUtilties.refreshTabularForm(this.datasetVector);
+			TabularUtilities.refreshTabularForm(this.datasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -585,7 +586,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			} else if (columnIndex == FIELD_CAPTION) {
 				return fieldInfo.getCaption();
 			} else if (columnIndex == FIELD_TYPE) {
-				return FieldTypeUtilties.getFieldTypeName(fieldInfo.getType());
+				return FieldTypeUtilities.getFieldTypeName(fieldInfo.getType());
 			} else if (columnIndex == MAX_LENGTH) {
 				return String.valueOf(fieldInfo.getMaxLength());
 			} else if (columnIndex == DEFAULT_VALUE) {
@@ -635,8 +636,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 						}
 					}
 				} else if (columnIndex == FIELD_TYPE) {
-					this.fieldInfos.get(rowIndex).setType(FieldTypeUtilties.getFieldType((String) aValue));
-					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilties.getFieldTypeMaxLength(FieldTypeUtilties.getFieldType((String) aValue)));
+					this.fieldInfos.get(rowIndex).setType(FieldTypeUtilities.getFieldType((String) aValue));
+					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilities.getFieldTypeMaxLength(FieldTypeUtilities.getFieldType((String) aValue)));
 					this.fireTableDataChanged();
 				} else if (columnIndex == MAX_LENGTH) {
 					try {
@@ -661,7 +662,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				} else if (columnIndex == IS_REQUIRED) {
 					Boolean isRequired = Boolean.valueOf(aValue.toString());
 					this.fieldInfos.get(rowIndex).setRequired(isRequired);
-					if (isRequired && StringUtilties.isNullOrEmpty(this.fieldInfos.get(rowIndex).getDefaultValue())) {
+					if (isRequired && StringUtilities.isNullOrEmpty(this.fieldInfos.get(rowIndex).getDefaultValue())) {
 						this.fieldInfos.get(rowIndex).setDefaultValue("0");
 						fireTableCellUpdated(rowIndex, DEFAULT_VALUE);
 						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, DEFAULT_VALUE));

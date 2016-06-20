@@ -5,9 +5,10 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.ui.XMLCommand;
-import com.supermap.desktop.utilties.CtrlActionUtilties;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -50,7 +51,7 @@ public class SmTextField extends JTextField implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilities.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {

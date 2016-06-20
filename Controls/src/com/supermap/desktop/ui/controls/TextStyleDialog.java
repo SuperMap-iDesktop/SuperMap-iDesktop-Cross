@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,10 +14,10 @@ import java.util.Map.Entry;
 
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.textStyle.*;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 
 /**
  * 文本风格对话框
@@ -26,7 +27,7 @@ import com.supermap.desktop.utilties.MapUtilties;
 public class TextStyleDialog extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private transient JButton buttonClose;
 
 	private transient ITextStyle textBasicPanel;
@@ -35,48 +36,25 @@ public class TextStyleDialog extends SmDialog {
 	private String text;
 	private TextStyle tempTextStyle;// 用于预览的TextStyle
 	private Double rotation;
-	private List<Geometry> geometries;
 	private Recordset recordset;
 	private transient TextStyleChangeListener textStyleChangeListener;
 	private ActionListener buttonCloseListener;
+	private boolean isDisposed;
 
-	public TextStyleDialog() {
-		super();
-	}
+	private static volatile TextStyleDialog dialog;
 
-	public void showDialog(Recordset recordset, List<Geometry> geometries) {
-		this.recordset = recordset;
-		this.geometries = geometries;
-		this.geometry = geometries.get(0);
-		if (geometry instanceof GeoText) {
-			text = ((GeoText) geometry).getText();
-			tempTextStyle = ((GeoText) geometry).getTextStyle();
-			rotation = ((GeoText) geometry).getPart(0).getRotation();
-
-		} else {
-			text = ((GeoText3D) geometry).getText();
-			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
+	public static TextStyleDialog createInstance() {
+		if (null == dialog) {
+			dialog = new TextStyleDialog();
+			dialog.setVisible(true);
 		}
-		initMainPanel();
-		registEvents();
-		this.setVisible(true);
+		return dialog;
 	}
-	
-	private void initMainPanel() {
-		this.textBasicPanel = new TextBasicPanel();
-		this.textBasicPanel.setTextStyle(tempTextStyle);
-		this.textBasicPanel.setOutLineWidth(false);
-		this.textBasicPanel.setUnityVisible(false);
-		this.textBasicPanel.setProperty(false);
-		this.textBasicPanel.initTextBasicPanel();
-		this.textBasicPanel.enabled(true);
-		this.getContentPane().setLayout(new GridBagLayout());
-		this.buttonClose = ComponentFactory.createButtonClose();
-		//@formatter:off
-		this.getContentPane().add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
-		this.getContentPane().add(textBasicPanel.getEffectPanel(),   new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
-		this.getContentPane().add(this.buttonClose,                  new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 1).setInsets(5, 10, 10, 10));
-		//@formatter:on
+
+	private TextStyleDialog() {
+		super();
+		setModal(false);
+		isDisposed = false;
 		this.setSize(360, 480);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -90,14 +68,51 @@ public class TextStyleDialog extends SmDialog {
 		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 	}
 
+	public void showDialog(Recordset recordset) {
+		if (null != this.recordset) {
+			this.recordset.dispose();
+		}
+		this.recordset = recordset;
+		this.recordset.moveFirst();
+		this.geometry = this.recordset.getGeometry();
+		if (geometry instanceof GeoText) {
+			text = ((GeoText) geometry).getText();
+			tempTextStyle = ((GeoText) geometry).getTextStyle();
+			rotation = ((GeoText) geometry).getPart(0).getRotation();
+		} else {
+			text = ((GeoText3D) geometry).getText();
+			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
+		}
+		initMainPanel();
+		registEvents();
+	}
+
+	private void initMainPanel() {
+		JPanel panel = (JPanel) this.getContentPane();
+		panel.removeAll();
+		this.textBasicPanel = new TextBasicPanel();
+		this.textBasicPanel.setTextStyle(tempTextStyle);
+		this.textBasicPanel.setOutLineWidth(false);
+		this.textBasicPanel.setUnityVisible(false);
+		this.textBasicPanel.setProperty(false);
+		this.textBasicPanel.initTextBasicPanel();
+		this.textBasicPanel.enabled(true);
+		this.getContentPane().setLayout(new GridBagLayout());
+		this.buttonClose = ComponentFactory.createButtonClose();
+		//@formatter:off
+		panel.add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+		panel.add(textBasicPanel.getEffectPanel(),   new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+		panel.add(this.buttonClose,                  new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(5, 10, 10, 10));
+		//@formatter:on
+		panel.updateUI();
+	}
+
 	public void registEvents() {
 		this.textStyleChangeListener = new TextStyleChangeListener() {
 
 			@Override
 			public void modify(TextStyleType newValue) {
-				if (!newValue.equals(TextStyleType.FIXEDSIZE) && !newValue.equals(TextStyleType.FONTWIDTH)) {
-					ResetTextStyleUtil.resetTextStyle(newValue, tempTextStyle, textBasicPanel.getResultMap().get(newValue));
-				}
+				updateGeometries(newValue);
 			}
 		};
 
@@ -105,58 +120,66 @@ public class TextStyleDialog extends SmDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TextStyleDialog.this.dispose();
+				if (!isDisposed) {
+					disposeInfo();
+				}
 			}
 		};
 		this.addWindowListener(new WindowAdapter() {
-			
+
 			@Override
-			public void windowClosed(WindowEvent e) {
-				removeEvents();
+			public void windowClosing(WindowEvent e) {
+				if (!isDisposed) {
+					disposeInfo();
+				}
 			}
-			
+
 		});
 		removeEvents();
 		this.textBasicPanel.addTextStyleChangeListener(this.textStyleChangeListener);
+		this.buttonClose.addActionListener(this.buttonCloseListener);
 	};
 
-	private void buttonConfirmClicked() {
-		HashMap<TextStyleType, Object> resultMap = textBasicPanel.getResultMap();
-		if (geometry instanceof GeoText) {
-			for (int i = 0; i < geometries.size(); i++) {
-				TextStyle tempStyle = ((GeoText) geometries.get(i)).getTextStyle();
-				resetTextStyle(resultMap, tempStyle);
-			}
-		} else {
-			for (int i = 0; i < geometries.size(); i++) {
-				TextStyle tempStyle = ((GeoText3D) geometries.get(i)).getTextStyle();
-				resetTextStyle(resultMap, tempStyle);
-			}
-		}
-		int count = 0;
+	private void disposeInfo() {
+		removeEvents();
+		dialog.dispose();
+		dialog = null;
+		recordset.dispose();
+		isDisposed = true;
+	}
+
+	private void updateGeometries(TextStyleType newValue) {
 		recordset.moveFirst();
 		while (!recordset.isEOF()) {
 			recordset.edit();
-			recordset.setGeometry(geometries.get(count));
+			Geometry tempGeometry = recordset.getGeometry();
+			if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+				ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+			}
+			if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
+				ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+				ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
+						textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+			}
+			if (tempGeometry instanceof GeoText3D && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+				ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+			}
+			if (tempGeometry instanceof GeoText3D && newValue.equals(TextStyleType.FIXEDSIZE)) {
+				ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+				ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText3D) tempGeometry).getTextStyle(),
+						textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+			}
+			recordset.setGeometry(tempGeometry);
 			recordset.update();
-			geometries.get(count).dispose();
-			count++;
 			recordset.moveNext();
 		}
+
 		recordset.dispose();
-		MapUtilties.getActiveMap().refresh();
+		MapUtilities.getActiveMap().refresh();
 		TextStyleDialog.this.dispose();
 	}
 
-	private void resetTextStyle(HashMap<TextStyleType, Object> resultMap, TextStyle tempStyle) {
-		Iterator<?> iterator = resultMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<TextStyleType, Object> entry = (Entry<TextStyleType, Object>) iterator.next();
-			ResetTextStyleUtil.resetTextStyle(entry.getKey(), tempStyle, entry.getValue());
-		}
-	}
-	
-	private void removeEvents(){
+	private void removeEvents() {
 		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
 	}

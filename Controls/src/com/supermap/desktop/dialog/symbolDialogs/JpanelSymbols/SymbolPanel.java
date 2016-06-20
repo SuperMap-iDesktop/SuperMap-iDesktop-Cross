@@ -7,9 +7,10 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.text.MessageFormat;
@@ -84,7 +85,7 @@ public abstract class SymbolPanel extends JPanel {
 	private String getFitText(Font font) {
 		int line = 1;
 		String result = symbolName;
-		if (FontUtilties.getStringWidth(symbolName, font) > fontSize) {
+		if (FontUtilities.getStringWidth(symbolName, font) > fontSize) {
 			StringBuilder builder = new StringBuilder();
 			int fontCount = 0;
 			builder.append("<html>");
@@ -93,7 +94,7 @@ public abstract class SymbolPanel extends JPanel {
 				if (fontCount > fontSize) {
 					builder.append(c);
 				} else {
-					int width = FontUtilties.getStringWidth(String.valueOf(c), font);
+					int width = FontUtilities.getStringWidth(String.valueOf(c), font);
 					if (width + fontCount > fontSize) {
 						line++;
 						builder.append("<br>");
@@ -106,7 +107,7 @@ public abstract class SymbolPanel extends JPanel {
 			builder.append("</html>");
 			result = builder.toString();
 		}
-		Dimension preferredSize = new Dimension(fontSize + 20, (int) (labelDimension.getHeight() + line * (FontUtilties.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 5)));
+		Dimension preferredSize = new Dimension(fontSize + 20, (int) (labelDimension.getHeight() + line * (FontUtilities.getStringHeight(CommonProperties.getString(CommonProperties.OK), font) + 5)));
 		this.setMinimumSize(preferredSize);
 		this.setPreferredSize(preferredSize);
 		this.setMaximumSize(preferredSize);

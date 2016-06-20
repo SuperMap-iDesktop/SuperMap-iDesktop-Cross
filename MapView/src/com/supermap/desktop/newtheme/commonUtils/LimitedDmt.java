@@ -4,7 +4,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class LimitedDmt extends PlainDocument {
 
@@ -31,7 +31,7 @@ public class LimitedDmt extends PlainDocument {
 				}
 			}
 			String insertStr = new String(upper, 0, length);
-			if (!StringUtilties.isNullOrEmptyString(insertStr) && StringUtilties.isNumeric(insertStr)) {
+			if (!StringUtilities.isNullOrEmptyString(insertStr) && StringUtilities.isNumeric(insertStr)) {
 				super.insertString(offset, new String(upper, 0, length), attr);
 			}
 		}

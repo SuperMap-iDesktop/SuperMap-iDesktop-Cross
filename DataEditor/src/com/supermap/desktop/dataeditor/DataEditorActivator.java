@@ -8,7 +8,7 @@ import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.LogUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
 
 public class DataEditorActivator implements BundleActivator {
 

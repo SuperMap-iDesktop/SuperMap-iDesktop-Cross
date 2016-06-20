@@ -12,9 +12,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogRegionExtractCenter;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 /**
@@ -31,28 +31,28 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 			JDialogRegionExtractCenter dialog = new JDialogRegionExtractCenter();
 
 			if (dialog.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor(environment.getMapControl());
+				CursorUtilities.setWaitCursor(environment.getMapControl());
 				convert(environment, dialog.getDesDatasource(), dialog.getNewDatasetName(), dialog.getMax(), dialog.getMin(), dialog.isRemoveSrc());
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.activateEditor(NullEditor.INSTANCE);
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getSelectedLayers().size() == 1
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.REGION);
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.REGION);
 	}
 
 	private void convert(EditEnvironment environment, Datasource desDatasource, String newDatasetName, double maxWidth, double minWidth, boolean isRemoveSrc) {
 		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				// @formatter:off

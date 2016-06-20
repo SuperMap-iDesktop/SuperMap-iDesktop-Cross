@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.Layer3DsTree;
@@ -34,7 +34,7 @@ public class CtrlActionLayer3DVisible extends CtrlAction {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
 			TreeNodeData data = (TreeNodeData) node.getUserObject();
 
-			boolean isVisible = !SceneUtilties.getObjectVisitble(data);
+			boolean isVisible = !SceneUIUtilities.getObjectVisitble(data);
 			for (int i = 0; i < layer3DsTree.getSelectionCount(); i++) {
 				node = (DefaultMutableTreeNode) layer3DsTree.getSelectionPaths()[i].getLastPathComponent();
 				data = (TreeNodeData) node.getUserObject();

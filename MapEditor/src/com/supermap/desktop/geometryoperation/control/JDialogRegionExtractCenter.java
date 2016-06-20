@@ -19,7 +19,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -28,7 +28,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class JDialogRegionExtractCenter extends SmDialog {
 
@@ -142,7 +142,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		public boolean isTextFieldValueLegit(String textFieldValue) {
 			boolean result = false;
 
-			if (StringUtilties.isNumber(textFieldValue)) {
+			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
 				return value >= JDialogRegionExtractCenter.this.min && value <= Double.MAX_VALUE;
 			}
@@ -161,7 +161,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		public boolean isTextFieldValueLegit(String textFieldValue) {
 			boolean result = false;
 
-			if (StringUtilties.isNumber(textFieldValue)) {
+			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
 				return value >= 0d && value <= JDialogRegionExtractCenter.this.max;
 			}
@@ -313,7 +313,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	private void textFieldMaxTextChange() {
 		if (this.textFieldMax.isLegitValue(this.textFieldMax.getText())) {
 			this.max = Double.valueOf(this.textFieldMax.getText());
-		} else if (!StringUtilties.isNullOrEmpty(this.textFieldMax.getText())) {
+		} else if (!StringUtilities.isNullOrEmpty(this.textFieldMax.getText())) {
 			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_RegionExtractCenterMaxError"));
 		}
 	}
@@ -321,7 +321,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	private void textFieldMinTextChange() {
 		if (this.textFieldMin.isLegitValue(this.textFieldMin.getText())) {
 			this.min = Double.valueOf(this.textFieldMin.getText());
-		} else if (!StringUtilties.isNullOrEmpty(this.textFieldMin.getText())) {
+		} else if (!StringUtilities.isNullOrEmpty(this.textFieldMin.getText())) {
 			Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_RegionExtractCenterMinError"));
 		}
 	}

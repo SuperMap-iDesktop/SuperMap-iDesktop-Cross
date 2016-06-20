@@ -20,7 +20,7 @@ import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableMo
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilties.GeometryTypeUtilties;
+import com.supermap.desktop.utilities.GeometryTypeUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
@@ -31,6 +31,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -402,7 +403,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 			currentTableModel.setModel(tableModels.get(0));
 		}
 		buttonAdd.setEnabled(isButtonEnable());
-		textFieldGeometryType.setText(GeometryTypeUtilties.toString(geometry.getGeometry().getType()));
+		textFieldGeometryType.setText(GeometryTypeUtilities.toString(geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(getSubPartCount()));
 		resetNodeCount();
 		tableNodeInfo.getColumnModel().getColumn(0).setMaxWidth(50);

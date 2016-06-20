@@ -4,10 +4,11 @@ import com.supermap.desktop.core.IteratorEnumerationAdapter;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeoCompound;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.utilties.GeometryTypeUtilties;
+import com.supermap.desktop.utilities.GeometryTypeUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -92,6 +93,6 @@ public class GeometryCompoundTreeNode extends DefaultMutableTreeNode {
 
 	@Override
 	public String toString() {
-		return GeometryTypeUtilties.toString(geometry.getGeometry().getType());
+		return GeometryTypeUtilities.toString(geometry.getGeometry().getType());
 	}
 }

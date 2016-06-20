@@ -7,7 +7,7 @@ import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetImageCollection;
 import com.supermap.desktop.CtrlAction.Dataset.CtrlActionDeleteImagePyramid;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
 import com.supermap.desktop.properties.CommonProperties;
@@ -171,7 +171,7 @@ public class PyramidManagerTableModel extends SortableTableModel {
 				datasets.add(currentDataset);
 			}
 		}
-		datasets = DatasetUtilties.sureDatasetClosed(datasets);
+		datasets = DatasetUIUtilities.sureDatasetClosed(datasets);
 		if (datasets == null || datasets.size() <= 0) {
 			return false;
 		}
@@ -193,7 +193,7 @@ public class PyramidManagerTableModel extends SortableTableModel {
 				datasets.add(currentDataset);
 			}
 		}
-		datasets = DatasetUtilties.sureDatasetClosed(datasets);
+		datasets = DatasetUIUtilities.sureDatasetClosed(datasets);
 		if (datasets == null || datasets.size() <= 0) {
 			return false;
 		}

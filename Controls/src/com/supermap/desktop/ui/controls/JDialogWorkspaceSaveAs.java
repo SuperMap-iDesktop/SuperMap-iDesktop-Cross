@@ -9,8 +9,8 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.PropertyManagerUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.PropertyManagerUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -59,7 +59,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 		listWorkspaceType.setBorder(MetalBorders.getTextBorder());
 		listWorkspaceType.setModel(new ListModel<String>() {
 			// @formatter:off
-			private String[] values = SystemPropertyUtilties.isWindows() ? 
+			private String[] values = SystemPropertyUtilities.isWindows() ? 
 						new String[] { CoreProperties.getString("String_WorkspaceType_File"), CoreProperties.getString("String_WorkspaceType_Oracle"), CoreProperties.getString("String_WorkspaceType_SQL") }: 
 						new String[] { CoreProperties.getString("String_WorkspaceType_File"), CoreProperties.getString("String_WorkspaceType_Oracle")};
 			// @formatter:on
@@ -319,7 +319,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 				saveAs(workspace, this.workspaceConnectionInfo, workspaceName, workspaceName);
 			}
 		}
-		PropertyManagerUtilties.refreshPropertyManager();
+		PropertyManagerUtilities.refreshPropertyManager();
 	}
 
 }
