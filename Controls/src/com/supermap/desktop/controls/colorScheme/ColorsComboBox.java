@@ -4,11 +4,12 @@ import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ColorsUtilties;
+import com.supermap.desktop.controls.utilities.ColorsUIUtilities;
 import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -34,7 +35,7 @@ public class ColorsComboBox extends JComboBox {
 					ItemListener[] itemListeners = ColorsComboBox.this.getItemListeners();
 					removeItemListeners(itemListeners);
 					for (int i = 0; i < getItemCount(); i++) {
-						if (ColorsUtilties.isEqualsColors((Colors) getItemAt(i), selectedItem)) {
+						if (ColorsUIUtilities.isEqualsColors((Colors) getItemAt(i), selectedItem)) {
 							setSelectedIndex(i);
 							addItemListeners(itemListeners);
 							return;

@@ -22,10 +22,10 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -33,17 +33,17 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		CursorUtilties.setWaitCursor(environment.getMapControl());
+		CursorUtilities.setWaitCursor(environment.getMapControl());
 
 		try {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(getTitle(), environment.getMap(), DatasetType.LINE);
 
 			if (formCombination.showDialog() == DialogResult.OK) {
 				jointLine(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 			
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
@@ -54,9 +54,9 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean result = false;
 
-		if (ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.LINE)
+		if (ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.LINE)
 				&& environment.getEditProperties().getSelectedGeometryCount() > 1
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class)) {
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class)) {
 			result = true;
 		}
 		return result;
@@ -99,7 +99,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 			ArrayList<Integer> deleteIDs = new ArrayList<Integer>();
 			// 统一管理后面从记录集中取出来的GeoLine对象的释放
 			ArrayList<GeoLine> releaseGeoLines = new ArrayList<GeoLine>();
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMapControl().getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMapControl().getMap());
 
 			for (Layer layer : layers) {
 				Selection selection = null;

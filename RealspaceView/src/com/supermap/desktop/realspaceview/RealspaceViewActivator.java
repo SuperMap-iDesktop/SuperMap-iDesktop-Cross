@@ -6,15 +6,17 @@ import com.supermap.desktop.FormScene;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CoreProperties;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 public class RealspaceViewActivator implements BundleActivator {
@@ -72,7 +74,7 @@ public class RealspaceViewActivator implements BundleActivator {
 
 			if (form == null) {
 				if (currentName == null || currentName.length() == 0) {
-					currentName = SceneUtilties.getAvailableSceneName(CoreProperties.getString("String_WorkspaceNodeCaptionScene"), true);
+					currentName = SceneUIUtilities.getAvailableSceneName(CoreProperties.getString("String_WorkspaceNodeCaptionScene"), true);
 				}
 
 				formScene = new FormScene(currentName);

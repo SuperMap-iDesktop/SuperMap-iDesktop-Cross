@@ -8,11 +8,12 @@ import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
-import com.supermap.desktop.utilties.ImageStretchTypeUtilties;
+import com.supermap.desktop.utilities.ImageStretchTypeUtilities;
 import com.supermap.mapping.ImageStretchType;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -142,7 +143,7 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 	protected void fillComponents() {
 		if (getLayerPropertyModel() != null) {
 			fillComboBoxStretchType();
-			this.comboBoxStretchType.setSelectedItem(ImageStretchTypeUtilties.toString(getLayerPropertyModel().getStretchType()));
+			this.comboBoxStretchType.setSelectedItem(ImageStretchTypeUtilities.toString(getLayerPropertyModel().getStretchType()));
 			this.textFieldSdDeviationStretchFactor.setValue(getLayerPropertyModel().getStandardDeviationStretchFactor());
 			this.textFieldGaussionStretchRatioFactor.setValue(getLayerPropertyModel().getGaussianStretchRatioFactor());
 			this.checkBoxIsGaussionStMiddleFactor.setSelectedEx(getLayerPropertyModel().isGaussianStretchMiddleFactor());
@@ -172,15 +173,15 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	private void fillComboBoxStretchType() {
 		this.comboBoxStretchType.removeAllItems();
-		this.comboBoxStretchType.addItem(ImageStretchTypeUtilties.toString(ImageStretchType.NONE));
-		this.comboBoxStretchType.addItem(ImageStretchTypeUtilties.toString(ImageStretchType.GAUSSIAN));
-		this.comboBoxStretchType.addItem(ImageStretchTypeUtilties.toString(ImageStretchType.MINIMUMMAXIMUM));
-		this.comboBoxStretchType.addItem(ImageStretchTypeUtilties.toString(ImageStretchType.STANDARDDEVIATION));
+		this.comboBoxStretchType.addItem(ImageStretchTypeUtilities.toString(ImageStretchType.NONE));
+		this.comboBoxStretchType.addItem(ImageStretchTypeUtilities.toString(ImageStretchType.GAUSSIAN));
+		this.comboBoxStretchType.addItem(ImageStretchTypeUtilities.toString(ImageStretchType.MINIMUMMAXIMUM));
+		this.comboBoxStretchType.addItem(ImageStretchTypeUtilities.toString(ImageStretchType.STANDARDDEVIATION));
 	}
 
 	private void comboBoxStretchTypeSelectedChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
-			getModifiedLayerPropertyModel().setStretchType(ImageStretchTypeUtilties.valueOf((String) this.comboBoxStretchType.getSelectedItem()));
+			getModifiedLayerPropertyModel().setStretchType(ImageStretchTypeUtilities.valueOf((String) this.comboBoxStretchType.getSelectedItem()));
 			checkChanged();
 		}
 	}

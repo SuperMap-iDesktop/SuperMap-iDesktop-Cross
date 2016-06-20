@@ -12,8 +12,8 @@ import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.CtrlAction.Utilties.SceneJumpUtilties;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.DialogSaveAsScene;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.WindowType;
@@ -42,6 +42,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -696,7 +697,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 				Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 				IFormScene formScene = (IFormScene) Application.getActiveApplication().getActiveForm();
 				Scene scene = formScene.getSceneControl().getScene();
-				SceneUtilties.addDatasetToScene(scene, datasets);
+				SceneUIUtilities.addDatasetToScene(scene, datasets);
 				scene.refresh();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);

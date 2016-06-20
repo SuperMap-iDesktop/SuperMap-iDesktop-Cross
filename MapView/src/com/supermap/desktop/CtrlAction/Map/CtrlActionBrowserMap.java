@@ -3,7 +3,7 @@ package com.supermap.desktop.CtrlAction.Map;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
@@ -26,7 +26,7 @@ public class CtrlActionBrowserMap extends CtrlAction {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 			String mapName = (String)selectedNodeData.getData();
-			MapViewUtilties.openMap(mapName);
+			MapViewUIUtilities.openMap(mapName);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

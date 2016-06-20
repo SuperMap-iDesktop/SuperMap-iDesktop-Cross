@@ -6,7 +6,8 @@ import com.supermap.desktop.ui.XMLMenus;
 import com.supermap.desktop.ui.XMLStatusbars;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.XMLToolbars;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -300,7 +301,7 @@ public class PluginInfo {
 
 	public void toXML() {
 		Element toolbarsElementTemp = null;
-		Document document = XmlUtilties.getDocument(this.configLocation);
+		Document document = XmlUtilities.getDocument(this.configLocation);
 		if (document != null) {
 			Element documentElement = document.getDocumentElement();
 			NodeList nodeToolbars = documentElement.getElementsByTagName(_XMLTag.g_NodeToolbars);
@@ -332,7 +333,7 @@ public class PluginInfo {
 				}
 
 				try {
-					XmlUtilties.saveXml(this.configLocation, document, document.getXmlEncoding());
+					XmlUtilities.saveXml(this.configLocation, document, document.getXmlEncoding());
 				} catch (FileNotFoundException e) {
 					Application.getActiveApplication().getOutput().output(e);
 				}

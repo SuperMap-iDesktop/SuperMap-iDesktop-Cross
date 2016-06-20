@@ -21,11 +21,12 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
-import com.supermap.desktop.utilties.CharsetUtilties;
+import com.supermap.desktop.utilities.CharsetUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -312,48 +313,48 @@ public class JDialogUnifiedSet extends JDialog {
 			if (dataset instanceof DatasetVector) {
 				if(datasetKind == -1){
 					datasetKind=DATASET_VECTOR;
-					charsetes.add(CharsetUtilties.toString(Charset.OEM));
-					charsetes.add(CharsetUtilties.toString(Charset.EASTEUROPE));
-					charsetes.add(CharsetUtilties.toString(Charset.THAI));
-					charsetes.add(CharsetUtilties.toString(Charset.RUSSIAN));
-					charsetes.add(CharsetUtilties.toString(Charset.BALTIC));
-					charsetes.add(CharsetUtilties.toString(Charset.ARABIC));
-					charsetes.add(CharsetUtilties.toString(Charset.HEBREW));
-					charsetes.add(CharsetUtilties.toString(Charset.VIETNAMESE));
-					charsetes.add(CharsetUtilties.toString(Charset.TURKISH));
-					charsetes.add(CharsetUtilties.toString(Charset.GREEK));
-					charsetes.add(CharsetUtilties.toString(Charset.CHINESEBIG5));
-					charsetes.add(CharsetUtilties.toString(Charset.JOHAB));
-					charsetes.add(CharsetUtilties.toString(Charset.HANGEUL));
-					charsetes.add(CharsetUtilties.toString(Charset.SHIFTJIS));
-					charsetes.add(CharsetUtilties.toString(Charset.MAC));
-					charsetes.add(CharsetUtilties.toString(Charset.SYMBOL));
-					charsetes.add(CharsetUtilties.toString(Charset.DEFAULT));
-					charsetes.add(CharsetUtilties.toString(Charset.ANSI));
-					charsetes.add(CharsetUtilties.toString(Charset.UTF8));
-					charsetes.add(CharsetUtilties.toString(Charset.UTF7));
-					charsetes.add(CharsetUtilties.toString(Charset.WINDOWS1252));
-					charsetes.add(CharsetUtilties.toString(Charset.KOREAN));
-					charsetes.add(CharsetUtilties.toString(Charset.UNICODE));
-					charsetes.add(CharsetUtilties.toString(Charset.CYRILLIC));
-					charsetes.add(CharsetUtilties.toString(Charset.XIA5));
-					charsetes.add(CharsetUtilties.toString(Charset.XIA5GERMAN));
-					charsetes.add(CharsetUtilties.toString(Charset.XIA5SWEDISH));
-					charsetes.add(CharsetUtilties.toString(Charset.XIA5NORWEGIAN));
-					charsetes.add(CharsetUtilties.toString(Charset.GB18030));
+					charsetes.add(CharsetUtilities.toString(Charset.OEM));
+					charsetes.add(CharsetUtilities.toString(Charset.EASTEUROPE));
+					charsetes.add(CharsetUtilities.toString(Charset.THAI));
+					charsetes.add(CharsetUtilities.toString(Charset.RUSSIAN));
+					charsetes.add(CharsetUtilities.toString(Charset.BALTIC));
+					charsetes.add(CharsetUtilities.toString(Charset.ARABIC));
+					charsetes.add(CharsetUtilities.toString(Charset.HEBREW));
+					charsetes.add(CharsetUtilities.toString(Charset.VIETNAMESE));
+					charsetes.add(CharsetUtilities.toString(Charset.TURKISH));
+					charsetes.add(CharsetUtilities.toString(Charset.GREEK));
+					charsetes.add(CharsetUtilities.toString(Charset.CHINESEBIG5));
+					charsetes.add(CharsetUtilities.toString(Charset.JOHAB));
+					charsetes.add(CharsetUtilities.toString(Charset.HANGEUL));
+					charsetes.add(CharsetUtilities.toString(Charset.SHIFTJIS));
+					charsetes.add(CharsetUtilities.toString(Charset.MAC));
+					charsetes.add(CharsetUtilities.toString(Charset.SYMBOL));
+					charsetes.add(CharsetUtilities.toString(Charset.DEFAULT));
+					charsetes.add(CharsetUtilities.toString(Charset.ANSI));
+					charsetes.add(CharsetUtilities.toString(Charset.UTF8));
+					charsetes.add(CharsetUtilities.toString(Charset.UTF7));
+					charsetes.add(CharsetUtilities.toString(Charset.WINDOWS1252));
+					charsetes.add(CharsetUtilities.toString(Charset.KOREAN));
+					charsetes.add(CharsetUtilities.toString(Charset.UNICODE));
+					charsetes.add(CharsetUtilities.toString(Charset.CYRILLIC));
+					charsetes.add(CharsetUtilities.toString(Charset.XIA5));
+					charsetes.add(CharsetUtilities.toString(Charset.XIA5GERMAN));
+					charsetes.add(CharsetUtilities.toString(Charset.XIA5SWEDISH));
+					charsetes.add(CharsetUtilities.toString(Charset.XIA5NORWEGIAN));
+					charsetes.add(CharsetUtilities.toString(Charset.GB18030));
 				}else if (datasetKind != DATASET_VECTOR) {
 					charsetes.clear();
-					charsetes.add(CharsetUtilties.toString(null));
+					charsetes.add(CharsetUtilities.toString(null));
 					checkboxCharset.setEnabled(false);
 					break;
 				}
 			}else {
 				if(datasetKind == -1){
 					datasetKind = DATASET_GRID;
-					charsetes.add(CharsetUtilties.toString(null));
+					charsetes.add(CharsetUtilities.toString(null));
 				}else if(datasetKind != DATASET_GRID){
 					charsetes.clear();
-					charsetes.add(CharsetUtilties.toString(null));
+					charsetes.add(CharsetUtilities.toString(null));
 					checkboxCharset.setEnabled(false);
 					break;
 				}

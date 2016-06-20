@@ -10,10 +10,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 public class CtrlActionDatasourceCloseSelected extends CtrlAction {
 
@@ -33,20 +34,15 @@ public class CtrlActionDatasourceCloseSelected extends CtrlAction {
 					.getActiveDatasources()[0].getAlias());
 			if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 				Datasource activeDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-				// 关闭选中的数据源下的数据集
-				Datasets datasets = activeDatasource.getDatasets();
-				CommonToolkit.DatasetWrap.CloseDataset(datasets);
-				// 关闭数据源
-				boolean flag = Application.getActiveApplication().getWorkspace().getDatasources().close(activeDatasource.getAlias());
 				String resultInfo = "";
-				if (flag) {
+				if (DatasourceUtilities.closeDatasource(activeDatasource)) {
 					Application.getActiveApplication().setActiveDatasources(null);
 					resultInfo = DataViewProperties.getString("String_CloseDatasourseSuccessful");
 				} else {
 					resultInfo = DataViewProperties.getString("String_CloseDatasourseFailed");
 				}
 				Application.getActiveApplication().getOutput().output(resultInfo);
-				ToolbarUtilties.updataToolbarsState();
+				ToolbarUIUtilities.updataToolbarsState();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

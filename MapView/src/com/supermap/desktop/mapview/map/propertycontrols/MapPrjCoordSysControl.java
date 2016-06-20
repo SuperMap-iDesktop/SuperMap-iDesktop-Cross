@@ -9,12 +9,13 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
-import com.supermap.desktop.utilties.PrjCoordSysUtilties;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.plaf.metal.MetalBorders;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -68,7 +69,7 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 		getMap().setPrjCoordSys(currentPrjCoorSys);
 		this.textFieldCoordName.setText(getMap().getPrjCoordSys().getName());
 		this.textFieldCoordUnit.setText(getMap().getPrjCoordSys().getCoordUnit().toString());
-		this.textAreaCoordInfo.setText(PrjCoordSysUtilties.getDescription(getMap().getPrjCoordSys()));
+		this.textAreaCoordInfo.setText(PrjCoordSysUtilities.getDescription(getMap().getPrjCoordSys()));
 		IForm form = Application.getActiveApplication().getActiveForm();
 		if(form != null && form instanceof FormMap){
 			FormMap formMap = (FormMap)form;
@@ -152,7 +153,7 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 		this.checkBoxIsDynamicProjection.setSelected(this.isDynamicProjection);
 		this.textFieldCoordName.setText(getMap().getPrjCoordSys().getName());
 		this.textFieldCoordUnit.setText(getMap().getPrjCoordSys().getCoordUnit().toString());
-		this.textAreaCoordInfo.setText(PrjCoordSysUtilties.getDescription(getMap().getPrjCoordSys()));
+		this.textAreaCoordInfo.setText(PrjCoordSysUtilities.getDescription(getMap().getPrjCoordSys()));
 	}
 
 	@Override

@@ -6,11 +6,12 @@ import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLCommand;
-import com.supermap.desktop.utilties.CtrlActionUtilties;
-import com.supermap.desktop.utilties.JOptionPaneUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -18,20 +19,23 @@ import java.io.File;
 
 public class SmCtrlActionButton extends JButton implements IBaseItem {
 	private static final long serialVersionUID = 1L;
+	private final Dimension preferredSize = new Dimension(31, 31);
 	private transient IForm formClass = null;
 	private transient XMLCommand xmlCommand = null;
 
 	public SmCtrlActionButton(IForm formClass, XMLCommand xmlCommand, JComponent parent) {
 		super.setToolTipText(xmlCommand.getTooltip());
-		String[] pathPrams = new String[] { PathUtilties.getRootPathName(), xmlCommand.getImageFile() };
-		String path = PathUtilties.combinePath(pathPrams, false);
+		String[] pathPrams = new String[] { PathUtilities.getRootPathName(), xmlCommand.getImageFile() };
+		String path = PathUtilities.combinePath(pathPrams, false);
 		File file = new File(path);
 		if (file.exists() && file.isFile()) {
 			this.setIcon(new ImageIcon(path));
 		} else {
 			this.setText(xmlCommand.getLabel());
 		}
-		this.setPreferredSize(new Dimension(31, 31));
+		this.setMinimumSize(preferredSize);
+		this.setMaximumSize(preferredSize);
+		this.setPreferredSize(preferredSize);
 		this.formClass = formClass;
 		this.xmlCommand = xmlCommand;
 
@@ -41,7 +45,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilities.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {
@@ -77,7 +81,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 				this.getCtrlAction().run();
 			} else {
 				Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
-				JOptionPaneUtilties.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
+				JOptionPaneUtilities.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -151,5 +155,11 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 	@Override
 	public void setCtrlAction(ICtrlAction ctrlAction) {
 		this.xmlCommand.setCtrlAction(ctrlAction);
+	}
+
+
+	@Override
+	public Dimension getPreferredSize() {
+		return preferredSize;
 	}
 }

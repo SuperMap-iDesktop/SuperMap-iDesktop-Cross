@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class DatasetUtil {
 
@@ -35,7 +35,7 @@ public class DatasetUtil {
 	}
 
 	public static FileType getFileType(String datasetName) {
-		if (StringUtilties.isNullOrEmpty(datasetName)) {
+		if (StringUtilities.isNullOrEmpty(datasetName)) {
 			return FileType.NONE;
 		}
 		FileType fileType = null;

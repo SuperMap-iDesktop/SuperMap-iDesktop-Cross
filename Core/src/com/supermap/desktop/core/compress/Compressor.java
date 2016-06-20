@@ -18,9 +18,9 @@ import org.apache.http.TruncatedChunkException;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * 封装文件/文件夹的压缩，提供进度信息的支持（目前仅实现 zip）
@@ -166,7 +166,7 @@ public class Compressor {
 		this.desDir = desDir;
 		this.isRootAsTopEntity = isRootAsTopEntity;
 
-		if (StringUtilties.isNullOrEmpty(desName)) {
+		if (StringUtilities.isNullOrEmpty(desName)) {
 			getDesName();
 		} else {
 			if (desName.toLowerCase().endsWith(ArchiveStreamFactory.ZIP)) {
@@ -366,7 +366,7 @@ public class Compressor {
 				}
 			}
 		} else {
-			ListUtilties.addArray(this.files, this.srcFile.listFiles());
+			ListUtilities.addArray(this.files, this.srcFile.listFiles());
 		}
 
 		computeTotalSize();
@@ -402,7 +402,7 @@ public class Compressor {
 	 */
 	private void computeTotalSize() {
 		for (int i = 0; i < this.files.size(); i++) {
-			this.totalSize += FileUtilties.getFileSize(this.files.get(i));
+			this.totalSize += FileUtilities.getFileSize(this.files.get(i));
 		}
 	}
 }

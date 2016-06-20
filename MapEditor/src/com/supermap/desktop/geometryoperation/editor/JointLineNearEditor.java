@@ -6,7 +6,7 @@ import com.supermap.data.GeoLine;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
 
 public class JointLineNearEditor extends JointLineEditorBase {
 
@@ -69,7 +69,7 @@ public class JointLineNearEditor extends JointLineEditorBase {
 	 */
 	private Point2Ds addTargetPoint(Point2Ds basePoints, Point2Ds targetPoints) {
 		ArrayList<Point2D> points = new ArrayList<>();
-		ListUtilties.addArray(points, basePoints.toArray());
+		ListUtilities.addArray(points, basePoints.toArray());
 		Point2Ds targetPointNew = new Point2Ds(targetPoints.toArray());
 
 		if (points.get(points.size() - 1).equals(targetPointNew.getItem(0)) || points.get(0).equals(targetPointNew.getItem(0))) {
@@ -79,7 +79,7 @@ public class JointLineNearEditor extends JointLineEditorBase {
 			targetPointNew.remove(targetPointNew.getCount() - 1);
 		}
 
-		ListUtilties.addArray(points, targetPointNew.toArray());
+		ListUtilities.addArray(points, targetPointNew.toArray());
 		return new Point2Ds(points.toArray(new Point2D[points.size()]));
 	}
 }

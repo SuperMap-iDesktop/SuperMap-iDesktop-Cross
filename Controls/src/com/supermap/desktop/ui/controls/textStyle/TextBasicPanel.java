@@ -22,7 +22,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Map;
 
 /**
@@ -141,7 +141,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 				textFieldFontSize.setText(decimalFormat.format(size));
 			}
 			double fontHeight = logicalHeight;
-			fontHeight = FontUtilties.fontSizeToMapHeight(size, MapUtilties.getActiveMap(), textStyle.isSizeFixed());
+			fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
 			if (fontHeight > 0) {
 				textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight);
 				fireTextStyleChanged(TextStyleType.FONTHEIGHT);
@@ -154,7 +154,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		public void stateChanged(ChangeEvent e) {
 			if (null != spinnerFontWidth.getValue()) {
 				double logicalWidth = Double.parseDouble(spinnerFontWidth.getValue().toString());
-				double fontWidth = FontUtilties.fontWidthToMapWidth(logicalWidth, MapUtilties.getActiveMap(), textStyle.isSizeFixed());
+				double fontWidth = FontUtilities.fontWidthToMapWidth(logicalWidth, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
 				textStyleTypeMap.put(TextStyleType.FONTWIDTH, fontWidth);
 				fireTextStyleChanged(TextStyleType.FONTWIDTH);
 			}
@@ -231,7 +231,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 					height /= 10;
 				} else {
 					double size = Double.parseDouble(textFieldFontSize.getText());
-					height = FontUtilties.fontSizeToMapHeight(size, MapUtilties.getActiveMap(), isFixedSize);
+					height = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), isFixedSize);
 				}
 				if (height > 0) {
 					textStyleTypeMap.put(TextStyleType.FONTHEIGHT, height);
@@ -653,7 +653,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 				map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
 			}
-			Double size = FontUtilties.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+			Double size = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
 			DecimalFormat decimalFormat = new DecimalFormat("0.0");
 			String textFieldString = "";
 			if (Double.compare(size, size.intValue()) > 0) {
@@ -788,7 +788,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		// 保证字高控件的值正确
 		double size = Double.valueOf(textFieldFontSize.getText());
 		double fontHeight = size / EXPERIENCE;
-		fontHeight = FontUtilties.fontSizeToMapHeight(size, MapUtilties.getActiveMap(), textStyle.isSizeFixed());
+		fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
 		if (fontHeight > 0) {
 			textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
 			textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);

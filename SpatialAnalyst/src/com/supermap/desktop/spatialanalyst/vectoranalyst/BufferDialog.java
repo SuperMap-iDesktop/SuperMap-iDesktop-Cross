@@ -28,7 +28,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
@@ -240,7 +240,7 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private Dimension getLinePanelDimension() {
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			return BufferDialog.DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION;
 		} else {
 			return BufferDialog.DEFAULT_LINUX_BUFFER_LINE_DIMENSION;
@@ -248,7 +248,7 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private Dimension getPointPanelDimension() {
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			return BufferDialog.DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION;
 		} else {
 			return BufferDialog.DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION;

@@ -34,9 +34,9 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.GeometryUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.GeometryUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
@@ -157,9 +157,9 @@ public class EraseEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		return environment.getMapControl().getEditableLayers().length > 0
 				&& environment.getEditProperties().getSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class,
 						ICompoundFeature.class)
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.LINE, DatasetType.REGION,
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.LINE, DatasetType.REGION,
 						DatasetType.CAD);
 	}
 
@@ -267,6 +267,7 @@ public class EraseEditor extends AbstractEditor {
 				recordset.update();
 			} else {
 				// 没有擦除结果，删除被擦除对象
+
 				editHistory.add(EditType.DELETE, recordset, true);
 				recordset.delete();
 				recordset.update();
@@ -467,8 +468,8 @@ public class EraseEditor extends AbstractEditor {
 				selectedIds.add(layer.getSelection().get(j));
 			}
 			editModel.srcInfos.put(layer, selectedIds);
-			Geometry unionLayer = GeometryUtilties.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
-			editModel.srRegion = GeometryUtilties.union(editModel.srRegion, unionLayer, true);
+			Geometry unionLayer = GeometryUtilities.union(selectedLayers.get(i)); // 将该图层中选中的面对象进行合并处理
+			editModel.srRegion = GeometryUtilities.union(editModel.srRegion, unionLayer, true);
 			editModel.srRegion.setStyle(getSourceStyle());
 
 			// 将结果对象添加到 TrackingLayer 做高亮显示
@@ -488,7 +489,7 @@ public class EraseEditor extends AbstractEditor {
 		EraseEditModel editModel = (EraseEditModel) environment.getEditModel();
 		editModel.clear();
 
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_SOURCE);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_SOURCE);
 	}
 
 	private class EraseEditModel implements IEditModel {

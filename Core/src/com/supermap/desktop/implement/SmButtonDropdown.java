@@ -8,12 +8,13 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.XMLButtonDropdown;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.CtrlActionUtilties;
-import com.supermap.desktop.utilties.JOptionPaneUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilities.CtrlActionUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalComboBoxIcon;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,11 +40,11 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 
 		displayButton = new ControlButton(this);
 		displayButton.setPreferredSize(new Dimension(31, 31));
-		this.setPreferredSize(new Dimension(52, 31));
-		this.setPreferredSize(new Dimension(52, 31));
-		this.setMaximumSize(new Dimension(52, 31));
-		String[] pathPrams = new String[]{PathUtilties.getRootPathName(), xmlCommand.getImageFile()};
-		String path = PathUtilties.combinePath(pathPrams, false);
+		this.setPreferredSize(new Dimension(51, 31));
+		this.setMaximumSize(new Dimension(51, 31));
+		this.setMinimumSize(new Dimension(51, 31));
+		String[] pathPrams = new String[]{PathUtilities.getRootPathName(), xmlCommand.getImageFile()};
+		String path = PathUtilities.combinePath(pathPrams, false);
 		File file = new File(path);
 		if (file.exists() && file.isFile()) {
 			displayButton.setIcon(new ImageIcon(path));
@@ -95,7 +96,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 			ICtrlAction ctrlAction = Application.getActiveApplication().getCtrlAction(xmlCommand.getPluginInfo().getBundleName(),
 					xmlCommand.getCtrlActionClass());
 			if (ctrlAction == null) {
-				ctrlAction = CtrlActionUtilties.getCtrlAction(xmlCommand, this, this.formClass);
+				ctrlAction = CtrlActionUtilities.getCtrlAction(xmlCommand, this, this.formClass);
 			}
 
 			if (ctrlAction != null) {
@@ -184,7 +185,7 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 				showPopupMenu();
 			} else {
 				Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
-				JOptionPaneUtilties.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
+				JOptionPaneUtilities.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

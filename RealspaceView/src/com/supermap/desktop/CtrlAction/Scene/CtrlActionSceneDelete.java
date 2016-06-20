@@ -2,7 +2,7 @@ package com.supermap.desktop.CtrlAction.Scene;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
@@ -11,6 +11,7 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import java.util.ArrayList;
 
 public class CtrlActionSceneDelete extends CtrlAction {
@@ -29,7 +30,7 @@ public class CtrlActionSceneDelete extends CtrlAction {
 			TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
 			sceneNames.add(selectedNodeData.getData().toString());
 		}
-		SceneUtilties.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+		SceneUIUtilities.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
 	}
 
 	@Override

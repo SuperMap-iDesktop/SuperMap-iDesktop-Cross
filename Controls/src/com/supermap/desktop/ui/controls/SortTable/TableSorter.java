@@ -1,6 +1,6 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
-import com.supermap.desktop.controls.utilties.SortUtilties;
+import com.supermap.desktop.controls.utilities.SortUIUtilities;
 
 import java.util.HashMap;
 
@@ -51,7 +51,7 @@ public class TableSorter {
 	private int compare(int column, int row1, int row2) {
 		Object o1 = model.getValueAt(row1, column);
 		Object o2 = model.getValueAt(row2, column);
-		return SortUtilties.compareObject(o1, o2);
+		return SortUIUtilities.compareObject(o1, o2);
 
 	}
 

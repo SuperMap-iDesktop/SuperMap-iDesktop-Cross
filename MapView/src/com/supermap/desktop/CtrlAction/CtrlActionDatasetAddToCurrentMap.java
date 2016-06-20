@@ -6,10 +6,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilties.MapViewUtilties;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Map;
 
 public class CtrlActionDatasetAddToCurrentMap extends CtrlAction {
@@ -25,7 +25,7 @@ public class CtrlActionDatasetAddToCurrentMap extends CtrlAction {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
 
-			MapViewUtilties.addDatasetsToMap(map, datasets, true);
+			MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

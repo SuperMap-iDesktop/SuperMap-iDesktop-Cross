@@ -9,13 +9,14 @@ import com.supermap.desktop.ui.XMLMenu;
 import com.supermap.desktop.ui.XMLMenuButton;
 import com.supermap.desktop.ui.XMLMenuButtonDropdown;
 import com.supermap.desktop.ui.XMLMenuGroup;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.WorkspaceUtilties;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ public class SmMenu extends JMenu implements IMenu {
 					xmlMenu.setImageFile("../Resources/MenuHeight16.png");
 				}
 
-				String[] pathPrams = new String[] { PathUtilties.getRootPathName(), xmlMenu.getImageFile() };
-				String path = PathUtilties.combinePath(pathPrams, false);
+				String[] pathPrams = new String[] { PathUtilities.getRootPathName(), xmlMenu.getImageFile() };
+				String path = PathUtilities.combinePath(pathPrams, false);
 				File file = new File(path);
 				if (file.exists()) {
 					this.setIcon(new ImageIcon(path));
@@ -303,20 +304,20 @@ public class SmMenu extends JMenu implements IMenu {
 
 			if ("RecentFile".equals(xmlMenuGroup.getID())) {
 				if ("WorkspaceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (WorkspaceUtilties.getPluginInfo() == null) {
-						WorkspaceUtilties.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (WorkspaceUtilities.getPluginInfo() == null) {
+						WorkspaceUtilities.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 					}
 
-					if (WorkspaceUtilties.getRecentWorkspaceMenu() == null) {
-						WorkspaceUtilties.setRecentWorkspaceMenu(menuButtonDropdown);
+					if (WorkspaceUtilities.getRecentWorkspaceMenu() == null) {
+						WorkspaceUtilities.setRecentWorkspaceMenu(menuButtonDropdown);
 					}
 				} else if ("DatasourceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (DatasourceUtilties.getPluginInfo() == null) {
-						DatasourceUtilties.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (DatasourceUtilities.getPluginInfo() == null) {
+						DatasourceUtilities.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 					}
 
-					if (DatasourceUtilties.getRecentDatasourceMenu() == null) {
-						DatasourceUtilties.setRecentDatasourceMenu(menuButtonDropdown);
+					if (DatasourceUtilities.getRecentDatasourceMenu() == null) {
+						DatasourceUtilities.setRecentDatasourceMenu(menuButtonDropdown);
 					}
 				}
 			}

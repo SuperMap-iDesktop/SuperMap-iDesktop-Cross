@@ -3,7 +3,7 @@ package com.supermap.desktop.controls.colorScheme;
 import com.supermap.data.Colors;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -13,10 +13,10 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -28,6 +28,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -196,7 +197,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		this.textFieldColorCount.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue)) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					return false;
 				}
 				try {
@@ -247,16 +248,16 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			toolBar.setFloatable(false);
 			toolBar.add(jButtonAddColorButton);
 			toolBar.add(jButtonRemoveColorButton);
-			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 			toolBar.add(jButtonSelectAllButton);
 			toolBar.add(jButtonSelectInvert);
-			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 			toolBar.add(buttonInvertColors);
 			toolBar.add(jButtonMoveTopButton);
 			toolBar.add(jButtonMoveUpButton);
 			toolBar.add(jButtonMoveDownButton);
 			toolBar.add(jButtonMoveBottomButton);
-			toolBar.add(ToolbarUtilties.getVerticalSeparator());
+			toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 			toolBar.add(buttonImport);
 			toolBar.add(buttonExport);
 
@@ -331,8 +332,8 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		jButtonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.stopEditing(tableColorsTable);
-				TableUtilties.invertSelection(tableColorsTable);
+				TableUtilities.stopEditing(tableColorsTable);
+				TableUtilities.invertSelection(tableColorsTable);
 			}
 
 		});
@@ -594,7 +595,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	private void buttonImportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeImport")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
-			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+			SmFileChoose.addNewNode(fileFilters, PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					ControlsProperties.getString("String_ImportColorScheme"), "ColorSchemeImport", "OpenMany");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeImport");
@@ -609,13 +610,13 @@ public class ColorSchemeEditorDialog extends SmDialog {
 	private void buttonExportClicked() {
 		if (!SmFileChoose.isModuleExist("ColorSchemeExportSingle")) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_ColorSchemeSaveFileFilter"), "scs", "SCS");
-			SmFileChoose.addNewNode(fileFilters, PathUtilties.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
+			SmFileChoose.addNewNode(fileFilters, PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeBasicDirectory"), true),
 					ControlsProperties.getString("String_ExportColorScheme"), "ColorSchemeExportSingle", "SaveOne");
 		}
 		SmFileChoose fileChooser = new SmFileChoose("ColorSchemeExportSingle");
 		int result = fileChooser.showDefaultDialog();
 		String filePath = fileChooser.getFilePath();
-		if (result == JFileChooser.APPROVE_OPTION && !StringUtilties.isNullOrEmpty(filePath)) {
+		if (result == JFileChooser.APPROVE_OPTION && !StringUtilities.isNullOrEmpty(filePath)) {
 			colorScheme.saveAsFilePath(filePath);
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_BatchExportColorSchemeSuccess"), filePath));
 		}
@@ -707,7 +708,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 
 			});
 			TableColumn column = tableColorsTable.getColumnModel().getColumn(0);
-			int indexWidth = FontUtilties.getStringWidth(ControlsProperties.getString("String_identifier"), tableColorsTable.getTableHeader().getFont()) + 30;
+			int indexWidth = FontUtilities.getStringWidth(ControlsProperties.getString("String_identifier"), tableColorsTable.getTableHeader().getFont()) + 30;
 			column.setMaxWidth(indexWidth);
 			column.setPreferredWidth(indexWidth);
 			column.setMinWidth(indexWidth);

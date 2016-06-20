@@ -18,14 +18,15 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.LogUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -105,7 +106,7 @@ public abstract class SymbolDialog extends SmDialog {
 	@Deprecated
 	@Override
 	public DialogResult showDialog() {
-		LogUtilties.debug("unSupportMethod");
+		LogUtilities.debug("unSupportMethod");
 		throw new UnsupportedOperationException();
 	}
 
@@ -159,7 +160,7 @@ public abstract class SymbolDialog extends SmDialog {
 	 * 初始化面板
 	 */
 	private void initComponent() {
-		if (!SystemPropertyUtilties.isWindows()) {
+		if (!SystemPropertyUtilities.isWindows()) {
 			labelSearch.setForeground(Color.white);
 		}
 		panelPreview = new SymbolPreViewPanel(getSymbolType());
@@ -183,7 +184,7 @@ public abstract class SymbolDialog extends SmDialog {
 	}
 
 	private void initSize() {
-		if (SystemPropertyUtilties.isWindows()) {
+		if (SystemPropertyUtilities.isWindows()) {
 			int width = 880;
 			int height = 650;
 			setSize(width, height);
@@ -200,7 +201,7 @@ public abstract class SymbolDialog extends SmDialog {
 	private void initPanelWorkspaceResources() {
 		SymbolLibrary symbolLibrary = SymbolFactory.getSymbolLibrary(currentResources, getSymbolType());
 		if (symbolLibrary == null) {
-			LogUtilties.debug("Symbol Library is null!");
+			LogUtilities.debug("Symbol Library is null!");
 			return;
 		}
 		Dimension minimumSize = new Dimension(200, 600);

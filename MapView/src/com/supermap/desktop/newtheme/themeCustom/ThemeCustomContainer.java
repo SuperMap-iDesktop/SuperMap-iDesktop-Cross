@@ -24,7 +24,7 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 
 /**
@@ -805,7 +805,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		if (null != ThemeGuideFactory.getMapControl()) {
 			this.map = ThemeGuideFactory.getMapControl().getMap();
 		}
-		this.themeCustomLayer = MapUtilties.findLayerByName(map, layerName);
+		this.themeCustomLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeCustomLayer && null != themeCustomLayer.getTheme() && themeCustomLayer.getTheme().getType() == ThemeType.CUSTOM) {
 			ThemeCustom nowThemecustom = ((ThemeCustom) this.themeCustomLayer.getTheme());
 			nowThemecustom.fromXML(themeCustom.toXML());

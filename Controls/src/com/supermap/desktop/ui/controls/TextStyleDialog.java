@@ -14,10 +14,10 @@ import java.util.Map.Entry;
 
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.textStyle.*;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
 
 /**
  * 文本风格对话框
@@ -173,7 +173,10 @@ public class TextStyleDialog extends SmDialog {
 			recordset.update();
 			recordset.moveNext();
 		}
-		MapUtilties.getActiveMap().refresh();
+
+		recordset.dispose();
+		MapUtilities.getActiveMap().refresh();
+		TextStyleDialog.this.dispose();
 	}
 
 	private void removeEvents() {

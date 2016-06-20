@@ -4,8 +4,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.exception.SmUncaughtExceptionHandler;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.LogUtilties;
-import com.supermap.desktop.utilties.SplashScreenUtilties;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.SplashScreenUtilities;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -32,12 +33,12 @@ public class CoreActivator implements BundleActivator {
 
 		// 设置没有被捕捉的异常的处理方法
 		Thread.setDefaultUncaughtExceptionHandler(new SmUncaughtExceptionHandler());
-		LogUtilties.outPut(LogUtilties.getSeparator());
-		LogUtilties.outPut(CoreProperties.getString("String_DesktopStarting"));
-		SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
+		LogUtilities.outPut(LogUtilities.getSeparator());
+		LogUtilities.outPut(CoreProperties.getString("String_DesktopStarting"));
+		SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
 		if (splashScreenUtiltiesInstance != null) {
-			SplashScreenUtilties.setBundleCount(context.getBundles().length);
-			SplashScreenUtilties.resetCurrentCount();
+			SplashScreenUtilities.setBundleCount(context.getBundles().length);
+			SplashScreenUtilities.resetCurrentCount();
 			Bundle bundle = context.getBundle();
 			String name = bundle.getSymbolicName();
 			if (name == null) {
@@ -54,7 +55,7 @@ public class CoreActivator implements BundleActivator {
 				if (bundleEvent.getType() != BundleEvent.STARTING) {
 					return;
 				}
-				SplashScreenUtilties splashScreenUtiltiesInstance = SplashScreenUtilties.getSplashScreenUtiltiesInstance();
+				SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
 				if (splashScreenUtiltiesInstance != null) {
 					Bundle bundle = bundleEvent.getBundle();
 					String name = bundle.getSymbolicName();

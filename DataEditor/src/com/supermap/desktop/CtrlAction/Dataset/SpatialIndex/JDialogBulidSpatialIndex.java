@@ -7,7 +7,7 @@ import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.DatasetUtilties;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -19,16 +19,17 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.SpatialIndexInfoUtilties;
-import com.supermap.desktop.utilties.SpatialIndexTypeUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.TableUtilties;
+import com.supermap.desktop.utilities.SpatialIndexInfoUtilities;
+import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -294,7 +295,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TableUtilties.invertSelection(tableDatasets);
+				TableUtilities.invertSelection(tableDatasets);
 			}
 		});
 
@@ -453,7 +454,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		for (int selectedRow : selectedRows) {
 			datasetList.add((Dataset) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
-		this.comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilties.getSupportSpatialIndexTypes(datasetList)));
+		this.comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilities.getSupportSpatialIndexTypes(datasetList)));
 	}
 
 	private void resetComboboxIndexTypeSelectItem() {
@@ -477,16 +478,16 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		Object selectedItem = this.comboBoxIndexType.getSelectedItem();
 		if (selectedItem == null) {
 			this.scrollPaneDescribe.setViewportView(null);
-		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.NONE))) {
+		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.NONE))) {
 			this.scrollPaneDescribe.setViewportView(this.textAreaNull);
-		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.RTREE))) {
+		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.RTREE))) {
 			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
-		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.QTREE))) {
+		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE))) {
 			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
-		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.MULTI_LEVEL_GRID))) {
+		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID))) {
 			this.scrollPaneDescribe.setViewportView(this.panelDynamicIndex);
 			initPanelDynamic();
-		} else if (selectedItem.equals(SpatialIndexTypeUtilties.toString(SpatialIndexType.TILE))) {
+		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE))) {
 			this.scrollPaneDescribe.setViewportView(this.panelGraphIndex);
 			initPanelGraph();
 		}
@@ -498,11 +499,11 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private void initPanelDynamic() {
 		java.util.List<SpatialIndexInfo> selectedSpatialIndexInfo = getSpatialIndexInfos();
 
-		this.panelDynamicIndex.setX(SpatialIndexInfoUtilties.getSpatialIndexInfoX(selectedSpatialIndexInfo));
-		this.panelDynamicIndex.setY(SpatialIndexInfoUtilties.getSpatialIndexInfoY(selectedSpatialIndexInfo));
-		this.panelDynamicIndex.setGrid0(SpatialIndexInfoUtilties.getSpatialIndexInfoGrid0(selectedSpatialIndexInfo));
-		this.panelDynamicIndex.setGrid1(SpatialIndexInfoUtilties.getSpatialIndexInfoGrid1(selectedSpatialIndexInfo));
-		this.panelDynamicIndex.setGrid2(SpatialIndexInfoUtilties.getSpatialIndexInfoGrid2(selectedSpatialIndexInfo));
+		this.panelDynamicIndex.setX(SpatialIndexInfoUtilities.getSpatialIndexInfoX(selectedSpatialIndexInfo));
+		this.panelDynamicIndex.setY(SpatialIndexInfoUtilities.getSpatialIndexInfoY(selectedSpatialIndexInfo));
+		this.panelDynamicIndex.setGrid0(SpatialIndexInfoUtilities.getSpatialIndexInfoGrid0(selectedSpatialIndexInfo));
+		this.panelDynamicIndex.setGrid1(SpatialIndexInfoUtilities.getSpatialIndexInfoGrid1(selectedSpatialIndexInfo));
+		this.panelDynamicIndex.setGrid2(SpatialIndexInfoUtilities.getSpatialIndexInfoGrid2(selectedSpatialIndexInfo));
 	}
 
 	/**
@@ -517,15 +518,15 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 			selectedDatasets.add((Dataset) this.spatialIndexTableModel.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
 
-		this.panelGraphIndex.setFieldModel(DatasetUtilties.getCommonFields(selectedDatasets));
+		this.panelGraphIndex.setFieldModel(DatasetUIUtilities.getCommonFields(selectedDatasets));
 
-		String spatialIndexInfoTileField = SpatialIndexInfoUtilties.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
+		String spatialIndexInfoTileField = SpatialIndexInfoUtilities.getSpatialIndexInfoTileField(selectedSpatialIndexInfo);
 		this.panelGraphIndex.setField(spatialIndexInfoTileField);
-		this.panelGraphIndex.setWidth(SpatialIndexInfoUtilties.getSpatialIndexInfoTileWidth(selectedSpatialIndexInfo));
-		this.panelGraphIndex.setHeight(SpatialIndexInfoUtilties.getSpatialIndexInfoTileHeight(selectedSpatialIndexInfo));
+		this.panelGraphIndex.setWidth(SpatialIndexInfoUtilities.getSpatialIndexInfoTileWidth(selectedSpatialIndexInfo));
+		this.panelGraphIndex.setHeight(SpatialIndexInfoUtilities.getSpatialIndexInfoTileHeight(selectedSpatialIndexInfo));
 
 		if (!this.panelGraphIndex.isRadioFieldSelected() && !this.panelGraphIndex.isRadioRangeSelected()) {
-			if (!StringUtilties.isNullOrEmpty(spatialIndexInfoTileField)) {
+			if (!StringUtilities.isNullOrEmpty(spatialIndexInfoTileField)) {
 				this.panelGraphIndex.setRadioFieldSelected(true);
 			} else {
 				this.panelGraphIndex.setRadioFieldSelected(false);
@@ -612,7 +613,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			getCombobox();
-			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilties.getSupportSpatialIndexType((Dataset) table.getValueAt(row,
+			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilities.getSupportSpatialIndexType((Dataset) table.getValueAt(row,
 					SpatialIndexTableModel.COLUMN_DATASET))));
 			this.comboBox.setSelectedItem(table.getValueAt(row, column));
 			return this.comboBox;

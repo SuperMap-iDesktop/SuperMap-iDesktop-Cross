@@ -7,6 +7,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -203,9 +204,9 @@ public class TabularTableModel extends AbstractTableModel {
 			result = String.class;
 		} else {
 			if (recordset.getRecordCount() > 0) {
-				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				if (CoreProperties.getString(CoreProperties.Boolean).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					result = Boolean.class;
-				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(FieldTypeUtilties.getFieldTypeName(fieldInfos.get(c).getType()))) {
+				} else if (CoreProperties.getString(CoreProperties.DateTime).equals(FieldTypeUtilities.getFieldTypeName(fieldInfos.get(c).getType()))) {
 					return Time.class;
 				} else {
 					result = String.class;

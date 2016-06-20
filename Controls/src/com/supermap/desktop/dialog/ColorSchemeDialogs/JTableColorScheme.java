@@ -4,12 +4,13 @@ import com.supermap.data.Colors;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
-import com.supermap.desktop.utilties.FontUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class JTableColorScheme extends SortTable {
 		this.setSurrendersFocusOnKeystroke(true);
 		this.setModel(colorSchemeTableModel);
 		this.setRowHeight(23);
-		int indexWidth = FontUtilties.getStringWidth(ControlsProperties.getString("String_identifier"), tableHeader.getFont()) + 30;
+		int indexWidth = FontUtilities.getStringWidth(ControlsProperties.getString("String_identifier"), tableHeader.getFont()) + 30;
 		TableColumn columnIndex = this.getColumnModel().getColumn(ColorSchemeTableModel.COLUMN_INDEX);
 		columnIndex.setMaxWidth(indexWidth);
 		columnIndex.setPreferredWidth(indexWidth);

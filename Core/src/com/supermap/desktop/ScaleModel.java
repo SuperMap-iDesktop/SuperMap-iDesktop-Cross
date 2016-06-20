@@ -1,8 +1,8 @@
 package com.supermap.desktop;
 
 import com.supermap.desktop.exception.InvalidScaleException;
-import com.supermap.desktop.utilties.DoubleUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 
@@ -44,7 +44,7 @@ public class ScaleModel {
 	}
 
 	public ScaleModel(String scale) throws InvalidScaleException {
-		if (StringUtilties.isNullOrEmpty(scale)) {
+		if (StringUtilities.isNullOrEmpty(scale)) {
 			throw new InvalidScaleException();
 		}
 
@@ -73,9 +73,9 @@ public class ScaleModel {
 	}
 
 	private void parse(double scale) throws InvalidScaleException {
-		this.scaleDenominator = DoubleUtilties.div(1.0, scale, 10);
+		this.scaleDenominator = DoubleUtilities.div(1.0, scale, 10);
 //		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
-		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilties.toString(scaleDenominator, 9));
+		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilities.toString(scaleDenominator, 9));
 	}
 
 	private void parse(String[] scaleCaption) throws InvalidScaleException {
@@ -86,7 +86,7 @@ public class ScaleModel {
 		String scaleNumeratorCaption = scaleCaption[0];
 		String scaleDenominatorCaption = scaleCaption[1];
 
-		if (StringUtilties.isNullOrEmpty(scaleDenominatorCaption) || StringUtilties.isNullOrEmpty(scaleNumeratorCaption)) {
+		if (StringUtilities.isNullOrEmpty(scaleDenominatorCaption) || StringUtilities.isNullOrEmpty(scaleNumeratorCaption)) {
 			throw new InvalidScaleException();
 		}
 
@@ -112,7 +112,7 @@ public class ScaleModel {
 	}
 
 	private void parseDenominator(String scaleDenominatorCaption) throws InvalidScaleException {
-		if (StringUtilties.isNullOrEmpty(scaleDenominatorCaption)) {
+		if (StringUtilities.isNullOrEmpty(scaleDenominatorCaption)) {
 			throw new InvalidScaleException();
 		}
 
@@ -179,14 +179,14 @@ public class ScaleModel {
 	}
 
 	public static boolean isLegitScaleString(String scaleString) {
-		if (StringUtilties.isNullOrEmpty(scaleString) || scaleString.contains("d")) {
+		if (StringUtilities.isNullOrEmpty(scaleString) || scaleString.contains("d")) {
 			return false;
 		} else {
 			if (scaleString.startsWith("1:")) {
 				// 包含 1:
 				scaleString = scaleString.substring(2);
 			}
-			if (StringUtilties.isNullOrEmpty(scaleString)) {
+			if (StringUtilities.isNullOrEmpty(scaleString)) {
 				return false;
 			}
 			try {

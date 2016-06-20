@@ -6,7 +6,7 @@ import com.supermap.data.Point3Ds;
 import com.supermap.data.PointMs;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.JTreeUtilties;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPoint3DFeature;
@@ -15,12 +15,13 @@ import com.supermap.desktop.geometry.Implements.DGeoCompound;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.compoundModels.GeometryCompoundTreeNode;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilties.GeometryTypeUtilties;
+import com.supermap.desktop.utilities.GeometryTypeUtilities;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+
 import java.awt.*;
 
 /**
@@ -133,9 +134,9 @@ public class JPanelGeometryCompound extends JPanel implements IGeometryNode {
 	private void initComponentState() {
 		if (tree.getRowCount() > 0) {
 			tree.setSelectionRow(0);
-			JTreeUtilties.expandTree(tree, true);
+			JTreeUIUtilities.expandTree(tree, true);
 		}
-		textFieldGeometryType.setText(GeometryTypeUtilties.toString(this.geometry.getGeometry().getType()));
+		textFieldGeometryType.setText(GeometryTypeUtilities.toString(this.geometry.getGeometry().getType()));
 		textFieldSubGeometryCount.setText(String.valueOf(this.geometry.getPartCount()));
 		textFieldNodeCount.setText(String.valueOf(getNodeCount(null)));
 	}

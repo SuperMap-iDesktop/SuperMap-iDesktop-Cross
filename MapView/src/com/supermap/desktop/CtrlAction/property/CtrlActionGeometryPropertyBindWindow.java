@@ -16,7 +16,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.docking.*;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.*;
 
 public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
@@ -98,7 +98,7 @@ public class CtrlActionGeometryPropertyBindWindow extends CtrlAction {
 
 	private void openTabular(Dataset dataset, Recordset recordset) {
 		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
-		this.tabular = TabularUtilties.openDatasetVectorFormTabular(dataset);
+		this.tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
 		this.tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
 		this.tabular.getIdMap().clear();
 		this.tabular.getRowIndexMap().clear();

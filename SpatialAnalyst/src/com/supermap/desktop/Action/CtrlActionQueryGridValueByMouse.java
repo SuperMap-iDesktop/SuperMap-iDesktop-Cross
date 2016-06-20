@@ -9,8 +9,8 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.utilties.DatasourceUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
@@ -195,7 +195,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				transparentBackground.setLocation(arg0.getX() + 15, arg0.getY());
 				transparentBackground.setVisible(true);
 				Map map = mapControl.getMap();
-				ArrayList<Layer> layers = MapUtilties.getLayers(map);
+				ArrayList<Layer> layers = MapUtilities.getLayers(map);
 				String currentDatasource = transparentBackground.getjLabelDatasource().getText();
 				String currentDataset = transparentBackground.getjLabelDataset().getText();
 				String currentPointX = transparentBackground.getjLabelPointX().getText();
@@ -326,13 +326,13 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		if (null != Application.getActiveApplication().getActiveForm() && (Application.getActiveApplication().getActiveForm() instanceof IFormMap)) {
 			formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
-			if (null != MapUtilties.getLayers(map)) {
-				ArrayList<Layer> layers = MapUtilties.getLayers(map);
+			if (null != MapUtilities.getLayers(map)) {
+				ArrayList<Layer> layers = MapUtilities.getLayers(map);
 				for (int i = 0; i < layers.size(); i++) {
 					Layer layer = layers.get(i);
 					if (null != layer && layer.isVisible() && null != layer.getDataset()) {
 						Dataset dataset = layer.getDataset();
-						if (null != layer.getDataset().getDatasource() && !DatasourceUtilties.isWebType(layer.getDataset().getDatasource())
+						if (null != layer.getDataset().getDatasource() && !DatasourceUtilities.isWebType(layer.getDataset().getDatasource())
 								&& (dataset instanceof DatasetGrid || dataset instanceof DatasetImage)) {
 							enable = true;
 							break;

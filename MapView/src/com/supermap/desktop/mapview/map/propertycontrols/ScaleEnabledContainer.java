@@ -36,7 +36,7 @@ import com.supermap.desktop.mapview.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 /**
  * 固定比例尺控件
@@ -272,7 +272,7 @@ public class ScaleEnabledContainer extends SmDialog {
 	protected void importXml(String string) {
 		try {
 			String filePath = getFilePathForImport();
-			if (!StringUtilties.isNullOrEmpty(filePath)) {
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
 				File file = new File(filePath);
 				FileInputStream fis = new FileInputStream(file);
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -363,7 +363,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			DOMSource source = new DOMSource(document);
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			if (StringUtilties.isNullOrEmpty(filename)) {
+			if (StringUtilities.isNullOrEmpty(filename)) {
 				return;
 			}
 			File file = new File(filename);

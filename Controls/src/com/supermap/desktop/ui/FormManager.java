@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.ToolbarUtilties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
@@ -26,6 +26,7 @@ import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -211,7 +212,7 @@ public class FormManager implements IFormManager {
 				if (this.activeForm != null) {
 					this.activeForm.actived();
 				}
-				ToolbarUtilties.updataToolbarsState();
+				ToolbarUIUtilities.updataToolbarsState();
 				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActiveForm, form));
 			}
 

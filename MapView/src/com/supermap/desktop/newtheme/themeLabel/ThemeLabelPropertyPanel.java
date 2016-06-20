@@ -8,7 +8,7 @@ import com.supermap.data.FieldType;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.SymbolDialogFactory;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
@@ -20,8 +20,8 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.LabelBackShape;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
@@ -30,6 +30,7 @@ import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -446,7 +447,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					setOffsetUnity();
 				} else if (e.getSource() == comboBoxOffsetX) {
 					String offsetXExpression = themeLabel.getOffsetX();
-					if (StringUtilties.isNullOrEmpty(offsetXExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetXExpression)) {
 						offsetXExpression = "0";
 					}
 					boolean isOffsetXExpressionChanged = ThemeUtil
@@ -457,7 +458,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 					}
 				} else if (e.getSource() == comboBoxOffsetY) {
 					String offsetYExpression = themeLabel.getOffsetY();
-					if (StringUtilties.isNullOrEmpty(offsetYExpression)) {
+					if (StringUtilities.isNullOrEmpty(offsetYExpression)) {
 						offsetYExpression = "0";
 					}
 					boolean isOffsetYExpressionChanged = ThemeUtil
@@ -770,7 +771,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	@Override
 	public void refreshMapAndLayer() {
-		this.themelabelLayer = MapUtilties.findLayerByName(this.map, layerName);
+		this.themelabelLayer = MapUtilities.findLayerByName(this.map, layerName);
 		ThemeLabel themeLabelTemp = (ThemeLabel) this.themelabelLayer.getTheme();
 		themeLabelTemp.setLabelExpression(this.themeLabel.getLabelExpression());
 		themeLabelTemp.setBackShape(this.themeLabel.getBackShape());

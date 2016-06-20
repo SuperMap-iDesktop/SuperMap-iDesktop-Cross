@@ -4,11 +4,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IToolbar;
 import com.supermap.desktop.Interface.IToolbarManager;
 import com.supermap.desktop.WorkEnvironment;
-import com.supermap.desktop.controls.utilties.ComponentUtilties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmToolbar;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -196,7 +197,7 @@ public class ToolbarManager implements IToolbarManager {
 			for (IToolbar aChildToolbarsList : childToolbarsList) {
 				SmToolbar toolbar = (SmToolbar) aChildToolbarsList;
 //				toolbar.setVisible(false);
-				Window parentWindow = ComponentUtilties.getParentWindow(toolbar);
+				Window parentWindow = ComponentUIUtilities.getParentWindow(toolbar);
 				if (parentWindow != Application.getActiveApplication().getMainFrame()) {
 					parentWindow.dispose();
 				}

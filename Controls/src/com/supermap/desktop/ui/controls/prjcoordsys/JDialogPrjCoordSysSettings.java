@@ -8,17 +8,18 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilties.JTreeUtilties;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFieldSearch;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.FileUtilties;
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.StringUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,6 +42,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -469,8 +471,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	 */
 	private void loadProjectionConfig() {
 		try {
-			String startupXml = PathUtilties.getFullPathName(XMLProjectionTag.FILE_STARTUP_XML, false);
-			Document startupDoc = XmlUtilties.getDocument(startupXml);
+			String startupXml = PathUtilities.getFullPathName(XMLProjectionTag.FILE_STARTUP_XML, false);
+			Document startupDoc = XmlUtilities.getDocument(startupXml);
 			if (startupDoc != null) {
 				NodeList nodeList = startupDoc.getElementsByTagName(XMLProjectionTag.PROJECTION);
 				if (nodeList.getLength() > 0) {
@@ -478,8 +480,8 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				}
 			}
 
-			if (StringUtilties.isNullOrEmpty(this.projectionConfigPath)) {
-				this.projectionConfigPath = PathUtilties.getFullPathName(XMLProjectionTag.PROJECTION_XML, false);
+			if (StringUtilities.isNullOrEmpty(this.projectionConfigPath)) {
+				this.projectionConfigPath = PathUtilities.getFullPathName(XMLProjectionTag.PROJECTION_XML, false);
 			}
 			loadProjectionConfig(this.projectionConfigPath);
 		} catch (Exception e) {
@@ -500,12 +502,12 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			if (!file.exists()) {
 				InputStream stream = getClass().getResourceAsStream(DEFAULT_PROJECTION_CONFIG_PATH);
 				if (stream != null) {
-					this.projectionDoc = XmlUtilties.getDocument(stream);
+					this.projectionDoc = XmlUtilities.getDocument(stream);
 				} else {
 					throw new Exception("Default ProjectionConfig does not exists.");
 				}
 			} else {
-				this.projectionDoc = XmlUtilties.getDocument(filePath);
+				this.projectionDoc = XmlUtilities.getDocument(filePath);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -559,7 +561,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 					result.setCaption(node.getTextContent());
 				} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.PRJCOORDSYS_TYPE)) {
 					String prjType = node.getTextContent();
-					if (!StringUtilties.isNullOrEmpty(prjType)) {
+					if (!StringUtilities.isNullOrEmpty(prjType)) {
 						result.setCoordSysCode(Integer.valueOf(prjType));
 					} else {
 						result.setCoordSysCode(CoordSysDefine.USER_DEFINED);
@@ -567,7 +569,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.COORDINATE_REFERENCE_SYSTEM)) {
 					PrjCoordSys prjCoordSys = new PrjCoordSys();
 					try {
-						prjCoordSys.fromXML(XmlUtilties.nodeToString(node, projectionDoc.getXmlEncoding()));
+						prjCoordSys.fromXML(XmlUtilities.nodeToString(node, projectionDoc.getXmlEncoding()));
 					} catch (Exception e) {
 						Application.getActiveApplication().getOutput().output(e);
 					}
@@ -612,7 +614,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 					result.setCaption(node.getTextContent());
 				} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.GEOCOORDSYS_TYPE)) {
 					String geoType = node.getTextContent();
-					if (!StringUtilties.isNullOrEmpty(geoType)) {
+					if (!StringUtilities.isNullOrEmpty(geoType)) {
 						result.setCoordSysCode(Integer.valueOf(geoType));
 					} else {
 						result.setCoordSysCode(CoordSysDefine.USER_DEFINED);
@@ -620,7 +622,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				} else if (node.getNodeName().equalsIgnoreCase(XMLProjectionTag.GEOGRAPHIC_COORDINATE_SYSTEM)) {
 					GeoCoordSys geoCoordSys = new GeoCoordSys();
 					try {
-						geoCoordSys.fromXML(XmlUtilties.nodeToString(node, projectionDoc.getXmlEncoding()));
+						geoCoordSys.fromXML(XmlUtilities.nodeToString(node, projectionDoc.getXmlEncoding()));
 					} catch (Exception e) {
 						Application.getActiveApplication().getOutput().output(e);
 					}
@@ -1026,10 +1028,10 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		define.appendChild(projectionDoc.createCDATASection(result.getGeoCoordSys().toXML()));
 		defines.appendChild(define);
 		try {
-			String string = XmlUtilties.nodeToString(projectionDoc, projectionDoc.getXmlEncoding());
+			String string = XmlUtilities.nodeToString(projectionDoc, projectionDoc.getXmlEncoding());
 			string = string.replaceAll("<!\\[CDATA\\[", "");
 			string = string.replaceAll("\\]\\]>", "");
-			FileUtilties.writeToFile(projectionConfigPath, string);
+			FileUtilities.writeToFile(projectionConfigPath, string);
 //			XmlUtilties.saveXml(projectionConfigPath, projectionDoc, projectionDoc.getXmlEncoding());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -1057,10 +1059,10 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 		define.appendChild(projectionDoc.createCDATASection(s));
 		defines.appendChild(define);
 		try {
-			String string = XmlUtilties.nodeToString(projectionDoc, projectionDoc.getXmlEncoding());
+			String string = XmlUtilities.nodeToString(projectionDoc, projectionDoc.getXmlEncoding());
 			string = string.replaceAll("<!\\[CDATA\\[", "");
 			string = string.replaceAll("\\]\\]>", "");
-			FileUtilties.writeToFile(projectionConfigPath, string);
+			FileUtilities.writeToFile(projectionConfigPath, string);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -1160,7 +1162,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 
 	private void save() {
 		try {
-			XmlUtilties.saveXml(projectionConfigPath, projectionDoc, "UTF-8");
+			XmlUtilities.saveXml(projectionConfigPath, projectionDoc, "UTF-8");
 		} catch (FileNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -1225,7 +1227,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 			if (parentNode == null) {
 				parentNode = createNode(parentValue);
 				((DefaultTreeModel) treePrjCoordSys.getModel()).insertNodeInto(parentNode, grandParentNode, grandParentNode.getChildCount());
-				JTreeUtilties.locateNode(treePrjCoordSys, (DefaultMutableTreeNode) parentNode.getChildAt(0));
+				JTreeUIUtilities.locateNode(treePrjCoordSys, (DefaultMutableTreeNode) parentNode.getChildAt(0));
 			} else {
 				java.util.List<String> names = new ArrayList<>();
 				for (int i = 0; i < parentNode.getChildCount(); i++) {
@@ -1235,7 +1237,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 				value.setCaption(getSingletonName(value.getCaption(), names));
 				DefaultMutableTreeNode node = createNode(value);
 				((DefaultTreeModel) treePrjCoordSys.getModel()).insertNodeInto(node, parentNode, parentNode.getChildCount());
-				JTreeUtilties.locateNode(treePrjCoordSys, node);
+				JTreeUIUtilities.locateNode(treePrjCoordSys, node);
 			}
 		}
 	}

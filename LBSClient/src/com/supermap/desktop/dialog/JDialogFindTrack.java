@@ -26,7 +26,7 @@ import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilties.CursorUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import net.infonode.properties.propertymap.PropertyMapWeakListenerManager;
 
@@ -290,7 +290,7 @@ public class JDialogFindTrack extends SmDialog {
 	 */
 	private void buttonOKActionPerformed() {
 		try {
-			CursorUtilties.setWaitCursor();	
+			CursorUtilities.setWaitCursor();	
 			
 			WorkThead thread = new WorkThead();
 			thread.start();
@@ -299,7 +299,7 @@ public class JDialogFindTrack extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor();
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 	

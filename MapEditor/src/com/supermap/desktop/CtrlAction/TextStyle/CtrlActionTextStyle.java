@@ -17,8 +17,8 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.CtrlAction.CtrlActionEditorBase;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.ui.controls.TextStyleDialog;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Selection;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
@@ -34,7 +34,7 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 	@Override
 	public void run() {
 		EditEnvironment environment = EditEnvironment.createInstance((IFormMap) Application.getActiveApplication().getActiveForm());
-		if (ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
+		if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
 			final TextStyleDialog dialog = TextStyleDialog.createInstance();
 			if (null != getActiveRecordset()) {
 				dialog.showDialog(getActiveRecordset());
@@ -73,8 +73,8 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 
 	private Recordset getActiveRecordset() {
 		Recordset recordset = null;
-		if (MapUtilties.getActiveMap().findSelection(true).length > 0) {
-			Selection selection = MapUtilties.getActiveMap().findSelection(true)[0];
+		if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
+			Selection selection = MapUtilities.getActiveMap().findSelection(true)[0];
 			recordset = selection.toRecordset();
 		}
 		return recordset;

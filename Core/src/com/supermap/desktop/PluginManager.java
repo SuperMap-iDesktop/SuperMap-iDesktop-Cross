@@ -1,7 +1,8 @@
 package com.supermap.desktop;
 
-import com.supermap.desktop.utilties.PathUtilties;
-import com.supermap.desktop.utilties.XmlUtilties;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -81,15 +82,15 @@ public class PluginManager {
 			Plugin plugin = getBundle(name);
 			if (plugin == null) {
 				// 查找所有默认工作场景下的插件配置文件
-				String workEnvironmentPath = PathUtilties.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
+				String workEnvironmentPath = PathUtilities.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
 				WorkEnvironment workEnvironment = Application.getActiveApplication().getWorkEnvironmentManager().getActiveWorkEnvironment();
 				String[] pathPrams = new String[] { workEnvironmentPath, workEnvironment.getName(), name + ".config" };
-				String configFile = PathUtilties.combinePath(pathPrams, false);
+				String configFile = PathUtilities.combinePath(pathPrams, false);
 
 				File file = new File(configFile);
 				PluginInfo pluginInfo = null;
 				if (file.exists()) {
-					Element pluginElement = XmlUtilties.getRootNode(configFile);
+					Element pluginElement = XmlUtilities.getRootNode(configFile);
 					if (pluginElement != null) {
 						pluginInfo = new PluginInfo(pluginElement);
 						if (pluginInfo.IsValid()) {

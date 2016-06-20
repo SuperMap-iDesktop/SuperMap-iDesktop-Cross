@@ -10,7 +10,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.utilties.LayerUtilties;
+import com.supermap.desktop.utilities.LayerUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 
@@ -33,9 +33,9 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 			Layer layer = (Layer) selectedNodeData.getData();
 			Rectangle2D rectangle2D;
 			if (layer instanceof LayerGroup) {
-				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
+				rectangle2D = LayerUtilities.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
 			} else {
-				rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
+				rectangle2D = LayerUtilities.getLayerBounds(formMap.getMapControl().getMap(), layer);
 			}
 
 			if (rectangle2D != null && rectangle2D.getHeight() > 0) {
@@ -64,9 +64,9 @@ public class CtrlActionLayerViewEntire extends CtrlAction {
 				if (layer != null) {
 
 					if (layer instanceof LayerGroup) {
-						rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
+						rectangle2D = LayerUtilities.getLayerBounds(formMap.getMapControl().getMap(), (LayerGroup) layer);
 					} else {
-						rectangle2D = LayerUtilties.getLayerBounds(formMap.getMapControl().getMap(), layer);
+						rectangle2D = LayerUtilities.getLayerBounds(formMap.getMapControl().getMap(), layer);
 					}
 				}
 			}

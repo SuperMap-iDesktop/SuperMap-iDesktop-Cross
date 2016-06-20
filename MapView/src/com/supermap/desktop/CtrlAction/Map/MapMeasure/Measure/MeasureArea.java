@@ -11,8 +11,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilties.FontUtilties;
-import com.supermap.desktop.utilties.SystemPropertyUtilties;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackedEvent;
 import com.supermap.ui.TrackedListener;
@@ -49,7 +49,7 @@ public class MeasureArea extends Measure {
 
 							String text = MessageFormat.format(CoreProperties.getString("String_Map_MeasureArea"), decimalFormat.format(getTotleArea(e.getArea())), getAreaUnit().toString());
 							labelTextBoxCurrent.setText(text);
-							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 12 + getSystemLength()) * SystemPropertyUtilties.getSystemSizeRate()), 23);
+							labelTextBoxCurrent.setSize((int) (((labelTextBoxCurrent.getText().length() << 3) + 12 + getSystemLength()) * SystemPropertyUtilities.getSystemSizeRate()), 23);
 							labelTextBoxCurrent.setLocation(pointInnerPixel);
 							mapControl.add(labelTextBoxCurrent);
 							labelTextBoxCurrent.setVisible(true);
@@ -86,7 +86,7 @@ public class MeasureArea extends Measure {
 					GeoText geotext = new GeoText(part);
 
 					TextStyle textStyle = geotext.getTextStyle();
-					textStyle.setFontHeight(FontUtilties.fontSizeToMapHeight(textFontHeight * 0.283,
+					textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight * 0.283,
 							mapControl.getMap(), textStyle.isSizeFixed()));
 					mapControl.getMap().getTrackingLayer().add(geotext, textTagTitle + "FinishedMeasure");
 					outputMeasure(totleArea);

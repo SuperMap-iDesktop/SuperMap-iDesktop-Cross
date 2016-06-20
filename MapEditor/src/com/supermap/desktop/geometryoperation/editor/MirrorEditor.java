@@ -34,9 +34,9 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -114,7 +114,7 @@ public class MirrorEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), IPointFeature.class,
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), IPointFeature.class,
 						ILineFeature.class, IRegionFeature.class, ICompoundFeature.class, IPoint3DFeature.class, ILine3DFeature.class, IRegion3DFeature.class);
 	}
 
@@ -130,7 +130,7 @@ public class MirrorEditor extends AbstractEditor {
 		MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
 
 		try {
-			MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
+			MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 			GeoLine geoLine = (GeoLine) e.getGeometry();
 			// 判断一下，当前绘制的线长度为0时，不执行镜像
 			editModel.point1 = geoLine.getPart(0).getItem(0);
@@ -140,7 +140,7 @@ public class MirrorEditor extends AbstractEditor {
 				return;
 			}
 
-			List<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			List<Layer> layers = MapUtilities.getLayers(environment.getMap());
 			for (Layer layer : layers) {
 				if (layer.isEditable() && (layer.getDataset() instanceof DatasetVector) && layer.getSelection().getCount() > 0) {
 					Recordset recordset = null;
@@ -176,10 +176,10 @@ public class MirrorEditor extends AbstractEditor {
 		try {
 			environment.getMapControl().getEditHistory().batchBegin();
 			editModel.setTipMessage(MapEditorProperties.getString("String_GeometryOperation_MirrorInfo"));
-			MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
+			MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 
 			if (editModel.point1 != Point2D.getEMPTY() && editModel.point2 != Point2D.getEMPTY() && !editModel.point1.equals(editModel.point2)) {
-				List<Layer> layers = MapUtilties.getLayers(environment.getMap());
+				List<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 				for (Layer layer : layers) {
 					if (layer.isEditable() && (layer.getDataset() instanceof DatasetVector) && layer.getSelection().getCount() > 0) {
@@ -212,7 +212,7 @@ public class MirrorEditor extends AbstractEditor {
 								}
 								recordset.moveNext();
 							}
-							TabularUtilties.refreshTabularForm(newRecordset.getDataset());
+							TabularUtilities.refreshTabularForm(newRecordset.getDataset());
 						} finally {
 							if (recordset != null) {
 								recordset.close();
@@ -246,7 +246,7 @@ public class MirrorEditor extends AbstractEditor {
 		MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
 		editModel.clear();
 
-		MapUtilties.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 	}
 
 	private class MirrorEditModel implements IEditModel {

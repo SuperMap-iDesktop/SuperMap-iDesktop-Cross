@@ -17,9 +17,9 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.GeometryUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 
 //@formatter:off
@@ -46,7 +46,7 @@ public class CombinationEditor extends AbstractEditor {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
 					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), datasetType);
 			if (formCombination.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor(environment.getMapControl());
+				CursorUtilities.setWaitCursor(environment.getMapControl());
 				MouseMotionListener[] listeners = environment.getMapControl().getMouseMotionListeners();
 //             用来验证崩溃缺陷的
 //				for (MouseMotionListener mouseMotionListener : listeners) {
@@ -55,12 +55,12 @@ public class CombinationEditor extends AbstractEditor {
 //					}
 //				}
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 			environment.stopEditor();
 		}
 	}
@@ -113,7 +113,7 @@ public class CombinationEditor extends AbstractEditor {
 			List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
 
 			for (Layer layer : selectedLayers) {
-				geometry = GeometryUtilties.combination(geometry, layer);
+				geometry = GeometryUtilities.combination(geometry, layer);
 			}
 
 			// 删除目标图层选中的对象

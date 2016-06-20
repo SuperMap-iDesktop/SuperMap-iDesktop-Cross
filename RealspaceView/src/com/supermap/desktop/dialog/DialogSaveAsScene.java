@@ -2,7 +2,7 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Scenes;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilties.SceneUtilties;
+import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -158,7 +159,7 @@ public class DialogSaveAsScene extends SmDialog {
 	private void okButton_Click() {
 		try {
 			DialogResult dialogResult = DialogResult.NO;
-			if (SceneUtilties.checkAvailableSceneName(this.textFieldSceneName.getText(), oldSceneName)) {
+			if (SceneUIUtilities.checkAvailableSceneName(this.textFieldSceneName.getText(), oldSceneName)) {
 				dialogResult = DialogResult.YES;
 			} else {
 				String message = String.format(RealspaceViewProperties.getString("String_SaveAsScene_ExistName"), this.textFieldSceneName.getText());

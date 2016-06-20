@@ -12,8 +12,8 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IReverse;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 public class ReverseEditor extends AbstractEditor {
@@ -30,7 +30,7 @@ public class ReverseEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilties.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE,
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE,
 						GeometryType.GEOLINEM, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOLINE3D);
 	}
 
@@ -38,7 +38,7 @@ public class ReverseEditor extends AbstractEditor {
 		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.isEditable()

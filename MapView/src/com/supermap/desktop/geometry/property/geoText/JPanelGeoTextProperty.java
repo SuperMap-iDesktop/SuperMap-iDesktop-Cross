@@ -13,7 +13,7 @@ import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.*;
-import com.supermap.desktop.utilties.*;
+import com.supermap.desktop.utilities.*;
 
 public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 
@@ -56,7 +56,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			public void modify(TextStyleType newValue) {
 				Object newTextStyleValue = panelBasicSet.getResultMap().get(newValue);
 				String text = ((JTextArea) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
-				if (null == newTextStyleValue || StringUtilties.isNullOrEmptyString(text)) {
+				if (null == newTextStyleValue || StringUtilities.isNullOrEmptyString(text)) {
 					return;
 				}
 				if (newValue.equals(TextStyleType.FIXEDSIZE)) {
@@ -86,7 +86,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 				Object newTextPartValue = panelTextPart.getResultMap().get(newValue);
 				String text = ((JTextArea) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
 
-				if (null == newTextPartValue || StringUtilties.isNullOrEmptyString(text)) {
+				if (null == newTextPartValue || StringUtilities.isNullOrEmptyString(text)) {
 					return;
 				}
 				boolean isApply = checkboxApplyForTextPart.isSelected();
@@ -235,7 +235,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 		recordset.setGeometry(geometry);
 		panelTextPart.resetGeometry(geometry);
 		recordset.update();
-		MapUtilties.getActiveMap().refresh();
+		MapUtilities.getActiveMap().refresh();
 	}
 
 	@Override

@@ -19,10 +19,10 @@ import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilties.CursorUtilties;
-import com.supermap.desktop.utilties.ListUtilties;
-import com.supermap.desktop.utilties.MapUtilties;
-import com.supermap.desktop.utilties.TabularUtilties;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -32,14 +32,14 @@ public class HoleyRegionEditor extends AbstractEditor {
 	public void activate(EditEnvironment environment) {
 		try {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
-					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), DatasetType.REGION);
+					MapEditorProperties.getString("String_GeometryOperation_HoleyRegion"), environment.getMap(), DatasetType.REGION);
 			if (formCombination.showDialog() == DialogResult.OK) {
-				CursorUtilties.setWaitCursor(environment.getMapControl());
+				CursorUtilities.setWaitCursor(environment.getMapControl());
 				holeyRegion(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-				TabularUtilties.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} finally {
-			CursorUtilties.setDefaultCursor(environment.getMapControl());
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 			
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
@@ -50,9 +50,9 @@ public class HoleyRegionEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean result = false;
 
-		if (ListUtilties.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)
+		if (ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)
 				&& environment.getEditProperties().getSelectedGeometryCount() > 1
-				&& ListUtilties.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)) {
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)) {
 			result = true;
 		}
 		return result;
@@ -65,7 +65,7 @@ public class HoleyRegionEditor extends AbstractEditor {
 		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
-			ArrayList<Layer> layers = MapUtilties.getLayers(environment.getMap());
+			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
 				if (layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD) {
@@ -133,7 +133,7 @@ public class HoleyRegionEditor extends AbstractEditor {
 				resultRecordset.addNew(resultRegion, propertyData);
 				resultRecordset.update();
 				editLayer.getSelection().add(resultRecordset.getID());
-				TabularUtilties.refreshTabularForm(resultRecordset.getDataset());
+				TabularUtilities.refreshTabularForm(resultRecordset.getDataset());
 				environment.getMapControl().getEditHistory().add(EditType.ADDNEW, resultRecordset, true);
 			}
 		} catch (Exception ex) {
