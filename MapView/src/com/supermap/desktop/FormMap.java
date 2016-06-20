@@ -1048,6 +1048,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	public void showPopupMenu() {
 		this.isShowPopupMenu--;
 	}
+	@Override
+	public int getIsShowPopupMenu() {
+		return isShowPopupMenu;
+	}
 
 	protected void fireActiveLayersChanged(ActiveLayersChangedEvent e) {
 		Object[] listeners = eventListenerList.getListenerList();
@@ -1091,7 +1095,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				|| nodeDataType == NodeDataType.THEME_LABEL_ITEM || nodeDataType == NodeDataType.THEME_UNIQUE_ITEM
 				|| nodeDataType == NodeDataType.THEME_RANGE_ITEM || nodeDataType == NodeDataType.LAYER_GROUP
 				|| nodeDataType == NodeDataType.DATASET_IMAGE_COLLECTION || nodeDataType == NodeDataType.DATASET_GRID_COLLECTION
-				||nodeDataType==NodeDataType.THEME_CUSTOM;
+				|| nodeDataType == NodeDataType.THEME_CUSTOM;
 	}
 
 	private void showPopupMenu(MouseEvent e) {
@@ -1407,7 +1411,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 				properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
 				properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
-				if (geometry instanceof GeoText||geometry instanceof GeoText3D) {
+				if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
 					properties.add(GeometryPropertyFactory.getGeometryGeoTextPropertyControl(recordset));
 				}
 				Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(properties.toArray(new IProperty[properties.size()]));
@@ -1476,9 +1480,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				for (int i = 0; i < dataFlavors.length; i++) {
 					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-						Map map = formMap.getMapControl().getMap();
-						MapViewUtilties.addDatasetsToMap(map, datasets, true);
+						if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+							IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+							Map map = formMap.getMapControl().getMap();
+							MapViewUtilties.addDatasetsToMap(map, datasets, true);
+						}
 					}
 				}
 			} catch (Exception e) {

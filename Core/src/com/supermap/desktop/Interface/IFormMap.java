@@ -36,6 +36,8 @@ public interface IFormMap extends IForm {
 	void dontShowPopupMenu();
 
 	void showPopupMenu();
+	
+	int getIsShowPopupMenu();
 
 	void updataSelectNumber();
 

@@ -1,6 +1,7 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Selection;
 
 /**
@@ -29,18 +30,25 @@ public interface IBindWindow {
 	 * 刷新属性表
 	 */
 	public void refreshFormTabular(int[] addRows);
+
 	/**
 	 * 移除事件
 	 */
 	public void removeEvents();
+
 	/**
 	 * 销毁类，释放资源
 	 */
 	public void dispose();
-	
+
 	public void addMapSelectionChangeListener(MapSelectionChangeListener l);
-	
+
 	public void removeMapSelectionChangeListener(MapSelectionChangeListener l);
-	
+
 	public void fireSelectionChanged(Selection selection);
+
+	/**
+	 * 获取属性表
+	 */
+	public IFormTabular getTabular();
 }
