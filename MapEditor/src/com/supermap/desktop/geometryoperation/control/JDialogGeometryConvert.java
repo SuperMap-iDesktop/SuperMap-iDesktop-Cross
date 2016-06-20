@@ -259,7 +259,6 @@ public class JDialogGeometryConvert extends SmDialog {
 
 	private void initializeComboBoxDatasetValue() {
 		this.comboBoxDataset.removeAllItems();
-		int cadCount = 0;
 
 		if (this.desDatasource != null) {
 			for (int i = 0; i < this.desDatasource.getDatasets().getCount(); i++) {
@@ -283,6 +282,9 @@ public class JDialogGeometryConvert extends SmDialog {
 			}
 		}
 		this.comboBoxDataset.setSelectedDataset(this.desDataset);
+		
+		// 如果目标数据集是 null，说明数据源下没有合适数据集，那就置为新建
+		this.isNewDataset = this.desDataset == null;
 	}
 
 	private void comboBoxDesDatasourceSelectedChange() {
