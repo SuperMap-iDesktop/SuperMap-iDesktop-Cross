@@ -32,7 +32,7 @@ public class HoleyRegionEditor extends AbstractEditor {
 	public void activate(EditEnvironment environment) {
 		try {
 			JDialogFieldOperationSetting formCombination = new JDialogFieldOperationSetting(
-					MapEditorProperties.getString("String_GeometryOperation_Combination"), environment.getMap(), DatasetType.REGION);
+					MapEditorProperties.getString("String_GeometryOperation_HoleyRegion"), environment.getMap(), DatasetType.REGION);
 			if (formCombination.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				holeyRegion(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
