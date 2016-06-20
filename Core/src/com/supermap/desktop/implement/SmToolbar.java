@@ -14,12 +14,10 @@ import com.supermap.desktop.ui.XMLSeparator;
 import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +39,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	private Dimension dimension = new Dimension(0, 0);
 	private int currentWidth = -1;
 	private MouseAdapter popupMouseListener;
+	// FIXME: 2016/6/20
+	private static final int defaultWidth = 13;
 	private ActionListener buttonActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -211,7 +211,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 					widthCount += ((Component) item).getPreferredSize().getWidth();
 					if (componentIndex == -1) {
 						this.remove(buttonMore);
-						this.add((JComponent) item, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0));//i == items.size() - 1 ? 1 :
+						this.add((JComponent) item, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(i == items.size() - 1 ? 1 : 0, 0));
 					}
 				} else {
 					widthCount = -1;
@@ -233,14 +233,14 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	 * @return 是否能放置
 	 */
 	private boolean isCanPlaced(int widthCount, IBaseItem item) {
-		int lastWidth = this.getWidth() - widthCount;
-		int moreButtonSize = (int) buttonMore.getPreferredSize().getWidth() + 5;
+		int lastWidth = this.getWidth() - widthCount - defaultWidth;
+		int moreButtonSize = (int) buttonMore.getPreferredSize().getWidth();
 		if (lastWidth < ((Component) item).getPreferredSize().getWidth()) {
 			// 当前剩余长度已经不能放置
 			return false;
 		}
 		lastWidth -= ((Component) item).getPreferredSize().getWidth();
-		if (lastWidth > moreButtonSize) {
+		if (lastWidth >= moreButtonSize) {
 			// 可以放MoreButton返回真
 			return true;
 		}
@@ -471,7 +471,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	}
 
 	public void initPreferredSize() {
-		int width = SystemPropertyUtilities.isWindows() ? 13 : 13;
+		int width = defaultWidth;
 		for (IBaseItem item : items) {
 			if (item instanceof Component) {
 				width += ((Component) item).getPreferredSize().getWidth();
