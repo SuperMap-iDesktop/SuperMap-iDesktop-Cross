@@ -14,6 +14,7 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	private IBindProperty bindProperty;
 	private IFormMap formMap;
 	private SplitWindow splitWindow;
+	// 是否要选中属性表中的某些行
 	private boolean addRow;
 	private PropertySelectChangeListener selectRowsChangeListener;
 	private MapSelectionChangeListener selectionChangeListener;
@@ -43,6 +44,13 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 			}
 		};
 		this.formMapMouseListener = new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+					bindWindow.refreshFormTabular(new int[0]);
+				}
+			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -102,4 +110,12 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.formMap = formMap;
 	}
 
+	public boolean isAddRow() {
+		return addRow;
+	}
+
+	public void setAddRow(boolean addRow) {
+		this.addRow = addRow;
+	}
+	
 }

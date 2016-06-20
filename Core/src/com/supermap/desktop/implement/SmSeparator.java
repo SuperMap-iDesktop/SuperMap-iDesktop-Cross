@@ -1,12 +1,12 @@
 package com.supermap.desktop.implement;
 
-import javax.swing.JComponent;
-import javax.swing.JSeparator;
-
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.ui.XMLCommand;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class SmSeparator extends JSeparator implements IBaseItem {
 	private static final long serialVersionUID = 1L;
@@ -24,6 +24,9 @@ public class SmSeparator extends JSeparator implements IBaseItem {
 
 	public SmSeparator(IForm formClass, XMLCommand xmlCommand, JComponent parent) {
 		super(VERTICAL);
+		this.setMinimumSize(new Dimension(2, 31));
+		this.setPreferredSize(new Dimension(2, 31));
+		this.setMaximumSize(new Dimension(2, 31));
 		this.formClass = formClass;
 		this.xmlCommand = xmlCommand;
 	}
