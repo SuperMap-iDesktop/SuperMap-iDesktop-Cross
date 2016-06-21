@@ -47,7 +47,6 @@ import com.supermap.desktop.http.DownloadUtils;
 import com.supermap.desktop.http.FileManager;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilties.DatasourceUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSetting;
 import com.supermap.mapping.LayerSettingGrid;

@@ -24,7 +24,7 @@ import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilties.PathUtilties;
+import com.supermap.desktop.utilities.PathUtilities;
 
 public class FileManager extends JPanel implements IUpdateProgress {
 
@@ -125,8 +125,8 @@ public class FileManager extends JPanel implements IUpdateProgress {
 	private ImageIcon getImageIcon(String imagePath) {
 		ImageIcon imageIcon = null;
 		try {
-			String[] pathPrams = new String[] { PathUtilties.getRootPathName(), "../LBSClient/reosurces/", imagePath };
-			imagePath = PathUtilties.combinePath(pathPrams, false);
+			String[] pathPrams = new String[] { PathUtilities.getRootPathName(), "../LBSClient/reosurces/", imagePath };
+			imagePath = PathUtilities.combinePath(pathPrams, false);
 			File imageFile = new File(imagePath);
 			if (imageFile.exists()) {
 				imageIcon = new ImageIcon(imagePath);

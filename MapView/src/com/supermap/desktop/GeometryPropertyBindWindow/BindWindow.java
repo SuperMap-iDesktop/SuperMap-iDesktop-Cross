@@ -60,6 +60,7 @@ public class BindWindow implements IBindWindow {
 		};
 		removeEvents();
 		this.formTabular.getjTableTabular().addMouseListener(this.tabularTableListener);
+		this.formTabular.getjTableTabular().getTableHeader().addMouseListener(this.tabularTableListener);
 		this.formTabular.getjTableTabular().addKeyListener(this.tabularTableKeyListener);
 		this.formTabular.getRowHeader().addMouseMotionListener(this.listMouseMotionListener);
 		this.formTabular.getRowHeader().addMouseListener(this.listMouseListener);
@@ -94,7 +95,7 @@ public class BindWindow implements IBindWindow {
 			}
 		}
 		if (this.formTabular.getRowCount() > 0) {
-			this.formTabular.addRow(tempRows);
+			this.formTabular.addRows(tempRows);
 		}
 	}
 
@@ -153,6 +154,11 @@ public class BindWindow implements IBindWindow {
 	@Override
 	public void setActiveDataset(Dataset dataset) {
 		this.dataset = dataset;
+	}
+
+	@Override
+	public IFormTabular getTabular() {
+		return this.formTabular;
 	}
 
 }

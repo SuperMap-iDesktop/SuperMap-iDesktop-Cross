@@ -35,6 +35,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -105,7 +106,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 
-	};;
+	};
 	private JList rowHeader;
 	private MouseAdapter rowHeaderMouseMotionListener = new MouseAdapter() {
 
@@ -203,6 +204,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	private void registerEvents() {
 		this.jTableTabular.addMouseListener(mouseAdapter);
+		this.jTableTabular.getTableHeader().addMouseListener(mouseAdapter);
 		this.jTableTabular.addKeyListener(keyListener);
 		this.jTableTabular.getSelectionModel().addListSelectionListener(listSelectionListener);
 		this.rowHeader.addMouseMotionListener(rowHeaderMouseMotionListener);
@@ -541,13 +543,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void addRow(int[] addRows) {
+	public void addRows(int[] addRows) {
 		this.jTableTabular.clearSelection();
 		for (int i = 0; i < addRows.length; i++) {
 			this.jTableTabular.addRowSelectionInterval(addRows[i], addRows[i]);
 			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
-			Rectangle aRect = this.jTableTabular.getCellRect(addRows[i], 0, true);
-			this.jTableTabular.scrollRectToVisible(aRect);
 		}
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
@@ -711,6 +711,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			return tableCellEditorComponent;
 		}
 	}
+
 	@Override
 	public HashMap<Integer, Object> getRowIndexMap() {
 		HashMap<Integer, Object> result = new HashMap<Integer, Object>();
@@ -719,6 +720,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 		return result;
 	}
+
 	@Override
 	public HashMap<Object, Integer> getIdMap() {
 		HashMap<Object, Integer> result = new HashMap<Object, Integer>();

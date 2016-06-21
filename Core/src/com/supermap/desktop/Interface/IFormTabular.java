@@ -52,7 +52,7 @@ public interface IFormTabular extends IForm {
 	/**
 	 * 添加选中项
 	 */
-	public void addRow(int[] addRows);
+	public void addRows(int[] addRows);
 
 	/**
 	 * 获取选中行的数目

@@ -1051,6 +1051,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.isShowPopupMenu--;
 	}
 
+	@Override
+	public int getIsShowPopupMenu() {
+		return isShowPopupMenu;
+	}
+
 	protected void fireActiveLayersChanged(ActiveLayersChangedEvent e) {
 		Object[] listeners = eventListenerList.getListenerList();
 
@@ -1404,9 +1409,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
 				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
-				Geometry geometry = recordset.getGeometry();
 
-				if (geometry != null) {
+				if (recordset.getGeometry() != null) {
+					Geometry geometry = recordset.getGeometry();
 					ArrayList<IProperty> properties = new ArrayList<IProperty>();
 					properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 					properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
@@ -1485,9 +1490,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				for (int i = 0; i < dataFlavors.length; i++) {
 					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-						IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-						Map map = formMap.getMapControl().getMap();
-						MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
+						if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+							IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+							Map map = formMap.getMapControl().getMap();
+							MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
+						}
 					}
 				}
 			} catch (Exception e) {
