@@ -13,16 +13,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.JLabel;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -204,9 +202,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	private void initializeDatas() {
 
 		// 目标数据源
-		if (Application.getActiveApplication().getActiveDatasources() != null && Application.getActiveApplication().getActiveDatasources().length > 0) {
-			this.desDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-		}
+		initializeDesDatasource();
 
 		// 其他
 		this.isRemoveSrc = false;
@@ -214,6 +210,38 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		if (this.desDatasource != null) {
 			this.newDatasetName = this.desDatasource.getDatasets().getAvailableDatasetName(DEFAULT_DATASET_NAME);
 		}
+	}
+
+	private void initializeDesDatasource() {
+		this.desDatasource = null;
+
+		if (Application.getActiveApplication().getActiveDatasources() != null) {
+			for (int i = 0; i < Application.getActiveApplication().getActiveDatasources().length; i++) {
+				Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
+
+				if (isDesDatasourceAvailable(datasource)) {
+					this.desDatasource = datasource;
+					break;
+				}
+			}
+		}
+
+		// 如果在选中的数据源中找不到合适的，就从所有数据源中取第一个满足条件的数据源
+		if (this.desDatasource == null) {
+			Workspace workspace = Application.getActiveApplication().getWorkspace();
+			for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
+				Datasource datasource = workspace.getDatasources().get(i);
+
+				if (isDesDatasourceAvailable(datasource)) {
+					this.desDatasource = datasource;
+					break;
+				}
+			}
+		}
+	}
+
+	private boolean isDesDatasourceAvailable(Datasource datasource) {
+		return datasource != null && !datasource.isReadOnly();
 	}
 
 	private void initializeComponents() {
@@ -278,10 +306,26 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	}
 
 	private void initializeComponentsValue() {
-		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);
+		initializeComboBoxDatasourceValue();
 		this.checkBoxRemoveSrc.setSelected(this.isRemoveSrc);
 		this.textFieldNewDataset.setText(this.newDatasetName);
 		setComponentsEnabled();
+	}
+
+	private void initializeComboBoxDatasourceValue() {
+		this.comboBoxDatasource.removeAllItems();
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+
+		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
+			Datasource datasource = workspace.getDatasources().get(i);
+
+			if (isDesDatasourceAvailable(datasource)) {
+				DataCell cell = new DataCell();
+				cell.initDatasourceType(datasource);
+				this.comboBoxDatasource.addItem(cell);
+			}
+		}
+		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);
 	}
 
 	private void registerEvents() {
