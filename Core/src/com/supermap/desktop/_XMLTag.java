@@ -66,6 +66,7 @@ public class _XMLTag {
 	public static final String g_AttributionFormClass = "formClass";
 	public static final String g_AttributionID = "id";
 	public static final String g_AttributionIndex = "index";
+	public static final String g_RowIndex = "rowIndex";
 	public static final String g_AttributionImage = "image";
 	public static final String g_AttributionImagePosition = "imagePosition";
 	public static final String g_AttributionLabel = "label";

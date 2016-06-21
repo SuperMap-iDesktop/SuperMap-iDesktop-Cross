@@ -17,6 +17,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -136,9 +137,7 @@ public class JDialogGeometryConvert extends SmDialog {
 	private void initializeDatas() {
 
 		// 目标数据源
-		if (Application.getActiveApplication().getActiveDatasources() != null && Application.getActiveApplication().getActiveDatasources().length > 0) {
-			this.desDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-		}
+		initializeDesDatasource();
 
 		// 目标数据集
 		initializeDesDataset();
@@ -149,6 +148,34 @@ public class JDialogGeometryConvert extends SmDialog {
 
 		if (this.desDatasource != null) {
 			this.newDatasetName = this.desDatasource.getDatasets().getAvailableDatasetName(DEFAULT_DATASET_NAME);
+		}
+	}
+
+	private void initializeDesDatasource() {
+		this.desDatasource = null;
+
+		if (Application.getActiveApplication().getActiveDatasources() != null) {
+			for (int i = 0; i < Application.getActiveApplication().getActiveDatasources().length; i++) {
+				Datasource datasource = Application.getActiveApplication().getActiveDatasources()[0];
+
+				if (isDesDatasourceAvailable(datasource)) {
+					this.desDatasource = datasource;
+					break;
+				}
+			}
+		}
+
+		// 如果在选中的数据源中找不到合适的，就从所有数据源中取第一个满足条件的数据源
+		if (this.desDatasource == null) {
+			Workspace workspace = Application.getActiveApplication().getWorkspace();
+			for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
+				Datasource datasource = workspace.getDatasources().get(i);
+
+				if (isDesDatasourceAvailable(datasource)) {
+					this.desDatasource = datasource;
+					break;
+				}
+			}
 		}
 	}
 
@@ -171,7 +198,7 @@ public class JDialogGeometryConvert extends SmDialog {
 		setTitle(title);
 		this.labelDesDatasource = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.labelDesDataset = new JLabel(ControlsProperties.getString("String_Label_TargetDataset"));
-		this.comboBoxDatasource = new DatasourceComboBox();
+		this.comboBoxDatasource = new DatasourceComboBox(new Datasource[0]);
 		this.comboBoxDataset = new DatasetComboBox(new Dataset[0]);
 		this.checkBoxNewDataset = new JCheckBox(ControlsProperties.getString("String_Label_NewDataset"));
 		this.textFieldNewDataset = new SmTextFieldLegit();
@@ -249,7 +276,7 @@ public class JDialogGeometryConvert extends SmDialog {
 	}
 
 	private void initializeComponentsValue() {
-		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);
+		initializeComboBoxDatasourceValue();
 		initializeComboBoxDatasetValue();
 		this.checkBoxNewDataset.setSelected(this.isNewDataset);
 		this.checkBoxRemoveSrc.setSelected(this.isRemoveSrc);
@@ -257,9 +284,28 @@ public class JDialogGeometryConvert extends SmDialog {
 		setComponentsEnabled();
 	}
 
+	private void initializeComboBoxDatasourceValue() {
+		this.comboBoxDatasource.removeAllItems();
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+
+		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
+			Datasource datasource = workspace.getDatasources().get(i);
+
+			if (isDesDatasourceAvailable(datasource)) {
+				DataCell cell = new DataCell();
+				cell.initDatasourceType(datasource);
+				this.comboBoxDatasource.addItem(cell);
+			}
+		}
+		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);
+	}
+
+	private boolean isDesDatasourceAvailable(Datasource datasource) {
+		return datasource != null && !datasource.isReadOnly();
+	}
+
 	private void initializeComboBoxDatasetValue() {
 		this.comboBoxDataset.removeAllItems();
-		int cadCount = 0;
 
 		if (this.desDatasource != null) {
 			for (int i = 0; i < this.desDatasource.getDatasets().getCount(); i++) {
@@ -283,6 +329,9 @@ public class JDialogGeometryConvert extends SmDialog {
 			}
 		}
 		this.comboBoxDataset.setSelectedDataset(this.desDataset);
+
+		// 如果目标数据集是 null，说明数据源下没有合适数据集，那就置为新建
+		this.isNewDataset = this.desDataset == null;
 	}
 
 	private void comboBoxDesDatasourceSelectedChange() {
