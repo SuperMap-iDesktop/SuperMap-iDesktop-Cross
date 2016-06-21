@@ -258,6 +258,23 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
 
+		this.textFieldNewDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
+
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (JDialogRegionExtractCenter.this.desDatasource == null) {
+					return false;
+				}
+
+				return JDialogRegionExtractCenter.this.desDatasource.getDatasets().isAvailableDatasetName(textFieldValue);
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
+
 		GroupLayout gl = new GroupLayout(getContentPane());
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);

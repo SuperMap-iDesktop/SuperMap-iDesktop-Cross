@@ -214,7 +214,7 @@ public class JDialogGeometryConvert extends SmDialog {
 					return false;
 				}
 
-				return JDialogGeometryConvert.this.desDatasource.getDatasets().isAvailableDatasetName(JDialogGeometryConvert.this.newDatasetName);
+				return JDialogGeometryConvert.this.desDatasource.getDatasets().isAvailableDatasetName(textFieldValue);
 			}
 
 			@Override
@@ -381,7 +381,7 @@ public class JDialogGeometryConvert extends SmDialog {
 		this.comboBoxDataset.setEnabled(this.desDatasource != null && !this.isNewDataset);
 
 		if (this.isNewDataset) {
-			this.buttonOK.setEnabled(this.desDatasource != null && this.textFieldNewDataset.isLegitValue(this.newDatasetName));
+			this.buttonOK.setEnabled(this.desDatasource != null && this.textFieldNewDataset.isLegitValue(this.textFieldNewDataset.getText()));
 		} else {
 			this.buttonOK.setEnabled(this.desDataset != null);
 		}
