@@ -78,6 +78,15 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 	}
 
+	public int getRowIndex() {
+		return this.xmlToolbar.getRowIndex();
+	}
+
+	public void setRowIndex(int rowIndex) {
+		this.xmlToolbar.setRowIndex(rowIndex);
+
+	}
+
 	protected boolean initialize() {
 		boolean result = false;
 		if (this.xmlToolbar != null) {
@@ -529,81 +538,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 
 	public XMLToolbar getXMLToolbar() {
 		return this.xmlToolbar;
-	}
-
-	class ToolBarMorePopupMenu extends JMenu implements IBaseItem {
-
-		private IBaseItem baseItem;
-
-		public ToolBarMorePopupMenu(IBaseItem baseItem) {
-			this.baseItem = baseItem;
-			this.setFocusPainted(false);
-			this.setFocusable(false);
-			this.setIcon(((SmButtonDropdown) baseItem).getDisplayButton().getIcon());
-		}
-
-		@Override
-		public void setPopupMenuVisible(boolean b) {
-			((SmButtonDropdown) baseItem).getPopupMenu().show(popupMenu, 33, 30);
-		}
-
-		@Override
-		public boolean isEnabled() {
-			if (baseItem == null) {
-				return true;
-			}
-			return baseItem.isEnabled();
-		}
-
-		@Override
-		public void setEnabled(boolean enabled) {
-			baseItem.setEnabled(enabled);
-		}
-
-		@Override
-		public boolean isVisible() {
-			return baseItem.isVisible();
-		}
-
-		@Override
-		public void setVisible(boolean visible) {
-			baseItem.setEnabled(visible);
-		}
-
-		@Override
-		public boolean isChecked() {
-			return baseItem.isChecked();
-		}
-
-		@Override
-		public void setChecked(boolean checked) {
-			baseItem.setChecked(checked);
-		}
-
-		@Override
-		public int getIndex() {
-			return baseItem.getIndex();
-		}
-
-		@Override
-		public void setIndex(int index) {
-			baseItem.setIndex(index);
-		}
-
-		@Override
-		public String getID() {
-			return baseItem.getID();
-		}
-
-		@Override
-		public ICtrlAction getCtrlAction() {
-			return baseItem.getCtrlAction();
-		}
-
-		@Override
-		public void setCtrlAction(ICtrlAction ctrlAction) {
-			baseItem.setCtrlAction(ctrlAction);
-		}
 	}
 
 

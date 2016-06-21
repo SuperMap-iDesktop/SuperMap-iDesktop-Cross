@@ -1,17 +1,14 @@
 package com.supermap.desktop.ui;
 
-import java.util.ArrayList;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.PluginInfo;
-import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IXMLCreator;
+import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.XMLCommandType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
 
 public class XMLToolbar extends XMLCommand {
 
@@ -19,6 +16,7 @@ public class XMLToolbar extends XMLCommand {
 	private IXMLCreator xmlCreator;
 	private String formClassName = "";
 	private IForm associatedForm = null;
+	private int rowIndex = 0;
 
 	public XMLToolbar(PluginInfo pluginInfo, XMLToolbars parent) {
 		super(pluginInfo, parent);
@@ -29,6 +27,13 @@ public class XMLToolbar extends XMLCommand {
 	@Override
 	public boolean initialize(Element element) {
 		super.initialize(element);
+		try {
+			if (element.hasAttribute(g_RowIndex)) {
+				this.rowIndex = Integer.valueOf(element.getAttribute(g_RowIndex));
+			}
+		} catch (Exception ignore) {
+			// nothing
+		}
 		try {
 			if (element.hasAttribute(g_AttributionFormClass)) {
 				this.formClassName = element.getAttribute(g_AttributionFormClass);
@@ -99,6 +104,14 @@ public class XMLToolbar extends XMLCommand {
 		return this.commands;
 	}
 
+	public int getRowIndex() {
+		return rowIndex;
+	}
+
+	public void setRowIndex(int rowIndex) {
+		this.rowIndex = rowIndex;
+	}
+
 	public XMLCommand getToolbarItem(String id) {
 		XMLCommand xmlCommand = null;
 		try {
@@ -155,6 +168,7 @@ public class XMLToolbar extends XMLCommand {
 			result.setID(this.getID());
 			result.setVisible(this.getVisible());
 			result.setIndex(this.getIndex());
+			result.setRowIndex(this.getRowIndex());
 			result.setLabel(this.getLabel());
 			result.setFormClassName(this.getFormClassName());
 			result.getPluginInfo().setBundleName(this.getPluginInfo().getBundleName());
