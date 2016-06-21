@@ -7,7 +7,6 @@ import com.supermap.desktop.ui.XMLStatusbars;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.XMLToolbars;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -327,6 +326,7 @@ public class PluginInfo {
 								childElement.setAttribute(_XMLTag.g_AttributionIndex, Integer.toString(xmlToolbar.getIndex()));
 
 								childElement.setAttribute(_XMLTag.g_AttributionVisible, Boolean.toString(xmlToolbar.getVisible()));
+								childElement.setAttribute(_XMLTag.g_RowIndex, Integer.toString(xmlToolbar.getRowIndex()));
 							}
 						}
 					}

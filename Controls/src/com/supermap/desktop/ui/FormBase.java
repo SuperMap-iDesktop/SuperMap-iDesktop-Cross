@@ -37,7 +37,6 @@ import com.supermap.realspace.Scene;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -147,9 +146,9 @@ public class FormBase extends JFrame implements IFormMain {
 			DatasourceUtilities.initRecentFileMenu();
 
 //			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
-			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
+//			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
 
-			this.toolbarManager.setToolbarContainer(this.toolbarManager.getToolbarsContainer());
+//			this.toolbarManager.setToolbarContainer(this.toolbarManager.getToolbarsContainer());
 			this.toolbarManager.load(workEnvironment);
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
