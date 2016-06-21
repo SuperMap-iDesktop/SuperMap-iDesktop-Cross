@@ -16,6 +16,7 @@ import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
@@ -75,6 +76,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		if (xmlToolbar != null) {
 			this.xmlToolbar = xmlToolbar;
 			initialize();
+//			((BasicToolBarUI) this.getUI()).setRolloverBorders(false);
 		}
 	}
 
@@ -97,6 +99,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			buttonMore.setPreferredSize(buttonMoreSize);
 			buttonMore.setMaximumSize(buttonMoreSize);
 			buttonMore.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/moreButton.png")));
+			buttonMore.setBorder(BorderFactory.createEmptyBorder());
 			buttonMore.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
@@ -282,7 +285,9 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			popupMenu.add(separator, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setIpad(0, 2).setWeight(1, 1));
 		} else if (item instanceof SmCtrlActionButton) {
 			SmCtrlActionButton button = (SmCtrlActionButton) item;
-			button.setContentAreaFilled(false);
+//			button.setContentAreaFilled(false);
+			button.setRolloverEnabled(false);
+			button.setBorder(new EmptyBorder(3, 3, 3, 3));
 			button.addMouseListener(popupMouseListener);
 			button.addActionListener(buttonActionListener);
 			popupMenu.add(button, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.WEST));

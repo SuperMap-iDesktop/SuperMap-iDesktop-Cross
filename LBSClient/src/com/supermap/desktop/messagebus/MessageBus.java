@@ -312,9 +312,9 @@ public class MessageBus {
 		public void run() {
 			try {
 				// 1. get download finished status
-				BatchDownloadFile batchDownloadFile = DownloadUtils.getBatchDownloadFileWorker(downloadInfo);
+				BatchDownloadFile batchDownloadFile = new BatchDownloadFile(downloadInfo);
 				try {
-					while (batchDownloadFile != null && !batchDownloadFile.isFinished()) {
+					while ( !batchDownloadFile.isFinished()) {
 						sleep(500);
 					}
 					sleep(1000);
