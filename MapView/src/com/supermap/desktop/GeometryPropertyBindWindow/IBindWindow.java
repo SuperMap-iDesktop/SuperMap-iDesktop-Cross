@@ -27,6 +27,13 @@ public interface IBindWindow {
 	public void setActiveDataset(Dataset dataset);
 
 	/**
+	 * 获取当前活动的数据集
+	 * 
+	 * @param dataset
+	 */
+	public Dataset getActiveDataset();
+
+	/**
 	 * 刷新属性表
 	 */
 	public void refreshFormTabular(int[] addRows);

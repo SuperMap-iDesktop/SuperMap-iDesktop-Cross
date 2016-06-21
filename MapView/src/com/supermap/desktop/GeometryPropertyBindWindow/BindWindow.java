@@ -1,9 +1,6 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import java.awt.event.*;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -159,6 +156,11 @@ public class BindWindow implements IBindWindow {
 	@Override
 	public IFormTabular getTabular() {
 		return this.formTabular;
+	}
+
+	@Override
+	public Dataset getActiveDataset() {
+		return this.dataset;
 	}
 
 }
