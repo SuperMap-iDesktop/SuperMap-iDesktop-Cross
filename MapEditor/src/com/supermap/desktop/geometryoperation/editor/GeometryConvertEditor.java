@@ -116,7 +116,6 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 	}
 
 	private boolean convert(EditEnvironment environment, DatasetVector desDataset, boolean isRemoveSrc) {
-		environment.getMapControl().getEditHistory().batchBegin();
 		Recordset desRecordset = null;
 		boolean isConverted = false;
 
@@ -135,6 +134,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 					Recordset recordset = layer.getSelection().toRecordset();
 					RecordsetDelete delete = null;
 					if (isRemoveSrc && layer.isEditable()) {
+						environment.getMapControl().getEditHistory().batchBegin();
 						delete = new RecordsetDelete((DatasetVector) layer.getDataset(), environment.getMapControl().getEditHistory());
 					}
 
@@ -169,8 +169,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 						// 移除源对象
 						if (delete != null) {
 							delete.update();
+							environment.getMapControl().getEditHistory().batchEnd();
 							layer.getSelection().clear();
 							environment.getMap().refresh();
+						} else {
+							environment.getMapControl().getEditHistory().batchCancel();
 						}
 					} finally {
 						if (recordset != null) {
@@ -186,8 +189,6 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(e);
 			isConverted = false;
 		} finally {
-			environment.getMapControl().getEditHistory().batchEnd();
-
 			if (desRecordset != null) {
 				desRecordset.close();
 				desRecordset.dispose();

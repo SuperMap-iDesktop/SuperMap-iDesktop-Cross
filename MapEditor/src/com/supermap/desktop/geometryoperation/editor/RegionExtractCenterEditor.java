@@ -67,7 +67,6 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 
 	private boolean convert(EditEnvironment environment, Datasource desDatasource, String newDatasetName, double maxWidth, double minWidth, boolean isRemoveSrc) {
 		boolean isConverted = false;
-		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
 			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
@@ -90,11 +89,13 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 							isConverted = true;
 							// 图层可编辑才能移除源对象
 							if (isRemoveSrc && layer.isEditable()) {
+								environment.getMapControl().getEditHistory().batchBegin();
 								environment.getMapControl().getEditHistory().add(EditType.DELETE, srcRecordset, false);
 								srcRecordset.getBatch().setMaxRecordCount(2000);
 								srcRecordset.getBatch().begin();
 								srcRecordset.deleteAll();
 								srcRecordset.getBatch().update();
+								environment.getMapControl().getEditHistory().batchEnd();
 								layer.getSelection().clear();
 							}
 
@@ -113,7 +114,6 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 			isConverted = false;
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
 		}
 		return isConverted;
