@@ -2,6 +2,7 @@ package com.supermap.desktop.http;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +26,7 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
  */
 public abstract class DownloadUtils {
 	
-	private static Map<DownloadInfo, BatchDownloadFile> hashMap = new HashMap<DownloadInfo, BatchDownloadFile>();
+	private static Map<DownloadInfo, BatchDownloadFile> hashMap = Collections.synchronizedMap(new HashMap());
  
     public static DownloadInfo download(String url) {
         DownloadInfo bean = new DownloadInfo(url);
@@ -46,7 +47,7 @@ public abstract class DownloadUtils {
         LogUtils.info(bean);
         BatchDownloadFile down = new BatchDownloadFile(bean);
         hashMap.put(bean, down);
-        new Thread(down).start();
+        down.start();
         
         return bean;
     }
