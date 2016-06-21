@@ -44,7 +44,7 @@ public class BindProperty implements IBindProperty {
 				recordset.moveNext();
 			}
 			if (rows.length > 0) {
-				firePropertySelectChanged(rows);
+				firePropertySelectChanged(rows,recordset.getDataset());
 			}
 			recordset.dispose();
 		}
@@ -137,12 +137,12 @@ public class BindProperty implements IBindProperty {
 	}
 
 	@Override
-	public void firePropertySelectChanged(int[] rows) {
+	public void firePropertySelectChanged(int[] rows,Dataset dataset) {
 		if (null != propertySelectChangeListener) {
 			Vector<PropertySelectChangeListener> listeners = propertySelectChangeListener;
 			int count = listeners.size();
 			for (int i = 0; i < count; i++) {
-				listeners.elementAt(i).selectChanged(rows);
+				listeners.elementAt(i).selectChanged(rows,dataset);
 			}
 		}
 	}
