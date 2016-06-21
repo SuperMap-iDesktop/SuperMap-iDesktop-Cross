@@ -5,6 +5,7 @@ import java.util.Map;
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
@@ -34,7 +35,12 @@ public class LineToRegionEditor extends GeometryConvertEditor {
 		boolean isConverted = true;
 
 		if (srcGeometry instanceof ILineFeature && srcGeometry instanceof IRegionConvertor) {
-			GeoRegion geoRegion = ((IRegionConvertor) srcGeometry).convertToRegion(120);
+			GeoRegion geoRegion = null;
+			try {
+				geoRegion = ((IRegionConvertor) srcGeometry).convertToRegion(120);
+			} catch (UnsupportedOperationException e) {
+				Application.getActiveApplication().getOutput().output(e.getMessage());
+			}
 
 			if (geoRegion != null) {
 				desRecordset.addNew(geoRegion, properties);
