@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import com.supermap.analyst.spatialanalyst.Generalization;
@@ -11,6 +12,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogRegionExtractCenter;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
@@ -32,7 +34,22 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 
 			if (dialog.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
-				convert(environment, dialog.getDesDatasource(), dialog.getNewDatasetName(), dialog.getMax(), dialog.getMin(), dialog.isRemoveSrc());
+				boolean isConverted = convert(environment, dialog.getDesDatasource(), dialog.getNewDatasetName(), dialog.getMax(), dialog.getMin(),
+						dialog.isRemoveSrc());
+
+				if (isConverted) {
+					Application
+							.getActiveApplication()
+							.getOutput()
+							.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_ConvertSuccess"),
+									MapEditorProperties.getString("String_GeometryOperation_RegionExtractCenter"), dialog.getNewDatasetName()));
+				} else {
+					Application
+							.getActiveApplication()
+							.getOutput()
+							.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_ConvertFailed"),
+									MapEditorProperties.getString("String_GeometryOperation_RegionExtractCenter")));
+				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -48,7 +65,8 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.REGION);
 	}
 
-	private void convert(EditEnvironment environment, Datasource desDatasource, String newDatasetName, double maxWidth, double minWidth, boolean isRemoveSrc) {
+	private boolean convert(EditEnvironment environment, Datasource desDatasource, String newDatasetName, double maxWidth, double minWidth, boolean isRemoveSrc) {
+		boolean isConverted = false;
 		environment.getMapControl().getEditHistory().batchBegin();
 
 		try {
@@ -69,7 +87,7 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 						DatasetVector datasetVector = Generalization.dualLineToCenterLine(srcRecordset, maxWidth, minWidth, desDatasource, newDatasetName);
 
 						if (datasetVector != null) {
-
+							isConverted = true;
 							// 图层可编辑才能移除源对象
 							if (isRemoveSrc && layer.isEditable()) {
 								environment.getMapControl().getEditHistory().add(EditType.DELETE, srcRecordset, false);
@@ -77,6 +95,7 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 								srcRecordset.getBatch().begin();
 								srcRecordset.deleteAll();
 								srcRecordset.getBatch().update();
+								layer.getSelection().clear();
 							}
 
 							// 成功执行一次就行
@@ -91,10 +110,12 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 				}
 			}
 		} catch (Exception e) {
+			isConverted = false;
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
 		}
+		return isConverted;
 	}
 }
