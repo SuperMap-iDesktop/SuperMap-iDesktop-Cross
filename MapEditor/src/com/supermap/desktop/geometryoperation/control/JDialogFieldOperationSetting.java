@@ -167,9 +167,9 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 
 		if (FieldTypeUtilities.isNumber(fieldType)) {
 			if (operationData.getFieldInfo() != null) {
-				double weightSum = recordset.statistic(operationData.getFieldInfo().getName(), StatisticMode.SUM);
+				Object weightSum = RecordsetUtilities.sum(recordset, operationData.getFieldInfo().getName(), operationData.getFieldInfo().getType());
 
-				if (weightSum != 0) {
+				if (weightSum != null) {
 					Object weight = null;
 					Object value = null;
 					double valueSum = 0;
@@ -183,12 +183,16 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 						}
 						recordset.moveNext();
 					}
-					result = valueSum / weightSum;
+					result = valueSum / Double.valueOf(weightSum.toString());
 				} else {
 					result = 0;
 				}
 			} else {
-				result = recordset.statistic(fieldName, StatisticMode.SUM) / recordset.getRecordCount();
+				Object sum = RecordsetUtilities.sum(recordset, fieldName, fieldType);
+
+				if (sum != null) {
+					result = Double.valueOf(sum.toString()) / recordset.getRecordCount();
+				}
 			}
 		}
 		return result;
