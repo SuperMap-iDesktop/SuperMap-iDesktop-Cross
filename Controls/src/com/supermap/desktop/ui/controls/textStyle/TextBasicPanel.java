@@ -86,6 +86,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	private boolean isProperty;
 	private boolean unityVisible;
 	private boolean showOutLineWidth;
+	private boolean isTextStyleSet;
 
 	protected double UNIT_CONVERSION = 10;
 
@@ -310,15 +311,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		// Do nothing
 	}
 
-	public void setInitInfo(TextStyle textStyle, boolean isProperty, boolean unityVisible) {
-		this.isProperty = isProperty;
-		this.textStyle = textStyle;
-		this.unityVisible = unityVisible;
-		init();
-		initResources();
-		registEvents();
-	}
-
 	private void registEvents() {
 		removeEvents();
 		this.comboBoxFontName.addItemListener(this.fontNameItemListener);
@@ -375,6 +367,11 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		} else {
 			this.labelAlign.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelAlinement"));
 		}
+		if (isTextStyleSet) {
+			this.labelStringAlignment.setText(ControlsProperties.getString("String_TextAlignment"));
+		}else {
+			this.labelStringAlignment.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelAlinement"));
+		}
 		this.labelFontSize.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelFontSize"));
 		this.labelFontHeight.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelFontHeight"));
 		this.labelFontWidth.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelFontWidth"));
@@ -392,7 +389,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.checkBoxFixedSize.setText(ControlsProperties.getString("String_FixedSize"));
 		this.checkBoxOutline.setText(ControlsProperties.getString("String_Contour"));
 		this.checkBoxBGOpaque.setText(ControlsProperties.getString("String_BackgroundTransparency"));
-		this.labelStringAlignment.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelAlinement"));
 	}
 
 	/**
@@ -500,12 +496,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.componentsMap.put(TextStyleType.OUTLINEWIDTH, this.sliderOutLineWidth);
 		this.componentsMap.put(TextStyleType.FONTSIZE, textFieldFontSize);
 		this.componentsMap.put(TextStyleType.FONTHEIGHT, this.textFieldFontHeight);
-		this.labelStringAlignment = new JLabel();
-		this.comboBoxStringAlignment = new JComboBox<String>();
-		this.comboBoxStringAlignment.setModel(new DefaultComboBoxModel<String>(new String[] { ControlsProperties.getString("String_AlignLeft"),
-				ControlsProperties.getString("String_AlignCenter"), ControlsProperties.getString("String_AlignRight"),
-				ControlsProperties.getString("String_AlignDistributed") }));
-		this.componentsMap.put(TextStyleType.STRINGALIGNMENT, comboBoxStringAlignment);
 	}
 
 	private void initBasicsetPanel() {
@@ -519,41 +509,77 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		initTextFieldFontWidth();
 		initTextFieldFontItalicAngl();
 		initTextFieldFontRotation();
+		initLayout();
+	}
+
+	private void initLayout() {
 		//@formatter:off
-		panelBasicset.add(this.labelFontName,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(10,10,5,0));
-		panelBasicset.add(this.comboBoxFontName,       new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(10,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelAlign,             new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-		panelBasicset.add(this.comboBoxAlign,          new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelFontSize,          new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-		panelBasicset.add(this.comboBoxFontSize,       new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelFontHeight,        new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-		if (unityVisible) {
-			panelBasicset.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelFontHeightUnity,   new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(0, 0,5,10));
-			panelBasicset.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(1, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelFontWidthUnity,    new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(0,0,5,10));
+		initBasicLayout();
+		if (!isTextStyleSet) {
+			initUnityLayout();
+			initPropertyLayout();
 		}else {
-			panelBasicset.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			initTextStyleSetLayout();
 		}
-		
+		//@formatter:on
+	}
+
+	private void initTextStyleSetLayout() {
+		panelBasicset.add(this.labelStringAlignment,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.comboBoxStringAlignment, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelRotationAngl,       new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.spinnerRotationAngl,     new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelFontColor,          new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.buttonFontColorSelect,   new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelBGColor,            new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.buttonBGColorSelect,     new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+	}
+
+	private void initPropertyLayout() {
+		//@formatter:off
 		if (isProperty) {
-			panelBasicset.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		}else{
-			panelBasicset.add(this.labelRotationAngl,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.spinnerRotationAngl,    new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelInclinationAngl,   new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.spinnerInclinationAngl, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-			panelBasicset.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0));
-			panelBasicset.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelRotationAngl,      new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.spinnerRotationAngl,    new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelInclinationAngl,   new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.spinnerInclinationAngl, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelFontColor,         new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.buttonFontColorSelect,  new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelBGColor,           new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.buttonBGColorSelect,    new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		}
+		//@formatter:on
+	}
+
+	private void initUnityLayout() {
+		//@formatter:off
+		panelBasicset.add(this.labelFontHeight,        new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		if (unityVisible) {
+			panelBasicset.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelFontHeightUnity,   new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 0,5,10));
+			panelBasicset.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(1, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelFontWidthUnity,    new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0,0,5,10));
+		}else {
+			panelBasicset.add(this.spinnerFontHeight,      new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+			panelBasicset.add(this.labelFontWidth,         new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+			panelBasicset.add(this.spinnerFontWidth,       new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		}
+		//@formatter:on
+	}
+
+	private void initBasicLayout() {
+		//@formatter:off
+		panelBasicset.add(this.labelFontName,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10,10,5,0));
+		panelBasicset.add(this.comboBoxFontName,       new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(10,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelAlign,             new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.comboBoxAlign,          new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelFontSize,          new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
+		panelBasicset.add(this.comboBoxFontSize,       new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
@@ -592,7 +618,13 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.labelBGColor = new JLabel();
 		this.buttonBGColorSelect = new ColorSelectButton(backColor);
 		this.buttonBGColorSelect.setColor(this.textStyle.getBackColor());
+		this.labelStringAlignment = new JLabel();
+		this.comboBoxStringAlignment = new JComboBox<String>();
+		this.comboBoxStringAlignment.setModel(new DefaultComboBoxModel<String>(new String[] { ControlsProperties.getString("String_AlignLeft"),
+				ControlsProperties.getString("String_AlignCenter"), ControlsProperties.getString("String_AlignRight"),
+				ControlsProperties.getString("String_AlignDistributed") }));
 		this.componentsMap = new HashMap<TextStyleType, JComponent>();
+		this.componentsMap.put(TextStyleType.STRINGALIGNMENT, comboBoxStringAlignment);
 		this.componentsMap.put(TextStyleType.FONTHEIGHT, this.spinnerFontHeight);
 		this.componentsMap.put(TextStyleType.FONTSIZE, this.comboBoxFontSize);
 		this.componentsMap.put(TextStyleType.ITALICANGLE, this.spinnerInclinationAngl);
@@ -857,6 +889,10 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	@Override
 	public void setOutLineWidth(boolean showOutLineWidth) {
 		this.showOutLineWidth = showOutLineWidth;
+	}
+	@Override
+	public void setTextStyleSet(boolean isTextStyleSet) {
+		this.isTextStyleSet = isTextStyleSet;
 	}
 
 	@Override
