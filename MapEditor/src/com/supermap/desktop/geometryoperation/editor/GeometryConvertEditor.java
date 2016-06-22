@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation.editor;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogGeometryConvert;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -50,7 +52,18 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 				} else {
 					dataset = dialog.getDesDataset();
 				}
-				convert(environment, dataset, dialog.isRemoveSrc());
+				boolean isConverted = convert(environment, dataset, dialog.isRemoveSrc());
+
+				if (isConverted) {
+					Application
+							.getActiveApplication()
+							.getOutput()
+							.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_ConvertSuccess"), getTitle(),
+									dataset.getName()));
+				} else {
+					Application.getActiveApplication().getOutput()
+							.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_ConvertFailed"), getTitle()));
+				}
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -102,9 +115,9 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 		return newDataset;
 	}
 
-	private void convert(EditEnvironment environment, DatasetVector desDataset, boolean isRemoveSrc) {
-		environment.getMapControl().getEditHistory().batchBegin();
+	private boolean convert(EditEnvironment environment, DatasetVector desDataset, boolean isRemoveSrc) {
 		Recordset desRecordset = null;
+		boolean isConverted = false;
 
 		try {
 			desRecordset = desDataset.getRecordset(false, CursorType.DYNAMIC);
@@ -121,6 +134,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 					Recordset recordset = layer.getSelection().toRecordset();
 					RecordsetDelete delete = null;
 					if (isRemoveSrc && layer.isEditable()) {
+						environment.getMapControl().getEditHistory().batchBegin();
 						delete = new RecordsetDelete((DatasetVector) layer.getDataset(), environment.getMapControl().getEditHistory());
 					}
 
@@ -138,7 +152,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 								Map<String, Object> desValues = mergePropertyData(desDataset, recordset.getFieldInfos(), currentValues);
 
 								// 执行转换
-								boolean isConverted = convert(desRecordset, geometry, desValues);
+								isConverted = convert(desRecordset, geometry, desValues);
 
 								// 如果转换失败，就不移除源对象
 								if (isConverted && delete != null) {
@@ -155,7 +169,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 						// 移除源对象
 						if (delete != null) {
 							delete.update();
+							environment.getMapControl().getEditHistory().batchEnd();
+							layer.getSelection().clear();
 							environment.getMap().refresh();
+						} else {
+							environment.getMapControl().getEditHistory().batchCancel();
 						}
 					} finally {
 						if (recordset != null) {
@@ -169,14 +187,14 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			desRecordset.getBatch().update();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+			isConverted = false;
 		} finally {
-			environment.getMapControl().getEditHistory().batchEnd();
-
 			if (desRecordset != null) {
 				desRecordset.close();
 				desRecordset.dispose();
 			}
 		}
+		return isConverted;
 	}
 
 	// @formatter:off
