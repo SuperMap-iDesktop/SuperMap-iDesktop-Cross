@@ -1,10 +1,12 @@
 package com.supermap.desktop.Interface;
 
-import java.lang.reflect.Type;
-
 import com.supermap.desktop.enums.WindowType;
 
+import javax.swing.*;
+
 public interface IToolbarManager {
+
+	JPanel getToolbarsContainer();
 
 	/**
 	* 获取指定索引的工具条。 
@@ -45,4 +47,6 @@ public interface IToolbarManager {
 	* 获取指定子窗体类型的所有子菜单的个数。 
 	*/
 	int getChildToolbarCount(WindowType windowType);
+
+	void update();
 }

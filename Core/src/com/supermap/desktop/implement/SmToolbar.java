@@ -76,7 +76,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		if (xmlToolbar != null) {
 			this.xmlToolbar = xmlToolbar;
 			initialize();
-//			((BasicToolBarUI) this.getUI()).setRolloverBorders(false);
+			this.setUI(new ToolBarUI());
 		}
 	}
 
