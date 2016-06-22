@@ -24,7 +24,7 @@ import com.supermap.desktop.utilities.MapUtilities;
  * 
  * @author xie 2016-6-3
  */
-public class TextStyleDialog extends SmDialog {
+public class TextStyleDialog extends SmDialog{
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,7 +55,7 @@ public class TextStyleDialog extends SmDialog {
 		super();
 		setModal(false);
 		isDisposed = false;
-		this.setSize(360, 480);
+		this.setSize(360, 400);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = this.getSize();
@@ -92,9 +92,7 @@ public class TextStyleDialog extends SmDialog {
 		panel.removeAll();
 		this.textBasicPanel = new TextBasicPanel();
 		this.textBasicPanel.setTextStyle(tempTextStyle);
-		this.textBasicPanel.setOutLineWidth(false);
-		this.textBasicPanel.setUnityVisible(false);
-		this.textBasicPanel.setProperty(false);
+		this.textBasicPanel.setTextStyleSet(true);
 		this.textBasicPanel.initTextBasicPanel();
 		this.textBasicPanel.enabled(true);
 		this.getContentPane().setLayout(new GridBagLayout());
@@ -173,15 +171,15 @@ public class TextStyleDialog extends SmDialog {
 			recordset.update();
 			recordset.moveNext();
 		}
-
-		recordset.dispose();
 		MapUtilities.getActiveMap().refresh();
-		TextStyleDialog.this.dispose();
 	}
 
+	public void enabled(boolean enabled){
+		this.textBasicPanel.enabled(enabled);
+		this.buttonClose.setEnabled(enabled);
+	};
 	private void removeEvents() {
 		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
 	}
-
 }

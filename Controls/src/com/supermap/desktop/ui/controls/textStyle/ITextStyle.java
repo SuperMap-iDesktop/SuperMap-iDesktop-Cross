@@ -38,6 +38,13 @@ public interface ITextStyle extends IGeoTextStyle {
 	public void setOutLineWidth(boolean showOutLineWidth);
 
 	/**
+	 * 是否是文本风格界面
+	 * 
+	 * @param isTextStyleSet
+	 */
+	public void setTextStyleSet(boolean isTextStyleSet);
+
+	/**
 	 * 初始化界面
 	 */
 	public void initTextBasicPanel();
@@ -61,13 +68,17 @@ public interface ITextStyle extends IGeoTextStyle {
 	public void removeTextStyleChangeListener(TextStyleChangeListener l);
 
 	void fireTextStyleChanged(TextStyleType newValue);
+
 	/**
 	 * 获取文本基本信息界面
+	 * 
 	 * @return
 	 */
 	public JPanel getBasicsetPanel();
+
 	/**
 	 * 获取文本效果设置界面
+	 * 
 	 * @return
 	 */
 	public JPanel getEffectPanel();

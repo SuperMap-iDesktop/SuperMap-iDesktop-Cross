@@ -1,31 +1,31 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.CtrlAction.CtrlActionEditorBase;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TextStyleDialog;
-import com.supermap.desktop.utilities.ListUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Selection;
-import com.supermap.ui.GeometrySelectChangedEvent;
-import com.supermap.ui.GeometrySelectChangedListener;
-
+import com.supermap.ui.*;
 public class CtrlActionTextStyle extends CtrlActionEditorBase {
 
 	IEditor editor = new TextStyleEditor();
+	MapControl mapControl;
 
 	public CtrlActionTextStyle(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -35,11 +35,12 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 	public void run() {
 		EditEnvironment environment = EditEnvironment.createInstance((IFormMap) Application.getActiveApplication().getActiveForm());
 		if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
+			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 			final TextStyleDialog dialog = TextStyleDialog.createInstance();
 			if (null != getActiveRecordset()) {
 				dialog.showDialog(getActiveRecordset());
 			}
-			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addGeometrySelectChangedListener(
+			this.mapControl.addGeometrySelectChangedListener(
 					new GeometrySelectChangedListener() {
 
 						@Override
@@ -52,6 +53,14 @@ public class CtrlActionTextStyle extends CtrlActionEditorBase {
 							}
 						}
 					});
+			
+			UICommonToolkit.getLayersManager().getLayersTree().addMouseListener(new MouseAdapter() {
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					dialog.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+				}
+			});
 		}
 	}
 

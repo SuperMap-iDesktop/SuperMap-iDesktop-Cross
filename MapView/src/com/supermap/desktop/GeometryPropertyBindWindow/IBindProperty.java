@@ -1,5 +1,6 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
+import com.supermap.data.Dataset;
 import com.supermap.mapping.Selection;
 
 public interface IBindProperty {
@@ -23,5 +24,5 @@ public interface IBindProperty {
 
 	public void removePropertySelectChangeListener(PropertySelectChangeListener l);
 
-	public void firePropertySelectChanged(int[] rows);
+	public void firePropertySelectChanged(int[] rows,Dataset dataset);
 }

@@ -142,7 +142,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 
 			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
-				return value >= JDialogRegionExtractCenter.this.min && value <= Double.MAX_VALUE;
+				return value > JDialogRegionExtractCenter.this.min && value > 0d && value <= Double.MAX_VALUE;
 			}
 			return result;
 		}
@@ -161,7 +161,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 
 			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
-				return value >= 0d && value <= JDialogRegionExtractCenter.this.max;
+				return value >= 0d && value < JDialogRegionExtractCenter.this.max;
 			}
 			return result;
 		}
@@ -257,6 +257,23 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
 		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
+
+		this.textFieldNewDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
+
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (JDialogRegionExtractCenter.this.desDatasource == null) {
+					return false;
+				}
+
+				return JDialogRegionExtractCenter.this.desDatasource.getDatasets().isAvailableDatasetName(textFieldValue);
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 
 		GroupLayout gl = new GroupLayout(getContentPane());
 		gl.setAutoCreateContainerGaps(true);

@@ -29,8 +29,8 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.selectRowsChangeListener = new PropertySelectChangeListener() {
 
 			@Override
-			public void selectChanged(int[] selectRows) {
-				if (!addRow) {
+			public void selectChanged(int[] selectRows, Dataset dataset) {
+				if (!addRow && dataset.equals(bindWindow.getActiveDataset())) {
 					bindWindow.refreshFormTabular(selectRows);
 				}
 			}
@@ -117,5 +117,5 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	public void setAddRow(boolean addRow) {
 		this.addRow = addRow;
 	}
-	
+
 }
