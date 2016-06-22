@@ -142,7 +142,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 
 			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
-				return value >= JDialogRegionExtractCenter.this.min && value <= Double.MAX_VALUE;
+				return value > JDialogRegionExtractCenter.this.min && value > 0d && value <= Double.MAX_VALUE;
 			}
 			return result;
 		}
@@ -161,7 +161,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 
 			if (StringUtilities.isNumber(textFieldValue)) {
 				Double value = Double.valueOf(textFieldValue);
-				return value >= 0d && value <= JDialogRegionExtractCenter.this.max;
+				return value >= 0d && value < JDialogRegionExtractCenter.this.max;
 			}
 			return result;
 		}
