@@ -7,6 +7,7 @@ import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmToolbar;
+import com.supermap.desktop.implement.ToolBarContainer;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -20,14 +21,20 @@ public class ToolbarManager implements IToolbarManager {
 	private JPanel toolbarsContainer = null;
 	private ArrayList<IToolbar> listToolbars = null;
 	private HashMap<WindowType, ArrayList<IToolbar>> childToolbars = null;
-//	private Container toolbarContainer;
 
 	public ToolbarManager() {
 		this.listToolbars = new ArrayList<IToolbar>();
 		this.childToolbars = new HashMap<WindowType, ArrayList<IToolbar>>();
 		this.toolbarsContainer = new JPanel();
+//		new DropTarget(toolbarsContainer, DnDConstants.ACTION_COPY_OR_MOVE, new DropTargetAdapter() {
+//			@Override
+//			public void drop(DropTargetDropEvent dtde) {
+//				System.out.println("received");
+//			}
+//		});
 	}
 
+	@Override
 	public JPanel getToolbarsContainer() {
 		return this.toolbarsContainer;
 	}
@@ -88,6 +95,11 @@ public class ToolbarManager implements IToolbarManager {
 	public int getChildToolbarCount(WindowType windowType) {
 		ArrayList<IToolbar> childToolbarsList = this.childToolbars.get(windowType);
 		return childToolbarsList.size();
+	}
+
+	@Override
+	public void update() {
+		reLayoutToolBarContainer();
 	}
 
 	public void add(IToolbar item) {
@@ -196,11 +208,20 @@ public class ToolbarManager implements IToolbarManager {
 	}
 
 	private void reLayoutToolBarContainer() {
+		int beforeCount = this.toolbarsContainer.getComponentCount();
 		this.toolbarsContainer.removeAll();
 		this.toolbarsContainer.setLayout(new GridBagLayout());
 		List<ToolBarContainer> containerS = ToolBarContainer.getContainerS();
 		for (ToolBarContainer toolBarContainer : containerS) {
 			this.toolbarsContainer.add(toolBarContainer, new GridBagConstraintsHelper(0, toolBarContainer.getIndex(), 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
+		}
+
+		if (beforeCount != this.toolbarsContainer.getComponentCount() && toolbarsContainer.getParent() != null) {
+			toolbarsContainer.getParent().validate();
+			toolbarsContainer.getParent().repaint();
+		} else {
+			this.toolbarsContainer.validate();
+			this.toolbarsContainer.repaint();
 		}
 	}
 
