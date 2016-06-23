@@ -58,9 +58,9 @@ public class ReverseEditor extends AbstractEditor {
 									reverseGeometry = ((IReverse) geometry).reverse();
 
 									recordset.edit();
+									environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
 									recordset.setGeometry(reverseGeometry);
 									recordset.update();
-									environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
 								}
 							} finally {
 								if (geometry != null) {
