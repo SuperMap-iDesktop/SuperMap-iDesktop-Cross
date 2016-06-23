@@ -981,7 +981,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			dialogSaveAs.setMapName(this.getText(), isNewWindow);
 			if (dialogSaveAs.showDialog() == DialogResult.YES) {
 				this.mapControl.getMap().setName(dialogSaveAs.getMapName());
-				System.out.println(this.mapControl.getMap().toXML());
 				result = workspace.getMaps().add(dialogSaveAs.getMapName(), this.mapControl.getMap().toXML()) >= 0;
 				if (result) {
 					this.setText(dialogSaveAs.getMapName());
