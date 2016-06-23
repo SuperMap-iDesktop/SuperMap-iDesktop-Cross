@@ -29,8 +29,15 @@ public class AddNodeEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		environment.getMapControl().setAction(Action.VERTEXADD);
-		environment.setEditController(this.addNodeEditController);
-		environment.getMap().refresh();
+
+		if (environment.getMapControl().getAction() != Action.VERTEXADD) {
+
+			// 因为这个功能是组件控制的，有一些导致 Action 设置失败的原因我们的封装无法知道，因此在这里处理一下漏网之鱼
+			environment.stopEditor();
+		} else {
+			environment.setEditController(this.addNodeEditController);
+			environment.getMap().refresh();
+		}
 	}
 
 	@Override
@@ -42,6 +49,7 @@ public class AddNodeEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getSelectedGeometryCount() == 1
+				&& environment.getEditProperties().getEditableSelectedGeometryCount() == 1
 				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOLINE3D,
 						GeometryType.GEOREGION);
 	}
