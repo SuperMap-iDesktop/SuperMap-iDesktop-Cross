@@ -446,7 +446,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			style2.setLineColor(Color.BLUE);
 
 			curLines = Geometrist.splitLine(desLine, baseLine, tolerance);
-			if (curLines.length >= 2) {
+			if (curLines != null && curLines.length >= 2) {
 				result = true;
 
 				for (int i = 0; i < curLines.length; i++) {
@@ -476,7 +476,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		// @formatter:off
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE, DatasetType.CAD);
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ILineFeature.class,IRegionFeature.class);
 		// @formatter:on
 	}
 
