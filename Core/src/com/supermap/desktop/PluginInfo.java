@@ -320,7 +320,7 @@ public class PluginInfo {
 
 						if (childElement.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeToolbar)) {
 							String id = childElement.getAttribute(_XMLTag.g_AttributionID);
-							XMLToolbar xmlToolbar = this.xmlToolbars.getToolbar(id);
+							XMLToolbar xmlToolbar = Application.getActiveApplication().getMainFrame().getToolbarManager().get(id).getXMLToolbar();
 
 							if (xmlToolbar != null) {
 								childElement.setAttribute(_XMLTag.g_AttributionIndex, Integer.toString(xmlToolbar.getIndex()));

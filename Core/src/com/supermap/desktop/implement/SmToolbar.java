@@ -16,6 +16,7 @@ import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -40,7 +41,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	private Dimension dimension = new Dimension(0, 0);
 	private int currentWidth = -1;
 	private MouseAdapter popupMouseListener;
-	// FIXME: 2016/6/20
 	private static final int defaultWidth = 13;
 	private ActionListener buttonActionListener = new ActionListener() {
 		@Override
@@ -71,12 +71,17 @@ public class SmToolbar extends JToolBar implements IToolbar {
 
 		}
 	};
+	private Border borderEmpty = BorderFactory.createEmptyBorder();
+	private Border borderLeft = BorderFactory.createMatteBorder(0, 5, 0, 0, Color.RED);
+	private Border borderRight = BorderFactory.createMatteBorder(0, 0, 0, 5, Color.red);
+	private Border borderDown = BorderFactory.createMatteBorder(0, 0, 3, 0, Color.red);
 
 	public SmToolbar(XMLToolbar xmlToolbar) {
 		if (xmlToolbar != null) {
 			this.xmlToolbar = xmlToolbar;
 			initialize();
 			this.setUI(new ToolBarUI());
+			ToolBarDrag.addListeners(this);
 		}
 	}
 
@@ -541,6 +546,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 	}
 
+	@Override
 	public XMLToolbar getXMLToolbar() {
 		return this.xmlToolbar;
 	}

@@ -26,12 +26,6 @@ public class ToolbarManager implements IToolbarManager {
 		this.listToolbars = new ArrayList<IToolbar>();
 		this.childToolbars = new HashMap<WindowType, ArrayList<IToolbar>>();
 		this.toolbarsContainer = new JPanel();
-//		new DropTarget(toolbarsContainer, DnDConstants.ACTION_COPY_OR_MOVE, new DropTargetAdapter() {
-//			@Override
-//			public void drop(DropTargetDropEvent dtde) {
-//				System.out.println("received");
-//			}
-//		});
 	}
 
 	@Override
@@ -46,14 +40,19 @@ public class ToolbarManager implements IToolbarManager {
 
 	@Override
 	public IToolbar get(String id) {
-		IToolbar item = null;
-		for (int i = 0; i < this.listToolbars.size(); i++) {
-			if (this.listToolbars.get(i).getID().equalsIgnoreCase(id)) {
-				item = this.listToolbars.get(i);
-				break;
+		for (IToolbar listToolbar : this.listToolbars) {
+			if (listToolbar.getID().equalsIgnoreCase(id)) {
+				return listToolbar;
 			}
 		}
-		return item;
+		for (ArrayList<IToolbar> iToolbars : childToolbars.values()) {
+			for (IToolbar iToolbar : iToolbars) {
+				if (iToolbar.getID().equalsIgnoreCase(id)) {
+					return iToolbar;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override

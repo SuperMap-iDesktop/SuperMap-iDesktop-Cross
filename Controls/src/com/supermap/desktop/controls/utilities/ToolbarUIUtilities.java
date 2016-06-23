@@ -4,9 +4,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IToolbar;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.implement.SmToolbar;
 import com.supermap.desktop.ui.ToolbarManager;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Administrator on 2015/11/10.
@@ -67,5 +69,23 @@ public class ToolbarUIUtilities {
 		JToolBar.Separator separator = new JToolBar.Separator();
 		separator.setOrientation(SwingConstants.VERTICAL);
 		return separator;
+	}
+
+	public static SmToolbar getSmToolbarAtPoint(Point point) {
+		Component deepestComponent = SwingUtilities.getDeepestComponentAt(Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer(), point.x, point.y);
+		if (deepestComponent != null) {
+			return getParentToolBar(deepestComponent);
+		}
+		return null;
+	}
+
+	public static SmToolbar getParentToolBar(Component component) {
+		if (component == null) {
+			return null;
+		}
+		if (component instanceof SmToolbar) {
+			return ((SmToolbar) component);
+		}
+		return getParentToolBar(component.getParent());
 	}
 }
