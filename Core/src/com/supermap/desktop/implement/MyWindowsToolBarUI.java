@@ -36,7 +36,7 @@ public class MyWindowsToolBarUI extends WindowsToolBarUI {
 				SmToolbar resultToolBar = getParentToolBar(deepestComponent);
 				Rectangle resultToolBarBounds = resultToolBar.getBounds();
 				int putPlace = getPutPlace(resultToolBarBounds, p);
-				if (resultToolBar.getParent().getHeight() + resultToolBar.getParent().getY() - p.y < 5) {
+				if (resultToolBar.getHeight() + resultToolBar.getY() - p.y < 5) {
 					putPlace = DOWN;
 				}
 				if (putPlace == DOWN) {
