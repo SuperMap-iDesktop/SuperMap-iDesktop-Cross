@@ -80,6 +80,7 @@ public class RotateEditor extends AbstractEditor {
 					}
 				}
 			}
+			center = bounds.getCenter();
 		}
 		return center;
 	}

@@ -155,6 +155,8 @@ public class EditEnvironment {
 			if (!EditEnvironment.this.isInitialAction && isMiddleMousePressed && arg0.getOldAction() != Action.PAN) {
 				activateEditor(NullEditor.INSTANCE);
 			}
+
+			EditEnvironment.this.editController.actionChanged(EditEnvironment.this, arg0);
 		}
 	};
 	private GeometrySelectedListener geometrySelectedListener = new GeometrySelectedListener() {
@@ -439,7 +441,8 @@ public class EditEnvironment {
 			if (layer.isEditable()) {
 				this.properties.setEditableSelectedGeometryCount(this.properties.getEditableSelectedGeometryCount() + selection.getCount());
 				this.properties.setEditableSelectedMaxPartCount(Math.max(this.properties.getEditableSelectedMaxPartCount(), editableSelectedMaxPartCount));
-				ListUtilities.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
+				ListUtilities
+						.addArraySingle(this.properties.getEditableSelectedGeometryTypeFeatures(), typeFeatures.toArray(new Class<?>[typeFeatures.size()]));
 				ListUtilities.addArraySingle(this.properties.getEditableSelectedGeometryTypes(), types.toArray(new GeometryType[types.size()]));
 			}
 		} catch (Exception e) {
@@ -512,6 +515,10 @@ public class EditEnvironment {
 	public void mapOpened(MapOpenedEvent arg0) {
 		this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
 		this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
+
+		// 直接打开地图导致 Layers 对象改变之后，要重新处理一下地图的状态数据
+		geometryStatusChange();
+		layersStatusChange();
 	}
 
 	public void mapClosed(MapClosedEvent arg0) {
