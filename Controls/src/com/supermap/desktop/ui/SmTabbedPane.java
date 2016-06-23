@@ -391,7 +391,7 @@ public class SmTabbedPane extends JTabbedPane {
 						rect.height = maxTabHeight/* - 2 */;
 
 					} else {
-						// Tabs on PUT_LEFT or PUT_RIGHT...
+						// Tabs on LEFT or RIGHT...
 						if (i > 0) {
 							rect.y = rects[i - 1].y + rects[i - 1].height;
 						} else {

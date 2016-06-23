@@ -79,7 +79,7 @@ public class TabLineBorder implements Border, Serializable {
 				else if (d == Direction.DOWN)
 					paintDownBorder(g, x, y, width, height, c);
 				else
-					// PUT_RIGHT
+					// RIGHT
 					paintRightBorder(g, x, y, width, height, c);
 			}
 		}

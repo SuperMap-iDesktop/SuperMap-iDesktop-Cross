@@ -42,7 +42,7 @@ import java.awt.*;
  */
 public interface ComponentPainter {
   /**
-   * Paints an area of a component. The area should be painted the same way as for direction Direction.PUT_RIGHT without
+   * Paints an area of a component. The area should be painted the same way as for direction Direction.RIGHT without
    * any flipping.
    *
    * @param component the component to paint on
@@ -64,7 +64,7 @@ public interface ComponentPainter {
    * @param y              the y-coordinate
    * @param width          the width
    * @param height         the height
-   * @param direction      the direction, Direction.PUT_RIGHT is the normal direction
+   * @param direction      the direction, Direction.RIGHT is the normal direction
    * @param horizontalFlip flip the painted graphics horizontally
    * @param verticalFlip   flip the painted graphics vertically
    */
