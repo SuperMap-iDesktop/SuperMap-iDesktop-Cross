@@ -546,5 +546,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		return this.xmlToolbar;
 	}
 
-
+	@Override
+	public int getOrientation() {
+		return JToolBar.HORIZONTAL;
+	}
 }

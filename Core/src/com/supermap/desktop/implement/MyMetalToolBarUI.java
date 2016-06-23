@@ -11,10 +11,7 @@ import java.awt.*;
  */
 public class MyMetalToolBarUI extends MetalToolBarUI {
 
-	private static final int UP = 1;
-	private static final int LEFT = 2;
-	private static final int DOWN = 3;
-	private static final int RIGHT = 4;
+	private Component subDockingSource;
 
 	@Override
 	public void setFloating(boolean b, Point p) {
@@ -23,23 +20,24 @@ public class MyMetalToolBarUI extends MetalToolBarUI {
 			super.setFloating(b, p);
 			return;
 		}
-		Component deepestComponent = SwingUtilities.getDeepestComponentAt(Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer(), p.x, p.y);
+		JPanel toolbarsContainer = Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer();
+		if (subDockingSource != null) {
+			p = SwingUtilities.convertPoint(subDockingSource, p, toolbarsContainer);
+		}
+		Component deepestComponent = SwingUtilities.getDeepestComponentAt(toolbarsContainer, p.x, p.y);
 		if (!b && deepestComponent != null) {
 			if (deepestComponent instanceof ToolBarContainer) {
 				deepestComponent = ((ToolBarContainer) deepestComponent).getComponent(((ToolBarContainer) deepestComponent).getComponentCount() - 1);
 			}
-			if (isSmToolBarSon(deepestComponent)) {
+			if (ToolbarUIUtilties.isSmToolBarSon(deepestComponent)) {
 				// 插入
 				int index = ((SmToolbar) toolBar).getIndex();
-				SmToolbar resultToolBar = getParentToolBar(deepestComponent);
-				Rectangle resultToolBarBounds = resultToolBar.getBounds();
-				int putPlace = getPutPlace(resultToolBarBounds, p);
-				if (resultToolBar.getParent().getHeight() + resultToolBar.getParent().getY() - p.y < 8) {
-					putPlace = DOWN;
-				}
-				if (putPlace == DOWN) {
-					super.setFloating(b, p);
+				SmToolbar resultToolBar = ToolbarUIUtilties.getParentToolBar(deepestComponent);
+				Rectangle contaninerBounds = resultToolBar.getParent().getBounds();
+				int putPlace = ToolbarUIUtilties.getPutPlace(contaninerBounds, p, resultToolBar.getX());
+				if (putPlace == ToolbarUIUtilties.PUT_DOWN) {
 					int toolBarContainerIndex = ((ToolBarContainer) resultToolBar.getParent()).getIndex() + 1;
+					super.setFloating(b, p);
 					ToolBarContainer toolBarContainer = ToolBarContainer.getToolBarContainer(toolBarContainerIndex);
 					((SmToolbar) toolBar).setRowIndex(toolBarContainerIndex);
 					Container parent = toolBar.getParent();
@@ -52,15 +50,24 @@ public class MyMetalToolBarUI extends MetalToolBarUI {
 
 					Container parent = resultToolBar.getParent();
 					int placeIndex = resultToolBar.getIndex();
-					if (putPlace == RIGHT) {
-						placeIndex++;
+					if (((SmToolbar) toolBar).getRowIndex() != resultToolBar.getRowIndex()) {
+						// 换行放最后，原来索引不重要了
+						index = ((SmToolbar) parent.getComponent(parent.getComponentCount() - 1)).getIndex() + 1;
 					}
 					if (index < placeIndex) {
 						// 原来在前面
 						for (int i = 0; i < parent.getComponentCount(); i++) {
 							if (parent.getComponent(i) != null && parent.getComponent(i) instanceof SmToolbar) {
 								SmToolbar component = (SmToolbar) parent.getComponent(i);
-								if (component.getIndex() >= placeIndex) {
+								if (component.getIndex() > placeIndex) {
+									break;
+								}
+								if (component.getIndex() == placeIndex) {
+									if (putPlace == ToolbarUIUtilties.PUT_RIGHT) {
+										int temp = component.getIndex();
+										component.setIndex(index);
+										index = temp;
+									}
 									break;
 								}
 								if (component.getIndex() > index) {
@@ -70,25 +77,32 @@ public class MyMetalToolBarUI extends MetalToolBarUI {
 								}
 							}
 						}
-						((SmToolbar) toolBar).setIndex(index);
 					} else {
 						// 本来在后面
-
 						for (int i = parent.getComponentCount() - 1; i >= 0; i--) {
 							if (parent.getComponent(i) != null && parent.getComponent(i) instanceof SmToolbar) {
 								SmToolbar component = (SmToolbar) parent.getComponent(i);
-								if (component.getIndex() <= index) {
+								if (component.getIndex() < placeIndex) {
 									break;
 								}
-								if (component.getIndex() < placeIndex) {
+								if (component.getIndex() == placeIndex) {
+									if (putPlace == ToolbarUIUtilties.PUT_LEFT) {
+										int temp = component.getIndex();
+										component.setIndex(index);
+										index = temp;
+									}
+									break;
+								}
+								if (component.getIndex() < index) {
 									int temp = component.getIndex();
-									component.setIndex(placeIndex);
-									placeIndex = temp;
+									component.setIndex(index);
+									index = temp;
 								}
 							}
 						}
-						((SmToolbar) toolBar).setIndex(placeIndex);
 					}
+					((SmToolbar) toolBar).setIndex(index);
+
 					super.setFloating(false, p);
 					Container parent1 = toolBar.getParent();
 					parent1.remove(toolBar);
@@ -105,33 +119,19 @@ public class MyMetalToolBarUI extends MetalToolBarUI {
 		}
 	}
 
-	private int getPutPlace(Rectangle resultToolBarBounds, Point p) {
-		if (resultToolBarBounds.contains(p)) {
-			if (p.getX() - resultToolBarBounds.getX() < 50) {
-				return LEFT;
-			}
-		}
-		return RIGHT;
-	}
-
-	private boolean isSmToolBarSon(Component deepestComponent) {
-		return getParentToolBar(deepestComponent) != null;
-	}
-
-	private SmToolbar getParentToolBar(Component component) {
-		if (component == null) {
-			return null;
-		}
-		if (component instanceof SmToolbar) {
-			return ((SmToolbar) component);
-		}
-		return getParentToolBar(component.getParent());
-	}
-
 
 	@Override
 	public boolean canDock(Component c, Point p) {
 		// 是否可以放置
-		return Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer().contains(p);
+		subDockingSource = c;
+		Point globalPoint = getGlobalPoint(p);
+		JPanel toolbarsContainer = Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer();
+		Rectangle bounds = new Rectangle(toolbarsContainer.getLocationOnScreen().x + 2, toolbarsContainer.getLocationOnScreen().y + 5, toolbarsContainer.getWidth() - 2, toolbarsContainer.getHeight() - 5);
+		return bounds.contains(globalPoint);
+	}
+
+	private Point getGlobalPoint(Point p) {
+		Point dockingPosition = subDockingSource.getLocationOnScreen();
+		return new Point(p.x + dockingPosition.x, p.y + dockingPosition.y);
 	}
 }
