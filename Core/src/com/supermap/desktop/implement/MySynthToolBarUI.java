@@ -5,13 +5,13 @@ import com.supermap.desktop.Application;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicToolBarUI;
+import javax.swing.plaf.synth.SynthToolBarUI;
 import java.awt.*;
 
 /**
  * @author XiaJT
  */
-public class ToolBarUI extends BasicToolBarUI {
+public class MySynthToolBarUI extends SynthToolBarUI {
 
 	private static final int UP = 1;
 	private static final int LEFT = 2;

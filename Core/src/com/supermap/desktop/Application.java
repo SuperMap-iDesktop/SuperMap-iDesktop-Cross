@@ -16,6 +16,7 @@ import com.supermap.desktop.implement.Output;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -112,9 +113,7 @@ public class Application {
 		Datasource[] old = getActiveDatasources();
 		this.activeDatasources.clear();
 		if (activeDatasources != null) {
-			for (Datasource datasource : activeDatasources) {
-				this.activeDatasources.add(datasource);
-			}
+			Collections.addAll(this.activeDatasources, activeDatasources);
 		}
 		fireActiveDatasourcesChange(new ActiveDatasourcesChangeEvent(this, old, getActiveDatasources()));
 	}
@@ -127,9 +126,7 @@ public class Application {
 		Dataset[] old = getActiveDatasets();
 		this.activeDatasets.clear();
 		if (activeDatasets != null) {
-			for (Dataset dataset : activeDatasets) {
-				this.activeDatasets.add(dataset);
-			}
+			Collections.addAll(this.activeDatasets, activeDatasets);
 		}
 		fireActiveDatasetsChange(new ActiveDatasetsChangeEvent(this, old, getActiveDatasets()));
 	}
