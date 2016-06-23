@@ -36,7 +36,7 @@ public class MySynthToolBarUI extends SynthToolBarUI {
 				SmToolbar resultToolBar = getParentToolBar(deepestComponent);
 				Rectangle resultToolBarBounds = resultToolBar.getBounds();
 				int putPlace = getPutPlace(resultToolBarBounds, p);
-				if (resultToolBar.getHeight() + resultToolBar.getY() - p.y < 5) {
+				if (resultToolBar.getParent().getHeight() + resultToolBar.getParent().getY() - p.y < 8) {
 					putPlace = DOWN;
 				}
 				if (putPlace == DOWN) {

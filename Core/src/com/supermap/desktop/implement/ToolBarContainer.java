@@ -80,6 +80,7 @@ public class ToolBarContainer extends Container {
 	@Override
 	public void remove(int index) {
 		super.remove(index);
+		this.repaint();
 		if (this.getComponentCount() == 0) {
 			removeFormLists();
 		}
@@ -88,6 +89,7 @@ public class ToolBarContainer extends Container {
 	@Override
 	public void remove(Component comp) {
 		super.remove(comp);
+		this.repaint();
 		if (this.getComponentCount() == 0) {
 			removeFormLists();
 		}
