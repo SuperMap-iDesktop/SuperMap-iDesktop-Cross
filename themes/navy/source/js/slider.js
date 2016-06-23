@@ -1,7 +1,7 @@
 /**
  * slider插件可悬停控制
  */
-; $(function ($, window, document, undefined) {
+$(function ($, window, document, undefined) {
     
     Slider = function (container, options) {
         /*
@@ -172,4 +172,3 @@ $(function() {
 		bannerSlider.next()
 	});
 })
-</script>

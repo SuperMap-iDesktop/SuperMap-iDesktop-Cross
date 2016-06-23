@@ -3,6 +3,8 @@
 {{ js('js/lang_select') }}
 {{ js('js/toc') }}
 {{ js('js/mobile_nav') }}
+{{ js('js/jquery-1.10.2.min') }}
+{{ js('js/slider') }}
 <!-- endbuild -->
 <script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
 {% if page.layout === 'plugins' %}
