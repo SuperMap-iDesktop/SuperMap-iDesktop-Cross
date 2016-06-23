@@ -59,7 +59,7 @@ public class ToolBarContainer extends Container {
 					}
 				}
 			}
-			int indexCopy = index;
+			int indexCopy = ((SmToolbar) comp).getIndex();
 			// 防止index重复
 			for (int i = 0; i < getComponentCount(); i++) {
 				Component tempComponent = this.getComponent(i);
@@ -76,12 +76,20 @@ public class ToolBarContainer extends Container {
 			lists.add(this);
 			Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 		}
-		return super.add(comp, index);
+		super.add(comp, index);
+		this.validate();
+		this.repaint();
+		return comp;
 	}
 
 	@Override
 	public Component add(String name, Component comp) {
-		return this.add(comp);
+		if (comp != null && comp instanceof SmToolbar) {
+			ToolBarContainer.getToolBarContainer(((SmToolbar) comp).getRowIndex()).add(comp);
+		} else {
+			this.add(comp);
+		}
+		return comp;
 	}
 
 	public int getIndex() {
@@ -91,6 +99,7 @@ public class ToolBarContainer extends Container {
 	@Override
 	public void remove(int index) {
 		super.remove(index);
+		this.validate();
 		this.repaint();
 		if (this.getComponentCount() == 0) {
 			removeFormLists();
@@ -100,6 +109,7 @@ public class ToolBarContainer extends Container {
 	@Override
 	public void remove(Component comp) {
 		super.remove(comp);
+		this.validate();
 		this.repaint();
 		if (this.getComponentCount() == 0) {
 			removeFormLists();
@@ -133,6 +143,33 @@ public class ToolBarContainer extends Container {
 		return lists;
 	}
 
+	@Override
+	public Point getLocationOnScreen() {
+		// 骗子！！！！
+		if (isShowing()) {
+			return super.getLocationOnScreen();
+		} else {
+			return new Point(0, 0);
+		}
+	}
+
+	@Override
+	public int getX() {
+		if (isShowing()) {
+			return super.getX();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getY() {
+		if (isShowing()) {
+			return super.getY();
+		} else {
+			return 0;
+		}
+	}
 
 	class ToolBarLayout extends FlowLayout {
 		/**
