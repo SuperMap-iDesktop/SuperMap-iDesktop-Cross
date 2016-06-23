@@ -28,9 +28,20 @@ public class ToolBarContainer extends Container {
 	}
 
 
+	/**
+	 * 这个方法只提供在工具条浮动窗口关闭时调用
+	 *
+	 * @param comp
+	 * @param constraints
+	 */
 	@Override
+	@Deprecated
 	public void add(Component comp, Object constraints) {
-		this.add(comp);
+		if (comp != null && comp instanceof SmToolbar) {
+			ToolBarContainer.getToolBarContainer(((SmToolbar) comp).getRowIndex()).add(comp);
+		} else {
+			this.add(comp);
+		}
 	}
 
 	@Override

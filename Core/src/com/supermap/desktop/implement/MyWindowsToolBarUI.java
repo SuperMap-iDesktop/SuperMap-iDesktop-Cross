@@ -4,8 +4,6 @@ import com.sun.java.swing.plaf.windows.WindowsToolBarUI;
 import com.supermap.desktop.Application;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -130,13 +128,6 @@ public class MyWindowsToolBarUI extends WindowsToolBarUI {
 		return getParentToolBar(component.getParent());
 	}
 
-	protected Border createRolloverBorder() {
-		return new EmptyBorder(3, 3, 3, 3);
-	}
-
-	protected Border createNonRolloverBorder() {
-		return new EmptyBorder(3, 3, 3, 3);
-	}
 
 	@Override
 	public boolean canDock(Component c, Point p) {
