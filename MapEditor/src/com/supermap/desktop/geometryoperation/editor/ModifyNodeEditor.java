@@ -12,14 +12,20 @@ import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.ui.Action;
+import com.supermap.ui.ActionChangedEvent;
 
 public class ModifyNodeEditor extends AbstractEditor {
 
 	private IEditController modifyNodeEditController = new EditControllerAdapter() {
 
 		@Override
-		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
-			if (SwingUtilities.isRightMouseButton(e)) {
+		public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
+			if (e.getOldAction() == Action.VERTEXEDIT) {
+
+				// @formatter:off
+				// 组件在很多情况下会自动结束编辑状态，比如右键，比如框选一堆对象，
+				// 比如当前操作对象所在图层变为不可编辑状态，这时候桌面自定义的 Editor 还没有结束编辑，处理一下
+				// @formatter:on
 				environment.stopEditor();
 			}
 		}

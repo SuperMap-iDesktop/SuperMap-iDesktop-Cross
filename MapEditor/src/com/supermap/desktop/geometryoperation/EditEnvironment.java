@@ -155,6 +155,8 @@ public class EditEnvironment {
 			if (!EditEnvironment.this.isInitialAction && isMiddleMousePressed && arg0.getOldAction() != Action.PAN) {
 				activateEditor(NullEditor.INSTANCE);
 			}
+
+			EditEnvironment.this.editController.actionChanged(EditEnvironment.this, arg0);
 		}
 	};
 	private GeometrySelectedListener geometrySelectedListener = new GeometrySelectedListener() {
