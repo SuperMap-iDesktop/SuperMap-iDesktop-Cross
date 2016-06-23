@@ -474,8 +474,10 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0 && ListUtilities
-				.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE, DatasetType.CAD);
+		// @formatter:off
+		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE, DatasetType.CAD);
+		// @formatter:on
 	}
 
 	@Override
