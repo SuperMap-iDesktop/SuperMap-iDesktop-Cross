@@ -88,7 +88,7 @@ public class JDialogResample extends SmDialog {
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 
-		setSize(450, 150);
+		setSize(400, 150);
 		setLocationRelativeTo(null);
 	}
 

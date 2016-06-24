@@ -61,6 +61,7 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 			this.geoLine.addPart(part);
 		}
 	}
+
 	@Override
 	public boolean setPart(int partIndex, Point2Ds part) {
 		return this.geoLine != null && this.geoLine.setPart(partIndex, part);
@@ -106,6 +107,7 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 	@Override
 	public Geometry reverse() {
 		GeoLine reverseLine = new GeoLine();
+		reverseLine.setStyle(this.geoLine.getStyle());
 
 		for (int i = 0; i < this.geoLine.getPartCount(); i++) {
 			Point2Ds point2Ds = GeometryUtilities.reverse(this.geoLine.getPart(i));
@@ -113,6 +115,5 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 		}
 		return reverseLine;
 	}
-
 
 }
