@@ -6,12 +6,6 @@ import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -40,6 +34,7 @@ public class TextStyleDialog extends SmDialog{
 	private transient TextStyleChangeListener textStyleChangeListener;
 	private ActionListener buttonCloseListener;
 	private boolean isDisposed;
+	private EditHistory editHistory;
 
 	private static volatile TextStyleDialog dialog;
 
@@ -79,7 +74,9 @@ public class TextStyleDialog extends SmDialog{
 			text = ((GeoText) geometry).getText();
 			tempTextStyle = ((GeoText) geometry).getTextStyle();
 			rotation = ((GeoText) geometry).getPart(0).getRotation();
-		} else {
+		} 
+		
+		if (geometry instanceof GeoText3D) {
 			text = ((GeoText3D) geometry).getText();
 			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
 		}
@@ -147,7 +144,10 @@ public class TextStyleDialog extends SmDialog{
 	}
 
 	private void updateGeometries(TextStyleType newValue) {
+		editHistory=MapUtilities.getMapControl().getEditHistory();
+		editHistory.batchBegin();
 		recordset.moveFirst();
+		editHistory.add(EditType.MODIFY, recordset, true);
 		while (!recordset.isEOF()) {
 			recordset.edit();
 			Geometry tempGeometry = recordset.getGeometry();
@@ -171,6 +171,7 @@ public class TextStyleDialog extends SmDialog{
 			recordset.update();
 			recordset.moveNext();
 		}
+		editHistory.batchEnd();
 		MapUtilities.getActiveMap().refresh();
 	}
 

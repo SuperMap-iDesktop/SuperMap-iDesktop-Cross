@@ -14,7 +14,7 @@ public class BindWindow implements IBindWindow {
 
 	private boolean selectionHasChanged;
 
-	private Dataset dataset;
+	private Layer layer;
 	private MouseAdapter tabularTableListener;
 	private KeyAdapter tabularTableKeyListener;
 	private MouseMotionAdapter listMouseMotionListener;
@@ -67,16 +67,15 @@ public class BindWindow implements IBindWindow {
 		int[] selectRows = tabularTable.getSelectedRows();
 		int[] idRows = new int[selectRows.length];
 		for (int i = 0; i < selectRows.length; i++) {
-			// idRows[i] = selectRows[i] + 1;
 			idRows[i] = (int) this.formTabular.getRowIndexMap().get(selectRows[i]);
 		}
-		if (null != this.dataset) {
-			DatasetVector datasetVector = (DatasetVector) this.dataset;
+		if (null != this.layer.getDataset()) {
+			DatasetVector datasetVector = (DatasetVector) this.layer.getDataset();
 			Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
 			Selection selection = new Selection();
 			selection.fromRecordset(recordset);
 			if (null != selection) {
-				fireSelectionChanged(selection);
+				fireSelectionChanged(selection, layer);
 			}
 			selection.clear();
 			recordset.dispose();
@@ -111,7 +110,7 @@ public class BindWindow implements IBindWindow {
 	@Override
 	public void dispose() {
 		removeEvents();
-		this.dataset = null;
+		this.layer = null;
 		this.formTabular = null;
 		this.listMouseListener = null;
 		this.listMouseMotionListener = null;
@@ -139,18 +138,18 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public void fireSelectionChanged(Selection selection) {
+	public void fireSelectionChanged(Selection selection, Layer layer) {
 		if (null != mapSelectionChangeListeners) {
 			Vector<MapSelectionChangeListener> listeners = mapSelectionChangeListeners;
 			for (int i = 0; i < listeners.size(); i++) {
-				listeners.elementAt(i).selectionChanged(selection);
+				listeners.elementAt(i).selectionChanged(selection, layer);
 			}
 		}
 	}
 
 	@Override
-	public void setActiveDataset(Dataset dataset) {
-		this.dataset = dataset;
+	public void setActiveLayer(Layer layer) {
+		this.layer = layer;
 	}
 
 	@Override
@@ -159,8 +158,8 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public Dataset getActiveDataset() {
-		return this.dataset;
+	public Layer getActiveLayer() {
+		return this.layer;
 	}
 
 }

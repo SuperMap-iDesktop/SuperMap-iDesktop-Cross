@@ -8,6 +8,7 @@ import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.utilities.TabularUtilities;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
 public class BindUtilties {
@@ -39,7 +40,7 @@ public class BindUtilties {
 		return isRightRows;
 	}
 
-	public static void windowBindProperty(IFormMap formMap, TabWindow tabWindow, Dataset dataset) {
+	public static void windowBindProperty(IFormMap formMap, TabWindow tabWindow, Layer layer) {
 		map = formMap.getMapControl().getMap();
 		newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
 		tabSize += 1;
@@ -51,7 +52,7 @@ public class BindUtilties {
 		propertyBindWindow = new PropertyBindWindow();
 		propertyBindWindow.setFormMap(formMap);
 		propertyBindWindow.setBindProperty(new BindProperty(map));
-		propertyBindWindow.setBindWindow(new BindWindow(tabular), dataset);
+		propertyBindWindow.setBindWindow(new BindWindow(tabular), layer);
 		propertyBindWindow.registEvents();
 		newTabWindow.addListener(new DockingWindowAdapter() {
 

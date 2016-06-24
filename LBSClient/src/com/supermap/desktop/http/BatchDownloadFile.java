@@ -9,13 +9,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.NewWindowListener;
 
 /**
  * <b>function:</b> 分批量下载文件
@@ -401,4 +395,13 @@ public class BatchDownloadFile extends Thread {
 		}
 		return fileLength;
 	}
+
+	public DownloadInfo getDownloadInfo() {
+		return downloadInfo;
+	}
+
+	public void setDownloadInfo(DownloadInfo downloadInfo) {
+		this.downloadInfo = downloadInfo;
+	}
+	
 }

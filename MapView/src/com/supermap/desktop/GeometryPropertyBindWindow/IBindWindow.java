@@ -2,6 +2,7 @@ package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 /**
@@ -20,18 +21,18 @@ public interface IBindWindow {
 	public boolean isSelectionHasChanged();
 
 	/**
-	 * 设置当前活动的数据集
+	 * 设置当前活动的图层
 	 * 
-	 * @param dataset
+	 * @param layer
 	 */
-	public void setActiveDataset(Dataset dataset);
+	public void setActiveLayer(Layer layer);
 
 	/**
-	 * 获取当前活动的数据集
+	 * 获取当前活动的图层
 	 * 
-	 * @param dataset
+	 * @param layer
 	 */
-	public Dataset getActiveDataset();
+	public Layer getActiveLayer();
 
 	/**
 	 * 刷新属性表
@@ -52,7 +53,7 @@ public interface IBindWindow {
 
 	public void removeMapSelectionChangeListener(MapSelectionChangeListener l);
 
-	public void fireSelectionChanged(Selection selection);
+	public void fireSelectionChanged(Selection selection,Layer layer);
 
 	/**
 	 * 获取属性表
