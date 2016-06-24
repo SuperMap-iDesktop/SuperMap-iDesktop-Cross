@@ -32,7 +32,7 @@ public class ToolbarUIUtilties {
 
 	public static int getPutPlace(Rectangle resultToolBarBounds, Point p, int resultToolBarX) {
 		if (resultToolBarBounds.contains(p)) {
-			if (resultToolBarBounds.getHeight() + resultToolBarBounds.getY() - p.y < 8) {
+			if (resultToolBarBounds.getHeight() + resultToolBarBounds.getY() - p.y < 12) {
 				return PUT_DOWN;
 			}
 			if (p.getX() - resultToolBarX < 50) {

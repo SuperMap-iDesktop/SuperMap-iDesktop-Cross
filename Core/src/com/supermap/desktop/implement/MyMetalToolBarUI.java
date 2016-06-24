@@ -126,12 +126,19 @@ public class MyMetalToolBarUI extends MetalToolBarUI {
 		subDockingSource = c;
 		Point globalPoint = getGlobalPoint(p);
 		JPanel toolbarsContainer = Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer();
-		Rectangle bounds = new Rectangle(toolbarsContainer.getLocationOnScreen().x + 2, toolbarsContainer.getLocationOnScreen().y + 5, toolbarsContainer.getWidth() - 2, toolbarsContainer.getHeight() - 5);
+		Rectangle bounds = new Rectangle(toolbarsContainer.getLocationOnScreen().x, toolbarsContainer.getLocationOnScreen().y, toolbarsContainer.getWidth(), toolbarsContainer.getHeight());
 		return bounds.contains(globalPoint);
 	}
 
 	private Point getGlobalPoint(Point p) {
 		Point dockingPosition = subDockingSource.getLocationOnScreen();
 		return new Point(p.x + dockingPosition.x, p.y + dockingPosition.y);
+	}
+
+	@Override
+	protected DragWindow createDragWindow(JToolBar toolbar) {
+		DragWindow dragWindow = super.createDragWindow(toolbar);
+		dragWindow.setOpacity(0.8f);
+		return dragWindow;
 	}
 }
