@@ -818,13 +818,15 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
 	private void setFontSize() {
 		// 保证字高控件的值正确
-		double size = Double.valueOf(textFieldFontSize.getText());
-		double fontHeight = size / EXPERIENCE;
-		fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
-		if (fontHeight > 0) {
-			textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
-			textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
-			fireTextStyleChanged(TextStyleType.FONTSIZE);
+		if (!StringUtilities.isNullOrEmpty(textFieldFontSize.getText())) {
+			double size = Double.valueOf(textFieldFontSize.getText());
+			double fontHeight = size / EXPERIENCE;
+			fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+			if (fontHeight > 0) {
+				textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+				textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
+				fireTextStyleChanged(TextStyleType.FONTSIZE);
+			}
 		}
 	}
 

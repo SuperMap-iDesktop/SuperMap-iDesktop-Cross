@@ -1,6 +1,7 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 public interface IBindProperty {
@@ -8,7 +9,7 @@ public interface IBindProperty {
 	/**
 	 * 刷新地图
 	 */
-	public void refreshMap(Selection selection);
+	public void refreshMap(Selection selection,Layer layer);
 
 	/**
 	 * 移除事件

@@ -1,16 +1,10 @@
 package com.supermap.desktop.http;
 
-import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.ui.controls.progress.FormProgress;
 
  
 /**
@@ -88,4 +82,9 @@ public abstract class DownloadUtils {
 			}
 		}
 	}
+
+	public static Map<DownloadInfo, BatchDownloadFile> getHashMap() {
+		return hashMap;
+	}
+    
 }

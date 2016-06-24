@@ -12,6 +12,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -19,10 +20,13 @@ import javax.swing.SwingWorker;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
+import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.PathUtilities;
 
@@ -49,6 +53,7 @@ public class FileManager extends JPanel implements IUpdateProgress {
 	private String remainTime;
 	private String message;
 	private DownloadInfo downloadInfo;
+	private  final String FILE_MANAGER_CONTROL_CLASS = "com.supermap.desktop.http.FileManagerContainer";
 	
 	public FileManager(DownloadInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
@@ -220,7 +225,28 @@ public class FileManager extends JPanel implements IUpdateProgress {
 	}
 
 	private void buttonRemoveClicked() {
-
+		try {
+			if (!DownloadUtils.getBatchDownloadFileWorker(downloadInfo).isFinished()) {
+				SmOptionPane optionPane = new SmOptionPane();
+				if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(ControlsProperties.getString("String_DownLoadInfo"), this.downloadInfo.getFileName()))==JOptionPane.YES_OPTION) {
+					DownloadUtils.getBatchDownloadFileWorker(downloadInfo).stopDownload();
+					try {
+						IDockbar dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
+								.get(Class.forName(FILE_MANAGER_CONTROL_CLASS));
+						if (null!=dockbarPropertyContainer) {
+							FileManagerContainer fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getComponent();
+							fileManagerContainer.removeItem(downloadInfo);
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_RemoveDownLoadMessionInfo"), this.downloadInfo.getFileName()));
+						}
+					} catch (ClassNotFoundException e) {
+						Application.getActiveApplication().getOutput().output(e);
+					}
+					
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -235,7 +261,10 @@ public class FileManager extends JPanel implements IUpdateProgress {
 				if (isCancel) {
 					DownloadUtils.getBatchDownloadFileWorker(this.downloadInfo).stopDownload();
 				} else {
-					DownloadUtils.getBatchDownloadFileWorker(this.downloadInfo).resumeDownload();
+					BatchDownloadFile downLoadFile = new BatchDownloadFile(downloadInfo);
+					DownloadUtils.getHashMap().remove(this.downloadInfo);
+					DownloadUtils.getHashMap().put(this.downloadInfo, downLoadFile);
+					downLoadFile.start();
 				}
 				
 				this.isCancel = isCancel;
@@ -278,12 +307,12 @@ public class FileManager extends JPanel implements IUpdateProgress {
 				progressBar.setValue(percent);	
 				labelProcess.setText(""); // 10MB/100MB
 				
-				BatchDownloadFile batchDownloadFile = DownloadUtils.getBatchDownloadFileWorker(downloadInfo);
-				try {
-					labelProcess.setText(batchDownloadFile.getDownloadInformation());
-				} catch (IOException e) {
-					Application.getActiveApplication().getOutput().output(e);
-				}
+//				BatchDownloadFile batchDownloadFile = DownloadUtils.getBatchDownloadFileWorker(downloadInfo);
+//				try {
+//					labelProcess.setText(batchDownloadFile.getDownloadInformation());
+//				} catch (IOException e) {
+//					Application.getActiveApplication().getOutput().output(e);
+//				}
 				
 				if (isCancel) {
 					labelStatus.setText("download canceled.");		
@@ -316,11 +345,5 @@ public class FileManager extends JPanel implements IUpdateProgress {
 	public void setDownloadInfo(DownloadInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
 	}
-	
-//	public static void main(String[] args) {
-//		FileManager f = new FileManager();
-//		f.setSize(300, 600);
-//		f.setLocationRelativeTo(null);
-//		f.showDialog();
-//	}
+
 }

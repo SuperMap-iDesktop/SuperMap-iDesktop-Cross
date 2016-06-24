@@ -52,7 +52,7 @@ public class BindProperty implements IBindProperty {
 	}
 
 	@Override
-	public void refreshMap(Selection selection) {
+	public void refreshMap(Selection selection,Layer layer) {
 		Selection tempSelection = selection;
 		Recordset recordset = tempSelection.toRecordset();
 		Geometry geo = recordset.getGeometry();
@@ -65,8 +65,8 @@ public class BindProperty implements IBindProperty {
 					new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop()) });
 			rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
 		}
-		if (map.getLayers().get(recordset.getDataset().getName()+"@"+recordset.getDataset().getDatasource().getAlias()) != null) {
-			map.getLayers().get(recordset.getDataset().getName()+"@"+recordset.getDataset().getDatasource().getAlias()).setSelection(tempSelection);
+		if (null!=map.getLayers().get(layer.getName())) {
+			map.getLayers().get(layer.getName()).setSelection(tempSelection);
 			map.setCenter(rectangle2d.getCenter());
 			map.refresh();
 		}

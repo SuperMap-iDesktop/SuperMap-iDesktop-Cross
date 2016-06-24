@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ui.docking.SplitWindow;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 public class PropertyBindWindow implements IPropertyBindWindow {
@@ -30,7 +31,7 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 
 			@Override
 			public void selectChanged(int[] selectRows, Dataset dataset) {
-				if (!addRow && dataset.equals(bindWindow.getActiveDataset())) {
+				if (!addRow && dataset.equals(bindWindow.getActiveLayer().getDataset())) {
 					bindWindow.refreshFormTabular(selectRows);
 				}
 			}
@@ -38,9 +39,9 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.selectionChangeListener = new MapSelectionChangeListener() {
 
 			@Override
-			public void selectionChanged(Selection selection) {
+			public void selectionChanged(Selection selection,Layer layer) {
 				addRow = true;
-				bindProperty.refreshMap(selection);
+				bindProperty.refreshMap(selection,layer);
 			}
 		};
 		this.formMapMouseListener = new MouseAdapter() {
@@ -79,9 +80,9 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	}
 
 	@Override
-	public void setBindWindow(IBindWindow bindWindow, Dataset dataset) {
+	public void setBindWindow(IBindWindow bindWindow, Layer layer) {
 		this.bindWindow = bindWindow;
-		this.bindWindow.setActiveDataset(dataset);
+		this.bindWindow.setActiveLayer(layer);
 	}
 
 	@Override
