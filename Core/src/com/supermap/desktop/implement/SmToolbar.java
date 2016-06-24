@@ -40,7 +40,6 @@ public class SmToolbar extends JToolBar implements IToolbar {
 	private Dimension dimension = new Dimension(0, 0);
 	private int currentWidth = -1;
 	private MouseAdapter popupMouseListener;
-	// FIXME: 2016/6/20
 	private static final int defaultWidth = 13;
 	private ActionListener buttonActionListener = new ActionListener() {
 		@Override
@@ -76,7 +75,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		if (xmlToolbar != null) {
 			this.xmlToolbar = xmlToolbar;
 			initialize();
-//			((BasicToolBarUI) this.getUI()).setRolloverBorders(false);
+			this.setUI(ToolBarUIFactory.getToolBarUIFactory(getUI()));
+			ToolBarDrag.addListeners(this);
 		}
 	}
 
@@ -541,9 +541,13 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 	}
 
+	@Override
 	public XMLToolbar getXMLToolbar() {
 		return this.xmlToolbar;
 	}
 
-
+	@Override
+	public int getOrientation() {
+		return JToolBar.HORIZONTAL;
+	}
 }

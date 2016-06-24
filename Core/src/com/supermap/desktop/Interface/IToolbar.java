@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.ui.XMLToolbar;
+
 public interface IToolbar extends IBaseItem  {
 
 	/**
@@ -67,4 +69,6 @@ public interface IToolbar extends IBaseItem  {
 	* 待移除子项的索引
 	*/
     void removeAt(int index);
+
+	XMLToolbar getXMLToolbar();
 }

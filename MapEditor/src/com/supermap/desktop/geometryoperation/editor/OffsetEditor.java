@@ -166,6 +166,13 @@ public class OffsetEditor extends AbstractEditor {
 
 		try {
 			int trackingIndex = environment.getMap().getTrackingLayer().indexOf(TAG_OFFSET);
+
+			if (trackingIndex < 0) {
+
+				// 缩放开启之后选中对象，然后保持鼠标不动，再次点击鼠标确认，此时结果对象为空，直接返回
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_OffsetEditor_Null"));
+				return;
+			}
 			Geometry desGeometry = environment.getMap().getTrackingLayer().get(trackingIndex);
 
 			if (desGeometry != null) {

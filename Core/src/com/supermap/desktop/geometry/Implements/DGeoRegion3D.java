@@ -18,8 +18,8 @@ import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
 import com.supermap.desktop.utilities.GeometryUtilities;
 
-public class DGeoRegion3D extends AbstractGeometry implements IRegion3DFeature, IMultiPartFeature<Point3Ds>, IRegion3DConvertor, IRegionConvertor,
-		ILine3DConvertor, ILineConvertor, IReverse {
+public class DGeoRegion3D extends AbstractGeometry
+		implements IRegion3DFeature, IMultiPartFeature<Point3Ds>, IRegion3DConvertor, IRegionConvertor, ILine3DConvertor, ILineConvertor, IReverse {
 
 	private GeoRegion3D geoRegion3D;
 
@@ -145,6 +145,7 @@ public class DGeoRegion3D extends AbstractGeometry implements IRegion3DFeature, 
 	@Override
 	public Geometry reverse() {
 		GeoRegion3D reverseRegion3D = new GeoRegion3D();
+		reverseRegion3D.setStyle3D(this.geoRegion3D.getStyle3D());
 
 		for (int i = 0; i < this.geoRegion3D.getPartCount(); i++) {
 			Point3Ds point3Ds = GeometryUtilities.reverse(this.geoRegion3D.getPart(i));

@@ -175,6 +175,10 @@ public class LineExtendEditor extends AbstractEditor {
 					}
 				}
 			}
+
+			if (editModel.baseLine == null) {
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_BaseLineError"));
+			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

@@ -24,7 +24,8 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 	}
 
 	/**
-	 * @param segment 本类本参数无效
+	 * @param segment
+	 *            本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -35,7 +36,8 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 	/**
 	 * 返回自己
 	 *
-	 * @param segment 本类本参数无效
+	 * @param segment
+	 *            本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -112,6 +114,7 @@ public class DGeoRegion extends AbstractGeometry implements IMultiPartFeature<Po
 	@Override
 	public Geometry reverse() {
 		GeoRegion reverseRegion = new GeoRegion();
+		reverseRegion.setStyle(this.geoRegion.getStyle());
 
 		for (int i = 0; i < this.geoRegion.getPartCount(); i++) {
 			Point2Ds point2Ds = GeometryUtilities.reverse(this.geoRegion.getPart(i));

@@ -138,10 +138,9 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 		for (Layer layer : layers) {
 			// 线面数据能作为被分割的对象
-			if (layer.isEditable()
-					&& layer.getDataset() != null
-					&& layer.getDataset() instanceof DatasetVector
-					&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)
+			if (layer.isEditable() && layer.getDataset() != null
+					&& layer.getDataset() instanceof DatasetVector && (layer.getDataset().getType() == DatasetType.LINE
+							|| layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)
 					&& layer.getSelection().getCount() > 0) {
 				Recordset recordset = layer.getSelection().toRecordset();
 
@@ -249,8 +248,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 								CoordSysTransParameter param = null;
 								try {
-									CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(), layer.getDataset()
-											.getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
+									CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(),
+											layer.getDataset().getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
 								} finally {
 									if (param != null) {
 										param.dispose();
@@ -311,11 +310,11 @@ public class SplitByGeometryEditor extends AbstractEditor {
 									}
 
 									if (dynamicGeometry != null) {
-										result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values, recordset.getDataset()
-												.getTolerance().getNodeSnap(), geoStyle);
+										result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values,
+												recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
 									} else {
-										result = splitLine(environment, (GeoLine) geometry, splitGeometry, resultGeometrys, values, recordset.getDataset()
-												.getTolerance().getNodeSnap(), geoStyle);
+										result = splitLine(environment, (GeoLine) geometry, splitGeometry, resultGeometrys, values,
+												recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
 									}
 
 									if (result) {
@@ -447,7 +446,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			style2.setLineColor(Color.BLUE);
 
 			curLines = Geometrist.splitLine(desLine, baseLine, tolerance);
-			if (curLines.length >= 2) {
+			if (curLines != null && curLines.length >= 2) {
 				result = true;
 
 				for (int i = 0; i < curLines.length; i++) {
@@ -475,9 +474,10 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
+		// @formatter:off
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
-				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.REGION, DatasetType.LINE,
-						DatasetType.CAD);
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), ILineFeature.class,IRegionFeature.class);
+		// @formatter:on
 	}
 
 	@Override

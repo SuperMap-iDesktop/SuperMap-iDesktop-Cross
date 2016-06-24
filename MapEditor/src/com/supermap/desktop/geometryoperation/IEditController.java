@@ -6,6 +6,7 @@ import java.util.EventObject;
 
 import com.supermap.desktop.geometryoperation.editor.EraseEditor;
 import com.supermap.desktop.utilities.MapControlUtilities;
+import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;
@@ -76,6 +77,8 @@ public interface IEditController {
 	 * Invoked when the mouse cursor has been moved onto a component but no buttons have been pushed.
 	 */
 	public void mouseMoved(EditEnvironment environment, MouseEvent e);
+
+	public void actionChanged(EditEnvironment environment, ActionChangedEvent e);
 
 	public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0);
 

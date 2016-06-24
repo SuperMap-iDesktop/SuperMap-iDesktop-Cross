@@ -245,6 +245,7 @@ public class XMLToolbar extends XMLCommand {
 				result.setID(this.getID());
 				result.setVisible(this.getVisible());
 				result.setIndex(this.getIndex());
+//				result.setR(this.getIndex());
 				result.setLabel(this.getLabel());
 				result.setFormClassName(this.getFormClassName());
 				result.getPluginInfo().setBundleName(this.getPluginInfo().getBundleName());

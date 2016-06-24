@@ -7,6 +7,7 @@ import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmToolbar;
+import com.supermap.desktop.implement.ToolBarContainer;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -20,7 +21,6 @@ public class ToolbarManager implements IToolbarManager {
 	private JPanel toolbarsContainer = null;
 	private ArrayList<IToolbar> listToolbars = null;
 	private HashMap<WindowType, ArrayList<IToolbar>> childToolbars = null;
-//	private Container toolbarContainer;
 
 	public ToolbarManager() {
 		this.listToolbars = new ArrayList<IToolbar>();
@@ -28,6 +28,7 @@ public class ToolbarManager implements IToolbarManager {
 		this.toolbarsContainer = new JPanel();
 	}
 
+	@Override
 	public JPanel getToolbarsContainer() {
 		return this.toolbarsContainer;
 	}
@@ -39,14 +40,19 @@ public class ToolbarManager implements IToolbarManager {
 
 	@Override
 	public IToolbar get(String id) {
-		IToolbar item = null;
-		for (int i = 0; i < this.listToolbars.size(); i++) {
-			if (this.listToolbars.get(i).getID().equalsIgnoreCase(id)) {
-				item = this.listToolbars.get(i);
-				break;
+		for (IToolbar listToolbar : this.listToolbars) {
+			if (listToolbar.getID().equalsIgnoreCase(id)) {
+				return listToolbar;
 			}
 		}
-		return item;
+		for (ArrayList<IToolbar> iToolbars : childToolbars.values()) {
+			for (IToolbar iToolbar : iToolbars) {
+				if (iToolbar.getID().equalsIgnoreCase(id)) {
+					return iToolbar;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -88,6 +94,11 @@ public class ToolbarManager implements IToolbarManager {
 	public int getChildToolbarCount(WindowType windowType) {
 		ArrayList<IToolbar> childToolbarsList = this.childToolbars.get(windowType);
 		return childToolbarsList.size();
+	}
+
+	@Override
+	public void update() {
+		reLayoutToolBarContainer();
 	}
 
 	public void add(IToolbar item) {
@@ -196,11 +207,20 @@ public class ToolbarManager implements IToolbarManager {
 	}
 
 	private void reLayoutToolBarContainer() {
+		int beforeCount = this.toolbarsContainer.getComponentCount();
 		this.toolbarsContainer.removeAll();
 		this.toolbarsContainer.setLayout(new GridBagLayout());
 		List<ToolBarContainer> containerS = ToolBarContainer.getContainerS();
 		for (ToolBarContainer toolBarContainer : containerS) {
 			this.toolbarsContainer.add(toolBarContainer, new GridBagConstraintsHelper(0, toolBarContainer.getIndex(), 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
+		}
+
+		if (beforeCount != this.toolbarsContainer.getComponentCount() && toolbarsContainer.getParent() != null) {
+			toolbarsContainer.getParent().validate();
+			toolbarsContainer.getParent().repaint();
+		} else {
+			this.toolbarsContainer.validate();
+			this.toolbarsContainer.repaint();
 		}
 	}
 

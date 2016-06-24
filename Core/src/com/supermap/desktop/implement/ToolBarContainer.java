@@ -1,4 +1,6 @@
-package com.supermap.desktop.ui;
+package com.supermap.desktop.implement;
+
+import com.supermap.desktop.Application;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +11,7 @@ import java.util.ArrayList;
 /**
  * @author XiaJT
  */
-class ToolBarContainer extends Container {
-	// 包内使用，暂不开放
+public class ToolBarContainer extends Container {
 	private int index = -1;
 	private static java.util.List<ToolBarContainer> lists = new ArrayList<>();
 
@@ -26,8 +27,113 @@ class ToolBarContainer extends Container {
 		});
 	}
 
+
+	/**
+	 * 这个方法只提供在工具条浮动窗口关闭时调用
+	 *
+	 * @param comp
+	 * @param constraints
+	 */
+	@Override
+	@Deprecated
+	public void add(Component comp, Object constraints) {
+		if (comp != null && comp instanceof SmToolbar) {
+			ToolBarContainer.getToolBarContainer(((SmToolbar) comp).getRowIndex()).add(comp);
+		} else {
+			this.add(comp);
+		}
+	}
+
+	@Override
+	public Component add(Component comp) {
+		int index = -1;
+		if (comp.getParent() != null) {
+			comp.getParent().remove(comp);
+		}
+		if (comp instanceof SmToolbar) {
+			for (int i = 0; i < this.getComponentCount(); i++) {
+				if (this.getComponent(i) != null && this.getComponent(i) instanceof SmToolbar) {
+					if (((SmToolbar) this.getComponent(i)).getIndex() >= ((SmToolbar) comp).getIndex()) {
+						index = i;
+						break;
+					}
+				}
+			}
+			int indexCopy = ((SmToolbar) comp).getIndex();
+			// 防止index重复
+			for (int i = 0; i < getComponentCount(); i++) {
+				Component tempComponent = this.getComponent(i);
+				if (tempComponent != null && tempComponent instanceof SmToolbar) {
+					if (((SmToolbar) tempComponent).getIndex() == indexCopy && tempComponent != comp) {
+						indexCopy++;
+						((SmToolbar) tempComponent).setIndex(indexCopy);
+					}
+				}
+			}
+			((SmToolbar) comp).setRowIndex(this.getIndex());
+		}
+		if (!lists.contains(this)) {
+			lists.add(this);
+			Application.getActiveApplication().getMainFrame().getToolbarManager().update();
+		}
+		super.add(comp, index);
+		this.validate();
+		this.repaint();
+		return comp;
+	}
+
+	@Override
+	public Component add(String name, Component comp) {
+		if (comp != null && comp instanceof SmToolbar) {
+			ToolBarContainer.getToolBarContainer(((SmToolbar) comp).getRowIndex()).add(comp);
+		} else {
+			this.add(comp);
+		}
+		return comp;
+	}
+
 	public int getIndex() {
 		return index;
+	}
+
+	@Override
+	public void remove(int index) {
+		super.remove(index);
+		this.validate();
+		this.repaint();
+		if (this.getComponentCount() == 0) {
+			removeFormLists();
+		}
+	}
+
+	@Override
+	public void remove(Component comp) {
+		super.remove(comp);
+		this.validate();
+		this.repaint();
+		if (this.getComponentCount() == 0) {
+			removeFormLists();
+		}
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+		for (int i = 0; i < this.getComponentCount(); i++) {
+			if (this.getComponent(i) != null && this.getComponent(i) instanceof SmToolbar) {
+				((SmToolbar) this.getComponent(i)).setRowIndex(i);
+			}
+		}
+	}
+
+	@Override
+	public void removeAll() {
+		super.removeAll();
+		removeFormLists();
+	}
+
+	private void removeFormLists() {
+		lists.remove(this);
+		Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 	}
 
 	public static ToolBarContainer getToolBarContainer(int index) {
@@ -38,11 +144,48 @@ class ToolBarContainer extends Container {
 		}
 		ToolBarContainer toolBarContainer = new ToolBarContainer(index);
 		lists.add(toolBarContainer);
+		Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 		return toolBarContainer;
 	}
 
 	public static java.util.List<ToolBarContainer> getContainerS() {
 		return lists;
+	}
+
+	public static void prepareInsertRow(int toolBarContainerIndex) {
+		for (ToolBarContainer toolBarContainer : lists) {
+			if (toolBarContainer.getIndex() == toolBarContainerIndex) {
+				prepareInsertRow(toolBarContainerIndex + 1);
+				toolBarContainer.setIndex(toolBarContainerIndex + 1);
+			}
+		}
+	}
+	@Override
+	public Point getLocationOnScreen() {
+		// 骗子！！！！
+		if (isShowing()) {
+			return super.getLocationOnScreen();
+		} else {
+			return new Point(0, 0);
+		}
+	}
+
+	@Override
+	public int getX() {
+		if (isShowing()) {
+			return super.getX();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getY() {
+		if (isShowing()) {
+			return super.getY();
+		} else {
+			return 0;
+		}
 	}
 
 	class ToolBarLayout extends FlowLayout {

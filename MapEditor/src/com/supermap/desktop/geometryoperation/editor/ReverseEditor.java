@@ -12,6 +12,7 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IReverse;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -21,9 +22,11 @@ public class ReverseEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
+			CursorUtilities.setWaitCursor(environment.getMapControl());
 			reverse(environment);
 		} finally {
 			environment.activateEditor(NullEditor.INSTANCE);
+			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
 	}
 
@@ -58,9 +61,9 @@ public class ReverseEditor extends AbstractEditor {
 									reverseGeometry = ((IReverse) geometry).reverse();
 
 									recordset.edit();
+									environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
 									recordset.setGeometry(reverseGeometry);
 									recordset.update();
-									environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
 								}
 							} finally {
 								if (geometry != null) {

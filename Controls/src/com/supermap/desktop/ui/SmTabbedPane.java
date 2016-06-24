@@ -1,27 +1,12 @@
 package com.supermap.desktop.ui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
+import javax.swing.text.View;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.text.View;
 
 public class SmTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
