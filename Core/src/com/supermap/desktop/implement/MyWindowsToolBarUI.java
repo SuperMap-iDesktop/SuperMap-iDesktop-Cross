@@ -38,14 +38,7 @@ public class MyWindowsToolBarUI extends WindowsToolBarUI {
 				if (putPlace == ToolbarUIUtilties.PUT_DOWN) {
 					int toolBarContainerIndex = ((ToolBarContainer) resultToolBar.getParent()).getIndex() + 1;
 					super.setFloating(b, p);
-					ToolBarContainer toolBarContainer = ToolBarContainer.getToolBarContainer(toolBarContainerIndex);
-					((SmToolbar) toolBar).setRowIndex(toolBarContainerIndex);
-					Container parent = toolBar.getParent();
-					parent.remove(toolBar);
-					parent.validate();
-					toolBarContainer.add(toolBar);
-					toolBarContainer.validate();
-					Application.getActiveApplication().getMainFrame().getToolbarManager().update();
+					ToolbarUIUtilties.addToDown(toolBarContainerIndex, (SmToolbar) toolBar);
 				} else if (resultToolBar != toolBar) {
 
 					Container parent = resultToolBar.getParent();
@@ -118,6 +111,7 @@ public class MyWindowsToolBarUI extends WindowsToolBarUI {
 			super.setFloating(true, p);
 		}
 	}
+
 
 	@Override
 	protected DragWindow createDragWindow(JToolBar toolbar) {

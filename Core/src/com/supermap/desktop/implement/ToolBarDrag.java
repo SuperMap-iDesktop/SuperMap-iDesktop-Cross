@@ -114,6 +114,9 @@ public class ToolBarDrag {
 
 	public SmToolbar getCurrentForcedToolbar(Point point) {
 		Component deepestComponent = SwingUtilities.getDeepestComponentAt(Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer(), point.x, point.y);
+		if (deepestComponent instanceof ToolBarContainer) {
+			deepestComponent = ((ToolBarContainer) deepestComponent).getComponent(((ToolBarContainer) deepestComponent).getComponentCount() - 1);
+		}
 		if (deepestComponent != null) {
 			return getParentToolBar(deepestComponent);
 		}

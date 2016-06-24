@@ -1,5 +1,7 @@
 package com.supermap.desktop.implement;
 
+import com.supermap.desktop.Application;
+
 import java.awt.*;
 
 /**
@@ -40,5 +42,17 @@ public class ToolbarUIUtilties {
 			}
 		}
 		return PUT_RIGHT;
+	}
+
+	public static void addToDown(int toolBarContainerIndex, SmToolbar smToolbar) {
+		ToolBarContainer.prepareInsertRow(toolBarContainerIndex);
+		ToolBarContainer toolBarContainer = ToolBarContainer.getToolBarContainer(toolBarContainerIndex);
+		smToolbar.setRowIndex(toolBarContainerIndex);
+		Container parent = smToolbar.getParent();
+		parent.remove(smToolbar);
+		parent.validate();
+		toolBarContainer.add(smToolbar);
+		toolBarContainer.validate();
+		Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 	}
 }
