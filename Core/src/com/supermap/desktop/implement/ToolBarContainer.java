@@ -116,6 +116,15 @@ public class ToolBarContainer extends Container {
 		}
 	}
 
+	public void setIndex(int index) {
+		this.index = index;
+		for (int i = 0; i < this.getComponentCount(); i++) {
+			if (this.getComponent(i) != null && this.getComponent(i) instanceof SmToolbar) {
+				((SmToolbar) this.getComponent(i)).setRowIndex(i);
+			}
+		}
+	}
+
 	@Override
 	public void removeAll() {
 		super.removeAll();
@@ -143,6 +152,14 @@ public class ToolBarContainer extends Container {
 		return lists;
 	}
 
+	public static void prepareInsertRow(int toolBarContainerIndex) {
+		for (ToolBarContainer toolBarContainer : lists) {
+			if (toolBarContainer.getIndex() == toolBarContainerIndex) {
+				prepareInsertRow(toolBarContainerIndex + 1);
+				toolBarContainer.setIndex(toolBarContainerIndex + 1);
+			}
+		}
+	}
 	@Override
 	public Point getLocationOnScreen() {
 		// 骗子！！！！

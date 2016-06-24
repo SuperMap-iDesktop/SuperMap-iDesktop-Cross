@@ -1,5 +1,7 @@
 package com.supermap.desktop.implement;
 
+import com.supermap.desktop.Application;
+
 import java.awt.*;
 
 /**
@@ -32,7 +34,7 @@ public class ToolbarUIUtilties {
 
 	public static int getPutPlace(Rectangle resultToolBarBounds, Point p, int resultToolBarX) {
 		if (resultToolBarBounds.contains(p)) {
-			if (resultToolBarBounds.getHeight() + resultToolBarBounds.getY() - p.y < 8) {
+			if (resultToolBarBounds.getHeight() + resultToolBarBounds.getY() - p.y < 12) {
 				return PUT_DOWN;
 			}
 			if (p.getX() - resultToolBarX < 50) {
@@ -40,5 +42,17 @@ public class ToolbarUIUtilties {
 			}
 		}
 		return PUT_RIGHT;
+	}
+
+	public static void addToDown(int toolBarContainerIndex, SmToolbar smToolbar) {
+		ToolBarContainer.prepareInsertRow(toolBarContainerIndex);
+		ToolBarContainer toolBarContainer = ToolBarContainer.getToolBarContainer(toolBarContainerIndex);
+		smToolbar.setRowIndex(toolBarContainerIndex);
+		Container parent = smToolbar.getParent();
+		parent.remove(smToolbar);
+		parent.validate();
+		toolBarContainer.add(smToolbar);
+		toolBarContainer.validate();
+		Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 	}
 }
