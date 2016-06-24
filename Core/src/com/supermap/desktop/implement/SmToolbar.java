@@ -158,10 +158,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			this.addComponentListener(new ComponentAdapter() {
 				@Override
 				public void componentResized(ComponentEvent e) {
-					if (currentWidth != getWidth()) {
-						currentWidth = getWidth();
 						reAddComponents();
-					}
 				}
 
 			});
@@ -205,33 +202,35 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 	}
 
-	private void reAddComponents() {
+	public void reAddComponents() {
 		// 根据大小重新添加控件，放的下的就放，放不下就到小黑屋了待着
-//		this.removeAll();
-		removePopupItem();
-		int widthCount = 0;
-		for (int i = 0; i < items.size(); i++) {
-			IBaseItem item = items.get(i);
-			if (item instanceof Component) {
-				int componentIndex = this.getComponentIndex(((Component) item));
-				if (widthCount == -1) {                    // 已经放不下了 直接丢到弹出框里面
-					if (componentIndex != -1) {
-						remove(((JComponent) item));
+		if (currentWidth != getWidth()) {
+			currentWidth = getWidth();
+			removePopupItem();
+			int widthCount = 0;
+			for (int i = 0; i < items.size(); i++) {
+				IBaseItem item = items.get(i);
+				if (item instanceof Component) {
+					int componentIndex = this.getComponentIndex((Component) item);
+					if (widthCount == -1) {                    // 已经放不下了 直接丢到弹出框里面
+						if (componentIndex != -1) {
+							remove((JComponent) item);
+						}
+						addToPopUpMenu((Component) item);
+					} else if (isCanPlaced(widthCount, item)) {
+						widthCount += ((Component) item).getPreferredSize().getWidth();
+						if (componentIndex == -1) {
+							this.remove(buttonMore);
+							this.add((JComponent) item, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(i == items.size() - 1 ? 1 : 0, 0));
+						}
+					} else {
+						widthCount = -1;
+						if (componentIndex != -1) {
+							remove((JComponent) item);
+						}
+						this.add(buttonMore, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0));
+						addToPopUpMenu((Component) item);
 					}
-					addToPopUpMenu((Component) item);
-				} else if (isCanPlaced(widthCount, item)) {
-					widthCount += ((Component) item).getPreferredSize().getWidth();
-					if (componentIndex == -1) {
-						this.remove(buttonMore);
-						this.add((JComponent) item, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(i == items.size() - 1 ? 1 : 0, 0));
-					}
-				} else {
-					widthCount = -1;
-					if (componentIndex != -1) {
-						remove(((JComponent) item));
-					}
-					this.add(buttonMore, new GridBagConstraintsHelper(i, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0));
-					addToPopUpMenu((Component) item);
 				}
 			}
 		}
