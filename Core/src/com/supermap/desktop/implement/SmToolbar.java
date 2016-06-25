@@ -284,7 +284,7 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			popupMenu.add(separator, new GridBagConstraintsHelper(0, popupMenu.getComponentCount(), 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setIpad(0, 2).setWeight(1, 1));
 		} else if (item instanceof SmCtrlActionButton) {
 			SmCtrlActionButton button = (SmCtrlActionButton) item;
-//			button.setContentAreaFilled(false);
+			button.setContentAreaFilled(false);
 			button.setRolloverEnabled(false);
 			button.setBorder(new EmptyBorder(3, 3, 3, 3));
 			button.addMouseListener(popupMouseListener);
@@ -320,6 +320,12 @@ public class SmToolbar extends JToolBar implements IToolbar {
 		}
 		popupMenu.addPopupMenuListener(subPopupMenuListener);
 		popupMenu.addMouseListener(popupMouseListener);
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		super.setSize(width, height);
+		reAddComponents();
 	}
 
 	private void removeSubPopupMenuListener(JPopupMenu popupMenu) {

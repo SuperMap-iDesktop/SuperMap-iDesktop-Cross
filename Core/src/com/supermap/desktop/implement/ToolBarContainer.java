@@ -79,7 +79,9 @@ public class ToolBarContainer extends Container {
 		super.add(comp, index);
 		this.validate();
 		this.repaint();
-		((SmToolbar) comp).reAddComponents();
+		if (comp instanceof SmToolbar) {
+			((SmToolbar) comp).reAddComponents();
+		}
 		return comp;
 	}
 
