@@ -71,16 +71,13 @@ public class ToolBarDrag {
 			Rectangle rect = toolbar.getVisibleRect();
 			switch (lastPlace) {
 				case ToolbarUIUtilties.PUT_LEFT:
-//					graphics.drawLine(rect.x,rect.y,rect.x,rect.y+rect.height);
 					graphics.fillRect(rect.x + 12, rect.y, lineWidth, rect.height);
 					break;
 				case ToolbarUIUtilties.PUT_DOWN:
 
-//					graphics.drawLine(rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height);
 					graphics.fillRect(rect.x + 12, rect.y + rect.height - 2, rect.width, lineWidth);
 					break;
 				case ToolbarUIUtilties.PUT_RIGHT:
-//					graphics.drawLine(rect.x+rect.width,rect.y,rect.x+rect.width,rect.y+rect.height);
 					graphics.fillRect(rect.x + rect.width - 2, rect.y, lineWidth, rect.height);
 			}
 		}
@@ -90,7 +87,7 @@ public class ToolBarDrag {
 		if (toolBarDrag == null) {
 			toolBarDrag = new ToolBarDrag();
 		}
-		return new ToolBarDrag();
+		return toolBarDrag;
 	}
 
 	public static void addListeners(SmToolbar smToolbar) {
@@ -115,7 +112,10 @@ public class ToolBarDrag {
 	public SmToolbar getCurrentForcedToolbar(Point point) {
 		Component deepestComponent = SwingUtilities.getDeepestComponentAt(Application.getActiveApplication().getMainFrame().getToolbarManager().getToolbarsContainer(), point.x, point.y);
 		if (deepestComponent instanceof ToolBarContainer && ((ToolBarContainer) deepestComponent).getComponentCount() > 0) {
+
 			deepestComponent = ((ToolBarContainer) deepestComponent).getComponent(((ToolBarContainer) deepestComponent).getComponentCount() - 1);
+		} else {
+			deepestComponent = null;
 		}
 		if (deepestComponent != null) {
 			return getParentToolBar(deepestComponent);
