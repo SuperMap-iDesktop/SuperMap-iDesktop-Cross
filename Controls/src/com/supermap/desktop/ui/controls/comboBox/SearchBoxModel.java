@@ -8,7 +8,6 @@ import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
-
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -78,7 +77,7 @@ public class SearchBoxModel<T> extends AbstractListModel
 
 		for (int i = 0, j = 0; i < inputString.length(); i++) {
 			for (; j < searchString.length(); j++) {
-				if (searchString.charAt(j) == inputString.charAt(i)) {
+				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
 					if (i == inputString.length() - 1) {
 						// 匹配成功
 						return true;
@@ -184,7 +183,7 @@ public class SearchBoxModel<T> extends AbstractListModel
 	}
 
 	public int getSelectedIndex() {
-		if (!isKeyReleased) {
+		if (!comboBox.isPopupVisible() && !isKeyReleased) {
 			resetSearchData();
 			fireContentsChanged(this, 0, searchData.size());
 		}

@@ -18,7 +18,6 @@ import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -77,7 +76,7 @@ public class JPanelGeoCoordSys extends JPanel {
 
 		Arrays.sort(enums, 0, enums.length, new EnumComparator());
 		for (Enum anEnum : enums) {
-			if (anEnum instanceof GeoCoordSysType) {
+			if (anEnum instanceof GeoCoordSysType && anEnum != GeoCoordSysType.GCS_USER_DEFINE) {
 				comboBoxType.addItem((GeoCoordSysType) anEnum);
 			}
 		}
@@ -96,7 +95,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		Arrays.sort(enumsGeoDatum, 0, enumsGeoDatum.length, new EnumComparator());
 
 		for (Enum anEnum : enumsGeoDatum) {
-			if (anEnum instanceof GeoDatumType) {
+			if (anEnum instanceof GeoDatumType && anEnum != GeoDatumType.DATUM_USER_DEFINED) {
 				comboBoxGeoDatumType.addItem((GeoDatumType) anEnum);
 			}
 		}
@@ -108,7 +107,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		comboBoxGeoSpheroidType.setSearchItemValueGetter(searchItemValueGetter);
 		Arrays.sort(enumsGeoSpheroid, 0, enumsGeoSpheroid.length, new EnumComparator());
 		for (Enum anEnum : enumsGeoSpheroid) {
-			if (anEnum instanceof GeoSpheroidType) {
+			if (anEnum instanceof GeoSpheroidType && anEnum != GeoSpheroidType.SPHEROID_USER_DEFINED) {
 				comboBoxGeoSpheroidType.addItem((GeoSpheroidType) anEnum);
 			}
 		}
@@ -162,7 +161,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		Enum[] enumsCenter = Enum.getEnums(GeoPrimeMeridianType.class);
 		comboBoxCentralMeridianType.setSearchItemValueGetter(searchItemValueGetter);
 		for (Enum anEnum : enumsCenter) {
-			if (anEnum instanceof GeoPrimeMeridianType)
+			if (anEnum instanceof GeoPrimeMeridianType && anEnum != GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED)
 				comboBoxCentralMeridianType.addItem((GeoPrimeMeridianType) anEnum);
 		}
 		comboBoxCentralMeridianType.setRenderer(renderer);

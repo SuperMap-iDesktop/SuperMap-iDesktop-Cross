@@ -21,7 +21,6 @@ import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -139,7 +138,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		comboBoxName.setSearchItemValueGetter(searchItemValueGetter);
 		Arrays.sort(enums, 0, enums.length, new EnumComparator());
 		for (Enum anEnum : enums) {
-			if (anEnum instanceof PrjCoordSysType && anEnum != PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE && anEnum != PrjCoordSysType.PCS_NON_EARTH) {
+			if (anEnum instanceof PrjCoordSysType && anEnum != PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE && anEnum != PrjCoordSysType.PCS_NON_EARTH && anEnum != PrjCoordSysType.PCS_USER_DEFINED) {
 				comboBoxName.addItem((PrjCoordSysType) anEnum);
 			}
 		}
@@ -154,7 +153,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		comboBoxCoordType.setSearchItemValueGetter(searchItemValueGetter);
 		Arrays.sort(enums1, 0, enums1.length, new EnumComparator());
 		for (Enum anEnum : enums1) {
-			if (anEnum instanceof ProjectionType) {
+			if (anEnum instanceof ProjectionType && anEnum != PrjCoordSysType.PCS_USER_DEFINED) {
 				comboBoxCoordType.addItem((ProjectionType) anEnum);
 			}
 		}
