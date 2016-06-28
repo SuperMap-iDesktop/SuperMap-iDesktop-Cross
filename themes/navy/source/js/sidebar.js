@@ -30,11 +30,11 @@
  		$this.find("li").each(function() {
  			if($(this).find("ul").size() != 0){
  				//add the multilevel sign next to the link
- 				$(this).find("a:first").append("<span>"+ opts.closedSign +"</span>");
+ 				$(this).find("strong:first").append("<span>"+ opts.openedSign +"</span>");
  				
- 				//avoid jumping to the top of the page when the name is an #
- 				if($(this).find("a:first").attr('name') == "#"){
- 		  			$(this).find("a:first").click(function(){return false;});
+ 				//avoid jumping to the top of the page when the class is an sidebar-title
+ 				if($(this).find("strong:first").attr('class') == "sidebar-title"){
+ 		  			$(this).find("strong:first").click(function(){return false;});
  		  		}
  			}
  		});
@@ -45,7 +45,7 @@
  			$(this).parents("ul").parent("li").find("span:first").html(opts.openedSign);
  		});
 
-  		$this.find("li a").click(function() {
+  		$this.find("li strong").click(function() {
   			if($(this).parent().find("ul").size() != 0){
   				if(opts.accordion){
   					//Do nothing when the list is open

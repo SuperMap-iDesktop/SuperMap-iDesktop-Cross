@@ -47,17 +47,19 @@ hexo.extend.helper.register('doc_sidebar', function(className){
   var type = this.page.canonical_path.split('/')[0];
   var sidebar = this.site.data.sidebar[type];
   var path = pathFn.basename(this.path);
-  var result = '';
+  var result = '<ul class="topnav">';
   var self = this;
   var prefix = 'sidebar.' + type + '.';
-
+   
   _.each(sidebar, function(menu, title){
-    result += '<ul class="topnav"><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
+    result += '<li><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
+    result += '<ul>'
     _.each(menu, function(link, text){
       var itemClass = className + '-link';
       if (link === path) itemClass += ' current';
-      result += '<li><a href="' + link + '" class="' + itemClass + '"  name="#">' + self.__(prefix + text) + '</a></li>';
+      result += '<li><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
     })
+    result +='</ul></li>'
   });
     result += '</ul>';
   return result;
