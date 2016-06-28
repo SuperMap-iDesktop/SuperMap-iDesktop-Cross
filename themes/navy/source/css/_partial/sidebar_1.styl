@@ -1,0 +1,119 @@
+*, *:after, *:before
+  -webkit-box-sizing border-box
+  -moz-box-sizing border-box
+  box-sizing border-box
+
+body, html
+  font-size 100%
+  padding 0
+  margin 0
+  height 100%
+
+.clearfix:before, .clearfix:after
+  content " "
+  display table
+
+.clearfix
+  &:after
+    clear both
+
+a
+  color #555
+  text-decoration none
+  outline none
+  img
+    border none
+
+a:hover,
+a:active
+  color #777
+
+@font-face
+  font-family 'FontAwesome'
+  font-weight normal
+  font-style normal
+
+.fa
+  display inline-block
+  font normal normal normal 14px/1 FontAwesome
+  font-size inherit
+  text-rendering auto
+  -webkit-font-smoothing antialiased
+  -moz-osx-font-smoothing grayscale
+  &.pull-left
+    margin-right .3em
+  &.pull-right
+    margin-left .3em
+
+.fa-lg
+  font-size 1.33333333em
+  line-height .75em
+  vertical-align -15%
+
+.fa-2x
+  font-size 2em
+
+.fa-3x
+  font-size 3em
+
+.fa-4x
+  font-size 4em
+
+.fa-5x
+  font-size 5em
+
+.fa-fw
+  width 1.28571429em
+  text-align center
+
+.fa-ul
+  padding-left 0
+  margin-left 2.14285714em
+  list-style-type none
+  & > li
+    position relative
+
+.fa-li
+  position absolute
+  left -2.14285714em
+  width 2.14285714em
+  top .14285714em
+  text-align center
+  &.fa-lg
+    left -1.85714286em
+
+.fa-border
+  padding .2em .25em .15em
+  border solid .08em #eee
+  border-radius .1em
+
+.pull-right
+  float right
+
+.pull-left
+  float left
+
+.fa-spin
+  -webkit-animation: fa-spin 2s infinite linear
+  animation: fa-spin 2s infinite linear
+  
+@-webkit-keyframes fa-spin
+  0%
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);}
+  100%{
+  -webkit-transform: rotate(359deg);
+  transform: rotate(359deg);}
+
+@keyframes fa-spin
+  0%{-webkit-transform: rotate(0deg);
+    transform: rotate(0deg);}
+  100%{
+  -webkit-transform: rotate(359deg);
+  transform: rotate(359deg);}
+  
+.fa-rotate-90
+  -webkit-transform: rotate(90deg)
+  -ms-transform: rotate(90deg)
+  transform: rotate(90deg)
+

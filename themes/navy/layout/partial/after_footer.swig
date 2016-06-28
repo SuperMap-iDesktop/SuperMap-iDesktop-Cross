@@ -5,6 +5,8 @@
 {{ js('js/mobile_nav') }}
 {{ js('js/jquery-1.10.2.min') }}
 {{ js('js/slider') }}
+{{ js('js/jquery-1.5.2.min') }}
+{{ js('js/sidebar') }}
 <!-- endbuild -->
 <script src="https://cdn.jsdelivr.net/retinajs/1.3.0/retina.min.js" async></script>
 {% if page.layout === 'plugins' %}
