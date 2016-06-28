@@ -14,7 +14,8 @@ public class CtrlActionTabularUpdateColumn extends CtrlAction {
 	}
 	@Override
 	public void run() {
-		JDialogTabularUpdateColumn dialogTabularUpdateColumn = new JDialogTabularUpdateColumn();
+		IFormTabular tabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
+		JDialogTabularUpdateColumn dialogTabularUpdateColumn = new JDialogTabularUpdateColumn(tabular);
 		dialogTabularUpdateColumn.showDialog();
 	}
 

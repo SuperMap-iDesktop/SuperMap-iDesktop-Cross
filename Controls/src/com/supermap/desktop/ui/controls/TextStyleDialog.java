@@ -52,15 +52,7 @@ public class TextStyleDialog extends SmDialog{
 		isDisposed = false;
 		this.setSize(360, 400);
 		this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension frameSize = this.getSize();
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+		setLocationRelativeTo(null);
 	}
 
 	public void showDialog(Recordset recordset) {

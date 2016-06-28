@@ -28,6 +28,17 @@ public class ComponentFactory {
 	}
 
 	/**
+	 * 生产一个Apply按钮
+	 * 
+	 * @return
+	 */
+	public static JButton createButtonApply() {
+		SmButton buttonApply = new SmButton();
+		buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
+		return buttonApply;
+	}
+
+	/**
 	 * 生产一个Cancel按钮
 	 * 
 	 * @return
@@ -37,7 +48,7 @@ public class ComponentFactory {
 		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 		return buttonCancel;
 	}
-	
+
 	/**
 	 * 生产一个Close按钮
 	 * 

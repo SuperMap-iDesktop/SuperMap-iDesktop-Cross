@@ -220,6 +220,15 @@ public class ImportPanelD extends AbstractImportPanel {
 		}
 	}
 
+	private void setImporttingAs3D(boolean isSaveH,ImportSetting importsetting){
+		if (importsetting instanceof ImportSettingDWG) {
+			((ImportSettingDWG) importsetting).setImporttingAs3D(isSaveH);
+		}
+		if (importsetting instanceof ImportSettingDXF) {
+			((ImportSettingDXF) importsetting).setImporttingAs3D(isSaveH);
+		}
+	};
+	
 	@Override
 	void initComponents() {
 
@@ -533,7 +542,9 @@ public class ImportPanelD extends AbstractImportPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean isSaveH = checkboxHeight.isSelected();
-				if (null != fileInfos) {
+				if (isSaveH) {
+					setImporttingAs3D(isSaveH,importsetting);
+				}else {
 					for (int i = 0; i < panels.size(); i++) {
 						ImportPanelD tempJPanel = (ImportPanelD) panels.get(i);
 						tempJPanel.getChckbxHeight().setSelected(isSaveH);
