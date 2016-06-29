@@ -57,8 +57,12 @@ public class SearchBoxModel<T> extends AbstractListModel
 		super.fireContentsChanged(this, 0, searchData.size());
 
 //this is a hack to get around redraw problems when changing the lsit length of the displayed popups
-		comboBox.hidePopup();
-		comboBox.showPopup();
+		if (comboBox.isPopupVisible()) {
+			comboBox.hidePopup();
+		}
+		if (searchData.size() > 0) {
+			comboBox.showPopup();
+		}
 //		if (searchData.size() != 0)
 //			comboBox.setSelectedIndex(0);
 	}
