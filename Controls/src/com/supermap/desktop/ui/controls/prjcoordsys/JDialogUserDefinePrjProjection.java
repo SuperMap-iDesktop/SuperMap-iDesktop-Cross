@@ -445,7 +445,6 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 					Object selectedItem = comboBoxName.getSelectedItem();
 					if (selectedItem != null && !(selectedItem instanceof String) && selectedItem != PrjCoordSysType.PCS_USER_DEFINED) {
 						String describe = PrjCoordSysTypeUtilities.getDescribe(((PrjCoordSysType) selectedItem).name());
-						prjCoordSys.setName(describe);
 						prjCoordSys.setType((PrjCoordSysType) selectedItem);
 						lock = true;
 						comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
@@ -453,6 +452,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 						comboBoxCoordSysUnit.setSelectedItem(prjCoordSys.getCoordUnit());
 						resetProjectionTypeValues();
 						prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
+						prjCoordSys.setName(describe);
 						comboBoxName.setSelectedItem(describe);
 						lock = false;
 					} else {
