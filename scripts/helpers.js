@@ -51,7 +51,29 @@ hexo.extend.helper.register('doc_sidebar', function(className){
   var self = this;
   var prefix = 'sidebar.' + type + '.';
    
-  _.each(sidebar, function(menu, title){
+   _.each(sidebar, function(menu, title){
+       result += '<li><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
+       result += '<ul>'
+       _.each(menu, function(submenu, subtitle){
+           if(_.isString(submenu)){
+               var itemClass = className + '-link';
+               if (submenu === path) itemClass += ' current';
+               result += '<li><a href="' + submenu + '" class="' + itemClass + '">' + self.__(prefix + subtitle) + '</a></li>';
+           } else{
+               result += '<li><strong class="' + className + '-subtitle">' + self.__(prefix + subtitle) + '</strong>';
+               result += '<ul>'
+               _.each(submenu, function(link, text){
+                   var itemClass = className + '-link';
+                   if (link === path) itemClass += ' current';
+                   result += '<li><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
+           })
+           result += '</ul></li>';
+           }
+       })
+       result += '</ul></li>';
+   })
+   
+  /*_.each(sidebar, function(menu, title){
     result += '<li><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
     result += '<ul>'
     _.each(menu, function(link, text){
@@ -60,7 +82,7 @@ hexo.extend.helper.register('doc_sidebar', function(className){
       result += '<li><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
     })
     result +='</ul></li>'
-  });
+  });*/
     result += '</ul>';
   return result;
 });

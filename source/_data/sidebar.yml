@@ -6,14 +6,16 @@ docs:
     Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
     DataConversion: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
   DataProcess:
-    TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
-    TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
-    TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
-    TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
-    SQLQuery_Expression: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQuery_Expression.html
-    SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
-    SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
-    SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
+    Topo:
+      TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
+      TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
+      TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
+      TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
+    SQL:
+      SQLQuery_Expression: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQuery_Expression.html
+      SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
+      SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
+      SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
   Objects:
     AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
     Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html

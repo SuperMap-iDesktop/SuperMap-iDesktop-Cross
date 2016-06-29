@@ -26,10 +26,12 @@ sidebar:
     Pyramid: 影像金字塔
     DataConversion: 数据转换
     DataProcess: 数据处理
+    Topo: 拓扑处理
     TopoProcess: 拓扑处理规则
     TopoPreprocess: 拓扑预处理
     TopoProcessLine: 线拓扑处理
     TopotoPolygon: 拓扑构面
+    SQL: SQL查询
     SQLQuery_Expression: 构建SQL表达式
     SQLQueryDia: SQL 查询
     SQLQueryDiaFuction: SQL函数运算符

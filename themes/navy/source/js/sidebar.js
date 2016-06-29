@@ -17,8 +17,8 @@
 		var defaults = {
 			accordion: 'true',
 			speed: 300,
-			closedSign: '[+]',
-			openedSign: '[-]'
+			closedSign: '[>]',
+			openedSign: '[v]'
 		};
 
 		// Extend our default options with those provided.
@@ -30,7 +30,7 @@
  		$this.find("li").each(function() {
  			if($(this).find("ul").size() != 0){
  				//add the multilevel sign next to the link
- 				$(this).find("strong:first").append("<span>"+ opts.openedSign +"</span>");
+ 				$(this).find("strong:first").append("<span>"+ opts.closedSign +"</span>");
  				
  				//avoid jumping to the top of the page when the class is an sidebar-title
  				if($(this).find("strong:first").attr('class') == "sidebar-title"){
@@ -92,7 +92,7 @@ $(document).ready(function() {
 	$(".topnav").accordion({
 		accordion:false,
 		speed: 500,
-		closedSign: '[+]',
-		openedSign: '[-]'
+		closedSign: '[>]',
+		openedSign: '[v]'
 	});
 });
