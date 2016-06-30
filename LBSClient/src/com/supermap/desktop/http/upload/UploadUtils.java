@@ -1,16 +1,14 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.upload;
 
-import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.ui.controls.progress.FormProgress;
-
+import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.http.callable.FileEvent;
+import com.supermap.desktop.http.callable.FileSteppedListener;
+import com.supermap.desktop.http.download.FileInfo;
  
 /**
  * <b>function:</b> 分块多线程下载工具类
@@ -25,20 +23,19 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
  */
 public abstract class UploadUtils {
 	
-	private static Map<DownloadInfo, BatchUploadFile> hashMap = new HashMap<DownloadInfo, BatchUploadFile>();
+	public static Map<FileInfo, BatchUploadFile> hashMap = new HashMap<FileInfo, BatchUploadFile>();
  
-    public static DownloadInfo upload(String url) {
-        DownloadInfo bean = new DownloadInfo(url);
+    public static FileInfo upload(String url) {
+        FileInfo bean = new FileInfo(url);
         return upload(bean);
     }
     
-    public static DownloadInfo upload(String url, int threadNum) {
-        DownloadInfo bean = new DownloadInfo(url, threadNum);
+    public static FileInfo upload(String url, int threadNum) {
+        FileInfo bean = new FileInfo(url, threadNum);
         return upload(bean);
     }
     
-    public static DownloadInfo upload(String webPath, String localFilePath, String fileName, long fileSize, Boolean isHDFSFile) {
-    	DownloadInfo bean = new DownloadInfo(webPath);
+    public static FileInfo upload(FileInfo bean, String localFilePath, String fileName, long fileSize, Boolean isHDFSFile) {
     	bean.setFilePath(localFilePath);
     	bean.setFileName(fileName);
     	bean.setFileSize(fileSize);
@@ -46,21 +43,20 @@ public abstract class UploadUtils {
         return upload(bean);
     }
     
-    public static DownloadInfo upload(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
-        DownloadInfo bean = new DownloadInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
+    public static FileInfo upload(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
+        FileInfo bean = new FileInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
         return upload(bean);
     }
     
-    public static DownloadInfo upload(DownloadInfo bean) {
+    public static FileInfo upload(FileInfo bean) {
         LogUtils.info(bean);
         BatchUploadFile down = new BatchUploadFile(bean);
         hashMap.put(bean, down);
-        new Thread(down).start();
-        
+        down.start();
         return bean;
     }
     
-    public static BatchUploadFile getBatchUploadFileWorker(DownloadInfo bean) {
+    public static BatchUploadFile getBatchUploadFileWorker(FileInfo bean) {
     	BatchUploadFile batchUPloadFile = null;
     	if (hashMap.containsKey(bean)) {
     		batchUPloadFile = hashMap.get(bean);
@@ -85,7 +81,7 @@ public abstract class UploadUtils {
 		}
 	}
 	
-    public static void fireSteppedEvent(Object source, DownloadInfo uploadInfo, int progress, int remainTime) {
+    public static void fireSteppedEvent(Object source, FileInfo uploadInfo, int progress, int remainTime) {
     	if (stepListeners != null) {
 			CopyOnWriteArrayList<FileSteppedListener> listeners = stepListeners;
 			Iterator<FileSteppedListener> iter = listeners.iterator();

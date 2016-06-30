@@ -1,4 +1,5 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.download;
+
 
 /**
  * <b>function:</b> 下载测试

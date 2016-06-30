@@ -1,5 +1,6 @@
 package com.supermap.desktop.http;
 
+import java.awt.Component;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -7,20 +8,23 @@ import javax.swing.GroupLayout.Group;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
 
+import com.supermap.Interface.ITask;
+import com.supermap.desktop.http.download.FileInfo;
+
 public class FileManagerContainer extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ArrayList<FileManager> items;
+	private ArrayList<ITask> items;
 
 	GroupLayout groupLayout;
 	Group horizontalGroup = null;
 	Group verticalGroup = null;
 
 	public FileManagerContainer() {
-		items = new ArrayList<FileManager>();
+		items = new ArrayList<ITask>();
 
 		initializeComponents();
 		initializeResources();
@@ -48,22 +52,22 @@ public class FileManagerContainer extends JPanel {
 		verticalGroup = groupLayout.createSequentialGroup();
 		groupLayout.setVerticalGroup(verticalGroup);
 
-		for (FileManager item : items) {
-			horizontalGroup.addComponent(item);
-			verticalGroup.addComponent(item);
+		for (ITask item : items) {
+			horizontalGroup.addComponent((Component) item);
+			verticalGroup.addComponent((Component) item);
 		}
 	}
 
-	public void addItem(FileManager fileManager) {
-		items.add(fileManager);
+	public void addItem(ITask task) {
+		items.add(task);
 		updateItems();
 	}
 
-	public void removeItem(DownloadInfo downloadInfo) {
-		for (FileManager item : items) {
-			if (item.getDownloadInfo().equals(downloadInfo)) {
+	public void removeItem(ITask task) {
+		for (ITask item : items) {
+			if (item.equals(task)) {
 				items.remove(item);
-				groupLayout.removeLayoutComponent(item);
+				groupLayout.removeLayoutComponent((Component) item);
 				break;
 			}
 		}

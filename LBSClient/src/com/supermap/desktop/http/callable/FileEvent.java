@@ -1,18 +1,19 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.callable;
 
-import java.text.SimpleDateFormat;
 import java.util.EventObject;
-import java.util.GregorianCalendar;
+
+import com.supermap.desktop.http.download.FileInfo;
 
 public class FileEvent extends EventObject {
 
-	DownloadInfo downloadInfo;
+	private static final long serialVersionUID = 1L;
+	FileInfo downloadInfo;
 	// 取百分比的整数值
 	int progress;
 	// 以秒为单位
 	int remainTime; 
 	
-	public FileEvent(Object source, DownloadInfo downloadInfo, int progress, int remainTime) {
+	public FileEvent(Object source, FileInfo downloadInfo, int progress, int remainTime) {
 		super(source);
 
 		this.downloadInfo = downloadInfo;
@@ -20,7 +21,7 @@ public class FileEvent extends EventObject {
 		this.remainTime = remainTime;
 	}
 
-	public DownloadInfo getDownloadInfo() {
+	public FileInfo getDownloadInfo() {
 		return this.downloadInfo;
 	}
 	

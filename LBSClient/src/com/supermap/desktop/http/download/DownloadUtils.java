@@ -1,10 +1,14 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.download;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.http.callable.FileEvent;
+import com.supermap.desktop.http.callable.FileSteppedListener;
 
  
 /**
@@ -20,24 +24,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class DownloadUtils {
 	
-	private static Map<DownloadInfo, BatchDownloadFile> hashMap = Collections.synchronizedMap(new HashMap());
+	private static Map<FileInfo, BatchDownloadFile> hashMap = Collections.synchronizedMap(new HashMap());
  
-    public static DownloadInfo download(String url) {
-        DownloadInfo bean = new DownloadInfo(url);
+    public static FileInfo download(String url) {
+        FileInfo bean = new FileInfo(url);
         return download(bean);
     }
     
-    public static DownloadInfo download(String url, int threadNum) {
-        DownloadInfo bean = new DownloadInfo(url, threadNum);
+    public static FileInfo download(String url, int threadNum) {
+        FileInfo bean = new FileInfo(url, threadNum);
         return download(bean);
     }
     
-    public static DownloadInfo download(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
-        DownloadInfo bean = new DownloadInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
+    public static FileInfo download(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
+        FileInfo bean = new FileInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
         return download(bean);
     }
     
-    public static DownloadInfo download(DownloadInfo bean) {
+    public static FileInfo download(FileInfo bean) {
         LogUtils.info(bean);
         BatchDownloadFile down = new BatchDownloadFile(bean);
         hashMap.put(bean, down);
@@ -46,7 +50,7 @@ public abstract class DownloadUtils {
         return bean;
     }
     
-    public static BatchDownloadFile getBatchDownloadFileWorker(DownloadInfo bean) {
+    public static BatchDownloadFile getBatchDownloadFileWorker(FileInfo bean) {
     	BatchDownloadFile batchDownloadFile = null;
     	if (hashMap.containsKey(bean)) {
     		batchDownloadFile = hashMap.get(bean);
@@ -71,7 +75,7 @@ public abstract class DownloadUtils {
 		}
 	}
 	
-    public static void fireSteppedEvent(Object source, DownloadInfo downloadInfo, int progress, int remainTime) {
+    public static void fireSteppedEvent(Object source, FileInfo downloadInfo, int progress, int remainTime) {
     	if (stepListeners != null) {
 			CopyOnWriteArrayList<FileSteppedListener> listeners = stepListeners;
 			Iterator<FileSteppedListener> iter = listeners.iterator();
@@ -83,7 +87,7 @@ public abstract class DownloadUtils {
 		}
 	}
 
-	public static Map<DownloadInfo, BatchDownloadFile> getHashMap() {
+	public static Map<FileInfo, BatchDownloadFile> getHashMap() {
 		return hashMap;
 	}
     
