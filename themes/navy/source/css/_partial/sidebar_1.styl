@@ -2183,11 +2183,13 @@ ul
     font-size 1em
     line-height 0.5em
     list-style none
+    strong
+      &:hover
+        background-color #F2F2F2
     li
       a
         &:hover
-          background-color #F5F5F5
-          color white
+          color: color-link-hover
     ul
       margin 0
       padding 0
@@ -2195,22 +2197,22 @@ ul
       li
         margin 0
         padding 0
+        font-size 15px
+        font-weight normal
         clear both
         a
-          padding-left 20px
-          font-size 13px
+          padding 5px
+          font-size 14px
           font-weight normal
           outline 0
           &:hover
-            background-color #F5F5F5
-            color #000
+            color: color-link-hover
       ul
         li
           a
             color #000
-            padding-left 40px
-            &:hover
-              background-color #F5F5F5
+            padding-left 30px
+
     span
       float right
 

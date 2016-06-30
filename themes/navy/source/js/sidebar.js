@@ -17,8 +17,8 @@
 		var defaults = {
 			accordion: 'true',
 			speed: 300,
-			closedSign: '[>]',
-			openedSign: '[v]'
+			closedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-right"></i>',
+			openedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-down"></i>'
 		};
 
 		// Extend our default options with those provided.
@@ -92,7 +92,7 @@ $(document).ready(function() {
 	$(".topnav").accordion({
 		accordion:false,
 		speed: 500,
-		closedSign: '[>]',
-		openedSign: '[v]'
+		closedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-right"></i>',
+		openedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-down"></i>'
 	});
 });
