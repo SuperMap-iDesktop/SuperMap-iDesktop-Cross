@@ -1,4 +1,4 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.download;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import com.supermap.desktop.Application;
+import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 
 /**
  * <b>function:</b> 分批量下载文件
@@ -25,7 +28,7 @@ import com.supermap.desktop.Application;
  */
 public class BatchDownloadFile extends Thread {
 	// 下载文件信息
-	private DownloadInfo downloadInfo;
+	private FileInfo downloadInfo;
 	// 一组开始下载位置
 	private long[] startPos;
 	// 一组结束下载位置
@@ -45,7 +48,7 @@ public class BatchDownloadFile extends Thread {
 	// 临时文件信息
 	private File tempFile;
 
-	public BatchDownloadFile(DownloadInfo downloadInfo) {
+	public BatchDownloadFile(FileInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
 		String tempPath = this.downloadInfo.getFilePath() + File.separator + downloadInfo.getFileName() + ".position";
 		tempFile = new File(tempPath);
@@ -157,7 +160,7 @@ public class BatchDownloadFile extends Thread {
 				if (isFinished) {
 					this.tempFile.delete();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
-					Application.getActiveApplication().getOutput().output(this.downloadInfo + " ### finished.");
+					Application.getActiveApplication().getOutput().output(this.downloadInfo + LBSClientProperties.getString("String_DownLoadFinished"));
 				}
 			}
 			LogUtils.info("Download task is finished!");
@@ -396,11 +399,11 @@ public class BatchDownloadFile extends Thread {
 		return fileLength;
 	}
 
-	public DownloadInfo getDownloadInfo() {
+	public FileInfo getDownloadInfo() {
 		return downloadInfo;
 	}
 
-	public void setDownloadInfo(DownloadInfo downloadInfo) {
+	public void setDownloadInfo(FileInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
 	}
 	

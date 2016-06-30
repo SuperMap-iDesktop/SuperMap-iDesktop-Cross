@@ -1,4 +1,4 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.upload;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,6 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import com.supermap.desktop.Application;
+import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.http.SaveItemFile;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 
  
 /**
@@ -89,18 +94,6 @@ public class UploadFile extends Thread {
 			OutputStream out = new DataOutputStream(conn.getOutputStream());
 			// 上传文件
 			File file = new File(fileName);
-//			StringBuilder sb = new StringBuilder();
-//			sb.append(boundaryPrefix);
-//			sb.append(BOUNDARY);
-//			sb.append(newLine);
-//			// 文件参数，photo参数名可以随意修改
-//			sb.append("Content-Disposition: form-data;name=\"photo\";filename=\"" + fileName + "\"" + newLine);
-//			sb.append("Content-Type:application/octet-stream");
-//			// 参数头设置完以后需要两个换行，然后才是参数内容
-//			sb.append(newLine);
-//			sb.append(newLine);
-//			// 将参数头的数据写入到输出流中
-//			out.write(sb.toString().getBytes());
 			// 数据输入流,用于读取文件数据
 			DataInputStream in = new DataInputStream(new FileInputStream(file));
 			byte[] bufferOut = new byte[1024];
@@ -119,15 +112,8 @@ public class UploadFile extends Thread {
 			out.write(end_data);
 			out.flush();
 			out.close();
-			// 定义BufferedReader输入流来读取URL的响应
-			// BufferedReader reader = new BufferedReader(new InputStreamReader(
-			// conn.getInputStream()));
-			// String line = null;
-			// while ((line = reader.readLine()) != null) {
-			// System.out.println(line);
-			// }
 		} catch (Exception e) {
-			System.out.println("发送POST请求出现异常！" + e);
+			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_POSTException"));
 			e.printStackTrace();
 		}
 	}

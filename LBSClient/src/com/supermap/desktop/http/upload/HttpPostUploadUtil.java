@@ -1,4 +1,4 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.upload;
 
 import java.io.BufferedReader;  
 import java.io.DataInputStream;  
