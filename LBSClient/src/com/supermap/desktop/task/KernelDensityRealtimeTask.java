@@ -1,28 +1,33 @@
 package com.supermap.desktop.task;
 
+import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
 import javax.swing.SwingUtilities;
 
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.CommonUtilities;
 
-public class KernelDensityRealtimeTask extends Task{
+public class KernelDensityRealtimeTask extends CommonTask{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	public KernelDensityRealtimeTask(){
 		super();
-		progressBar.setString(LBSClientProperties.getString("String_KernelDensityRealtime"));
+		labelTitle.setText(LBSClientProperties.getString("String_KernelDensityRealtime"));
+		labelLogo.setIcon(CommonUtilities.getImageIcon("image_KernelDensityRealtime.png"));
 	}
 	@Override
-	public void updateProgress(final int percent, String remainTime, String message) throws CancellationException {
+	public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				progressBar.setValue(percent);
-				if (100 == percent) {
-					progressBar.setString(LBSClientProperties.getString("String_KernelDensityRealtimeFinished"));
+				labelStatus.setText("...");
+				if (percent == 100) {
+					labelTitle.setText(LBSClientProperties.getString("String_KernelDensityRealtimeFinished"));
 				}
 
 			}

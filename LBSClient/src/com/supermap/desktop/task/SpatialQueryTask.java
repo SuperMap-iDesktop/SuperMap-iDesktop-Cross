@@ -5,12 +5,14 @@ import java.util.concurrent.CancellationException;
 import javax.swing.SwingUtilities;
 
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.CommonUtilities;
 
 public class SpatialQueryTask extends CommonTask{
 
 	public SpatialQueryTask() {
 		super();
-		progressBar.setString(LBSClientProperties.getString("String_SpatialQuery"));
+		labelTitle.setText(LBSClientProperties.getString("String_CreateSpatialIndex"));
+		labelLogo.setIcon(CommonUtilities.getImageIcon("image_createSpatialIndex.png"));
 	}
 	
 	@Override
@@ -19,8 +21,9 @@ public class SpatialQueryTask extends CommonTask{
 			@Override
 			public void run() {
 				progressBar.setValue(percent);
-				if (100 == percent) {
-					progressBar.setString(LBSClientProperties.getString("String_SpatialQueryFinished"));
+				labelStatus.setText("...");
+				if (percent == 100) {
+					labelTitle.setText(LBSClientProperties.getString("String_CreateSpatialIndexFinished"));
 				}
 
 			}

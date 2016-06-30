@@ -1,10 +1,14 @@
 package com.supermap.desktop.task;
 
-import java.awt.event.*;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.concurrent.CancellationException;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
 import javax.swing.GroupLayout.Alignment;
 
 import com.supermap.Interface.ITask;
@@ -13,20 +17,18 @@ import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CommonUtilities;
 
-public class Task extends JPanel implements ITask {
+public class CommonTask extends JPanel implements ITask {
 	private static final long serialVersionUID = 1L;
 	private static final int buttonWidth = 23;
 	private static final int buttonHeight = 23;
 	private transient SwingWorker<Boolean, Object> worker = null;
 
 	JLabel labelTitle;//
-	private JLabel labelLogo;
+	JLabel labelLogo;
 	JProgressBar progressBar = null;
-	SmButton buttonRun;
 	protected SmButton buttonRemove;
-	JLabel labelProcess;
 	JLabel labelStatus;
 	GroupLayout groupLayout = new GroupLayout(this);
 	protected Boolean isCancel = false;
@@ -37,8 +39,8 @@ public class Task extends JPanel implements ITask {
 	private ActionListener buttonRunListener;
 	private ActionListener buttonRemoveListener;
 
-	public Task(FileInfo downloadInfo) {
-		this.fileInfo = downloadInfo;
+	public CommonTask() {
+		// this.fileInfo = downloadInfo;
 		initializeComponents();
 		initializeResources();
 		registEvents();
@@ -65,42 +67,37 @@ public class Task extends JPanel implements ITask {
 	@Override
 	public void initializeComponents() {
 
-		labelTitle = new JLabel("file name");
-		labelLogo = new JLabel(CommonUtilities.getImageIcon("image_datasource.png"));
-		this.buttonRun = new SmButton(CommonUtilities.getImageIcon("Image_Stop.png"));
+		labelTitle = new JLabel("Info");
+		labelLogo = new JLabel();
 		this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("Image_Delete.png"));
-		labelProcess = new JLabel("-0%");
 		labelStatus = new JLabel("Remain time:0");
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
 		progressBar = new JProgressBar();
 		progressBar.setStringPainted(true);
+		progressBar.setString("");
 		// @formatter:off
-			groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
-					.addComponent(labelLogo, 32, 32, 32)
-					.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-							.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(this.labelTitle)
-									.addGap(0, 10, Short.MAX_VALUE))
-							.addComponent(this.progressBar)
-							.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(this.labelProcess)
-									.addGap(0, 10, Short.MAX_VALUE)
-									.addComponent(this.labelStatus)))
-					.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(this.buttonRun, buttonWidth, buttonWidth, buttonWidth)
-							.addComponent(this.buttonRemove, buttonWidth, buttonWidth, buttonWidth)));	
-			groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-					.addComponent(labelLogo, 32, 32, 32)
-					.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(this.labelTitle)
-							.addComponent(this.progressBar)
-							.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-									.addComponent(this.labelProcess)
-									.addComponent(this.labelStatus)))
-					.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-							.addComponent(this.buttonRun, buttonHeight, buttonHeight, buttonHeight)
-							.addComponent(this.buttonRemove, buttonHeight, buttonHeight, buttonHeight)));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addComponent(labelLogo)
+				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+						.addGroup(groupLayout.createSequentialGroup()
+								.addComponent(this.labelTitle)
+								.addGap(0, 10, Short.MAX_VALUE))
+						.addComponent(this.progressBar)
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(0, 10, Short.MAX_VALUE)
+								.addComponent(this.labelStatus)))
+				.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(this.buttonRemove, buttonWidth, buttonWidth, buttonWidth)));	
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+				.addComponent(labelLogo)
+				.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(this.labelTitle)
+						.addComponent(this.progressBar)
+						.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+								.addComponent(this.labelStatus)))
+				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+						.addComponent(this.buttonRemove, buttonHeight, buttonHeight, buttonHeight)));
 		// @formatter:on
 		this.setLayout(groupLayout);
 		return;

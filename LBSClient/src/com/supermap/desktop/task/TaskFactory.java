@@ -18,7 +18,7 @@ public class TaskFactory implements ITaskFactory {
 		ITask task = null;
 		if (taskEnum.equals(TaskEnum.DOWNLOADTASK)) {
 			// 下载任务
-			task = new DownLoadTask();
+			task = new DownLoadTask(fileInfo);
 		}
 		if (taskEnum.equals(TaskEnum.UPLOADTASK)) {
 			// 上传任务

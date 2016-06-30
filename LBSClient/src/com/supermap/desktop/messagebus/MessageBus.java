@@ -11,7 +11,6 @@ import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
 import com.supermap.Interface.ITask;
 import com.supermap.Interface.ITaskFactory;
@@ -25,11 +24,8 @@ import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.http.FileManagerContainer;
-import com.supermap.desktop.http.callable.DownloadProgressCallable;
-import com.supermap.desktop.http.callable.UploadPropressCallable;
 import com.supermap.desktop.http.download.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.mapping.*;
@@ -41,6 +37,7 @@ public class MessageBus {
 
 	private static ArrayList<String> tasks = null;
 	private static Boolean stop = false;
+	private static ITask task;
 
 	public static void producer(String command) {
 		if (tasks == null) {
@@ -79,21 +76,49 @@ public class MessageBus {
 				Queue queue = session.createQueue(producerCommand);
 				MessageProducer procucer = session.createProducer(queue);
 				procucer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-
+				FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
+				ITaskFactory taskFactory = TaskFactory.getInstance();
 				while (!MessageBus.stop) {
 					for (String command : MessageBus.tasks) {
 						TextMessage msg = session.createTextMessage(command);
+							if (command.contains("HDFSGridIndexBuild")) {
+								task = taskFactory.getTask(TaskEnum.CREATESPATIALINDEXTASK, null);
+								addTask(fileManagerContainer, task);
+							}
+//							if (command.contains("HDFSGridIndexBuild")) {
+//								task = taskFactory.getTask(TaskEnum.SPATIALQUERY, null);
+//								addTask(fileManagerContainer, task);
+//							}
+//							if (type.equals(MessageBusType.AttributeQuery)) {
+//								task = taskFactory.getTask(TaskEnum.ATTRIBUTEQUERY, null);
+//								addTask(fileManagerContainer, task);
+//							}
+							if (command.contains("KernelDensity")&&command.endsWith("3")) {
+								task = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
+								addTask(fileManagerContainer, task);
+							}
+							if (command.contains("KernelDensity")&&command.endsWith("4")) {
+								task = taskFactory.getTask(TaskEnum.KERNELDENSITYREALTIMETASK, null);
+								addTask(fileManagerContainer, task);
+							}
 						procucer.send(msg);
 					}
 					tasks.clear();
 					Thread.sleep(100);
 				}
-
 				// Clean up
 				session.close();
 				conn.close();
 			} catch (Throwable e) {
 				e.printStackTrace();
+			}
+		}
+
+		private void addTask(FileManagerContainer fileManagerContainer, ITask task) throws InterruptedException {
+			if (fileManagerContainer != null) {
+				fileManagerContainer.addItem(task);
+				Thread.sleep(1000);
+				task.updateProgress(getRandomProgress(), "", "");
 			}
 		}
 
@@ -126,45 +151,24 @@ public class MessageBus {
 							MessageBusType type = MessageBusType.getType(params[0]);
 							switch (type) {
 							case BuildSpatialIndex:
-								ITask createSpatialIndexTask = taskFactory.getTask(TaskEnum.CREATESPATIALINDEXTASK, null);
-								if (fileManagerContainer != null) {
-									fileManagerContainer.addItem(createSpatialIndexTask);
-									createSpatialIndexTask.updateProgress(getRandomProgress(), "", "");
-								}
-								finishBuildSpatialIndex(params[1],createSpatialIndexTask);
+								updateProgress();
+								finishBuildSpatialIndex(params[1], task);
 								break;
 							case SpatialQuery:
-								ITask spatialQueryTask = taskFactory.getTask(TaskEnum.SPATIALQUERY, null);
-								if (fileManagerContainer != null) {
-									fileManagerContainer.addItem(spatialQueryTask);
-									spatialQueryTask.updateProgress(getRandomProgress(), "", "");
-								}
-								finishSpatialQuery(params[1],spatialQueryTask);
+								updateProgress();
+								finishSpatialQuery(params[1], task);
 								break;
 							case AttributeQuery:
-								ITask attributeTask = taskFactory.getTask(TaskEnum.SPATIALQUERY, null);
-								if (fileManagerContainer != null) {
-									fileManagerContainer.addItem(attributeTask);
-									attributeTask.updateProgress(getRandomProgress(), "", "");
-								}
-								finishAttributeQuery(params[1],attributeTask);
+								updateProgress();
+								finishAttributeQuery(params[1], task);
 								break;
 							case KernelDensity:
-								
-								ITask kernelDensityTask = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
-								if (fileManagerContainer != null) {
-									fileManagerContainer.addItem(kernelDensityTask);
-									kernelDensityTask.updateProgress(getRandomProgress(), "", "");
-								}
-								finishKernelDensity(params[1],kernelDensityTask);
+								updateProgress();
+								finishKernelDensity(params[1], task);
 								break;
 							case KernelDensityRealtime:
-								ITask kernelDensityRealtimeTask = taskFactory.getTask(TaskEnum.KERNELDENSITYREALTIMETASK, null);
-								if (fileManagerContainer != null) {
-									fileManagerContainer.addItem(kernelDensityRealtimeTask);
-									kernelDensityRealtimeTask.updateProgress(getRandomProgress(), "", "");
-								}
-								finishKernelDensityRealtime(params[1],kernelDensityRealtimeTask);
+								updateProgress();
+								finishKernelDensityRealtime(params[1], task);
 								break;
 							default:
 								break;
@@ -178,8 +182,14 @@ public class MessageBus {
 				session.close();
 				conn.close();
 			} catch (JMSException | InterruptedException exception) {
+				exception.printStackTrace();
 				Application.getActiveApplication().getOutput().output(exception);
 			}
+		}
+
+		private void updateProgress() throws InterruptedException {
+			Thread.sleep(1000);
+			task.updateProgress(getRandomProgress(), "", "");
 		}
 
 		@Override
@@ -193,7 +203,7 @@ public class MessageBus {
 		return random.nextInt(100);
 	}
 
-	private static void finishBuildSpatialIndex(String path,ITask task) {
+	private static void finishBuildSpatialIndex(String path, ITask task) {
 		try {
 			task.updateProgress(100, "", "");
 			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_KernelDensityFinished"));
@@ -202,7 +212,7 @@ public class MessageBus {
 		}
 	}
 
-	private static void finishSpatialQuery(String path,ITask task) {
+	private static void finishSpatialQuery(String path, ITask task) {
 		try {
 			task.updateProgress(100, "", "");
 			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_SpatialQueryFinished"));
@@ -211,7 +221,7 @@ public class MessageBus {
 		}
 	}
 
-	private static void finishAttributeQuery(String path,ITask task) {
+	private static void finishAttributeQuery(String path, ITask task) {
 		try {
 			task.updateProgress(100, "", "");
 			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_AttributeQueryFinished"));
@@ -220,7 +230,7 @@ public class MessageBus {
 		}
 	}
 
-	private static void finishKernelDensity(String path,ITask task) {
+	private static void finishKernelDensity(String path, ITask task) {
 		try {
 			String localPath = downloadKernelDesity(path);
 			task.updateProgress(100, "", "");
@@ -230,7 +240,7 @@ public class MessageBus {
 		}
 	}
 
-	private static void finishKernelDensityRealtime(String path,ITask task) {
+	private static void finishKernelDensityRealtime(String path, ITask task) {
 		try {
 			String localPath = downloadKernelDesity(path);
 			task.updateProgress(100, "", "");
@@ -256,7 +266,7 @@ public class MessageBus {
 				localPath += "/";
 			}
 			localPath += fileName;
-			
+
 			CommonUtilities.addDownLoadTask(downloadInfo);
 			ShowResultThread showResultThread = new ShowResultThread();
 			showResultThread.setDownloadInfo(downloadInfo);

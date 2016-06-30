@@ -14,6 +14,8 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.http.download.BatchDownloadFile;
 import com.supermap.desktop.http.download.DownloadUtils;
+import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 
 
@@ -21,8 +23,8 @@ public class DownLoadTask extends Task {
 
 	private ActionListener buttonNowRunListener;
 	private ActionListener buttonNowRemoveListener;
-	public DownLoadTask() {
-		super();
+	public DownLoadTask(FileInfo downloadInfo) {
+		super(downloadInfo);
 		
 	}
 	
@@ -133,7 +135,7 @@ public class DownLoadTask extends Task {
 					if (percent != 100) {
 						labelStatus.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
 					} else {
-						labelStatus.setText("download finished.");
+						labelStatus.setText(LBSClientProperties.getString("String_FileDownLoadFinished"));
 						buttonRun.setEnabled(false);
 					}
 				}

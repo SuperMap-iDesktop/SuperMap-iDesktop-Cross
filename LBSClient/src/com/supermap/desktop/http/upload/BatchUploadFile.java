@@ -47,7 +47,7 @@ public class BatchUploadFile extends Thread {
 					createFile.start();
 					boolean isCreated = false;
 					while (!isCreated&&!createFile.isFailed()) {
-						Thread.sleep(100);
+						Thread.sleep(1000);
 						UploadUtils.fireSteppedEvent(this, downloadInfo, getRandomProgress(), 0);
 						isCreated = createFile.isCreated();
 						// 上传失败或上传结束
