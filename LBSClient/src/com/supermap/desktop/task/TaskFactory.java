@@ -18,11 +18,11 @@ public class TaskFactory implements ITaskFactory {
 		ITask task = null;
 		if (taskEnum.equals(TaskEnum.DOWNLOADTASK)) {
 			// 下载任务
-			task = new DownLoadTask(fileInfo);
+			task = new DownLoadTask();
 		}
 		if (taskEnum.equals(TaskEnum.UPLOADTASK)) {
 			// 上传任务
-			task = new UploadTask(fileInfo);
+			task = new UploadTask();
 		}
 		if (taskEnum.equals(TaskEnum.KERNELDENSITYTASK)) {
 			// 计算热度图任务
