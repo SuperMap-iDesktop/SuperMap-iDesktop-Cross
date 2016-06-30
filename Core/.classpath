@@ -11,7 +11,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.analyst.spatialanalyst.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.analyst.terrainanalyst.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.analyst.trafficanalyst.jar"/>
-	<classpathentry kind="lib" path="E:/projects/iDesktop Java/SuperMap-iDesktop-Cross/Core/lib/com.supermap.chart.conversion.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.chart.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.data.conversion.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.supermap.data.jar"/>

@@ -122,7 +122,7 @@ public class JDialogBoundsQuery extends SmDialog {
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 
-		setSize(500, 140);
+		setSize(500, 180);
 		setLocationRelativeTo(null);
 		
 		fillComponents();
