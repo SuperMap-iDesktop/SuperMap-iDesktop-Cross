@@ -448,10 +448,10 @@ public class JDialogHDFSFiles extends SmDialog {
 				Boolean fileSelected = false;
 				String webFile = "";
 				String webURL = "";
-				if (table.getSelectedRow() != -1) {
-					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-					if (define != null) {
 
+				if (table.getSelectedRowCount() == 1) {
+					HDFSDefine define = (HDFSDefine)((HDFSTableModel)this.table.getModel()).getRowTagAt(table.getSelectedRow());
+					if (define != null) {
 						webFile = define.getName();
 						webURL = this.textServerURL.getText();
 
@@ -464,14 +464,31 @@ public class JDialogHDFSFiles extends SmDialog {
 								fileSelected = true;
 							}
 						}
+						
+						DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+						deleteFile.start();
 					}
+				} else if (table.getSelectedRowCount() > 1) {
+					int[] indexs = table.getSelectedRows();
+					if (UICommonToolkit.showConfirmDialog(String.format("是否确认要删除所选的%d个文件/文件夹？", indexs.length)) == JOptionPane.OK_OPTION) {
+						for (int index : indexs) {
+							HDFSDefine define = (HDFSDefine)((HDFSTableModel)this.table.getModel()).getRowTagAt(index);
+							if (define != null) {
+								webFile = define.getName();
+								webURL = this.textServerURL.getText();
+								
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+								deleteFile.start();
+							}
+						}
+					}					
+				} else {
 				}
 
 				if (!fileSelected) {
 					UICommonToolkit.showMessageDialog("please select a file");
 				}
-				DeleteFile deleteFile = new DeleteFile(webURL, webFile);
-				deleteFile.start();
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
