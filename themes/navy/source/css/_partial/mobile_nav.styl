@@ -80,12 +80,26 @@ lang-select-height = 40px
   padding: 10px 15px
   line-height: 1
   display: block
-  border-top: 1px solid #444
+  border-top: 0px
   margin-top: 10px
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
 
+.mobile-nav-subtitle
+  margin-top: 5px
+  padding 7px 20px
+  font-size 14px
+  font-weight: bold 
+  font-family: font-title
+  color: #fff
+  display: inline-block
+  line-height: 1em
+  outline 0
+  &:hover
+    background-color #F2F2F2
+    color: #000
+  
 #mobile-lang-select-wrap
   position: absolute
   bottom: 0
@@ -134,3 +148,56 @@ lang-select-height = 40px
     opacity: 0.7
     transform: translateX(-100%)
     transition: opacity transition-duration
+
+ul
+  &.topnav
+    padding 0
+    margin 0
+    font-size 1em
+    line-height 0.5em
+    list-style none
+    strong
+      &:hover
+        background-color #F2F2F2
+    li
+      a
+        &:hover
+          color: color-link-hover
+    ul
+      margin 0
+      padding 0
+      display none
+      li
+        margin 0
+        padding 0
+        font-size 15px
+        font-weight normal
+        clear both
+        a
+          padding 7px 20px
+          font-size 14px
+          font-weight normal
+          outline 0
+          &:hover
+            color: color-link-hover
+      ul
+        li
+          a
+            color #fff
+            padding-left 30px
+
+    span
+      float right
+
+
+  ul
+    &.topnav
+      li
+        a
+          line-height 10px
+          font-size 11px
+          padding 10px 5px
+          color #000
+          display block
+          text-decoration none
+          font-weight bolder    
