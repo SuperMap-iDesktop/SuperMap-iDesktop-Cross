@@ -3,7 +3,7 @@
 	<ul class="slides">
 		<li>
 			<a title="" target="_blank" href="#">
-				<img width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner1.jpg) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
+				<img width="1920" height="482" alt="" style="background: url(http://o9s6vl04k.bkt.clouddn.com/banner1.jpg) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
 			</a>
 		</li>
 		<li>
