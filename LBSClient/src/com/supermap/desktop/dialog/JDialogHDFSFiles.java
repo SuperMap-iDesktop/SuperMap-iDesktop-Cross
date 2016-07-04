@@ -140,6 +140,8 @@ public class JDialogHDFSFiles extends SmDialog {
 			}
 			
 		});
+		
+		listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
 	}
 
 	private void removeEvents(){
