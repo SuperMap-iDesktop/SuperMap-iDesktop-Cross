@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 
-public class AttributeQueryTask extends Task{
+public class AttributeQueryTask extends CommonTask{
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class AttributeQueryTask extends Task{
 
 	public AttributeQueryTask() {
 		super();
-		progressBar.setString(LBSClientProperties.getString("String_AttributeQuery"));
+//		progressBar.setString(LBSClientProperties.getString("String_AttributeQuery"));
 	}
 	
 	@Override
