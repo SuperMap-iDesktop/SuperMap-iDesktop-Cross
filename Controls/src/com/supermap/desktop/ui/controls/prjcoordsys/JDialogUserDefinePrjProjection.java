@@ -33,6 +33,20 @@ import java.util.Arrays;
  * @author XiaJT
  */
 public class JDialogUserDefinePrjProjection extends SmDialog {
+	private final ActionListener buttonOkListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			dialogResult = DialogResult.OK;
+			dispose();
+		}
+	};
+	private final ActionListener buttonCalcelListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			dialogResult = DialogResult.CANCEL;
+			dispose();
+		}
+	};
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private JLabel labelName = new JLabel();
 	private JSearchComboBox<PrjCoordSysType> comboBoxName = new JSearchComboBox<>();
@@ -44,7 +58,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	private JLabel labelCoordSysUnit = new JLabel();
 	private JSearchComboBox<Unit> comboBoxCoordSysUnit = new JSearchComboBox<>();
-	private Unit[] units = new Unit[] { Unit.KILOMETER, Unit.METER, Unit.DECIMETER, Unit.CENTIMETER, Unit.MILIMETER, Unit.MILE, Unit.YARD, Unit.FOOT, Unit.INCH };
+	private Unit[] units = new Unit[]{Unit.KILOMETER, Unit.METER, Unit.DECIMETER, Unit.CENTIMETER, Unit.MILIMETER, Unit.MILE, Unit.YARD, Unit.FOOT, Unit.INCH};
 	private DecimalFormat df = new DecimalFormat("0.######################");
 
 	// 投影参数
@@ -53,7 +67,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	// 按钮
 	private JPanel panelButtons = new JPanel();
 	private SmButton buttonOK = new SmButton();
-	private SmButton buttonCancle = new SmButton();
+	private SmButton buttonCancel = new SmButton();
 
 	private JPanelGeoCoordSys panelGeoCoordSys = new JPanelGeoCoordSys();
 
@@ -98,19 +112,80 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	// 方位角
 	private JLabel labelAzimuth = new JLabel();
 	private JPanelFormat panelAzimuth = new JPanelFormat();
+	private final ItemListener radioAMSListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			boolean mode = JPanelFormat.angle;
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				mode = JPanelFormat.ANGLE_M_S;
+			}
+			panelCentralMeridian.setMode(mode);
+			panelCentralParallel.setMode(mode);
+			panelStandardParallel1.setMode(mode);
+			panelStandardParallel2.setMode(mode);
+			panelFirstPointLongitude.setMode(mode);
+			panelSecondPointLongitude.setMode(mode);
+			panelAzimuth.setMode(mode);
+			repaint();
+		}
+	};
 
 	private PrjCoordSys prjCoordSys;
 	private boolean lock = false;
 	private ISmTextFieldLegit fieldLegit;
 	private Dimension labelPreferredSize = new Dimension(20, 23);
-	private ListCellRenderer<Enum> renderer;
+	private ItemListener comboBoxUnitListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				prjCoordSys.setCoordUnit((Unit) comboBoxCoordSysUnit.getSelectedItem());
+			}
+		}
+	};
+	private ItemListener comboBoxNameListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (lock) {
+				return;
+			}
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				Object selectedItem = comboBoxName.getSelectedItem();
+				if (selectedItem != null && !(selectedItem instanceof String) && selectedItem != PrjCoordSysType.PCS_USER_DEFINED) {
+					String describe = PrjCoordSysTypeUtilities.getDescribe(((PrjCoordSysType) selectedItem).name());
+					prjCoordSys.setType((PrjCoordSysType) selectedItem);
+					lock = true;
+					comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
+					panelGeoCoordSys.setGeoCoordSys(prjCoordSys.getGeoCoordSys());
+					comboBoxCoordSysUnit.setSelectedItem(prjCoordSys.getCoordUnit());
+					resetProjectionTypeValues();
+					prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
+					prjCoordSys.setName(describe);
+					comboBoxName.setSelectedItem(describe);
+					lock = false;
+				} else {
+					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+						return;
+					}
+					prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());
+				}
+			}
+		}
+	};
+	private ItemListener comboBoxCoordTypeListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				prjCoordSys.getProjection().setType((ProjectionType) comboBoxCoordType.getSelectedItem());
+			}
+		}
+	};
 
 	public JDialogUserDefinePrjProjection() {
 		super();
 		this.setTitle(ControlsProperties.getString("String_UserDefined_PrjCoordSys"));
 		prjCoordSys = new PrjCoordSys();
 		componentList.add(buttonOK);
-		componentList.add(buttonCancle);
+		componentList.add(buttonCancel);
 		init();
 	}
 
@@ -143,8 +218,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			}
 		}
 
-		renderer = PrjCoordSysSettingsUtilties.getEnumComboBoxItemRender();
-		comboBoxName.setRenderer(renderer);
+		comboBoxName.setRenderer(new MyEnumCellRender(comboBoxName));
 		comboBoxName.setEditable(true);
 		// endregion
 
@@ -158,7 +232,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			}
 		}
 
-		comboBoxCoordType.setRenderer(renderer);
+		comboBoxCoordType.setRenderer(new MyEnumCellRender(comboBoxCoordType));
 
 		// endregion
 
@@ -373,7 +447,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 	private void initPanelButtons() {
 		panelButtons.setLayout(new GridBagLayout());
 		panelButtons.add(buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5));
-		panelButtons.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST));
+		panelButtons.add(buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST));
 	}
 
 	// endregion
@@ -399,88 +473,25 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		labelAzimuth.setText(ControlsProperties.getString("String_Label_Azimuth"));
 
 		buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
-		buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
 
 	private void addListeners() {
-		buttonOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.OK;
-				dispose();
-			}
-		});
-		buttonCancle.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.CANCEL;
-				dispose();
-			}
-		});
-		radioButtonAMS.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				boolean mode = JPanelFormat.angle;
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					mode = JPanelFormat.ANGLE_M_S;
-				}
-				panelCentralMeridian.setMode(mode);
-				panelCentralParallel.setMode(mode);
-				panelStandardParallel1.setMode(mode);
-				panelStandardParallel2.setMode(mode);
-				panelFirstPointLongitude.setMode(mode);
-				panelSecondPointLongitude.setMode(mode);
-				panelAzimuth.setMode(mode);
-				repaint();
-			}
-		});
+		buttonOK.addActionListener(buttonOkListener);
+		buttonCancel.addActionListener(buttonCalcelListener);
+		radioButtonAMS.addItemListener(radioAMSListener);
+		comboBoxName.addItemListener(comboBoxNameListener);
+		comboBoxCoordType.addItemListener(comboBoxCoordTypeListener);
+		comboBoxCoordSysUnit.addItemListener(comboBoxUnitListener);
+	}
 
-		comboBoxName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (lock) {
-					return;
-				}
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					Object selectedItem = comboBoxName.getSelectedItem();
-					if (selectedItem != null && !(selectedItem instanceof String) && selectedItem != PrjCoordSysType.PCS_USER_DEFINED) {
-						String describe = PrjCoordSysTypeUtilities.getDescribe(((PrjCoordSysType) selectedItem).name());
-						prjCoordSys.setType((PrjCoordSysType) selectedItem);
-						lock = true;
-						comboBoxCoordType.setSelectedItem(prjCoordSys.getProjection().getType());
-						panelGeoCoordSys.setGeoCoordSys(prjCoordSys.getGeoCoordSys());
-						comboBoxCoordSysUnit.setSelectedItem(prjCoordSys.getCoordUnit());
-						resetProjectionTypeValues();
-						prjCoordSys.setType(PrjCoordSysType.PCS_USER_DEFINED);
-						prjCoordSys.setName(describe);
-						comboBoxName.setSelectedItem(describe);
-						lock = false;
-					} else {
-						if (StringUtilties.isNullOrEmptyString(selectedItem)) {
-							return;
-						}
-						prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());
-					}
-				}
-			}
-		});
-
-		comboBoxCoordType.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					prjCoordSys.getProjection().setType((ProjectionType) comboBoxCoordType.getSelectedItem());
-				}
-			}
-		});
-		comboBoxCoordSysUnit.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					prjCoordSys.setCoordUnit((Unit) comboBoxCoordSysUnit.getSelectedItem());
-				}
-			}
-		});
+	private void removeListeners() {
+		buttonOK.removeActionListener(buttonOkListener);
+		buttonCancel.removeActionListener(buttonCalcelListener);
+		radioButtonAMS.removeItemListener(radioAMSListener);
+		comboBoxName.removeItemListener(comboBoxNameListener);
+		comboBoxCoordType.removeItemListener(comboBoxCoordTypeListener);
+		comboBoxCoordSysUnit.removeItemListener(comboBoxUnitListener);
 	}
 
 	private void resetProjectionTypeValues() {
@@ -534,8 +545,10 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	public void clean() {
 		panelGeoCoordSys.dispose();
+		removeListeners();
 		if (this.prjCoordSys != null) {
 			this.prjCoordSys.dispose();
 		}
 	}
+
 }

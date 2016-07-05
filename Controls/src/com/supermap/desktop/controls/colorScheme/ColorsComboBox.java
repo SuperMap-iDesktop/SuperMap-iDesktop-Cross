@@ -2,15 +2,19 @@ package com.supermap.desktop.controls.colorScheme;
 
 import com.supermap.data.Colors;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.JLabelUIUtilities;
 import com.supermap.desktop.dialog.ColorSchemeDialogs.ColorSchemeTreeNode;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFieldSearch;
 import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.metal.MetalComboBoxIcon;
@@ -99,6 +103,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	};
 	private MyAWTEventListener myAWTEventListener = new MyAWTEventListener();
 	private GridBagConstraintsHelper panelShowConstraints;
+	private boolean isReAddElements = false;
 
 	/**
 	 * 构造函数
@@ -129,10 +134,12 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	private void initComponents() {
 		panelShow = new JPanel();
 		panelShow.setBorder(new LineBorder(Color.GRAY));
-		panelShow.setMinimumSize(new Dimension(20, 25));
+		panelShow.setMinimumSize(new Dimension(20, 23));
 		buttonPopup = new JButton();
 		buttonPopup.setIcon(new MetalComboBoxIcon());
-		buttonPopup.setMaximumSize(new Dimension(10, 25));
+		buttonPopup.setMaximumSize(new Dimension(20, 23));
+		buttonPopup.setMinimumSize(new Dimension(20, 23));
+		buttonPopup.setPreferredSize(new Dimension(20, 23));
 		colorSchemeSelected = null;
 		popupMenuColorScheme = new JPopupMenu() {
 			@Override
@@ -147,6 +154,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 				} else {
 					Toolkit.getDefaultToolkit().removeAWTEventListener(myAWTEventListener);
 				}
+				popupMenuColorScheme.setPopupSize(panelShow.getWidth() + 25, 500);
 				super.setVisible(b);
 			}
 		};
@@ -216,6 +224,30 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 				setSelectedItem(currentColors);
 			}
 		});
+
+		textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				textFieldSearchChanged();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				textFieldSearchChanged();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				textFieldSearchChanged();
+			}
+
+			private void textFieldSearchChanged() {
+				reAddElements();
+				popupMenuColorScheme.setVisible(true);
+				textFieldSearch.requestFocus();
+			}
+
+		});
 	}
 
 	private void initComponentState() {
@@ -230,17 +262,21 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 	private void reAddElements() {
 		LogUtilities.outPut("ColorsComboBox reAddElements");
+		isReAddElements = true;
 		((DefaultListModel) listColors.getModel()).removeAllElements();
 		if (selectedColorSchemeTreeNode != null) {
 			java.util.List<ColorScheme> colorSchemes = selectedColorSchemeTreeNode.getColorSchemes();
 			if (colorSchemes != null) {
 				for (ColorScheme colorScheme : colorSchemes) {
-					((DefaultListModel<ColorScheme>) listColors.getModel()).addElement(colorScheme);
+					if (StringUtilities.isContain(colorScheme.getName(), textFieldSearch.getText())) {
+						((DefaultListModel<ColorScheme>) listColors.getModel()).addElement(colorScheme);
+					}
 				}
 			}
 			buttonColorGroup.setText(selectedColorSchemeTreeNode.getShowName());
 		}
 		((DefaultListModel) listColors.getModel()).addElement(null);
+		isReAddElements = false;
 	}
 
 	private ColorSchemeTreeNode getDefaultNode() {
@@ -483,6 +519,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	class ColorsCellRenderer implements ListCellRenderer {
 		private static final long serialVersionUID = 1L;
 		private final ColorsComboBox colorsComboBox;
+		private JLabel emptyLabel = new JLabel();
 
 		public ColorsCellRenderer(ColorsComboBox colorsComboBox) {
 			this.colorsComboBox = colorsComboBox;
@@ -490,6 +527,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			if (isReAddElements) {
+				return emptyLabel;
+			}
 			LogUtilities.outPut("ColorsComboBox CellRender Do Cell");
 			JLabel colorsLabel = new JLabel();
 			JLabel labelName = new JLabel();
@@ -497,13 +537,13 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			if (colorScheme != null) {
 
 				Colors colors = colorScheme.getColors();
-				int imageWidth = colorsComboBox.getWidth();
+				int imageWidth = panelShow.getWidth();
 				int imageHeight = 24;
 				colorsLabel = ColorScheme.getColorsLabel(colors, imageWidth, imageHeight);
 				labelName.setText(colorScheme.getName());
 			} else {
-				colorsLabel.setMinimumSize(new Dimension(colorsComboBox.getWidth(), 24));
-				colorsLabel.setPreferredSize(new Dimension(colorsComboBox.getWidth(), 24));
+				colorsLabel.setMinimumSize(new Dimension(panelShow.getWidth(), 24));
+				colorsLabel.setPreferredSize(new Dimension(panelShow.getWidth(), 24));
 
 				labelName.setText(ControlsProperties.getString("String_CustomColor"));
 			}
@@ -518,6 +558,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 			JPanel jPanel = new JPanel();
 			jPanel.setLayout(new GridBagLayout());
+			if (!StringUtilities.isNullOrEmpty(textFieldSearch.getText())) {
+				JLabelUIUtilities.highLightText(labelName, textFieldSearch.getText());
+			}
 			jPanel.add(labelName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
 			jPanel.add(colorsLabel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 			return jPanel;

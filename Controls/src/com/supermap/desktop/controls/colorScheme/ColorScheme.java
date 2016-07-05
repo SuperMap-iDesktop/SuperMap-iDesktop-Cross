@@ -829,7 +829,7 @@ public class ColorScheme implements ICloneable {
 		JLabel label = new JLabel();
 		label.setOpaque(true);
 		if (imageWidth <= 0) {
-			imageWidth = 200;
+			imageWidth = 100;
 		}
 		if (imageHeight <= 0) {
 			imageHeight = 23;
@@ -839,8 +839,6 @@ public class ColorScheme implements ICloneable {
 		if (colors != null) {
 			BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
-
-
 			int colorsCount = colors.getCount();
 			double step = (double) imageWidth / colorsCount;
 			for (int i = 0; i < colorsCount; i++) {

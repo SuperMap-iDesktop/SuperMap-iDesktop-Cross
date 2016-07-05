@@ -145,7 +145,9 @@ public class ColorSchemeTableModel extends SortableTableModel {
 	@Override
 	protected void removeRowsHook(int... selectedRows) {
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
-			colorSchemes.remove(selectedRows[i]);
+			ColorScheme colorScheme = colorSchemes.get(selectedRows[i]);
+			colorSchemes.remove(colorScheme);
+			colorScheme.getParentNode().getColorSchemes().remove(colorScheme);
 		}
 	}
 

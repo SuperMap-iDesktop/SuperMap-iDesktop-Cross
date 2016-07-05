@@ -172,4 +172,8 @@ public class SearchBoxModel<T> extends AbstractListModel
 		}
 		return -1;
 	}
+
+	public boolean isSearch() {
+		return searchData.size() != data.size();
+	}
 }

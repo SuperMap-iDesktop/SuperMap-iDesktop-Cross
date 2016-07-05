@@ -214,6 +214,16 @@ public class StringUtilities {
 		return tempName;
 	}
 
+
+	/**
+	 * 模糊搜索如
+	 * isContain(AB,a) = true;
+	 * isContain(a,Ab) = false;
+	 *
+	 * @param searchString 被搜索的字符串
+	 * @param inputString  搜索的字符串
+	 * @return 是否匹配
+	 */
 	public static boolean isContain(String searchString, String inputString) {
 
 		if (StringUtilties.isNullOrEmpty(searchString)) {
@@ -225,6 +235,15 @@ public class StringUtilities {
 			return true;
 		}
 
+//		StringBuilder stringBuilder = new StringBuilder(".*");
+//		for (int i = 0; i < inputString.length(); i++) {
+//			stringBuilder.append("[");
+//			stringBuilder.append(Character.toLowerCase(inputString.charAt(i)));
+//			stringBuilder.append(Character.toUpperCase(inputString.charAt(i)));
+//			stringBuilder.append("]");
+//		}
+//		stringBuilder.append(".*");
+//		return searchString.matches(stringBuilder.toString());
 
 		for (int i = 0, j = 0; i < inputString.length(); i++) {
 			for (; j < searchString.length(); j++) {
