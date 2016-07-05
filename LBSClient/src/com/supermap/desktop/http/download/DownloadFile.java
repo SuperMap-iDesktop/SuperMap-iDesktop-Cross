@@ -1,4 +1,4 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.download;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.http.SaveItemFile;
 
  
 /**

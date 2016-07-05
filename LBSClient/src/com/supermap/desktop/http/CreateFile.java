@@ -12,6 +12,9 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.CommonUtilities;
 
 /**
  * <b>function:</b> 单线程下载文件
@@ -28,58 +31,41 @@ import com.supermap.desktop.Application;
 @SuppressWarnings("deprecation")
 public class CreateFile extends Thread {
 
-	// 上传文件url
-	private String url;
-	// 待上传的本地文件名称
-	private String fileName;
-	// 待上传的本地文件路径
-	private String filePath;
+	// 待上传文件信息
+	private FileInfo downloadInfo;
 
-	// 下载是否完成
+	// 上传是否完成
 	private boolean isCreated = false;
+
+	private boolean isFailed;
 
 	private static final int BUFF_LENGTH = 1024 * 8;
 
-	/**
-	 * @param url
-	 *            下载文件url
-	 * @param name
-	 *            文件名称
-	 * @param startPos
-	 *            下载文件起点
-	 * @param endPos
-	 *            下载文件结束点
-	 * @param threadId
-	 *            线程id
-	 * @throws IOException
-	 */
-	public CreateFile(String url, String filePath, String fileName) throws IOException {
+	public CreateFile(FileInfo downloadInfo) throws IOException {
 		super();
-		this.url = url;
-		this.filePath = filePath;
-		this.fileName = fileName;
+		this.downloadInfo = downloadInfo;
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
 	@Override
 	public void run() {
 		this.createFile();
-//		this.createDir();
-//		this.renameFile();
+		// this.createDir();
+		// this.renameFile();
 	}
-	
+
 	// 创建文件
 	private void createFile() {
-		try {			
-			String webFile = this.url;
+		try {
+			String webFile = this.downloadInfo.getUrl();
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.fileName);
+			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.downloadInfo.getFileName());
 			HttpClient client = new DefaultHttpClient();
 			HttpPut requestPut = new HttpPut(webFile);
-	        
+
 			HttpResponse response = client.execute(requestPut);
 			if (response != null) {
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
@@ -89,43 +75,34 @@ public class CreateFile extends Thread {
 						return;
 					} else {
 						// 获取登陆成功之后跳转链接
-						locationURL = locationHeader.getValue();					
+						locationURL = locationHeader.getValue();
 					}
-				}
-//				Header headers[] = response.getAllHeaders();
-//				for (int i = 0; i < headers.length; i++) {
-//					System.out.println(headers[i].getName() + "   "
-//							+ headers[i].getValue());
-//				}				
-			}
-			
-			if (!"".equals(locationURL)) {
-				requestPut = new HttpPut(locationURL);
-				
-				String fullPath = this.filePath;
-				if (!fullPath.endsWith("/")) {
-					fullPath += "/";
-				}
-				fullPath += this.fileName;
-				File file = new File(fullPath);
-				FileEntity fileEntity = new FileEntity(file);
-				requestPut.setEntity( fileEntity );
-//		        HttpParams params = client.getParams();
-//		        params.setParameter( CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1 );
-//		        params.setParameter( CoreConnectionPNames.SO_TIMEOUT, new Integer( 15000 ) );
-//		        params.setParameter( CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer( 15000 ) );	
-				HttpClient allocateClient = new DefaultHttpClient();
-				response = allocateClient.execute(requestPut);				
-				if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					Application.getActiveApplication().getOutput().output("file \"" + fullPath + "\" upload finished.");
-				} else {
-					Application.getActiveApplication().getOutput().output("file \"" + fullPath + "\" upload failed.");
 				}
 			}
 
-			System.out.println(response.getStatusLine());
-			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils
-					.toByteArray(response.getEntity().getContent());
+			if (!"".equals(locationURL)) {
+				requestPut = new HttpPut(locationURL);
+				String fullPath = this.downloadInfo.getFilePath();
+				if (!fullPath.endsWith("\\")) {
+					fullPath += "\\";
+				}
+				fullPath += this.downloadInfo.getFileName();
+				File file = new File(fullPath);
+				FileEntity fileEntity = new FileEntity(file);
+				requestPut.setEntity(fileEntity);
+				HttpClient allocateClient = new DefaultHttpClient();
+				response = allocateClient.execute(requestPut);
+				if (response != null && response.getStatusLine().getStatusCode() == 201) {
+					Application.getActiveApplication().getOutput()
+							.output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
+					isCreated = true;
+				} else {
+					Application.getActiveApplication().getOutput()
+							.output("File: \"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndFailed"));
+					isFailed = true;
+				}
+			}
+			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
 
 			System.out.println("response enttiy " + new String(bytes2, "utf-8"));
 		} catch (MalformedURLException e) {
@@ -137,11 +114,11 @@ public class CreateFile extends Thread {
 		} finally {
 		}
 	}
-	
+
 	private void createDir() {
 		try {
 			// 创建目录
-			String webFile = this.url;
+			String webFile = this.downloadInfo.getUrl();
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
@@ -159,28 +136,26 @@ public class CreateFile extends Thread {
 						return;
 					} else {
 						// 获取登陆成功之后跳转链接
-						locationURL = locationHeader.getValue();					
+						locationURL = locationHeader.getValue();
 					}
 				}
 				Header headers[] = response.getAllHeaders();
 				for (int i = 0; i < headers.length; i++) {
-					System.out.println(headers[i].getName() + "   "
-							+ headers[i].getValue());
-				}				
+					System.out.println(headers[i].getName() + "   " + headers[i].getValue());
+				}
 			}
-			
+
 			if (!"".equals(locationURL)) {
 				requestPut = new HttpPut(locationURL);
 				response = client.execute(requestPut);
-				
+
 				if (response != null) {
-					
+
 				}
 			}
 
 			System.out.println(response.getStatusLine());
-			byte[] bytes = org.apache.commons.compress.utils.IOUtils
-					.toByteArray(response.getEntity().getContent());
+			byte[] bytes = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
 
 			System.out.println("response enttiy " + new String(bytes, "utf-8"));
 		} catch (MalformedURLException e) {
@@ -190,11 +165,11 @@ public class CreateFile extends Thread {
 		} finally {
 		}
 	}
-	
+
 	private void renameFile() {
 		try {
 			// 重命名文件
-			String webFile = this.url;
+			String webFile = this.downloadInfo.getUrl();
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
@@ -212,30 +187,28 @@ public class CreateFile extends Thread {
 						return;
 					} else {
 						// 获取登陆成功之后跳转链接
-						locationURL = locationHeader.getValue();					
+						locationURL = locationHeader.getValue();
 					}
 				}
 				Header headers[] = response.getAllHeaders();
 				for (int i = 0; i < headers.length; i++) {
-					System.out.println(headers[i].getName() + "   "
-							+ headers[i].getValue());
-				}				
+					System.out.println(headers[i].getName() + "   " + headers[i].getValue());
+				}
 			}
-			
+
 			if (!"".equals(locationURL)) {
 				requestPut = new HttpPut(locationURL);
 				response = client.execute(requestPut);
-				
+
 				if (response != null) {
-					
+
 				}
 			}
 
 			System.out.println(response.getStatusLine());
-			byte[] bytes = org.apache.commons.compress.utils.IOUtils
-					.toByteArray(response.getEntity().getContent());
+			byte[] bytes = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
 
-			System.out.println("response enttiy " + new String(bytes, "utf-8"));			
+			System.out.println("response enttiy " + new String(bytes, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -273,18 +246,15 @@ public class CreateFile extends Thread {
 	 * @param con
 	 */
 	public static void setHeader(URLConnection conn) {
-		conn.setRequestProperty("user-agent",
-				"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+		conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 		// conn.setRequestProperty("User-Agent",
 		// "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.3) Gecko/2008092510 Ubuntu/8.04 (hardy) Firefox/3.0.3");
 		conn.setRequestProperty("Accept-Language", "en-us,en;q=0.7,zh-cn;q=0.3");
 		conn.setRequestProperty("Accept-Encoding", "utf-8");
-		conn.setRequestProperty("Accept-Charset",
-				"ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+		conn.setRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		conn.setRequestProperty("Keep-Alive", "300");
 		conn.setRequestProperty("connnection", "keep-alive");
-		conn.setRequestProperty("If-Modified-Since",
-				"Fri, 02 Jan 2009 17:00:05 GMT");
+		conn.setRequestProperty("If-Modified-Since", "Fri, 02 Jan 2009 17:00:05 GMT");
 		conn.setRequestProperty("If-None-Match", "\"1261d8-4290-df64d224\"");
 		conn.setRequestProperty("Cache-conntrol", "max-age=0");
 		conn.setRequestProperty("Referer", "http://www.baidu.com");
@@ -298,4 +268,13 @@ public class CreateFile extends Thread {
 	public void setCreated(boolean isCreated) {
 		this.isCreated = isCreated;
 	}
+
+	public boolean isFailed() {
+		return isFailed;
+	}
+
+	public void setFailed(boolean isFailed) {
+		this.isFailed = isFailed;
+	}
+
 }

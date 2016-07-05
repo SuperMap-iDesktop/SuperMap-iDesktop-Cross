@@ -1,4 +1,4 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.download;
 
 /**
  * <b>function:</b> 下载文件信息类
@@ -12,7 +12,7 @@ package com.supermap.desktop.http;
  * @email hoojo_@126.com
  * @version 1.0
  */
-public class DownloadInfo {
+public class FileInfo {
 	// 下载文件url
 	private String url;
 	// 下载文件名称
@@ -31,7 +31,7 @@ public class DownloadInfo {
 	// 默认分块数、线程数
 	private final static int SPLITTER_NUM = 5;
 
-	public DownloadInfo() {
+	public FileInfo() {
 		super();
 	}
 
@@ -39,7 +39,7 @@ public class DownloadInfo {
 	 * @param url
 	 *            下载地址
 	 */
-	public DownloadInfo(String url) {
+	public FileInfo(String url) {
 		this(url, SPLITTER_NUM);
 	}
 
@@ -49,7 +49,7 @@ public class DownloadInfo {
 	 * @param splitter
 	 *            分成多少段或是多少个线程下载
 	 */
-	public DownloadInfo(String url, int splitter) {
+	public FileInfo(String url, int splitter) {
 		this(url, null, null, -1, splitter, false);
 	}
 
@@ -65,7 +65,7 @@ public class DownloadInfo {
 	 * @param splitter
 	 *            分成多少段或是多少个线程下载
 	 */
-	public DownloadInfo(String url, String fileName, String filePath, long fileSize, int splitter, Boolean isHDFSFile) {
+	public FileInfo(String url, String fileName, String filePath, long fileSize, int splitter, Boolean isHDFSFile) {
 		super();
 		if (url == null || "".equals(url)) {
 			throw new RuntimeException("url is not null!");
@@ -150,8 +150,8 @@ public class DownloadInfo {
 	@Override
 	public boolean equals(Object obj) {		
 		Boolean result = true;
-        if (obj instanceof DownloadInfo) {
-        	DownloadInfo downloadInfo = (DownloadInfo) obj;
+        if (obj instanceof FileInfo) {
+        	FileInfo downloadInfo = (FileInfo) obj;
             if (!this.url.equals(downloadInfo.getUrl())) {
             	result = false;
             }

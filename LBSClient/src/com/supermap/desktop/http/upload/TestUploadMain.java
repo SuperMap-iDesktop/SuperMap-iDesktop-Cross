@@ -1,4 +1,7 @@
-package com.supermap.desktop.http;
+package com.supermap.desktop.http.upload;
+
+import com.supermap.desktop.http.download.FileInfo;
+
 
 /**
  * <b>function:</b> 下载测试
@@ -15,10 +18,11 @@ public class TestUploadMain {
  
     public static void main(String[] args) {
     	String webPath = "http://192.168.12.103:50070/webhdfs/v1/tmp/";
+    	FileInfo fileInfo = new FileInfo(webPath);
     	String fileName = "test1.java";
     	String localFilePath = "F:/temp/";
     	int threadCount = 3;
     	
-		UploadUtils.upload(webPath, localFilePath, fileName, threadCount, true);		
+		UploadUtils.upload(fileInfo, localFilePath, fileName, threadCount, true);		
     }
 }

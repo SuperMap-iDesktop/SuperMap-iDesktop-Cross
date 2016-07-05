@@ -29,6 +29,7 @@ import com.supermap.desktop.Application;
 @SuppressWarnings("deprecation")
 public class DeleteFile extends Thread {
 
+	private boolean isDeleted;
 	// 文件url
 	private String url;
 	// 文件名称
@@ -46,7 +47,7 @@ public class DeleteFile extends Thread {
 		this.deleteFile();
 	}
 	
-	// 创建文件
+	// 删除文件
 	private void deleteFile() {
 		try {			
 			String webFile = this.url;
@@ -61,15 +62,11 @@ public class DeleteFile extends Thread {
 			HttpResponse response = client.execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				Application.getActiveApplication().getOutput().output("file \"" + webFile + "\" delete finished.");
+				isDeleted = true;
 			} else {
 				Application.getActiveApplication().getOutput().output("file \"" + webFile + "\" delete failed.");
 			}
 
-//			Header headers[] = response.getAllHeaders();
-//			for (int i = 0; i < headers.length; i++) {
-//				System.out.println(headers[i].getName() + "   "
-//						+ headers[i].getValue());
-//			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -105,4 +102,13 @@ public class DeleteFile extends Thread {
 		conn.setRequestProperty("Referer", "http://www.baidu.com");
 		// conn.setRequestProperty("accept", "*/*");
 	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
 }
