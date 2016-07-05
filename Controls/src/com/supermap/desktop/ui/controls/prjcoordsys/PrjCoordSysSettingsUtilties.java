@@ -115,14 +115,6 @@ public class PrjCoordSysSettingsUtilties {
 		return description;
 	}
 
-	public static ListCellRenderer<Enum> getEnumComboBoxItemRender(JComboBox<Enum> source) {
-//		if (enumComboBoxItemRender == null) {
-////			enumComboBoxItemRender = new ListCellRenderer<Enum>(source) {
-//
-//			};
-//		}
-		return enumComboBoxItemRender;
-	}
 
 	public static SearchItemValueGetter<Enum> getSearchItemValueGetter() {
 		if (searchItemValueGetter == null) {
