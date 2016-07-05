@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.util.List;
 
@@ -66,7 +65,13 @@ public class JTableColorScheme extends SortTable {
 	}
 
 	public void setColorSchemeList(List<ColorScheme> colorSchemeList) {
+		if (getCellEditor() != null) {
+			getCellEditor().stopCellEditing();
+		}
 		colorSchemeTableModel.setColorSchemes(colorSchemeList);
+		if (getRowCount() > 0) {
+			setRowSelectionInterval(0, 0);
+		}
 	}
 
 	public List<ColorScheme> getColorSchemeList() {
@@ -92,7 +97,6 @@ public class JTableColorScheme extends SortTable {
 				return new JLabel();
 			}
 			int width = table.getColumnModel().getColumn(column).getWidth();
-			int height = table.getRowHeight(row);
 			JLabel colorsLabel = ColorScheme.getColorsLabel(((Colors) value), width, 23);
 			if (isSelected) {
 				colorsLabel.setBorder(new LineBorder(Color.black, 1, false));

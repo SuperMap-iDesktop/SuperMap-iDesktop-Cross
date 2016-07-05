@@ -125,6 +125,7 @@ public class FileUtilities {
 				OutputStreamWriter.write(value);
 				OutputStreamWriter.flush();
 				OutputStreamWriter.close();
+				fOutputStream.close();
 			}
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);

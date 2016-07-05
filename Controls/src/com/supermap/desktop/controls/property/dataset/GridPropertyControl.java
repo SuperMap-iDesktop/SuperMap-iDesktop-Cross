@@ -24,7 +24,6 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -288,7 +287,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		// @formatter:on
 
 		this.labelColorTable = new JLabel("ColorTable:");
-		this.comboBoxColors = new ColorsComboBox();
+		this.comboBoxColors = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 
 		JPanel panelColors = new JPanel();
 		panelColors.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ColorTable")));
@@ -428,7 +427,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void colorsComboBoxSelectedChanged() {
-		this.colors = (Colors) this.comboBoxColors.getSelectedItem();
+		this.colors = this.comboBoxColors.getSelectedItem();
 		setComponentsEnabled();
 	}
 

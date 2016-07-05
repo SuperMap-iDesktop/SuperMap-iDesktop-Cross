@@ -2,6 +2,7 @@ package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +57,7 @@ public class StringUtilities {
 
 	/**
 	 * 匹配字符串中的一部分
-	 * 
+	 *
 	 * @param regex
 	 * @param orginal
 	 * @return
@@ -147,7 +148,7 @@ public class StringUtilities {
 	 * @return
 	 */
 	public static boolean isNumeric(String str) {
-		for (int i = str.length(); --i >= 0;) {
+		for (int i = str.length(); --i >= 0; ) {
 			if (!Character.isDigit(str.charAt(i))) {
 				return false;
 			}
@@ -195,5 +196,52 @@ public class StringUtilities {
 			result = 0.0;
 		}
 		return result;
+	}
+
+	public static String getUniqueName(String newName, List<String> existNames) {
+		if (newName == null || existNames == null || existNames.size() <= 0) {
+			return newName;
+		}
+		return getUniqueName(newName, existNames, 0);
+	}
+
+	private static String getUniqueName(String newName, List<String> existNames, int i) {
+		String tempName = i == 0 ? newName : newName + "_" + i;
+		i++;
+		for (; existNames.contains(tempName); i++) {
+			tempName = newName + "_" + i;
+		}
+		return tempName;
+	}
+
+	public static boolean isContain(String searchString, String inputString) {
+
+		if (StringUtilties.isNullOrEmpty(searchString)) {
+			// 为空始终显示
+			return true;
+		}
+
+		if (StringUtilties.isNullOrEmpty(inputString)) {
+			return true;
+		}
+
+
+		for (int i = 0, j = 0; i < inputString.length(); i++) {
+			for (; j < searchString.length(); j++) {
+				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
+					if (i == inputString.length() - 1) {
+						// 匹配成功
+						return true;
+					}
+					j++;
+					break;
+				}
+				if (j == searchString.length() - 1) {
+					// 后面字符没找到
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 }

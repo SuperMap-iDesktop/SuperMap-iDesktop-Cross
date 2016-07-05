@@ -4,6 +4,7 @@ package com.supermap.desktop.ui.controls.comboBox;
  * @author XiaJT
  */
 
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class SearchBoxModel<T> extends AbstractListModel
 		if (!StringUtilties.isNullOrEmpty(inputString)) {
 			for (int i = searchData.size() - 1; i >= 0; i--) {
 				String searchString = searchItemValueGetter.getSearchString(searchData.get(i));
-				if (searchString != null && !isContain(searchString, inputString)) {
+				if (searchString != null && !StringUtilities.isContain(searchString, inputString)) {
 					searchData.remove(i);
 				}
 			}
@@ -67,36 +68,7 @@ public class SearchBoxModel<T> extends AbstractListModel
 //			comboBox.setSelectedIndex(0);
 	}
 
-	private boolean isContain(String searchString, String inputString) {
 
-		if (StringUtilties.isNullOrEmpty(searchString)) {
-			// 为空始终显示
-			return true;
-		}
-
-		if (StringUtilties.isNullOrEmpty(inputString)) {
-			return true;
-		}
-
-
-		for (int i = 0, j = 0; i < inputString.length(); i++) {
-			for (; j < searchString.length(); j++) {
-				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
-					if (i == inputString.length() - 1) {
-						// 匹配成功
-						return true;
-					}
-					j++;
-					break;
-				}
-				if (j == searchString.length() - 1) {
-					// 后面字符没找到
-					return false;
-				}
-			}
-		}
-		return false;
-	}
 
 	private void resetSearchData() {
 		searchData.clear();

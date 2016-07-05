@@ -1,6 +1,12 @@
 package com.supermap.desktop.newtheme.themeRange;
 
-import com.supermap.data.*;
+import com.supermap.data.ColorGradientType;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
@@ -10,21 +16,40 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.*;
+import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
+import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilities.*;
-import com.supermap.mapping.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.MathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
-
-import java.awt.*;
-
 import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -56,7 +81,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private JLabel labelRangeFormat = new JLabel();
 	private JComboBox<String> comboBoxRangeFormat = new JComboBox<String>();
 	private JLabel labelColorStyle = new JLabel();
-	private ColorsComboBox comboBoxColorStyle = new ColorsComboBox();
+	private ColorsComboBox comboBoxColorStyle = new ColorsComboBox(ThemeType.RANGE);
 	private JToolBar toolBar = new JToolBar();
 	private JButton buttonMerge = new JButton();
 	private JButton buttonSplit = new JButton();

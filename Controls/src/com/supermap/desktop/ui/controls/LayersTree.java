@@ -44,7 +44,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -394,7 +393,7 @@ public class LayersTree extends JTree {
 	 * @param layer
 	 * @return
 	 */
-	public DefaultMutableTreeNode getNodeByLayer(Layer layer) {
+	protected DefaultMutableTreeNode getNodeByLayer(Layer layer) {
 		DefaultMutableTreeNode result = null;
 
 		Dataset dataset = layer.getDataset();

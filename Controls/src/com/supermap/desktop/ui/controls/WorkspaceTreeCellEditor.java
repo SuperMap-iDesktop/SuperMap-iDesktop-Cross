@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.LayoutUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -21,7 +22,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
-
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -116,113 +116,115 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		DefaultMutableTreeNode tempNode = (DefaultMutableTreeNode) lastComponent;
 		TreeNodeData tempNodeData = (TreeNodeData) tempNode.getUserObject();
 		try {
-			Object data = tempNodeData.getData();
-			if (data instanceof Datasource) {
-				// 数据源重命名
-				Datasource datasource = (Datasource) data;
-				String message = null;
-				// 数据源已存在
-				if (datasource.getAlias().equals(stringTextField)) {
-					// 我知道你点错了！
-				} else if (null != Application.getActiveApplication().getWorkspace().getDatasources().get(stringTextField)) {
-					message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceFailed"), stringTextField);
-					Application.getActiveApplication().getOutput().output(message);
-				} else {
-					int dialogResult = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_RenameDatasourceInfo"));
-					if (JOptionPane.OK_OPTION == dialogResult) {
-						message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceSuccess"), datasource.getAlias(), stringTextField);
-						currentWorkspace.getDatasources().modifyAlias(datasource.getAlias(), stringTextField);
+			if (!StringUtilities.isNullOrEmpty(stringTextField)) {
+				Object data = tempNodeData.getData();
+				if (data instanceof Datasource) {
+					// 数据源重命名
+					Datasource datasource = (Datasource) data;
+					String message = null;
+					// 数据源已存在
+					if (datasource.getAlias().equals(stringTextField)) {
+						// 我知道你点错了！
+					} else if (null != Application.getActiveApplication().getWorkspace().getDatasources().get(stringTextField)) {
+						message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceFailed"), stringTextField);
 						Application.getActiveApplication().getOutput().output(message);
+					} else {
+						int dialogResult = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_RenameDatasourceInfo"));
+						if (JOptionPane.OK_OPTION == dialogResult) {
+							message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceSuccess"), datasource.getAlias(), stringTextField);
+							currentWorkspace.getDatasources().modifyAlias(datasource.getAlias(), stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
+						}
 					}
-				}
 
-			} else if (data instanceof Dataset) {
-				// 数据集重命名
-				Dataset dataset = (Dataset) data;
-				if (dataset.getDatasource().isReadOnly() || dataset.getName().equals(stringTextField)) {
-					// do nothings
-				} else if (!dataset.getDatasource().getDatasets().isAvailableDatasetName(stringTextField)) {
-					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_IllegalDatasetName"));
+				} else if (data instanceof Dataset) {
+					// 数据集重命名
+					Dataset dataset = (Dataset) data;
+					if (dataset.getDatasource().isReadOnly() || dataset.getName().equals(stringTextField)) {
+						// do nothings
+					} else if (!dataset.getDatasource().getDatasets().isAvailableDatasetName(stringTextField)) {
+						Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_IllegalDatasetName"));
+					} else {
+						boolean isClosed = true;
+						if (DatasetUtilities.isDatasetOpened(dataset)) {
+							// show dialog
+							int dialogResult = UICommonToolkit.showConfirmDialog(MessageFormat.format(
+									ControlsProperties.getString("String_DatasetOpenWhileRename"), dataset.getName()));
+							if (dialogResult == JOptionPane.OK_OPTION) {
+								DatasetUtilities.closeDataset(dataset);
+							} else {
+								isClosed = false;
+							}
+						}
+						if (isClosed) {
+							dataset.getDatasource().getDatasets().rename(dataset.getName(), stringTextField);
+							Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RenameDatasetSuccess"));
+						}
+					}
 				} else {
-					boolean isClosed = true;
-					if (DatasetUtilities.isDatasetOpened(dataset)) {
-						// show dialog
-						int dialogResult = UICommonToolkit.showConfirmDialog(MessageFormat.format(
-								ControlsProperties.getString("String_DatasetOpenWhileRename"), dataset.getName()));
-						if (dialogResult == JOptionPane.OK_OPTION) {
-							DatasetUtilities.closeDataset(dataset);
+					NodeDataType type = tempNodeData.getType();
+					if (type.equals(NodeDataType.LAYOUT_NAME)) {
+						// 布局重命名
+						String layoutName = (String) data;
+						if (layoutName.equals(stringTextField)) {
+							// 点错了！
+						} else if (LayoutUtilities.checkAvailableLayoutName(stringTextField, layoutName)) {
+							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+							for (int i = 0; i < formManager.getCount(); i++) {
+								if (formManager.get(i) instanceof IFormLayout && formManager.get(i).getText().equals(layoutName)) {
+									formManager.get(i).setText(stringTextField);
+								}
+							}
+							currentWorkspace.getLayouts().rename(layoutName, stringTextField);
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameLayoutSuccess"), layoutName, stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
 						} else {
-							isClosed = false;
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameLayoutFailed"), stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
 						}
-					}
-					if (isClosed) {
-						dataset.getDatasource().getDatasets().rename(dataset.getName(), stringTextField);
-						Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RenameDatasetSuccess"));
-					}
-				}
-			} else {
-				NodeDataType type = tempNodeData.getType();
-				if (type.equals(NodeDataType.LAYOUT_NAME)) {
-					// 布局重命名
-					String layoutName = (String) data;
-					if (layoutName.equals(stringTextField)) {
-						// 点错了！
-					} else if (LayoutUtilities.checkAvailableLayoutName(stringTextField, layoutName)) {
-						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormLayout && formManager.get(i).getText().equals(layoutName)) {
-								formManager.get(i).setText(stringTextField);
-							}
-						}
-						currentWorkspace.getLayouts().rename(layoutName, stringTextField);
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameLayoutSuccess"), layoutName, stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					} else {
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameLayoutFailed"), stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					}
 
-				} else if (type.equals(NodeDataType.MAP_NAME)) {
-					// 地图重命名
-					String mapName = (String) data;
-					if (mapName.equals(stringTextField)) {
-						// 点错了！
-					} else if (MapUtilities.checkAvailableMapName(stringTextField, mapName)) {
-						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
-								formManager.get(i).setText(stringTextField);
+					} else if (type.equals(NodeDataType.MAP_NAME)) {
+						// 地图重命名
+						String mapName = (String) data;
+						if (mapName.equals(stringTextField)) {
+							// 点错了！
+						} else if (MapUtilities.checkAvailableMapName(stringTextField, mapName)) {
+							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+							for (int i = 0; i < formManager.getCount(); i++) {
+								if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
+									formManager.get(i).setText(stringTextField);
+								}
 							}
+							currentWorkspace.getMaps().rename(mapName, stringTextField);
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameMapSuccess"), mapName, stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
+						} else {
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameMapFailed"), stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
 						}
-						currentWorkspace.getMaps().rename(mapName, stringTextField);
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameMapSuccess"), mapName, stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					} else {
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameMapFailed"), stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					}
-				} else if (type.equals(NodeDataType.SCENE_NAME)) {
-					// 场景重命名
-					String sceneName = (String) data;
-					if (sceneName.equals(stringTextField)) {
-						// 点错了
-					} else if (SceneUIUtilities.checkAvailableSceneName(stringTextField, sceneName)) {
-						IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-						for (int i = 0; i < formManager.getCount(); i++) {
-							if (formManager.get(i) instanceof IFormScene && formManager.get(i).getText().equals(sceneName)) {
-								formManager.get(i).setText(stringTextField);
+					} else if (type.equals(NodeDataType.SCENE_NAME)) {
+						// 场景重命名
+						String sceneName = (String) data;
+						if (sceneName.equals(stringTextField)) {
+							// 点错了
+						} else if (SceneUIUtilities.checkAvailableSceneName(stringTextField, sceneName)) {
+							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+							for (int i = 0; i < formManager.getCount(); i++) {
+								if (formManager.get(i) instanceof IFormScene && formManager.get(i).getText().equals(sceneName)) {
+									formManager.get(i).setText(stringTextField);
+								}
 							}
+							currentWorkspace.getScenes().rename(sceneName, stringTextField);
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameSceneSuccess"), sceneName, stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
+						} else {
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameSceneFailed"), stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
 						}
-						currentWorkspace.getScenes().rename(sceneName, stringTextField);
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameSceneSuccess"), sceneName, stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					} else {
-						String message = MessageFormat.format(ControlsProperties.getString("String_RenameSceneFailed"), stringTextField);
-						Application.getActiveApplication().getOutput().output(message);
-					}
 
-				} else {
-					cancelCellEditing();
+					} else {
+						cancelCellEditing();
+					}
 				}
 			}
 		} catch (RuntimeException e) {

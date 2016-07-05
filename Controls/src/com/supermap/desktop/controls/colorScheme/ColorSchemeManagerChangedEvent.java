@@ -1,18 +1,18 @@
 package com.supermap.desktop.controls.colorScheme;
 
-import java.util.List;
+import com.supermap.desktop.dialog.ColorSchemeDialogs.ColorSchemeTreeNode;
 
 /**
  * @author XiaJT
  */
 public class ColorSchemeManagerChangedEvent {
-	private List colorSchemeList;
+	private ColorSchemeTreeNode colorSchemeTreeNode;
 
-	public ColorSchemeManagerChangedEvent(List colorSchemeList) {
-		this.colorSchemeList = colorSchemeList;
+	public ColorSchemeManagerChangedEvent(ColorSchemeTreeNode colorSchemeTreeNode) {
+		this.colorSchemeTreeNode = colorSchemeTreeNode;
 	}
 
-	public List getColorSchemeList() {
-		return colorSchemeList;
+	public ColorSchemeTreeNode getColorSchemeList() {
+		return colorSchemeTreeNode;
 	}
 }
