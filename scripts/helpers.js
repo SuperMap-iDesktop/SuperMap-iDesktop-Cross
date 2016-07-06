@@ -52,37 +52,27 @@ hexo.extend.helper.register('doc_sidebar', function(className){
   var prefix = 'sidebar.' + type + '.';
    
    _.each(sidebar, function(menu, title){
-       result += '<li><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
+       result += '<li id="' + title + '"><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
        result += '<ul>'
        _.each(menu, function(submenu, subtitle){
            if(_.isString(submenu)){
                var itemClass = className + '-link';
                if (submenu === path) itemClass += ' current';
-               result += '<li><a href="' + submenu + '" class="' + itemClass + '">' + self.__(prefix + subtitle) + '</a></li>';
+               result += '<li id="' + subtitle + '"><a href="' + submenu + '" class="' + itemClass + '">' + self.__(prefix + subtitle) + '</a></li>';
            } else{
-               result += '<li><strong class="' + className + '-subtitle">' + self.__(prefix + subtitle) + '</strong>';
+               result += '<li id="' + subtitle + '"><strong class="' + className + '-subtitle">' + self.__(prefix + subtitle) + '</strong>';
                result += '<ul>'
                _.each(submenu, function(link, text){
                    var itemClass = className + '-link';
                    if (link === path) itemClass += ' current';
-                   result += '<li><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
+                   result += '<li id="' + text + '"><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
            })
            result += '</ul></li>';
            }
        })
        result += '</ul></li>';
    })
-   
-  /*_.each(sidebar, function(menu, title){
-    result += '<li><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
-    result += '<ul>'
-    _.each(menu, function(link, text){
-      var itemClass = className + '-link';
-      if (link === path) itemClass += ' current';
-      result += '<li><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
-    })
-    result +='</ul></li>'
-  });*/
+    
     result += '</ul>';
   return result;
 });
@@ -176,4 +166,5 @@ hexo.extend.helper.register('disqus_lang', function(){
 
   return data.disqus_lang || lang;
 });
+
 
