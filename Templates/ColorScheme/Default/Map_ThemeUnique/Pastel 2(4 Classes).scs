@@ -1,0 +1,43 @@
+﻿<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>0</Version>
+    <Name>Pastel 2(4 Classes)</Name>
+    <Author>SuperMap</Author>
+    <Description>Custom</Description>
+    <ColorSystem>1</ColorSystem>
+    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+    <KeyColorCount>4</KeyColorCount>
+    <IntervalColorCount>0</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>180</Red>
+      <Green>226</Green>
+      <Blue>206</Blue>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>253</Red>
+      <Green>206</Green>
+      <Blue>172</Blue>
+    </KeyColor2>
+    <KeyColor3>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>203</Red>
+      <Green>213</Green>
+      <Blue>232</Blue>
+    </KeyColor3>
+    <KeyColor4>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>245</Red>
+      <Green>202</Green>
+      <Blue>228</Blue>
+    </KeyColor4>
+  </DataBlock>
+</ColorScheme>

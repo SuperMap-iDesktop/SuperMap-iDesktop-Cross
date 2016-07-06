@@ -51,5 +51,8 @@ public class JTreeUIUtilities {
 		}
 	}
 
+	private static void expendNode(JTree tree, TreeNode node) {
+
+	}
 }
 

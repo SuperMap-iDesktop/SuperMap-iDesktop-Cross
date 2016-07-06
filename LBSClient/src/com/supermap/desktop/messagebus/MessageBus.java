@@ -33,6 +33,9 @@ public class MessageBus {
 	private static final String producerCommand = "gitstark-Server";
 	private static final String consumerName = "gitstark-Result";
 	private static final String tcp_url = "tcp://192.168.14.2:61616";
+	
+	// 任务暂时不能并行，用个变量，临时解决下不。只有该值为0的时候才能继续发送任务
+	private static int runningTasts = 0;
 
 	private static ArrayList<String> tasks = null;
 	private static Boolean stop;
@@ -66,6 +69,7 @@ public class MessageBus {
 		@Override
 		public void run() {
 			try {
+				runningTasts = 0;
 				ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(tcp_url);
 				Connection conn = factory.createConnection();
 				conn.start();
@@ -78,6 +82,11 @@ public class MessageBus {
 				ITaskFactory taskFactory = TaskFactory.getInstance();
 				while (!MessageBus.stop) {
 					for (String command : MessageBus.tasks) {
+						if (runningTasts != 0) {
+							Thread.sleep(100);
+							continue;
+						}
+							
 						TextMessage msg = session.createTextMessage(command);
 						if (command.contains("HDFSGridIndexBuild")) {
 							task = taskFactory.getTask(TaskEnum.CREATESPATIALINDEXTASK, null);
@@ -100,6 +109,7 @@ public class MessageBus {
 							addTask(fileManagerContainer, task);
 						}
 						procucer.send(msg);
+						runningTasts++;
 					}
 					tasks.clear();
 					updateProgress();
@@ -145,6 +155,7 @@ public class MessageBus {
 						String command = ((TextMessage) message).getText();
 						String[] params = command.split(",");
 						if (params.length == 2 && !"error".equalsIgnoreCase(params[1])) {
+							runningTasts--;
 							MessageBusType type = MessageBusType.getType(params[0]);
 							switch (type) {
 							case BuildSpatialIndex:
@@ -260,10 +271,13 @@ public class MessageBus {
 			localPath += fileName;
 
 			CommonUtilities.addDownLoadTask(downloadInfo);
+
 			ShowResultThread showResultThread = new ShowResultThread();
 			showResultThread.setDownloadInfo(downloadInfo);
 			showResultThread.setLocalPath(localPath);
 			showResultThread.start();
+			
+			CommonUtilities.addDownLoadTask(downloadInfo);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

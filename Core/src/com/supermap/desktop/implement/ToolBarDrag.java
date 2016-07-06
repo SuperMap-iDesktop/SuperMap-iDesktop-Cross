@@ -65,7 +65,6 @@ public class ToolBarDrag {
 
 	private void drawLine(Color color) {
 		if (toolbar != null) {
-
 			Graphics2D graphics = (Graphics2D) toolbar.getGraphics();
 			graphics.setColor(color);
 			Rectangle rect = toolbar.getVisibleRect();

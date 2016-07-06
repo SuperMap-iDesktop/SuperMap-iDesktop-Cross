@@ -5,11 +5,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ColorsUIUtilities;
+import com.supermap.desktop.dialog.ColorSchemeDialogs.ColorSchemeTreeNode;
 import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,7 +18,6 @@ import org.w3c.dom.Text;
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -60,6 +58,8 @@ public class ColorScheme implements ICloneable {
 
 	private String colorSchemePath;
 
+	private ColorSchemeTreeNode parentNode;
+
 	private static final char[] unLegitFileNameChars = new char[]{
 			'<', '>', '!', ':', '\\', '/', '*', '?', '|'
 	};
@@ -99,6 +99,7 @@ public class ColorScheme implements ICloneable {
 		clone.setIntervalColorBuildMethod(this.intervalColorBuildMethod);
 		clone.setKeyColorCount(keyColorCount);
 		clone.setIntervalColorCount(this.intervalColorCount);
+//		clone.colorSchemePath = this.colorSchemePath;
 		return clone;
 	}
 
@@ -109,6 +110,14 @@ public class ColorScheme implements ICloneable {
 	public ColorScheme(ColorScheme colorScheme) {
 		this.colors = colorScheme.colors;
 		this.fileType = version;
+	}
+
+	public ColorSchemeTreeNode getParentNode() {
+		return parentNode;
+	}
+
+	public void setParentNode(ColorSchemeTreeNode parentNode) {
+		this.parentNode = parentNode;
 	}
 
 	/**
@@ -317,17 +326,9 @@ public class ColorScheme implements ICloneable {
 		keyColorCount = count;
 	}
 
-	public String getColorSchemePath() {
-		if (StringUtilities.isNullOrEmpty(colorSchemePath)) {
-			colorSchemePath = getDefaultFilePath(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
-			save();
-		}
-		return colorSchemePath;
-	}
-
 	public void save() {
 		if (colorSchemePath == null) {
-			colorSchemePath = getDefaultFilePath(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeCustomDirectory"), true));
+			colorSchemePath = getDefaultFilePath(parentNode.getFilePath());
 		}
 		saveAsFilePath(colorSchemePath);
 	}
@@ -361,13 +362,13 @@ public class ColorScheme implements ICloneable {
 		if (!new File(customDirectory).exists()) {
 			new File(customDirectory).mkdirs();
 		}
-		boolean isExist = true;
-		int i = -1;
-		while (isExist) {
-			i++;
-			isExist = new File(customDirectory + getFileName(i, this.name)).exists();
-		}
-		return customDirectory + getFileName(i, this.name);
+//		boolean isExist = true;
+//		int i = -1;
+//		while (isExist) {
+//			i++;
+//			isExist = new File(customDirectory + getFileName(i, this.name)).exists();
+//		}
+		return customDirectory + getFileName(0, this.name);
 	}
 
 	private String getFileName(int i, String fileName) {
@@ -389,13 +390,6 @@ public class ColorScheme implements ICloneable {
 
 	public void setColorSchemePath(String colorSchemePath) {
 		this.colorSchemePath = colorSchemePath;
-		try {
-			if (colorSchemePath == null || !new File(colorSchemePath).exists()) {
-				save();
-			}
-		} catch (Exception ignored) {
-
-		}
 	}
 
 	private String toXML() {
@@ -500,8 +494,11 @@ public class ColorScheme implements ICloneable {
 
 	public void delete() {
 		// 自爆
-		if (new File(this.colorSchemePath).exists()) {
+		if (colorSchemePath != null && new File(this.colorSchemePath).exists()) {
 			new File(this.colorSchemePath).delete();
+		}
+		if (parentNode != null && parentNode.getColorSchemes() != null) {
+			parentNode.getColorSchemes().remove(this);
 		}
 	}
 
@@ -706,6 +703,10 @@ public class ColorScheme implements ICloneable {
 		this.colors = colorList;
 	}
 
+	public String getColorSchemePath() {
+		return colorSchemePath;
+	}
+
 	/*
 	 * 文件范例
 	 * 
@@ -828,25 +829,24 @@ public class ColorScheme implements ICloneable {
 		JLabel label = new JLabel();
 		label.setOpaque(true);
 		if (imageWidth <= 0) {
-			imageWidth = 270;
+			imageWidth = 100;
 		}
 		if (imageHeight <= 0) {
 			imageHeight = 23;
 		}
 		label.setPreferredSize(new Dimension(imageWidth, imageHeight));
-		BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
-
 		// 根据当前渲染单元格的宽度和颜色数计算出每个颜色应当渲染的步长
 		if (colors != null) {
+			BufferedImage bufferedImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
 			int colorsCount = colors.getCount();
 			double step = (double) imageWidth / colorsCount;
 			for (int i = 0; i < colorsCount; i++) {
 				graphics.setColor(colors.get(i));
 				graphics.fillRect(((int) (step * i)), 0, (int) step + 1, imageHeight);
 			}
+			label.setIcon(new ImageIcon(bufferedImage));
 		}
-		label.setIcon(new ImageIcon(bufferedImage));
 
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setHorizontalTextPosition(SwingConstants.CENTER);

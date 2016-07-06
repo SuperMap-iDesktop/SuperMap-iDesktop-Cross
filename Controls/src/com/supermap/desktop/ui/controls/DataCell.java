@@ -8,7 +8,6 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.net.URL;
 
@@ -172,6 +171,10 @@ public class DataCell extends JPanel {
 	 */
 	@Override
 	public String toString() {
+		return getDataName();
+	}
+
+	public String getText() {
 		return getDataName();
 	}
 

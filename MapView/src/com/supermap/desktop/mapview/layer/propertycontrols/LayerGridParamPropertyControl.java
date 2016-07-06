@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.Colors;
 import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
@@ -112,7 +113,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.spinnerContrast = new SMSpinner(new SpinnerNumberModel(0, 0, 100, 1));
 		this.labelColorTable = new JLabel("ColorTable:");
 		this.labelColorTable.setToolTipText(this.labelColorTable.getText());
-		this.colorsTable = new ColorsComboBox();
+		this.colorsTable = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 		this.labelSpecialValue = new JLabel("SpecialValue:");
 		this.labelSpecialValue.setToolTipText(this.labelSpecialValue.getText());
 		this.textFieldSpecialValue = new SMFormattedTextField(NumberFormat.getInstance());

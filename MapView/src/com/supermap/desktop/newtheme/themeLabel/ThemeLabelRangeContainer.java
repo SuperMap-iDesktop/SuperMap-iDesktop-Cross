@@ -20,7 +20,13 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -29,9 +35,13 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -41,9 +51,8 @@ import java.util.List;
 
 /**
  * 标签分段风格专题图
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
@@ -67,7 +76,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private JLabel labelRangeFormat = new JLabel();
 	private JComboBox<String> comboBoxRangeFormat = new JComboBox<String>();
 	private JLabel labelColorStyle = new JLabel();
-	private ColorsComboBox comboBoxColorStyle = new ColorsComboBox();
+	private ColorsComboBox comboBoxColorStyle = new ColorsComboBox(ThemeType.RANGE);
 	private JToolBar toolBar = new JToolBar();
 	private JButton buttonMerge = new JButton();
 	private JButton buttonSplit = new JButton();

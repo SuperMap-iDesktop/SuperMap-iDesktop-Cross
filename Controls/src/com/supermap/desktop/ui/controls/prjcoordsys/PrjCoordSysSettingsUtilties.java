@@ -15,12 +15,9 @@ import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
 import javax.swing.*;
-
-import java.awt.*;
 import java.text.MessageFormat;
 
 public class PrjCoordSysSettingsUtilties {
-	private static Dimension labelPreferredSize = new Dimension(20, 23);
 	private static ListCellRenderer<Enum> enumComboBoxItemRender = null;
 	private static SearchItemValueGetter<Enum> searchItemValueGetter = null;
 
@@ -118,26 +115,6 @@ public class PrjCoordSysSettingsUtilties {
 		return description;
 	}
 
-	public static ListCellRenderer<Enum> getEnumComboBoxItemRender() {
-		if (enumComboBoxItemRender == null) {
-			enumComboBoxItemRender = new ListCellRenderer<Enum>() {
-				@Override
-				public Component getListCellRendererComponent(JList<? extends Enum> list, Enum value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel jLabel = new JLabel();
-					jLabel.setOpaque(true);
-					jLabel.setPreferredSize(labelPreferredSize);
-					jLabel.setText(" " + PrjCoordSysTypeUtilities.getDescribe(value.name()));
-					if (isSelected) {
-						jLabel.setBackground(list.getSelectionBackground());
-					} else {
-						jLabel.setBackground(list.getBackground());
-					}
-					return jLabel;
-				}
-			};
-		}
-		return enumComboBoxItemRender;
-	}
 
 	public static SearchItemValueGetter<Enum> getSearchItemValueGetter() {
 		if (searchItemValueGetter == null) {
