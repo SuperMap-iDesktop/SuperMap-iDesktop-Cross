@@ -139,8 +139,8 @@ public class TextStyleDialog extends SmDialog{
 		editHistory=MapUtilities.getMapControl().getEditHistory();
 		editHistory.batchBegin();
 		recordset.moveFirst();
-		editHistory.add(EditType.MODIFY, recordset, true);
 		while (!recordset.isEOF()) {
+			editHistory.add(EditType.MODIFY, recordset, true);
 			recordset.edit();
 			Geometry tempGeometry = recordset.getGeometry();
 			if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
