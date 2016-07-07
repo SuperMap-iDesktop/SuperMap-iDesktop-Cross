@@ -15,6 +15,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * <b>function:</b> 单线程下载文件
@@ -57,8 +58,10 @@ public class CreateFile extends Thread {
 	// 创建文件
 	private void createFile() {
 		try {
-			String webFile = this.downloadInfo.getUrl();
 			String locationURL = "";
+			
+			String webFile = this.downloadInfo.getUrl();
+			
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
@@ -80,7 +83,7 @@ public class CreateFile extends Thread {
 				}
 			}
 
-			if (!"".equals(locationURL)) {
+			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
 				requestPut = new HttpPut(locationURL);
 				String fullPath = this.downloadInfo.getFilePath();
 				if (!fullPath.endsWith("\\")) {
@@ -115,6 +118,14 @@ public class CreateFile extends Thread {
 		}
 	}
 
+	private void executeCommond(){
+		
+	}
+	
+	private void appendFile(){
+		
+	}
+	
 	private void createDir() {
 		try {
 			// 创建目录

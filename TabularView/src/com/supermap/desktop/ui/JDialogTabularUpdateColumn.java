@@ -182,7 +182,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			if (e.getStateChange() == ItemEvent.SELECTED && null != textFieldOperationEQ) {
 				textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
 						+ comboBoxSecondField.getSelectedItem().toString());
-				labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString()).getType()));
+				labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
+						.get(comboBoxSecondField.getSelectedItem().toString()).getType()));
 			}
 		}
 	};
@@ -388,7 +389,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				count++;
 			}
 		}
-		if (!"".equals(defualtSelectField)&&fieldInfoMap.containsValue(defualtSelectField)) {
+		boolean hasItem = false;
+		Iterator<FieldInfo> values = fieldInfoMap.values().iterator();
+		while (values.hasNext()) {
+			if (values.next().getCaption().equals(defualtSelectField)) {
+				hasItem = true;
+			}
+		}
+		if (!StringUtilities.isNullOrEmptyString(defualtSelectField) && hasItem) {
 			// 设置默认选中行
 			this.comboBoxUpdateField.setSelectedItem(defualtSelectField);
 		}
@@ -491,7 +499,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	}
 
 	private void resetMethodItems() {
-		if (comboBoxUpdateField.getSelectedIndex()>=0) {
+		if (comboBoxUpdateField.getSelectedIndex() >= 0) {
 			if (FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
 				comboBoxMethod.removeAllItems();
 				comboBoxMethod.addItem("+");
@@ -731,7 +739,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void operationFieldChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
-			labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType()));
+			labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
+					.get(comboBoxOperationField.getSelectedItem().toString()).getType()));
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				// 单字段运算
 				resetTextFieldOperationEQ();
@@ -1021,7 +1030,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if (null == resultSet) {
 			// 没有查询结果不执行更新，给出提示
 			Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_UpdateColumnFailed"));
-		} else if(null!=resultSet.getFieldInfos().get(temp[0])){
+		} else if (null != resultSet.getFieldInfos().get(temp[0])) {
 			// 更新整列,将需要更新的数据替换为查询结果的数据
 			boolean isUpdateAllColumn = checkBoxUpdateColumn.isSelected();
 			if (isUpdateAllColumn) {
@@ -1054,11 +1063,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		for (int i = 0; i < rows.length; i++) {
 			recordset.moveTo(rows[i]);
 			resultSet.moveTo(rows[i]);
-			if (fieldInfoMap.get(index).getType().equals(FieldType.INT16)||fieldInfoMap.get(index).getType().equals(FieldType.INT32)||fieldInfoMap.get(index).getType().equals(FieldType.INT64)) {
-				recordset.setFieldValue(updateField, (int)resultSet.getFieldValue(temp[0]));
-			}else{
-				recordset.setFieldValue(updateField, resultSet.getFieldValue(temp[0]));
-			}
+			if ((fieldInfoMap.get(index).getType().equals(FieldType.INT16) || fieldInfoMap.get(index).getType().equals(FieldType.INT32) || fieldInfoMap
+					.get(index).getType().equals(FieldType.INT64))
+					&& null != resultSet.getFieldValue(temp[0])) {
+				recordset.setFieldValue(updateField, (int) resultSet.getFieldValue(temp[0]));
+			}else if (null != resultSet.getFieldValue(temp[0])) {
+				 recordset.setFieldValue(updateField, resultSet.getFieldValue(temp[0]));
+			 }
 		}
 		recordset.getBatch().update();
 		// 重新查询避免操作后记录集清除的异常
