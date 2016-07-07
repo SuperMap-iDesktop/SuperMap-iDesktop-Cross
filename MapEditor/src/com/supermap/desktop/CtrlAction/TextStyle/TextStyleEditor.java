@@ -1,20 +1,22 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
 import java.awt.event.*;
-import java.util.*;
+import java.util.EventObject;
 
 import javax.swing.*;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.geometryoperation.*;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TextStyleDialog;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
-import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.*;
 
 public class TextStyleEditor extends AbstractEditor {
 
@@ -24,7 +26,16 @@ public class TextStyleEditor extends AbstractEditor {
 		public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0) {
 			resetRecordset(environment);
 		}
+		@Override
+		public void undone(EditEnvironment environment, EventObject arg0) {
+			resetRecordset(environment);
+		}
 	};
+	private MouseAdapter layerMouseListener;
+	private GeometryDeletedListener geometryDeletedListener;
+	private GeometryAddedListener geometryAddedListener;
+	private GeometryModifiedListener geometryModifiedListener;
+	private LayersTree layersTree;
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
@@ -44,7 +55,8 @@ public class TextStyleEditor extends AbstractEditor {
 	}
 
 	@Override
-	public void activate(EditEnvironment environment) {
+	public void activate(final EditEnvironment environment) {
+		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
 			environment.setEditController(this.editController);
 			dialog = TextStyleDialog.createInstance();
@@ -52,25 +64,99 @@ public class TextStyleEditor extends AbstractEditor {
 				dialog.showDialog(getActiveRecordset(environment));
 			}
 		}
-		UICommonToolkit.getLayersManager().getLayersTree().addMouseListener(new MouseAdapter() {
+		this.layerMouseListener = new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				dialog.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
 			}
+		};
+		this.geometryAddedListener = new GeometryAddedListener() {
+
+			@Override
+			public void geometryAdded(GeometryEvent arg0) {
+				resetRecordset(environment);
+			}
+		};
+		this.geometryDeletedListener = new GeometryDeletedListener() {
+
+			@Override
+			public void geometryDeleted(GeometryEvent arg0) {
+				resetRecordset(environment);
+			}
+		};
+		this.geometryModifiedListener = new GeometryModifiedListener() {
+
+			@Override
+			public void geometryModified(GeometryEvent arg0) {
+				resetRecordset(environment);
+			}
+		};
+
+		registEvents(environment);
+	}
+
+	private void removeEvents(EditEnvironment environment){
+		layersTree.removeMouseListener(layerMouseListener);
+		environment.getMapControl().removeGeometryAddedListener(geometryAddedListener);
+		environment.getMapControl().removeGeometryDeletedListener(geometryDeletedListener);
+		environment.getMapControl().removeGeometryModifiedListener(geometryModifiedListener);
+	}
+	
+	private void registEvents(EditEnvironment environment) {
+		removeEvents(environment);
+		this.layersTree.addMouseListener(layerMouseListener);
+		environment.getMapControl().addGeometryAddedListener(geometryAddedListener);
+		environment.getMapControl().addGeometryDeletedListener(geometryDeletedListener);
+		environment.getMapControl().addGeometryModifiedListener(geometryModifiedListener);
+		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
+
+			@Override
+			public void activeFormChanged(final ActiveFormChangedEvent e) {
+				if (e.getNewActiveForm() instanceof IFormMap) {
+					resetRecordset((IFormMap) e.getNewActiveForm());
+				}
+				if (null == e.getNewActiveForm()) {
+					// 销毁
+					dialog.dispose();
+				}
+			}
 		});
 	}
+
+	private void removeDialog() {
+		((JPanel) dialog.getContentPane()).removeAll();
+		((JPanel) dialog.getContentPane()).updateUI();
+	}
+
+	private void resetRecordset(IFormMap formMap){
+		if (null != dialog && null != getActiveRecordset(formMap)) {
+			dialog.showDialog(getActiveRecordset(formMap));
+		} else if (null == getActiveRecordset(formMap)) {
+			removeDialog();
+		}
+	}
+	
 	private void resetRecordset(EditEnvironment environment) {
 		if (null != dialog && null != getActiveRecordset(environment)) {
 			dialog.showDialog(getActiveRecordset(environment));
 		} else if (null == getActiveRecordset(environment)) {
-			((JPanel) dialog.getContentPane()).removeAll();
-			((JPanel) dialog.getContentPane()).updateUI();
+			removeDialog();
 		}
 	}
+
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		resetRecordset(environment);
+		removeEvents(environment);
+	}
+
+	private Recordset getActiveRecordset(IFormMap formMap) {
+		Recordset recordset = null;
+		if (formMap.getMapControl().getMap().findSelection(true).length > 0) {
+			Selection selection = MapUtilities.getActiveMap().findSelection(true)[0];
+			recordset = selection.toRecordset();
+		}
+		return recordset;
 	}
 
 	private Recordset getActiveRecordset(EditEnvironment environment) {

@@ -388,7 +388,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				count++;
 			}
 		}
-		if (!"".equals(defualtSelectField)) {
+		if (!"".equals(defualtSelectField)&&fieldInfoMap.containsValue(defualtSelectField)) {
 			// 设置默认选中行
 			this.comboBoxUpdateField.setSelectedItem(defualtSelectField);
 		}
@@ -491,17 +491,19 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	}
 
 	private void resetMethodItems() {
-		if (FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
-			comboBoxMethod.removeAllItems();
-			comboBoxMethod.addItem("+");
-			comboBoxMethod.addItem("-");
-			comboBoxMethod.addItem("*");
-			comboBoxMethod.addItem("/");
-		}
-		if (FieldTypeUtilities.isString(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())
-				|| fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.CHAR)) {
-			comboBoxMethod.removeAllItems();
-			comboBoxMethod.addItem("+");
+		if (comboBoxUpdateField.getSelectedIndex()>=0) {
+			if (FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
+				comboBoxMethod.removeAllItems();
+				comboBoxMethod.addItem("+");
+				comboBoxMethod.addItem("-");
+				comboBoxMethod.addItem("*");
+				comboBoxMethod.addItem("/");
+			}
+			if (FieldTypeUtilities.isString(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())
+					|| fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.CHAR)) {
+				comboBoxMethod.removeAllItems();
+				comboBoxMethod.addItem("+");
+			}
 		}
 	}
 
