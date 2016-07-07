@@ -1066,8 +1066,16 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			if ((fieldInfoMap.get(index).getType().equals(FieldType.INT16) || fieldInfoMap.get(index).getType().equals(FieldType.INT32) || fieldInfoMap
 					.get(index).getType().equals(FieldType.INT64))
 					&& null != resultSet.getFieldValue(temp[0])) {
-				Double tempValue = (Double) resultSet.getFieldValue(temp[0]);
-				recordset.setFieldValue(updateField, tempValue.intValue());
+				int result = -1;
+				if (resultSet.getFieldValue(temp[0]) instanceof Double) {
+					Double tempValue = (Double) resultSet.getFieldValue(temp[0]);
+					result = tempValue.intValue();
+				}
+				if (resultSet.getFieldValue(temp[0]) instanceof Integer) {
+					result = (int) resultSet.getFieldValue(temp[0]);
+				}
+				
+				recordset.setFieldValue(updateField, result);
 			}else if (null != resultSet.getFieldValue(temp[0])) {
 				 recordset.setFieldValue(updateField, resultSet.getFieldValue(temp[0]));
 			 }
