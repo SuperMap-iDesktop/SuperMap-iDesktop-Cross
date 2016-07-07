@@ -182,6 +182,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			if (e.getStateChange() == ItemEvent.SELECTED && null != textFieldOperationEQ) {
 				textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
 						+ comboBoxSecondField.getSelectedItem().toString());
+				labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString()).getType()));
 			}
 		}
 	};
@@ -728,6 +729,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void operationFieldChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
+			labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType()));
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				// 单字段运算
 				resetTextFieldOperationEQ();
