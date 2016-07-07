@@ -87,7 +87,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	private boolean unityVisible;
 	private boolean showOutLineWidth;
 	private boolean isTextStyleSet;
-
+	private String fontSize;
+	private boolean isResetFontSize;
 	protected double UNIT_CONVERSION = 10;
 
 	private JTextField textFieldFontSize;
@@ -306,6 +307,21 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			}
 		}
 	};
+	private FocusListener fontSizeFocusListener = new FocusListener() {
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (StringUtilities.isNullOrEmptyString(textFieldFontSize.getText())) {
+				textFieldFontSize.setText((String) textStyleTypeMap.get(TextStyleType.FONTSIZE));
+				isResetFontSize = true;
+			}
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			isResetFontSize = false;
+		}
+	};
 
 	public TextBasicPanel() {
 		// Do nothing
@@ -323,6 +339,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.buttonFontColorSelect.addPropertyChangeListener("m_selectionColors", this.fontColorProperty);
 		this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.backColorListener);
 		this.textFieldFontSize.addKeyListener(this.localKeyListener);
+		this.textFieldFontSize.addFocusListener(this.fontSizeFocusListener);
 		this.textFieldFontHeight.addKeyListener(this.localKeyListener);
 		this.textFieldFontWidth.addKeyListener(this.localKeyListener);
 		this.textFieldFontItalicAngl.addKeyListener(this.localKeyListener);
@@ -344,7 +361,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			if (e.getSource() == textFieldFontSize) {
+			if (e.getSource() == textFieldFontSize && !isResetFontSize) {
 				setFontSize();
 			}
 		}
@@ -369,7 +386,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		}
 		if (isTextStyleSet) {
 			this.labelStringAlignment.setText(ControlsProperties.getString("String_TextAlignment"));
-		}else {
+		} else {
 			this.labelStringAlignment.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelAlinement"));
 		}
 		this.labelFontSize.setText(ControlsProperties.getString("String_GeometryPropertyTextControl_LabelFontSize"));
@@ -525,14 +542,30 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	}
 
 	private void initTextStyleSetLayout() {
-		panelBasicset.add(this.labelStringAlignment,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
-		panelBasicset.add(this.comboBoxStringAlignment, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelRotationAngl,       new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
-		panelBasicset.add(this.spinnerRotationAngl,     new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelFontColor,          new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
-		panelBasicset.add(this.buttonFontColorSelect,   new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelBGColor,            new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
-		panelBasicset.add(this.buttonBGColorSelect,     new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelStringAlignment,
+				new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(
+				this.comboBoxStringAlignment,
+				new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
+						.setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelRotationAngl,
+				new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(
+				this.spinnerRotationAngl,
+				new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
+						.setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelFontColor,
+				new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(
+				this.buttonFontColorSelect,
+				new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
+						.setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelBGColor, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1)
+				.setInsets(0, 10, 5, 0));
+		panelBasicset.add(
+				this.buttonBGColorSelect,
+				new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
+						.setFill(GridBagConstraints.HORIZONTAL));
 	}
 
 	private void initPropertyLayout() {
@@ -696,6 +729,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 				textFieldString = decimalFormat.format(size);
 				this.textFieldFontSize.setText(textFieldString);
 			}
+			this.fontSize = textFieldString;
 			double height = Double.parseDouble(textFieldString);
 			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height / EXPERIENCE));
 		}
@@ -799,6 +833,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.buttonFontColorSelect.removePropertyChangeListener("m_selectionColors", this.fontColorProperty);
 		this.buttonBGColorSelect.removePropertyChangeListener("m_selectionColors", this.backColorListener);
 		this.textFieldFontSize.removeKeyListener(this.localKeyListener);
+		this.textFieldFontSize.removeFocusListener(this.fontSizeFocusListener);
 		this.textFieldFontHeight.removeKeyListener(this.localKeyListener);
 		this.textFieldFontWidth.removeKeyListener(this.localKeyListener);
 		this.textFieldFontItalicAngl.removeKeyListener(this.localKeyListener);
@@ -818,7 +853,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
 	private void setFontSize() {
 		// 保证字高控件的值正确
-		if (!StringUtilities.isNullOrEmpty(textFieldFontSize.getText())) {
+		if (!StringUtilities.isNullOrEmpty(textFieldFontSize.getText()) && StringUtilities.isNumber(textFieldFontSize.getText())) {
 			double size = Double.valueOf(textFieldFontSize.getText());
 			double fontHeight = size / EXPERIENCE;
 			fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
@@ -892,6 +927,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	public void setOutLineWidth(boolean showOutLineWidth) {
 		this.showOutLineWidth = showOutLineWidth;
 	}
+
 	@Override
 	public void setTextStyleSet(boolean isTextStyleSet) {
 		this.isTextStyleSet = isTextStyleSet;

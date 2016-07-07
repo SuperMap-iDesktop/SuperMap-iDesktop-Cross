@@ -6,6 +6,9 @@ import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import org.apache.http.entity.ContentProducer;
+
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -66,11 +69,14 @@ public class TextStyleDialog extends SmDialog{
 			text = ((GeoText) geometry).getText();
 			tempTextStyle = ((GeoText) geometry).getTextStyle();
 			rotation = ((GeoText) geometry).getPart(0).getRotation();
-		} 
-		
-		if (geometry instanceof GeoText3D) {
+		}else if (geometry instanceof GeoText3D) {
 			text = ((GeoText3D) geometry).getText();
 			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
+		}else{
+			// 不为文本类型时显示为空
+			((JPanel) this.getContentPane()).removeAll();
+			((JPanel) this.getContentPane()).updateUI();
+			return;
 		}
 		initMainPanel();
 		registEvents();
@@ -139,8 +145,8 @@ public class TextStyleDialog extends SmDialog{
 		editHistory=MapUtilities.getMapControl().getEditHistory();
 		editHistory.batchBegin();
 		recordset.moveFirst();
-		editHistory.add(EditType.MODIFY, recordset, true);
 		while (!recordset.isEOF()) {
+			editHistory.add(EditType.MODIFY, recordset, true);
 			recordset.edit();
 			Geometry tempGeometry = recordset.getGeometry();
 			if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
@@ -175,4 +181,13 @@ public class TextStyleDialog extends SmDialog{
 		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
 	}
+
+	public TextStyle getTempTextStyle() {
+		return tempTextStyle;
+	}
+
+	public void setTempTextStyle(TextStyle tempTextStyle) {
+		this.tempTextStyle = tempTextStyle;
+	}
+	
 }
