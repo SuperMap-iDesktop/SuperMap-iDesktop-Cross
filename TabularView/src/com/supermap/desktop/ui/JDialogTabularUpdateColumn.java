@@ -1016,7 +1016,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			parameter.setAttributeFilter(textFieldOperationEQ.getText());
 			temp = getQueryFieldNames(textFieldOperationEQ.getText());
 		}
-		parameter.setResultFields(new String[]{"2"});
+		parameter.setResultFields(temp);
 		Recordset resultSet = tabular.getRecordset().getDataset().query(parameter);
 		if (null == resultSet) {
 			// 没有查询结果不执行更新，给出提示

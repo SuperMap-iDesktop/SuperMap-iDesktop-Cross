@@ -306,6 +306,18 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			}
 		}
 	};
+	private FocusListener comboBoxFontSizeFocusListener = new FocusListener() {
+		
+		@Override
+		public void focusLost(FocusEvent e) {
+			comboBoxFontSize.setSelectedItem(textStyle.getFontHeight() * EXPERIENCE);
+		}
+		
+		@Override
+		public void focusGained(FocusEvent e) {
+
+		}
+	};
 
 	public TextBasicPanel() {
 		// Do nothing
@@ -316,6 +328,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.comboBoxFontName.addItemListener(this.fontNameItemListener);
 		this.comboBoxAlign.addItemListener(this.alignItemListener);
 		this.comboBoxFontSize.addItemListener(this.fontsizeItemListener);
+		this.comboBoxFontSize.addFocusListener(comboBoxFontSizeFocusListener);
 		this.spinnerFontHeight.addChangeListener(this.fontHeightListener);
 		this.spinnerFontWidth.addChangeListener(this.fontWidthListener);
 		this.spinnerRotationAngl.addChangeListener(this.rotationAnglListener);
@@ -792,6 +805,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.comboBoxFontName.removeItemListener(this.fontNameItemListener);
 		this.comboBoxAlign.removeItemListener(this.alignItemListener);
 		this.comboBoxFontSize.removeItemListener(this.fontsizeItemListener);
+		this.comboBoxFontSize.removeFocusListener(comboBoxFontSizeFocusListener);
 		this.spinnerFontHeight.removeChangeListener(this.fontHeightListener);
 		this.spinnerFontWidth.removeChangeListener(this.fontWidthListener);
 		this.spinnerRotationAngl.removeChangeListener(this.rotationAnglListener);

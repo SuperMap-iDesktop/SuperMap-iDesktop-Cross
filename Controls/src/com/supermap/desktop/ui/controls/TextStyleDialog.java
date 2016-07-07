@@ -175,4 +175,13 @@ public class TextStyleDialog extends SmDialog{
 		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
 	}
+
+	public TextStyle getTempTextStyle() {
+		return tempTextStyle;
+	}
+
+	public void setTempTextStyle(TextStyle tempTextStyle) {
+		this.tempTextStyle = tempTextStyle;
+	}
+	
 }

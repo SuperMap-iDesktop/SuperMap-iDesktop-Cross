@@ -125,6 +125,8 @@ public class TextStyleEditor extends AbstractEditor {
 	}
 
 	private void removeDialog() {
+		TextStyle textStyle = dialog.getTempTextStyle();
+		textStyle = null;
 		((JPanel) dialog.getContentPane()).removeAll();
 		((JPanel) dialog.getContentPane()).updateUI();
 	}
