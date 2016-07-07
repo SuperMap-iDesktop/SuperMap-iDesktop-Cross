@@ -3,6 +3,7 @@
     <h1 id="logo-wrap">
       <a href="{{ url_for_lang('') }}" id="logo">SuperMap iDesktop Cross</a>
     </h1>
+    <h2 id="Productname">SuperMap iDesktop Cross</h2>
     <nav id="main-nav">
       {{ header_menu('main-nav') }}
       <a href="http://git.oschina.net/{{ config.oschina }}" class="main-nav-link"><i class="fa fa-git"></i></a>

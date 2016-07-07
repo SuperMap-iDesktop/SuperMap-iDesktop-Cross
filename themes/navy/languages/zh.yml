@@ -24,7 +24,7 @@ sidebar:
     SuperMap Cross: 产品介绍
     SuperMapDataStructure: 数据组织结构
     Pyramid: 影像金字塔
-    DataConversion: 数据转换
+    GeoFormates: 数据转换
     DataProcess: 数据处理
     Topo: 拓扑处理
     TopoProcess: 拓扑处理规则

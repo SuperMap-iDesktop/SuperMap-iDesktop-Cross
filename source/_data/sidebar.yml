@@ -4,7 +4,7 @@ docs:
   getting_started:
     SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
     Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
-    DataConversion: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
+    GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
   DataProcess:
     Topo:
       TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html

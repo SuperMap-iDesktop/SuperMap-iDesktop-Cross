@@ -17,6 +17,8 @@ logo-size = 50px
 
 #logo-wrap
   flex: 0 logo-size
+  width: auto
+  height: logo-size
 
 #logo
   hide-text()
@@ -25,6 +27,19 @@ logo-size = 50px
   height: logo-size
   background-size: @width @height
   display: block
+  
+#Productname
+  padding-left: 20px
+  display: none
+  flex: 1 auto
+  text-align: left
+  padding-left: 10px
+  color: #FFFFFF
+  font-family: font-title
+  font-size: 20px
+  @media mq-normal
+    display: block
+  
 
 #main-nav
   display: none
@@ -35,10 +50,9 @@ logo-size = 50px
     display: block
 
 .main-nav-link
-  color: #fff
+  color: #FFFFFF
   text-decoration: none
   line-height: logo-size
-  opacity: 0.7
   transition: 0.2s
   font-family: font-title
   display: inline-block
@@ -56,16 +70,16 @@ logo-size = 50px
     display: inline-block
 
 #search-input-icon
-  color: #fff
+  color: #FFFFFF
   padding-right: 0.5em
   display: inline-block
-  opacity: 0.7
+
 
 #search-input
   background: none
   font-size: inherit
   font-family: font-title
-  color: #fff
+  color: #FFFFFF
   outline: none
   -webkit-appearance: none
 
@@ -76,17 +90,15 @@ logo-size = 50px
     display: block
 
 #lang-select-label
-  color: #fff
-  opacity: 0.7
+  color: #FFFFFF
   font-family: font-title
   line-height: logo-size
   span
     padding-left: 8px
   i
-    opacity: 0.7
+    opacity: 1
 
 #lang-select
-  opacity: 0
   position: absolute
   top: 0
   left: 0
