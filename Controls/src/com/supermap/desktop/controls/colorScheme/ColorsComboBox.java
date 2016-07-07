@@ -206,15 +206,17 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		listColors.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				int selectedIndex = listColors.getSelectedIndex();
-				popupMenuColorScheme.setVisible(false);
-				if (selectedIndex != -1 && selectedIndex == listColors.getModel().getSize() - 1) {
-					showUserDefineDialog();
-				} else if (selectedIndex != -1) {
-					currentColors = null;
-					colorSchemeSelected = listColors.getSelectedValue();
-					setSelectedItem(colorSchemeSelected.getColors());
-					fireItemStateChanged(new ItemEvent(ColorsComboBox.this, ItemEvent.ITEM_STATE_CHANGED, listColors.getSelectedValue(), ItemEvent.SELECTED));
+				if (!isReAddElements) {
+					int selectedIndex = listColors.getSelectedIndex();
+					popupMenuColorScheme.setVisible(false);
+					if (selectedIndex != -1 && selectedIndex == listColors.getModel().getSize() - 1) {
+						showUserDefineDialog();
+					} else if (selectedIndex != -1) {
+						currentColors = null;
+						colorSchemeSelected = listColors.getSelectedValue();
+						setSelectedItem(colorSchemeSelected.getColors());
+						fireItemStateChanged(new ItemEvent(ColorsComboBox.this, ItemEvent.ITEM_STATE_CHANGED, listColors.getSelectedValue(), ItemEvent.SELECTED));
+					}
 				}
 			}
 		});
@@ -243,8 +245,8 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 			private void textFieldSearchChanged() {
 				reAddElements();
-				popupMenuColorScheme.setVisible(true);
-				textFieldSearch.requestFocus();
+//				popupMenuColorScheme.setVisible(true);
+//				textFieldSearch.requestFocus();
 			}
 
 		});
@@ -277,6 +279,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		}
 		((DefaultListModel) listColors.getModel()).addElement(null);
 		isReAddElements = false;
+		listColors.repaint();
 	}
 
 	private ColorSchemeTreeNode getDefaultNode() {

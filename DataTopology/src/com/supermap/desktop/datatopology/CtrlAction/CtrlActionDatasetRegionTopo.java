@@ -1,16 +1,16 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import javax.swing.JFrame;
-
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 
+import javax.swing.*;
+
 /**
- * @author xie
  * 拓扑构面
+ * @author xie
  */
 public class CtrlActionDatasetRegionTopo extends CtrlAction {
 
