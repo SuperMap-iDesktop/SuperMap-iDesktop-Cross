@@ -504,7 +504,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jTextAreaSQLSentence.requestFocusInWindow();
 
 		String opertorString = botton.getText();
-		opertorString = " " + opertorString;
+//		opertorString = " " + opertorString;
 		setSQLSentenceText(this.jTextAreaSQLSentence, opertorString, "");
 	}
 
@@ -518,7 +518,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 		if (comboBox.getSelectedIndex() != 0) {
 			String functionString = comboBox.getSelectedItem().toString();
-			functionString = " " + functionString;
+//			functionString = " " + functionString;
 			setSQLSentenceText(this.jTextAreaSQLSentence, functionString, "fuction");
 		}
 	}
@@ -643,9 +643,9 @@ public class SQLExpressionDialog extends SmDialog {
 
 				if (jTableFieldInfo.getCellRect(row, column, false).contains(point)) {
 					String text = jTableFieldInfo.getValueAt(row, 1).toString();
-					if (jTextAreaSQLSentence.getSelectionStart() != 0) {
-						text = " " + text;
-					}
+//					if (jTextAreaSQLSentence.getSelectionStart() != 0) {
+//						text = " " + text;
+//					}
 
 					setSQLSentenceText(jTextAreaSQLSentence, text, "");
 				}

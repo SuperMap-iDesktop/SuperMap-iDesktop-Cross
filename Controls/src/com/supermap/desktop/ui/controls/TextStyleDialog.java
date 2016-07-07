@@ -6,6 +6,9 @@ import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import org.apache.http.entity.ContentProducer;
+
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -66,11 +69,14 @@ public class TextStyleDialog extends SmDialog{
 			text = ((GeoText) geometry).getText();
 			tempTextStyle = ((GeoText) geometry).getTextStyle();
 			rotation = ((GeoText) geometry).getPart(0).getRotation();
-		} 
-		
-		if (geometry instanceof GeoText3D) {
+		}else if (geometry instanceof GeoText3D) {
 			text = ((GeoText3D) geometry).getText();
 			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
+		}else{
+			// 不为文本类型时显示为空
+			((JPanel) this.getContentPane()).removeAll();
+			((JPanel) this.getContentPane()).updateUI();
+			return;
 		}
 		initMainPanel();
 		registEvents();

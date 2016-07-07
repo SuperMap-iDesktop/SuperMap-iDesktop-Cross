@@ -1041,7 +1041,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				}
 				updateRecordset(temp, resultSet, selectRows);
 				return;
-			} else {
+			} else{
 				// 更新选中列中选中的记录
 				if (tabular.getSelectedRows().length > 0) {
 					updateRecordset(temp, resultSet, tabular.getSelectedRows());
