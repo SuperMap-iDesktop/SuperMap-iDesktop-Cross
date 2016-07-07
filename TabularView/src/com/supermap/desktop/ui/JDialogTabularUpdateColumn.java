@@ -399,9 +399,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if (!StringUtilities.isNullOrEmptyString(defualtSelectField) && hasItem) {
 			// 设置默认选中行
 			this.comboBoxUpdateField.setSelectedItem(defualtSelectField);
+			this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(this.comboBoxUpdateField.getSelectedIndex()).getType()));
 		}
 		this.labelFieldType.setPreferredSize(new Dimension(60, 23));
-		this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(0).getType()));
 	}
 
 	private void initComboBoxSourceOfField() {
