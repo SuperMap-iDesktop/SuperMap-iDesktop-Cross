@@ -65,6 +65,8 @@ public class BatchUploadFile extends Thread {
 
 				// Step2：用要被写入的文件数据，提交另一个HTTP PUT请求到上边返回的Header中的location的URL。
 			}
+		}else{
+			// 不是首次创建
 		}
 
 	}
