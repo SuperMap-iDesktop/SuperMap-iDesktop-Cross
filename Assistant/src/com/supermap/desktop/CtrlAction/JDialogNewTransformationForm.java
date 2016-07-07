@@ -1,5 +1,8 @@
 package com.supermap.desktop.CtrlAction;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.assistant.AssistantProperties;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -10,6 +13,7 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -18,6 +22,9 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * 新建配准
@@ -28,13 +35,13 @@ public class JDialogNewTransformationForm extends SmDialog {
 
 	private JPanel panelTransformationLayer = new JPanel();
 	private JLabel labelTransformationDatasource = new JLabel();
-	private DatasourceComboBox comboBoxTransformationDatasource = new DatasourceComboBox();
+	private DatasourceComboBox comboBoxTransformationDatasource;
 	private JLabel labelTransformationDataset = new JLabel();
 	private DatasetComboBox comboBoxTransformationDataset = new DatasetComboBox();
 
 	private JPanel panelReferenceLayer = new JPanel();
 	private JLabel labelReferenceDatasource = new JLabel();
-	private DatasourceComboBox comboBoxReferenceDatasource = new DatasourceComboBox();
+	private DatasourceComboBox comboBoxReferenceDatasource;
 	private JLabel labelReferenceDataset = new JLabel();
 	private DatasetComboBox comboBoxReferenceDataset = new DatasetComboBox();
 
@@ -42,7 +49,7 @@ public class JDialogNewTransformationForm extends SmDialog {
 	private JPanel panelResultDataset = new JPanel();
 	private JCheckBox checkBoxSaveAsDataset = new JCheckBox();
 	private JLabel labelResultDatasource = new JLabel();
-	private DatasourceComboBox comboBoxResultDatasource = new DatasourceComboBox();
+	private DatasourceComboBox comboBoxResultDatasource;
 	private JLabel labelResultDataset = new JLabel();
 	private SmTextFieldLegit textFieldResultDatasetName = new SmTextFieldLegit();
 
@@ -64,6 +71,30 @@ public class JDialogNewTransformationForm extends SmDialog {
 	}
 
 	private void initComponents() {
+		textFieldResultDatasetName.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				return comboBoxResultDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textFieldValue).equals(textFieldValue);
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
+		ArrayList<Datasource> datasourcesList = new ArrayList<>();
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			Datasource datasource = datasources.get(i);
+			if (datasource.getDatasets().getCount() > 0 && !datasource.isReadOnly()) {
+				datasourcesList.add(datasource);
+			}
+		}
+		Datasource[] datasourcesArray = datasourcesList.toArray(new Datasource[datasourcesList.size()]);
+		comboBoxTransformationDatasource = new DatasourceComboBox(datasourcesArray);
+		comboBoxReferenceDatasource = new DatasourceComboBox(datasourcesArray);
+		comboBoxResultDatasource = new DatasourceComboBox(datasourcesArray);
+
 		panelResultDatasetMain = new CompTitledPane(checkBoxSaveAsDataset, panelResultDataset);
 		panelTransformationLayer.setBorder(new TitledBorder(AssistantProperties.getString("String_Transfernation_TargetLayer")));
 		panelReferenceLayer.setBorder(new TitledBorder(AssistantProperties.getString("String_Transfernation_ReferLayer")));
@@ -115,6 +146,42 @@ public class JDialogNewTransformationForm extends SmDialog {
 	}
 
 	private void initListeners() {
+		comboBoxTransformationDatasource.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxTransformationDatasource.getSelectedItem() != null) {
+					comboBoxTransformationDataset.setDatasets(comboBoxTransformationDatasource.getSelectedDatasource().getDatasets());
+				}
+			}
+		});
+		comboBoxReferenceDatasource.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxReferenceDatasource.getSelectedItem() != null) {
+					comboBoxReferenceDataset.setDatasets(comboBoxReferenceDatasource.getSelectedDatasource().getDatasets());
+					comboBoxReferenceDataset.addItemAt(0, null);
+					comboBoxReferenceDataset.setSelectedIndex(0);
+				}
+			}
+		});
+
+		comboBoxResultDatasource.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxResultDatasource.getSelectedItem() != null) {
+					textFieldResultDatasetName.setText(getUniqueDatasetName(textFieldResultDatasetName.getText()));
+				}
+			}
+		});
+
+		smButtonOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialogResult = DialogResult.OK;
+				dispose();
+			}
+		});
+
 		smButtonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -122,15 +189,55 @@ public class JDialogNewTransformationForm extends SmDialog {
 				dispose();
 			}
 		});
+
+		checkBoxSaveAsDataset.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				boolean selected = checkBoxSaveAsDataset.isSelected();
+				comboBoxResultDatasource.setEnabled(selected);
+				textFieldResultDatasetName.setEditable(selected);
+			}
+		});
 	}
 
 	private void initComponentState() {
-		comboBoxTransformationDataset.setDatasets(Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets());
-		comboBoxReferenceDataset.setDatasets(Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets());
+		comboBoxReferenceDatasource.setSelectedIndex(-1);
+		if (comboBoxReferenceDatasource.getItemCount() > 0) {
+			comboBoxReferenceDatasource.setSelectedIndex(0);
+		}
+		checkBoxSaveAsDataset.setSelected(true);
+		textFieldResultDatasetName.setText(getUniqueDatasetName("Result_adjust"));
+	}
+
+	private String getUniqueDatasetName(String datasetName) {
+		Datasource selectedDatasource = comboBoxResultDatasource.getSelectedDatasource();
+		return selectedDatasource.getDatasets().getAvailableDatasetName(datasetName);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
+	}
+
+	public Dataset getTransformationDataset() {
+		return comboBoxTransformationDataset.getSelectedDataset();
+	}
+
+	public Dataset getReferenceDataset() {
+		return comboBoxReferenceDataset.getSelectedDataset();
+	}
+
+	public String getResultDatasetName() {
+		if (checkBoxSaveAsDataset.isSelected()) {
+			return textFieldResultDatasetName.getText();
+		}
+		return null;
+	}
+
+	public Datasource getResultDatasource() {
+		if (checkBoxSaveAsDataset.isSelected()) {
+			return comboBoxResultDatasource.getSelectedDatasource();
+		}
+		return null;
 	}
 }

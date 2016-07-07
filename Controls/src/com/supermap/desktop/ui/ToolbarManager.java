@@ -93,7 +93,7 @@ public class ToolbarManager implements IToolbarManager {
 	@Override
 	public int getChildToolbarCount(WindowType windowType) {
 		ArrayList<IToolbar> childToolbarsList = this.childToolbars.get(windowType);
-		return childToolbarsList.size();
+		return childToolbarsList == null ? 0 : childToolbarsList.size();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.supermap.desktop;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -38,7 +40,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public WindowType getWindowType() {
-		return null;
+		return WindowType.TRANSFORMATION;
 	}
 
 	@Override
@@ -98,6 +100,26 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void clean() {
+
+	}
+
+	@Override
+	public void setTransformationDataset(Dataset transformationDataset) {
+
+	}
+
+	@Override
+	public void addReferenceDataset(Dataset referenceDataset) {
+
+	}
+
+	@Override
+	public void setResultDataSource(Datasource resultDatasource) {
+
+	}
+
+	@Override
+	public void setResultDatasetName(String resultDatasetName) {
 
 	}
 }
