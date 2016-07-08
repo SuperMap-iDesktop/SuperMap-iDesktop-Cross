@@ -301,4 +301,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 			}
 		}
 	}
+
+	public void addItemAt(int index, Object item) {
+		((DefaultComboBoxModel<Object>) this.getModel()).insertElementAt(item, index);
+	}
 }
