@@ -384,7 +384,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				this.comboBoxUpdateField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
 				fieldInfoMap.put(count, tabular.getRecordset().getFieldInfos().get(i));
 				if (tabular.getjTableTabular().getSelectedColumn() >= 0) {
-					defualtSelectField = tabular.getRecordset().getFieldInfos().get(tabular.getjTableTabular().getSelectedColumn()).getCaption();
+					defualtSelectField = tabular.getRecordset().getFieldInfos().get(tabular.getjTableTabular().getSelectedColumn()).getName();
 				}
 				count++;
 			}
@@ -392,7 +392,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		boolean hasItem = false;
 		Iterator<FieldInfo> values = fieldInfoMap.values().iterator();
 		while (values.hasNext()) {
-			if (values.next().getCaption().equals(defualtSelectField)) {
+			if (values.next().getName().equals(defualtSelectField)) {
 				hasItem = true;
 			}
 		}
@@ -400,6 +400,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			// 设置默认选中行
 			this.comboBoxUpdateField.setSelectedItem(defualtSelectField);
 			this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(this.comboBoxUpdateField.getSelectedIndex()).getType()));
+		}else {
+			this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(0).getType()));
 		}
 		this.labelFieldType.setPreferredSize(new Dimension(60, 23));
 	}
@@ -586,7 +588,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void setSingleFieldInfo() {
 		// 单字段运算时的界面设置
 		addNeededComponents();
-		checkBoxInversion.setEnabled(false);
+		checkBoxInversion.setEnabled(true);
 		labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelField"));
 		comboBoxOperationField.setEnabled(true);
 		labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
