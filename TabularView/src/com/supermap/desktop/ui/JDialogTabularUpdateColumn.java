@@ -1030,8 +1030,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		}
 		parameter.setResultFields(temp);
 		Recordset resultSet = tabular.getRecordset().getDataset().query(parameter);
-		IFormTabular newTabular = TabularUtilities.openDatasetVectorFormTabular(tabular.getRecordset().getDataset());
-		newTabular.setRecordset(resultSet);
 		if (null == resultSet || null == temp) {
 			// 没有查询结果不执行更新，给出提示
 			Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_UpdateColumnFailed"));
