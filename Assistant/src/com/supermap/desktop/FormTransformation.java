@@ -5,7 +5,9 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.transformation.FormTransformationTableModel;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.ui.MapControl;
 
@@ -13,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +32,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private JTable tablePoints;
 	private JSplitPane splitPaneMapControls;
 	private JSplitPane splitPaneMain;
+	private FormTransformationTableModel formTransformationTableModel;
+	private int rightHeight;
 
 	public FormTransformation() {
 		this(null);
@@ -40,13 +46,15 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	public FormTransformation(String name, Icon icon, Component component) {
+
 		super(name, icon, component);
 		mapControlTransformation = new MapControl();
 		mapControlTransformation.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		mapControlReference = new MapControl();
 		mapControlReference.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		referenceDatasetList = new ArrayList<>();
-		tablePoints = new JTable();
+		formTransformationTableModel = new FormTransformationTableModel();
+		tablePoints = new JTable(formTransformationTableModel);
 		initLayout();
 		initListener();
 	}
@@ -73,9 +81,32 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			@Override
 			public void componentResized(ComponentEvent e) {
 				splitPaneMain.setDividerLocation(0.8);
+				splitPaneMain.addComponentListener(new ComponentAdapter() {
+
+					@Override
+					public void componentResized(ComponentEvent e) {
+						splitPaneMain.setDividerLocation(splitPaneMain.getHeight() - rightHeight);
+					}
+				});
+				rightHeight = splitPaneMain.getHeight() - splitPaneMain.getDividerLocation();
 				splitPaneMain.removeComponentListener(this);
 			}
 		});
+
+
+		splitPaneMain.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+				for (StackTraceElement stackTraceElement : stackTrace) {
+					// 拖拽改变时没有发送事件，暂时这样绕一下吧
+					if (stackTraceElement.getClassName().equals("javax.swing.plaf.basic.BasicSplitPaneDivider") && stackTraceElement.getMethodName().equals("finishDraggingTo")) {
+						rightHeight = splitPaneMain.getHeight() - (Integer) evt.getNewValue();
+					}
+				}
+			}
+		});
+
 		splitPaneMapControls.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -137,7 +168,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void actived() {
-
+		UICommonToolkit.getLayersManager().getLayersTree().setMap(null);
 	}
 
 	@Override
