@@ -64,15 +64,26 @@ public class TextStyleDialog extends SmDialog{
 		}
 		this.recordset = recordset;
 		this.recordset.moveFirst();
-		this.geometry = this.recordset.getGeometry();
-		if (geometry instanceof GeoText) {
-			text = ((GeoText) geometry).getText();
-			tempTextStyle = ((GeoText) geometry).getTextStyle();
-			rotation = ((GeoText) geometry).getPart(0).getRotation();
-		}else if (geometry instanceof GeoText3D) {
-			text = ((GeoText3D) geometry).getText();
-			tempTextStyle = ((GeoText3D) geometry).getTextStyle();
-		}else{
+		boolean hasGeoText =false;
+		while (!recordset.isEOF()) {
+			Geometry tempGeoMetry = recordset.getGeometry();
+			if (tempGeoMetry instanceof GeoText||tempGeoMetry instanceof GeoText3D) {
+				if (tempGeoMetry instanceof GeoText) {
+					text = ((GeoText) tempGeoMetry).getText();
+					tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
+					rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
+					this.geometry = tempGeoMetry;
+				}else if (tempGeoMetry instanceof GeoText3D) {
+					text = ((GeoText3D) tempGeoMetry).getText();
+					tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
+					this.geometry = tempGeoMetry;
+				}
+				hasGeoText = true;
+				break;
+			}
+			recordset.moveNext();
+		}
+		if(!hasGeoText){
 			// 不为文本类型时显示为空
 			((JPanel) this.getContentPane()).removeAll();
 			((JPanel) this.getContentPane()).updateUI();
