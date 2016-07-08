@@ -5,6 +5,7 @@
     </h1>
     <h2 id="Productname">SuperMap iDesktop Cross</h2>
     <nav id="main-nav">
+      <a class="main-nav-link" href="/SuperMap-iDesktop-Cross/">首页</a>
       {{ header_menu('main-nav') }}
       <a href="http://git.oschina.net/{{ config.oschina }}" class="main-nav-link"><i class="fa fa-git"></i></a>
       <div id="search-input-wrap">

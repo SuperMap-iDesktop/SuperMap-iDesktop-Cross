@@ -17,16 +17,18 @@ docs:
       SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
       SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
   Objects:
-    AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
-    Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
-    DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
-    DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
-    Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
-    PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
-    LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
-    VertexEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/VertexEdit.html
-    ObjectsConversion: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/ObjectsConversion.html
-    OtherEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/OtherEdit.html
+    CreateGeometry:
+      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
+      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
+      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
+      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
+      Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
+    EdittingGeometry:
+      PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
+      LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
+      VertexEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/VertexEdit.html
+      ObjectsConversion: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/ObjectsConversion.html
+      OtherEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/OtherEdit.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html

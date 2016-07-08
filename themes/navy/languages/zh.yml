@@ -37,11 +37,13 @@ sidebar:
     SQLQueryDiaFuction: SQL函数运算符
     SQLSupporttedType: SQL查询引擎支持
     Objects: 对象操作
+    CreateGeometry: 对象绘制
     AboutCreateGeometry: 对象绘制概述
     Point: 绘制点
     DrawCurve: 绘制线
     DrawQuadRangle: 绘制面
     Text: 绘制文本
+    EdittingGeometry: 对象编辑
     PolygonEdit: 面对象编辑
     LineEdit: 线对象编辑
     VertexEdit: 节点编辑
