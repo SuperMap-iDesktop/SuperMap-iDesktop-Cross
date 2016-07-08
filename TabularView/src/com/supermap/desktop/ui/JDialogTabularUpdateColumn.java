@@ -392,7 +392,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		boolean hasItem = false;
 		Iterator<FieldInfo> values = fieldInfoMap.values().iterator();
 		while (values.hasNext()) {
-			if (values.next().getCaption().equals(defualtSelectField)) {
+			if (values.next().getName().equals(defualtSelectField)) {
 				hasItem = true;
 			}
 		}
