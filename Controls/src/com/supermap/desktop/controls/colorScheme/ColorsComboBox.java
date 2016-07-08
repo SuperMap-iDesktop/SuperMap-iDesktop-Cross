@@ -245,8 +245,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 			private void textFieldSearchChanged() {
 				reAddElements();
-//				popupMenuColorScheme.setVisible(true);
-//				textFieldSearch.requestFocus();
+				// FIXME: 2016/7/8 bug会导致无法输入中文
+				popupMenuColorScheme.setVisible(true);
+				textFieldSearch.requestFocus();
 			}
 
 		});
@@ -279,7 +280,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		}
 		((DefaultListModel) listColors.getModel()).addElement(null);
 		isReAddElements = false;
-		listColors.repaint();
+		listColors.getParent().validate();
 	}
 
 	private ColorSchemeTreeNode getDefaultNode() {
@@ -366,6 +367,8 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			reAddElements();
 			listColors.setSelectedIndex(listColors.getModel().getSize() - 2);
 			isUserDefineFireChange = false;
+		} else {
+			listColors.setSelectedIndex(-1);
 		}
 	}
 

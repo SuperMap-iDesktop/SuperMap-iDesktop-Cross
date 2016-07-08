@@ -28,6 +28,8 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 			iFormTransformation.addReferenceDataset(jDialogNewTransformationForm.getReferenceDataset());
 			iFormTransformation.setResultDataSource(jDialogNewTransformationForm.getResultDatasource());
 			iFormTransformation.setResultDatasetName(jDialogNewTransformationForm.getResultDatasetName());
+			// FIXME: 2016/7/8 临时使用这个方法移除layersTree
+			iFormTransformation.actived();
 		}
 	}
 

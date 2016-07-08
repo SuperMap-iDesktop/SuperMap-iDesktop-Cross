@@ -26,7 +26,6 @@ import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -209,6 +208,13 @@ public class FormManager implements IFormManager {
 				if (oldActiveForm != null) {
 					oldActiveForm.deactived();
 				}
+
+				// 选中子窗体
+				int index = this.childWindowsContainer.getChildWindowIndex((DockingWindow) form);
+				if (index >= 0) {
+					this.childWindowsContainer.setSelectedTab(index);
+				}
+
 				if (this.activeForm != null) {
 					this.activeForm.actived();
 				}
@@ -216,11 +222,7 @@ public class FormManager implements IFormManager {
 				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActiveForm, form));
 			}
 
-			// 选中子窗体
-			int index = this.childWindowsContainer.getChildWindowIndex((DockingWindow) form);
-			if (index >= 0) {
-				this.childWindowsContainer.setSelectedTab(index);
-			}
+
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

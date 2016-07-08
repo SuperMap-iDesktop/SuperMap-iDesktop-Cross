@@ -201,6 +201,11 @@ public class JDialogNewTransformationForm extends SmDialog {
 	}
 
 	private void initComponentState() {
+		comboBoxTransformationDatasource.setSelectedIndex(-1);
+		if (comboBoxTransformationDatasource.getItemCount() > 0) {
+			comboBoxTransformationDatasource.setSelectedIndex(0);
+		}
+
 		comboBoxReferenceDatasource.setSelectedIndex(-1);
 		if (comboBoxReferenceDatasource.getItemCount() > 0) {
 			comboBoxReferenceDatasource.setSelectedIndex(0);
