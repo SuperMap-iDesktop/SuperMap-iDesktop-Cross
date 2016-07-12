@@ -333,6 +333,7 @@ public class JDialogGeometryConvert extends SmDialog {
 
 		// 如果目标数据集是 null，说明数据源下没有合适数据集，那就置为新建
 		this.isNewDataset = this.desDataset == null;
+		this.checkBoxNewDataset.setSelected(this.isNewDataset);
 	}
 
 	private void comboBoxDesDatasourceSelectedChange() {
