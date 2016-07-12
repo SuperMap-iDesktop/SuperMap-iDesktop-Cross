@@ -364,8 +364,8 @@ public class EditEnvironment {
 			// 选中对象数目
 			resetGeometryStatus();
 
-			Layers layers = this.formMap.getMapControl().getMap().getLayers();
-			for (int i = 0; i < layers.getCount(); i++) {
+			List<Layer> layers = MapUtilities.getLayers(this.formMap.getMapControl().getMap());
+			for (int i = 0; i < layers.size(); i++) {
 				Layer layer = layers.get(i);
 
 				if (layer.getDataset() == null) {
