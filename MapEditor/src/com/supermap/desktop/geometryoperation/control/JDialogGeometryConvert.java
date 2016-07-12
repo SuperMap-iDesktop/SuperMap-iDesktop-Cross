@@ -256,6 +256,7 @@ public class JDialogGeometryConvert extends SmDialog {
 						.addComponent(this.checkBoxNewDataset)
 						.addComponent(this.textFieldNewDataset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(this.checkBoxRemoveSrc)
+				.addGap(10, 10, Short.MAX_VALUE)
 				.addGroup(gl.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));
