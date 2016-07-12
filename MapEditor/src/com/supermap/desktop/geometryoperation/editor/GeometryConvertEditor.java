@@ -41,7 +41,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
-			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType());
+			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType(), canRemoveSrc(environment));
 
 			if (dialog.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
@@ -71,6 +71,19 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			environment.activateEditor(NullEditor.INSTANCE);
 			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
+	}
+
+	protected boolean canRemoveSrc(EditEnvironment environment) {
+		boolean canRemoveSrc = false;
+
+		Layer[] editableLayers = environment.getMapControl().getEditableLayers();
+		for (int i = 0; i < editableLayers.length; i++) {
+			canRemoveSrc = editableLayers[i].getSelection().getCount() > 0;
+			if (canRemoveSrc) {
+				break;
+			}
+		}
+		return canRemoveSrc;
 	}
 
 	private DatasetVector createNewDataset(EditEnvironment environment, Datasource datasource, String name) {

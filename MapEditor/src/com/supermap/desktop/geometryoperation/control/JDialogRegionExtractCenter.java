@@ -52,6 +52,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	private double min = 0d;
 	private Datasource desDatasource;
 	private String newDatasetName;
+	private boolean canRemoveSrc = true;
 	private boolean isRemoveSrc;
 
 	private ItemListener itemListener = new ItemListener() {
@@ -172,7 +173,8 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		}
 	};
 
-	public JDialogRegionExtractCenter() {
+	public JDialogRegionExtractCenter(boolean canRemoveSrc) {
+		this.canRemoveSrc = canRemoveSrc;
 		initializeDatas();
 		initializeComponents();
 		initializeComponentsValue();
@@ -188,7 +190,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	}
 
 	public boolean isRemoveSrc() {
-		return this.isRemoveSrc;
+		return this.canRemoveSrc ? this.isRemoveSrc : false;
 	}
 
 	public double getMax() {
@@ -255,6 +257,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.comboBoxDatasource = new DatasourceComboBox();
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
+		this.checkBoxRemoveSrc.setEnabled(this.canRemoveSrc);
 		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
 
@@ -396,7 +399,7 @@ public class JDialogRegionExtractCenter extends SmDialog {
 	}
 
 	private void checkBoxRemoveSrcCheckedChange() {
-		this.isRemoveSrc = this.checkBoxRemoveSrc.isSelected();
+		this.isRemoveSrc = this.canRemoveSrc ? this.checkBoxRemoveSrc.isSelected() : false;
 	}
 
 	private void setComponentsEnabled() {

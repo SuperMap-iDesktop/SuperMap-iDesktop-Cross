@@ -53,6 +53,7 @@ public class JDialogGeometryConvert extends SmDialog {
 	private DatasetVector desDataset;
 	private String newDatasetName;
 	private boolean isNewDataset;
+	private boolean canRemoveSrc = true;
 	private boolean isRemoveSrc;
 
 	private ItemListener itemListener = new ItemListener() {
@@ -106,8 +107,9 @@ public class JDialogGeometryConvert extends SmDialog {
 		}
 	};
 
-	public JDialogGeometryConvert(String title, DatasetType datasetType) {
+	public JDialogGeometryConvert(String title, DatasetType datasetType, boolean canRemoveSrc) {
 		this.datasetType = datasetType;
+		this.canRemoveSrc = canRemoveSrc;
 		initializeDatas();
 		initializeComponents(title);
 		initializeComponentsValue();
@@ -131,7 +133,7 @@ public class JDialogGeometryConvert extends SmDialog {
 	}
 
 	public boolean isRemoveSrc() {
-		return this.isRemoveSrc;
+		return this.canRemoveSrc ? this.isRemoveSrc : false;
 	}
 
 	private void initializeDatas() {
@@ -203,6 +205,7 @@ public class JDialogGeometryConvert extends SmDialog {
 		this.checkBoxNewDataset = new JCheckBox(ControlsProperties.getString("String_Label_NewDataset"));
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
+		this.checkBoxRemoveSrc.setEnabled(this.canRemoveSrc);
 		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
 
@@ -375,7 +378,7 @@ public class JDialogGeometryConvert extends SmDialog {
 	}
 
 	private void checkBoxRemoveSrcCheckedChange() {
-		this.isRemoveSrc = this.checkBoxRemoveSrc.isSelected();
+		this.isRemoveSrc = this.canRemoveSrc ? this.checkBoxRemoveSrc.isSelected() : false;
 	}
 
 	private void setComponentsEnabled() {
