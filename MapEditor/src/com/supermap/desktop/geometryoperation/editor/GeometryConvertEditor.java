@@ -159,7 +159,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 								geometry = DGeometryFactory.create(recordset.getGeometry());
 
 								// 获取当前对象自身的属性
-								Map<String, Object> currentValues = RecordsetUtilities.getFieldValues(recordset);
+								Map<String, Object> currentValues = RecordsetUtilities.getFieldValuesIgnoreCase(recordset);
 
 								// 拿目标数据集的属性结构来和当前对象属性进行合并处理，相同的字段赋值，目标数据集没有的字段不要
 								Map<String, Object> desValues = mergePropertyData(desDataset, recordset.getFieldInfos(), currentValues);
@@ -228,11 +228,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 		for (int i = 0; i < desFieldInfos.getCount(); i++) {
 			FieldInfo desFieldInfo = desFieldInfos.get(i);
 
-			if (!desFieldInfo.isSystemField() && properties.containsKey(desFieldInfo.getName())) {
+			if (!desFieldInfo.isSystemField() && properties.containsKey(desFieldInfo.getName().toLowerCase())) {
 				FieldInfo srcFieldInfo = srcFieldInfos.get(desFieldInfo.getName());
 
 				if (desFieldInfo.getType() == srcFieldInfo.getType()) {
-					// 如果要源字段和目标字段类型一致，直接做保存
+					// 如果要源字段和目标字段类型一致，直接保存
 					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()));
 				} else if (desFieldInfo.getType() == FieldType.WTEXT || desFieldInfo.getType() == FieldType.TEXT) {
 
