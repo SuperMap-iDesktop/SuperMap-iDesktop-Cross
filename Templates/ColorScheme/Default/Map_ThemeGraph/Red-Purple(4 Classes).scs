@@ -1,43 +1,44 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Red-Purple(4 Classes)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>4</KeyColorCount>
-    <IntervalColorCount>0</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>254</Red>
-      <Green>236</Green>
-      <Blue>226</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>252</Red>
-      <Green>181</Green>
-      <Blue>186</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>247</Red>
-      <Green>103</Green>
-      <Blue>161</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>174</Red>
-      <Green>0</Green>
-      <Blue>126</Blue>
-    </KeyColor4>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Red-Purple(4 Classes)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>4</KeyColorCount>
+<IntervalColorCount>0</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>254</Red>
+<Green>236</Green>
+<Blue>226</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>252</Red>
+<Green>181</Green>
+<Blue>186</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>247</Red>
+<Green>103</Green>
+<Blue>161</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>174</Red>
+<Green>0</Green>
+<Blue>126</Blue>
+</KeyColor4>
+</DataBlock>
 </ColorScheme>

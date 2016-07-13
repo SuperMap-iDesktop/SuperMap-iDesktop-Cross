@@ -133,4 +133,14 @@ public class FileUtilities {
 		}
 		return true;
 	}
+
+	public static boolean isLegalFolderName(String folderName) {
+		String folder = System.getProperty("java.io.tmpdir");
+		String filePath = folder + folderName + File.separator;
+		if (new File(filePath).exists() || new File(filePath).mkdirs()) {
+			new File(filePath).delete();
+			return true;
+		}
+		return false;
+	}
 }

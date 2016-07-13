@@ -49,6 +49,8 @@ public class ColorScheme implements ICloneable {
 
 	private IntervalColorBuildMethod intervalColorBuildMethod;
 
+	private boolean isFavorite;
+
 	/**
 	 * 这个变量好像没用到
 	 */
@@ -128,6 +130,10 @@ public class ColorScheme implements ICloneable {
 	public List<Color> getColorsList() {
 		return colors;
 	}
+
+//	public void setColorsList(List<Color> colorsList) {
+//		this.colors = colorsList;
+//	}
 
 	public Colors getColors() {
 		Colors colors = null;
@@ -269,6 +275,14 @@ public class ColorScheme implements ICloneable {
 		intervalColorCount = colorCount;
 	}
 
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		isFavorite = favorite;
+	}
+
 	/**
 	 * 获取颜色方案系统类型
 	 *
@@ -334,7 +348,7 @@ public class ColorScheme implements ICloneable {
 	}
 
 	public void saveAsDirectories(String directories) {
-		String defaultFilePath = getDefaultFilePath(directories);
+		String defaultFilePath = getUniqueFilePath(directories);
 		saveAsFilePath(defaultFilePath);
 	}
 
@@ -355,20 +369,47 @@ public class ColorScheme implements ICloneable {
 		}
 	}
 
+	/**
+	 * 获得路径
+	 *
+	 * @param customDirectory
+	 * @return
+	 */
 	private String getDefaultFilePath(String customDirectory) {
+		if (StringUtilities.isNullOrEmpty(this.name)) {
+			return getUniqueFilePath(customDirectory);
+		}
+
 		if (!customDirectory.endsWith(File.separator) && !customDirectory.endsWith("//")) {
 			customDirectory = customDirectory + File.separator;
 		}
 		if (!new File(customDirectory).exists()) {
 			new File(customDirectory).mkdirs();
 		}
-//		boolean isExist = true;
-//		int i = -1;
-//		while (isExist) {
-//			i++;
-//			isExist = new File(customDirectory + getFileName(i, this.name)).exists();
-//		}
 		return customDirectory + getFileName(0, this.name);
+	}
+
+	/**
+	 * 获得唯一路径
+	 *
+	 * @param customDirectory
+	 * @return
+	 */
+	private String getUniqueFilePath(String customDirectory) {
+		if (!customDirectory.endsWith(File.separator) && !customDirectory.endsWith("//")) {
+			customDirectory = customDirectory + File.separator;
+		}
+		if (!new File(customDirectory).exists()) {
+			new File(customDirectory).mkdirs();
+		}
+		boolean isExist = true;
+		int i = -1;
+		String name = StringUtilities.isNullOrEmpty(this.name) ? "NewColorScheme" : this.name;
+		while (isExist) {
+			i++;
+			isExist = new File(customDirectory + getFileName(i, name)).exists();
+		}
+		return customDirectory + getFileName(i, name);
 	}
 
 	private String getFileName(int i, String fileName) {
@@ -423,6 +464,10 @@ public class ColorScheme implements ICloneable {
 			Element description = document.createElement("Description");
 			description.appendChild(document.createTextNode(this.description));
 			fileHeader.appendChild(description);
+			// Favorites
+			Element favorites = document.createElement("Favorites");
+			favorites.appendChild(document.createTextNode(String.valueOf(this.isFavorite)));
+			fileHeader.appendChild(favorites);
 			// ColorSystem
 			Element colorSystem = document.createElement("ColorSystem");
 			colorSystem.appendChild(document.createTextNode(String.valueOf(this.colorSystem.getValue())));
@@ -575,6 +620,9 @@ public class ColorScheme implements ICloneable {
 						// 描述，Description节点
 						this.setDescription(value);
 						break;
+					case ColorSchemeTags.FAVORITES:
+						this.setFavorite(Boolean.valueOf(value));
+						break;
 					case ColorSchemeTags.COLORSYSTEM:
 						// 颜色系统，ColorSystem节点
 						int colorSystemValue = Integer.parseInt(value);
@@ -725,7 +773,7 @@ public class ColorScheme implements ICloneable {
 		public static final String NAME = "Name";
 		public static final String AUTHOR = "Author";
 		public static final String DESCRIPTION = "Description";
-
+		public static final String FAVORITES = "Favorites";
 		public static final String COLORSYSTEM = "ColorSystem";
 		public static final String INTERVAL_COLOR_BUILD_METHOD = "IntervalColorBuildMethod";
 

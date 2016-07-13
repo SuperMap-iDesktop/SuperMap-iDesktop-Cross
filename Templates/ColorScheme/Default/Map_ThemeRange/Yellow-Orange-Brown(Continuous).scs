@@ -1,79 +1,79 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Yellow-Orange-Brown(Continuous)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>9</KeyColorCount>
-    <IntervalColorCount>32</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>255</Red>
-      <Green>255</Green>
-      <Blue>229</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>255</Red>
-      <Green>247</Green>
-      <Blue>188</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>254</Red>
-      <Green>227</Green>
-      <Blue>144</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>254</Red>
-      <Green>196</Green>
-      <Blue>79</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>254</Red>
-      <Green>154</Green>
-      <Blue>36</Blue>
-    </KeyColor5>
-    <KeyColor6>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>237</Red>
-      <Green>111</Green>
-      <Blue>18</Blue>
-    </KeyColor6>
-    <KeyColor7>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>205</Red>
-      <Green>77</Green>
-      <Blue>0</Blue>
-    </KeyColor7>
-    <KeyColor8>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>154</Red>
-      <Green>51</Green>
-      <Blue>0</Blue>
-    </KeyColor8>
-    <KeyColor9>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>102</Red>
-      <Green>36</Green>
-      <Blue>7</Blue>
-    </KeyColor9>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Yellow-Orange-Brown(Continuous)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>9</KeyColorCount>
+<IntervalColorCount>32</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>255</Red>
+<Green>255</Green>
+<Blue>229</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>255</Red>
+<Green>247</Green>
+<Blue>188</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>254</Red>
+<Green>227</Green>
+<Blue>144</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>254</Red>
+<Green>196</Green>
+<Blue>79</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>254</Red>
+<Green>154</Green>
+<Blue>36</Blue>
+</KeyColor5>
+<KeyColor6>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>237</Red>
+<Green>111</Green>
+<Blue>18</Blue>
+</KeyColor6>
+<KeyColor7>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>205</Red>
+<Green>77</Green>
+<Blue>0</Blue>
+</KeyColor7>
+<KeyColor8>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>154</Red>
+<Green>51</Green>
+<Blue>0</Blue>
+</KeyColor8>
+<KeyColor9>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>102</Red>
+<Green>36</Green>
+<Blue>7</Blue>
+</KeyColor9>
+</DataBlock>
 </ColorScheme>
