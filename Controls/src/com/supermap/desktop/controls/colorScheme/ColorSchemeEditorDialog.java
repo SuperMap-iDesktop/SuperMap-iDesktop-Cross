@@ -28,7 +28,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,6 +102,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 
 	private ColorScheme colorScheme;
 
+	private java.util.List<String> exitNames;
 
 	/**
 	 * 构造函数
@@ -183,6 +183,24 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		this.panelBasicInfo = new JPanel();
 		this.labelName = new JLabel();
 		this.textFieldName = new SmTextFieldLegit();
+		this.textFieldName.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+//				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+//					return false;
+//				}
+				if (exitNames != null && exitNames.contains(textFieldValue)) {
+					return false;
+				}
+				colorScheme.setName(textFieldValue);
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 
 		this.labelColorBuildMethod = new JLabel();
 		this.comboBoxColorBuildMethod = new JComboBox<>(new String[]{
@@ -443,27 +461,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			}
 		});
 
-		textFieldName.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateName();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateName();
-
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateName();
-			}
-
-			private void updateName() {
-				colorScheme.setName(textFieldName.getText());
-			}
-		});
 
 		comboBoxColorBuildMethod.addItemListener(new ItemListener() {
 			@Override
@@ -644,7 +641,7 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		colorsTableModel.setColors(colorScheme.getColorsList());
 		textFieldDescribe.setText(colorScheme.getDescription());
 		textFieldColorCount.setText(String.valueOf(colorScheme.getIntervalColorCount()));
-		textFieldName.setText(colorScheme.getName());
+		textFieldName.setText(StringUtilities.getUniqueName(colorScheme.getName(), exitNames));
 		textFieldAuthor.setText(colorScheme.getAuthor());
 		comboBoxColorBuildMethod.setSelectedItem(colorScheme.getIntervalColorBuildMethod().toString());
 		if (tableColorsTable.getRowCount() > 0) {
@@ -663,6 +660,11 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		init(colorScheme);
 	}
 
+
+	public void setExitNames(java.util.List<String> exitNames) {
+		this.exitNames = exitNames;
+		this.textFieldName.setText(StringUtilities.getUniqueName(this.textFieldName.getText(), exitNames));
+	}
 
 	/**
 	 * 颜色集合预览面板

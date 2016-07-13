@@ -402,6 +402,10 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 					// If this property is set to TRUE component wants
 					// to deal with this event by himself.
 					cancelPopupMenu();
+					if (src != TreePopup.this.treeComboBox && src != TreePopup.this.treeComboBox.getComponent(0)) {
+						// 触发自己就又弹出来了！
+						src.dispatchEvent(event);
+					}
 					// Ask UIManager about should we consume event that closes
 					// popup. This made to match native apps behaviour.
 					boolean consumeEvent =
@@ -452,7 +456,7 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 		}
 
 		private boolean isInPopup(Component src) {
-			return getParentPopupMenu(src) != null;
+			return getParentPopupMenu(src) == TreePopup.this;
 		}
 
 		private JPopupMenu getParentPopupMenu(Component src) {

@@ -348,7 +348,7 @@ public class ColorScheme implements ICloneable {
 	}
 
 	public void saveAsDirectories(String directories) {
-		String defaultFilePath = getDefaultFilePath(directories);
+		String defaultFilePath = getUniqueFilePath(directories);
 		saveAsFilePath(defaultFilePath);
 	}
 
@@ -369,20 +369,47 @@ public class ColorScheme implements ICloneable {
 		}
 	}
 
+	/**
+	 * 获得路径
+	 *
+	 * @param customDirectory
+	 * @return
+	 */
 	private String getDefaultFilePath(String customDirectory) {
+		if (StringUtilities.isNullOrEmpty(this.name)) {
+			return getUniqueFilePath(customDirectory);
+		}
+
 		if (!customDirectory.endsWith(File.separator) && !customDirectory.endsWith("//")) {
 			customDirectory = customDirectory + File.separator;
 		}
 		if (!new File(customDirectory).exists()) {
 			new File(customDirectory).mkdirs();
 		}
-//		boolean isExist = true;
-//		int i = -1;
-//		while (isExist) {
-//			i++;
-//			isExist = new File(customDirectory + getFileName(i, this.name)).exists();
-//		}
 		return customDirectory + getFileName(0, this.name);
+	}
+
+	/**
+	 * 获得唯一路径
+	 *
+	 * @param customDirectory
+	 * @return
+	 */
+	private String getUniqueFilePath(String customDirectory) {
+		if (!customDirectory.endsWith(File.separator) && !customDirectory.endsWith("//")) {
+			customDirectory = customDirectory + File.separator;
+		}
+		if (!new File(customDirectory).exists()) {
+			new File(customDirectory).mkdirs();
+		}
+		boolean isExist = true;
+		int i = -1;
+		String name = StringUtilities.isNullOrEmpty(this.name) ? "NewColorScheme" : this.name;
+		while (isExist) {
+			i++;
+			isExist = new File(customDirectory + getFileName(i, name)).exists();
+		}
+		return customDirectory + getFileName(i, name);
 	}
 
 	private String getFileName(int i, String fileName) {

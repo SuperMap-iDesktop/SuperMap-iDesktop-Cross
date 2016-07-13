@@ -4,6 +4,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.core.IteratorEnumerationAdapter;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -58,6 +59,11 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			colorSchemes = new ArrayList<>();
 		}
 		colorScheme.setParentNode(this);
+		ArrayList<String> names = new ArrayList<>();
+		for (ColorScheme scheme : colorSchemes) {
+			names.add(scheme.getName());
+		}
+		colorScheme.setName(StringUtilities.getUniqueName(colorScheme.getName(), names));
 		colorSchemes.add(colorScheme);
 	}
 
@@ -253,8 +259,12 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			}
 		}
 		if (children != null) {
-			for (ColorSchemeTreeNode child : children) {
-				child.save();
+			for (int i = 0; i < children.size(); i++) {
+				ColorSchemeTreeNode child = children.get(i);
+				if (!StringUtilities.isNullOrEmpty(this.getName()) || i != 2) {
+					// 我的收藏不收藏！
+					child.save();
+				}
 			}
 		}
 	}

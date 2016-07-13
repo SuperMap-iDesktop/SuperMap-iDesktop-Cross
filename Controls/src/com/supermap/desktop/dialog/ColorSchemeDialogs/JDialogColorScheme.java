@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
 
@@ -174,10 +175,16 @@ public class JDialogColorScheme extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				TableUtilities.stopEditing(tableColorScheme);
 				ColorSchemeEditorDialog colorSchemeEditorDialog = new ColorSchemeEditorDialog();
+				ColorSchemeTreeNode lastNode = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
+				ArrayList<String> names = new ArrayList<>();
+				for (ColorScheme colorScheme : lastNode.getColorSchemes()) {
+					names.add(colorScheme.getName());
+				}
+				colorSchemeEditorDialog.setExitNames(names);
 				DialogResult dialogResult = colorSchemeEditorDialog.showDialog();
 				if (dialogResult == DialogResult.OK) {
 					ColorScheme colorScheme = colorSchemeEditorDialog.getColorScheme();
-					colorScheme.setParentNode(((ColorSchemeTreeNode) tree.getLastSelectedPathComponent()));
+					colorScheme.setParentNode(lastNode);
 					tableColorScheme.addColorScheme(colorScheme);
 					tableColorScheme.setRowSelectionInterval(tableColorScheme.getRowCount() - 1, tableColorScheme.getRowCount() - 1);
 					tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(tableColorScheme.getRowCount() - 1, 0, true));
@@ -448,6 +455,13 @@ public class JDialogColorScheme extends SmDialog {
 	private void editColorSchemeAtRow(int selectedRow) {
 		ColorScheme colorSchemeClone = tableColorScheme.getColorScheme(selectedRow).clone();
 		ColorSchemeEditorDialog colorSchemeEditorDialog = new ColorSchemeEditorDialog(colorSchemeClone);
+		ArrayList<String> names = new ArrayList<>();
+		ColorSchemeTreeNode lastNode = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
+		for (ColorScheme colorScheme : lastNode.getColorSchemes()) {
+			names.add(colorScheme.getName());
+		}
+		names.remove(colorSchemeClone.getName());
+		colorSchemeEditorDialog.setExitNames(names);
 		if (colorSchemeEditorDialog.showDialog() == DialogResult.OK) {
 			isModified = true;
 			tableColorScheme.setColorSchemeAtRow(selectedRow, colorSchemeEditorDialog.getColorScheme());
@@ -471,6 +485,7 @@ public class JDialogColorScheme extends SmDialog {
 			for (File selectFile : selectFiles) {
 				ColorScheme colorScheme = new ColorScheme();
 				if (colorScheme.fromXML(selectFile, true)) {
+					colorScheme.setParentNode((ColorSchemeTreeNode) tree.getLastSelectedPathComponent());
 					tableColorScheme.addColorScheme(colorScheme);
 				}
 			}
@@ -613,7 +628,13 @@ public class JDialogColorScheme extends SmDialog {
 			textFieldName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 				@Override
 				public boolean isTextFieldValueLegit(String textFieldValue) {
-					return !names.contains(textFieldValue);
+					if (names.contains(textFieldValue)) {
+						return false;
+					}
+					if (!FileUtilities.isLegalFolderName(textFieldValue)) {
+						return false;
+					}
+					return true;
 				}
 
 				@Override
@@ -683,7 +704,7 @@ public class JDialogColorScheme extends SmDialog {
 					}
 					ColorSchemeTreeNode lastSelectedPathComponent = ((ColorSchemeTreeNode) tree.getLastSelectedPathComponent());
 					if (lastSelectedPathComponent != null && lastSelectedPathComponent == colorSchemeTreeNode) {
-						tableColorScheme.setColorSchemeList(lastSelectedPathComponent.getColorSchemes());
+						((ColorSchemeTableModel) tableColorScheme.getModel()).fireTableDataChanged();
 						tableColorScheme.setRowSelectionInterval(tableColorScheme.getRowCount() - selectedRows.length, tableColorScheme.getRowCount() - 1);
 						tableColorScheme.scrollRectToVisible(tableColorScheme.getCellRect(tableColorScheme.getRowCount() - selectedRows.length, 0, true));
 					}

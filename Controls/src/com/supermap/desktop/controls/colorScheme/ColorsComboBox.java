@@ -223,10 +223,11 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!isReAddElements) {
 					int selectedIndex = listColors.getSelectedIndex();
-					popupMenuColorScheme.setVisible(false);
 					if (selectedIndex != -1 && selectedIndex == listColors.getModel().getSize() - 1) {
+						popupMenuColorScheme.setVisible(false);
 						showUserDefineDialog();
 					} else if (selectedIndex != -1) {
+						popupMenuColorScheme.setVisible(false);
 						currentColors = null;
 						colorSchemeSelected = listColors.getSelectedValue();
 						setSelectedItem(colorSchemeSelected.getColors());
@@ -298,11 +299,8 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 //			buttonColorGroup.setText(selectedColorSchemeTreeNode.getShowName());
 		}
-		((DefaultListModel) listColors.getModel()).addElement(null);
 		isReAddElements = false;
-		listColors.getParent().validate();
-		listColors.repaint();
-		listColors.getParent().repaint();
+		((DefaultListModel) listColors.getModel()).addElement(null);
 //		listColors.setSelectedIndex(-1);
 	}
 
