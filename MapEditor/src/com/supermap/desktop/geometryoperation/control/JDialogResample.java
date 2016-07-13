@@ -83,12 +83,13 @@ public class JDialogResample extends SmDialog {
 				.addGroup(gl.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelParameter)
 						.addComponent(this.textFieldParameter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(5, 5, Short.MAX_VALUE)
 				.addGroup(gl.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
 
-		setSize(400, 150);
+		setSize(400, 140);
 		setLocationRelativeTo(null);
 	}
 
