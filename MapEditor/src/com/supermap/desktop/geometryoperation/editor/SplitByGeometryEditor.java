@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,9 +139,10 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 		for (Layer layer : layers) {
 			// 线面数据能作为被分割的对象
-			if (layer.isEditable() && layer.getDataset() != null
-					&& layer.getDataset() instanceof DatasetVector && (layer.getDataset().getType() == DatasetType.LINE
-							|| layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)
+			if (layer.isEditable()
+					&& layer.getDataset() != null
+					&& layer.getDataset() instanceof DatasetVector
+					&& (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)
 					&& layer.getSelection().getCount() > 0) {
 				Recordset recordset = layer.getSelection().toRecordset();
 
@@ -214,8 +216,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 	}
 
 	private void splitByGeometry(EditEnvironment environment, Geometry splitGeometry) {
-		boolean result = false;
-		Recordset recordset = null;
+		Map<Layer, ArrayList<Integer>> failedMap = new HashMap<>();
 		SplitByGeometryEditModel editModel = (SplitByGeometryEditModel) environment.getEditModel();
 
 		try {
@@ -225,6 +226,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				Map<Geometry, Map<String, Object>> resultGeometrys = new HashMap<Geometry, Map<String, Object>>();
 
 				for (Layer layer : editModel.forEraseGeometryIDs.keySet()) {
+					Recordset recordset = null;
+					ArrayList<Integer> failedIDs = new ArrayList<>();
 					resultGeometrys.clear();
 					DatasetVector datasetVector = (DatasetVector) layer.getDataset();
 					recordset = datasetVector.getRecordset(false, CursorType.DYNAMIC);
@@ -248,8 +251,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 								CoordSysTransParameter param = null;
 								try {
-									CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(),
-											layer.getDataset().getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
+									CoordSysTranslator.convert(dynamicGeometry, editModel.selectedLayer.getDataset().getPrjCoordSys(), layer.getDataset()
+											.getPrjCoordSys(), param, CoordSysTransMethod.MTH_COORDINATE_FRAME);
 								} finally {
 									if (param != null) {
 										param.dispose();
@@ -294,6 +297,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 								if (geometry.getType() == GeometryType.GEOREGION)// 面
 								{
+									boolean result = false;
 									if (dynamicGeometry != null) {
 										result = splitRegion((GeoRegion) geometry, dynamicGeometry, resultGeometrys, values, geoStyle);
 									} else {
@@ -302,6 +306,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 									if (result) {
 										delete.delete(recordset.getID());
+									} else {
+										failedIDs.add(id);
 									}
 								} else if (geometry.getType() == GeometryType.GEOLINE)// 线
 								{
@@ -309,16 +315,19 @@ public class SplitByGeometryEditor extends AbstractEditor {
 										recordset.getDataset().getTolerance().setDefault();
 									}
 
+									boolean result = false;
 									if (dynamicGeometry != null) {
-										result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values,
-												recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
+										result = splitLine(environment, (GeoLine) geometry, dynamicGeometry, resultGeometrys, values, recordset.getDataset()
+												.getTolerance().getNodeSnap(), geoStyle);
 									} else {
-										result = splitLine(environment, (GeoLine) geometry, splitGeometry, resultGeometrys, values,
-												recordset.getDataset().getTolerance().getNodeSnap(), geoStyle);
+										result = splitLine(environment, (GeoLine) geometry, splitGeometry, resultGeometrys, values, recordset.getDataset()
+												.getTolerance().getNodeSnap(), geoStyle);
 									}
 
 									if (result) {
 										delete.delete(recordset.getID());
+									} else {
+										failedIDs.add(id);
 									}
 								}
 							}
@@ -377,15 +386,28 @@ public class SplitByGeometryEditor extends AbstractEditor {
 							layer.getSelection().addRange(ArrayUtilities.convertToInt(addHistoryIDs.toArray(new Integer[addHistoryIDs.size()])));
 						}
 					}
-				}
-				if (recordset != null) {
-					recordset.dispose();
+
+					if (recordset != null) {
+						recordset.dispose();
+					}
+
+					if (failedIDs.size() > 0) {
+						failedMap.put(layer, failedIDs);
+					}
 				}
 
-				if (result) {
+				if (failedMap.keySet().size() == 0) {
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Successed_Message"));
 				} else {
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
+					for (Layer layer : failedMap.keySet()) {
+						ArrayList<Integer> failedIDs = failedMap.get(layer);
+
+						for (Integer integer : failedIDs) {
+							String msg = MessageFormat.format(MapEditorProperties.getString("String_GeometryOperation_SplitFailed"), layer.getCaption(),
+									integer);
+							Application.getActiveApplication().getOutput().output(msg);
+						}
+					}
 				}
 			} else {
 				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
