@@ -184,11 +184,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 							delete.update();
 							environment.getMapControl().getEditHistory().batchEnd();
 							layer.getSelection().clear();
-							environment.getMap().refresh();
 						} else {
 							environment.getMapControl().getEditHistory().batchCancel();
 						}
 					} finally {
+						environment.getMap().refresh();
 						if (recordset != null) {
 							recordset.close();
 							recordset.dispose();
