@@ -46,7 +46,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	public FormTransformation(String name, Icon icon, Component component) {
-
 		super(name, icon, component);
 		mapControlTransformation = new MapControl();
 		mapControlTransformation.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
@@ -73,7 +72,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		this.add(this.splitPaneMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		// FIXME: 2016/7/8 状态栏为空
-//		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 	}
 
 	private void initListener() {

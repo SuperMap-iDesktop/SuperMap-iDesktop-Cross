@@ -48,36 +48,12 @@ public class ColorSchemeManager {
 		initData();
 	}
 
+	public void reload() {
+		initData();
+		fireColorSchemeManagerChanged();
+	}
+
 	private void initData() {
-		//region 改版
-		//		colorSchemeList.clear();
-//		Document document = XmlUtilities.getDocument(filePath);
-//		NodeList childNodes = document.getChildNodes().item(0).getChildNodes();
-//		for (int i = 0; i < childNodes.getLength(); i++) {
-//			if (childNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-//				if (TAG_FILE_HEADER.equals(childNodes.item(i).getNodeName())) {
-//					// 文件头
-//					String versionValue = childNodes.item(i).getChildNodes().item(1).getChildNodes().item(0).getNodeValue();
-//					version = Integer.valueOf(versionValue);
-//				} else if (TAG_DATA_BLOCK.equals(childNodes.item(i).getNodeName())) {
-//					// colors
-//					NodeList childNodesColors = childNodes.item(i).getChildNodes();
-//					for (int j = 0; j < childNodesColors.getLength(); j++) {
-//						if (childNodesColors.item(j).getNodeType() == Node.ELEMENT_NODE) {
-//							String colorFilePath = childNodesColors.item(j).getChildNodes().item(0).getNodeValue();
-//							if (new File(colorFilePath).exists()) {
-//								ColorScheme colorScheme = new ColorScheme();
-//								if (colorScheme.fromXML(new File(colorFilePath), false)) {
-//									colorScheme.setColorSchemePath(colorFilePath);
-//									colorSchemeList.add(colorScheme);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-		//endregion
 		rootTreeNode = new ColorSchemeTreeNode(null);
 		rootTreeNode.setFilePath(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeRootFilePath"), true));
 		// 默认

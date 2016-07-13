@@ -1,51 +1,51 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Purple-Blue-Green(5 Classes)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>5</KeyColorCount>
-    <IntervalColorCount>0</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>246</Red>
-      <Green>240</Green>
-      <Blue>247</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>189</Red>
-      <Green>202</Green>
-      <Blue>225</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>102</Red>
-      <Green>169</Green>
-      <Blue>207</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>25</Red>
-      <Green>143</Green>
-      <Blue>154</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>0</Red>
-      <Green>107</Green>
-      <Blue>90</Blue>
-    </KeyColor5>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Purple-Blue-Green(5 Classes)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>5</KeyColorCount>
+<IntervalColorCount>0</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>246</Red>
+<Green>240</Green>
+<Blue>247</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>189</Red>
+<Green>202</Green>
+<Blue>225</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>102</Red>
+<Green>169</Green>
+<Blue>207</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>25</Red>
+<Green>143</Green>
+<Blue>154</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>0</Red>
+<Green>107</Green>
+<Blue>90</Blue>
+</KeyColor5>
+</DataBlock>
 </ColorScheme>

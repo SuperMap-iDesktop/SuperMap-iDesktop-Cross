@@ -1,10 +1,20 @@
 package com.supermap.desktop.ui.controls;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.IllegalComponentStateException;
+import com.sun.java.swing.plaf.motif.MotifComboBoxUI;
+import com.sun.java.swing.plaf.windows.WindowsComboBoxUI;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
+
+import javax.swing.*;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.plaf.metal.MetalComboBoxUI;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.AWTEventListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -14,42 +24,24 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.MenuSelectionManager;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.plaf.ComboBoxUI;
-import javax.swing.plaf.basic.ComboPopup;
-import javax.swing.plaf.metal.MetalComboBoxUI;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-
-import com.sun.java.swing.plaf.motif.MotifComboBoxUI;
-import com.sun.java.swing.plaf.windows.WindowsComboBoxUI;
-
 /**
  * 树下拉列表
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
-class TreeComboBox extends JComboBox {
+public class TreeComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
 	/**
 	 * 显示用的树
 	 */
 	private JTree tree;
+
+	private int popupMenuPreferredHeight = 120;
+
+	public TreeComboBox(JTree tree) {
+		this.setTree(tree);
+	}
 
 	public TreeComboBox() {
 		this(new JTree(), "");
@@ -67,15 +59,15 @@ class TreeComboBox extends JComboBox {
 
 	/**
 	 * 显示根节点的TreeComboBox
-	 * 
+	 *
 	 * @param tree
 	 * @param treeCellRenderer
-	 * @param showRoot
+	 * @param isNotShowRoot
 	 */
-	public TreeComboBox(JTree tree, TreeCellRenderer treeCellRenderer, boolean showRoot) {
+	public TreeComboBox(JTree tree, TreeCellRenderer treeCellRenderer, boolean isNotShowRoot) {
 		this.setTree(tree);
 		tree.setCellRenderer(treeCellRenderer);
-		if (!showRoot) {
+		if (!isNotShowRoot) {
 			tree.expandPath(new TreePath(tree.getModel().getRoot()));
 			tree.setRootVisible(true);
 		}
@@ -84,7 +76,7 @@ class TreeComboBox extends JComboBox {
 
 	/**
 	 * 设置树
-	 * 
+	 *
 	 * @param tree JTree
 	 */
 	public void setTree(JTree tree) {
@@ -99,7 +91,7 @@ class TreeComboBox extends JComboBox {
 
 	/**
 	 * 取得树
-	 * 
+	 *
 	 * @return JTree
 	 */
 	public JTree getTree() {
@@ -108,7 +100,7 @@ class TreeComboBox extends JComboBox {
 
 	/**
 	 * 设置当前选择的树路径
-	 * 
+	 *
 	 * @param o Object
 	 */
 	@Override
@@ -119,16 +111,15 @@ class TreeComboBox extends JComboBox {
 
 	/**
 	 * 获得当前选中的节点的值
-	 * 
+	 *
 	 * @return o Object
 	 */
-	public Object getSelectedObject() {
-		TreePath treePath = (TreePath) this.getSelectedItem();
+	public Object getSelectedItem() {
+		TreePath treePath = (TreePath) super.getSelectedItem();
 		if (treePath == null) {
 			return null;
 		}
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-		return node.getUserObject();
+		return treePath.getLastPathComponent();
 	}
 
 	@Override
@@ -144,7 +135,15 @@ class TreeComboBox extends JComboBox {
 		setUI(comboBoxUi);
 	}
 
-	// richer:皮肤
+	public int getPopupMenuPreferredHeight() {
+		return popupMenuPreferredHeight;
+	}
+
+	public void setPopupMenuPreferredHeight(int popupMenuPreferredHeight) {
+		this.popupMenuPreferredHeight = popupMenuPreferredHeight;
+	}
+
+// richer:皮肤
 
 	class MetalTreeComboBoxUI extends MetalComboBoxUI {
 		@Override
@@ -176,13 +175,13 @@ class TreeComboBox extends JComboBox {
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			setValueTemp(value);
-			if (value != null) {
-				TreePath path = (TreePath) value;
-				TreeNode node = (TreeNode) path.getLastPathComponent();
-				setValueTemp(node);
-				TreeCellRenderer treeCellRenderer = tree.getCellRenderer();
-				JLabel lb = (JLabel) treeCellRenderer.getTreeCellRendererComponent(tree, value, isSelected, false, node.isLeaf(), index, cellHasFocus);
-				return lb;
+			if (value != null && value instanceof TreeNode) {
+				Component treeCellRendererComponent = tree.getCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, false, ((TreeNode) value).isLeaf(), index, cellHasFocus);
+				if (treeCellRendererComponent instanceof JLabel) {
+					((JLabel) treeCellRendererComponent).setHorizontalAlignment(JLabel.CENTER);
+					((JLabel) treeCellRendererComponent).setIcon(getDisabledIcon());
+				}
+				return treeCellRendererComponent;
 			}
 			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}
@@ -224,6 +223,8 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 
 		}
 	};
+
+	private transient MyAWTEventListener myAWTEventListener = new MyAWTEventListener();
 
 	private void abstractTreeSelectListener(MouseEvent e) {
 		JTree tree = (JTree) e.getSource();
@@ -284,9 +285,11 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 	@Override
 	public void show() {
 		this.updatePopup();
+		Toolkit.getDefaultToolkit().addAWTEventListener(myAWTEventListener, AWTEvent.MOUSE_EVENT_MASK | sun.awt.SunToolkit.GRAB_EVENT_MASK);
 		try {
 			this.show(treeComboBox, 0, treeComboBox.getHeight());
 		} catch (IllegalComponentStateException e) {
+			e.printStackTrace();
 			// richer:这里有可能会抛出一个异常，可以不用处理
 		}
 		this.treeComboBox.getTree().requestFocus();
@@ -294,6 +297,7 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 
 	@Override
 	public void hide() {
+		Toolkit.getDefaultToolkit().removeAWTEventListener(myAWTEventListener);
 		this.setVisible(false);
 		this.treeComboBox.firePropertyChange("popupVisible", true, false);
 	}
@@ -326,7 +330,7 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 
 	/**
 	 * Implementation of ComboPopup.getMouseListener().
-	 * 
+	 *
 	 * @return a <code>MouseListener</code> or null
 	 * @see ComboPopup#getMouseListener
 	 */
@@ -347,11 +351,12 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 	}
 
 	protected void updatePopup() {
-		this.setPreferredSize(new Dimension(this.treeComboBox.getSize().width, 120));
+		this.setPreferredSize(new Dimension(this.treeComboBox.getSize().width, treeComboBox.getPopupMenuPreferredHeight()));
 		Object selectedObj = this.treeComboBox.getSelectedItem();
 		if (selectedObj != null) {
-			TreePath tp = (TreePath) selectedObj;
-			((TreeComboBox) this.treeComboBox).getTree().setSelectionPath(tp);
+
+			TreePath tp = JTreeUIUtilities.getPath((TreeNode) selectedObj);
+			this.treeComboBox.getTree().setSelectionPath(tp);
 		}
 	}
 
@@ -370,6 +375,95 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 				treeComboBox.requestFocus();
 			}
 			togglePopup();
+		}
+	}
+
+	private class MyAWTEventListener implements AWTEventListener {
+
+		@Override
+		public void eventDispatched(AWTEvent event) {
+			if (event instanceof sun.awt.UngrabEvent) {
+				cancelPopupMenu();
+				return;
+			}
+			if (!(event instanceof MouseEvent)) {
+				// We are interested in MouseEvents only
+				return;
+			}
+			MouseEvent me = (MouseEvent) event;
+			Component src = me.getComponent();
+			switch (me.getID()) {
+				case MouseEvent.MOUSE_PRESSED:
+					if (isInPopup(src) ||
+							(src instanceof JMenu && ((JMenu) src).isSelected())) {
+						return;
+					}
+					// Cancel popup only if this property was not set.
+					// If this property is set to TRUE component wants
+					// to deal with this event by himself.
+					cancelPopupMenu();
+					// Ask UIManager about should we consume event that closes
+					// popup. This made to match native apps behaviour.
+					boolean consumeEvent =
+							UIManager.getBoolean("PopupMenu.consumeEventOnClose");
+					// Consume the event so that normal processing stops.
+					if (consumeEvent && !(src instanceof MenuElement)) {
+						me.consume();
+					}
+					break;
+
+				case MouseEvent.MOUSE_RELEASED:
+					if (!(src instanceof MenuElement)) {
+						// Do not forward event to MSM, let component handle it
+						if (isInPopup(src)) {
+							break;
+						}
+					}
+					if (src instanceof JMenu || !(src instanceof JMenuItem)) {
+						MenuSelectionManager.defaultManager().
+								processMouseEvent(me);
+					}
+					break;
+				case MouseEvent.MOUSE_DRAGGED:
+					if (!(src instanceof MenuElement)) {
+						// For the MOUSE_DRAGGED event the src is
+						// the Component in which mouse button was pressed.
+						// If the src is in popupMenu,
+						// do not forward event to MSM, let component handle it.
+						if (isInPopup(src)) {
+							break;
+						}
+					}
+					MenuSelectionManager.defaultManager().
+							processMouseEvent(me);
+					break;
+				case MouseEvent.MOUSE_WHEEL:
+					if (isInPopup(src)) {
+						return;
+					}
+					cancelPopupMenu();
+					break;
+			}
+		}
+
+
+		private void cancelPopupMenu() {
+			TreePopup.this.hide();
+		}
+
+		private boolean isInPopup(Component src) {
+			return getParentPopupMenu(src) != null;
+		}
+
+		private JPopupMenu getParentPopupMenu(Component src) {
+			for (Component c = src; c != null; c = c.getParent()) {
+				if (c instanceof Applet || c instanceof Window) {
+					break;
+				} else if (c instanceof JPopupMenu) {
+					return ((JPopupMenu) c);
+				}
+			}
+			return null;
 		}
 	}
 }

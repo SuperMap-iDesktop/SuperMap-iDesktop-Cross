@@ -71,6 +71,7 @@ public class JTableColorScheme extends SortTable {
 		colorSchemeTableModel.setColorSchemes(colorSchemeList);
 		if (getRowCount() > 0) {
 			setRowSelectionInterval(0, 0);
+			colorSchemeTableModel.sortByColumn(ColorSchemeTableModel.COLUMN_RAMP_NAME, false);
 		}
 	}
 

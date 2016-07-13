@@ -1,79 +1,79 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Purple-Red(Continuous)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>9</KeyColorCount>
-    <IntervalColorCount>32</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>247</Red>
-      <Green>245</Green>
-      <Blue>249</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>231</Red>
-      <Green>225</Green>
-      <Blue>240</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>212</Red>
-      <Green>186</Green>
-      <Blue>218</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>202</Red>
-      <Green>148</Green>
-      <Blue>200</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>224</Red>
-      <Green>100</Green>
-      <Blue>176</Blue>
-    </KeyColor5>
-    <KeyColor6>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>231</Red>
-      <Green>36</Green>
-      <Blue>137</Blue>
-    </KeyColor6>
-    <KeyColor7>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>206</Red>
-      <Green>18</Green>
-      <Blue>86</Blue>
-    </KeyColor7>
-    <KeyColor8>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>153</Red>
-      <Green>0</Green>
-      <Blue>69</Blue>
-    </KeyColor8>
-    <KeyColor9>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>102</Red>
-      <Green>0</Green>
-      <Blue>31</Blue>
-    </KeyColor9>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Purple-Red(Continuous)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>9</KeyColorCount>
+<IntervalColorCount>32</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>247</Red>
+<Green>245</Green>
+<Blue>249</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>231</Red>
+<Green>225</Green>
+<Blue>240</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>212</Red>
+<Green>186</Green>
+<Blue>218</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>202</Red>
+<Green>148</Green>
+<Blue>200</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>224</Red>
+<Green>100</Green>
+<Blue>176</Blue>
+</KeyColor5>
+<KeyColor6>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>231</Red>
+<Green>36</Green>
+<Blue>137</Blue>
+</KeyColor6>
+<KeyColor7>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>206</Red>
+<Green>18</Green>
+<Blue>86</Blue>
+</KeyColor7>
+<KeyColor8>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>153</Red>
+<Green>0</Green>
+<Blue>69</Blue>
+</KeyColor8>
+<KeyColor9>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>102</Red>
+<Green>0</Green>
+<Blue>31</Blue>
+</KeyColor9>
+</DataBlock>
 </ColorScheme>

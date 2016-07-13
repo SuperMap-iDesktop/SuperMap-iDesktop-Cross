@@ -1,30 +1,30 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>peacock</Name>
-    <Author>SuperMap</Author>
-    <Description>Gradient</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>2</KeyColorCount>
-    <IntervalColorCount>16</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>225</Red>
-      <Green>230</Green>
-      <Blue>242</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>19</Red>
-      <Green>73</Green>
-      <Blue>133</Blue>
-    </KeyColor2>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>peacock</Name>
+<Author>SuperMap</Author>
+<Description>Gradient</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>2</KeyColorCount>
+<IntervalColorCount>16</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>225</Red>
+<Green>230</Green>
+<Blue>242</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>19</Red>
+<Green>73</Green>
+<Blue>133</Blue>
+</KeyColor2>
+</DataBlock>
 </ColorScheme>

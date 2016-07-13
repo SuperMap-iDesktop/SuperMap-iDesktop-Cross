@@ -1,44 +1,44 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Purple-Red(4 Classes)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>4</KeyColorCount>
-    <IntervalColorCount>0</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>241</Red>
-      <Green>239</Green>
-      <Blue>246</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>215</Red>
-      <Green>181</Green>
-      <Blue>216</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>224</Red>
-      <Green>100</Green>
-      <Blue>176</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>206</Red>
-      <Green>18</Green>
-      <Blue>86</Blue>
-    </KeyColor4>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Purple-Red(4 Classes)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>4</KeyColorCount>
+<IntervalColorCount>0</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>241</Red>
+<Green>239</Green>
+<Blue>246</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>215</Red>
+<Green>181</Green>
+<Blue>216</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>224</Red>
+<Green>100</Green>
+<Blue>176</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>206</Red>
+<Green>18</Green>
+<Blue>86</Blue>
+</KeyColor4>
+</DataBlock>
 </ColorScheme>

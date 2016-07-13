@@ -1,51 +1,51 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Greens(5 Classes)</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <Favorites>False</Favorites>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>5</KeyColorCount>
-    <IntervalColorCount>0</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>238</Red>
-      <Green>248</Green>
-      <Blue>233</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>186</Red>
-      <Green>228</Green>
-      <Blue>180</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>116</Red>
-      <Green>196</Green>
-      <Blue>118</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>48</Red>
-      <Green>163</Green>
-      <Blue>85</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>0</Red>
-      <Green>107</Green>
-      <Blue>39</Blue>
-    </KeyColor5>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Greens(5 Classes)</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>5</KeyColorCount>
+<IntervalColorCount>0</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>238</Red>
+<Green>248</Green>
+<Blue>233</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>186</Red>
+<Green>228</Green>
+<Blue>180</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>116</Red>
+<Green>196</Green>
+<Blue>118</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>48</Red>
+<Green>163</Green>
+<Blue>85</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>0</Red>
+<Green>107</Green>
+<Blue>39</Blue>
+</KeyColor5>
+</DataBlock>
 </ColorScheme>

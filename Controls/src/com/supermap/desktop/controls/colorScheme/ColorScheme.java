@@ -49,6 +49,8 @@ public class ColorScheme implements ICloneable {
 
 	private IntervalColorBuildMethod intervalColorBuildMethod;
 
+	private boolean isFavorite;
+
 	/**
 	 * 这个变量好像没用到
 	 */
@@ -128,6 +130,10 @@ public class ColorScheme implements ICloneable {
 	public List<Color> getColorsList() {
 		return colors;
 	}
+
+//	public void setColorsList(List<Color> colorsList) {
+//		this.colors = colorsList;
+//	}
 
 	public Colors getColors() {
 		Colors colors = null;
@@ -267,6 +273,14 @@ public class ColorScheme implements ICloneable {
 	 */
 	public void setIntervalColorCount(int colorCount) {
 		intervalColorCount = colorCount;
+	}
+
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		isFavorite = favorite;
 	}
 
 	/**
@@ -423,6 +437,10 @@ public class ColorScheme implements ICloneable {
 			Element description = document.createElement("Description");
 			description.appendChild(document.createTextNode(this.description));
 			fileHeader.appendChild(description);
+			// Favorites
+			Element favorites = document.createElement("Favorites");
+			favorites.appendChild(document.createTextNode(String.valueOf(this.isFavorite)));
+			fileHeader.appendChild(favorites);
 			// ColorSystem
 			Element colorSystem = document.createElement("ColorSystem");
 			colorSystem.appendChild(document.createTextNode(String.valueOf(this.colorSystem.getValue())));
@@ -575,6 +593,9 @@ public class ColorScheme implements ICloneable {
 						// 描述，Description节点
 						this.setDescription(value);
 						break;
+					case ColorSchemeTags.FAVORITES:
+						this.setFavorite(Boolean.valueOf(value));
+						break;
 					case ColorSchemeTags.COLORSYSTEM:
 						// 颜色系统，ColorSystem节点
 						int colorSystemValue = Integer.parseInt(value);
@@ -725,7 +746,7 @@ public class ColorScheme implements ICloneable {
 		public static final String NAME = "Name";
 		public static final String AUTHOR = "Author";
 		public static final String DESCRIPTION = "Description";
-
+		public static final String FAVORITES = "Favorites";
 		public static final String COLORSYSTEM = "ColorSystem";
 		public static final String INTERVAL_COLOR_BUILD_METHOD = "IntervalColorBuildMethod";
 

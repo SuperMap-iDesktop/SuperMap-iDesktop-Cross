@@ -3,10 +3,12 @@ package com.supermap.desktop.controls.colorScheme;
 import com.supermap.data.Colors;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.JLabelUIUtilities;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.dialog.ColorSchemeDialogs.ColorSchemeTreeNode;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFieldSearch;
+import com.supermap.desktop.ui.controls.TreeComboBox;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.ThemeType;
@@ -18,6 +20,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.metal.MetalComboBoxIcon;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
@@ -38,7 +42,7 @@ import java.util.ArrayList;
  */
 public class ColorsComboBox extends JComponent implements ItemSelectable {
 	private static final long serialVersionUID = 1L;
-	private Object themeType = ThemeType.UNIQUE;
+	private Object themeType;
 
 	private JPanel panelShow;// 用来存放label
 	private JButton buttonPopup;
@@ -49,12 +53,10 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	// 搜索
 	private TextFieldSearch textFieldSearch;
 	// 显示当前分组按钮
-	private JButton buttonColorGroup;
+//	private JButton buttonColorGroup;
 	// 显示当前颜色
 	private JList<ColorScheme> listColors;
 
-	// 选择颜色分组
-	private JPopupMenu popupMenuChooseColorGroup;
 
 	private ColorsCellRenderer colorsCellRenderer;
 
@@ -80,8 +82,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 					}
 				}
 			}
+			tree.setModel(new DefaultTreeModel(ColorSchemeManager.getColorSchemeManager().getRootTreeNode()));
+			JTreeUIUtilities.expandTree(tree, true);
 			reAddElements();
-			popupMenuChooseColorGroup = null;
 		}
 	};
 	private ListSelectionListener listGroupSelectionListener = new ListSelectionListener() {
@@ -93,7 +96,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			if (source != null && source instanceof JList && !lock) {
 				lock = true;
 				selectedColorSchemeTreeNode = (ColorSchemeTreeNode) ((JList) source).getSelectedValue();
-				popupMenuChooseColorGroup.setVisible(false);
 				((JList) source).clearSelection();
 				reAddElements();
 				popupMenuColorScheme.setVisible(true);
@@ -104,12 +106,25 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	private MyAWTEventListener myAWTEventListener = new MyAWTEventListener();
 	private GridBagConstraintsHelper panelShowConstraints;
 	private boolean isReAddElements = false;
+	private JTree tree;
+	private TreeComboBox treeComboBox;
 
 	/**
 	 * 构造函数
 	 */
 	public ColorsComboBox() {
+		this(ThemeType.UNIQUE);
+
+	}
+
+	/**
+	 * 根据专题图类型初始化，或者自行输入节点名称初始化
+	 *
+	 * @param themeType 专题图类型或节点名称
+	 */
+	public ColorsComboBox(Object themeType) {
 		super();
+		this.themeType = themeType;
 		this.setMinimumSize(new Dimension(20, 24));
 		this.setPreferredSize(new Dimension(20, 24));
 		itemListeners = new ArrayList<>();
@@ -119,16 +134,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		initLayout();
 		initListeners();
 		initComponentState();
-	}
-
-	/**
-	 * 根据专题图类型初始化，或者自行输入节点名称初始化
-	 *
-	 * @param themeType 专题图类型或节点名称
-	 */
-	public ColorsComboBox(Object themeType) {
-		this();
-		this.themeType = themeType;
 	}
 
 	private void initComponents() {
@@ -159,7 +164,14 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 		};
 		textFieldSearch = new TextFieldSearch();
-		buttonColorGroup = new JButton();
+
+		tree = new JTree(ColorSchemeManager.getColorSchemeManager().getRootTreeNode());
+		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
+		((DefaultTreeCellRenderer) tree.getCellRenderer()).setLeafIcon(((DefaultTreeCellRenderer) tree.getCellRenderer()).getDefaultClosedIcon());
+		JTreeUIUtilities.expandTree(tree, true);
+		treeComboBox = new TreeComboBox(tree);
+		treeComboBox.setPopupMenuPreferredHeight(450);
 		listColors = new JList<>();
 		listColors.setModel(new DefaultListModel<ColorScheme>());
 		selectedColorSchemeTreeNode = null;
@@ -176,7 +188,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 		popupMenuColorScheme.setLayout(new GridBagLayout());
 		popupMenuColorScheme.add(textFieldSearch, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
-		popupMenuColorScheme.add(buttonColorGroup, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
+		popupMenuColorScheme.add(treeComboBox, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0));
 		popupMenuColorScheme.add(new JScrollPane(listColors), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1));
 
 	}
@@ -196,10 +208,13 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 		});
 
-		buttonColorGroup.addActionListener(new ActionListener() {
+		treeComboBox.addItemListener(new ItemListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				getPopupMenuChooseColorGroup().show(buttonColorGroup, -145, 0);
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					selectedColorSchemeTreeNode = (ColorSchemeTreeNode) treeComboBox.getSelectedItem();
+					reAddElements();
+				}
 			}
 		});
 
@@ -246,19 +261,24 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			private void textFieldSearchChanged() {
 				reAddElements();
 				// FIXME: 2016/7/8 bug会导致无法输入中文
-				popupMenuColorScheme.setVisible(true);
-				textFieldSearch.requestFocus();
+//				popupMenuColorScheme.setVisible(false);
+//				popupMenuColorScheme.setVisible(true);
+//				textFieldSearch.requestFocus();
 			}
 
 		});
+
 	}
 
 	private void initComponentState() {
 		if (selectedColorSchemeTreeNode == null) {
 			selectedColorSchemeTreeNode = getDefaultNode();
 		}
-		reAddElements();
-		if (listColors.getModel().getSize() > 2) {
+		if (selectedColorSchemeTreeNode != null) {
+			treeComboBox.setSelectedItem(JTreeUIUtilities.getPath(selectedColorSchemeTreeNode));
+		}
+//		reAddElements();
+		if (listColors.getModel().getSize() >= 2) {
 			listColors.setSelectedIndex(0);
 		}
 	}
@@ -276,11 +296,14 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 					}
 				}
 			}
-			buttonColorGroup.setText(selectedColorSchemeTreeNode.getShowName());
+//			buttonColorGroup.setText(selectedColorSchemeTreeNode.getShowName());
 		}
 		((DefaultListModel) listColors.getModel()).addElement(null);
 		isReAddElements = false;
 		listColors.getParent().validate();
+		listColors.repaint();
+		listColors.getParent().repaint();
+//		listColors.setSelectedIndex(-1);
 	}
 
 	private ColorSchemeTreeNode getDefaultNode() {
@@ -299,61 +322,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		return null;
 	}
 
-	public JPopupMenu getPopupMenuChooseColorGroup() {
-		if (popupMenuChooseColorGroup == null) {
-			JPanel jPanel = new JPanel();
-			popupMenuChooseColorGroup = new JPopupMenu();
-			jPanel.setLayout(new GridBagLayout());
-			ColorSchemeTreeNode rootTreeNode = ColorSchemeManager.getColorSchemeManager().getRootTreeNode();
-
-			int comCount = 0;
-			// 收藏夹
-			if (rootTreeNode.getChildAt(2).getChildCount() > 0) {
-				ColorSchemeTreeNode favoriteNode = (ColorSchemeTreeNode) rootTreeNode.getChildAt(2);
-				JLabel label = new JLabel(favoriteNode.getName());
-				jPanel.add(label, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
-				comCount++;
-				JList<ColorSchemeTreeNode> listFavorite = new JList<>();
-				listFavorite.setModel(new DefaultListModel<ColorSchemeTreeNode>());
-				for (int i = 0; i < favoriteNode.getChildCount(); i++) {
-					((DefaultListModel<ColorSchemeTreeNode>) listFavorite.getModel()).addElement(((ColorSchemeTreeNode) favoriteNode.getChildAt(i)));
-				}
-				listFavorite.addListSelectionListener(listGroupSelectionListener);
-				jPanel.add(listFavorite, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
-				comCount++;
-			}
-
-			ColorSchemeTreeNode nodeDefault = (ColorSchemeTreeNode) rootTreeNode.getChildAt(0);
-			JLabel label = new JLabel(nodeDefault.getName());
-			jPanel.add(label, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
-			comCount++;
-			JList<ColorSchemeTreeNode> listDefault = new JList<>();
-			listDefault.setModel(new DefaultListModel<ColorSchemeTreeNode>());
-			for (int i = 0; i < nodeDefault.getChildCount(); i++) {
-				((DefaultListModel<ColorSchemeTreeNode>) listDefault.getModel()).addElement(((ColorSchemeTreeNode) nodeDefault.getChildAt(i)));
-			}
-			listDefault.addListSelectionListener(listGroupSelectionListener);
-			jPanel.add(listDefault, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
-			comCount++;
-
-			if (rootTreeNode.getChildAt(1).getChildCount() > 0) {
-				ColorSchemeTreeNode userDefineNode = (ColorSchemeTreeNode) rootTreeNode.getChildAt(1);
-				JLabel labelUserDefine = new JLabel(userDefineNode.getName());
-				jPanel.add(labelUserDefine, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
-				comCount++;
-				JList<ColorSchemeTreeNode> listUserDefine = new JList<>();
-				listUserDefine.setModel(new DefaultListModel<ColorSchemeTreeNode>());
-				for (int i = 0; i < userDefineNode.getChildCount(); i++) {
-					((DefaultListModel<ColorSchemeTreeNode>) listUserDefine.getModel()).addElement(((ColorSchemeTreeNode) userDefineNode.getChildAt(i)));
-				}
-				listUserDefine.addListSelectionListener(listGroupSelectionListener);
-				jPanel.add(listUserDefine, new GridBagConstraintsHelper(0, comCount, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-			}
-			popupMenuChooseColorGroup.setLayout(new GridBagLayout());
-			popupMenuChooseColorGroup.add(new JScrollPane(jPanel), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		}
-		return popupMenuChooseColorGroup;
-	}
 
 	private void showUserDefineDialog() {
 		ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
@@ -441,7 +409,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			Component src = me.getComponent();
 			switch (me.getID()) {
 				case MouseEvent.MOUSE_PRESSED:
-					checkPopupMenuChooseColorGroupState(src);
+//					checkPopupMenuChooseColorGroupState(src);
 					if (isInPopup(src) ||
 							(src instanceof JMenu && ((JMenu) src).isSelected())) {
 						return;
@@ -487,7 +455,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 							processMouseEvent(me);
 					break;
 				case MouseEvent.MOUSE_WHEEL:
-					checkPopupMenuChooseColorGroupState(src);
+//					checkPopupMenuChooseColorGroupState(src);
 					if (isInPopup(src)) {
 						return;
 					}
@@ -496,13 +464,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 		}
 
-		private void checkPopupMenuChooseColorGroupState(Component src) {
-			if (popupMenuChooseColorGroup != null && popupMenuChooseColorGroup.isVisible() && getParentPopupMenu(src) != popupMenuChooseColorGroup) {
-				popupMenuChooseColorGroup.setVisible(false);
-			}
-		}
 
 		private void cancelPopupMenu() {
+			treeComboBox.hidePopup();
 			popupMenuColorScheme.setVisible(false);
 		}
 

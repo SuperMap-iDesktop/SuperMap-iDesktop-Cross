@@ -81,6 +81,7 @@ public class JDialogColorScheme extends SmDialog {
 	}
 
 	private void initComponents() {
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		toolBar = new JToolBar();
 		buttonAddDirectory = new SmButton();
 		buttonAdd = new SmButton();
@@ -106,7 +107,7 @@ public class JDialogColorScheme extends SmDialog {
 
 
 		this.getRootPane().setDefaultButton(buttonOk);
-		this.setSize(new Dimension(1200, 650));
+		this.setSize(new Dimension(900, 515));
 		this.setLocationRelativeTo(null);
 	}
 
@@ -203,8 +204,13 @@ public class JDialogColorScheme extends SmDialog {
 				TableUtilities.stopEditing(tableColorScheme);
 				int[] selectedRows = tableColorScheme.getSelectedRows();
 
+				boolean isHasFavorites = false;
 				for (int selectedRow : selectedRows) {
-					deletedList.add(tableColorScheme.getColorScheme(selectedRow));
+					ColorScheme colorScheme = tableColorScheme.getColorScheme(selectedRow);
+					deletedList.add(colorScheme);
+					if (colorScheme.isFavorite()) {
+						isHasFavorites = true;
+					}
 				}
 
 				tableColorScheme.deleteSelectedRow();
@@ -213,13 +219,26 @@ public class JDialogColorScheme extends SmDialog {
 				} else if (tableColorScheme.getRowCount() > 0) {
 					tableColorScheme.setRowSelectionInterval(tableColorScheme.getRowCount() - 1, tableColorScheme.getRowCount() - 1);
 				}
-				ColorSchemeTreeNode lastSelectedPathComponent = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
-				if (lastSelectedPathComponent != null && lastSelectedPathComponent.getColorSchemes().size() <= 0 && ((ColorSchemeTreeNode) lastSelectedPathComponent.getParent()).getName().equals(CoreProperties.getString("String_MyFavorites"))) {
-					TreeNode parent = lastSelectedPathComponent.getParent();
-					int index = parent.getIndex(lastSelectedPathComponent);
-					((ColorSchemeTreeNode) parent).removeChild(lastSelectedPathComponent);
-					((DefaultTreeModel) tree.getModel()).nodesWereRemoved(parent, new int[]{index}, new Object[]{lastSelectedPathComponent});
+				if (isHasFavorites) {
+					// 有收藏要删除
+					ColorSchemeTreeNode favoriteNode = (ColorSchemeTreeNode) ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2);
+					for (int childCount = favoriteNode.getChildCount() - 1; childCount >= 0; childCount--) {
+						ColorSchemeTreeNode childNode = (ColorSchemeTreeNode) favoriteNode.getChildAt(childCount);
+						if (childNode.getColorSchemes() == null || childNode.getColorSchemes().size() == 0) {
+							TreeNode parent = childNode.getParent();
+							((ColorSchemeTreeNode) parent).removeChild(childNode);
+							((DefaultTreeModel) tree.getModel()).nodesWereRemoved(parent, new int[]{childCount}, new Object[]{childNode});
+						}
+					}
 				}
+
+//				ColorSchemeTreeNode lastSelectedPathComponent = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
+//				if (lastSelectedPathComponent != null && lastSelectedPathComponent.getColorSchemes().size() <= 0 && ((ColorSchemeTreeNode) lastSelectedPathComponent.getParent()).getName().equals(CoreProperties.getString("String_MyFavorites"))) {
+//					TreeNode parent = lastSelectedPathComponent.getParent();
+//					int index = parent.getIndex(lastSelectedPathComponent);
+//					((ColorSchemeTreeNode) parent).removeChild(lastSelectedPathComponent);
+//					((DefaultTreeModel) tree.getModel()).nodesWereRemoved(parent, new int[]{index}, new Object[]{lastSelectedPathComponent});
+//				}
 			}
 		});
 
@@ -227,7 +246,9 @@ public class JDialogColorScheme extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableUtilities.stopEditing(tableColorScheme);
-				tableColorScheme.setRowSelectionInterval(0, tableColorScheme.getRowCount() - 1);
+				if (tableColorScheme.getRowCount() > 0) {
+					tableColorScheme.setRowSelectionInterval(0, tableColorScheme.getRowCount() - 1);
+				}
 			}
 		});
 
@@ -235,7 +256,9 @@ public class JDialogColorScheme extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableUtilities.stopEditing(tableColorScheme);
-				TableUtilities.invertSelection(tableColorScheme);
+				if (tableColorScheme.getRowCount() > 0) {
+					TableUtilities.invertSelection(tableColorScheme);
+				}
 			}
 		});
 
@@ -275,7 +298,6 @@ public class JDialogColorScheme extends SmDialog {
 		this.buttonCancle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				askSave();
 				dialogResult = DialogResult.CANCEL;
 				dispose();
 			}
@@ -325,7 +347,7 @@ public class JDialogColorScheme extends SmDialog {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				askSave();
+				dispose();
 			}
 		});
 
@@ -345,16 +367,13 @@ public class JDialogColorScheme extends SmDialog {
 					return;
 				}
 				isModified = true;
+
 				ColorSchemeTreeNode favoriteNode = (ColorSchemeTreeNode) ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2);
 				for (int i : tableColorScheme.getSelectedRows()) {
 					ColorScheme colorScheme = tableColorScheme.getColorScheme(i);
 					int childCount = favoriteNode.getChildCount();
-					ColorSchemeTreeNode child = favoriteNode.getChild(colorScheme.getParentNode().getName());
-					if (child != null) {
-						ColorScheme clone = colorScheme.clone();
-						clone.setParentNode(child);
-						child.addColorScheme(clone);
-					}
+					favoriteNode.getChild(colorScheme.getParentNode().getName());
+					colorScheme.setFavorite(true);
 					if (favoriteNode.getChildCount() != childCount) {
 						((DefaultTreeModel) tree.getModel()).nodesWereInserted(favoriteNode, new int[]{favoriteNode.getChildCount() - 1});
 					}
@@ -375,32 +394,46 @@ public class JDialogColorScheme extends SmDialog {
 		ColorSchemeTreeNode defaultTreeNode = (ColorSchemeTreeNode) root.getChildAt(0);
 		for (int i = 0; i < defaultTreeNode.getChildCount(); i++) {
 			ColorSchemeTreeNode childAt = (ColorSchemeTreeNode) defaultTreeNode.getChildAt(i);
-			MyMenuItem myMenuItem = new MyMenuItem(childAt == lastSelectedPathComponent ? childAt.getName() + CoreProperties.getString("String_current") : childAt.getName());
+			MyMenuItem myMenuItem = new MyMenuItem(childAt == lastSelectedPathComponent ? childAt.getShowName() + CoreProperties.getString("String_current") : childAt.getShowName());
 			myMenuItem.setColorSchemeTreeNode(childAt);
 			defaultNode.add(myMenuItem);
 		}
 
 		String userDefineNode = CoreProperties.getString("String_UserDefine");
-		copyTo.add(new JMenu(userDefineNode));
+		JMenu userDefineNdoe = new JMenu(userDefineNode);
+		copyTo.add(userDefineNdoe);
 		ColorSchemeTreeNode userDefineTreeNode = (ColorSchemeTreeNode) root.getChildAt(1);
 		for (int i = 0; i < userDefineTreeNode.getChildCount(); i++) {
 			ColorSchemeTreeNode childAt = (ColorSchemeTreeNode) userDefineTreeNode.getChildAt(i);
-			MyMenuItem myMenuItem = new MyMenuItem(childAt == lastSelectedPathComponent ? childAt.getName() + CoreProperties.getString("String_current") : childAt.getName());
+			MyMenuItem myMenuItem = new MyMenuItem(childAt == lastSelectedPathComponent ? childAt.getShowName() + CoreProperties.getString("String_current") : childAt.getShowName());
 			myMenuItem.setColorSchemeTreeNode(childAt);
+			userDefineNdoe.add(myMenuItem);
 		}
 
 		jPopupMenu.add(menuItemExport);
-		jPopupMenu.add(menuItemFavorite);
+		if (lastSelectedPathComponent != ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2) && lastSelectedPathComponent.getParent() != ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2)) {
+			jPopupMenu.add(menuItemFavorite);
+		}
 		return jPopupMenu;
 
 	}
 
-	private void askSave() {
+	/**
+	 * 询问是否保存
+	 *
+	 * @return 是/否 -> true  关闭->false
+	 */
+	private boolean askSave() {
 		if (isModified) {
-			if (UICommonToolkit.showConfirmDialogYesNo(ControlsProperties.getString("String_ColorSchemeHadModified")) == JOptionPane.YES_OPTION) {
+//			int result = UICommonToolkit.showConfirmDialogYesNo(ControlsProperties.getString("String_ColorSchemeHadModified"));
+			int result = UICommonToolkit.showConfirmDialogWithCancel(ControlsProperties.getString("String_ColorSchemeHadModified"));
+			if (result == JOptionPane.YES_OPTION) {
 				save();
+			} else if (result == JOptionPane.CLOSED_OPTION || result == JOptionPane.CANCEL_OPTION) {
+				return false;
 			}
 		}
+		return true;
 	}
 
 	private void save() {
@@ -409,6 +442,7 @@ public class JDialogColorScheme extends SmDialog {
 		}
 		ColorSchemeManager.getColorSchemeManager().setRootTreeNode(((ColorSchemeTreeNode) tree.getModel().getRoot()));
 		dialogResult = DialogResult.OK;
+		isModified = false;
 	}
 
 	private void editColorSchemeAtRow(int selectedRow) {
@@ -505,11 +539,12 @@ public class JDialogColorScheme extends SmDialog {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
-				splitPane.setDividerLocation(0.25d);
+				splitPane.setDividerLocation(0.23d);
 				removeWindowListener(this);
 			}
 		});
 		ColorSchemeManager colorSchemeManager = ColorSchemeManager.getColorSchemeManager();
+		colorSchemeManager.reload();
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setModel(new DefaultTreeModel(colorSchemeManager.getRootTreeNode().clone()));
 		tree.setRootVisible(false);
@@ -528,6 +563,13 @@ public class JDialogColorScheme extends SmDialog {
 		return new JDialogAddDirectory();
 	}
 
+	@Override
+	public void dispose() {
+		if (askSave()) {
+			super.dispose();
+		}
+	}
+
 	protected class JDialogAddDirectory extends SmDialog {
 		private JLabel labelParent = new JLabel();
 		private JTextField textFieldParent = new JTextField();
@@ -540,8 +582,17 @@ public class JDialogColorScheme extends SmDialog {
 
 		public JDialogAddDirectory() {
 			init();
-			this.setSize(new Dimension(300, 200));
+			this.setTitle(ControlsProperties.getString("String_title_newColorSchemeGroup"));
+			this.setSize(new Dimension(250, 150));
 			this.setLocationRelativeTo(null);
+			this.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowOpened(WindowEvent e) {
+					textFieldName.requestFocus();
+					textFieldName.select(0, textFieldName.getText().length());
+					JDialogAddDirectory.this.removeWindowListener(this);
+				}
+			});
 		}
 
 		protected void init() {
@@ -579,18 +630,18 @@ public class JDialogColorScheme extends SmDialog {
 			this.getRootPane().setDefaultButton(buttonOk);
 
 			this.setLayout(new GridBagLayout());
-			this.add(labelParent, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0.2, 0.5).setInsets(10, 10, 0, 0));
-			this.add(textFieldParent, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(0.8, 0.5).setInsets(10, 5, 0, 10));
+			this.add(labelParent, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(10, 10, 0, 0));
+			this.add(textFieldParent, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0.5).setInsets(10, 5, 0, 10));
 
-			this.add(labelName, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0).setWeight(0.2, 0.5));
-			this.add(textFieldName, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setWeight(0.2, 0.5));
+			this.add(labelName, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0).setWeight(0, 0));
+			this.add(textFieldName, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setWeight(1, 0));
 
 			JPanel panelButtons = new JPanel();
 			panelButtons.setLayout(new GridBagLayout());
 			panelButtons.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 0).setWeight(1, 0));
 			panelButtons.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0).setWeight(0, 0));
 
-			this.add(panelButtons, new GridBagConstraintsHelper(0, 2, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
+			this.add(panelButtons, new GridBagConstraintsHelper(0, 2, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 10, 10, 10).setAnchor(GridBagConstraints.SOUTH));
 
 			buttonOk.addActionListener(new ActionListener() {
 				@Override

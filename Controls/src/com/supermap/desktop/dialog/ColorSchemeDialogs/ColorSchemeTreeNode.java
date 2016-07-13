@@ -45,9 +45,6 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			if (name.equals(CoreProperties.getString("String_UserDefine"))) {
 				name = "UserDefine";
 			}
-			if (name.equals(CoreProperties.getString("String_MyFavorites"))) {
-				name = "Favorites";
-			}
 		}
 		return filePath + name + System.getProperty("file.separator");
 	}
@@ -61,19 +58,12 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			colorSchemes = new ArrayList<>();
 		}
 		colorScheme.setParentNode(this);
-//		ArrayList<String> names = new ArrayList<>();
-//		for (ColorScheme scheme : colorSchemes) {
-//			names.add(scheme.getName());
-//		}
-//		colorScheme.setName(StringUtilities.getUniqueName(colorScheme.getName(), names));
 		colorSchemes.add(colorScheme);
 	}
 
 	public List<ColorScheme> getColorSchemes() {
-		if (colorSchemes != null) {
-			return colorSchemes;
-		}
 		if (children != null && children.size() > 0) {
+			// 是否为父节点
 			ArrayList<ColorScheme> colorSchemes = new ArrayList<>();
 			for (ColorSchemeTreeNode child : children) {
 				if (child.getColorSchemes() != null && child.getColorSchemes().size() > 0) {
@@ -82,7 +72,31 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			}
 			return colorSchemes;
 		}
-		return null;
+		if (this.getParent() != null && CoreProperties.getString("String_MyFavorites").equals(((ColorSchemeTreeNode) this.getParent()).getShowName())) {
+			// 收藏子节点
+			ArrayList<ColorScheme> colorSchemes = new ArrayList<>();
+			if (((ColorSchemeTreeNode) this.getParent().getParent().getChildAt(0)).getChildByName(this.getShowName()) != null) {
+				ColorSchemeTreeNode childByName = ((ColorSchemeTreeNode) this.getParent().getParent().getChildAt(0)).getChildByName(this.getShowName());
+				for (ColorScheme colorScheme : childByName.getColorSchemes()) {
+					if (colorScheme.isFavorite()) {
+						colorSchemes.add(colorScheme);
+					}
+				}
+			}
+			if (((ColorSchemeTreeNode) this.getParent().getParent().getChildAt(1)).getChildByName(this.getShowName()) != null) {
+				ColorSchemeTreeNode childByName = ((ColorSchemeTreeNode) this.getParent().getParent().getChildAt(1)).getChildByName(this.getShowName());
+				for (ColorScheme colorScheme : childByName.getColorSchemes()) {
+					if (colorScheme.isFavorite()) {
+						colorSchemes.add(colorScheme);
+					}
+				}
+			}
+			return colorSchemes;
+		}
+		if (colorSchemes == null) {
+			colorSchemes = new ArrayList<>();
+		}
+		return colorSchemes;
 	}
 
 	@Override
@@ -186,7 +200,7 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 	public ColorSchemeTreeNode getChild(String name) {
 		if (children != null) {
 			for (ColorSchemeTreeNode aChildren : children) {
-				if (aChildren.getName().equals(name)) {
+				if (aChildren.getName().equals(name) || aChildren.getShowName().equals(name)) {
 					return aChildren;
 				}
 			}
@@ -196,6 +210,7 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 		this.addChild(colorSchemeTreeNode);
 		return colorSchemeTreeNode;
 	}
+
 
 	public void removeChild(ColorSchemeTreeNode lastSelectedPathComponent) {
 		if (new File(lastSelectedPathComponent.getFilePath()).exists()) {
