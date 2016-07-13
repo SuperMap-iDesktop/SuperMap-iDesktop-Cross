@@ -233,11 +233,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 
 				if (desFieldInfo.getType() == srcFieldInfo.getType()) {
 					// 如果要源字段和目标字段类型一致，直接保存
-					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()));
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName().toLowerCase()));
 				} else if (desFieldInfo.getType() == FieldType.WTEXT || desFieldInfo.getType() == FieldType.TEXT) {
 
 					// 如果目标字段与源字段类型不一致，则只有目标字段是文本型字段时，将源字段值做 toString 处理
-					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()).toString());
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName().toLowerCase()).toString());
 				}
 			}
 		}
