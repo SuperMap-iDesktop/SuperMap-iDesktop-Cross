@@ -26,7 +26,7 @@ public class DGeoCardinal extends AbstractGeometry implements ILineFeature, ILin
 
 	@Override
 	public GeoLine convertToLine(int segment) {
-		return this.geoCardinal == null ? null : this.geoCardinal.convertToLine(0);
+		return this.geoCardinal == null ? null : this.geoCardinal.convertToLine(segment);
 	}
 
 }

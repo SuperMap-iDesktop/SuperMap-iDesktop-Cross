@@ -87,8 +87,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	private boolean unityVisible;
 	private boolean showOutLineWidth;
 	private boolean isTextStyleSet;
-	private String fontSize;
 	private boolean isResetFontSize;
+	private String fontSize;
 	protected double UNIT_CONVERSION = 10;
 
 	private JTextField textFieldFontSize;
@@ -96,7 +96,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	private JFormattedTextField textFieldFontWidth;
 	private JFormattedTextField textFieldFontItalicAngl;
 	private JFormattedTextField textFieldFontRotationAngl;
-	//
 	private Vector<TextStyleChangeListener> textStyleChangedListeners;
 
 	private ItemListener fontNameItemListener = new ItemListener() {
@@ -312,7 +311,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		@Override
 		public void focusLost(FocusEvent e) {
 			if (StringUtilities.isNullOrEmptyString(textFieldFontSize.getText())) {
-				textFieldFontSize.setText((String) textStyleTypeMap.get(TextStyleType.FONTSIZE));
+				comboBoxFontSize.setSelectedItem(fontSize);
 				isResetFontSize = true;
 			}
 		}
@@ -729,7 +728,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 				textFieldString = decimalFormat.format(size);
 				this.textFieldFontSize.setText(textFieldString);
 			}
-			this.fontSize = textFieldString;
+			fontSize = textFieldString;
 			double height = Double.parseDouble(textFieldString);
 			this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height / EXPERIENCE));
 		}
@@ -855,6 +854,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		// 保证字高控件的值正确
 		if (!StringUtilities.isNullOrEmpty(textFieldFontSize.getText()) && StringUtilities.isNumber(textFieldFontSize.getText())) {
 			double size = Double.valueOf(textFieldFontSize.getText());
+			fontSize = textFieldFontSize.getText();
 			double fontHeight = size / EXPERIENCE;
 			fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
 			if (fontHeight > 0) {
@@ -910,7 +910,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
 	@Override
 	public void setTextStyle(TextStyle textStyle) {
-		this.textStyle = textStyle;
+		this.textStyle = textStyle.clone();
 	}
 
 	@Override

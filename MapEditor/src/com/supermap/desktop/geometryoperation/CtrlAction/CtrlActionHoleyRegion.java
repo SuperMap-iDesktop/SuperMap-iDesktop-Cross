@@ -4,7 +4,6 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.geometryoperation.editor.HoleyRegionEditor;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
-import com.supermap.desktop.geometryoperation.editor.NullEditor;
 
 public class CtrlActionHoleyRegion extends CtrlActionEditorBase {
 

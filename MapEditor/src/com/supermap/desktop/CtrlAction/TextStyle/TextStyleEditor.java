@@ -26,6 +26,7 @@ public class TextStyleEditor extends AbstractEditor {
 		public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0) {
 			resetRecordset(environment);
 		}
+
 		@Override
 		public void undone(EditEnvironment environment, EventObject arg0) {
 			resetRecordset(environment);
@@ -57,7 +58,7 @@ public class TextStyleEditor extends AbstractEditor {
 	@Override
 	public void activate(final EditEnvironment environment) {
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-		if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT)) {
+		if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
 			environment.setEditController(this.editController);
 			dialog = TextStyleDialog.createInstance();
 			if (null != getActiveRecordset(environment)) {
@@ -68,7 +69,9 @@ public class TextStyleEditor extends AbstractEditor {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dialog.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+				if (null != dialog) {
+					dialog.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+				}
 			}
 		};
 		this.geometryAddedListener = new GeometryAddedListener() {
@@ -96,13 +99,13 @@ public class TextStyleEditor extends AbstractEditor {
 		registEvents(environment);
 	}
 
-	private void removeEvents(EditEnvironment environment){
+	private void removeEvents(EditEnvironment environment) {
 		layersTree.removeMouseListener(layerMouseListener);
 		environment.getMapControl().removeGeometryAddedListener(geometryAddedListener);
 		environment.getMapControl().removeGeometryDeletedListener(geometryDeletedListener);
 		environment.getMapControl().removeGeometryModifiedListener(geometryModifiedListener);
 	}
-	
+
 	private void registEvents(EditEnvironment environment) {
 		removeEvents(environment);
 		this.layersTree.addMouseListener(layerMouseListener);
@@ -115,30 +118,43 @@ public class TextStyleEditor extends AbstractEditor {
 			public void activeFormChanged(final ActiveFormChangedEvent e) {
 				if (e.getNewActiveForm() instanceof IFormMap) {
 					resetRecordset((IFormMap) e.getNewActiveForm());
+					((IFormMap) e.getNewActiveForm()).getMapControl().addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
+
+						@Override
+						public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
+							resetRecordset((IFormMap) e.getNewActiveForm());
+						}
+					});
+				} else {
+					removeDialog();
 				}
 				if (null == e.getNewActiveForm()) {
 					// 销毁
-					dialog.dispose();
+					if (null != dialog) {
+						dialog.dispose();
+					}
 				}
 			}
 		});
 	}
 
 	private void removeDialog() {
-		TextStyle textStyle = dialog.getTempTextStyle();
-		textStyle = null;
-		((JPanel) dialog.getContentPane()).removeAll();
-		((JPanel) dialog.getContentPane()).updateUI();
+		if (null != dialog) {
+			TextStyle textStyle = dialog.getTempTextStyle();
+			textStyle = null;
+			((JPanel) dialog.getContentPane()).removeAll();
+			((JPanel) dialog.getContentPane()).updateUI();
+		}
 	}
 
-	private void resetRecordset(IFormMap formMap){
+	private void resetRecordset(IFormMap formMap) {
 		if (null != dialog && null != getActiveRecordset(formMap)) {
 			dialog.showDialog(getActiveRecordset(formMap));
 		} else if (null == getActiveRecordset(formMap)) {
 			removeDialog();
 		}
 	}
-	
+
 	private void resetRecordset(EditEnvironment environment) {
 		if (null != dialog && null != getActiveRecordset(environment)) {
 			dialog.showDialog(getActiveRecordset(environment));

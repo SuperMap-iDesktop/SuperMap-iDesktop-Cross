@@ -22,6 +22,7 @@ import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 /**
  * 更新列主界面
@@ -400,7 +401,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			// 设置默认选中行
 			this.comboBoxUpdateField.setSelectedItem(defualtSelectField);
 			this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(this.comboBoxUpdateField.getSelectedIndex()).getType()));
-		}else {
+		} else {
 			this.labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(0).getType()));
 		}
 		this.labelFieldType.setPreferredSize(new Dimension(60, 23));
@@ -1029,7 +1030,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		}
 		parameter.setResultFields(temp);
 		Recordset resultSet = tabular.getRecordset().getDataset().query(parameter);
-		if (null == resultSet) {
+		if (null == resultSet || null == temp) {
 			// 没有查询结果不执行更新，给出提示
 			Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_UpdateColumnFailed"));
 		} else if (null != resultSet.getFieldInfos().get(temp[0])) {
@@ -1043,7 +1044,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				}
 				updateRecordset(temp, resultSet, selectRows);
 				return;
-			} else{
+			} else {
 				// 更新选中列中选中的记录
 				if (tabular.getSelectedRows().length > 0) {
 					updateRecordset(temp, resultSet, tabular.getSelectedRows());
@@ -1076,11 +1077,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				if (resultSet.getFieldValue(temp[0]) instanceof Integer) {
 					result = (int) resultSet.getFieldValue(temp[0]);
 				}
-				
+
 				recordset.setFieldValue(updateField, result);
-			}else if (null != resultSet.getFieldValue(temp[0])) {
-				 recordset.setFieldValue(updateField, resultSet.getFieldValue(temp[0]));
-			 }
+			} else if (null != resultSet.getFieldValue(temp[0])) {
+				recordset.setFieldValue(updateField, resultSet.getFieldValue(temp[0]));
+			}
 		}
 		recordset.getBatch().update();
 		// 重新查询避免操作后记录集清除的异常
