@@ -7,6 +7,7 @@ import java.net.URLConnection;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -53,6 +54,7 @@ public class CreateFile extends Thread {
 		this.createFile();
 		// this.createDir();
 		// this.renameFile();
+//		appendFile();
 	}
 
 	// 创建文件
@@ -67,6 +69,7 @@ public class CreateFile extends Thread {
 			}
 			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.downloadInfo.getFileName());
 			HttpClient client = new DefaultHttpClient();
+			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
 			HttpPut requestPut = new HttpPut(webFile);
 
 			HttpResponse response = client.execute(requestPut);
@@ -117,14 +120,70 @@ public class CreateFile extends Thread {
 		} finally {
 		}
 	}
-
-	private void executeCommond(){
-		
-	}
 	
-	private void appendFile(){
-		
-	}
+	// 创建文件
+		private void appendFile() {
+			try {
+				String locationURL = "";
+				
+				String webFile = this.downloadInfo.getUrl();
+				
+				if (!webFile.endsWith("/")) {
+					webFile += "/";
+				}
+				webFile = String.format("%s%s?user.name=root&op=APPEND", webFile, this.downloadInfo.getFileName());
+				HttpClient client = new DefaultHttpClient();
+				HttpPost requestPost = new HttpPost(webFile);
+
+				HttpResponse response = client.execute(requestPost);
+				if (response != null) {
+					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+						Header locationHeader = response.getFirstHeader("Location");
+						if (locationHeader == null) {
+							System.out.println("登陆不成功，请稍后再试!");
+							return;
+						} else {
+							// 获取登陆成功之后跳转链接
+							locationURL = locationHeader.getValue();
+						}
+					}
+				}
+
+				if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+					requestPost = new HttpPost(locationURL);
+					String fullPath = this.downloadInfo.getFilePath();
+					if (!fullPath.endsWith("\\")) {
+						fullPath += "\\";
+					}
+					fullPath += this.downloadInfo.getFileName();
+					File file = new File(fullPath);
+					FileEntity fileEntity = new FileEntity(file);
+					requestPost.setEntity(fileEntity);
+					response = new DefaultHttpClient().execute(requestPost);
+					if (response != null && response.getStatusLine().getStatusCode() == 200) {
+						Application.getActiveApplication().getOutput()
+								.output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
+						isCreated = true;
+					} else {
+						Application.getActiveApplication().getOutput()
+								.output("File: \"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndFailed"));
+						isFailed = true;
+					}
+				}
+				byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
+
+				System.out.println("response enttiy " + new String(bytes2, "utf-8"));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+			}
+		}
+	
+	
 	
 	private void createDir() {
 		try {

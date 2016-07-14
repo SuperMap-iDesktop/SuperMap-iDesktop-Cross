@@ -144,7 +144,7 @@ public class TextStyleDialog extends SmDialog{
 		this.buttonClose.addActionListener(this.buttonCloseListener);
 	};
 
-	private void disposeInfo() {
+	public void disposeInfo() {
 		removeEvents();
 		dialog.dispose();
 		dialog = null;

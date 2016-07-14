@@ -1,11 +1,8 @@
 package com.supermap.desktop.task;
 
-import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
 import javax.swing.SwingUtilities;
-
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 

@@ -38,7 +38,6 @@ public class BatchUploadFile extends Thread {
 	@Override
 	public void run() {
 		// 首次上传，创建文件
-		if (first) {
 			CreateFile createFile = null;
 			// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
 			if (this.downloadInfo.isHDFSFile()) {
@@ -64,9 +63,6 @@ public class BatchUploadFile extends Thread {
 				}
 
 				// Step2：用要被写入的文件数据，提交另一个HTTP PUT请求到上边返回的Header中的location的URL。
-			}
-		}else{
-			// 不是首次创建
 		}
 
 	}

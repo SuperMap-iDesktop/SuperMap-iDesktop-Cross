@@ -131,7 +131,7 @@ public class TextStyleEditor extends AbstractEditor {
 				if (null == e.getNewActiveForm()) {
 					// 销毁
 					if (null != dialog) {
-						dialog.dispose();
+						dialog.disposeInfo();
 					}
 				}
 			}

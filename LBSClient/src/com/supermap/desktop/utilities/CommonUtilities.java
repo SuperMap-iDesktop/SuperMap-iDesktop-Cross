@@ -70,24 +70,40 @@ public class CommonUtilities {
 			fileManagerContainer.removeItem(task);
 		}
 	}
+//	/**
+//	 * 获取资源图片
+//	 * @param imagePath
+//	 * @return
+//	 */
+//	public static ImageIcon getImageIcon(String imagePath) {
+//		ImageIcon imageIcon = null;
+//		try {
+//			String[] pathPrams = new String[] { PathUtilities.getRootPathName(), "../LBSClient/reosurces/", imagePath };
+//			imagePath = PathUtilities.combinePath(pathPrams, false);
+//			File imageFile = new File(imagePath);
+//			if (imageFile.exists()) {
+//				imageIcon = new ImageIcon(imagePath);
+//			}
+//		} catch (Exception exception) {
+//			Application.getActiveApplication().getOutput().output(exception);
+//		}
+//
+//		return imageIcon;
+//	}
 	/**
-	 * 获取资源图片
-	 * @param imagePath
+	 * 获取图片资源
+	 * @param path
 	 * @return
 	 */
-	public static ImageIcon getImageIcon(String imagePath) {
+	public static ImageIcon getImageIcon(String path){
 		ImageIcon imageIcon = null;
-		try {
-			String[] pathPrams = new String[] { PathUtilities.getRootPathName(), "../LBSClient/reosurces/", imagePath };
-			imagePath = PathUtilities.combinePath(pathPrams, false);
-			File imageFile = new File(imagePath);
-			if (imageFile.exists()) {
-				imageIcon = new ImageIcon(imagePath);
+		try{
+			if (!StringUtilities.isNullOrEmptyString(path)) {
+				imageIcon = new ImageIcon(CommonUtilities.class.getResource("/com/supermap/desktop/lbsresources/ToolBar/"+path));
 			}
-		} catch (Exception exception) {
-			Application.getActiveApplication().getOutput().output(exception);
+		} catch(Exception e){
+			Application.getActiveApplication().getOutput().output(e);
 		}
-
 		return imageIcon;
 	}
 	/**
