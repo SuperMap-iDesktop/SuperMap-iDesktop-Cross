@@ -16,15 +16,11 @@ public class StringUtilities {
 			return true;
 		}
 
-		if (!(obj instanceof String)) {
+		if (isTrimString(obj.toString())) {
 			return true;
 		}
 
-		if (isTrimString((String) obj)) {
-			return true;
-		}
-
-		return ((String) obj).isEmpty();
+		return (obj.toString()).isEmpty();
 	}
 
 	public static boolean isNullOrEmpty(String str) {
