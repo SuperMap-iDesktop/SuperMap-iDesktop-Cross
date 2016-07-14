@@ -26,6 +26,11 @@ sidebar:
     Pyramid: 影像金字塔
     GeoFormates: 数据转换
     DataProcess: 数据处理
+    Projection: 投影
+    AboutMapProjection: 投影概述
+    ProjectionUsed: 常用投影
+    PrjCoordSysType: 坐标系类型
+    SetPrjCoordSys: 投影设置
     Topo: 拓扑处理
     TopoProcess: 拓扑处理规则
     TopoPreprocess: 拓扑预处理

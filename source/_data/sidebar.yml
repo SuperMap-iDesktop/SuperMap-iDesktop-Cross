@@ -6,6 +6,11 @@ docs:
     Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
     GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
   DataProcess:
+    Projection:
+      AboutMapProjection: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/AboutMapProjection.html
+      ProjectionUsed: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/ProjectionUsed.html
+      PrjCoordSysType: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/PrjCoordSysType.html
+      SetPrjCoordSys: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/SetPrjCoordSys.html
     Topo:
       TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
       TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
