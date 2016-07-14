@@ -1422,8 +1422,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidthRatio(), themeGraph.getBarWidthRatio());
 				Point2D point2DStart1 = map.mapToLogical(pointStart1);
 				Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
-
-				themeGraph.setBarWidthRatio(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+				if (10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX())-10<0) {
+					themeGraph.setBarWidthRatio(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+				}
 			} else {
 				Point2D pointStart = new Point2D(0, 0);
 				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
