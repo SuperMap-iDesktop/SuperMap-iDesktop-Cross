@@ -407,14 +407,14 @@ public class JDialogColorScheme extends SmDialog {
 		}
 
 		String userDefineNode = CoreProperties.getString("String_UserDefine");
-		JMenu userDefineNdoe = new JMenu(userDefineNode);
-		copyTo.add(userDefineNdoe);
+		JMenu userDefineMenu = new JMenu(userDefineNode);
+		copyTo.add(userDefineMenu);
 		ColorSchemeTreeNode userDefineTreeNode = (ColorSchemeTreeNode) root.getChildAt(1);
 		for (int i = 0; i < userDefineTreeNode.getChildCount(); i++) {
 			ColorSchemeTreeNode childAt = (ColorSchemeTreeNode) userDefineTreeNode.getChildAt(i);
 			MyMenuItem myMenuItem = new MyMenuItem(childAt == lastSelectedPathComponent ? childAt.getShowName() + CoreProperties.getString("String_current") : childAt.getShowName());
 			myMenuItem.setColorSchemeTreeNode(childAt);
-			userDefineNdoe.add(myMenuItem);
+			userDefineMenu.add(myMenuItem);
 		}
 
 		jPopupMenu.add(menuItemExport);
@@ -422,7 +422,6 @@ public class JDialogColorScheme extends SmDialog {
 			jPopupMenu.add(menuItemFavorite);
 		}
 		return jPopupMenu;
-
 	}
 
 	/**
@@ -628,17 +627,17 @@ public class JDialogColorScheme extends SmDialog {
 			textFieldName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 				@Override
 				public boolean isTextFieldValueLegit(String textFieldValue) {
-					if (names.contains(textFieldValue)) {
+					if (names.contains(textFieldValue) || !FileUtilities.isLegalFolderName(textFieldValue)) {
+						buttonOk.setEnabled(false);
 						return false;
 					}
-					if (!FileUtilities.isLegalFolderName(textFieldValue)) {
-						return false;
-					}
+					buttonOk.setEnabled(true);
 					return true;
 				}
 
 				@Override
 				public String getLegitValue(String currentValue, String backUpValue) {
+					buttonOk.setEnabled(true);
 					return backUpValue;
 				}
 			});
@@ -700,6 +699,7 @@ public class JDialogColorScheme extends SmDialog {
 					for (int i : selectedRows) {
 						ColorScheme clone = tableColorScheme.getColorScheme(i).clone();
 						clone.setParentNode(colorSchemeTreeNode);
+						// TODO: 2016/7/14
 						colorSchemeTreeNode.addColorScheme(clone);
 					}
 					ColorSchemeTreeNode lastSelectedPathComponent = ((ColorSchemeTreeNode) tree.getLastSelectedPathComponent());

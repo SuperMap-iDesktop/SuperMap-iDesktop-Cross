@@ -61,7 +61,8 @@ public class ColorSchemeManager {
 		// 自定义
 		initTreeNode(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeUserDefineFilePath"), true), CoreProperties.getString("String_UserDefine"));
 		// 我的收藏
-		initTreeNode(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeFavoritesFilePath"), true), CoreProperties.getString("String_MyFavorites"));
+		initFavoriteNode();
+//		initTreeNode(PathUtilities.getFullPathName(ControlsProperties.getString("String_ColorSchemeFavoritesFilePath"), true), CoreProperties.getString("String_MyFavorites"));
 	}
 
 	private void initTreeNode(String directoryPath, String nodeName) {
@@ -90,6 +91,45 @@ public class ColorSchemeManager {
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+	private void initFavoriteNode() {
+		ColorSchemeTreeNode favoriteTreeNode = new ColorSchemeTreeNode(rootTreeNode);
+		favoriteTreeNode.setName(CoreProperties.getString("String_MyFavorites"));
+		rootTreeNode.addChild(favoriteTreeNode);
+
+		// 添加default中的收藏颜色方案
+		ColorSchemeTreeNode defaultNode = (ColorSchemeTreeNode) rootTreeNode.getChildAt(0);
+		if (defaultNode.getChildCount() > 0) {
+			for (int i = 0; i < defaultNode.getChildCount(); i++) {
+				ColorSchemeTreeNode childNode = (ColorSchemeTreeNode) defaultNode.getChildAt(i);
+				if (childNode.getFavoriteColorSchemes().size() > 0) {
+					ColorSchemeTreeNode child = favoriteTreeNode.getChild(childNode.getName());
+//					ColorSchemeTreeNode node = new ColorSchemeTreeNode(favoriteTreeNode);
+					for (ColorScheme colorScheme : childNode.getFavoriteColorSchemes()) {
+						child.addColorScheme(colorScheme);
+						// 不想改变颜色的父节点
+						colorScheme.setParentNode(childNode);
+					}
+				}
+			}
+		}
+
+		ColorSchemeTreeNode userDefineNode = (ColorSchemeTreeNode) rootTreeNode.getChildAt(1);
+		if (userDefineNode.getChildCount() > 0) {
+			for (int i = 0; i < userDefineNode.getChildCount(); i++) {
+				ColorSchemeTreeNode childNode = (ColorSchemeTreeNode) userDefineNode.getChildAt(i);
+				if (childNode.getFavoriteColorSchemes().size() > 0) {
+					ColorSchemeTreeNode child = favoriteTreeNode.getChild(childNode.getName());
+//					ColorSchemeTreeNode node = new ColorSchemeTreeNode(favoriteTreeNode);
+					for (ColorScheme colorScheme : childNode.getFavoriteColorSchemes()) {
+						child.addColorScheme(colorScheme);
+						// 不想改变颜色的父节点
+						colorScheme.setParentNode(childNode);
 					}
 				}
 			}

@@ -268,4 +268,16 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 			}
 		}
 	}
+
+	public List<ColorScheme> getFavoriteColorSchemes() {
+		ArrayList<ColorScheme> colorSchemes = new ArrayList<>();
+		if (this.colorSchemes != null && this.colorSchemes.size() > 0) {
+			for (ColorScheme colorScheme : this.colorSchemes) {
+				if (colorScheme.isFavorite()) {
+					colorSchemes.add(colorScheme);
+				}
+			}
+		}
+		return colorSchemes;
+	}
 }

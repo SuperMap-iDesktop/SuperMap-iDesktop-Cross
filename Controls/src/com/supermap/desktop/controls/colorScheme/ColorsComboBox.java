@@ -52,8 +52,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	private JPopupMenu popupMenuColorScheme;
 	// 搜索
 	private TextFieldSearch textFieldSearch;
-	// 显示当前分组按钮
-//	private JButton buttonColorGroup;
 	// 显示当前颜色
 	private JList<ColorScheme> listColors;
 
@@ -85,22 +83,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			tree.setModel(new DefaultTreeModel(ColorSchemeManager.getColorSchemeManager().getRootTreeNode()));
 			JTreeUIUtilities.expandTree(tree, true);
 			reAddElements();
-		}
-	};
-	private ListSelectionListener listGroupSelectionListener = new ListSelectionListener() {
-		private boolean lock = false;
-
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			Object source = e.getSource();
-			if (source != null && source instanceof JList && !lock) {
-				lock = true;
-				selectedColorSchemeTreeNode = (ColorSchemeTreeNode) ((JList) source).getSelectedValue();
-				((JList) source).clearSelection();
-				reAddElements();
-				popupMenuColorScheme.setVisible(true);
-				lock = false;
-			}
 		}
 	};
 	private MyAWTEventListener myAWTEventListener = new MyAWTEventListener();
@@ -159,7 +141,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 				} else {
 					Toolkit.getDefaultToolkit().removeAWTEventListener(myAWTEventListener);
 				}
-				popupMenuColorScheme.setPopupSize(panelShow.getWidth() + 25, 500);
+				popupMenuColorScheme.setPopupSize(panelShow.getWidth() + 20, 500);
 				super.setVisible(b);
 			}
 		};
@@ -214,6 +196,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					selectedColorSchemeTreeNode = (ColorSchemeTreeNode) treeComboBox.getSelectedItem();
 					reAddElements();
+					textFieldSearch.requestFocus();
 				}
 			}
 		});
@@ -261,10 +244,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 			private void textFieldSearchChanged() {
 				reAddElements();
-				// FIXME: 2016/7/8 bug会导致无法输入中文
-//				popupMenuColorScheme.setVisible(false);
-//				popupMenuColorScheme.setVisible(true);
-//				textFieldSearch.requestFocus();
 			}
 
 		});

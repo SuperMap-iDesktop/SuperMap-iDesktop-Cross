@@ -152,7 +152,7 @@ public class ColorSchemeTableModel extends SortableTableModel {
 	}
 
 	public void setColorSchemeAtRow(int row, ColorScheme colorScheme) {
-		colorSchemes.set(row, colorScheme);
+		colorSchemes.get(row).copy(colorScheme);
 		fireTableDataChanged();
 	}
 
