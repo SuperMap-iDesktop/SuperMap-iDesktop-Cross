@@ -1,30 +1,19 @@
 package com.supermap.desktop.ui;
 
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingMrSID;
-import com.supermap.data.conversion.ImportSettingTIF;
-import com.supermap.data.conversion.MultiBandImportMode;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CharsetComboBox;
-import com.supermap.desktop.ui.controls.DatasetComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
-import com.supermap.desktop.util.CommonFunction;
-import com.supermap.desktop.util.ImportInfoUtil;
+import com.supermap.desktop.util.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

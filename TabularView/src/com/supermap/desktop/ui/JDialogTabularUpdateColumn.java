@@ -2,6 +2,10 @@ package com.supermap.desktop.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -13,6 +17,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.controls.*;
@@ -61,6 +66,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private JButton buttonApply;
 	private JButton buttonClose;
 	private IFormTabular tabular;
+	private JPanel contentPanel;
+	private FileChooserControl fileChooser;
 
 	private Map<Integer, FieldInfo> fieldInfoMap = new HashMap<Integer, FieldInfo>();// 字段信息MAP，用于存放可更新的列
 	private JTextArea textAreaExpression;// 存放表达式
@@ -71,10 +78,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private final String[] textExpressions = { "Left", "Right", "Mid", "UCase", "LCase", "Trim", "TrimEnd", "TrimStart", "ObjectCenterX", "ObjectCenterY",
 			"ObjectLeft", "ObjectRight", "ObjectTop", "ObjectBottom", "ObjectWidth", "ObjectHeight", "LRemove", "RRemove", "Replace" };
 	private final String[] dateTimeExpressions = { "AddDays", "AddHours", "AddMilliseconds", "AddSeconds", "AddMinutes", "AddMonths", "AddYears", "Date", "Now" };
-
 	private final String[] dateMethodExpresssions = { "DaysInMonth", "Second", "Minute", "Hour", "Day", "Month", "Year", "DayOfYear", "DayOfWeek" };
-
-	private JPanel contentPanel;
 
 	private ItemListener updateFieldListener = new ItemListener() {
 
@@ -178,18 +182,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED && null != textFieldOperationEQ) {
-				if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN) && !comboBoxOperationField.isEnabled()) {
-					textFieldOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString());
-				} else {
-					textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
-							+ comboBoxSecondField.getSelectedItem().toString());
-				}
-				if (null != tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString())) {
-					labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
-							.get(comboBoxSecondField.getSelectedItem().toString()).getType()));
-				}
-			}
+			comboBoxSecondFieldChanged(e);
 		}
 	};
 	private ActionListener buttonApplyListener = new ActionListener() {
@@ -206,6 +199,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			disposeDialog();
 		}
 
+	};
+	private ActionListener fileChooserListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			fileChooserClicked();
+		}
 	};
 
 	public JDialogTabularUpdateColumn(IFormTabular tabular) {
@@ -236,9 +236,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		initTextFieldOperationEQ();
 		initLayout();
 		if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN)) {
-			replaceSecondField(comboBoxSecondField, textFieldSecondField);
+			replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
 			setComboBoxSecondFieldItems(FieldType.BOOLEAN);
 			this.textFieldOperationEQ.setText("True");
+		}
+		if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.LONGBINARY)) {
+			replaceSecondField(fileChooser, textFieldSecondField, comboBoxSecondField);
+			this.textFieldOperationEQ.setText("null");
 		}
 	}
 
@@ -306,6 +310,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private Component initButtonPanel() {
 		JPanel panelButton = new JPanel();
 		this.buttonApply = ComponentFactory.createButtonApply();
+		this.buttonApply.setEnabled(false);
 		this.buttonClose = ComponentFactory.createButtonClose();
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(this.buttonApply, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 10));
@@ -385,6 +390,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.labelSecondField.setPreferredSize(new Dimension(100, 23));
 		this.comboBoxSecondField = new JComboBox<String>();
 		this.comboBoxSecondField.setEditable(true);
+		this.fileChooser = new FileChooserControl();
 		((JTextField) this.comboBoxSecondField.getEditor().getEditorComponent()).setEditable(false);
 		this.comboBoxUpdateField.removeAllItems();
 		int count = 0;
@@ -481,6 +487,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
 		this.buttonApply.addActionListener(this.buttonApplyListener);
 		this.buttonClose.addActionListener(this.buttonCloseListener);
+		this.fileChooser.getButton().addActionListener(this.fileChooserListener);
 	}
 
 	private void disposeDialog() {
@@ -525,6 +532,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			String filter = dialog.getQueryParameter().getAttributeFilter();
 			if (!StringUtilities.isNullOrEmpty(filter)) {
 				textAreaExpression.setText(filter);
+				buttonApply.setEnabled(true);
 			}
 		}
 	}
@@ -569,7 +577,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		resetMethodItemsForMathModel();
 		labelSecondField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelSecondField"));
 		labelSecondField.setEnabled(false);
-		replaceSecondField(textFieldSecondField, comboBoxSecondField);
+		replaceSecondField(textFieldSecondField, comboBoxSecondField, fileChooser);
 		textFieldSecondField.setEnabled(false);
 		labelOperationEQ.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelExpression"));
 		labelSecondFieldType.setText("");
@@ -627,7 +635,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		updateComboboxMethod();
 		comboBoxMethod.setEnabled(true);
 		labelSecondField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelSecondField1"));
-		replaceSecondField(comboBoxSecondField, textFieldSecondField);
+		replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
 		setComboBoxSecondFieldItems(FieldType.INT16);
 		labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedIndex())
 				.getType()));
@@ -649,7 +657,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		updateComboboxMethod();
 		comboBoxMethod.setEnabled(true);
 		labelSecondField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelFieldValue"));
-		replaceSecondField(textFieldSecondField, comboBoxSecondField);
+		replaceSecondField(textFieldSecondField, comboBoxSecondField, fileChooser);
 		labelOperationEQ.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelExpression"));
 		textFieldSecondField.setEnabled(true);
 		labelEQTip.setText("");
@@ -680,11 +688,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		labelEQTip.setText("");
 		labelSecondField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelSecondField"));
 		if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN)) {
-			replaceSecondField(comboBoxSecondField, textFieldSecondField);
+			replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
 			setComboBoxSecondFieldItems(FieldType.BOOLEAN);
 			textFieldOperationEQ.setText("True");
+		} else if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.LONGBINARY)) {
+			replaceSecondField(fileChooser, comboBoxSecondField, textFieldSecondField);
 		} else {
-			replaceSecondField(textFieldSecondField, comboBoxSecondField);
+			replaceSecondField(textFieldSecondField, comboBoxSecondField, fileChooser);
 		}
 	}
 
@@ -705,8 +715,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		textFieldY.setEnabled(false);
 	}
 
-	private void replaceSecondField(JComponent component, JComponent removeComponent) {
+	private void replaceSecondField(JComponent component, JComponent removeComponent, JComponent removeComponent1) {
 		contentPanel.remove(removeComponent);
+		contentPanel.remove(removeComponent1);
 		contentPanel.add(component, new GridBagConstraintsHelper(1, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0)
 				.setFill(GridBagConstraints.HORIZONTAL));
 		contentPanel.updateUI();
@@ -736,12 +747,18 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			FieldType fieldType = fieldInfoMap.get(updateFieldIndex).getType();
 			setComboBoxSourceOfFieldItems(fieldType);
 			if (fieldType.equals(FieldType.BOOLEAN)) {
-				replaceSecondField(comboBoxSecondField, textFieldSecondField);
+				replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
 				setComboBoxSecondFieldItems(fieldType);
 			}
 			comboBoxSourceOfField.setSelectedIndex(0);
 			labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(updateFieldIndex).getType()));
 			initTextFieldOperationEQText(fieldInfoMap.get(updateFieldIndex).getType());
+			if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+				textFieldOperationEQ.setText(Convert.getDateStr(textFieldSecondField.getText()));
+				buttonApply.setEnabled(true);
+			} else {
+				updateEQ(fieldType, "");
+			}
 		}
 	}
 
@@ -765,6 +782,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				result = expression[1].trim() + method + expression[0].trim();
 			}
 			textFieldOperationEQ.setText(result);
+			buttonApply.setEnabled(true);
 		}
 	}
 
@@ -773,22 +791,27 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
 				setUnityEvaluationInfo();
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				setSingleFieldInfo();
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
 				setDoubleFieldInfo();
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
 				setFunctionInfo();
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression"))) {
 				setExpression();
+				buttonApply.setEnabled(true);
 				return;
 			}
 		}
@@ -802,6 +825,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				// 单字段运算
 				resetTextFieldOperationEQ();
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -810,11 +834,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				String operation = comboBoxMethod.getSelectedItem().toString();
 				String secondField = comboBoxSecondField.getSelectedItem().toString();
 				textFieldOperationEQ.setText(fristField + operation + secondField);
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
 				// 函数运算
 				resetMethodInfo();
+				buttonApply.setEnabled(true);
 				return;
 			}
 
@@ -839,8 +865,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 						&& StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 					textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + method + "0");
 				} else {
-					textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + method + textFieldSecondField.getText());
+					if (checkBoxInversion.isSelected()) {
+						textFieldOperationEQ.setText(textFieldSecondField.getText() + method + comboBoxOperationField.getSelectedItem().toString());
+					} else {
+						textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + method + textFieldSecondField.getText());
+					}
 				}
+				buttonApply.setEnabled(true);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
@@ -875,13 +906,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 					textFieldX.setText("0");
 					setMethodStatus(true, true, false, tempOperationField + "." + method + "(0)", method);
 				} else if (method.equals("Date") || method.equals("Now")) {
-					setMethodStatus(true, true, false, method, method);
+					setMethodStatus(true, false, false, tempOperationField + "." + method, method);
 				} else if (method.equals("DaysInMonth")) {
 					setMethodStatus(true, false, false, method + "(" + tempOperationField + ".Year," + tempOperationField + ".Month)", method);
 				} else if (method.equals("Second") || method.equals("Minute") || method.equals("Hour") || method.equals("Day") || method.equals("Month")
 						|| method.equals("Year") || method.equals("DayOfYear") || method.equals("DayOfWeek")) {
 					setMethodStatus(false, false, false, tempOperationField + "." + method, method);
 				}
+				buttonApply.setEnabled(true);
 				return;
 			}
 		}
@@ -902,21 +934,21 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if ((method.equals("Log") || method.equals("Left") || method.equals("Right") || method.equals("LRemove") || method.equals("RRemove"))
 				&& !StringUtilities.isNullOrEmptyString(textFieldX.getText())) {
 			textFieldOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ")");
-			return;
+			buttonApply.setEnabled(true);
 		} else if ((method.equals("AddDays") || method.equals("AddHours") || method.equals("AddMilliseconds") || method.equals("AddSeconds")
 				|| method.equals("AddMinutes") || method.equals("AddMonths") || method.equals("AddYears"))
 				&& !StringUtilities.isNullOrEmptyString(textFieldX.getText()) && StringUtilities.isPositiveInteger(textFieldX.getText())) {
 			textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + "." + method + "(" + textFieldX.getText() + ")");
-			return;
+			buttonApply.setEnabled(true);
 		} else if (method.equals("Mid") && !StringUtilities.isNullOrEmptyString(textFieldX.getText())
 				&& StringUtilities.isPositiveInteger(textFieldX.getText())) {
 			textFieldOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ","
 					+ textFieldY.getText() + ")");
-			return;
+			buttonApply.setEnabled(true);
 		} else if (method.equals("Replace")) {
 			textFieldOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + ",\'" + textFieldX.getText() + "\',\'"
 					+ textFieldY.getText() + "\')");
-			return;
+			buttonApply.setEnabled(true);
 		} else if (method.equals("TrimEnd") || method.equals("TrimStart")) {
 			String expression = method + "(" + comboBoxOperationField.getSelectedItem().toString();
 			for (int i = 0; i < textFieldX.getText().toCharArray().length; i++) {
@@ -924,6 +956,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			}
 			expression += ")";
 			textFieldOperationEQ.setText(expression);
+			buttonApply.setEnabled(true);
 		}
 
 	}
@@ -933,11 +966,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if (methodItem.equals("Mid") && !StringUtilities.isNullOrEmptyString(textFieldX.getText()) && StringUtilities.isPositiveInteger(textFieldX.getText())) {
 			textFieldOperationEQ.setText(methodItem + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ","
 					+ textFieldY.getText() + ")");
+			buttonApply.setEnabled(true);
 			return;
 		}
 		if (methodItem.equals("Replace")) {
 			textFieldOperationEQ.setText(methodItem + "(" + comboBoxOperationField.getSelectedItem().toString() + ",\'" + textFieldX.getText() + "\',\'"
 					+ textFieldY.getText() + "\')");
+			buttonApply.setEnabled(true);
 			return;
 		}
 	}
@@ -946,37 +981,51 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
 		FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
 		if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
-			updateEQ(fieldType, "");
-			// if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-			// textFieldOperationEQ.setText(new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(textFieldSecondField.getText()));
-			// }
+			if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+				textFieldOperationEQ.setText(Convert.getDateStr(textFieldSecondField.getText()));
+				buttonApply.setEnabled(true);
+			} else {
+				updateEQ(fieldType, "");
+			}
 		} else if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
-			updateEQ(fieldType, comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString());
+			String info = "";
+			if (!checkBoxInversion.isSelected()) {
+				info = comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString();
+			} else {
+				info = comboBoxMethod.getSelectedItem().toString() + comboBoxOperationField.getSelectedItem().toString();
+			}
+			updateEQ(fieldType, info);
 		}
 	}
 
 	private void updateEQ(FieldType fieldType, String info) {
 		if (FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			textFieldOperationEQ.setText(info + "0");
+			buttonApply.setEnabled(true);
 			return;
 		}
-		if ((fieldType.equals(FieldType.INT16) || fieldType.equals(FieldType.INT32) || fieldType.equals(FieldType.INT64))
-				&& !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText()) && StringUtilities.isNumeric(textFieldSecondField.getText())) {
-			textFieldOperationEQ.setText(info + textFieldSecondField.getText());
-			return;
-		}
-		if ((fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())
-				&& StringUtilities.isDecimal(textFieldSecondField.getText())) {
-			textFieldOperationEQ.setText(info + textFieldSecondField.getText());
+		if (FieldTypeUtilities.isNumber(fieldType) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+			if (!checkBoxInversion.isSelected()) {
+				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
+			} else {
+				textFieldOperationEQ.setText(textFieldSecondField.getText() + info);
+			}
+			buttonApply.setEnabled(true);
 			return;
 		}
 		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			textFieldOperationEQ.setText(info);
+			buttonApply.setEnabled(true);
 			return;
 		}
 		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR))
 				&& !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-			textFieldOperationEQ.setText(info + textFieldSecondField.getText());
+			if (!checkBoxInversion.isSelected()) {
+				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
+			} else {
+				textFieldOperationEQ.setText(textFieldSecondField.getText() + info);
+			}
+			buttonApply.setEnabled(true);
 			return;
 		}
 	}
@@ -986,18 +1035,23 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
 			// 统一赋值
 			updateUnitySetValue();
+			buttonApply.setEnabled(false);
 		} else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 			// 单字段运算
 			updateOneField();
+			buttonApply.setEnabled(false);
 		} else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
 			// 双字段运算
 			updateTwoField();
+			buttonApply.setEnabled(false);
 		} else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
 			// 函数运算
 			updateModeMath();
+			buttonApply.setEnabled(false);
 		} else {
 			// sql查询结果替换
 			updateModeQuery();
+			buttonApply.setEnabled(false);
 		}
 	}
 
@@ -1011,7 +1065,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			Recordset result = tabular.getRecordset().getDataset().query(parameter);
 			boolean selectAllColumn = radioButtonUpdateColumn.isSelected();
 			FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-			if (null != result) {
+			if (null != result && null != result.getFieldInfos().get(textAreaExpression.getText())) {
 				if (selectAllColumn) {
 					// 更新选中列
 					int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
@@ -1080,7 +1134,25 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			updateModeMathText(fieldType, selectRows);
 		} else if (fieldType.equals(FieldType.DATETIME)) {
 			// 日期型
+			updateModeMathDate(selectRows);
 		}
+	}
+
+	private void updateModeMathDate(int[] selectRows) {
+		String method = comboBoxMethod.getSelectedItem().toString();
+		String updateField = comboBoxUpdateField.getSelectedItem().toString();
+		Recordset recordset = tabular.getRecordset();
+		recordset.getBatch().setMaxRecordCount(1024);
+		recordset.getBatch().begin();
+		Object newValue = null;
+		for (int i = 0; i < selectRows.length; i++) {
+			recordset.moveTo(selectRows[i]);
+			newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime((Date) recordset.getFieldValue(updateField), method, textFieldX.getText());
+			recordset.setFieldValue(updateField, newValue);
+		}
+		recordset.getBatch().update();
+		// 重新查询避免操作后记录集清除的异常
+		refreshTabular(selectRows);
 	}
 
 	private void updateModeMathText(FieldType fieldType, int[] selectRows) {
@@ -1096,6 +1168,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			recordset.moveTo(selectRows[i]);
 			if (UpdateColumnUtilties.isObjectConnect(method)) {
 				newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
+			} else if (UpdateColumnUtilties.isDaysInfo(method)) {
+				newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
 			} else {
 				newValue = UpdateColumnUtilties.getUpdataModeMathValueText(method, recordset.getFieldValue(fristField).toString(), textFieldX.getText(),
 						textFieldY.getText());
@@ -1129,6 +1203,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				newValue = UpdateColumnUtilties.getMathInfo(method, recordset.getFieldValue(fristField).toString(), textFieldX.getText(), fieldType);
 			} else if (UpdateColumnUtilties.isObjectConnect(method)) {
 				newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
+			} else if (UpdateColumnUtilties.isDaysInfo(method)) {
+				newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
 			}
 			recordset.setFieldValue(updateField, newValue);
 		}
@@ -1173,15 +1249,28 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		for (int i = 0; i < selectRows.length; i++) {
 			recordset.moveTo(selectRows[i]);
 			if (isText) {
-				String newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
+				String newValue = "";
+				if (checkBoxInversion.isSelected()) {
+					newValue = recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
+				} else {
+					newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
+				}
 				if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
 					beyoundMaxLength = true;
 					newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
 				}
 				recordset.setFieldValue(updateField, newValue);
 			} else {
-				recordset.setFieldValue(updateField,
-						UpdateColumnUtilties.getCommonMethodInfo(method, recordset.getFieldValue(fristField), recordset.getFieldValue(secondField), fieldType));
+				Object source = null;
+				Object source1 = null;
+				if (checkBoxInversion.isSelected()) {
+					source = recordset.getFieldValue(secondField);
+					source1 = recordset.getFieldValue(fristField);
+				} else {
+					source = recordset.getFieldValue(fristField);
+					source1 = recordset.getFieldValue(secondField);
+				}
+				recordset.setFieldValue(updateField, UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType));
 			}
 		}
 		recordset.getBatch().update();
@@ -1242,14 +1331,28 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		for (int i = 0; i < selectRows.length; i++) {
 			recordset.moveTo(selectRows[i]);
 			if (isText) {
-				String newValue = recordset.getFieldValue(fristField).toString().concat(value);
+				String newValue = "";
+				if (checkBoxInversion.isSelected()) {
+					newValue = value.concat(recordset.getFieldValue(fristField).toString());
+				} else {
+					newValue = recordset.getFieldValue(fristField).toString().concat(value);
+				}
 				if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
 					beyoundMaxLength = true;
 					newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
 				}
 				recordset.setFieldValue(updateField, newValue);
 			} else {
-				recordset.setFieldValue(updateField, UpdateColumnUtilties.getCommonMethodInfo(method, recordset.getFieldValue(fristField), value, fieldType));
+				Object source = null;
+				Object source1 = null;
+				if (checkBoxInversion.isSelected()) {
+					source = value;
+					source1 = recordset.getFieldValue(fristField);
+				} else {
+					source = recordset.getFieldValue(fristField);
+					source1 = value;
+				}
+				recordset.setFieldValue(updateField, UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType));
 			}
 		}
 		recordset.getBatch().update();
@@ -1312,7 +1415,17 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			}
 			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		} else if (fieldType.equals(FieldType.LONGBINARY)) {
-			// 二进制型
+			// 二进制型,利用Files类来读取字节
+			// 得到一个Path对象
+			Path path = Paths.get(fileChooser.getEditor().getText());
+			try {
+				newValue = Files.readAllBytes(path);
+				Files.deleteIfExists(path);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		} else if (fieldType.equals(FieldType.DATETIME)) {
 			if (StringUtilities.isNullOrEmptyString(expression)) {
 				newValue = new Date();
@@ -1335,5 +1448,39 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		recordset.getBatch().update();
 		// 重新查询避免操作后记录集清除的异常
 		refreshTabular(selectRows);
+	}
+
+	private void fileChooserClicked() {
+		if (!SmFileChoose.isModuleExist("GetLongBinary")) {
+			SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), "", "GetLongBinary", "OpenOne");
+		}
+		SmFileChoose fileChooserc = new SmFileChoose("GetLongBinary");
+		fileChooserc.setAcceptAllFileFilterUsed(true);
+		int state = fileChooserc.showDefaultDialog();
+		if (state == JFileChooser.APPROVE_OPTION && !StringUtilities.isNullOrEmpty(fileChooserc.getFilePath())) {
+			fileChooser.getEditor().setText(fileChooserc.getFilePath());
+			buttonApply.setEnabled(true);
+		}
+	}
+
+	private void comboBoxSecondFieldChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED && null != textFieldOperationEQ) {
+			if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN) && !comboBoxOperationField.isEnabled()) {
+				textFieldOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString());
+			} else {
+				if (checkBoxInversion.isSelected()) {
+					textFieldOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
+							+ comboBoxOperationField.getSelectedItem().toString());
+				} else {
+					textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
+							+ comboBoxSecondField.getSelectedItem().toString());
+				}
+			}
+			if (null != tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString())) {
+				labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
+						.get(comboBoxSecondField.getSelectedItem().toString()).getType()));
+			}
+			buttonApply.setEnabled(true);
+		}
 	}
 }

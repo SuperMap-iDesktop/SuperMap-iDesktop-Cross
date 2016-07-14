@@ -1,14 +1,9 @@
 package com.supermap.desktop.utilties;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import com.supermap.data.FieldType;
-import com.supermap.data.Geometry;
+import java.util.*;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 
 public class UpdateColumnUtilties {
 	/**
@@ -32,6 +27,20 @@ public class UpdateColumnUtilties {
 	 */
 	public static boolean isMathInfo(String method) {
 		if (method.equals("Abs") || method.equals("Sqrt") || method.equals("Ln") || method.equals("Log") || method.equals("Int")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断运算符是否为日期型运算
+	 * 
+	 * @param method
+	 * @return
+	 */
+	public static boolean isDaysInfo(String method) {
+		if ("DaysInMonth".equals(method) || "Millisecond".equals(method) || "Second".equals(method) || "Minute".equals(method) || "Hour".equals(method)
+				|| "Day".equals(method) || "Month".equals(method) || "Year".equals(method) || "DayOfYear".equals(method) || "DayOfWeek".equals(method)) {
 			return true;
 		}
 		return false;
@@ -80,16 +89,16 @@ public class UpdateColumnUtilties {
 				desValue = srcString.toLowerCase();
 			} else if ("TrimEnd".equals(method)) {
 				for (int i = 0; i < expression.toCharArray().length; i++) {
-					if (srcString.endsWith(expression.toCharArray()[i]+"")) {
-						srcString = srcString.substring(0,srcString.length()-1);
+					if (srcString.endsWith(expression.toCharArray()[i] + "")) {
+						srcString = srcString.substring(0, srcString.length() - 1);
 						break;
 					}
 				}
 				desValue = srcString;
 			} else if ("TrimStart".equals(method)) {
 				for (int i = 0; i < expression.toCharArray().length; i++) {
-					if (srcString.startsWith(expression.toCharArray()[i]+"")) {
-						srcString = srcString.substring(1,srcString.length());
+					if (srcString.startsWith(expression.toCharArray()[i] + "")) {
+						srcString = srcString.substring(1, srcString.length());
 						break;
 					}
 				}
@@ -129,7 +138,7 @@ public class UpdateColumnUtilties {
 		return desValue;
 	}
 
-	public static Object getObjectInfo(String method, Geometry geometry,FieldType fieldType) {
+	public static Object getObjectInfo(String method, Geometry geometry, FieldType fieldType) {
 		Object desValue = null;
 		if ("ObjectCenterX".equals(method)) {
 			desValue = geometry.getInnerPoint().getX();
@@ -150,65 +159,52 @@ public class UpdateColumnUtilties {
 		}
 		if (isIntegerType(fieldType)) {
 			desValue = Convert.toInteger(desValue.toString());
-		}else if(FieldTypeUtilities.isString(fieldType)||fieldType.equals(FieldType.CHAR)){
+		} else if (FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) {
 			desValue = desValue.toString();
 		}
 		return desValue;
 	}
 
-	public static Object getUpdataModeMathValueDataTime(String method, String expression) {
+	public static Date getUpdataModeMathValueDataTime(Date srcDate, String method, String expression) {
 		Date desValue = null;
 		try {
+			GregorianCalendar ca = new GregorianCalendar();
+			ca.setTime(srcDate);
 			if ("AddDays".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.DAY_OF_MONTH, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddHours".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.HOUR_OF_DAY, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddMilliseconds".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.MILLISECOND, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddSeconds".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.SECOND, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddMinutes".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.MINUTE, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddMonths".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.MONTH, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("AddYears".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				ca.add(GregorianCalendar.YEAR, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("Date".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
 				desValue = ca.getTime();
 			} else if ("Now".equals(method)) {
-				GregorianCalendar ca = new GregorianCalendar();
-				desValue = ca.getTime();
+				desValue = new Date();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-		return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(desValue);
+		return desValue;
 	}
 
-	public static Object getDateInfo(String method, String date) {
-		Date srcDate = new Date();
-		if (StringUtilities.isNullOrEmptyString(date)) {
-			return null;
-		} else {
-			srcDate = Convert.toDateTime(date);
-		}
+	public static Object getDateInfo(String method, Date date) {
 		GregorianCalendar ca = new GregorianCalendar();
-		ca.setTime(srcDate);
+		ca.setTime(date);
 		Object desValue = null;
 		if ("DaysInMonth".equals(method)) {
 			desValue = ca.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);

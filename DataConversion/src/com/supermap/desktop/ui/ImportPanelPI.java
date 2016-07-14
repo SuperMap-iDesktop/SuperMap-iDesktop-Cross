@@ -6,13 +6,13 @@ import com.supermap.data.conversion.ImportSettingBMP;
 import com.supermap.data.conversion.ImportSettingGIF;
 import com.supermap.data.conversion.ImportSettingJPG;
 import com.supermap.data.conversion.ImportSettingPNG;
-import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -22,6 +22,7 @@ import com.supermap.desktop.util.ImportInfoUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

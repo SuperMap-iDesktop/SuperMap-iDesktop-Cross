@@ -21,7 +21,7 @@ import com.supermap.desktop.utilities.MapUtilities;
  * 
  * @author xie 2016-6-3
  */
-public class TextStyleDialog extends SmDialog{
+public class TextStyleDialog extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,16 +64,16 @@ public class TextStyleDialog extends SmDialog{
 		}
 		this.recordset = recordset;
 		this.recordset.moveFirst();
-		boolean hasGeoText =false;
+		boolean hasGeoText = false;
 		while (!recordset.isEOF()) {
 			Geometry tempGeoMetry = recordset.getGeometry();
-			if (tempGeoMetry instanceof GeoText||tempGeoMetry instanceof GeoText3D) {
+			if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
 				if (tempGeoMetry instanceof GeoText) {
 					text = ((GeoText) tempGeoMetry).getText();
 					tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
 					rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
 					this.geometry = tempGeoMetry;
-				}else if (tempGeoMetry instanceof GeoText3D) {
+				} else if (tempGeoMetry instanceof GeoText3D) {
 					text = ((GeoText3D) tempGeoMetry).getText();
 					tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
 					this.geometry = tempGeoMetry;
@@ -83,7 +83,7 @@ public class TextStyleDialog extends SmDialog{
 			}
 			recordset.moveNext();
 		}
-		if(!hasGeoText){
+		if (!hasGeoText) {
 			// 不为文本类型时显示为空
 			((JPanel) this.getContentPane()).removeAll();
 			((JPanel) this.getContentPane()).updateUI();
@@ -145,15 +145,17 @@ public class TextStyleDialog extends SmDialog{
 	};
 
 	public void disposeInfo() {
-		removeEvents();
-		dialog.dispose();
-		dialog = null;
-		recordset.dispose();
-		isDisposed = true;
+		if (null != dialog) {
+			removeEvents();
+			dialog.dispose();
+			dialog = null;
+			recordset.dispose();
+			isDisposed = true;
+		}
 	}
 
 	private void updateGeometries(TextStyleType newValue) {
-		editHistory=MapUtilities.getMapControl().getEditHistory();
+		editHistory = MapUtilities.getMapControl().getEditHistory();
 		editHistory.batchBegin();
 		recordset.moveFirst();
 		while (!recordset.isEOF()) {
@@ -184,10 +186,11 @@ public class TextStyleDialog extends SmDialog{
 		MapUtilities.getActiveMap().refresh();
 	}
 
-	public void enabled(boolean enabled){
+	public void enabled(boolean enabled) {
 		this.textBasicPanel.enabled(enabled);
 		this.buttonClose.setEnabled(enabled);
 	};
+
 	private void removeEvents() {
 		this.buttonClose.removeActionListener(this.buttonCloseListener);
 		this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
@@ -200,5 +203,5 @@ public class TextStyleDialog extends SmDialog{
 	public void setTempTextStyle(TextStyle tempTextStyle) {
 		this.tempTextStyle = tempTextStyle;
 	}
-	
+
 }
