@@ -34,7 +34,7 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
-			JDialogRegionExtractCenter dialog = new JDialogRegionExtractCenter();
+			JDialogRegionExtractCenter dialog = new JDialogRegionExtractCenter(canRemoveSrc(environment));
 
 			if (dialog.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
@@ -62,6 +62,19 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 			environment.activateEditor(NullEditor.INSTANCE);
 			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
+	}
+
+	protected boolean canRemoveSrc(EditEnvironment environment) {
+		boolean canRemoveSrc = false;
+
+		Layer[] editableLayers = environment.getMapControl().getEditableLayers();
+		for (int i = 0; i < editableLayers.length; i++) {
+			canRemoveSrc = editableLayers[i].getSelection().getCount() > 0;
+			if (canRemoveSrc) {
+				break;
+			}
+		}
+		return canRemoveSrc;
 	}
 
 	@Override

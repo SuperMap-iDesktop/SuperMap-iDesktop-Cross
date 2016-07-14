@@ -1,99 +1,100 @@
-﻿<ColorScheme>
-  <FileHeader>
-    <FileType>678370</FileType>
-    <Version>0</Version>
-    <Name>Green-Brown 3</Name>
-    <Author>SuperMap</Author>
-    <Description>Custom</Description>
-    <ColorSystem>1</ColorSystem>
-    <IntervalColorBuildMethod>0</IntervalColorBuildMethod>
-    <KeyColorCount>12</KeyColorCount>
-    <IntervalColorCount>3</IntervalColorCount>
-  </FileHeader>
-  <DataBlock>
-    <KeyColor1>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>1</Red>
-      <Green>130</Green>
-      <Blue>1</Blue>
-    </KeyColor1>
-    <KeyColor2>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>41</Red>
-      <Green>159</Green>
-      <Blue>23</Blue>
-    </KeyColor2>
-    <KeyColor3>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>90</Red>
-      <Green>188</Green>
-      <Blue>53</Blue>
-    </KeyColor3>
-    <KeyColor4>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>143</Red>
-      <Green>217</Green>
-      <Blue>94</Blue>
-    </KeyColor4>
-    <KeyColor5>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>192</Red>
-      <Green>250</Green>
-      <Blue>138</Blue>
-    </KeyColor5>
-    <KeyColor6>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>196</Red>
-      <Green>236</Green>
-      <Blue>124</Blue>
-    </KeyColor6>
-    <KeyColor7>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>201</Red>
-      <Green>224</Green>
-      <Blue>110</Blue>
-    </KeyColor7>
-    <KeyColor8>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>207</Red>
-      <Green>210</Green>
-      <Blue>97</Blue>
-    </KeyColor8>
-    <KeyColor9>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>199</Red>
-      <Green>186</Green>
-      <Blue>82</Blue>
-    </KeyColor9>
-    <KeyColor10>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>184</Red>
-      <Green>158</Green>
-      <Blue>73</Blue>
-    </KeyColor10>
-    <KeyColor11>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>175</Red>
-      <Green>128</Green>
-      <Blue>58</Blue>
-    </KeyColor11>
-    <KeyColor12>
-      <Name></Name>
-      <ColorSystem>CS_RGB</ColorSystem>
-      <Red>156</Red>
-      <Green>104</Green>
-      <Blue>46</Blue>
-    </KeyColor12>
-  </DataBlock>
+<?xml version="1.0" encoding="UTF-8"?><ColorScheme>
+<FileHeader>
+<FileType>678370</FileType>
+<Version>0</Version>
+<Name>Green-Brown 3</Name>
+<Author>SuperMap</Author>
+<Description>Custom</Description>
+<Favorites>false</Favorites>
+<ColorSystem>1</ColorSystem>
+<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+<KeyColorCount>12</KeyColorCount>
+<IntervalColorCount>3</IntervalColorCount>
+</FileHeader>
+<DataBlock>
+<KeyColor1>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>1</Red>
+<Green>130</Green>
+<Blue>1</Blue>
+</KeyColor1>
+<KeyColor2>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>41</Red>
+<Green>159</Green>
+<Blue>23</Blue>
+</KeyColor2>
+<KeyColor3>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>90</Red>
+<Green>188</Green>
+<Blue>53</Blue>
+</KeyColor3>
+<KeyColor4>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>143</Red>
+<Green>217</Green>
+<Blue>94</Blue>
+</KeyColor4>
+<KeyColor5>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>192</Red>
+<Green>250</Green>
+<Blue>138</Blue>
+</KeyColor5>
+<KeyColor6>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>196</Red>
+<Green>236</Green>
+<Blue>124</Blue>
+</KeyColor6>
+<KeyColor7>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>201</Red>
+<Green>224</Green>
+<Blue>110</Blue>
+</KeyColor7>
+<KeyColor8>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>207</Red>
+<Green>210</Green>
+<Blue>97</Blue>
+</KeyColor8>
+<KeyColor9>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>199</Red>
+<Green>186</Green>
+<Blue>82</Blue>
+</KeyColor9>
+<KeyColor10>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>184</Red>
+<Green>158</Green>
+<Blue>73</Blue>
+</KeyColor10>
+<KeyColor11>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>175</Red>
+<Green>128</Green>
+<Blue>58</Blue>
+</KeyColor11>
+<KeyColor12>
+<Name/>
+<ColorSystem>1</ColorSystem>
+<Red>156</Red>
+<Green>104</Green>
+<Blue>46</Blue>
+</KeyColor12>
+</DataBlock>
 </ColorScheme>

@@ -84,4 +84,24 @@ public class RecordsetUtilities {
 		}
 		return fieldValues;
 	}
+
+	/**
+	 * 获取指定 recordset 当前记录的字段值（不含系统字段，并且字段名忽略大小写）
+	 * 
+	 * @param recordset
+	 * @return
+	 */
+	public static Map<String, Object> getFieldValuesIgnoreCase(Recordset recordset) {
+		Map<String, Object> fieldValues = new HashMap<>();
+		FieldInfos fieldInfos = recordset.getFieldInfos();
+
+		for (int i = 0; i < fieldInfos.getCount(); i++) {
+			FieldInfo fieldInfo = fieldInfos.get(i);
+
+			if (!fieldInfo.isSystemField()) {
+				fieldValues.put(fieldInfo.getName().toLowerCase(), recordset.getFieldValue(fieldInfo.getName()));
+			}
+		}
+		return fieldValues;
+	}
 }

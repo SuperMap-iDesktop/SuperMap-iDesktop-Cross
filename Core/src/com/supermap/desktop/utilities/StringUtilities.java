@@ -231,32 +231,32 @@ public class StringUtilities {
 			return true;
 		}
 
-//		StringBuilder stringBuilder = new StringBuilder(".*");
-//		for (int i = 0; i < inputString.length(); i++) {
-//			stringBuilder.append("[");
-//			stringBuilder.append(Character.toLowerCase(inputString.charAt(i)));
-//			stringBuilder.append(Character.toUpperCase(inputString.charAt(i)));
-//			stringBuilder.append("]");
-//		}
-//		stringBuilder.append(".*");
-//		return searchString.matches(stringBuilder.toString());
-
-		for (int i = 0, j = 0; i < inputString.length(); i++) {
-			for (; j < searchString.length(); j++) {
-				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
-					if (i == inputString.length() - 1) {
-						// 匹配成功
-						return true;
-					}
-					j++;
-					break;
-				}
-				if (j == searchString.length() - 1) {
-					// 后面字符没找到
-					return false;
-				}
-			}
+		StringBuilder stringBuilder = new StringBuilder(".*");
+		for (int i = 0; i < inputString.length(); i++) {
+			stringBuilder.append("[");
+			stringBuilder.append(Character.toLowerCase(inputString.charAt(i)));
+			stringBuilder.append(Character.toUpperCase(inputString.charAt(i)));
+			stringBuilder.append("]");
+			stringBuilder.append(".*");
 		}
-		return false;
+		return searchString.matches(stringBuilder.toString());
+
+//		for (int i = 0, j = 0; i < inputString.length(); i++) {
+//			for (; j < searchString.length(); j++) {
+//				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
+//					if (i == inputString.length() - 1) {
+//						// 匹配成功
+//						return true;
+//					}
+//					j++;
+//					break;
+//				}
+//				if (j == searchString.length() - 1) {
+//					// 后面字符没找到
+//					return false;
+//				}
+//			}
+//		}
+//		return false;
 	}
 }

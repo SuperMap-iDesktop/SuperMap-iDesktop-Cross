@@ -41,7 +41,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 	@Override
 	public void activate(EditEnvironment environment) {
 		try {
-			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType());
+			JDialogGeometryConvert dialog = new JDialogGeometryConvert(getTitle(), getDesDatasetType(), canRemoveSrc(environment));
 
 			if (dialog.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
@@ -71,6 +71,19 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 			environment.activateEditor(NullEditor.INSTANCE);
 			CursorUtilities.setDefaultCursor(environment.getMapControl());
 		}
+	}
+
+	protected boolean canRemoveSrc(EditEnvironment environment) {
+		boolean canRemoveSrc = false;
+
+		Layer[] editableLayers = environment.getMapControl().getEditableLayers();
+		for (int i = 0; i < editableLayers.length; i++) {
+			canRemoveSrc = editableLayers[i].getSelection().getCount() > 0;
+			if (canRemoveSrc) {
+				break;
+			}
+		}
+		return canRemoveSrc;
 	}
 
 	private DatasetVector createNewDataset(EditEnvironment environment, Datasource datasource, String name) {
@@ -146,7 +159,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 								geometry = DGeometryFactory.create(recordset.getGeometry());
 
 								// 获取当前对象自身的属性
-								Map<String, Object> currentValues = RecordsetUtilities.getFieldValues(recordset);
+								Map<String, Object> currentValues = RecordsetUtilities.getFieldValuesIgnoreCase(recordset);
 
 								// 拿目标数据集的属性结构来和当前对象属性进行合并处理，相同的字段赋值，目标数据集没有的字段不要
 								Map<String, Object> desValues = mergePropertyData(desDataset, recordset.getFieldInfos(), currentValues);
@@ -171,11 +184,11 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 							delete.update();
 							environment.getMapControl().getEditHistory().batchEnd();
 							layer.getSelection().clear();
-							environment.getMap().refresh();
 						} else {
 							environment.getMapControl().getEditHistory().batchCancel();
 						}
 					} finally {
+						environment.getMap().refresh();
 						if (recordset != null) {
 							recordset.close();
 							recordset.dispose();
@@ -215,16 +228,16 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 		for (int i = 0; i < desFieldInfos.getCount(); i++) {
 			FieldInfo desFieldInfo = desFieldInfos.get(i);
 
-			if (!desFieldInfo.isSystemField() && properties.containsKey(desFieldInfo.getName())) {
+			if (!desFieldInfo.isSystemField() && properties.containsKey(desFieldInfo.getName().toLowerCase())) {
 				FieldInfo srcFieldInfo = srcFieldInfos.get(desFieldInfo.getName());
 
 				if (desFieldInfo.getType() == srcFieldInfo.getType()) {
-					// 如果要源字段和目标字段类型一致，直接做保存
-					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()));
+					// 如果要源字段和目标字段类型一致，直接保存
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName().toLowerCase()));
 				} else if (desFieldInfo.getType() == FieldType.WTEXT || desFieldInfo.getType() == FieldType.TEXT) {
 
 					// 如果目标字段与源字段类型不一致，则只有目标字段是文本型字段时，将源字段值做 toString 处理
-					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName()).toString());
+					results.put(desFieldInfo.getName(), properties.get(desFieldInfo.getName().toLowerCase()).toString());
 				}
 			}
 		}
