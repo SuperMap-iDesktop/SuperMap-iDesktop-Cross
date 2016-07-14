@@ -136,6 +136,9 @@ public class FileUtilities {
 
 	public static boolean isLegalFolderName(String folderName) {
 		String folder = System.getProperty("java.io.tmpdir");
+		if (!folder.endsWith(File.separator)) {
+			folder += File.separator;
+		}
 		String filePath = folder + folderName + File.separator;
 		if (new File(filePath).exists() || new File(filePath).mkdirs()) {
 			new File(filePath).delete();

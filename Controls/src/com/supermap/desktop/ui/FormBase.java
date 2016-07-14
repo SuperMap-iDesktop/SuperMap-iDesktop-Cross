@@ -179,7 +179,6 @@ public class FormBase extends JFrame implements IFormMain {
 			initLayout(dockbar);
 			FormBase.this.setVisible(true);
 
-
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

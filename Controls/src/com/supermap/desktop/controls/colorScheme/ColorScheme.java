@@ -82,13 +82,7 @@ public class ColorScheme implements ICloneable {
 
 	@Override
 	public ColorScheme clone() {
-		ColorScheme clone;
-		try {
-			clone = ((ColorScheme) super.clone());
-		} catch (CloneNotSupportedException e) {
-			Application.getActiveApplication().getOutput().output(e);
-			return null;
-		}
+		ColorScheme clone = new ColorScheme();
 		List<Color> copy = new LinkedList<>();
 		copy.addAll(this.colors);
 		clone.setColors(copy);
@@ -753,6 +747,15 @@ public class ColorScheme implements ICloneable {
 
 	public String getColorSchemePath() {
 		return colorSchemePath;
+	}
+
+	public void copy(ColorScheme colorScheme) {
+		this.colors = colorScheme.colors;
+		this.name = colorScheme.name;
+		this.author = colorScheme.author;
+		this.description = colorScheme.description;
+		this.intervalColorBuildMethod = colorScheme.intervalColorBuildMethod;
+		this.intervalColorCount = colorScheme.intervalColorCount;
 	}
 
 	/*

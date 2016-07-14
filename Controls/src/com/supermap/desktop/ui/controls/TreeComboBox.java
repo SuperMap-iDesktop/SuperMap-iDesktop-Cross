@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.plaf.metal.MetalComboBoxUI;
+import javax.swing.plaf.synth.SynthComboBoxUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
@@ -41,6 +42,7 @@ public class TreeComboBox extends JComboBox {
 
 	public TreeComboBox(JTree tree) {
 		this.setTree(tree);
+		this.setFocusable(false);
 	}
 
 	public TreeComboBox() {
@@ -71,7 +73,7 @@ public class TreeComboBox extends JComboBox {
 			tree.expandPath(new TreePath(tree.getModel().getRoot()));
 			tree.setRootVisible(true);
 		}
-
+		this.setFocusable(false);
 	}
 
 	/**
@@ -131,6 +133,8 @@ public class TreeComboBox extends JComboBox {
 			comboBoxUi = new MotifTreeComboBoxUI();
 		} else if (comboBoxUi instanceof WindowsComboBoxUI) {
 			comboBoxUi = new WindowsTreeComboBoxUI();
+		} else if (comboBoxUi instanceof SynthComboBoxUI) {
+			comboBoxUi = new SynthTreeComboBoxUI();
 		}
 		setUI(comboBoxUi);
 	}
@@ -146,6 +150,13 @@ public class TreeComboBox extends JComboBox {
 // richer:皮肤
 
 	class MetalTreeComboBoxUI extends MetalComboBoxUI {
+		@Override
+		protected ComboPopup createPopup() {
+			return new TreePopup(comboBox);
+		}
+	}
+
+	class SynthTreeComboBoxUI extends MetalComboBoxUI {
 		@Override
 		protected ComboPopup createPopup() {
 			return new TreePopup(comboBox);
@@ -235,14 +246,14 @@ class TreePopup extends JPopupMenu implements ComboPopup {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 
 		if (node.isLeaf() && e.getButton() == 1) {
-			treeComboBox.setSelectedItem(treePath);
 			togglePopup();
+			treeComboBox.setSelectedItem(treePath);
 			MenuSelectionManager.defaultManager().clearSelectedPath();
 		}
 
 		if (!node.isLeaf()) {
-			treeComboBox.setSelectedItem(treePath);
 			togglePopup();
+			treeComboBox.setSelectedItem(treePath);
 			MenuSelectionManager.defaultManager().clearSelectedPath();
 		}
 	}
