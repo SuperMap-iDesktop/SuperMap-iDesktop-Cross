@@ -881,6 +881,20 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				buttonApply.setEnabled(true);
 				return;
 			}
+			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
+				// 双字段运算
+				if (null != comboBoxSecondField.getSelectedItem()) {
+					if (checkBoxInversion.isSelected()) {
+						textFieldOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString() + method
+								+ comboBoxOperationField.getSelectedItem().toString());
+					} else {
+						textFieldOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + method
+								+ comboBoxSecondField.getSelectedItem().toString());
+					}
+				}
+				buttonApply.setEnabled(true);
+				return;
+			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
 				// 函数运算
 				if (method.equals("Abs") || method.equals("Sqrt") || method.equals("Ln") || method.equals("Int")) {
