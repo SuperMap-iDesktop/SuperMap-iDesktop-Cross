@@ -95,6 +95,7 @@ public class ColorScheme implements ICloneable {
 		clone.setIntervalColorBuildMethod(this.intervalColorBuildMethod);
 		clone.setKeyColorCount(keyColorCount);
 		clone.setIntervalColorCount(this.intervalColorCount);
+		clone.setFavorite(isFavorite);
 //		clone.colorSchemePath = this.colorSchemePath;
 		return clone;
 	}
