@@ -124,6 +124,11 @@ public class LineTrimEditor extends AbstractEditor {
 				|| environment.getEditProperties().getEditableDatasetTypes().contains(DatasetType.CAD);
 	}
 
+	@Override
+	public boolean check(EditEnvironment environment) {
+		return environment.getEditor() instanceof LineTrimEditor;
+	}
+
 	private void trim(MapControl mapControl, DatasetVector dataset, GeoLine desLine, LineTrimEditModel editModel) {
 		Recordset recordset = null;
 
@@ -447,17 +452,17 @@ public class LineTrimEditor extends AbstractEditor {
 			}
 
 			if (desLine == null) {
-				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectTrimLine_ERROR"));
 			} else {
 
 				// 如果选中的基线和目标线是同一个对象就什么都不做
 				if (editModel.baseLayer == activeEditableLayer && desLine.getID() == editModel.baseLine.getID()) {
 					Application.getActiveApplication().getOutput()
-							.output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ShouldNotBaseLine"));
+							.output(MapEditorProperties.getString("String_LineEditor_SelectTrimLine_ShouldNotBaseLine"));
 					desLine.dispose();
 					desLine = null;
 				} else if (desLine.getPartCount() > 1) {
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectExtendLine_ERROR"));
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectTrimLine_ERROR"));
 					desLine.dispose();
 					desLine = null;
 				}
