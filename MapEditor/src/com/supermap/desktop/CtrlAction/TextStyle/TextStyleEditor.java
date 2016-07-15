@@ -41,6 +41,14 @@ public class TextStyleEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean isEditable = false;
+		isEditable = isLayerEditabled(isEditable);
+
+		return isEditable && environment.getEditProperties().getSelectedGeometryCount() >= 1
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
+
+	}
+
+	private boolean isLayerEditabled(boolean isEditable) {
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap
 				&& ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers().length > 0) {
 			Layer activeLayer = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0];
@@ -49,10 +57,7 @@ public class TextStyleEditor extends AbstractEditor {
 				isEditable = true;
 			}
 		}
-
-		return isEditable && environment.getEditProperties().getSelectedGeometryCount() >= 1
-				&& ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
-
+		return isEditable;
 	}
 
 	@Override
@@ -70,7 +75,7 @@ public class TextStyleEditor extends AbstractEditor {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (null != dialog) {
-					dialog.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+					dialog.enabled(isLayerEditabled(false));
 				}
 			}
 		};
@@ -123,9 +128,7 @@ public class TextStyleEditor extends AbstractEditor {
 						@Override
 						public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
 							resetRecordset((IFormMap) e.getNewActiveForm());
-							if (((IFormMap) e.getNewActiveForm()).getActiveLayers().length > 0 && null != dialog) {
-								dialog.enabled(((IFormMap) e.getNewActiveForm()).getActiveLayers()[0].isEditable());
-							}
+							dialog.enabled(isLayerEditabled(false));
 						}
 					});
 				} else {

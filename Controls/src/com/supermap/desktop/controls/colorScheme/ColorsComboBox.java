@@ -111,7 +111,6 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	 */
 	public ColorsComboBox() {
 		this(ThemeType.UNIQUE);
-
 	}
 
 	/**
@@ -318,7 +317,11 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	private void showUserDefineDialog() {
 		ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
 
-		ColorSchemeTreeNode userDefineNode = ((ColorSchemeTreeNode) ColorSchemeManager.getColorSchemeManager().getRootTreeNode().getChildAt(1)).getChild("UserDefine");
+		ColorSchemeTreeNode userDefineNode = ((ColorSchemeTreeNode) ColorSchemeManager.getColorSchemeManager().getRootTreeNode().getChildAt(1)).getChildByName("UserDefine");
+		if (userDefineNode == null) {
+			userDefineNode = ((ColorSchemeTreeNode) ColorSchemeManager.getColorSchemeManager().getRootTreeNode().getChildAt(1)).getChild("UserDefine");
+			((DefaultTreeModel) tree.getModel()).nodesWereInserted(userDefineNode.getParent(), new int[]{userDefineNode.getParent().getIndex(userDefineNode)});
+		}
 		java.util.List<ColorScheme> colorSchemes = userDefineNode.getColorSchemes();
 		ArrayList<String> names = new ArrayList<>();
 		if (colorSchemes != null && colorSchemes.size() > 0) {

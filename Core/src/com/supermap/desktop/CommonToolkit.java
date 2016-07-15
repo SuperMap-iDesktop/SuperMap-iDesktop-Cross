@@ -10,6 +10,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.EngineInfo;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
@@ -1952,6 +1953,8 @@ public class CommonToolkit {
 					type = WindowType.SCENE;
 				} else if (form instanceof IFormTabular) {
 					type = WindowType.TABULAR;
+				}else if(form instanceof IFormLBSControl){
+					type = WindowType.LBSCONTROL;
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);

@@ -28,7 +28,9 @@ public class FontComboBox extends JComboBox {
 
 		Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 		for (int i = 0; i < fonts.length; i++) {
-			this.addItem(fonts[i].getName());
+			if (!fonts[i].getName().contains("Bold")) {
+				this.addItem(fonts[i].getName());
+			}
 		}
 	}
 }
