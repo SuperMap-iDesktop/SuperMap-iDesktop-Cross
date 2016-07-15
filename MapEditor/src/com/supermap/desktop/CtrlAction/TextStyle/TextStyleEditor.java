@@ -123,6 +123,9 @@ public class TextStyleEditor extends AbstractEditor {
 						@Override
 						public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
 							resetRecordset((IFormMap) e.getNewActiveForm());
+							if (((IFormMap) e.getNewActiveForm()).getActiveLayers().length > 0 && null != dialog) {
+								dialog.enabled(((IFormMap) e.getNewActiveForm()).getActiveLayers()[0].isEditable());
+							}
 						}
 					});
 				} else {

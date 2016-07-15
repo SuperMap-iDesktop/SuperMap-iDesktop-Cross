@@ -1,14 +1,9 @@
 package com.supermap.desktop.ui.controls;
 
 import java.awt.*;
-import java.awt.Toolkit;
 import java.awt.event.*;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
-import org.apache.http.entity.ContentProducer;
-
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -187,8 +182,10 @@ public class TextStyleDialog extends SmDialog {
 	}
 
 	public void enabled(boolean enabled) {
-		this.textBasicPanel.enabled(enabled);
-		this.buttonClose.setEnabled(enabled);
+		if (null != textBasicPanel && null != buttonClose) {
+			this.textBasicPanel.enabled(enabled);
+			this.buttonClose.setEnabled(enabled);
+		}
 	};
 
 	private void removeEvents() {

@@ -488,6 +488,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.buttonApply.addActionListener(this.buttonApplyListener);
 		this.buttonClose.addActionListener(this.buttonCloseListener);
 		this.fileChooser.getButton().addActionListener(this.fileChooserListener);
+		this.comboBoxSourceOfField.getComponent(1).addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				comboBoxSourceOfField.setSelectedIndex(0);
+			}
+		});
 	}
 
 	private void disposeDialog() {

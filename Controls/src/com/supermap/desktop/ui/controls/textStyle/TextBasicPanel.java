@@ -224,7 +224,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 				fireTextStyleChanged(TextStyleType.BOLD);
 				return;
 			}
-			if (e.getSource().equals(checkBoxFixedSize)) {
+			if (e.getSource().equals(checkBoxFixedSize) && !StringUtilities.isNullOrEmpty(textFieldFontHeight.getText())) {
 				boolean isFixedSize = checkBoxFixedSize.isSelected();
 				Double height = 0.0;
 				if (isFixedSize) {
@@ -310,7 +310,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			if (StringUtilities.isNullOrEmptyString(textFieldFontSize.getText())) {
+			if (StringUtilities.isNullOrEmptyString(textFieldFontSize.getText()) || !StringUtilities.isNumber(textFieldFontSize.getText())) {
 				comboBoxFontSize.setSelectedItem(fontSize);
 				isResetFontSize = true;
 			}

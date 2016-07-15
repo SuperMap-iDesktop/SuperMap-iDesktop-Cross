@@ -570,11 +570,16 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public boolean sortRecordset(String sortKind, int... selectedColumns) {
 		boolean flag = false;
+		int selectColumn = jTableTabular.getSelectedColumn();
 		this.recordset = ((TabularTableModel) this.jTableTabular.getModel()).sortRecordset(sortKind, selectedColumns);
 		this.jTableTabular.updateUI();
 		if (recordset != null) {
 			flag = true;
 		}
+		for (int i = 0; i < jTableTabular.getRowCount(); i++) {
+			this.jTableTabular.addRowSelectionInterval(i, i);
+		}
+		setSelectedColumn(selectColumn, selectColumn);
 		setColumnsWidth();
 		return flag;
 	}
