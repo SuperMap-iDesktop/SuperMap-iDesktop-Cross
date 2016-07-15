@@ -212,6 +212,7 @@ public class LineTrimEditor extends AbstractEditor {
 			}
 
 			if (geoLines.size() >= 1) {
+				GeoStyle style = desLine.getStyle();
 				recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
 
 				mapControl.getEditHistory().batchBegin();
@@ -234,6 +235,7 @@ public class LineTrimEditor extends AbstractEditor {
 				// 添加修剪打断后的线对象
 				for (int i = 0; i < geoLines.size(); i++) {
 					GeoLine geoLine = geoLines.get(i);
+					geoLine.setStyle(style);
 					recordset.addNew(geoLine, values);
 					recordset.update();
 					mapControl.getEditHistory().add(EditType.ADDNEW, recordset, true);
@@ -457,8 +459,7 @@ public class LineTrimEditor extends AbstractEditor {
 
 				// 如果选中的基线和目标线是同一个对象就什么都不做
 				if (editModel.baseLayer == activeEditableLayer && desLine.getID() == editModel.baseLine.getID()) {
-					Application.getActiveApplication().getOutput()
-							.output(MapEditorProperties.getString("String_LineEditor_SelectTrimLine_ShouldNotBaseLine"));
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_LineEditor_SelectTrimLine_ShouldNotBaseLine"));
 					desLine.dispose();
 					desLine = null;
 				} else if (desLine.getPartCount() > 1) {
