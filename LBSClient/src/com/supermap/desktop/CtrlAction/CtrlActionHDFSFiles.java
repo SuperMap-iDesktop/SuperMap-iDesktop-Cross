@@ -36,13 +36,14 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-			JDialogHDFSFiles dialog = new JDialogHDFSFiles();
-			DialogResult result = dialog.showDialog();
-			if (result == DialogResult.OK) {
-				// WorkThead thread = new WorkThead();
-				// thread.start();
-			}
+//			JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
+//			JDialogHDFSFiles dialog = new JDialogHDFSFiles();
+//			DialogResult result = dialog.showDialog();
+//			if (result == DialogResult.OK) {
+//				// WorkThead thread = new WorkThead();
+//				// thread.start();
+//			}
+			CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
