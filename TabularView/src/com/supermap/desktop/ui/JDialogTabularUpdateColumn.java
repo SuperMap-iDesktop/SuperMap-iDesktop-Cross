@@ -1459,15 +1459,26 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	}
 
 	private void updateUnitySetValue(int[] selectRows, String updateField, Object newValue, int selectColumn) {
-
+		boolean beyoundMaxLength = false;
+		FieldType updateFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
 		Recordset recordset = tabular.getRecordset();
 		recordset.getBatch().setMaxRecordCount(1024);
 		recordset.getBatch().begin();
 		for (int i = 0; i < selectRows.length; i++) {
 			recordset.moveTo(selectRows[i]);
+			if (updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT) || updateFieldType.equals(FieldType.CHAR)) {
+				if (newValue.toString().length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
+					beyoundMaxLength = true;
+					newValue = newValue.toString().substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
+				}
+			}
 			recordset.setFieldValue(updateField, newValue);
 		}
 		recordset.getBatch().update();
+		if (beyoundMaxLength) {
+			Application.getActiveApplication().getOutput()
+					.output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
+		}
 		// 重新查询避免操作后记录集清除的异常
 		refreshTabular(selectRows);
 	}
