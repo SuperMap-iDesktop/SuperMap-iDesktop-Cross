@@ -32,21 +32,15 @@ public class CommonTask extends JPanel implements ITask {
 	JLabel labelStatus;
 	GroupLayout groupLayout = new GroupLayout(this);
 	protected Boolean isCancel = false;
-	private int percent;
-	private String remainTime;
-	private String message;
 	protected FileInfo fileInfo;
-	private ActionListener buttonRunListener;
 	private ActionListener buttonRemoveListener;
 
 	public CommonTask() {
 		// this.fileInfo = downloadInfo;
 		initializeComponents();
-		initializeResources();
 		registEvents();
 	}
 
-	@Override
 	public void registEvents() {
 		this.buttonRemoveListener = new ActionListener() {
 
@@ -64,7 +58,6 @@ public class CommonTask extends JPanel implements ITask {
 		this.buttonRemove.removeActionListener(buttonRemoveListener);
 	}
 
-	@Override
 	public void initializeComponents() {
 
 		labelTitle = new JLabel("Info");
@@ -102,12 +95,6 @@ public class CommonTask extends JPanel implements ITask {
 		this.setLayout(groupLayout);
 		return;
 	}
-
-	@Override
-	public void initializeResources() {
-
-	}
-
 
 	@Override
 	public void doWork(final UpdateProgressCallable doWork) {

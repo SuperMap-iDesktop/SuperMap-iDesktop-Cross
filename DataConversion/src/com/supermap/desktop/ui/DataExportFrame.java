@@ -1,51 +1,24 @@
 package com.supermap.desktop.ui;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.conversion.CADVersion;
-import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.ExportSettingBMP;
-import com.supermap.data.conversion.ExportSettingDWG;
-import com.supermap.data.conversion.ExportSettingDXF;
-import com.supermap.data.conversion.ExportSettingGIF;
-import com.supermap.data.conversion.ExportSettingJPG;
-import com.supermap.data.conversion.ExportSettingPNG;
-import com.supermap.data.conversion.ExportSettingSIT;
-import com.supermap.data.conversion.ExportSettingTIF;
-import com.supermap.data.conversion.FileType;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.ExportFileInfo;
-import com.supermap.desktop.FileChooserControl;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CommonListCellRenderer;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.util.CommonFunction;
-import com.supermap.desktop.util.DataExportCallable;
-import com.supermap.desktop.util.DatasetUtil;
-import com.supermap.desktop.util.ExportFunction;
-import com.supermap.desktop.util.ExportModel;
+import com.supermap.desktop.util.*;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.border.*;
+import javax.swing.event.*;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
