@@ -99,7 +99,7 @@ public class EditorUtilties {
 	static boolean isPointInLineRect(Point2D point, Point2D pntStart, Point2D pntEnd, double tolerance) {
 		Boolean bResult = false;
 		try {
-			if (point != Point2D.getEMPTY() && point.getX() >= Math.min(pntStart.getX(), pntEnd.getX()) - tolerance
+			if (point != null && point != Point2D.getEMPTY() && point.getX() >= Math.min(pntStart.getX(), pntEnd.getX()) - tolerance
 					&& point.getX() <= Math.max(pntStart.getX(), pntEnd.getX()) + tolerance
 					&& point.getY() >= Math.min(pntStart.getY(), pntEnd.getY()) - tolerance
 					&& point.getY() <= Math.max(pntStart.getY(), pntEnd.getY()) + tolerance) {

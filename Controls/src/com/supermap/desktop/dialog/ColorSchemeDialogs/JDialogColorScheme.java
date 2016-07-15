@@ -726,6 +726,7 @@ public class JDialogColorScheme extends SmDialog {
 					int[] selectedRows = tableColorScheme.getSelectedRows();
 					for (int i : selectedRows) {
 						ColorScheme clone = tableColorScheme.getColorScheme(i).clone();
+						clone.setFavorite(false);
 						clone.setParentNode(colorSchemeTreeNode);
 						// TODO: 2016/7/14
 						colorSchemeTreeNode.addColorScheme(clone);
