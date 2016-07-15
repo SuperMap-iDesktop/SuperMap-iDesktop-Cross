@@ -1419,6 +1419,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			} else {
 				newValue = Convert.toDouble(expression);
 			}
+			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		} else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
 			// 字符型
 			if (StringUtilities.isNullOrEmptyString(expression)) {
