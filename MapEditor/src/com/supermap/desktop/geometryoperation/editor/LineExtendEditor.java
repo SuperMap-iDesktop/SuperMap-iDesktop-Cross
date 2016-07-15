@@ -376,6 +376,7 @@ public class LineExtendEditor extends AbstractEditor {
 			if (nKey != -1) {
 				// 延伸线对象
 				GeoLine newLine = new GeoLine(desLinePoints);
+				newLine.setStyle(desLine.getStyle());
 				recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
 				recordset.moveFirst();
 				recordset.seekID(desLine.getID());
