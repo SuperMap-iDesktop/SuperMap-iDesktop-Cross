@@ -135,6 +135,19 @@ public class FileUtilities {
 	}
 
 	public static boolean isLegalFolderName(String folderName) {
+		if (folderName.indexOf('/') != -1 || folderName.indexOf('\\') != -1) {
+			return false;
+		}
+		boolean isAllPoint = true;
+		for (char c : folderName.toCharArray()) {
+			if (c != '.') {
+				isAllPoint = false;
+				break;
+			}
+		}
+		if (isAllPoint) {
+			return false;
+		}
 		String folder = System.getProperty("java.io.tmpdir");
 		if (!folder.endsWith(File.separator)) {
 			folder += File.separator;
