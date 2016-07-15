@@ -450,9 +450,10 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 								fileSelected = true;
 							}
 						}
-
-						DeleteFile deleteFile = new DeleteFile(webURL, webFile);
-						deleteFile.start();
+						if (fileSelected) {
+							DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+							deleteFile.start();
+						}
 					}
 				} else if (table.getSelectedRowCount() > 1) {
 					int[] indexs = table.getSelectedRows();
@@ -471,7 +472,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				}
 
 				if (!fileSelected) {
-					UICommonToolkit.showMessageDialog("please select a file");
+					UICommonToolkit.showMessageDialog("please select a file to delete");
 				}
 
 			} catch (IOException e) {
