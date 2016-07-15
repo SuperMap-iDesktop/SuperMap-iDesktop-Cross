@@ -60,7 +60,7 @@ public class LineExtendEditor extends AbstractEditor {
 			} else {
 				Layer activeEditableLayer = mapControl.getActiveEditableLayer();
 
-				if (activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
+				if (activeEditableLayer != null && activeEditableLayer.getSelection() != null && activeEditableLayer.getSelection().getCount() > 0) {
 					GeoLine desLine = getDesLine(activeEditableLayer, editModel);
 
 					if (desLine != null) {
