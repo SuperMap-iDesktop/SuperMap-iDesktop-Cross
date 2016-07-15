@@ -80,7 +80,10 @@ public class Convert {
 	}
 
 	public static double toDouble(Object expression) {
-		return Double.parseDouble(expression.toString());
+		if (!StringUtilities.isNullOrEmptyString(expression)&&StringUtilities.isNumber(expression.toString())) {
+			return Double.parseDouble(expression.toString());
+		}
+		return 0.0;
 	}
 
 	public static int toInteger(Object expression) {
