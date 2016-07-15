@@ -259,4 +259,29 @@ public class StringUtilities {
 //		}
 //		return false;
 	}
+
+	public static int compareIgnoreCase(String a, String b) {
+		int len1 = a.length();
+		int len2 = b.length();
+		int lim = Math.min(len1, len2);
+		char v1[] = a.toCharArray();
+		char v2[] = b.toCharArray();
+
+		int k = 0;
+		while (k < lim) {
+			char c1 = v1[k];
+			char c2 = v2[k];
+			if (c1 == c2) {
+				k++;
+				continue;
+			}
+			if (Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
+				return c1 - c2 > 0 ? -1 : 1;
+			}
+			int result = Character.toLowerCase(c1) - Character.toLowerCase(c2);
+			return result > 0 ? ++result : --result;
+		}
+		int result = len1 - len2;
+		return result > 0 ? ++result : --result;
+	}
 }

@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class JTableColorScheme extends SortTable {
 	private static final int preferredWidth = 250;
+	private static final int namePreferredWidth = 180;
 	private ColorSchemeTableModel colorSchemeTableModel;
 
 	public JTableColorScheme() {
@@ -46,6 +47,9 @@ public class JTableColorScheme extends SortTable {
 		columnColors.setMaxWidth(preferredWidth);
 		columnColors.setMinWidth(preferredWidth);
 		columnColors.setPreferredWidth(preferredWidth);
+
+		TableColumn columnName = this.getColumnModel().getColumn(ColorSchemeTableModel.COLUMN_RAMP_NAME);
+		columnName.setPreferredWidth(namePreferredWidth);
 
 		DefaultCellEditor objectCellEditor = new DefaultCellEditor(new JTextField()) {
 			@Override

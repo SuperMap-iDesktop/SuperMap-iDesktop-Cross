@@ -302,14 +302,24 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 
 	private void showUserDefineDialog() {
 		ColorSchemeEditorDialog dialog = new ColorSchemeEditorDialog();
+
+		ColorSchemeTreeNode userDefineNode = ((ColorSchemeTreeNode) ColorSchemeManager.getColorSchemeManager().getRootTreeNode().getChildAt(1)).getChild("UserDefine");
+		java.util.List<ColorScheme> colorSchemes = userDefineNode.getColorSchemes();
+		ArrayList<String> names = new ArrayList<>();
+		if (colorSchemes != null && colorSchemes.size() > 0) {
+			for (ColorScheme colorScheme : colorSchemes) {
+				names.add(colorScheme.getName());
+			}
+		}
+		dialog.setExitNames(names);
 		if (dialog.showDialog() == DialogResult.OK) {
-			ColorSchemeTreeNode userDefineNode = ((ColorSchemeTreeNode) ColorSchemeManager.getColorSchemeManager().getRootTreeNode().getChildAt(1)).getChild("UserDefine");
 			userDefineNode.addColorScheme(dialog.getColorScheme());
 			dialog.getColorScheme().save();
 			isUserDefineFireChange = true;
 			ColorSchemeManager.getColorSchemeManager().fireColorSchemeManagerChanged();
 			selectedColorSchemeTreeNode = userDefineNode;
-			reAddElements();
+			treeComboBox.setSelectedItem(JTreeUIUtilities.getPath(userDefineNode));
+//			reAddElements();
 			listColors.setSelectedIndex(listColors.getModel().getSize() - 2);
 			isUserDefineFireChange = false;
 		} else {
@@ -367,7 +377,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		this.currentColors = colors;
 		panelShow.removeAll();
 		panelShow.add(ColorScheme.getColorsLabel(currentColors, panelShow.getWidth(), panelShow.getHeight()), panelShowConstraints);
-		panelShow.repaint();
+		panelShow.getParent().validate();
+		panelShow.getParent().repaint();
+//		panelShow.repaint();
 	}
 
 	private class MyAWTEventListener implements AWTEventListener {
