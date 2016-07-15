@@ -72,13 +72,28 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			}
 			if (selectedColorSchemeTreeNode != null) {
 				ColorSchemeTreeNode rootTreeNode = ColorSchemeManager.getColorSchemeManager().getRootTreeNode();
-				ColorSchemeTreeNode parent = rootTreeNode.getChild(((ColorSchemeTreeNode) selectedColorSchemeTreeNode.getParent()).getName());
-				for (int i = 0; i < parent.getChildCount(); i++) {
-					if (parent.getName().equals(selectedColorSchemeTreeNode.getName())) {
-						selectedColorSchemeTreeNode = parent;
+				ArrayList<String> paths = new ArrayList<>();
+				while (!StringUtilities.isNullOrEmpty(selectedColorSchemeTreeNode.getName())) {
+					paths.add(selectedColorSchemeTreeNode.getName());
+					selectedColorSchemeTreeNode = (ColorSchemeTreeNode) selectedColorSchemeTreeNode.getParent();
+				}
+				selectedColorSchemeTreeNode = rootTreeNode;
+				for (int size = paths.size() - 1; size >= 0; size--) {
+					ColorSchemeTreeNode node = selectedColorSchemeTreeNode.getChildByName(paths.get(size));
+					if (node != null) {
+						selectedColorSchemeTreeNode = node;
+					} else {
+						selectedColorSchemeTreeNode = getDefaultNode();
 						break;
 					}
 				}
+//				ColorSchemeTreeNode parent = rootTreeNode.getChild(((ColorSchemeTreeNode) selectedColorSchemeTreeNode.getParent()).getName());
+//				for (int i = 0; i < parent.getChildCount(); i++) {
+//					if (parent.getName().equals(selectedColorSchemeTreeNode.getName())) {
+//						selectedColorSchemeTreeNode = parent;
+//						break;
+//					}
+//				}
 			}
 			tree.setModel(new DefaultTreeModel(ColorSchemeManager.getColorSchemeManager().getRootTreeNode()));
 			JTreeUIUtilities.expandTree(tree, true);
