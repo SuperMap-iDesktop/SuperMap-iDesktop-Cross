@@ -186,9 +186,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 		this.textFieldName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-//				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
-//					return false;
-//				}
 				if (exitNames != null && exitNames.contains(textFieldValue)) {
 					return false;
 				}
@@ -226,6 +223,8 @@ public class ColorSchemeEditorDialog extends SmDialog {
 				} catch (Exception e) {
 					return false;
 				}
+				colorScheme.setIntervalColorCount(Integer.valueOf(textFieldColorCount.getText()));
+				refreshViewLabel();
 				return true;
 			}
 
@@ -495,31 +494,6 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			}
 		});
 
-		textFieldColorCount.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateCount();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateCount();
-
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateCount();
-
-			}
-
-			private void updateCount() {
-				if (textFieldColorCount.isLegitValue(textFieldColorCount.getText())) {
-					colorScheme.setIntervalColorCount(Integer.valueOf(textFieldColorCount.getText()));
-					refreshViewLabel();
-				}
-			}
-		});
 
 		textFieldDescribe.getDocument().addDocumentListener(new DocumentListener() {
 			@Override

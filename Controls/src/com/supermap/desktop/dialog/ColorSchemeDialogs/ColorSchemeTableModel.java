@@ -147,7 +147,6 @@ public class ColorSchemeTableModel extends SortableTableModel {
 		for (int i = selectedRows.length - 1; i >= 0; i--) {
 			ColorScheme colorScheme = colorSchemes.get(selectedRows[i]);
 			colorSchemes.remove(colorScheme);
-			colorScheme.getParentNode().getColorSchemes().remove(colorScheme);
 		}
 	}
 

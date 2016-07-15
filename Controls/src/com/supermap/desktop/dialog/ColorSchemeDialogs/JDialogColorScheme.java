@@ -19,6 +19,7 @@ import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -211,16 +213,33 @@ public class JDialogColorScheme extends SmDialog {
 				TableUtilities.stopEditing(tableColorScheme);
 				int[] selectedRows = tableColorScheme.getSelectedRows();
 
+				ColorSchemeTreeNode lastSelectedPathComponent = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
 				boolean isHasFavorites = false;
-				for (int selectedRow : selectedRows) {
-					ColorScheme colorScheme = tableColorScheme.getColorScheme(selectedRow);
-					deletedList.add(colorScheme);
-					if (colorScheme.isFavorite()) {
-						isHasFavorites = true;
+				ArrayList<ColorScheme> removeFromParentNode = new ArrayList<>();
+
+				if (lastSelectedPathComponent == ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2) || lastSelectedPathComponent.getParent() == ((ColorSchemeTreeNode) tree.getModel().getRoot()).getChildAt(2)) {
+					// 从收藏删除
+					isHasFavorites = true;
+					for (int selectedRow : selectedRows) {
+						tableColorScheme.getColorScheme(selectedRow).setFavorite(false);
+					}
+				} else {
+					for (int selectedRow : selectedRows) {
+						ColorScheme colorScheme = tableColorScheme.getColorScheme(selectedRow);
+						deletedList.add(colorScheme);
+						removeFromParentNode.add(colorScheme);
+						if (colorScheme.isFavorite()) {
+							isHasFavorites = true;
+						}
+					}
+
+				}
+				tableColorScheme.deleteSelectedRow();
+				if (removeFromParentNode.size() > 0) {
+					for (ColorScheme colorScheme : removeFromParentNode) {
+						colorScheme.getParentNode().getColorSchemes().remove(colorScheme);
 					}
 				}
-
-				tableColorScheme.deleteSelectedRow();
 				if (selectedRows[0] < tableColorScheme.getRowCount()) {
 					tableColorScheme.setRowSelectionInterval(selectedRows[0], selectedRows[0]);
 				} else if (tableColorScheme.getRowCount() > 0) {
@@ -239,13 +258,6 @@ public class JDialogColorScheme extends SmDialog {
 					}
 				}
 
-//				ColorSchemeTreeNode lastSelectedPathComponent = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
-//				if (lastSelectedPathComponent != null && lastSelectedPathComponent.getColorSchemes().size() <= 0 && ((ColorSchemeTreeNode) lastSelectedPathComponent.getParent()).getName().equals(CoreProperties.getString("String_MyFavorites"))) {
-//					TreeNode parent = lastSelectedPathComponent.getParent();
-//					int index = parent.getIndex(lastSelectedPathComponent);
-//					((ColorSchemeTreeNode) parent).removeChild(lastSelectedPathComponent);
-//					((DefaultTreeModel) tree.getModel()).nodesWereRemoved(parent, new int[]{index}, new Object[]{lastSelectedPathComponent});
-//				}
 			}
 		});
 
@@ -484,8 +496,11 @@ public class JDialogColorScheme extends SmDialog {
 			for (File selectFile : selectFiles) {
 				ColorScheme colorScheme = new ColorScheme();
 				if (colorScheme.fromXML(selectFile, true)) {
-					colorScheme.setParentNode((ColorSchemeTreeNode) tree.getLastSelectedPathComponent());
-					tableColorScheme.addColorScheme(colorScheme);
+					ColorSchemeTreeNode lastSelectedPathComponent = (ColorSchemeTreeNode) tree.getLastSelectedPathComponent();
+					colorScheme.setParentNode(lastSelectedPathComponent);
+					lastSelectedPathComponent.addColorScheme(colorScheme);
+					((DefaultTableModel) tableColorScheme.getModel()).fireTableDataChanged();
+//					tableColorScheme.addColorScheme(colorScheme);
 				}
 			}
 		}
@@ -627,7 +642,20 @@ public class JDialogColorScheme extends SmDialog {
 			textFieldName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 				@Override
 				public boolean isTextFieldValueLegit(String textFieldValue) {
-					if (names.contains(textFieldValue) || !FileUtilities.isLegalFolderName(textFieldValue)) {
+					if (SystemPropertyUtilities.isWindows()) {
+						for (String name : names) {
+							if (name.compareToIgnoreCase(textFieldValue) == 0) {
+								buttonOk.setEnabled(false);
+								return false;
+							}
+						}
+					} else {
+						if (names.contains(textFieldValue)) {
+							buttonOk.setEnabled(false);
+							return false;
+						}
+					}
+					if (!FileUtilities.isLegalFolderName(textFieldValue)) {
 						buttonOk.setEnabled(false);
 						return false;
 					}

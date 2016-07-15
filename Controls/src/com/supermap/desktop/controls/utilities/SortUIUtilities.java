@@ -5,6 +5,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Enum;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.*;
 import java.util.Date;
@@ -97,7 +98,7 @@ public class SortUIUtilities {
 	}
 
 	private static int compare(String o1, String o2) {
-		return o1.compareTo(o2);
+		return StringUtilities.compareIgnoreCase(o1, o2);
 	}
 
 	private static int compare(Colors o1, Colors o2) {
