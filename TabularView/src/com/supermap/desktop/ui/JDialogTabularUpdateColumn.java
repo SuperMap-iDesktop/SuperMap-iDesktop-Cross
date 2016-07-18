@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -1162,14 +1164,18 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void updateModeMathDate(int[] selectRows) {
 		String method = comboBoxMethod.getSelectedItem().toString();
 		String updateField = comboBoxUpdateField.getSelectedItem().toString();
+		String operationField = comboBoxOperationField.getSelectedItem().toString();
 		Recordset recordset = tabular.getRecordset();
 		recordset.getBatch().setMaxRecordCount(1024);
 		recordset.getBatch().begin();
 		Object newValue = null;
 		for (int i = 0; i < selectRows.length; i++) {
 			recordset.moveTo(selectRows[i]);
-			newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime((Date) recordset.getFieldValue(updateField), method, textFieldX.getText());
-			recordset.setFieldValue(updateField, newValue);
+			newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime(recordset.getFieldValue(operationField), recordset.getFieldValue(updateField),
+					method, textFieldX.getText());
+			if (null != newValue) {
+				recordset.setFieldValue(updateField, newValue);
+			}
 		}
 		recordset.getBatch().update();
 		// 重新查询避免操作后记录集清除的异常

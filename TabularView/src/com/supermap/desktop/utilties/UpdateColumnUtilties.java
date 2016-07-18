@@ -1,9 +1,12 @@
 package com.supermap.desktop.utilties;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 public class UpdateColumnUtilties {
 	/**
@@ -165,11 +168,16 @@ public class UpdateColumnUtilties {
 		return desValue;
 	}
 
-	public static Date getUpdataModeMathValueDataTime(Date srcDate, String method, String expression) {
+	public static Date getUpdataModeMathValueDataTime(Object srcValue, Object updateField, String method, String expression) {
 		Date desValue = null;
 		try {
+			if (null == Convert.toDateTime(updateField)) {
+				return new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse("1899/12/30 00:00:00");
+			} else if (null == Convert.toDateTime(srcValue)) {
+				return desValue;
+			}
 			GregorianCalendar ca = new GregorianCalendar();
-			ca.setTime(srcDate);
+			ca.setTime(Convert.toDateTime(srcValue));
 			if ("AddDays".equals(method)) {
 				ca.add(GregorianCalendar.DAY_OF_MONTH, Convert.toInteger(expression));
 				desValue = ca.getTime();
@@ -192,7 +200,7 @@ public class UpdateColumnUtilties {
 				ca.add(GregorianCalendar.YEAR, Convert.toInteger(expression));
 				desValue = ca.getTime();
 			} else if ("Date".equals(method)) {
-				desValue = ca.getTime();
+				desValue = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").parse("1899/12/30 00:00:00");
 			} else if ("Now".equals(method)) {
 				desValue = new Date();
 			}
