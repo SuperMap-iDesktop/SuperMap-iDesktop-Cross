@@ -21,6 +21,7 @@ import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeoCompound;
+import com.supermap.desktop.geometry.Implements.DGeoText;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.mapping.Layer;
 
@@ -343,6 +344,19 @@ public class GeometryUtilities {
 						}
 					}
 					recordset.moveNext();
+				}
+
+				// 设置文本风格
+				if (target instanceof DGeoText) {
+					recordset.seekID(layer.getSelection().get(0));
+					Geometry geometry = recordset.getGeometry();
+					if (geometry instanceof GeoText) {
+						GeoText geoText = (GeoText) geometry;
+						if (geoText.getTextStyle() != null) {
+							((DGeoText) target).setTextStyle(geoText.getTextStyle().clone());
+						}
+					}
+					geometry.dispose();
 				}
 			}
 		} catch (Exception e) {

@@ -68,9 +68,6 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				splitGeometry = getSplitGeometry(environment);
 				if (splitGeometry != null) {
 					SplitByGeometryEditor.this.splitByGeometry(environment, splitGeometry);
-				} else {
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
-					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_NotCorrectGeometry"));
 				}
 			} finally {
 				if (splitGeometry != null) {
@@ -154,8 +151,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				Recordset recordset = layer.getSelection().toRecordset();
 
 				try {
-					if (!editModel.forEraseGeometryIDs.containsKey(layer)) {
-						editModel.forEraseGeometryIDs.put(layer, new ArrayList<Integer>());
+					if (!editModel.toSplitGeometryIDs.containsKey(layer)) {
+						editModel.toSplitGeometryIDs.put(layer, new ArrayList<Integer>());
 					}
 
 					while (!recordset.isEOF()) {
@@ -164,7 +161,12 @@ public class SplitByGeometryEditor extends AbstractEditor {
 						if (geometry instanceof ILineFeature || geometry instanceof IRegionFeature) {
 							GeometryUtilities.setGeometryStyle(geometry.getGeometry(), style);
 							environment.getMap().getTrackingLayer().add(geometry.getGeometry(), TAG_SPLITBYGEOEMTRY);
-							editModel.forEraseGeometryIDs.get(layer).add(recordset.getID());
+							editModel.toSplitGeometryIDs.get(layer).add(recordset.getID());
+						}
+
+						// 源数据是否包含面。点不能切割面。
+						if (!editModel.isContainRegion && geometry instanceof IRegionFeature) {
+							editModel.isContainRegion = true;
 						}
 
 						geometry.dispose();
@@ -201,16 +203,22 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				IGeometry selecteometry = null;
 
 				selectrecordset = layer.getSelection().toRecordset();
-				selecteometry = DGeometryFactory.create(selectrecordset.getGeometry());// 单选
+				selecteometry = DGeometryFactory.create(selectrecordset.getGeometry()); // 单选
 
 				if (selecteometry instanceof IPointFeature) {
-					splitGeometry = selecteometry.getGeometry();
+					if (!editModel.isContainRegion) {
+						splitGeometry = selecteometry.getGeometry();
+					} else {
+						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_RegionCannotSplitByPoint"));
+					}
 				} else if (selecteometry instanceof ILineFeature) {
 					splitGeometry = ((ILineFeature) selecteometry).convertToLine(120);
 				} else if (selecteometry instanceof IRegionFeature) {
 					splitGeometry = ((IRegionFeature) selecteometry).convertToRegion(120);
 				} else {
 					splitGeometry = null;
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
+					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_NotCorrectGeometry"));
 				}
 
 				if (splitGeometry != null) {
@@ -230,7 +238,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 			environment.getMapControl().getEditHistory().batchBegin();
 			Map<Geometry, Map<String, Object>> resultGeometrys = new HashMap<Geometry, Map<String, Object>>();
 
-			for (Layer layer : editModel.forEraseGeometryIDs.keySet()) {
+			for (Layer layer : editModel.toSplitGeometryIDs.keySet()) {
 				Recordset recordset = null;
 				ArrayList<Integer> failedIDs = new ArrayList<>();
 				resultGeometrys.clear();
@@ -240,7 +248,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 				RecordsetDelete delete = new RecordsetDelete(datasetVector, environment.getMapControl().getEditHistory());
 				delete.begin();
 
-				for (Integer id : editModel.forEraseGeometryIDs.get(layer)) {
+				for (Integer id : editModel.toSplitGeometryIDs.get(layer)) {
 					// 如果不在一个图层上有可能ID一样的
 					if ((editModel.selectedLayer != layer) || id != splitGeometry.getID()) {
 						Geometry dynamicGeometry = null;
@@ -521,7 +529,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		public TrackMode oldTrackMode = TrackMode.EDIT;
 
 		public Layer selectedLayer = null;
-		public Map<Layer, List<Integer>> forEraseGeometryIDs = new HashMap<>();
+		public Map<Layer, List<Integer>> toSplitGeometryIDs = new HashMap<>();
+		public boolean isContainRegion = false; // 点不能分割面，用这个变量来做一下判断
 
 		public MapControlTip tip = new MapControlTip();
 		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_SplitByGeometry_SelectTarget"));
@@ -536,8 +545,8 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		public void clear() {
 			this.oldMapControlAction = Action.SELECT2;
 			this.oldTrackMode = TrackMode.EDIT;
-
-			this.forEraseGeometryIDs.clear();
+			this.isContainRegion = false;
+			this.toSplitGeometryIDs.clear();
 		}
 	}
 }
