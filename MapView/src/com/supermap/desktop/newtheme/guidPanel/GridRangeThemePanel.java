@@ -33,9 +33,9 @@ public class GridRangeThemePanel extends JPanel {
 		this.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(16).addComponent(labelGridRangeTheme).addContainerGap(300, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addComponent(labelGridRangeTheme).addContainerGap(160, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addComponent(labelGridRangeTheme).addContainerGap(200, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addComponent(labelGridRangeTheme).addContainerGap(240, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on
 	}

@@ -439,13 +439,14 @@ public class DatasetChooser extends SmDialog {
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
 			compositeSearch();
-
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
-			if (null != selectedNode) {
-				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
-				if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
-					DatasetChooser.this.datasource = (Datasource) selectedNodeData.getData();
-					DatasetChooser.this.textFieldPath.setText(DatasetChooser.this.datasource.getConnectionInfo().getServer());
+			if (null!=e.getNewLeadSelectionPath()) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
+				if (null != selectedNode) {
+					TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+					if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
+						DatasetChooser.this.datasource = (Datasource) selectedNodeData.getData();
+						DatasetChooser.this.textFieldPath.setText(DatasetChooser.this.datasource.getConnectionInfo().getServer());
+					}
 				}
 			}
 		}
@@ -590,6 +591,10 @@ public class DatasetChooser extends SmDialog {
 			}
 			return resultDataset;
 		}
+	}
+
+	public WorkspaceTree getWorkspaceTree() {
+		return workspaceTree;
 	}
 
 	private void cancelButtonClicked() {

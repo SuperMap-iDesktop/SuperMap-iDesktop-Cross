@@ -39,15 +39,14 @@ public class GraduatedSymbolThemePanel extends JPanel{
 		groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(16)
 								.addComponent(graduatedSymbolTheme)
-								.addContainerGap(300, Short.MAX_VALUE))
+								.addContainerGap(160, Short.MAX_VALUE))
 				);
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 								.addComponent(graduatedSymbolTheme)
-								.addContainerGap(200, Short.MAX_VALUE))
+								.addContainerGap(240, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
 		// @formatter:on

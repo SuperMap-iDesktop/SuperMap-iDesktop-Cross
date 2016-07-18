@@ -39,15 +39,14 @@ public class GraphThemePanel extends JPanel {
 		groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-								.addGap(16)
 								.addComponent(labelGraphTheme)
-								.addContainerGap(300, Short.MAX_VALUE))
+								.addContainerGap(160, Short.MAX_VALUE))
 				);
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 								.addComponent(labelGraphTheme)
-								.addContainerGap(200, Short.MAX_VALUE))
+								.addContainerGap(240, Short.MAX_VALUE))
 				);
 		setLayout(groupLayout);
 		// @formatter:on

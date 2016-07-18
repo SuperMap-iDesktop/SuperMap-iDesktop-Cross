@@ -33,9 +33,9 @@ public class UniqueThemePanel extends JPanel {
 		this.labelUniqueTheme.selected(true);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addGap(16).addComponent(labelUniqueTheme).addContainerGap(300, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addComponent(labelUniqueTheme).addContainerGap(160, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-				groupLayout.createSequentialGroup().addComponent(labelUniqueTheme).addContainerGap(200, Short.MAX_VALUE)));
+				groupLayout.createSequentialGroup().addComponent(labelUniqueTheme).addContainerGap(240, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 	}
 
