@@ -31,6 +31,7 @@ import com.supermap.desktop.core.recordset.RecordsetAddNew;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -212,9 +213,21 @@ public class SplitByGeometryEditor extends AbstractEditor {
 						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_RegionCannotSplitByPoint"));
 					}
 				} else if (selecteometry instanceof ILineFeature) {
-					splitGeometry = ((ILineFeature) selecteometry).convertToLine(120);
+					if (selecteometry instanceof IMultiPartFeature<?> && ((IMultiPartFeature<?>) selecteometry).getPartCount() > 1) {
+						splitGeometry = null;
+						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
+						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_NotCorrectGeometry"));
+					} else {
+						splitGeometry = ((ILineFeature) selecteometry).convertToLine(120);
+					}
 				} else if (selecteometry instanceof IRegionFeature) {
-					splitGeometry = ((IRegionFeature) selecteometry).convertToRegion(120);
+					if (selecteometry instanceof IMultiPartFeature<?> && ((IMultiPartFeature<?>) selecteometry).getPartCount() > 1) {
+						splitGeometry = null;
+						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
+						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_NotCorrectGeometry"));
+					} else {
+						splitGeometry = ((IRegionFeature) selecteometry).convertToRegion(120);
+					}
 				} else {
 					splitGeometry = null;
 					Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_Failed_Message"));
