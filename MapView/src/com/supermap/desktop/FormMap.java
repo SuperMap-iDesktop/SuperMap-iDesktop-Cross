@@ -917,7 +917,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.layersTree.setMap(null);
 		}
 		this.mapControl.getMap().close();
-		this.mapControl.getMap().dispose();
 		this.mapControl.delete();
 		this.mapControl.dispose();
 		this.mapControl = null;
