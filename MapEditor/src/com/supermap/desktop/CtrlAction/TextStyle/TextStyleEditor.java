@@ -11,8 +11,6 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.geometryoperation.*;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
-import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TextStyleDialog;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
@@ -36,13 +34,14 @@ public class TextStyleEditor extends AbstractEditor {
 	private GeometryDeletedListener geometryDeletedListener;
 	private GeometryAddedListener geometryAddedListener;
 	private GeometryModifiedListener geometryModifiedListener;
-	private LayersTree layersTree;
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		boolean isEditable = false;
 		isEditable = isLayerEditabled(isEditable);
-
+		if (null!=dialog) {
+			dialog.enabled(isEditable);
+		}
 		return isEditable && environment.getEditProperties().getSelectedGeometryCount() >= 1
 				&& ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
 
@@ -62,7 +61,6 @@ public class TextStyleEditor extends AbstractEditor {
 
 	@Override
 	public void activate(final EditEnvironment environment) {
-		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
 			environment.setEditController(this.editController);
 			dialog = TextStyleDialog.createInstance();
@@ -105,7 +103,6 @@ public class TextStyleEditor extends AbstractEditor {
 	}
 
 	private void removeEvents(EditEnvironment environment) {
-		layersTree.removeMouseListener(layerMouseListener);
 		environment.getMapControl().removeGeometryAddedListener(geometryAddedListener);
 		environment.getMapControl().removeGeometryDeletedListener(geometryDeletedListener);
 		environment.getMapControl().removeGeometryModifiedListener(geometryModifiedListener);
@@ -113,7 +110,6 @@ public class TextStyleEditor extends AbstractEditor {
 
 	private void registEvents(EditEnvironment environment) {
 		removeEvents(environment);
-		this.layersTree.addMouseListener(layerMouseListener);
 		environment.getMapControl().addGeometryAddedListener(geometryAddedListener);
 		environment.getMapControl().addGeometryDeletedListener(geometryDeletedListener);
 		environment.getMapControl().addGeometryModifiedListener(geometryModifiedListener);
@@ -191,4 +187,5 @@ public class TextStyleEditor extends AbstractEditor {
 		}
 		return recordset;
 	}
+	
 }
