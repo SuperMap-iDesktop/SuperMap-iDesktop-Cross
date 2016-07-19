@@ -19,23 +19,20 @@ import com.supermap.desktop.implement.SmMenu;
 import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.XMLCommand;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
 /**
  * 数据源工具类
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class DatasourceUtilities {
 
@@ -79,7 +76,7 @@ public class DatasourceUtilities {
 
 	/**
 	 * 根据指定名称获取指定数据源下的数据集
-	 * 
+	 *
 	 * @param datasetName
 	 * @param datasource
 	 * @return
@@ -123,7 +120,7 @@ public class DatasourceUtilities {
 	 * 关闭所有内存数据源
 	 */
 	public static void closeMemoryDatasource() {
-		for (int i = 0; i < Application.getActiveApplication().getWorkspace().getDatasources().getCount();) {
+		for (int i = 0; i < Application.getActiveApplication().getWorkspace().getDatasources().getCount(); ) {
 			Datasource item = Application.getActiveApplication().getWorkspace().getDatasources().get(i);
 			if (":memory:".equalsIgnoreCase(item.getConnectionInfo().getServer())) {
 				closeDatasource(item);
@@ -137,7 +134,7 @@ public class DatasourceUtilities {
 
 	/**
 	 * 关闭数据源
-	 * 
+	 *
 	 * @param datasource
 	 * @return
 	 */
@@ -445,7 +442,7 @@ public class DatasourceUtilities {
 				server = server.replace("\\", "/");
 				if (server.indexOf(".") > -1
 						&& (server.equals(fileNameTemp) || (server.substring(0, server.lastIndexOf(".")) + ".udd").equals(fileNameTemp) || (server.substring(0,
-								server.lastIndexOf(".")) + ".udb").equals(fileNameTemp))) {
+						server.lastIndexOf(".")) + ".udb").equals(fileNameTemp))) {
 					datasource = workspace.getDatasources().get(index);
 					alreadyOpen = true;
 					break;
@@ -531,12 +528,12 @@ public class DatasourceUtilities {
 		return datasource;
 	}
 
-	private static EngineType[] WEB_TYPE = new EngineType[] { EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
-			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD };
+	private static EngineType[] WEB_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
+			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
 
 	/**
 	 * 根据引擎类型判断是否为web类型的数据源
-	 * 
+	 *
 	 * @param engineType
 	 * @return
 	 */
@@ -554,11 +551,16 @@ public class DatasourceUtilities {
 
 	/**
 	 * 根据数据源判断是否为web类型的数据源
-	 * 
+	 *
 	 * @param datasource
 	 * @return
 	 */
 	public static boolean isWebType(Datasource datasource) {
 		return isWebType(datasource.getEngineType());
+	}
+
+
+	public static boolean isFileType(EngineType engineType) {
+		return engineType == EngineType.IMAGEPLUGINS || engineType == EngineType.UDB || engineType == EngineType.VECTORFILE;
 	}
 }

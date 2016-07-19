@@ -1,7 +1,7 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.desktop.controls.utilities.SystemUIUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -47,6 +47,7 @@ public class MainFrame extends FormBase implements WindowListener {
 		this.setIconImages(images);
 		this.setVisible(true);
 		this.addWindowListener(this);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
 
 	@Override
@@ -56,16 +57,7 @@ public class MainFrame extends FormBase implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-
-		// 先把窗口关闭状态恢复成默认状态：收到关闭消息即退出
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-		boolean result = WorkspaceUtilities.closeWorkspace();
-		if (!result) {
-			// 取消关闭操作
-			setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		}
-
+		SystemUIUtilities.exit();
 	}
 
 	@Override

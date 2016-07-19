@@ -7,7 +7,6 @@ import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,7 +15,6 @@ import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -457,8 +455,8 @@ public class SmFileChoose extends JFileChooser {
 			}
 		} else if ("GetDirectories".equals(moduleType)) {
 			String absolutePath = getSelectedFile().getAbsolutePath();
-			if (absolutePath.endsWith(File.pathSeparator)) {
-				int length = File.pathSeparator.length();
+			if (absolutePath.endsWith(File.separator)) {
+				int length = File.separator.length();
 				absolutePath = absolutePath.substring(0, absolutePath.length() - length);
 			}
 			this.filePath = absolutePath;

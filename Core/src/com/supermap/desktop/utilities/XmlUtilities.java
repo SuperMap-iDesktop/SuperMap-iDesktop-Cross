@@ -5,12 +5,15 @@ import com.supermap.desktop._XMLTag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -23,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 public class XmlUtilities {
@@ -133,14 +137,30 @@ public class XmlUtilities {
 	 * @throws TransformerException
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String nodeToString(Node node, String encoding) throws UnsupportedEncodingException {
+	public static String nodeToString(Node node, String encoding) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		String result = null;
 		try {
 			writeXml(outputStream, node, encoding);
-		} catch (TransformerException e) {
+			result = outputStream.toString(encoding);
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
-		return outputStream.toString(encoding);
+		return result;
+	}
+
+	public static Document stringToDocument(String xmlString) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+		Document doc = null;
+		try {
+			builder = factory.newDocumentBuilder();
+			doc = builder.parse(new InputSource(new StringReader(xmlString)));
+
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return doc;
 	}
 
 	/**
@@ -158,5 +178,32 @@ public class XmlUtilities {
 		} catch (TransformerException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	public static Document getEmptyDocument() {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = null;
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			return null;
+		}
+		return documentBuilder.newDocument();
+	}
+
+	public static Node getChildElementNodeByName(Node node, String name) {
+		if (node == null) {
+			return null;
+		}
+		NodeList nodeList = node.getChildNodes();
+		if (nodeList != null && nodeList.getLength() > 0) {
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node item = nodeList.item(i);
+				if (item != null && node.getNodeType() == Node.ELEMENT_NODE && name.equalsIgnoreCase(item.getNodeName())) {
+					return item;
+				}
+			}
+		}
+		return null;
 	}
 }
