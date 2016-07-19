@@ -155,7 +155,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		public void stateChanged(ChangeEvent e) {
 			if (null != spinnerFontWidth.getValue()) {
 				double logicalWidth = Double.parseDouble(spinnerFontWidth.getValue().toString());
-				double fontWidth = FontUtilities.fontWidthToMapWidth(logicalWidth, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+				double fontWidth = FontUtilities.mapWidthToFontWidth(logicalWidth, MapUtilities.getActiveMap(), textStyle.isSizeFixed())*10;
 				textStyleTypeMap.put(TextStyleType.FONTWIDTH, fontWidth);
 				fireTextStyleChanged(TextStyleType.FONTWIDTH);
 			}
@@ -529,7 +529,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	}
 
 	private void initLayout() {
-		//@formatter:off
+		
 		initBasicLayout();
 		if (!isTextStyleSet) {
 			initUnityLayout();
@@ -537,34 +537,19 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		}else {
 			initTextStyleSetLayout();
 		}
-		//@formatter:on
 	}
 
 	private void initTextStyleSetLayout() {
-		panelBasicset.add(this.labelStringAlignment,
-				new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
-		panelBasicset.add(
-				this.comboBoxStringAlignment,
-				new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
-						.setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelRotationAngl,
-				new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
-		panelBasicset.add(
-				this.spinnerRotationAngl,
-				new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
-						.setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelFontColor,
-				new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
-		panelBasicset.add(
-				this.buttonFontColorSelect,
-				new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
-						.setFill(GridBagConstraints.HORIZONTAL));
-		panelBasicset.add(this.labelBGColor, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1)
-				.setInsets(0, 10, 5, 0));
-		panelBasicset.add(
-				this.buttonBGColorSelect,
-				new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10)
-						.setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:off
+		panelBasicset.add(this.labelStringAlignment,    new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(this.comboBoxStringAlignment, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelRotationAngl,       new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(this.spinnerRotationAngl,     new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelFontColor,          new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(this.buttonFontColorSelect,   new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicset.add(this.labelBGColor,            new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
+		panelBasicset.add(this.buttonBGColorSelect,     new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 1).setInsets(0, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		//@formatter:on
 	}
 
 	private void initPropertyLayout() {
@@ -742,7 +727,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontWidth.getEditor();
 		this.textFieldFontWidth = numberEditor.getTextField();
 		if (null != this.textStyle) {
-			this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(textStyle.getFontWidth()));
+			this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(FontUtilities.fontWidthToMapWidth(textStyle.getFontWidth(), MapUtilities.getActiveMap(), textStyle.isSizeFixed())/10));
 		}
 	}
 

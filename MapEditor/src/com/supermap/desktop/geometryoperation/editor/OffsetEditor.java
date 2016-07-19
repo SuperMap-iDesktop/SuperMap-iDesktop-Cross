@@ -218,6 +218,7 @@ public class OffsetEditor extends AbstractEditor {
 				TabularUtilities.refreshTabularForm(recordset.getDataset());
 
 				environment.getMap().refresh();
+				environment.getMapControl().revalidate();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

@@ -74,4 +74,10 @@ public class DGeoText extends AbstractGeometry implements ITextFeature, IMultiPa
 	public boolean setPart(int partIndex, TextPart part) {
 		return this.geoText != null && this.geoText.setPart(partIndex, part);
 	}
+
+	public void setTextStyle(TextStyle textStyle) {
+		if (this.geoText != null) {
+			this.geoText.setTextStyle(textStyle);
+		}
+	}
 }

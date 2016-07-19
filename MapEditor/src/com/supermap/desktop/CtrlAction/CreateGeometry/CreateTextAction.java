@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.CreateGeometry;
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
 import com.supermap.data.GeoText;
 import com.supermap.data.Point2D;
 import com.supermap.data.PrjCoordSysType;
@@ -11,6 +12,8 @@ import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -27,9 +30,16 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import sun.swing.SwingUtilities2;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
 // @formatter:off
 /**
@@ -50,11 +60,10 @@ import java.awt.event.ActionListener;
 // @formatter:on
 public class CreateTextAction {
 
-	private static final double DEFAULT_FONT_HEIGHT = 10;
 	private static final int DEFAULT_INPUT_HEIGHT = 45;
 	private static final float DEFAULT_INPUT_FONT_SIZE = 25.0f;
 
-	private JTextField textFieldInput = new JTextField();
+	private JTextArea textFieldInput = new JTextArea();
 	private MapControl mapControl;
 	private LayoutManager preLayout;
 	private GeoText editingGeoText; // 用来记录每一次点击获取到的 GeoText，当鼠标在另一个位置点击再次出发 Tracked 的时候，将编辑的数据保存
@@ -72,7 +81,7 @@ public class CreateTextAction {
 		@Override
 		public void actionChanged(ActionChangedEvent arg0) {
 
-			abstractAvtionListener(arg0);
+			abstractActionListener(arg0);
 		}
 	};
 	private MapClosedListener mapClosedListener = new MapClosedListener() {
@@ -84,7 +93,7 @@ public class CreateTextAction {
 		}
 	};
 
-	private void abstractAvtionListener(ActionChangedEvent arg0) {
+	private void abstractActionListener(ActionChangedEvent arg0) {
 		if (arg0.getOldAction() == Action.CREATETEXT) {
 
 			// 结束文本对象绘制，绘制过程中，按住中键会切换为漫游，此时不希望结束绘制，而是提交当前编辑，漫游结束之后继续绘制
@@ -104,18 +113,53 @@ public class CreateTextAction {
 		}
 	}
 
-	private ActionListener actionListener = new ActionListener() {
+	/**
+	 * Shift + Enter 换行，Enter 结束编辑
+	 */
+	private KeyListener keyListener = new KeyAdapter() {
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			textFieldInputAction();
+		private List<Integer> pressedKeys = new ArrayList<Integer>();
+
+		/**
+		 * Invoked when a key has been pressed.
+		 */
+		public void keyPressed(KeyEvent e) {
+			if (!pressedKeys.contains(e.getKeyCode())) {
+				pressedKeys.add(new Integer(e.getKeyCode()));
+			}
+		}
+
+		/**
+		 * Invoked when a key has been released.
+		 */
+		public void keyReleased(KeyEvent e) {
+
+			try {
+				// 如果按下的只有 enter，那么就在释放按键的时候结束编辑
+				if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
+					commitEditing();
+				}
+
+				// 如果按下的第一个按键是 Shift，第二个按键是 Enter，并且释放的按键也是 Enter，那么就换行
+				if (pressedKeys.size() == 2 && pressedKeys.get(0) == KeyEvent.VK_SHIFT && pressedKeys.get(1) == KeyEvent.VK_ENTER
+						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
+					CreateTextAction.this.textFieldInput.setText(CreateTextAction.this.textFieldInput.getText() + System.lineSeparator());
+				}
+
+				// 从按下的按键中移除释放的按键
+				if (pressedKeys.contains(e.getKeyCode())) {
+					pressedKeys.remove(new Integer(e.getKeyCode()));
+				}
+			} catch (Exception e2) {
+				Application.getActiveApplication().getOutput().output(e2);
+			}
 		}
 	};
 
 	public CreateTextAction() {
 		this.textFieldInput.setBorder(null);
 		this.textFieldInput.setSize(new Dimension(25, DEFAULT_INPUT_HEIGHT));
-		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.BOLD, (float) DEFAULT_INPUT_FONT_SIZE));
+		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.PLAIN, (float) DEFAULT_INPUT_FONT_SIZE));
 		this.textFieldInput.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -164,7 +208,31 @@ public class CreateTextAction {
 		this.mapControl.add(this.textFieldInput);
 		this.mapControl.addTrackedListener(this.trackedListener);
 		this.mapControl.getMap().addMapClosedListener(this.mapClosedListener);
-		this.textFieldInput.addActionListener(this.actionListener);
+		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
+
+			@Override
+			public void activeFormChanged(ActiveFormChangedEvent e) {
+				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof IFormMap) {
+					Recordset recordset = null;
+					try {
+						recordset = finishCommit(recordset, e.getOldActiveForm());
+					} catch (Exception ex) {
+						// TODO: handle exception
+					} finally {
+						// Action结束之前，编辑提交之后，下一次编辑开始之前，隐藏编辑控件
+						textFieldInput.setText("");
+						textFieldInput.setVisible(false);
+						if (editingGeoText != null) {
+							editingGeoText.dispose();
+						}
+						if (recordset != null) {
+							recordset.dispose();
+						}
+					}
+				}
+			}
+		});
+		this.textFieldInput.addKeyListener(this.keyListener);
 	}
 
 	private void endAction() {
@@ -175,7 +243,7 @@ public class CreateTextAction {
 		this.mapControl.setLayout(this.preLayout);
 		this.mapControl.removeTrackedListener(this.trackedListener);
 		this.mapControl.removeActionChangedListener(this.actionChangedListener);
-		this.textFieldInput.removeActionListener(this.actionListener);
+		this.textFieldInput.removeKeyListener(this.keyListener);
 	}
 
 	private void mapControlTracked(TrackedEvent e) {
@@ -192,8 +260,8 @@ public class CreateTextAction {
 			this.editingGeoText = (GeoText) e.getGeometry();
 			this.editingGeoText.getTextStyle().setSizeFixed(false);
 			// DEFAULT_INPUT_HEIGHT / 2 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
+			// 绘制时暂时设置为宋体，windows下能支持，linux下暂不支持
 			this.editingGeoText.getTextStyle().setFontName("宋体");
-			//绘制时暂时设置为宋体，windows下能支持，linux下暂不支持
 			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilities.pixelLength(this.mapControl));
 
 			// 获取 GeoText 的位置，将文本编辑控件显示到那个位置
@@ -206,41 +274,13 @@ public class CreateTextAction {
 		}
 	}
 
-	private void textFieldInputAction() {
-		commitEditing();
-	}
-
 	private void commitEditing() {
 		Recordset recordset = null;
 
 		try {
 			IForm activeForm = Application.getActiveApplication().getActiveForm();
 
-			if (activeForm instanceof IFormMap) {
-				Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
-
-				if (activeEditableLayer.getDataset() instanceof DatasetVector
-						&& (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
-					recordset = ((DatasetVector) activeEditableLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
-
-					// 表明有待提交的编辑
-					if (this.editingGeoText != null) {
-						String text = this.textFieldInput.getText();
-						if (!StringUtilities.isNullOrEmpty(text)) {
-							TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
-							this.editingGeoText.setPart(0, textPart);
-							recordset.addNew(this.editingGeoText);
-							recordset.update();
-
-							// 选中新添加的文本对象
-							recordset.moveLast();
-							activeEditableLayer.getSelection().clear();
-							activeEditableLayer.getSelection().add(recordset.getID());
-							this.mapControl.getMap().refresh();
-						}
-					}
-				}
-			}
+			recordset = finishCommit(recordset, activeForm);
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
@@ -256,12 +296,50 @@ public class CreateTextAction {
 		}
 	}
 
+	private Recordset finishCommit(Recordset recordset, IForm activeForm) {
+		if (activeForm instanceof IFormMap) {
+			Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
+
+			if (activeEditableLayer.getDataset() instanceof DatasetVector
+					&& (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
+				recordset = ((DatasetVector) activeEditableLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
+
+				// 表明有待提交的编辑
+				if (this.editingGeoText != null) {
+					String text = this.textFieldInput.getText();
+					if (!StringUtilities.isNullOrEmpty(text)) {
+						TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
+						this.editingGeoText.setPart(0, textPart);
+						((IFormMap) activeForm).getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
+						recordset.addNew(this.editingGeoText);
+						recordset.update();
+
+						// 选中新添加的文本对象
+						recordset.moveLast();
+						activeEditableLayer.getSelection().clear();
+						activeEditableLayer.getSelection().add(recordset.getID());
+						this.mapControl.getMap().refresh();
+					}
+				}
+			}
+		}
+		return recordset;
+	}
+
 	/**
 	 * 计算输入的文本长度，动态调整输入框的大小
 	 */
 	private void resizeInput() {
+		String text = this.textFieldInput.getText();
+		String[] lines = text.split(System.lineSeparator());
 		FontMetrics fontMetrics = this.textFieldInput.getFontMetrics(this.textFieldInput.getFont());
-		int textWidth = fontMetrics.stringWidth(this.textFieldInput.getText());
-		this.textFieldInput.setSize(new Dimension(textWidth + 5, fontMetrics.getHeight()));
+
+		int textWidth = 0;
+		for (int i = 0; i < lines.length; i++) {
+			int lineWidth = fontMetrics.stringWidth(lines[i]);
+			textWidth = Math.max(textWidth, lineWidth);
+		}
+		int textHeight = fontMetrics.getHeight() * lines.length + 5 * (lines.length - 1);
+		this.textFieldInput.setSize(new Dimension(textWidth + 5, textHeight));
 	}
 }

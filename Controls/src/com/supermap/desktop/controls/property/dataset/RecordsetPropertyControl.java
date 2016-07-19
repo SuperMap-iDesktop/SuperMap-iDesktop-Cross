@@ -451,7 +451,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private static final String DEFAULT_FIELDNAME = "NewField";
+		private String DEFAULT_FIELDNAME = "NewField";
 		private static final int INDEX = 0;
 		private static final int FIELD_NAME = 1;
 		private static final int FIELD_CAPTION = 2;
@@ -535,8 +535,10 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		/**
 		 * Returns true regardless of parameter values.
 		 *
-		 * @param row    the row whose value is to be queried
-		 * @param column the column whose value is to be queried
+		 * @param row
+		 *            the row whose value is to be queried
+		 * @param column
+		 *            the column whose value is to be queried
 		 * @return true
 		 * @see #setValueAt
 		 */
@@ -616,7 +618,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 				if (columnIndex == INDEX) {
 					return;
 				} else if (columnIndex == FIELD_NAME) {
-					String newName = getAvailableFieldName(String.valueOf(aValue));
+					// String newName = getAvailableFieldName(String.valueOf(aValue));
+					String newName = datasetVector.getAvailableFieldName(String.valueOf(aValue));
 					this.fieldInfos.get(rowIndex).setName(newName);
 
 					// 如果 caption 的主动修改记录列表不包含当前修改记录，那么联动更新 caption
@@ -734,16 +737,22 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		}
 
 		private String getAvailableFieldName(String name) {
-			String availableName = datasetVector.getAvailableFieldName(name);
-			String resultName = availableName;
-
-			int suffix = 0;
-			label:
-			for (int i = 0; i < this.fieldInfos.size(); i++) {
-				if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName())) {
-					suffix++;
-					resultName = MessageFormat.format("{0}_{1}", availableName, suffix);
-					continue label;
+			String resultName = name;
+			String lastFieldName = (String) tableRecordset.getValueAt(tableRecordset.getRowCount() - 1, FIELD_NAME);
+			if (name.equals(lastFieldName)) {
+				int suffix = 1;
+				for (int i = 0; i < this.fieldInfos.size(); i++) {
+					if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName()) && !resultName.contains("_")) {
+						resultName = MessageFormat.format("{0}_{1}", lastFieldName, suffix);
+						DEFAULT_FIELDNAME = resultName;
+						// continue label;
+						break;
+					} else if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName()) && resultName.contains("_")) {
+						suffix = Integer.parseInt(resultName.substring(resultName.length() - 1, resultName.length())) + 1;
+						resultName = resultName.replace(resultName.substring(resultName.length() - 2, resultName.length()), "_" + suffix);
+						DEFAULT_FIELDNAME = resultName;
+						break;
+					}
 				}
 			}
 			return resultName;

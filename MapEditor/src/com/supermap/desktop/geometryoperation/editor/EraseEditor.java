@@ -229,6 +229,7 @@ public class EraseEditor extends AbstractEditor {
 		} finally {
 			mapControl.getEditHistory().batchEnd();
 			mapControl.getMap().refresh();
+			mapControl.revalidate();
 
 			if (recordset != null) {
 				recordset.close();

@@ -67,27 +67,29 @@ public class Convert {
 		return success;
 	}
 
-	public static Date toDateTime(String srcValue) {
+	public static Date toDateTime(Object srcValue) {
 		Date result = null;
-		if (!StringUtilities.isNullOrEmpty(srcValue) && !StringUtilities.isNumber(getDateStr(srcValue))) {
-			try {
-				result = resultFormat.parse(getDateStr(srcValue));
-			} catch (ParseException e) {
-				e.printStackTrace();
+		try {
+			if (srcValue instanceof Date) {
+				result = (Date) srcValue;
+			} else if (!StringUtilities.isNullOrEmptyString(srcValue) && !StringUtilities.isNumber(getDateStr(srcValue.toString()))) {
+				result = resultFormat.parse(getDateStr(srcValue.toString()));
 			}
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		return result;
 	}
 
 	public static double toDouble(Object expression) {
-		if (!StringUtilities.isNullOrEmptyString(expression)&&StringUtilities.isNumber(expression.toString())) {
+		if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumber(expression.toString())) {
 			return Double.parseDouble(expression.toString());
 		}
 		return 0.0;
 	}
 
 	public static int toInteger(Object expression) {
-		if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumeric(expression.toString())) {
+		if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumeric(expression.toString()) && expression.toString().length() < 10) {
 			return Integer.parseInt(expression.toString());
 		}
 		if (!StringUtilities.isNullOrEmptyString(expression) && expression.toString().contains(".")) {

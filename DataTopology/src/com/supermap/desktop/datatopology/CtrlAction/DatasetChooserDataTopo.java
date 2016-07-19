@@ -29,11 +29,15 @@ public class DatasetChooserDataTopo {
 		this.topoPreProgress = (JDialogTopoPreProgress) owner;
 		this.datasetChooser = new DatasetChooser(owner);
 		this.datasetChooser.setSupportDatasetTypes(datasetType);
+		if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
+			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+		}else if (null != Application.getActiveApplication().getWorkspace().getDatasources()){
+			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
+		}
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			addInfoToMainTable();
 		}
 	}
-
 
 	private void addInfoToMainTable() {
 		try {
