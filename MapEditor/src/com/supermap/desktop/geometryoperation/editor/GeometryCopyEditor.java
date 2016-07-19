@@ -228,6 +228,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 				}
 
 				environment.getMap().refresh();
+				environment.getMapControl().revalidate();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

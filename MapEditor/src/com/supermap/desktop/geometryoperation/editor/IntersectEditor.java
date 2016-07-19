@@ -126,6 +126,7 @@ public class IntersectEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMapControl().revalidate();
 
 			if (result != null) {
 				result.dispose();

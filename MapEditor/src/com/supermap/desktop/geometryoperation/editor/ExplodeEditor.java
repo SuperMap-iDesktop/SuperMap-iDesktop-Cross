@@ -97,6 +97,7 @@ public class ExplodeEditor extends AbstractEditor {
 
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
+			environment.getMapControl().revalidate();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {

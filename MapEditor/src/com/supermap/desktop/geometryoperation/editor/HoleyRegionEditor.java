@@ -133,7 +133,6 @@ public class HoleyRegionEditor extends AbstractEditor {
 				resultRecordset.addNew(resultRegion, propertyData);
 				resultRecordset.update();
 				editLayer.getSelection().add(resultRecordset.getID());
-				TabularUtilities.refreshTabularForm(resultRecordset.getDataset());
 				environment.getMapControl().getEditHistory().add(EditType.ADDNEW, resultRecordset, true);
 			}
 		} catch (Exception ex) {
@@ -148,6 +147,7 @@ public class HoleyRegionEditor extends AbstractEditor {
 				resultRegion.dispose();
 			}
 			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMapControl().revalidate();
 		}
 	}
 }

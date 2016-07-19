@@ -189,6 +189,7 @@ public abstract class GeometryConvertEditor extends AbstractEditor {
 						}
 					} finally {
 						environment.getMap().refresh();
+						environment.getMapControl().revalidate();
 						if (recordset != null) {
 							recordset.close();
 							recordset.dispose();
