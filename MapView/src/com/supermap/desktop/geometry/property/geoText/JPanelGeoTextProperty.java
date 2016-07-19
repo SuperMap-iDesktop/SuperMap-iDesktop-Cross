@@ -31,6 +31,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 	private TextPartChangeListener textpartListener;
 	private Vector<GeoInfoChangeListener> geoTextChangeListeners;
 	private ItemListener checkboxItemListener;
+	
+	private boolean isModify;
 
 	public JPanelGeoTextProperty(Geometry geometry) {
 		this.geometry = geometry;
@@ -275,8 +277,14 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			int count = listeners.size();
 			for (int i = 0; i < count; i++) {
 				listeners.elementAt(i).modify(isModified);
+				this.isModify = isModified;
 			}
 		}
+	}
+
+	@Override
+	public boolean isModified() {
+		return this.isModify;
 	}
 
 }

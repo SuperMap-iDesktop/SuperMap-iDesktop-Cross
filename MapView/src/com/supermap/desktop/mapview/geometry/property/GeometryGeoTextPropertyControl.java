@@ -2,12 +2,15 @@ package com.supermap.desktop.mapview.geometry.property;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.geometry.property.geoText.*;
@@ -15,6 +18,10 @@ import com.supermap.desktop.properties.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
 
 public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 	private static final long serialVersionUID = 1L;
@@ -32,7 +39,7 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 			initButtonStates(false);
 		}
 	};
-	private ActionListener resetListener= new ActionListener() {
+	private ActionListener resetListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -40,7 +47,7 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 			initButtonStates(false);
 		}
 	};
-	private GeoInfoChangeListener geoInfoLisener= new GeoInfoChangeListener() {
+	private GeoInfoChangeListener geoInfoLisener = new GeoInfoChangeListener() {
 
 		@Override
 		public void modify(boolean isModified) {
@@ -49,17 +56,42 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 			}
 		}
 	};
-	private MouseAdapter layersTreeListener = new MouseAdapter() {
-		
+	private LayerEditableChangedListener layerEditableChangedListener = new LayerEditableChangedListener() {
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable()==false) {
-				panelGeoTextProperty.reset(recordset);
-				initButtonStates(false);
+		public void editableChanged(LayerEditableChangedEvent layerEditableChangedEvent) {
+			if (SwingUtilities.getWindowAncestor(GeometryGeoTextPropertyControl.this) == null || !SwingUtilities.getWindowAncestor(GeometryGeoTextPropertyControl.this).isVisible()) {
+				currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this);
+				return;
 			}
-			panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+			if (layerEditableChangedEvent.getLayer().getDataset() == recordset.getDataset()) {
+				boolean editable = isEditable();
+				panelGeoTextProperty.enabled(editable);
+				if (!editable && panelGeoTextProperty.isModified()) {
+					if (UICommonToolkit.showConfirmDialogYesNo(ControlsProperties.getString("String_PropertyInfo_Modifyed_Notify")) == JOptionPane.YES_OPTION) {
+						panelGeoTextProperty.apply(recordset);
+					} else {
+						panelGeoTextProperty.reset(recordset);
+					}
+					initButtonStates(false);
+				}
+			}
 		}
 	};
+	private boolean isEditable() {
+		try {
+			ArrayList<Layer> layers = MapUtilities.getLayers(currentForm.getMapControl().getMap());
+			for (Layer layer : layers) {
+				if (layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
+					return true;
+				}
+			}
+		} catch (Exception ignore) {
+			// 地图dispose没接口判断
+		}
+		return false;
+	}
+
+	private FormMap currentForm;
 
 	public GeometryGeoTextPropertyControl(Recordset recordset) {
 		super(CoreProperties.getString("String_TextInfo"));
@@ -71,20 +103,23 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 
 	private void registEvents() {
 		removeEvents();
+		this.currentForm.getMapControl().getMap().getLayers().addLayerEditableChangedListener(layerEditableChangedListener);
 		this.buttonReset.addActionListener(resetListener);
 		this.buttonApply.addActionListener(applyListener);
 		this.panelGeoTextProperty.addGeoTextChangeListener(geoInfoLisener);
-		this.layersTree.addMouseListener(layersTreeListener);
 	}
-	private void removeEvents(){
+
+	private void removeEvents() {
 		this.buttonReset.removeActionListener(resetListener);
 		this.buttonApply.removeActionListener(applyListener);
 		this.panelGeoTextProperty.removeGeoTextChangeListener(geoInfoLisener);
-		this.layersTree.removeMouseListener(layersTreeListener);
+		this.currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
 	}
-	
 	private void initComponents() {
 		this.removeAll();
+		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
+			this.currentForm = (FormMap) Application.getActiveApplication().getActiveForm();
+		}
 		this.setLayout(new GridBagLayout());
 		initPanelButtons();
 		//@formatter:off

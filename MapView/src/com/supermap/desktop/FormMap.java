@@ -58,6 +58,8 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSelectableChangedEvent;
+import com.supermap.mapping.LayerSelectableChangedListener;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawingEvent;
@@ -404,6 +406,19 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					ToolbarUIUtilities.updataToolbarsState();
 				}
 			});
+
+			// 刷新地图。如果选中对象时，更改编辑状态，理应要刷新地图显示。
+			FormMap.this.mapControl.getMap().refresh();
+		}
+	};
+
+	private LayerSelectableChangedListener layerSelectableChangedListener = new LayerSelectableChangedListener() {
+
+		@Override
+		public void selectableChanged(LayerSelectableChangedEvent arg0) {
+
+			// 刷新地图。如果选中对象时，更改可选择状态，理应要刷新地图显示。
+			FormMap.this.mapControl.getMap().refresh();
 		}
 	};
 
@@ -589,8 +604,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.getMap().addDrawnListener(this.mapDrawnListener);
 			this.mapControl.getMap().addDrawingListener(this.mapDrawingListener);
 			this.mapControl.getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
-			// 比例尺下拉框添加选择事件
+			this.mapControl.getMap().getLayers().addLayerSelectableChangedListener(this.layerSelectableChangedListener);
 
+			// 比例尺下拉框添加选择事件
 			this.scaleBox.addItemListener(this.itemListener);
 			this.pointXField.addKeyListener(this.keyAdapter);
 			this.pointXField.addFocusListener(this.pointFocusListener);
@@ -632,6 +648,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				this.mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
 				this.mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
 				this.mapControl.getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
+				this.mapControl.getMap().getLayers().removeLayerSelectableChangedListener(this.layerSelectableChangedListener);
 			}
 		}
 
