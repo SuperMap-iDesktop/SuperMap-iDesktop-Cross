@@ -33,7 +33,7 @@ public class WorkspaceAutoSave {
 	private static WorkspaceAutoSave workspaceAutoSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private int period = 5000; // 1 min
+	private int period = 60000; // 1 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
@@ -147,8 +147,6 @@ public class WorkspaceAutoSave {
 		// 工作空间连接信息
 		Element workspaceConnectionInfoNode = document.createElement("WorkspaceConnection");
 		Element workspaceConnectionNode = WorkspaceConnectionInfoUtilities.toXml(workspace.getConnectionInfo(), document);
-		workspaceConnectionInfoNode.setAttribute("WorkspaceConnectionInfoVersion", String.valueOf(activeWorkspace.getVersion().value()));
-		workspaceConnectionInfoNode.setAttribute("WorkspaceName", activeWorkspace.getCaption());
 		workspaceConnectionInfoNode.appendChild(workspaceConnectionNode);
 		rootNode.appendChild(workspaceConnectionInfoNode);
 
@@ -220,7 +218,7 @@ public class WorkspaceAutoSave {
 		if (workspace != null) {
 			workspace.close();
 		}
-		if (tempWorkspaceFile.exists()) {
+		if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
 			if (!tempWorkspaceFile.delete()) {
 				LogUtilities.outPut("Delete TempWorkspaceFile Failed On Exit ");
 			}

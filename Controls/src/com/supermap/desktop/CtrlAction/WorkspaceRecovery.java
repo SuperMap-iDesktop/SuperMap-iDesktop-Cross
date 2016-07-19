@@ -1,14 +1,13 @@
 package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.DatasourceConnectionInfo;
-import com.supermap.data.Enum;
 import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceVersion;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
@@ -18,15 +17,14 @@ import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import sun.misc.BASE64Decoder;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -95,17 +93,20 @@ public class WorkspaceRecovery {
 				long length = randomAccessFile.length();
 				byte[] bytes = new byte[(int) length];
 				randomAccessFile.read(bytes);
-				String s = new String(bytes, "UTF-8");
-				Document document = XmlUtilities.stringToDocument(s);
+				Document document = XmlUtilities.stringToDocument(new String(bytes, "UTF-8"));
 				if (document != null) {
 					Node root = document.getChildNodes().item(0);
+
+					String workSpaceFilePath = "";
+					Node workspacePath = XmlUtilities.getChildElementNodeByName(root, "WorkspacePath");
+					if (workspacePath.getChildNodes() != null && workspacePath.getChildNodes().getLength() > 0) {
+						workSpaceFilePath = workspacePath.getChildNodes().item(0).getNodeValue();
+					}
+
 					Node workspaceConnection = XmlUtilities.getChildElementNodeByName(root, "WorkspaceConnection");
 					Node workspaceConnectionInfoNode = XmlUtilities.getChildElementNodeByName(workspaceConnection, "WorkspaceConnectionInfo");
 					final WorkspaceConnectionInfo workspaceConnectionInfo = WorkspaceConnectionInfoUtilities.fromXml(workspaceConnectionInfoNode);
 
-					NamedNodeMap attributes = workspaceConnection.getAttributes();
-					WorkspaceVersion workspaceCurrentVersion = (WorkspaceVersion) Enum.parse(WorkspaceVersion.class, attributes.getNamedItem("WorkspaceConnectionInfoVersion").getNodeValue());
-					String workspaceName = attributes.getNamedItem("WorkspaceName").getNodeValue();
 
 					Node datasources = XmlUtilities.getChildElementNodeByName(root, "Datasources");
 					NodeList childNodes = datasources.getChildNodes();
@@ -113,19 +114,21 @@ public class WorkspaceRecovery {
 					if (childNodes != null && childNodes.getLength() > 0) {
 						for (int i = 0; i < childNodes.getLength(); i++) {
 							Node item = childNodes.item(i);
-							if (item != null && item.getNodeType() == Node.ELEMENT_NODE && "Datasource".equalsIgnoreCase(item.getNodeValue())) {
-								String nodeValue = item.getNodeValue();
-								String datasourceConnect = new String(new BASE64Decoder().decodeBuffer(nodeValue), "UTF-8");
-								DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
-								if (datasourceConnectionInfo.fromXML(datasourceConnect)) {
-									datasourceConnectionInfos.add(datasourceConnectionInfo);
-								} else {
-									System.out.println("fromXml failed");
+							if (item != null && item.getNodeType() == Node.ELEMENT_NODE && "Datasource".equalsIgnoreCase(item.getNodeName())) {
+								if (item.getChildNodes() != null && item.getChildNodes().getLength() > 0) {
+									String nodeValue = item.getChildNodes().item(0).getNodeValue();
+									String datasourceConnect = new String(new BASE64Decoder().decodeBuffer(nodeValue), "UTF-8");
+									DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
+									if (datasourceConnectionInfo.fromXML(datasourceConnect)) {
+										datasourceConnectionInfos.add(datasourceConnectionInfo);
+									} else {
+										LogUtilities.outPut("fromXml failed");
+									}
 								}
 							}
 						}
 					}
-					OpenWorkspaceResult result = WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
+					OpenWorkspaceResult result = openWorkspace(workspaceConnectionInfo);
 					if (result != OpenWorkspaceResult.SUCCESSED) {
 						while (result == OpenWorkspaceResult.FAILED_PASSWORD_WRONG) {
 							JDialogGetPassword dialogGetPassword = new JDialogGetPassword(CoreProperties.getString("String_WorkspacePasswordPrompt")) {
@@ -145,13 +148,34 @@ public class WorkspaceRecovery {
 					}
 
 					if (result == OpenWorkspaceResult.SUCCESSED) {
-
+						if (datasourceConnectionInfos.size() > 0) {
+							for (DatasourceConnectionInfo datasourceConnectionInfo : datasourceConnectionInfos) {
+								Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
+							}
+						}
+						Class<WorkspaceConnectionInfo> clazz = WorkspaceConnectionInfo.class;
+						Field isOpenedWorkspace = clazz.getDeclaredField("_$3");
+						isOpenedWorkspace.setAccessible(true);
+						WorkspaceConnectionInfo connectionInfo = Application.getActiveApplication().getWorkspace().getConnectionInfo();
+						isOpenedWorkspace.setBoolean(connectionInfo, false);
+						connectionInfo.setServer(workSpaceFilePath);
+						isOpenedWorkspace.setBoolean(connectionInfo, true);
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_RecoveryWorkspaceFailed"));
+			} finally {
+				fileLocker.release();
+				deleteAutoSaveConfigFile(file);
 			}
 		}
+	}
+
+	private OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo workspaceConnectionInfo) {
+		CursorUtilities.setWaitCursor();
+		Application.getActiveApplication().getWorkspace().open(workspaceConnectionInfo);
+		CursorUtilities.setDefaultCursor();
+		return WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
 	}
 
 	private void deleteAutoSaveConfigFile(File file) {

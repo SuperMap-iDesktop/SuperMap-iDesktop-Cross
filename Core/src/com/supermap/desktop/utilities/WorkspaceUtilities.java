@@ -184,13 +184,6 @@ public class WorkspaceUtilities {
 							Application.getActiveApplication().getWorkspace().getDatasources().close(entry.getValue());
 							DatasourceUtilities.openFileDatasource(entry.getKey(), "", true, true);
 						}
-						/*
-						 * 
-						 * Iterator iterator = readOnlyDatasourceDictionary.keySet().iterator(); while (iterator.hasNext()) { Object a = iterator.next(); String
-						 * entry = (String) iterator.next(); Application.getActiveApplication( ).getWorkspace().getDatasources().close(entry);
-						 * readOnlyDatasourceDictionary .get(iterator.next()); Datasource datasource = CommonToolkit .DatasourceWrap.openFileDatasource(entry,
-						 * "", true, true); }
-						 */
 
 						for (int index = Application.getActiveApplication().getWorkspace().getDatasources().getCount() - 1; index >= 0; index--) {
 							Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(index);
@@ -609,27 +602,27 @@ public class WorkspaceUtilities {
 			copyWorkspace.getLayouts().add(workspace.getLayouts().get(i), workspace.getLayouts().getLayoutXML(i));
 		}
 
-		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
-		String markerSymbolFilePath = tempFolder + ".sym";
-		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
-		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
-		if (new File(markerSymbolFilePath).exists()) {
-			new File(markerSymbolFilePath).delete();
-		}
-
-		String lineSymbolFilePath = tempFolder + ".lsl";
-		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
-		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
-		if (new File(lineSymbolFilePath).exists()) {
-			new File(lineSymbolFilePath).delete();
-		}
-
-		String fillSymbolFilePath = tempFolder + ".bru";
-		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
-		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
-		if (new File(fillSymbolFilePath).exists()) {
-			new File(fillSymbolFilePath).delete();
-		}
+//		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
+//		String markerSymbolFilePath = tempFolder + ".sym";
+//		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
+//		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
+//		if (new File(markerSymbolFilePath).exists()) {
+//			new File(markerSymbolFilePath).delete();
+//		}
+//
+//		String lineSymbolFilePath = tempFolder + ".lsl";
+//		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
+//		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
+//		if (new File(lineSymbolFilePath).exists()) {
+//			new File(lineSymbolFilePath).delete();
+//		}
+//
+//		String fillSymbolFilePath = tempFolder + ".bru";
+//		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
+//		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
+//		if (new File(fillSymbolFilePath).exists()) {
+//			new File(fillSymbolFilePath).delete();
+//		}
 
 		return copyWorkspace;
 	}

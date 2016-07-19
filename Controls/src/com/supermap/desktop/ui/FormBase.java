@@ -179,7 +179,12 @@ public class FormBase extends JFrame implements IFormMain {
 
 			initLayout(dockbar);
 			FormBase.this.setVisible(true);
-			WorkspaceRecovery.getInstance().run();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					WorkspaceRecovery.getInstance().run();
+				}
+			});
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

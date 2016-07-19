@@ -48,16 +48,14 @@ public class WorkspaceConnectionInfoUtilities {
 	}
 
 	public static WorkspaceConnectionInfo fromXml(Node workspaceConnectionInfoNode) {
-		WorkspaceConnectionInfo workspaceConnectionInfo = new WorkspaceConnectionInfo();
-
 		Node serverNode = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfoNode, "Server");
-		if (serverNode.getChildNodes() != null && serverNode.getChildNodes().item(0) != null) {
-			workspaceConnectionInfo.setDriver(serverNode.getChildNodes().item(0).getNodeValue());
-		}
+		String server = serverNode.getChildNodes().item(0).getNodeValue();
+
+		WorkspaceConnectionInfo workspaceConnectionInfo = new WorkspaceConnectionInfo(server);
 
 		Node typeNode = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfoNode, "Type");
 		if (typeNode.getChildNodes() != null && typeNode.getChildNodes().item(0) != null) {
-			workspaceConnectionInfo.setType((WorkspaceType) Enum.parse(WorkspaceType.class, typeNode.getChildNodes().item(0).getNodeValue()));
+			workspaceConnectionInfo.setType((WorkspaceType) Enum.parse(WorkspaceType.class, Integer.valueOf(typeNode.getChildNodes().item(0).getNodeValue())));
 		}
 
 		Node nameNode = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfoNode, "Name");
@@ -72,7 +70,7 @@ public class WorkspaceConnectionInfoUtilities {
 
 		Node versionNode = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfoNode, "Version");
 		if (versionNode.getChildNodes() != null && versionNode.getChildNodes().item(0) != null) {
-			workspaceConnectionInfo.setVersion((WorkspaceVersion) Enum.parse(WorkspaceVersion.class, serverNode.getChildNodes().item(0).getNodeValue()));
+			workspaceConnectionInfo.setVersion((WorkspaceVersion) Enum.parse(WorkspaceVersion.class, Integer.valueOf(versionNode.getChildNodes().item(0).getNodeValue())));
 		}
 
 		return workspaceConnectionInfo;
