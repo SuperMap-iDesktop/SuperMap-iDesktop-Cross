@@ -11,6 +11,8 @@ import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -164,6 +166,30 @@ public class CreateTextAction {
 		this.mapControl.add(this.textFieldInput);
 		this.mapControl.addTrackedListener(this.trackedListener);
 		this.mapControl.getMap().addMapClosedListener(this.mapClosedListener);
+		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
+
+			@Override
+			public void activeFormChanged(ActiveFormChangedEvent e) {
+				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof IFormMap) {
+					Recordset recordset = null;
+					try {
+						recordset = finishCommit(recordset, e.getOldActiveForm());
+					} catch (Exception ex) {
+						// TODO: handle exception
+					} finally {
+						// Action结束之前，编辑提交之后，下一次编辑开始之前，隐藏编辑控件
+						textFieldInput.setText("");
+						textFieldInput.setVisible(false);
+						if (editingGeoText != null) {
+							editingGeoText.dispose();
+						}
+						if (recordset != null) {
+							recordset.dispose();
+						}
+					}
+				}
+			}
+		});
 		this.textFieldInput.addActionListener(this.actionListener);
 	}
 
@@ -193,7 +219,7 @@ public class CreateTextAction {
 			this.editingGeoText.getTextStyle().setSizeFixed(false);
 			// DEFAULT_INPUT_HEIGHT / 2 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
 			this.editingGeoText.getTextStyle().setFontName("宋体");
-			//绘制时暂时设置为宋体，windows下能支持，linux下暂不支持
+			// 绘制时暂时设置为宋体，windows下能支持，linux下暂不支持
 			this.editingGeoText.getTextStyle().setFontHeight(DEFAULT_INPUT_HEIGHT / 2 * MapUtilities.pixelLength(this.mapControl));
 
 			// 获取 GeoText 的位置，将文本编辑控件显示到那个位置
@@ -216,31 +242,7 @@ public class CreateTextAction {
 		try {
 			IForm activeForm = Application.getActiveApplication().getActiveForm();
 
-			if (activeForm instanceof IFormMap) {
-				Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
-
-				if (activeEditableLayer.getDataset() instanceof DatasetVector
-						&& (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
-					recordset = ((DatasetVector) activeEditableLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
-
-					// 表明有待提交的编辑
-					if (this.editingGeoText != null) {
-						String text = this.textFieldInput.getText();
-						if (!StringUtilities.isNullOrEmpty(text)) {
-							TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
-							this.editingGeoText.setPart(0, textPart);
-							recordset.addNew(this.editingGeoText);
-							recordset.update();
-
-							// 选中新添加的文本对象
-							recordset.moveLast();
-							activeEditableLayer.getSelection().clear();
-							activeEditableLayer.getSelection().add(recordset.getID());
-							this.mapControl.getMap().refresh();
-						}
-					}
-				}
-			}
+			recordset = finishCommit(recordset, activeForm);
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
@@ -254,6 +256,35 @@ public class CreateTextAction {
 				recordset.dispose();
 			}
 		}
+	}
+
+	private Recordset finishCommit(Recordset recordset, IForm activeForm) {
+		if (activeForm instanceof IFormMap) {
+			Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
+
+			if (activeEditableLayer.getDataset() instanceof DatasetVector
+					&& (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
+				recordset = ((DatasetVector) activeEditableLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
+
+				// 表明有待提交的编辑
+				if (this.editingGeoText != null) {
+					String text = this.textFieldInput.getText();
+					if (!StringUtilities.isNullOrEmpty(text)) {
+						TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
+						this.editingGeoText.setPart(0, textPart);
+						recordset.addNew(this.editingGeoText);
+						recordset.update();
+
+						// 选中新添加的文本对象
+						recordset.moveLast();
+						activeEditableLayer.getSelection().clear();
+						activeEditableLayer.getSelection().add(recordset.getID());
+						this.mapControl.getMap().refresh();
+					}
+				}
+			}
+		}
+		return recordset;
 	}
 
 	/**
