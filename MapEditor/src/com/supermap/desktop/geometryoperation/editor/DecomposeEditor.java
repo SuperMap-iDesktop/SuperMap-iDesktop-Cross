@@ -121,6 +121,7 @@ public class DecomposeEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMapControl().getMap().refresh();
+			environment.getMapControl().revalidate();
 
 			if (recordset != null) {
 				recordset.close();

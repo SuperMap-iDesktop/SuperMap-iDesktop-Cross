@@ -132,6 +132,7 @@ public class RegionExtractCenterEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			environment.getMap().refresh();
+			environment.getMapControl().revalidate();
 		}
 		return datasetVector;
 	}

@@ -386,6 +386,7 @@ public class LineExtendEditor extends AbstractEditor {
 				recordset.update();
 				newLine.dispose();
 				mapControl.getMap().refresh();
+				mapControl.revalidate();
 			}
 
 			desLine.dispose();

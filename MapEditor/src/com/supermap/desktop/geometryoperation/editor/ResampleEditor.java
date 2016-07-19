@@ -90,6 +90,7 @@ public class ResampleEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMapControl().getMap().refresh();
+			environment.getMapControl().revalidate();
 		}
 	}
 }

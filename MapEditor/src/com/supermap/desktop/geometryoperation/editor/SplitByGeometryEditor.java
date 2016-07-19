@@ -439,6 +439,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
+			environment.getMapControl().revalidate();
 		}
 	}
 
