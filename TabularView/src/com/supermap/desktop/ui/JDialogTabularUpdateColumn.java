@@ -1310,13 +1310,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	}
 
 	private void refreshTabular(int[] selectRows) {
+		int selectColumn = tabular.getjTableTabular().getSelectedColumn();
 		Recordset tempRecordset = tabular.getRecordset().getDataset().getRecordset(false, CursorType.DYNAMIC);
 		tabular.setRecordset(tempRecordset);
 		// 恢复原来的选中项
 		for (int j = 0; j < selectRows.length; j++) {
 			tabular.getjTableTabular().addRowSelectionInterval(selectRows[j], selectRows[j]);
 		}
-		int selectColumn = tabular.getjTableTabular().getSelectedColumn();
 		if (selectColumn != -1) {
 			tabular.getjTableTabular().setColumnSelectionInterval(selectColumn, selectColumn);
 		}

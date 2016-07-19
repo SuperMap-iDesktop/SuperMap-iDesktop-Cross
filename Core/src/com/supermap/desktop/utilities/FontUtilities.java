@@ -118,14 +118,14 @@ public class FontUtilities {
 				Point2D logicalPntEnd = new Point2D();
 				Point2D logicalPntStart = new Point2D();
 
-				if (mapObject instanceof Map) {
+				if (null!=mapObject&&mapObject instanceof Map) {
 					Map map = (Map) mapObject;
 					logicalPntEnd = map.mapToLogical(pointEnd);
 					logicalPntStart = map.mapToLogical(pointStart);
 					fontWidth = Math.abs(logicalPntEnd.getX() - logicalPntStart.getX());
 				}
 
-				if (mapObject instanceof MapLayout) {
+				if (null!=mapObject&&mapObject instanceof MapLayout) {
 					MapLayout mapLayout = (MapLayout) mapObject;
 					logicalPntEnd = mapLayout.layoutToLogical(pointEnd);
 					logicalPntStart = mapLayout.layoutToLogical(pointStart);
