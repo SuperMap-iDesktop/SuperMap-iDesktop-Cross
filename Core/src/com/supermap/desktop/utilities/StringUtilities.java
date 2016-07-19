@@ -15,7 +15,9 @@ public class StringUtilities {
 		if (obj == null) {
 			return true;
 		}
-
+		if ("".equals(obj)) {
+			return true;
+		}
 		if (isTrimString(obj.toString())) {
 			return true;
 		}
@@ -144,7 +146,7 @@ public class StringUtilities {
 	 * @return
 	 */
 	public static boolean isNumeric(String str) {
-		for (int i = str.length(); --i >= 0; ) {
+		for (int i = str.length(); --i >= 0;) {
 			if (!Character.isDigit(str.charAt(i))) {
 				return false;
 			}
@@ -210,14 +212,13 @@ public class StringUtilities {
 		return tempName;
 	}
 
-
 	/**
-	 * 模糊搜索如
-	 * isContain(AB,a) = true;
-	 * isContain(a,Ab) = false;
+	 * 模糊搜索如 isContain(AB,a) = true; isContain(a,Ab) = false;
 	 *
-	 * @param searchString 被搜索的字符串
-	 * @param inputString  搜索的字符串
+	 * @param searchString
+	 *            被搜索的字符串
+	 * @param inputString
+	 *            搜索的字符串
 	 * @return 是否匹配
 	 */
 	public static boolean isContain(String searchString, String inputString) {
@@ -241,23 +242,23 @@ public class StringUtilities {
 		}
 		return searchString.matches(stringBuilder.toString());
 
-//		for (int i = 0, j = 0; i < inputString.length(); i++) {
-//			for (; j < searchString.length(); j++) {
-//				if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
-//					if (i == inputString.length() - 1) {
-//						// 匹配成功
-//						return true;
-//					}
-//					j++;
-//					break;
-//				}
-//				if (j == searchString.length() - 1) {
-//					// 后面字符没找到
-//					return false;
-//				}
-//			}
-//		}
-//		return false;
+		// for (int i = 0, j = 0; i < inputString.length(); i++) {
+		// for (; j < searchString.length(); j++) {
+		// if (Character.toLowerCase(searchString.charAt(j)) == Character.toLowerCase(inputString.charAt(i))) {
+		// if (i == inputString.length() - 1) {
+		// // 匹配成功
+		// return true;
+		// }
+		// j++;
+		// break;
+		// }
+		// if (j == searchString.length() - 1) {
+		// // 后面字符没找到
+		// return false;
+		// }
+		// }
+		// }
+		// return false;
 	}
 
 	public static int compareIgnoreCase(String a, String b) {

@@ -264,13 +264,13 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 		GridBagLayout gbl_panelUser = new GridBagLayout();
 		panelUser.setLayout(gbl_panelUser);
-		panelUser.add(this.labelUserName, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0),
+		panelUser.add(this.labelUserName, new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0),
 				0, 0));
-		panelUser.add(this.textFieldUserName, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0,
+		panelUser.add(this.textFieldUserName, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5, 0,
 				10), 0, 0));
-		panelUser.add(this.labelPassword, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0),
+		panelUser.add(this.labelPassword, new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 10, 0),
 				0, 0));
-		panelUser.add(this.textFieldPassword, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10,
+		panelUser.add(this.textFieldPassword, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 10,
 				10), 0, 0));
 
 		// Rest服务类型设置面板
@@ -284,15 +284,15 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 		GridBagLayout gbl_panelRestService = new GridBagLayout();
 		panelRestService.setLayout(gbl_panelRestService);
-		panelRestService.add(this.checkBoxRestData, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,
+		panelRestService.add(this.checkBoxRestData, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,
 				10, 0, 0), 0, 0));
-		panelRestService.add(this.checkBoxRestRealspace, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(
+		panelRestService.add(this.checkBoxRestRealspace, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(
 				10, 5, 0, 10), 0, 0));
-		panelRestService.add(this.checkBoxRestMap, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+		panelRestService.add(this.checkBoxRestMap, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
 				0, 0), 0, 0));
-		panelRestService.add(this.checkBoxRestTransAnalyst, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+		panelRestService.add(this.checkBoxRestTransAnalyst, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH,
 				new Insets(5, 5, 0, 10), 0, 0));
-		panelRestService.add(this.checkBoxRestSpatialAnalyst, new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+		panelRestService.add(this.checkBoxRestSpatialAnalyst, new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH,
 				new Insets(5, 10, 10, 0), 0, 0));
 
 		// OGC服务类型设置面板
@@ -309,21 +309,21 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 		GridBagLayout gbl_panelOGCService = new GridBagLayout();
 		panelOGCService.setLayout(gbl_panelOGCService);
-		panelOGCService.add(this.checkBoxWCS111, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10,
+		panelOGCService.add(this.checkBoxWCS111, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10,
 				0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMS111, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5,
+		panelOGCService.add(this.checkBoxWMS111, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 5,
 				0, 10), 0, 0));
-		panelOGCService.add(this.checkBoxWCS112, new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+		panelOGCService.add(this.checkBoxWCS112, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
 				0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMS130, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0,
+		panelOGCService.add(this.checkBoxWMS130, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0,
 				10), 0, 0));
-		panelOGCService.add(this.checkBoxWFS100, new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+		panelOGCService.add(this.checkBoxWFS100, new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
 				0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMTS100, new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
+		panelOGCService.add(this.checkBoxWMTS100, new GridBagConstraints(1, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
 				0, 10), 0, 0));
-		panelOGCService.add(this.checkBoxWPS100, new GridBagConstraints(0, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
+		panelOGCService.add(this.checkBoxWPS100, new GridBagConstraints(0, 3, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10,
 				0, 0), 0, 0));
-		panelOGCService.add(this.checkBoxWMTSCHINA, new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
+		panelOGCService.add(this.checkBoxWMTSCHINA, new GridBagConstraints(1, 3, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5,
 				10, 10), 0, 0));
 
 		// 附加设置面板
@@ -333,7 +333,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 		GridBagLayout gbl_panelAdditionalSetting = new GridBagLayout();
 		panelAdditionalSetting.setLayout(gbl_panelAdditionalSetting);
-		panelAdditionalSetting.add(this.checkBoxIsEditable, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
+		panelAdditionalSetting.add(this.checkBoxIsEditable, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH,
 				new Insets(10, 10, 10, 10), 0, 0));
 
 		// 主面板
@@ -345,20 +345,20 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		GridBagLayout gbl_panelMain = new GridBagLayout();
 		setLayout(gbl_panelMain);
 		panelMain
-				.add(panelService, new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
-		panelMain.add(panelUser, new GridBagConstraints(0, 1, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-		panelMain.add(panelRestService, new GridBagConstraints(0, 2, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
+				.add(panelService, new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
+		panelMain.add(panelUser, new GridBagConstraints(0, 1, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
+		panelMain.add(panelRestService, new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
 				0));
-		panelMain.add(panelOGCService, new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
+		panelMain.add(panelOGCService, new GridBagConstraints(0, 3, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0,
 				0));
-		panelMain.add(panelAdditionalSetting, new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0,
+		panelMain.add(panelAdditionalSetting, new GridBagConstraints(0, 4, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0,
 				10), 0, 0));
-		panelMain.add(this.buttonRelease, new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 10, 10, 0),
+		panelMain.add(this.buttonRelease, new GridBagConstraints(0, 5, 1, 1, 1, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 10, 10, 0),
 				0, 0));
-		panelMain.add(this.buttonClose, new GridBagConstraints(1, 5, 1, 1, 0, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0,
+		panelMain.add(this.buttonClose, new GridBagConstraints(1, 5, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0,
 				0));
 
-		setSize(new Dimension(450, 750));
+		setSize(new Dimension(450, 650));
 		setLocationRelativeTo(null);
 	}
 

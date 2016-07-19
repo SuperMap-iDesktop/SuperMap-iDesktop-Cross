@@ -1,5 +1,8 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.analyst.spatialanalyst.SmoothMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -10,6 +13,7 @@ import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
 import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
@@ -25,6 +29,7 @@ import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -32,7 +37,7 @@ public class MapUtilities {
 	private MapUtilities() {
 		// 工具类不提供构造函数
 	}
-	
+
 	/**
 	 * 获取MapControl
 	 *
@@ -51,14 +56,16 @@ public class MapUtilities {
 
 	/**
 	 * 获取当前地图
+	 * 
 	 * @return
 	 */
-	public static Map getActiveMap(){
+	public static Map getActiveMap() {
 		return getMapControl().getMap();
 	}
-	
+
 	/**
 	 * 通过图层表达式获取当前地图
+	 * 
 	 * @param map
 	 * @param caption
 	 * @return
@@ -318,6 +325,12 @@ public class MapUtilities {
 		Layer layer = null;
 		try {
 			if (dataset != null) {
+				if (map.getLayers().getCount() > 0 && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
+							CoreProperties.getString("String_TitleCoordSys"))) {
+						map.setDynamicProjection(true);
+					}
+				}
 				layer = map.getLayers().add(dataset, addToHead);
 				if (layer == null || layer.isDisposed()) {
 					Application.getActiveApplication().getOutput()
@@ -553,7 +566,8 @@ public class MapUtilities {
 	/**
 	 * 获取高亮的对象
 	 *
-	 * @param geometry 需要高亮的对象
+	 * @param geometry
+	 *            需要高亮的对象
 	 * @return 高亮风格的对象
 	 */
 	public static Geometry getHeightGeometry(Geometry geometry) {

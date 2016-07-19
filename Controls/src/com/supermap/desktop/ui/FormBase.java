@@ -316,7 +316,7 @@ public class FormBase extends JFrame implements IFormMain {
 						}
 						// 打开数据源类型的文件
 						if (datasourceType == getFileType(file)) {
-							DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, true);
+							DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false);
 						}
 					}
 					dtde.dropComplete(true);// 指示拖拽操作已完成
