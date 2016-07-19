@@ -156,7 +156,7 @@ public class CreateTextAction {
 	public CreateTextAction() {
 		this.textFieldInput.setBorder(null);
 		this.textFieldInput.setSize(new Dimension(25, DEFAULT_INPUT_HEIGHT));
-		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.BOLD, (float) DEFAULT_INPUT_FONT_SIZE));
+		this.textFieldInput.setFont(this.textFieldInput.getFont().deriveFont(Font.PLAIN, (float) DEFAULT_INPUT_FONT_SIZE));
 		this.textFieldInput.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
