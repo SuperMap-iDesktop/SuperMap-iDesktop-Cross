@@ -32,6 +32,8 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.exception.InvalidScaleException;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.implement.SmComboBox;
 import com.supermap.desktop.implement.SmLabel;
 import com.supermap.desktop.implement.SmStatusbar;
@@ -1412,10 +1414,13 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 				if (recordset.getGeometry() != null) {
 					Geometry geometry = recordset.getGeometry();
+					IGeometry iGeometry = DGeometryFactory.create(geometry);
 					ArrayList<IProperty> properties = new ArrayList<IProperty>();
 					properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 					properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
-					properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
+					if (iGeometry != null) {
+						properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
+					}
 					if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
 						properties.add(GeometryPropertyFactory.getGeometryGeoTextPropertyControl(recordset));
 					}
