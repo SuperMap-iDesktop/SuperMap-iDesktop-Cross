@@ -19,4 +19,6 @@ public interface IGeoTextProperty {
 	public void removeGeoTextChangeListener(GeoInfoChangeListener l);
 
 	void fireGeoTextChanged(boolean isModified);
+	
+	boolean isModified();
 }
