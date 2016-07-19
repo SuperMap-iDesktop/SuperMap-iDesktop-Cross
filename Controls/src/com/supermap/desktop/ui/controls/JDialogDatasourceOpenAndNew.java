@@ -173,7 +173,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		listModel.addElement(ogcDataCell);
 		listModel.addElement(iServerRestDataCell);
 		listModel.addElement(superMapCloudDataCell);
-		listModel.addElement(googleMapsDataCell);
+//		listModel.addElement(googleMapsDataCell);
 		listModel.addElement(baiduMapDataCell);
 		listModel.addElement(openStreetMapsdCell);
 		return listModel;
@@ -273,13 +273,13 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		case 2: // SuperMapCloud
 			engineTypeTemp = EngineType.SUPERMAPCLOUD;
 			break;
-		case 3: // GoogleMaps
-			engineTypeTemp = EngineType.GOOGLEMAPS;
-			break;
-		case 4: // BaiduMap
+//		case 3: // GoogleMaps
+//			engineTypeTemp = EngineType.GOOGLEMAPS;
+//			break;
+		case 3: // BaiduMap
 			engineTypeTemp = EngineType.BAIDUMAPS;
 			break;
-		case 5: // OpenStreetMaps
+		case 4: // OpenStreetMaps
 			engineTypeTemp = EngineType.OPENSTREETMAPS;
 			break;
 		default:
