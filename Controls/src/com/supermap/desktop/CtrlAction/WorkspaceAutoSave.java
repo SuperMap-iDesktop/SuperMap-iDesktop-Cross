@@ -6,6 +6,10 @@ import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceSavedAsEvent;
+import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
+import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -73,6 +77,18 @@ public class WorkspaceAutoSave {
 			}
 		};
 		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
+		Application.getActiveApplication().getWorkspace().addSavedListener(new WorkspaceSavedListener() {
+			@Override
+			public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
+				autoSave();
+			}
+		});
+		Application.getActiveApplication().getWorkspace().addSavedAsListener(new WorkspaceSavedAsListener() {
+			@Override
+			public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
+				autoSave();
+			}
+		});
 		timer = new Timer("WorkspaceSave", true);
 		task = new TimerTask() {
 			@Override
@@ -117,6 +133,7 @@ public class WorkspaceAutoSave {
 			if (type != WorkspaceType.DEFAULT && type != WorkspaceType.SMWU && type != WorkspaceType.SXWU) {
 				if (workspace != null) {
 					workspace.close();
+					workspace = new Workspace();
 				}
 //				if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
 //					tempWorkspaceFile.delete();
@@ -170,7 +187,7 @@ public class WorkspaceAutoSave {
 				} else {
 					LogUtilities.outPut("workspace autoSave failed");
 				}
-				Application.getActiveApplication().getOutput().output("Save success");
+//				Application.getActiveApplication().getOutput().output("Save success");
 			}
 		}
 	}
@@ -182,6 +199,7 @@ public class WorkspaceAutoSave {
 		if (!StringUtilities.isNullOrEmpty(workspace.getConnectionInfo().getServer())) {
 			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
+			workspace = new Workspace();
 		}
 	}
 
