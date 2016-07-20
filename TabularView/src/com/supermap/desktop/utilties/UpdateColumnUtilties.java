@@ -65,7 +65,7 @@ public class UpdateColumnUtilties {
 	}
 
 	public static boolean isIntegerType(FieldType fieldType) {
-		if (fieldType.equals(FieldType.INT16) || fieldType.equals(FieldType.INT32) || fieldType.equals(FieldType.INT64) || fieldType.equals(FieldType.BYTE)) {
+		if (fieldType.equals(FieldType.INT16) || fieldType.equals(FieldType.INT32) || fieldType.equals(FieldType.INT64)) {
 			return true;
 		}
 		return false;

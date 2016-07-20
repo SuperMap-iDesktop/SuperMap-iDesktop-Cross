@@ -738,14 +738,19 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 		private String getAvailableFieldName(String name) {
 			String resultName = name;
+			boolean hasName = false;
 			String lastFieldName = (String) tableRecordset.getValueAt(tableRecordset.getRowCount() - 1, FIELD_NAME);
-			if (name.equals(lastFieldName)) {
+			for (int i = 0; i < this.fieldInfos.size(); i++) {
+				if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName())) {
+					hasName = true;
+				}
+			}
+			if (hasName) {
 				int suffix = 1;
 				for (int i = 0; i < this.fieldInfos.size(); i++) {
 					if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName()) && !resultName.contains("_")) {
 						resultName = MessageFormat.format("{0}_{1}", lastFieldName, suffix);
 						DEFAULT_FIELDNAME = resultName;
-						// continue label;
 						break;
 					} else if (resultName.equalsIgnoreCase(this.fieldInfos.get(i).getName()) && resultName.contains("_")) {
 						suffix = Integer.parseInt(resultName.substring(resultName.length() - 1, resultName.length())) + 1;

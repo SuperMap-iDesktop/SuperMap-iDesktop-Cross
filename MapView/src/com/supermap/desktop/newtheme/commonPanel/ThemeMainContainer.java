@@ -201,8 +201,6 @@ public class ThemeMainContainer extends JPanel {
 		}
 		if (null != oldLayer && !oldLayer.isDisposed()) {
 			updateProperty(oldLayer);
-			// UGDJ-323 切换图层刷新
-//			ThemeGuideFactory.getMapControl().getMap().refresh();
 		}
 	}
 
@@ -221,8 +219,7 @@ public class ThemeMainContainer extends JPanel {
 				if (panel instanceof ThemeLabelUniformContainer) {
 					panel.refreshMapAndLayer();
 					isThemeLabelUniform = true;
-				}
-				if (panel instanceof ThemeLabelRangeContainer) {
+				}else if (panel instanceof ThemeLabelRangeContainer) {
 					((ThemeLabelRangeContainer) panel).getPanelAdvance().refreshMapAndLayer();
 					((ThemeLabelRangeContainer) panel).getPanelProperty().refreshMapAndLayer();
 					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
@@ -237,16 +234,14 @@ public class ThemeMainContainer extends JPanel {
 					}
 					nowThemeLabel.setRangeExpression(themeLabel.getRangeExpression());
 					isThemeLabelRange = true;
-				}
-				if (panel instanceof ThemeLabelComplicatedContainer) {
+				}else if (panel instanceof ThemeLabelComplicatedContainer) {
 					((ThemeLabelComplicatedContainer) panel).getPanelAdvance().refreshMapAndLayer();
 					((ThemeLabelComplicatedContainer) panel).getPanelProperty().refreshMapAndLayer();
 					ThemeLabel themeLabel = (ThemeLabel) panel.getCurrentTheme();
 					ThemeLabel nowThemeLabel = ((ThemeLabel) layer.getTheme());
 					nowThemeLabel.setUniformMixedStyle(themeLabel.getUniformMixedStyle());
 					isThemeLabelComplicated = true;
-				}
-				if (!isThemeLabelComplicated && !isThemeLabelRange && !isThemeLabelUniform) {
+				}else if (!isThemeLabelComplicated && !isThemeLabelRange && !isThemeLabelUniform) {
 					layer.getTheme().fromXML(panel.getCurrentTheme().toXML());
 				}
 				TreePath treePath = layersTree.getSelectionPath();
@@ -255,7 +250,7 @@ public class ThemeMainContainer extends JPanel {
 				layersTree.reload();
 				layersTree.setSelectionRow(row);
 				buttonApply.setEnabled(false);
-				
+				ThemeGuideFactory.getMapControl().getMap().refresh();
 			}
 		}
 	}

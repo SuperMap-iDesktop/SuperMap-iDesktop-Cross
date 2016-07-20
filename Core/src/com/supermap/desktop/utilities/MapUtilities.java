@@ -294,14 +294,13 @@ public class MapUtilities {
 	public static void setDynamic(Dataset[] datasets, Map map) {
 		// 设置动态投影
 		for (Dataset dataset : datasets) {
-			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
+			if (!map.isDynamicProjection() && dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
 				if (map.getLayers().getCount() > 0 && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
 					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
 							CoreProperties.getString("String_TitleCoordSys"))) {
 						map.setDynamicProjection(true);
 						break;
 					} else {
-						map.setDynamicProjection(false);
 						break;
 					}
 				}
