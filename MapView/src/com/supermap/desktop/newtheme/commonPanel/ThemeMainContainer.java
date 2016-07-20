@@ -1,30 +1,5 @@
 package com.supermap.desktop.newtheme.commonPanel;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IDockbar;
@@ -41,10 +16,23 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * 屏蔽掉专题图下拉显示项
@@ -213,7 +201,8 @@ public class ThemeMainContainer extends JPanel {
 		}
 		if (null != oldLayer && !oldLayer.isDisposed()) {
 			updateProperty(oldLayer);
-			ThemeGuideFactory.getMapControl().getMap().refresh();
+			// UGDJ-323 切换图层刷新
+//			ThemeGuideFactory.getMapControl().getMap().refresh();
 		}
 	}
 
