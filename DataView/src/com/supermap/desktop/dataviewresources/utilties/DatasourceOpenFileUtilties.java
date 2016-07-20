@@ -7,8 +7,6 @@ import com.supermap.data.EngineFamilyType;
 import com.supermap.data.EngineInfo;
 import com.supermap.data.EngineType;
 import com.supermap.data.Environment;
-import com.supermap.data.ErrorInfo;
-import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
@@ -22,6 +20,7 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
@@ -36,9 +35,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 打开文件型数据源
- * 
- * @author X
  *
+ * @author X
  */
 public class DatasourceOpenFileUtilties {
 	private static final String WINDOWS_FILE_CHOOSE_UI = "com.sun.java.swing.plaf.windows.WindowsFileChooserUI";
@@ -55,7 +53,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 打开文件型数据源。 主要获取文件路径，然后调用DatasourceOpenFile方法打开
-	 * 
+	 *
 	 * @return 成功数目
 	 */
 
@@ -127,7 +125,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 添加只读打开选项
-	 * 
+	 *
 	 * @param openFileDlg
 	 * @param isReadOpen
 	 */
@@ -143,9 +141,8 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 根据文件打开数据源，失败时返回null。 如果单独使用此方法需要先调用resetReadOnlyProperties方法。
-	 * 
-	 * @param file
-	 *            数据源文件
+	 *
+	 * @param file 数据源文件
 	 * @return
 	 */
 	public static Datasource openFileDatasource(File file) {
@@ -156,9 +153,8 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 根据文件打开数据源，失败时返回null。 如果单独使用此方法需要先调用resetReadOnlyProperties方法。
-	 * 
-	 * @param file
-	 *            数据源文件
+	 *
+	 * @param file 数据源文件
 	 * @return
 	 */
 	public static Datasource openDatasourceFile(File file, boolean isReadOnlyOpen) {
@@ -251,11 +247,12 @@ public class DatasourceOpenFileUtilties {
 				connectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias(file.getName().substring(0, file.getName().lastIndexOf(".")), 0));
 				connectionInfo.setEngineType(engineType);
 				connectionInfo.setReadOnly(isReadOnlyOpenTemp);
+				String errorMessage = null;
 				try {
 					CursorUtilities.setWaitCursor();
 					resultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().open(connectionInfo);
 				} catch (Exception e) {
-					// 有可能密码错误，这里先不输出
+					errorMessage = e.getMessage();
 				} finally {
 					CursorUtilities.setDefaultCursor();
 				}
@@ -263,25 +260,25 @@ public class DatasourceOpenFileUtilties {
 					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
 					DatasourceUtilities.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
-				} else {
+				} else if (!StringUtilities.isNullOrEmpty(errorMessage)) {
 					// 判断是否为密码错误
 					boolean isPasswordWrong = false;
 
-					// TODO 先不判断 密码错误返回的代码不一致,后面如果有其他错误方式再改，此处代码先不删除
-					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
+//					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
 
-					for (int i = 0; i < errorInfos.length; i++) {
-						String marker = errorInfos[i].getMarker();
-						LogUtilities.outPut(MessageFormat.format(DataViewProperties.getString("String_OpenDatasourceFailedCode"), marker));
-						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
-								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
-							isPasswordWrong = true;
-							break;
-						} else if ("-100".equalsIgnoreCase(marker) && "sit".equalsIgnoreCase(fileType)) {
-							isPasswordWrong = true;
-							break;
-						}
-					}
+//					for (int i = 0; i < errorInfos.length; i++) {
+//						String marker = errorInfos[i].getMarker();
+					LogUtilities.outPut(MessageFormat.format(DataViewProperties.getString("String_OpenDatasourceFailedCode"), errorMessage));
+//						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
+//								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
+//							isPasswordWrong = true;
+//							break;
+//						} else if ("-100".equalsIgnoreCase(marker) && "sit".equalsIgnoreCase(fileType)) {
+//							isPasswordWrong = true;
+//							break;
+//						}
+//					}
+					isPasswordWrong = errorMessage.equals(DataViewProperties.getString("String_errorPassword"));
 					if (isPasswordWrong) {
 						JDialogGetPassword dialogGetPassword = new JDialogGetPassword(MessageFormat.format(
 								DataViewProperties.getString("String_InputDatasourcePassword"), filePath)) {
@@ -322,8 +319,11 @@ public class DatasourceOpenFileUtilties {
 						Application.getActiveApplication().getOutput().output(openFailedMessage);
 						return null;
 					}
+				} else {
+					return null;
 				}
 			}
+
 		} else {
 			// 文件无后缀名，不能判断类型
 			Application.getActiveApplication().getOutput().output(openFailedMessage);
@@ -341,9 +341,8 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 判断当前数据源是否已经打开
-	 * 
-	 * @param filePath
-	 *            数据源的文件路径
+	 *
+	 * @param filePath 数据源的文件路径
 	 * @return
 	 */
 	public static Datasource isDatasourceOpened(String filePath) {
@@ -358,7 +357,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 数据源只读时弹出提示，并根据选项设置对应的属性
-	 * 
+	 *
 	 * @param message
 	 * @return
 	 */
@@ -397,7 +396,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 支持的文件类型引擎
-	 * 
+	 *
 	 * @return
 	 */
 	private static EngineInfo[] getFileInfos() {
@@ -413,7 +412,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 去掉文件后缀中的.符号
-	 * 
+	 *
 	 * @param engineInfo
 	 * @return
 	 */
@@ -427,7 +426,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * 所有支持的文件类型
-	 * 
+	 *
 	 * @return
 	 */
 	public static String[] getAllSupportFileExtensions() {
@@ -447,7 +446,7 @@ public class DatasourceOpenFileUtilties {
 
 	/**
 	 * UDB引擎
-	 * 
+	 *
 	 * @return
 	 */
 	public static String[] getTypedSupportFileExtensions(EngineType engineType) {
