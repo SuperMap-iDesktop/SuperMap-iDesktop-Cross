@@ -111,6 +111,12 @@ public class LayersTree extends JTree {
 
 	public LayersTree() {
 		super();
+//		this.addTreeSelectionListener(new TreeSelectionListener() {
+//			@Override
+//			public void valueChanged(TreeSelectionEvent e) {
+//				System.out.println(1);
+//			}
+//		});
 		this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(new Map()));
 		this.setModel(this.treeModeltemp);
 		this.setEditable(true);
@@ -121,6 +127,12 @@ public class LayersTree extends JTree {
 
 	public LayersTree(Map map) {
 		super();
+//		this.addTreeSelectionListener(new TreeSelectionListener() {
+//			@Override
+//			public void valueChanged(TreeSelectionEvent e) {
+//				System.out.println(1);
+//			}
+//		});
 		if (map == null) {
 			TreeNodeData data = new TreeNodeData("", NodeDataType.UNKNOWN);
 			this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(data));
