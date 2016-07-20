@@ -157,7 +157,7 @@ public class FormBase extends JFrame implements IFormMain {
 			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
 			dockbar.load(workEnvironment);
 //			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
-			this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
 //			SwingUtilities.invokeLater(new Runnable() {

@@ -174,7 +174,7 @@ public class FileUtilities {
 		} else if (OS.contains("MAC")) {
 			result = System.getProperty("user.home") + "/Library/Application Support";
 		} else if (OS.contains("NUX")) {
-			result = "/var/lib/";
+			result = "/var/tmp/";
 		}
 		if (result == null) {
 			result = System.getProperty("user.dir");
