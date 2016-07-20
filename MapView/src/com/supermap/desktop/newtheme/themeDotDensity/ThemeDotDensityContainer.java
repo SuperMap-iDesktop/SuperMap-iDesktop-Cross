@@ -51,7 +51,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	private Map map;
 	private String layerName;
 
-	private boolean isResetLayerProperty = false;
 	private double maxValue;
 
 	private ArrayList<String> comboBoxArray;
@@ -62,11 +61,11 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	private ActionListener buttonActionListener = new ButtonActionListener();
 	private ChangeListener changeListener = new SpinnerListener();
 	private FocusAdapter textFieldListener = new TextFieldListener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isResetLayerProperty = false;
+			// 动态刷新表达式
+			initComboBoxExpression();
 		}
 	};
 
@@ -200,7 +199,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.textFieldValue.addFocusListener(this.textFieldListener);
 		this.spinnerDotDensityValue.addChangeListener(this.changeListener);
 		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseAdapter);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	@Override
@@ -210,7 +208,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		this.textFieldValue.removeFocusListener(this.textFieldListener);
 		this.spinnerDotDensityValue.removeChangeListener(this.changeListener);
 		this.comboBoxExpression.getComponent(0).removeMouseListener(this.mouseAdapter);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	class TextFieldListener extends FocusAdapter {
@@ -245,9 +242,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			Dataset[] datasets = ThemeUtil.getDatasets(themeDotDensityLayer, datasetVector);
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				// sql表达式
 				String tempExpression = themeDotDensity.getDotExpression();
@@ -327,17 +321,6 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 		}
 	}
 
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent e) {
-			if (null != themeDotDensityLayer && !themeDotDensityLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeDotDensityLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxExpression();
-			}
-		}
-
-	}
 
 	@Override
 	public void setRefreshAtOnce(boolean isRefreshAtOnce) {

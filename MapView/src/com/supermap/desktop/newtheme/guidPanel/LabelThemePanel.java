@@ -43,14 +43,15 @@ public class LabelThemePanel extends JPanel {
 				groupLayout.createSequentialGroup()
 						.addComponent(labelUniformTheme)
 						.addComponent(labelRangeTheme)
-						.addComponent(labelComplicated)
-						.addContainerGap(28, Short.MAX_VALUE)));
+//						.addComponent(labelComplicated)
+						.addContainerGap(68, Short.MAX_VALUE)));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
 				groupLayout.createSequentialGroup().addGroup(
 						groupLayout.createParallelGroup(Alignment.LEADING)
 										.addGroup(groupLayout.createSequentialGroup().addComponent(labelUniformTheme))
 										.addGroup(groupLayout.createSequentialGroup().addComponent(labelRangeTheme))
-										.addGroup(groupLayout.createSequentialGroup().addComponent(labelComplicated)))
+//										.addGroup(groupLayout.createSequentialGroup().addComponent(labelComplicated))
+										)
 						.addContainerGap(240, Short.MAX_VALUE)));
 		setLayout(groupLayout);
 		// @formatter:on

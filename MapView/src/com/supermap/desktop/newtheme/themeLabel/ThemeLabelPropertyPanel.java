@@ -1,12 +1,6 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
@@ -14,34 +8,17 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
-import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.LabelBackShape;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
-
+import com.supermap.mapping.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -93,17 +70,28 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<>();
 	private Layer themelabelLayer;
 	private String layerName;
-	private boolean isResetLayerProperty;
 
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
-	private transient LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
+//	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
-			isResetLayerProperty = false;
+			//此处动态刷新字段信息
+			if (arg0.getSource().equals(comboBoxLabelExpression.getComponent(0))) {
+				// 刷新表达式字段信息
+				ThemeUtil.initComboBox(comboBoxLabelExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArray, false, false);
+			}else if(arg0.getSource().equals(comboBoxOffsetX.getComponent(0))){
+				// 刷新水平偏移量字段信息
+				ThemeUtil.initComboBox(comboBoxOffsetX, themeLabel.getOffsetX(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetX, true, true);
+			}else if(arg0.getSource().equals(comboBoxOffsetY.getComponent(0))){
+				// 刷新垂直偏移量字段信息
+				ThemeUtil.initComboBox(comboBoxOffsetY, themeLabel.getOffsetY(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetY, true, true);
+			}
 		}
 	};
 
@@ -386,7 +374,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.checkBoxShowSmallLabel.addActionListener(this.actionListener);
 		this.checkBoxShowSubscription.addActionListener(this.actionListener);
 		this.comboBoxTextPrecision.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -412,7 +399,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.checkBoxShowSmallLabel.removeActionListener(this.actionListener);
 		this.checkBoxShowSubscription.removeActionListener(this.actionListener);
 		this.comboBoxTextPrecision.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	private void refreshAtOnce() {
@@ -426,9 +412,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themelabelLayer, datasetVector);
 				if (e.getSource() == comboBoxLabelExpression) {
@@ -598,20 +581,6 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 			}
 			themeLabel.setLabelExpression(labelExpression);
 		}
-	}
-
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themelabelLayer && !themelabelLayer.isDisposed() && evt.getNewValue().equals(themelabelLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxLabelExpression();
-				initComboBoxOffsetX();
-				initComboBoxOffsetY();
-			}
-		}
-
 	}
 
 	class LocalKeyListener extends KeyAdapter {
