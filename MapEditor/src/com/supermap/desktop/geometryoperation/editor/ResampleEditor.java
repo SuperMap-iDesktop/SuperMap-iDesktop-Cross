@@ -2,6 +2,8 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import java.util.ArrayList;
 
+import net.infonode.util.ArrayUtil;
+
 import com.supermap.data.DatasetType;
 import com.supermap.data.EditType;
 import com.supermap.data.Geometrist;
@@ -13,6 +15,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogResample;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -36,7 +39,8 @@ public class ResampleEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
+		return ListUtilities
+				.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	private void resample(EditEnvironment environment, double tolerance, ResampleType resampleType) {
@@ -45,8 +49,10 @@ public class ResampleEditor extends AbstractEditor {
 			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMap());
 
 			for (Layer layer : layers) {
-				if (layer.getDataset().getType() != DatasetType.POINT && layer.getDataset().getType() != DatasetType.TEXT) {
+				if (layer.isEditable() && layer.getDataset().getType() != DatasetType.POINT && layer.getDataset().getType() != DatasetType.TEXT) {
 					Recordset recordset = layer.getSelection().toRecordset();
+					// 记录当前图层重采样成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
+					ArrayList<Integer> succeededIDs = new ArrayList<>();
 
 					try {
 						while (!recordset.isEOF()) {
@@ -64,6 +70,7 @@ public class ResampleEditor extends AbstractEditor {
 										recordset.edit();
 										recordset.setGeometry(result);
 										recordset.update();
+										succeededIDs.add(recordset.getID());
 									}
 								}
 							} finally {
@@ -83,6 +90,9 @@ public class ResampleEditor extends AbstractEditor {
 							recordset.dispose();
 						}
 					}
+
+					layer.getSelection().clear();
+					layer.getSelection().addRange(ArrayUtilities.convertToInt(succeededIDs.toArray(new Integer[succeededIDs.size()])));
 				}
 			}
 		} catch (Exception ex) {

@@ -12,8 +12,8 @@ public class SystemUIUtilities {
 	}
 
 	public static void exit() {
-		WorkspaceAutoSave.getInstance().exit();
 		if (WorkspaceUtilities.closeWorkspace()) {
+			WorkspaceAutoSave.getInstance().exit();
 			System.exit(0);
 		}
 	}

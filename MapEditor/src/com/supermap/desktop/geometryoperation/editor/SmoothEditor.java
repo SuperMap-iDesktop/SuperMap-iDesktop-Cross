@@ -15,6 +15,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogSmoothRatio;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -36,7 +37,8 @@ public class SmoothEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		return ListUtilities.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
+		return ListUtilities
+				.isListOnlyContain(environment.getEditProperties().getEditableSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	private void smooth(EditEnvironment environment, int smoothRatio) {
@@ -48,6 +50,8 @@ public class SmoothEditor extends AbstractEditor {
 				if (layer.isEditable() && layer.getSelection().getCount() > 0 && layer.getDataset().getType() != DatasetType.POINT
 						&& layer.getDataset().getType() != DatasetType.TEXT) {
 					Recordset recordset = layer.getSelection().toRecordset();
+					// 记录当前图层光滑操作成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
+					ArrayList<Integer> succeededIDs = new ArrayList<>();
 
 					try {
 						while (!recordset.isEOF()) {
@@ -63,6 +67,7 @@ public class SmoothEditor extends AbstractEditor {
 									recordset.edit();
 									recordset.setGeometry(result);
 									recordset.update();
+									succeededIDs.add(recordset.getID());
 
 									result.dispose();
 								}
@@ -77,11 +82,15 @@ public class SmoothEditor extends AbstractEditor {
 							recordset.dispose();
 						}
 					}
+
+					layer.getSelection().clear();
+					layer.getSelection().addRange(ArrayUtilities.convertToInt(succeededIDs.toArray(new Integer[succeededIDs.size()])));
 				}
 			}
 
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
+			environment.getMapControl().revalidate();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

@@ -15,12 +15,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.ImagePyramidUtilities;
-import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
@@ -29,8 +27,6 @@ import com.supermap.ui.Action;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
 
 public class MapViewUIUtilities {
 
@@ -129,8 +125,7 @@ public class MapViewUIUtilities {
 	/**
 	 * 获取数据集的 bounds
 	 *
-	 * @param datasets
-	 *            需要获取bounds的数据集数组
+	 * @param datasets 需要获取bounds的数据集数组
 	 * @return bounds 如果数据集全为空，返回Null
 	 */
 	public static Rectangle2D getDatasetsBounds(Dataset[] datasets) {
@@ -153,8 +148,7 @@ public class MapViewUIUtilities {
 	/**
 	 * 全选指定 IFormMap 可编辑图层的 Geometry
 	 *
-	 * @param formMap
-	 *            指定的 IFormMap
+	 * @param formMap 指定的 IFormMap
 	 * @return 选中的对象数
 	 */
 	public static int selectAllGeometry(IFormMap formMap) {
@@ -238,8 +232,7 @@ public class MapViewUIUtilities {
 	/**
 	 * 打开工作空间中已存在的地图
 	 *
-	 * @param mapName
-	 *            地图名称
+	 * @param mapName 地图名称
 	 * @return 是否打开
 	 */
 	public static boolean openMap(String mapName) {
@@ -260,7 +253,7 @@ public class MapViewUIUtilities {
 				Map map = formMap.getMapControl().getMap();
 				map.open(mapName);
 				Application.getActiveApplication().resetActiveForm();
-				// map.refresh();
+				map.refresh();
 				UICommonToolkit.getLayersManager().setMap(map);
 				return true;
 			}

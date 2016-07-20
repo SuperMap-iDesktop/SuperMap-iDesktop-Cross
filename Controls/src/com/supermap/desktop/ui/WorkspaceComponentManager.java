@@ -31,7 +31,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -564,6 +563,7 @@ public class WorkspaceComponentManager extends JComponent {
 					for (int i = 0; i < selectedPaths.length; i++) {
 						nodeText = ((TreeNodeData) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject()).getData().toString();
 						MapViewUIUtilities.openMap(nodeText);
+//						ToolbarUIUtilities.updataToolbarsState();
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.SCENE_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();

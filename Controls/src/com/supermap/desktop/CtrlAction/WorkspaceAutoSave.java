@@ -6,10 +6,6 @@ import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceSavedAsEvent;
-import com.supermap.data.WorkspaceSavedAsListener;
-import com.supermap.data.WorkspaceSavedEvent;
-import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -77,18 +73,6 @@ public class WorkspaceAutoSave {
 			}
 		};
 		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
-		Application.getActiveApplication().getWorkspace().addSavedListener(new WorkspaceSavedListener() {
-			@Override
-			public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-				autoSave();
-			}
-		});
-		Application.getActiveApplication().getWorkspace().addSavedAsListener(new WorkspaceSavedAsListener() {
-			@Override
-			public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-				autoSave();
-			}
-		});
 		timer = new Timer("WorkspaceSave", true);
 		task = new TimerTask() {
 			@Override
@@ -133,7 +117,7 @@ public class WorkspaceAutoSave {
 			if (type != WorkspaceType.DEFAULT && type != WorkspaceType.SMWU && type != WorkspaceType.SXWU) {
 				if (workspace != null) {
 					workspace.close();
-					workspace = new Workspace();
+					workspace = null;
 				}
 //				if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
 //					tempWorkspaceFile.delete();
@@ -149,7 +133,7 @@ public class WorkspaceAutoSave {
 				}
 
 				WorkspaceConnectionInfo workspaceConnectionInfo = null;
-				if (workspace.getType() != WorkspaceType.DEFAULT && workspace.getVersion() == activeWorkspace.getVersion() && workspace.getType() == activeWorkspace.getType()) {
+				if (workspace.getType() != WorkspaceType.DEFAULT && workspace.getVersion() == activeWorkspace.getVersion() && (workspace.getType() == activeWorkspace.getType() || activeWorkspace.getType() == WorkspaceType.DEFAULT)) {
 					if (!workspace.getConnectionInfo().getPassword().equals(activeWorkspace.getConnectionInfo().getPassword())) {
 						workspace.changePassword(workspace.getConnectionInfo().getPassword(), activeWorkspace.getConnectionInfo().getPassword());
 					}
@@ -159,6 +143,9 @@ public class WorkspaceAutoSave {
 						lastServer = null;
 					}
 					closeTempWorkspace();
+					if (workspace == null) {
+						workspace = new Workspace();
+					}
 					if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
 						new File(lastServer).delete();
 						lastServer = null;
@@ -183,11 +170,9 @@ public class WorkspaceAutoSave {
 					if (!saveToFile(activeWorkspace, workspace)) {
 						LogUtilities.outPut("save config autoSaveWorkspaceConfigFile failed");
 					}
-//					tempWorkspaceFile = new File(workspace.getConnectionInfo().getServer());
 				} else {
 					LogUtilities.outPut("workspace autoSave failed");
 				}
-//				Application.getActiveApplication().getOutput().output("Save success");
 			}
 		}
 	}
@@ -199,7 +184,7 @@ public class WorkspaceAutoSave {
 		if (!StringUtilities.isNullOrEmpty(workspace.getConnectionInfo().getServer())) {
 			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
-			workspace = new Workspace();
+			workspace = null;
 		}
 	}
 
@@ -285,9 +270,10 @@ public class WorkspaceAutoSave {
 				LogUtilities.outPut("Delete AutoSaveWorkspaceConfigFile Failed On Exit ");
 			}
 		}
-		lastServer = workspace.getConnectionInfo().getServer();
 		if (workspace != null) {
+			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
+			workspace = null;
 		}
 		if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
 			if (!new File(lastServer).delete()) {
@@ -304,6 +290,4 @@ public class WorkspaceAutoSave {
 		}
 		return workspaceAutoSave;
 	}
-
-
 }

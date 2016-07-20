@@ -161,7 +161,7 @@ public class WorkspaceRecovery {
 							}
 						}
 						Class<WorkspaceConnectionInfo> clazz = WorkspaceConnectionInfo.class;
-						Field isOpenedWorkspace = clazz.getDeclaredField("_$3");
+						Field isOpenedWorkspace = clazz.getDeclaredFields()[0];
 						isOpenedWorkspace.setAccessible(true);
 						WorkspaceConnectionInfo connectionInfo = Application.getActiveApplication().getWorkspace().getConnectionInfo();
 						isOpenedWorkspace.setBoolean(connectionInfo, false);
