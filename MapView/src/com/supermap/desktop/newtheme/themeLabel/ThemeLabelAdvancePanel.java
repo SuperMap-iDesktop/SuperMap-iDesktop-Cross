@@ -908,9 +908,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		themeLabelTemp.setMaxTextWidth(this.themeLabel.getMaxTextWidth());
 		themeLabelTemp.setMinTextWidth(this.themeLabel.getMinTextWidth());
 		themeLabelTemp.setTextExtentInflation(this.themeLabel.getTextExtentInflation());
-//		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
-//		themeLabelTemp.getUniformStyle().setStringAlignment(this.themeLabel.getUniformStyle().getStringAlignment());
-		themeLabelTemp.setUniformStyle(this.themeLabel.getUniformStyle());
+		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
+		StringAlignment stringAlignment = this.themeLabel.getUniformStyle().getStringAlignment();
+		themeLabelTemp.getUniformStyle().setStringAlignment(stringAlignment);
+		if (themeLabelTemp.getCount()>0) {
+			for (int i = 0; i < themeLabelTemp.getCount(); i++) {
+				themeLabelTemp.getItem(i).getStyle().setStringAlignment(stringAlignment);
+			}
+		}
 		((ThemeLabel) this.themeLabelLayer.getTheme()).getUniformStyle();
 		this.map.refresh();
 	}
