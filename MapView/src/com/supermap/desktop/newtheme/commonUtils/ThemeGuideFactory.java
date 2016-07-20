@@ -188,7 +188,11 @@ public class ThemeGuideFactory {
 			result = getMapControl().getMap().getLayers().add(dataset, theme, true);
 			if (null != layer) {
 				// 复制关联表信息到新图层中
-				result.setDisplayFilter(layer.getDisplayFilter());
+//				result.setDisplayFilter(layer.getDisplayFilter());
+//				result.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
+				for (int i = 0; i < layer.getDisplayFilter().getJoinItems().getCount(); i++) {
+					result.getDisplayFilter().getJoinItems().add(layer.getDisplayFilter().getJoinItems().get(i));
+				}
 			}
 			((ThemeMainContainer) getDockbarThemeContainer().getComponent()).unregistActionListener();
 			UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(0);
@@ -210,7 +214,7 @@ public class ThemeGuideFactory {
 				return success;
 			}
 			expression = hasJoinItems(layer, expression);
-			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.GREENORANGEVIOLET);
+			ThemeUnique themeUnique = ThemeUnique.makeDefault((DatasetVector) getDataset(), expression, ColorGradientType.BLUERED);
 			if (null != themeUnique) {
 				for (int i = 0; i < themeUnique.getCount(); i++) {
 					GeoStyle textStyle = themeUnique.getItem(i).getStyle();
