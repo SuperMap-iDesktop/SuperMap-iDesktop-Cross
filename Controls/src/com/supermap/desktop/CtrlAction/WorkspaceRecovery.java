@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction;
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.properties.CoreProperties;
@@ -25,6 +26,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -151,7 +153,11 @@ public class WorkspaceRecovery {
 					if (result == OpenWorkspaceResult.SUCCESSED) {
 						if (datasourceConnectionInfos.size() > 0) {
 							for (DatasourceConnectionInfo datasourceConnectionInfo : datasourceConnectionInfos) {
-								Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
+								try {
+									Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
+								} catch (Exception e) {
+									Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_OpenDatasourceFailed"), datasourceConnectionInfo.getServer()));
+								}
 							}
 						}
 						Class<WorkspaceConnectionInfo> clazz = WorkspaceConnectionInfo.class;
