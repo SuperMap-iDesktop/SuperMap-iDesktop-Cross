@@ -133,7 +133,7 @@ public class WorkspaceAutoSave {
 				}
 
 				WorkspaceConnectionInfo workspaceConnectionInfo = null;
-				if (workspace.getType() != WorkspaceType.DEFAULT && workspace.getVersion() == activeWorkspace.getVersion() && workspace.getType() == activeWorkspace.getType()) {
+				if (workspace.getType() != WorkspaceType.DEFAULT && workspace.getVersion() == activeWorkspace.getVersion() && (workspace.getType() == activeWorkspace.getType() || activeWorkspace.getType() == WorkspaceType.DEFAULT)) {
 					if (!workspace.getConnectionInfo().getPassword().equals(activeWorkspace.getConnectionInfo().getPassword())) {
 						workspace.changePassword(workspace.getConnectionInfo().getPassword(), activeWorkspace.getConnectionInfo().getPassword());
 					}
@@ -143,6 +143,9 @@ public class WorkspaceAutoSave {
 						lastServer = null;
 					}
 					closeTempWorkspace();
+					if (workspace == null) {
+						workspace = new Workspace();
+					}
 					if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
 						new File(lastServer).delete();
 						lastServer = null;
