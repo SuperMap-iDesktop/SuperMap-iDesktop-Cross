@@ -2247,7 +2247,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 								}
 								// 打开数据源类型的文件
 								if (datasourceType == getFileType(file)) {
-									DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false);
+									DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false,true);
 								}
 							}
 							dtde.dropComplete(true);// 指示拖拽操作已完成

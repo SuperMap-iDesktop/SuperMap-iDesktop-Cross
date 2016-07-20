@@ -209,30 +209,6 @@ public class CreateTextAction {
 		this.mapControl.add(this.textFieldInput);
 		this.mapControl.addTrackedListener(this.trackedListener);
 		this.mapControl.getMap().addMapClosedListener(this.mapClosedListener);
-		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
-
-			@Override
-			public void activeFormChanged(ActiveFormChangedEvent e) {
-				if (null != e.getOldActiveForm() && e.getOldActiveForm() instanceof IFormMap) {
-					Recordset recordset = null;
-					try {
-						recordset = finishCommit(recordset, e.getOldActiveForm());
-					} catch (Exception ex) {
-						// TODO: handle exception
-					} finally {
-						// Action结束之前，编辑提交之后，下一次编辑开始之前，隐藏编辑控件
-						textFieldInput.setText("");
-						textFieldInput.setVisible(false);
-						if (editingGeoText != null) {
-							editingGeoText.dispose();
-						}
-						if (recordset != null) {
-							recordset.dispose();
-						}
-					}
-				}
-			}
-		});
 		this.textFieldInput.addKeyListener(this.keyListener);
 	}
 
