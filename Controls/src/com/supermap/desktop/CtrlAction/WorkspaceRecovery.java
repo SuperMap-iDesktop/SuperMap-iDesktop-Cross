@@ -52,6 +52,7 @@ public class WorkspaceRecovery {
 	private void recovery() {
 		String appDataPath = FileUtilities.getAppDataPath();
 		if (appDataPath != null) {
+			appDataPath += "tempWorkspace" + File.separator;
 			File appDataPathFile = new File(appDataPath);
 			if (appDataPathFile.exists()) {
 				ArrayList<File> fileList = new ArrayList<>();

@@ -13,6 +13,7 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.PluginInfo;
@@ -575,6 +576,7 @@ public class WorkspaceUtilities {
 		for (Datasource datasource : datasourceAOnly) {
 			copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
 		}
+
 //		copyWorkspace.getDatasources().closeAll();
 //		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
 //			Datasource datasource = workspace.getDatasources().get(i);
@@ -588,41 +590,65 @@ public class WorkspaceUtilities {
 //		}
 
 		copyWorkspace.getMaps().clear();
-		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
-			copyWorkspace.getMaps().add(workspace.getMaps().get(i), workspace.getMaps().getMapXML(i));
-		}
-
 		copyWorkspace.getScenes().clear();
-		for (int i = 0; i < workspace.getScenes().getCount(); i++) {
-			copyWorkspace.getScenes().add(workspace.getScenes().get(i), workspace.getScenes().getSceneXML(i));
-		}
-
 		copyWorkspace.getLayouts().clear();
-		for (int i = 0; i < workspace.getLayouts().getCount(); i++) {
-			copyWorkspace.getLayouts().add(workspace.getLayouts().get(i), workspace.getLayouts().getLayoutXML(i));
+
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			IForm iForm = formManager.get(i);
+			if (iForm instanceof IFormMap) {
+				copyWorkspace.getMaps().add(iForm.getText(), ((IFormMap) iForm).getMapControl().getMap().toXML());
+			} else if (iForm instanceof IFormScene) {
+				copyWorkspace.getScenes().add(iForm.getText(), ((IFormScene) iForm).getSceneControl().getScene().toXML());
+			} else if (iForm instanceof IFormLayout) {
+				copyWorkspace.getLayouts().add(iForm.getText(), ((IFormLayout) iForm).getMapLayoutControl().getMapLayout().toXML());
+			}
 		}
 
-//		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
-//		String markerSymbolFilePath = tempFolder + ".sym";
-//		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
-//		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
-//		if (new File(markerSymbolFilePath).exists()) {
-//			new File(markerSymbolFilePath).delete();
-//		}
-//
-//		String lineSymbolFilePath = tempFolder + ".lsl";
-//		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
-//		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
-//		if (new File(lineSymbolFilePath).exists()) {
-//			new File(lineSymbolFilePath).delete();
-//		}
-//
-//		String fillSymbolFilePath = tempFolder + ".bru";
-//		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
-//		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
-//		if (new File(fillSymbolFilePath).exists()) {
-//			new File(fillSymbolFilePath).delete();
-//		}
+		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
+			String mapName = workspace.getMaps().get(i);
+			if (copyWorkspace.getMaps().indexOf(mapName) == -1) {
+				copyWorkspace.getMaps().add(mapName, workspace.getMaps().getMapXML(i));
+			}
+		}
+
+		for (int i = 0; i < workspace.getScenes().getCount(); i++) {
+
+			String sceneName = workspace.getScenes().get(i);
+			if (copyWorkspace.getScenes().indexOf(sceneName) == -1) {
+				copyWorkspace.getScenes().add(sceneName, workspace.getScenes().getSceneXML(i));
+			}
+		}
+
+		for (int i = 0; i < workspace.getLayouts().getCount(); i++) {
+
+			String layoutName = workspace.getLayouts().get(i);
+			if (copyWorkspace.getLayouts().indexOf(layoutName) == -1) {
+				copyWorkspace.getLayouts().add(layoutName, workspace.getLayouts().getLayoutXML(i));
+			}
+		}
+
+		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
+		String markerSymbolFilePath = tempFolder + ".sym";
+		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
+		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
+		if (new File(markerSymbolFilePath).exists()) {
+			new File(markerSymbolFilePath).delete();
+		}
+
+		String lineSymbolFilePath = tempFolder + ".lsl";
+		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
+		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
+		if (new File(lineSymbolFilePath).exists()) {
+			new File(lineSymbolFilePath).delete();
+		}
+
+		String fillSymbolFilePath = tempFolder + ".bru";
+		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
+		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
+		if (new File(fillSymbolFilePath).exists()) {
+			new File(fillSymbolFilePath).delete();
+		}
 
 		return copyWorkspace;
 	}

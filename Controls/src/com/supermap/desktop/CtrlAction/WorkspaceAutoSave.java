@@ -72,7 +72,7 @@ public class WorkspaceAutoSave {
 	}
 
 	public void start() {
-		timer.schedule(task, period, period);
+		timer.schedule(task, period / 6, period);
 	}
 
 	private String getFilePath() {
@@ -82,6 +82,8 @@ public class WorkspaceAutoSave {
 			LogUtilities.outPut("get AppData path failed. AutoSave exit.");
 			return null;
 		}
+		appDataPath += "tempWorkspace" + File.separator;
+
 		File file = new File(appDataPath);
 		File[] listFiles = file.listFiles();
 		ArrayList<String> list = new ArrayList<>();
@@ -97,39 +99,46 @@ public class WorkspaceAutoSave {
 
 	private void autoSave() {
 		Workspace activeWorkspace = Application.getActiveApplication().getWorkspace();
-		WorkspaceConnectionInfo connectionInfo = activeWorkspace.getConnectionInfo();
-		WorkspaceType type = connectionInfo.getType();
-		if (type != WorkspaceType.DEFAULT && type != WorkspaceType.SMWU && type != WorkspaceType.SXWU) {
-			if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
-				tempWorkspaceFile.delete();
-
-			}
-			try {
-				randomAccessFile.setLength(0);
-			} catch (IOException e) {
-				LogUtilities.outPut("database workspace delete config failed");
-			}
-		} else {
-			WorkspaceConnectionInfo workspaceConnectionInfo = new WorkspaceConnectionInfo(getTempWorkspaceFilePath());
-			workspaceConnectionInfo.setServer(getTempWorkspaceFilePath() + (connectionInfo.getServer().toLowerCase().endsWith("sxwu") ? ".sxwu" : ".smwu"));
-			workspaceConnectionInfo.setType(connectionInfo.getType() != WorkspaceType.SXWU ? WorkspaceType.SMWU : WorkspaceType.SMWU);
-			workspaceConnectionInfo.setVersion(connectionInfo.getVersion());
-			workspaceConnectionInfo.setUser(connectionInfo.getUser());
-			workspaceConnectionInfo.setPassword(connectionInfo.getPassword());
-
-			if (workspace == null) {
-				workspace = new Workspace();
-			}
-			workspace = WorkspaceUtilities.copyWorkspace(activeWorkspace, workspace);
-			if (workspace.saveAs(workspaceConnectionInfo)) {
-				if (!saveToFile(activeWorkspace, workspace)) {
-					LogUtilities.outPut("save config autoSaveWorkspaceConfigFile failed");
+		synchronized (activeWorkspace) {
+			WorkspaceConnectionInfo connectionInfo = activeWorkspace.getConnectionInfo();
+			WorkspaceType type = connectionInfo.getType();
+			if (type != WorkspaceType.DEFAULT && type != WorkspaceType.SMWU && type != WorkspaceType.SXWU) {
+				if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
+					tempWorkspaceFile.delete();
 				}
-				tempWorkspaceFile = new File(workspace.getConnectionInfo().getServer());
+				try {
+					randomAccessFile.setLength(0);
+				} catch (IOException e) {
+					LogUtilities.outPut("database workspace delete config failed");
+				}
 			} else {
-				LogUtilities.outPut("workspace autoSave failed");
-			}
+				WorkspaceConnectionInfo workspaceConnectionInfo = new WorkspaceConnectionInfo(getTempWorkspaceFilePath());
+				workspaceConnectionInfo.setServer(getTempWorkspaceFilePath() + (connectionInfo.getServer().toLowerCase().endsWith("sxwu") ? ".sxwu" : ".smwu"));
+				workspaceConnectionInfo.setType(connectionInfo.getType() != WorkspaceType.SXWU ? WorkspaceType.SMWU : WorkspaceType.SMWU);
+				workspaceConnectionInfo.setVersion(connectionInfo.getVersion());
+				workspaceConnectionInfo.setUser(connectionInfo.getUser());
+				workspaceConnectionInfo.setPassword(connectionInfo.getPassword());
 
+				if (workspace == null) {
+					workspace = new Workspace();
+				}
+				workspace = WorkspaceUtilities.copyWorkspace(activeWorkspace, workspace);
+				boolean saveSuccess;
+				if (StringUtilities.isNullOrEmpty(workspace.getConnectionInfo().getServer())) {
+					saveSuccess = workspace.saveAs(workspaceConnectionInfo);
+				} else {
+					saveSuccess = workspace.save();
+				}
+				if (saveSuccess) {
+					if (!saveToFile(activeWorkspace, workspace)) {
+						LogUtilities.outPut("save config autoSaveWorkspaceConfigFile failed");
+					}
+					tempWorkspaceFile = new File(workspace.getConnectionInfo().getServer());
+				} else {
+					LogUtilities.outPut("workspace autoSave failed");
+				}
+				Application.getActiveApplication().getOutput().output("Save success");
+			}
 		}
 	}
 
@@ -225,7 +234,6 @@ public class WorkspaceAutoSave {
 		}
 		return false;
 	}
-
 
 
 	public static WorkspaceAutoSave getInstance() {

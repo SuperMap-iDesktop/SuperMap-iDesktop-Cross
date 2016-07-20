@@ -98,12 +98,12 @@ public class Application {
 		return this.workspace;
 	}
 
-	/**
-	 * Set the Workspace
-	 */
-	public void setWorkspace(Workspace workspace) {
-		this.workspace = workspace;
-	}
+//	/**
+//	 * Set the Workspace
+//	 */
+//	public void setWorkspace(Workspace workspace) {
+//		this.workspace = workspace;
+//	}
 
 	public Datasource[] getActiveDatasources() {
 		return this.activeDatasources.toArray(new Datasource[this.activeDatasources.size()]);
