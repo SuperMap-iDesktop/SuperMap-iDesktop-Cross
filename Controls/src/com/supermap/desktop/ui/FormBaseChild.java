@@ -163,7 +163,12 @@ public class FormBaseChild extends View implements IForm {
 	@Override
 	public void clean() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public boolean isClosed() {
+		return !isVisible();
 	}
 
 }
