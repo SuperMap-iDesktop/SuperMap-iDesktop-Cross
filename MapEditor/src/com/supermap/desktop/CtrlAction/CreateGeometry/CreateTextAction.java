@@ -317,7 +317,9 @@ public class CreateTextAction {
 			int lineWidth = fontMetrics.stringWidth(lines[i]);
 			textWidth = Math.max(textWidth, lineWidth);
 		}
-		int textHeight = fontMetrics.getHeight() * lines.length + 5 * (lines.length - 1);
+
+		int lineCount = text.endsWith(System.lineSeparator()) ? lines.length + 1 : lines.length;
+		int textHeight = fontMetrics.getHeight() * lineCount + 5 * (lineCount - 1);
 		this.textFieldInput.setSize(new Dimension(textWidth + 5, textHeight));
 	}
 }

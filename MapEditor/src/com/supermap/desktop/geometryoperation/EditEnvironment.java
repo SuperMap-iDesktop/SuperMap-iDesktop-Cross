@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
@@ -235,28 +233,51 @@ public class EditEnvironment {
 		this.formMap = formMap;
 
 		if (this.formMap != null) {
-			this.formMap.getMapControl().addMouseListener(this.mouseListener);
-			this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
-			this.formMap.getMapControl().addKeyListener(this.keyListener);
-			this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
-
-			this.formMap.getMapControl().addRedoneListener(this.redoneListener);
-			this.formMap.getMapControl().addUndoneListener(this.undoneListener);
-			this.formMap.getMapControl().addTrackingListener(this.trackingListener);
-			this.formMap.getMapControl().addTrackedListener(this.trackedListener);
-			// 选中对象状态改变
-			this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
-			this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);
-			// 图层可编辑状态改变
-			this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
-			this.formMap.getMapControl().getMap().addMapClosedListener(this.mapClosedListener);
-			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
-
+			registerEvents();
 			// 工具条上的下拉按钮在点开的时候才会构造，在那之前对地图的操作都没有记录，因此在这里初始化一下。
 			geometryStatusChange();
 			layersStatusChange();
 		}
+	}
+
+	private void registerEvents() {
+		this.formMap.getMapControl().addMouseListener(this.mouseListener);
+		this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
+		this.formMap.getMapControl().addKeyListener(this.keyListener);
+		this.formMap.getMapControl().addActionChangedListener(this.actionChangedListener);
+
+		this.formMap.getMapControl().addRedoneListener(this.redoneListener);
+		this.formMap.getMapControl().addUndoneListener(this.undoneListener);
+		this.formMap.getMapControl().addTrackingListener(this.trackingListener);
+		this.formMap.getMapControl().addTrackedListener(this.trackedListener);
+		// 选中对象状态改变
+		this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
+		this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);
+		// 图层可编辑状态改变
+		this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
+		this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
+		this.formMap.getMapControl().getMap().addMapClosedListener(this.mapClosedListener);
+		this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
+	}
+
+	private void unregisterEvents() {
+		this.formMap.getMapControl().removeMouseListener(this.mouseListener);
+		this.formMap.getMapControl().removeMouseMotionListener(this.mouseMotionListener);
+		this.formMap.getMapControl().removeKeyListener(this.keyListener);
+		this.formMap.getMapControl().removeActionChangedListener(this.actionChangedListener);
+
+		this.formMap.getMapControl().removeRedoneListener(this.redoneListener);
+		this.formMap.getMapControl().removeUndoneListener(this.undoneListener);
+		this.formMap.getMapControl().removeTrackingListener(this.trackingListener);
+		this.formMap.getMapControl().removeTrackedListener(this.trackedListener);
+		// 选中对象状态改变
+		this.formMap.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
+		this.formMap.getMapControl().removeGeometrySelectedListener(this.geometrySelectedListener);
+		// 图层可编辑状态改变
+		this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
+		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this.layerRemovedListener);
+		this.formMap.getMapControl().getMap().removeMapClosedListener(this.mapClosedListener);
+		this.formMap.getMapControl().getMap().removeMapOpenedListener(this.mapOpenedListener);
 	}
 
 	public IEditModel getEditModel() {
@@ -313,6 +334,7 @@ public class EditEnvironment {
 			this.isInitialAction = true;
 			this.editor.deactivate(this);
 
+			// 点击一次开启功能，再次点击该功能结束
 			if (this.editor != NullEditor.INSTANCE && this.editor == editor) {
 				this.editor = NullEditor.INSTANCE;
 			} else {
@@ -524,5 +546,16 @@ public class EditEnvironment {
 	public void mapClosed(MapClosedEvent arg0) {
 		this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
 		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this.layerRemovedListener);
+	}
+
+	public void clear() {
+		unregisterEvents();
+		this.formMap = null;
+		this.properties.clear();
+		this.editor = NullEditor.INSTANCE;
+		this.isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
+		this.isMiddleMousePressed = false;
+		this.editModel = null;
+		this.editController = NullEditController.instance();
 	}
 }
