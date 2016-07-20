@@ -526,6 +526,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		initTextFieldFontItalicAngl();
 		initTextFieldFontRotation();
 		initLayout();
+		this.labelFontWidth.setVisible(false);
+		this.spinnerFontWidth.setVisible(false);
+		this.labelFontWidthUnity.setVisible(false);
 	}
 
 	private void initLayout() {

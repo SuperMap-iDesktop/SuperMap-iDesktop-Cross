@@ -99,7 +99,7 @@ public class CommonUtilities {
 		ImageIcon imageIcon = null;
 		try{
 			if (!StringUtilities.isNullOrEmptyString(path)) {
-				imageIcon = new ImageIcon(CommonUtilities.class.getResource("/com/supermap/desktop/lbsresources/ToolBar/"+path));
+				imageIcon = new ImageIcon(CommonUtilities.class.getResource("/com/supermap/desktop/lbsresources/Toolbar/"+path));
 			}
 		} catch(Exception e){
 			Application.getActiveApplication().getOutput().output(e);
