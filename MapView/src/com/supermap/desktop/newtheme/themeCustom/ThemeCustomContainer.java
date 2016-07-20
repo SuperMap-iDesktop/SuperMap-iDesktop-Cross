@@ -1,29 +1,17 @@
 package com.supermap.desktop.newtheme.themeCustom;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
+import com.supermap.data.*;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
-import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 
@@ -40,7 +28,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	private Layer themeCustomLayer;
 	private Map map;
 	private DatasetVector datasetVector;
-	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 
 	private JTabbedPane tabbedPane;
 	private JPanel panelProperty;
@@ -99,18 +86,62 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	private final int MARKERANGLE = 14;
 
 	private boolean isRefreshAtOnce;
-	public boolean isResetLayerProperty = false;
 	private String layerName;
 
 	private Dimension dimension = new Dimension(120, 23);
 	private ItemListener panelFillComboBoxListener = new PanelFillComboBoxListener();
 	private ItemListener panelLineComboBoxListener = new PanelLineComboBoxListener();
 	private ItemListener panelMarkerComboBoxListener = new PanelMarkerComboBoxLitener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isResetLayerProperty = false;
+			// 动态刷新表达式
+			if (e.getSource().equals(comboBoxFillSymbol.getComponent(0))) {
+				// 填充风格
+				initComboBoxFillStyle();
+			}else if(e.getSource().equals(comboBoxFillOpaque.getComponent(0))){
+				// 透明度
+				initComboBoxFillOpaque();
+			}else if (e.getSource().equals(comboBoxFillForeColor.getComponent(0))) {
+				// 填充前景色
+				initComboBoxFillForeColor();
+			}else if(e.getSource().equals(comboBoxFillBackColor.getComponent(0))){
+				// 填充背景色
+				initComboBoxFillBackColor();
+			}else if(e.getSource().equals(comboBoxFillGradientMode.getComponent(0))){
+				// 渐变类型
+				initComboBoxFillGradientMode();
+			}else if(e.getSource().equals(comboBoxFillGradientAngle.getComponent(0))){
+				// // 渐变角度
+				initComboBoxFillGradientAngle();
+			}else if(e.getSource().equals(comboBoxFillGradientOffsetRatioX.getComponent(0))){
+				// 渐变水平偏移
+				initComboBoxFillGradientOffsetRatioX();
+			}else if(e.getSource().equals(comboBoxFillGradientOffsetRatioY.getComponent(0))){
+				// 渐变垂直偏移
+				initComboBoxFillGradientOffsetRatioY();
+			}else if(e.getSource().equals(comboBoxLineSymbol.getComponent(0))){
+				// 线风格
+				initComboBoxLineSymbol();
+			}else if(e.getSource().equals(comboBoxLineColor.getComponent(0))){
+				// 线颜色
+				initComboBoxLineColor();
+			}else if(e.getSource().equals(comboBoxLineWidth.getComponent(0))){
+				// 线宽
+				initComboBoxLineWidth();
+			}else if(e.getSource().equals(comboBoxMarkerSymbol.getComponent(0))){
+				// 符号风格
+				initComboBoxMarkerSymbol();
+			}else if(e.getSource().equals(comboBoxMarkerColor.getComponent(0))){
+				// 符号颜色
+				initComboBoxMarkerColor();
+			}else if(e.getSource().equals(comboBoxMarkerSize.getComponent(0))){
+				// 符号大小
+				initComboBoxMarkerSize();
+			}else if(e.getSource().equals(comboBoxMarkerAngle.getComponent(0))){
+				// 符号角度
+				initComboBoxMarkerAngle();
+			}
 		}
 	};
 
@@ -474,7 +505,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxMarkerColor.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSize.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerAngle.getComponent(0).addMouseListener(this.mouseAdapter);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	@Override
@@ -509,15 +539,11 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 		this.comboBoxMarkerColor.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerSize.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxMarkerAngle.getComponent(0).removeMouseListener(this.mouseAdapter);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	class PanelFillComboBoxListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxFillSymbol) {
 					String fillSymbolExpression = themeCustom.getFillSymbolIDExpression();
@@ -559,9 +585,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxLineSymbol) {
 					String lineSymbolExpression = themeCustom.getLineSymbolIDExpression();
@@ -583,9 +606,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 	class PanelMarkerComboBoxLitener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxMarkerSymbol) {
 					String markerSymbolExpression = themeCustom.getMarkerSymbolIDExpression();
@@ -605,32 +625,6 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 				}
 			}
 		}
-	}
-
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent e) {
-			if (null != themeCustomLayer && !themeCustomLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeCustomLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxFillStyle();
-				initComboBoxFillOpaque();
-				initComboBoxFillForeColor();
-				initComboBoxFillBackColor();
-				initComboBoxFillGradientMode();
-				initComboBoxFillGradientAngle();
-				initComboBoxFillGradientOffsetRatioX();
-				initComboBoxFillGradientOffsetRatioY();
-				initComboBoxLineSymbol();
-				initComboBoxLineColor();
-				initComboBoxLineWidth();
-				initComboBoxMarkerSymbol();
-				initComboBoxMarkerColor();
-				initComboBoxMarkerSize();
-				initComboBoxMarkerAngle();
-			}
-		}
-
 	}
 
 	public void resetExpression(int type, String expression) {

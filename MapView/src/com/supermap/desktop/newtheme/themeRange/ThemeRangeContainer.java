@@ -117,7 +117,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
-	private boolean isResetLayerProperty = false;
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
@@ -125,11 +124,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isResetLayerProperty = false;
+			initComboBoxRangeExpression();
 		}
 	};
 
@@ -529,7 +527,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
+//		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -555,7 +553,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
+//		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -855,9 +853,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeRangeLayer, datasetVector);
 				if (e.getSource() == comboBoxColorStyle) {
@@ -1313,18 +1308,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return columnIndex == TABLE_COLUMN_RANGEVALUE || columnIndex == TABLE_COLUMN_CAPTION;
 		}
-	}
-
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themeRangeLayer && !themeRangeLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themeRangeLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxRangeExpression();
-			}
-		}
-
 	}
 
 	/**

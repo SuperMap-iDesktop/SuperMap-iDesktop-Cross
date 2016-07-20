@@ -71,6 +71,7 @@ public class MapViewUIUtilities {
 		}
 
 		SortUIUtilities.sortList(datasets);
+		MapUtilities.setDynamic(datasets, map);
 		// 添加到地图
 		for (Dataset dataset : datasets) {
 			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {

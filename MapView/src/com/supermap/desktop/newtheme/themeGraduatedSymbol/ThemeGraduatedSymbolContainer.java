@@ -2,7 +2,6 @@ package com.supermap.desktop.newtheme.themeGraduatedSymbol;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -15,14 +14,11 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
-import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
-import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
+import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 
 /**
@@ -78,13 +74,11 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetY;
 	private ArrayList<String> comboBoxArray;
 	private GraduatedMode graduatedMode;
-	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 
 	private final int POSITIVESTYLE = 0;
 	private final int ZEROSTYLE = 1;
 	private final int NEGATIVESTYLE = 2;
 	private final int LEADERLINESTYLE = 3;
-	public boolean isResetLayerProperty = false;
 	private String expression;
 
 	private ItemListener expressionListener = new ExpressionListener();
@@ -93,11 +87,26 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	private ItemListener checkboxListener = new CheckboxItemListener();
 	private ItemListener comboxListener = new ComboxBoxListener();
 	private ActionListener buttonListener = new ButtonActionListener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isResetLayerProperty = false;
+			//此处动态刷新字段信息
+			if (e.getSource().equals(comboBoxExpression.getComponent(0))) {
+				// 刷新表达式字段信息
+				comboBoxArray = new ArrayList<String>();
+				ThemeUtil.initComboBox(comboBoxExpression, themeGraduatedSymbol.getExpression(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter()
+						.getJoinItems(), comboBoxArray, true, false);
+			}else if(e.getSource().equals(comboBoxOffsetX.getComponent(0))){
+				// 刷新水平偏移量字段信息
+				comboBoxArrayForOffsetX = new ArrayList<String>();
+				ThemeUtil.initComboBox(comboBoxOffsetX, themeGraduatedSymbol.getOffsetX(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetX, true, true);
+			}else if(e.getSource().equals(comboBoxOffsetY.getComponent(0))){
+				// 刷新垂直偏移量字段信息
+				comboBoxArrayForOffsetY = new ArrayList<String>();
+				ThemeUtil.initComboBox(comboBoxOffsetY, themeGraduatedSymbol.getOffsetY(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetY, true, true);
+			}
 		}
 	};
 	private KeyAdapter textFieldKeyListener;
@@ -370,7 +379,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		this.comboBoxExpression.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetX.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).addMouseListener(this.mouseAdapter);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	@Override
@@ -393,7 +401,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		this.comboBoxExpression.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetX.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).removeMouseListener(this.mouseAdapter);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	class ButtonActionListener implements ActionListener {
@@ -490,9 +497,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			Dataset[] tempDatasets = ThemeUtil.getDatasets(themeGraduatedSymbolLayer, datasetVector);
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				if (e.getSource() == comboBoxOffsetUnity) {
 					int unity = comboBoxOffsetUnity.getSelectedIndex();
@@ -680,9 +684,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			Dataset[] datasets = ThemeUtil.getDatasets(themeGraduatedSymbolLayer, datasetVector);
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				// sql表达式
 				expression = themeGraduatedSymbol.getExpression();
@@ -754,19 +755,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		}
 	}
 
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent e) {
-			if (null != themeGraduatedSymbolLayer && !themeGraduatedSymbolLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeGraduatedSymbolLayer)) {
-				isResetLayerProperty = true;
-				initComboboxExpression();
-				initComboBoxOffsetX();
-				initComboBoxOffsetY();
-			}
-		}
-
-	}
 
 	private void refreshAtOnce() {
 		firePropertyChange("ThemeChange", null, null);

@@ -1,31 +1,10 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.analyst.spatialanalyst.SmoothMethod;
-import com.supermap.data.CoordSysTransParameter;
-import com.supermap.data.CoordSysTranslator;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoStyle3D;
-import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
-import com.supermap.data.Geometry;
-import com.supermap.data.Geometry3D;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.TrackingLayer;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -312,6 +291,24 @@ public class MapUtilities {
 	//
 	// return layerCaption;
 	// }
+	public static void setDynamic(Dataset[] datasets, Map map) {
+		// 设置动态投影
+		for (Dataset dataset : datasets) {
+			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
+				if (map.getLayers().getCount() > 0 && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
+							CoreProperties.getString("String_TitleCoordSys"))) {
+						map.setDynamicProjection(true);
+						break;
+					} else {
+						map.setDynamicProjection(false);
+						break;
+					}
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * 添加指定数据集到地图中
@@ -325,12 +322,6 @@ public class MapUtilities {
 		Layer layer = null;
 		try {
 			if (dataset != null) {
-				if (!map.isDynamicProjection() && map.getLayers().getCount() > 0 && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
-					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
-							CoreProperties.getString("String_TitleCoordSys"))) {
-						map.setDynamicProjection(true);
-					}
-				}
 				layer = map.getLayers().add(dataset, addToHead);
 				if (layer == null || layer.isDisposed()) {
 					Application.getActiveApplication().getOutput()

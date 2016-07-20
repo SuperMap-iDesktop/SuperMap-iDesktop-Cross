@@ -100,13 +100,13 @@ public class ThemeUtil {
 	/**
 	 * 初始化comboBoxExpression，并设置默认选项
 	 * 
-	 * @param comboBoxExpression
-	 * @param tempExpression
-	 * @param datasetVector
-	 * @param joinItems
-	 * @param comboBoxArray
-	 * @param isDataType
-	 * @param addZero
+	 * @param comboBoxExpression 添加表达式的控件
+	 * @param tempExpression 默认表达式
+	 * @param datasetVector  数据集
+	 * @param joinItems      外部连接表
+	 * @param comboBoxArray  存放表达式的容器
+	 * @param isDataType     是否为数据类型
+	 * @param addZero        是否添加0值
 	 */
 	public static void initComboBox(JComboBox<String> comboBoxExpression, String tempExpression, DatasetVector datasetVector, JoinItems joinItems,
 			ArrayList<String> comboBoxArray, boolean isDataType, boolean addZero) {
