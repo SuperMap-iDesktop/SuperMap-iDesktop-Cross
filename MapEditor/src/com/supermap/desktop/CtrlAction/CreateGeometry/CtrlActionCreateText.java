@@ -9,7 +9,6 @@ import com.supermap.ui.Action;
 
 public class CtrlActionCreateText extends ActionCreateBase {
 
-	private CreateTextAction createTextAction = new CreateTextAction();
 
 	public CtrlActionCreateText(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
@@ -25,7 +24,8 @@ public class CtrlActionCreateText extends ActionCreateBase {
 	public void run() {
 		try {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			this.createTextAction.Start(formMap.getMapControl());
+			CreateTextAction createTextAction = new CreateTextAction();
+			createTextAction.Start(formMap.getMapControl());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
