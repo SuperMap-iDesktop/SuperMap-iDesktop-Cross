@@ -11,7 +11,6 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.geometryoperation.*;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
-import com.supermap.desktop.ui.controls.TextStyleDialog;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.*;
 import com.supermap.ui.*;
@@ -63,7 +62,7 @@ public class TextStyleEditor extends AbstractEditor {
 	public void activate(final EditEnvironment environment) {
 		if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
 			environment.setEditController(this.editController);
-			dialog = TextStyleDialog.createInstance();
+			dialog = TextStyleDialog.createInstance(environment);
 			if (null != getActiveRecordset(environment)) {
 				dialog.showDialog(getActiveRecordset(environment));
 			}
