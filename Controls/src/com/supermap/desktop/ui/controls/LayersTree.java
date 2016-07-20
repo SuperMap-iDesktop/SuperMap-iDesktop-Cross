@@ -111,12 +111,6 @@ public class LayersTree extends JTree {
 
 	public LayersTree() {
 		super();
-//		this.addTreeSelectionListener(new TreeSelectionListener() {
-//			@Override
-//			public void valueChanged(TreeSelectionEvent e) {
-//				System.out.println(1);
-//			}
-//		});
 		this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(new Map()));
 		this.setModel(this.treeModeltemp);
 		this.setEditable(true);
@@ -127,12 +121,6 @@ public class LayersTree extends JTree {
 
 	public LayersTree(Map map) {
 		super();
-//		this.addTreeSelectionListener(new TreeSelectionListener() {
-//			@Override
-//			public void valueChanged(TreeSelectionEvent e) {
-//				System.out.println(1);
-//			}
-//		});
 		if (map == null) {
 			TreeNodeData data = new TreeNodeData("", NodeDataType.UNKNOWN);
 			this.treeModeltemp = new DefaultTreeModel(new DefaultMutableTreeNode(data));
@@ -153,6 +141,7 @@ public class LayersTree extends JTree {
 	}
 
 	private void initDrag() {
+		this.setDragEnabled(true);
 		dragSource = DragSource.getDefaultDragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new LayersTreeDragGestureListener());
 		dropTargetTemp = new DropTarget(this, new LayersTreeDropTargetAdapter());
