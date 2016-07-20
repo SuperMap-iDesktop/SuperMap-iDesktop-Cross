@@ -106,7 +106,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArray = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
-	private boolean isResetLayerProperty = false;
 	private boolean isNewTheme = false;
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
@@ -121,11 +120,23 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			isResetLayerProperty = false;
+			//此处动态刷新字段信息
+			if (arg0.getSource().equals(comboBoxExpression.getComponent(0))) {
+				// 刷新表达式字段信息
+				ThemeUtil.initComboBox(comboBoxExpression, themeUnique.getUniqueExpression(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArray, false, false);
+			}else if(arg0.getSource().equals(comboBoxOffsetX.getComponent(0))){
+				// 刷新水平偏移量字段信息
+				ThemeUtil.initComboBox(comboBoxOffsetX, themeUnique.getOffsetX(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetX, true, true);
+			}else if(arg0.getSource().equals(comboBoxOffsetY.getComponent(0))){
+				// 刷新垂直偏移量字段信息
+				ThemeUtil.initComboBox(comboBoxOffsetY, themeUnique.getOffsetY(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
+						comboBoxArrayForOffsetY, true, true);
+			}
 		}
 	};
 
@@ -222,7 +233,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableUniqueInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -273,7 +283,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -615,9 +624,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	class LocalComboBoxItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeUniqueLayer, datasetVector);
 				if (e.getSource() == comboBoxExpression) {
@@ -784,19 +790,19 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 	}
 
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent e) {
-			if (null != themeUniqueLayer && !themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeUniqueLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxExpression();
-				initComboBoxOffsetX();
-				initComboBoxOffsetY();
-			}
-		}
-
-	}
+//	class LayerPropertyChangeListener implements PropertyChangeListener {
+//
+//		@Override
+//		public void propertyChange(PropertyChangeEvent e) {
+//			if (null != themeUniqueLayer && !themeUniqueLayer.isDisposed() && ((Layer) e.getNewValue()).equals(themeUniqueLayer)) {
+//				isResetLayerProperty = true;
+//				initComboBoxExpression();
+//				initComboBoxOffsetX();
+//				initComboBoxOffsetY();
+//			}
+//		}
+//
+//	}
 
 	class LocalActionListener implements ActionListener {
 		@Override

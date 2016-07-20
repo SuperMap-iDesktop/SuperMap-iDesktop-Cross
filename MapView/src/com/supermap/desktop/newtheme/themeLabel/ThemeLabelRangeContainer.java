@@ -99,7 +99,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private boolean isCustom = false;
 	private boolean isMergeOrSplit = false;
 	private boolean isResetComboBox = false;
-	private boolean isResetLayerProperty = false;
 	private LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 	private String layerName;
 	private boolean isNewTheme;
@@ -115,11 +114,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private transient LocalPropertyChangeListener propertyChangeListener = new LocalPropertyChangeListener();
 	private PropertyChangeListener layersTreePropertyChangeListener = new LayerChangeListener();
-	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isResetLayerProperty = false;
+			initComboBoxRangeExpression();
 		}
 	};
 	private ItemListener unityListener;
@@ -428,7 +426,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.addChangeListener(this.changeListener);
 		this.tableLabelInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -453,7 +450,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableLabelInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	class LayerChangeListener implements PropertyChangeListener {
@@ -711,9 +707,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (isResetLayerProperty) {
-				return;
-			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themeLabelLayer, datasetVector);
 				if (e.getSource() == comboBoxColorStyle) {
@@ -1091,18 +1084,6 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 				themeLabel.getItem(selectRow + 1).setCaption(nextCaption);
 			}
 		}
-	}
-
-	class LayerPropertyChangeListener implements PropertyChangeListener {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (null != themeLabelLayer && !themeLabelLayer.isDisposed() && ((Layer) evt.getNewValue()).equals(themeLabelLayer)) {
-				isResetLayerProperty = true;
-				initComboBoxRangeExpression();
-			}
-		}
-
 	}
 
 	public boolean isRefreshAtOnece() {

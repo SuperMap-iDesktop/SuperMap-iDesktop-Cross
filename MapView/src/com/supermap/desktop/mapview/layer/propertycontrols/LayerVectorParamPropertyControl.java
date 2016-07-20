@@ -12,7 +12,6 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
@@ -504,7 +503,6 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 			JoinItems tempJoinItems = jDialogJoinItem.getJoinItems();
 			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
 			jDialogJoinItem.dispose();
-			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
 			checkChanged();
 		}
 	}

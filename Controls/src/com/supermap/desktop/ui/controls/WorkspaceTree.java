@@ -123,7 +123,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -310,6 +309,12 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	 */
 	public WorkspaceTree() {
 		super();
+//		this.addTreeSelectionListener(new TreeSelectionListener() {
+//			@Override
+//			public void valueChanged(TreeSelectionEvent e) {
+//				System.out.println(1);
+//			}
+//		});
 		try {
 			currentWorkspace = this.getDefaultWorkspace();
 			treeModelTemp = new DefaultTreeModel(treeNodeWorkspace);
