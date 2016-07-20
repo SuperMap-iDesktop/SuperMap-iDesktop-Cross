@@ -250,11 +250,8 @@ public class MapViewUIUtilities {
 		} else {
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, mapName);
 			if (formMap != null) {
-				Map map = formMap.getMapControl().getMap();
-				map.open(mapName);
+				formMap.openMap(mapName);
 				Application.getActiveApplication().resetActiveForm();
-				map.refresh();
-				UICommonToolkit.getLayersManager().setMap(map);
 				return true;
 			}
 		}
