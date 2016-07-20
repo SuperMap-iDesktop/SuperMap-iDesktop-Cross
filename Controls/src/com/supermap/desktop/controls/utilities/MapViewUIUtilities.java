@@ -15,10 +15,12 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.callable.CreateImagePyramidCallable;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.ImagePyramidUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
@@ -27,6 +29,8 @@ import com.supermap.ui.Action;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 public class MapViewUIUtilities {
 

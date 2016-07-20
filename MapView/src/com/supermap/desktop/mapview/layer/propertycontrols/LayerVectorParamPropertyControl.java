@@ -1,9 +1,6 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.JoinItem;
-import com.supermap.data.JoinItems;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
@@ -30,12 +27,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -509,18 +501,11 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 		jDialogJoinItem.setCurrentDataset(dataset);
 		if (jDialogJoinItem.showDialog() == DialogResult.OK) {
 			// 修改属性
-//			JoinItems tempJoinItems = jDialogJoinItem.getJoinItems();
-			JoinItem item = new JoinItem();
-			item.setForeignTable("China_Nation_B_pt");
-			JoinItems items = new JoinItems();
-			items.add(item);
-			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-				((IFormMap)Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDisplayFilter().setJoinItems(items);
-			}
-//			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
-//			jDialogJoinItem.dispose();
-//			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
-//			checkChanged();
+			JoinItems tempJoinItems = jDialogJoinItem.getJoinItems();
+			getModifiedLayerPropertyModel().getLayers()[0].getDisplayFilter().setJoinItems(tempJoinItems);
+			jDialogJoinItem.dispose();
+			UICommonToolkit.getLayersManager().getLayersTree().fireLayerPropertyChanged(getModifiedLayerPropertyModel().getLayers()[0]);
+			checkChanged();
 		}
 	}
 }
