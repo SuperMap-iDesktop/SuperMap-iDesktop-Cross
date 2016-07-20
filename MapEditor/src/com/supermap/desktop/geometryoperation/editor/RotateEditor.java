@@ -16,6 +16,7 @@ import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogRotateParams;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -94,6 +95,8 @@ public class RotateEditor extends AbstractEditor {
 			for (Layer layer : layers) {
 				if (layer.isEditable() && layer.getSelection().getCount() > 0) {
 					Recordset recordset = layer.getSelection().toRecordset();
+					// 记录当前图层旋转成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
+					ArrayList<Integer> succeededIDs = new ArrayList<>();
 
 					try {
 						// 这句话会导致 recordset 的指针到最后
@@ -108,6 +111,7 @@ public class RotateEditor extends AbstractEditor {
 								recordset.edit();
 								recordset.setGeometry(geo);
 								recordset.update();
+								succeededIDs.add(recordset.getID());
 							} finally {
 								if (geo != null) {
 									geo.dispose();
@@ -121,6 +125,9 @@ public class RotateEditor extends AbstractEditor {
 							recordset.dispose();
 						}
 					}
+
+					layer.getSelection().clear();
+					layer.getSelection().addRange(ArrayUtilities.convertToInt(succeededIDs.toArray(new Integer[succeededIDs.size()])));
 				}
 			}
 		} catch (Exception ex) {
@@ -128,6 +135,7 @@ public class RotateEditor extends AbstractEditor {
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMapControl().getMap().refresh();
+			environment.getMapControl().revalidate();
 		}
 	}
 }

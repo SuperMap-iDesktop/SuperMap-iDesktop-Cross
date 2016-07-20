@@ -12,6 +12,7 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IReverse;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -50,6 +51,8 @@ public class ReverseEditor extends AbstractEditor {
 								|| layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.REGION3D || layer
 								.getDataset().getType() == DatasetType.LINE3D) && layer.getSelection().getCount() > 0) {
 					Recordset recordset = layer.getSelection().toRecordset();
+					// 记录当前图层变方向成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
+					ArrayList<Integer> succeededIDs = new ArrayList<>();
 
 					try {
 						while (!recordset.isEOF()) {
@@ -64,6 +67,7 @@ public class ReverseEditor extends AbstractEditor {
 									environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
 									recordset.setGeometry(reverseGeometry);
 									recordset.update();
+									succeededIDs.add(recordset.getID());
 								}
 							} finally {
 								if (geometry != null) {
@@ -82,6 +86,9 @@ public class ReverseEditor extends AbstractEditor {
 							recordset.dispose();
 						}
 					}
+
+					layer.getSelection().clear();
+					layer.getSelection().addRange(ArrayUtilities.convertToInt(succeededIDs.toArray(new Integer[succeededIDs.size()])));
 				}
 			}
 		} catch (Exception ex) {
