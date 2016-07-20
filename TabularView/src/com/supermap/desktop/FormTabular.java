@@ -593,11 +593,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		QueryParameter queryParameter = new QueryParameter(recordset.getQueryParameter());
 		String smIdName = recordset.getDataset().getTableName() + "." + recordset.getFieldInfos().get(0).getName();
 		if (selectedRows.length > 0 && selectedRows.length < this.getRowCount()) {
-			StringBuilder stringBuilder = new StringBuilder(queryParameter.getAttributeFilter());
-			if (stringBuilder.length() > 0) {
-				stringBuilder.append(" and ");
-			}
-			stringBuilder.append(" (");
+			StringBuilder stringBuilder = new StringBuilder();
 			for (int i = 0; i < selectedRows.length; i++) {
 				// 第一列为ID
 				int selectID = (int) jTableTabular.getModel().getValueAt(selectedRows[i], 0);
@@ -606,13 +602,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				}
 				stringBuilder.append(" " + smIdName + "=" + selectID);
 			}
-			stringBuilder.append(")");
 			queryParameter.setAttributeFilter(stringBuilder.toString());
 		}
 
 
 		Recordset statisticRecordset = recordset.getDataset().query(queryParameter);
-
 
 		double result = statisticRecordset.statistic(selectColumn, statisticMode);
 		String columnType = getSelectColumnType(selectColumn);
