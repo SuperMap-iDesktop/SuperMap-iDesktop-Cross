@@ -1,6 +1,8 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
 import com.supermap.data.Workspace;
@@ -35,6 +37,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -181,13 +184,6 @@ public class WorkspaceUtilities {
 							Application.getActiveApplication().getWorkspace().getDatasources().close(entry.getValue());
 							DatasourceUtilities.openFileDatasource(entry.getKey(), "", true, true);
 						}
-						/*
-						 * 
-						 * Iterator iterator = readOnlyDatasourceDictionary.keySet().iterator(); while (iterator.hasNext()) { Object a = iterator.next(); String
-						 * entry = (String) iterator.next(); Application.getActiveApplication( ).getWorkspace().getDatasources().close(entry);
-						 * readOnlyDatasourceDictionary .get(iterator.next()); Datasource datasource = CommonToolkit .DatasourceWrap.openFileDatasource(entry,
-						 * "", true, true); }
-						 */
 
 						for (int index = Application.getActiveApplication().getWorkspace().getDatasources().getCount() - 1; index >= 0; index--) {
 							Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(index);
@@ -564,5 +560,113 @@ public class WorkspaceUtilities {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return isClose;
+	}
+
+	public static Workspace copyWorkspace(Workspace workspace, Workspace copyWorkspace) {
+		copyWorkspace.setCaption(workspace.getCaption());
+		copyWorkspace.setDescription(workspace.getDescription());
+
+		RepeatDatasourceDeal repeatDatasourceDeal = new RepeatDatasourceDeal(workspace.getDatasources(), copyWorkspace.getDatasources());
+		List<Datasource> datasourceBOnly = repeatDatasourceDeal.getDatasourceBOnly();
+		for (int i = datasourceBOnly.size() - 1; i >= 0; i--) {
+			copyWorkspace.getDatasources().close(datasourceBOnly.get(i).getAlias());
+		}
+		List<Datasource> datasourceAOnly = repeatDatasourceDeal.getDatasourceAOnly();
+		for (Datasource datasource : datasourceAOnly) {
+			copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
+		}
+//		copyWorkspace.getDatasources().closeAll();
+//		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
+//			Datasource datasource = workspace.getDatasources().get(i);
+//			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
+//				try {
+//					copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
+//				} catch (Exception e) {
+//					// ignore
+//				}
+//			}
+//		}
+
+		copyWorkspace.getMaps().clear();
+		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
+			copyWorkspace.getMaps().add(workspace.getMaps().get(i), workspace.getMaps().getMapXML(i));
+		}
+
+		copyWorkspace.getScenes().clear();
+		for (int i = 0; i < workspace.getScenes().getCount(); i++) {
+			copyWorkspace.getScenes().add(workspace.getScenes().get(i), workspace.getScenes().getSceneXML(i));
+		}
+
+		copyWorkspace.getLayouts().clear();
+		for (int i = 0; i < workspace.getLayouts().getCount(); i++) {
+			copyWorkspace.getLayouts().add(workspace.getLayouts().get(i), workspace.getLayouts().getLayoutXML(i));
+		}
+
+//		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
+//		String markerSymbolFilePath = tempFolder + ".sym";
+//		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
+//		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
+//		if (new File(markerSymbolFilePath).exists()) {
+//			new File(markerSymbolFilePath).delete();
+//		}
+//
+//		String lineSymbolFilePath = tempFolder + ".lsl";
+//		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
+//		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
+//		if (new File(lineSymbolFilePath).exists()) {
+//			new File(lineSymbolFilePath).delete();
+//		}
+//
+//		String fillSymbolFilePath = tempFolder + ".bru";
+//		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
+//		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
+//		if (new File(fillSymbolFilePath).exists()) {
+//			new File(fillSymbolFilePath).delete();
+//		}
+
+		return copyWorkspace;
+	}
+
+
+}
+
+class RepeatDatasourceDeal {
+	private List<Datasource> datasourceAOnly = new ArrayList<>();
+	private List<Datasource> datasourceBOnly = new ArrayList<>();
+
+	RepeatDatasourceDeal(Datasources datasourcesA, Datasources datasourcesB) {
+		for (int i = 0; i < datasourcesA.getCount(); i++) {
+			Datasource datasource = datasourcesA.get(i);
+			// 只考虑不为内存和非只读数据源的情况
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
+				datasourceAOnly.add(datasource);
+			}
+		}
+		for (int i = 0; i < datasourcesB.getCount(); i++) {
+			Datasource datasource = datasourcesB.get(i);
+			// 只考虑不为内存和非只读数据源的情况
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
+				datasourceBOnly.add(datasource);
+			}
+		}
+
+		for (int i = datasourceAOnly.size() - 1; i >= 0; i--) {
+			Datasource datasourceA = datasourceAOnly.get(i);
+			for (int j = datasourceBOnly.size() - 1; j >= 0; j--) {
+				Datasource datasourceB = datasourceAOnly.get(i);
+				if (datasourceA.toString().equalsIgnoreCase(datasourceB.toString())) {
+					datasourceAOnly.remove(datasourceA);
+					datasourceBOnly.remove(datasourceB);
+				}
+			}
+		}
+	}
+
+	List<Datasource> getDatasourceAOnly() {
+		return datasourceAOnly;
+	}
+
+	List<Datasource> getDatasourceBOnly() {
+		return datasourceBOnly;
 	}
 }

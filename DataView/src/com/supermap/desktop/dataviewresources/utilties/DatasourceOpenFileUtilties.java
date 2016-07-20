@@ -25,7 +25,6 @@ import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -42,7 +41,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  */
 public class DatasourceOpenFileUtilties {
-	// 用到了很多controls下的类 所以不能写在core下，先放在这里吧。
 	private static final String WINDOWS_FILE_CHOOSE_UI = "com.sun.java.swing.plaf.windows.WindowsFileChooserUI";
 	private static final String GTK_FILE_CHOOSE_UI = "com.sun.java.swing.plaf.gtk.GTKFileChooserUI";
 	private static final String MEYAL_FILE_CHOOSE_UI = "javax.swing.plaf.metal.MetalFileChooserUI";

@@ -6,6 +6,7 @@ import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.CtrlAction.WorkspaceRecovery;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
@@ -178,6 +179,12 @@ public class FormBase extends JFrame implements IFormMain {
 
 			initLayout(dockbar);
 			FormBase.this.setVisible(true);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					WorkspaceRecovery.getInstance().run();
+				}
+			});
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

@@ -134,6 +134,14 @@ public class FileUtilities {
 		return true;
 	}
 
+	public static String getTempFolder() {
+		String folder = System.getProperty("java.io.tmpdir");
+		if (!folder.endsWith(File.separator)) {
+			folder += File.separator;
+		}
+		return folder;
+	}
+
 	public static boolean isLegalFolderName(String folderName) {
 		if (folderName.indexOf('/') != -1 || folderName.indexOf('\\') != -1) {
 			return false;
@@ -148,10 +156,7 @@ public class FileUtilities {
 		if (isAllPoint) {
 			return false;
 		}
-		String folder = System.getProperty("java.io.tmpdir");
-		if (!folder.endsWith(File.separator)) {
-			folder += File.separator;
-		}
+		String folder = getTempFolder();
 		String filePath = folder + folderName + File.separator;
 		if (new File(filePath).exists() || new File(filePath).mkdirs()) {
 			new File(filePath).delete();
@@ -159,4 +164,33 @@ public class FileUtilities {
 		}
 		return false;
 	}
+
+
+	public static String getAppDataPath() {
+		String OS = System.getProperty("os.name").toUpperCase();
+		String result = null;
+		if (OS.contains("WIN")) {
+			result = System.getenv("APPDATA");
+		} else if (OS.contains("MAC")) {
+			result = System.getProperty("user.home") + "/Library/Application Support";
+		} else if (OS.contains("NUX")) {
+			result = "/var/lib/";
+		}
+		if (result == null) {
+			result = System.getProperty("user.dir");
+		}
+
+		if (StringUtilities.isNullOrEmpty(result)) {
+			return null;
+		}
+
+		if (!result.endsWith(File.separator)) {
+			result += File.separator;
+		}
+
+		result += "Supermap" + File.separator + "cross" + File.separator;
+		return result;
+	}
+
+
 }

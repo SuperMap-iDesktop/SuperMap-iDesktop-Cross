@@ -11,6 +11,7 @@ import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 public class CtrlActionWorkspaceSave extends CtrlAction {
@@ -71,7 +72,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			run(null);
+			run(Application.getActiveApplication().getWorkspace().getConnectionInfo());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -92,7 +93,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 		try {
 			WorkspaceType workspaceType = Application.getActiveApplication().getWorkspace().getType();
 			// 是默认类型，说明需要进行另存操作
-			if (workspaceType == WorkspaceType.DEFAULT) {
+			if (workspaceType == WorkspaceType.DEFAULT || StringUtilities.isNullOrEmpty(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer())) {
 				dialogResult = CtrlActionWorkspaceSaveAs.saveAs(info);
 			} else {
 				if (!WorkspaceUtilities.isWorkspaceReadonly()) {
