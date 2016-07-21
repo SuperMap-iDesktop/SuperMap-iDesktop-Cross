@@ -32,8 +32,10 @@ public interface IForm {
 	/**
 	 * 保存窗口中的内容。
 	 * 
-	 * @param notify 是否弹出提示对话框。
-	 * @param newWindow 判断窗体是否为新窗体，ture 表示是新窗体，false 表示不是新窗体。
+	 * @param notify
+	 *            是否弹出提示对话框。
+	 * @param newWindow
+	 *            判断窗体是否为新窗体，ture 表示是新窗体，false 表示不是新窗体。
 	 * @return 保存成功返回 true；否则返回 false。
 	 */
 	boolean save(boolean notify, boolean isNewWindow);
@@ -101,5 +103,7 @@ public interface IForm {
 	 * 关闭时清理
 	 */
 	void clean();
+
+	boolean isClosed();
 
 }

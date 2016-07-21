@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeometryType;
-import com.supermap.desktop.geometry.Abstract.IGeometryFeature;
 import com.supermap.mapping.Layer;
 
 /**
@@ -156,5 +155,24 @@ public class EditProperties {
 	 */
 	public List<Class<?>> getEditableSelectedGeometryTypeFeatures() {
 		return this.editableSelectedGeometryTypeFeatures;
+	}
+
+	/**
+	 * 清理资源
+	 */
+	public void clear() {
+		this.selectedGeometryCount = 0; // 当前选中对象的数目
+		this.editableSelectedGeometryCount = 0; // 获取在可编辑图层上选中的几何对象个数
+		this.editableSelectedMaxPartCount = 0; // 当前选中对象的最大子对象个数
+		this.selectedDatasetTypes.clear(); // 选中对象所在的数据集类型集合
+		this.editableDatasetTypes.clear(); // 可编辑的数据集类型集合
+		this.selectedGeometryTypes.clear(); // 选中的几何对象类型集合
+		this.editableSelectedGeometryTypes.clear(); // 选中的可编辑图层集合对象类型集合
+		this.selectedLayers.clear(); // 选中对象所在的图层
+		this.selectedGeometryFeatures.clear();
+		this.editableSelectedGeometryFeatures.clear();
+		this.selectedGeometryTypeFeatures.clear();
+		this.editableSelectedGeometryTypeFeatures.clear();
+
 	}
 }

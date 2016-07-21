@@ -490,13 +490,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.buttonApply.addActionListener(this.buttonApplyListener);
 		this.buttonClose.addActionListener(this.buttonCloseListener);
 		this.fileChooser.getButton().addActionListener(this.fileChooserListener);
-		this.comboBoxSourceOfField.getComponent(1).addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				comboBoxSourceOfField.setSelectedIndex(0);
-			}
-		});
 	}
 
 	private void disposeDialog() {
@@ -1007,7 +1000,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 				textFieldOperationEQ.setText(Convert.getDateStr(textFieldSecondField.getText()));
 				buttonApply.setEnabled(true);
-			} else {
+			} else if(fieldType.equals(FieldType.BYTE)){
+				
+			}else
+			{
 				updateEQ(fieldType, "");
 			}
 		} else if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
@@ -1027,7 +1023,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			buttonApply.setEnabled(true);
 			return;
 		}
-		if (FieldTypeUtilities.isNumber(fieldType) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+		if (UpdateColumnUtilties.isIntegerType(fieldType)||fieldType.equals(FieldType.SINGLE)||fieldType.equals(FieldType.DOUBLE) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			if (!checkBoxInversion.isSelected()) {
 				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
 			} else {
@@ -1035,6 +1031,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			}
 			buttonApply.setEnabled(true);
 			return;
+		}
+		if (fieldType.equals(FieldType.BYTE)) {
+			
 		}
 		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			textFieldOperationEQ.setText(info);
@@ -1460,6 +1459,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			} else {
 				newValue = Convert.toDateTime(expression);
 			}
+			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+		}else if(fieldType.equals(FieldType.BYTE)){
 			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		}
 	}
