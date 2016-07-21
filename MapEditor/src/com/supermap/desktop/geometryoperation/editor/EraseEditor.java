@@ -1,6 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -508,11 +509,8 @@ public class EraseEditor extends AbstractEditor {
 		public HashMap<Layer, ArrayList<Integer>> srcInfos = new HashMap<>(); // 用来记录擦除对象所在图层以及对应的 id 集合
 
 		public EraseEditModel() {
-			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
-			this.tip.getContentPanel().add(labelMsg);
-			this.tip.getContentPanel().add(labelChangeMode);
-			this.tip.getContentPanel().setSize(200, 35);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(labelMsg);
+			this.tip.addLabel(labelChangeMode);
 		}
 
 		public void clear() {

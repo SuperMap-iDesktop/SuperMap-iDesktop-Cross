@@ -262,10 +262,7 @@ public class MirrorEditor extends AbstractEditor {
 		public Point2D point2 = Point2D.getEMPTY();
 
 		public MirrorEditModel() {
-			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
-			this.tip.getContentPanel().add(this.tipLabel);
-			this.tip.getContentPanel().setSize(100, 20);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(this.tipLabel);
 		}
 
 		public void setTipMessage(String tipMessage) {

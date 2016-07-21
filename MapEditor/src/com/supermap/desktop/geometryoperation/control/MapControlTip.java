@@ -1,10 +1,17 @@
 package com.supermap.desktop.geometryoperation.control;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import com.supermap.ui.MapControl;
@@ -34,11 +41,36 @@ public class MapControlTip {
 
 	public MapControlTip() {
 		this.contentPanel = new JPanel();
+		this.contentPanel.setLayout(new BoxLayout(this.contentPanel, BoxLayout.Y_AXIS));
+		this.contentPanel.setBackground(new Color(255, 255, 255, 150));
 		this.contentPanel.setVisible(false);
 	}
 
-	public JPanel getContentPanel() {
-		return this.contentPanel;
+	public void addLabel(final JComponent component) {
+		if (component != null) {
+			this.contentPanel.add(component);
+			component.addPropertyChangeListener("text", new PropertyChangeListener() {
+
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					resize();
+				}
+			});
+
+			resize();
+		}
+	}
+
+	private void resize() {
+		int width = 0;
+		int height = 0;
+
+		for (int i = 0; i < this.contentPanel.getComponentCount(); i++) {
+			Component cop = this.contentPanel.getComponent(i);
+			width = Math.max(width, cop.getPreferredSize().width);
+			height += cop.getPreferredSize().height + 2;
+		}
+		this.contentPanel.setSize(new Dimension(width, height));
 	}
 
 	public void bind(MapControl mapControl) {
