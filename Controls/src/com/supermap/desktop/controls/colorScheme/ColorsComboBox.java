@@ -336,12 +336,13 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 			isUserDefineFireChange = true;
 			ColorSchemeManager.getColorSchemeManager().fireColorSchemeManagerChanged();
 			selectedColorSchemeTreeNode = userDefineNode;
+			treeComboBox.setSelectedItem(null);
 			treeComboBox.setSelectedItem(JTreeUIUtilities.getPath(userDefineNode));
 //			reAddElements();
 			listColors.setSelectedIndex(listColors.getModel().getSize() - 2);
 			isUserDefineFireChange = false;
 		} else {
-			listColors.setSelectedIndex(-1);
+			listColors.clearSelection();
 		}
 	}
 
