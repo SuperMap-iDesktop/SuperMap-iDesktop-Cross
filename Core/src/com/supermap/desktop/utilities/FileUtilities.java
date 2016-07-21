@@ -188,7 +188,7 @@ public class FileUtilities {
 			result += File.separator;
 		}
 
-		result += "Supermap" + File.separator + "cross" + File.separator;
+		result += "Supermap" + File.separator + "Cross" + File.separator;
 		return result;
 	}
 

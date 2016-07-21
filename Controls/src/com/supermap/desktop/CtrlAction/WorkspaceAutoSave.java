@@ -6,6 +6,10 @@ import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceSavedAsEvent;
+import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
+import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -72,7 +76,7 @@ public class WorkspaceAutoSave {
 				workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
 			}
 		};
-		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
+
 		timer = new Timer("WorkspaceSave", true);
 		task = new TimerTask() {
 			@Override
@@ -83,6 +87,20 @@ public class WorkspaceAutoSave {
 	}
 
 	public void start() {
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.addClosingListener(workspaceClosingListener);
+		workspace.addSavedListener(new WorkspaceSavedListener() {
+			@Override
+			public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
+				autoSave();
+			}
+		});
+		workspace.addSavedAsListener(new WorkspaceSavedAsListener() {
+			@Override
+			public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
+				autoSave();
+			}
+		});
 		timer.schedule(task, period / 6, period);
 	}
 
@@ -231,7 +249,7 @@ public class WorkspaceAutoSave {
 			}
 			randomAccessFile.seek(0);
 			String string = XmlUtilities.nodeToString(rootNode, "UTF-8");
-			randomAccessFile.write(string.getBytes());
+			randomAccessFile.write(string.getBytes("UTF-8"));
 		} catch (Exception e) {
 			LogUtilities.outPut("write to config file failed.");
 			return false;

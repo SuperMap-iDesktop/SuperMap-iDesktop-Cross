@@ -6,7 +6,6 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -522,6 +521,13 @@ public class GlobalParameters {
 
 	//endregion
 	private static void init() {
+		initLogInfo();
+		initCamera();
+
+		// TODO: 2016/3/29 新增节点在此初始化
+	}
+
+	private static void initLogInfo() {
 		// 日志路径
 		String value = getValue("_startup_log", "logFolder");
 		setLogFolder(PathUtilities.getFullPathName(value, false));
@@ -547,10 +553,9 @@ public class GlobalParameters {
 			booleanValue = Boolean.valueOf(value);
 			setLogException(booleanValue);
 		}
-		initCamera();
-		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
+	//region 相机相关设置
 	private static void initCamera() {
 		String value;
 		value = getValue("_startup_camera", "altitude");
@@ -650,6 +655,7 @@ public class GlobalParameters {
 	public static double getCameraAltitude() {
 		return cameraAltitude;
 	}
+	//endregion
 	//endregion
 
 	public static boolean isShowFormClosingInfo() {

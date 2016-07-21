@@ -608,7 +608,15 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		Recordset statisticRecordset = recordset.getDataset().query(queryParameter);
 
-		double result = statisticRecordset.statistic(selectColumn, statisticMode);
+		double result = 0;
+		try {
+			result = statisticRecordset.statistic(selectColumn, statisticMode);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			statisticRecordset.close();
+			statisticRecordset.dispose();
+		}
 		String columnType = getSelectColumnType(selectColumn);
 		String caption = getColumnCaption(selectColumn);
 		TabularStatisticUtilties.updataStatisticsResult(MessageFormat.format(successMessage, columnType, caption, result));
