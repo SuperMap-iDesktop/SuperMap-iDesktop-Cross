@@ -46,7 +46,7 @@ public class BatchUploadFile extends Thread {
 				try {
 					createFile = new CreateFile(this.downloadInfo);
 					createFile.start();
-					boolean isCreated = false;
+//					boolean isCreated = false;
 //					while (!isCreated&&!createFile.isFailed()) {
 //						Thread.sleep(1000);
 //						UploadUtils.fireSteppedEvent(this, downloadInfo, getRandomProgress(), 0);

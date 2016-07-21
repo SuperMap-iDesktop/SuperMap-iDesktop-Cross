@@ -16,6 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -69,6 +70,7 @@ public class CreateFile extends Thread {
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
+			File uploadFile = new File(this.uploadInfo.getFilePath());
 			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.uploadInfo.getFileName());
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
@@ -87,9 +89,6 @@ public class CreateFile extends Thread {
 					}
 				}
 			}
-			// // 利用Append命令在文件中追加内容
-			// appendFile();
-
 			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
 				requestPut = new HttpPut(locationURL);
 				String fullPath = this.uploadInfo.getFilePath();
@@ -97,26 +96,15 @@ public class CreateFile extends Thread {
 					fullPath += "\\";
 				}
 				fullPath += this.uploadInfo.getFileName();
-				// File file = new File(fullPath);
-				// FileEntity fileEntity = new FileEntity(file);
-				// requestPut.setEntity(fileEntity);
 				response = new DefaultHttpClient().execute(requestPut);
 				if (response != null && response.getStatusLine().getStatusCode() == 201) {
-					// Application.getActiveApplication().getOutput()
-					// .output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
-					// isCreated = true;
 					Application.getActiveApplication().getOutput().output("HDFS file create success");
-					appendFile();
+					// 文件创建成功后利用Append命令在文件中追加内容
+					appendFile(uploadFile);
 				} else {
-					// Application.getActiveApplication().getOutput()
-					// .output("File: \"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndFailed"));
-					// isFailed = true;
 					Application.getActiveApplication().getOutput().output("HDFS file create failed");
 				}
 			}
-			// byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-
-			// System.out.println("response enttiy " + new String(bytes2, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -128,7 +116,7 @@ public class CreateFile extends Thread {
 	}
 
 	// 创建文件
-	private void appendFile() {
+	private void appendFile(File uploadFile) {
 		try {
 			String locationURL = "";
 
@@ -165,14 +153,7 @@ public class CreateFile extends Thread {
 				// 上传文件
 				File file = new File(fullPath);
 				// 数据输入流,用于读取文件数据
-				DataInputStream in = new DataInputStream(new FileInputStream(file));
-				byte[] bufferOut = new byte[1024];
-				int bytes = 0;
 				// 每次读1KB数据
-				while ((bytes = in.read(bufferOut)) != -1) {
-					
-//					Application.getActiveApplication().getOutput().output(in.readLine());
-				}
 				FileEntity fileEntity = new FileEntity(file);
 				requestPost.setEntity(fileEntity);
 				response = new DefaultHttpClient().execute(requestPost);
@@ -186,8 +167,8 @@ public class CreateFile extends Thread {
 					isFailed = true;
 				}
 			}
-			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-
+//			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
+//
 //			System.out.println("response enttiy " + new String(bytes2, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

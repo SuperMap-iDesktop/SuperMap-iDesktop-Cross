@@ -293,6 +293,9 @@ public class MapUtilities {
 	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
 		// 设置动态投影
+		if (datasets.length == 1) {
+			return;
+		}
 		for (Dataset dataset : datasets) {
 			if (!map.isDynamicProjection() && dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
 				if (!dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {

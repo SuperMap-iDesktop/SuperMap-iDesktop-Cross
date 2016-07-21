@@ -248,7 +248,7 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 				if (!comboBoxArray.contains(tempExpression)) {
 					tempExpression = tempExpression.substring(tempExpression.indexOf(".") + 1, tempExpression.length());
 				}
-				boolean itemHasChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray, tempExpression, false);
+				boolean itemHasChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray, tempExpression, true);
 				// 修改表达式
 				if (itemHasChanged) {
 					// 如果sql表达式中修改了选项
