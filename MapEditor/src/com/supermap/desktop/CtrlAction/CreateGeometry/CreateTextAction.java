@@ -45,7 +45,7 @@ import java.util.List;
 // @formatter:off
 /**
  * 封装 MapControl 上文本绘制的操作
- * 1：JTextArea 没有办法根据文本内容的改变自适应大小，因此目前不支持输入文本的时候换行，按回车等于直接应用。
+ * 1：Shift + Enter 换行，Enter 提交编辑。
  * 2：目前的 Java 组件，MapControl 在 Action.CreateText 的时候，无法选中已有的文本对象进行绘制。
  * 3：组件提供的文本绘制思路是，在 TrackedListener 的时候，取出  GeoText，设置完内容，执行完 TrackedListener 的回调方法之后，
  * 		会将这个 GeoText 添加到地图。但是这样的思路需要阻塞方法，等待文本输入，实在太不易用。
@@ -179,11 +179,24 @@ public class CreateTextAction {
 		if (!this.textFieldInput.getText().isEmpty()) {
 			commitEditing();
 		}
+
+		reset();
+	}
+
+	private void cancel() {
+		reset();
+		this.mapControl.setAction(Action.SELECT2);
+	}
+
+	/**
+	 * 还原 mapControl 至原状态
+	 */
+	private void reset() {
+		this.textFieldInput.removeKeyListener(this.keyListener);
 		this.mapControl.remove(this.textFieldInput);
 		this.mapControl.setLayout(this.preLayout);
 		this.mapControl.removeTrackedListener(this.trackedListener);
 		this.mapControl.removeActionChangedListener(this.actionChangedListener);
-		this.textFieldInput.removeKeyListener(this.keyListener);
 	}
 
 	private void mapControlTracked(TrackedEvent e) {
@@ -191,9 +204,10 @@ public class CreateTextAction {
 
 		// 当地图在经纬坐标下时，鼠标点击位置在经纬范围之外，不做任何事情并输出提示
 		if (this.mapControl.getMap().getPrjCoordSys() != null
-				&& this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE && e.getGeometry() != null
-				&& (e.getGeometry().getInnerPoint().getX() > 180 || e.getGeometry().getInnerPoint().getX() < -180 || e.getGeometry().getInnerPoint().getY() > 90
-						|| e.getGeometry().getInnerPoint().getY() < -90)) {
+				&& this.mapControl.getMap().getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE
+				&& e.getGeometry() != null
+				&& (e.getGeometry().getInnerPoint().getX() > 180 || e.getGeometry().getInnerPoint().getX() < -180
+						|| e.getGeometry().getInnerPoint().getY() > 90 || e.getGeometry().getInnerPoint().getY() < -90)) {
 			// 什么都不做，输出提示信息的工作已经由 FormMap 全权负责
 		} else {
 			this.editingGeoText = (GeoText) e.getGeometry();
@@ -362,6 +376,10 @@ public class CreateTextAction {
 					}
 				}
 
+				// ESC 结束编辑
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE && CreateTextAction.this.mapControl != null) {
+					cancel();
+				}
 			} catch (Exception e2) {
 				Application.getActiveApplication().getOutput().output(e2);
 			}
