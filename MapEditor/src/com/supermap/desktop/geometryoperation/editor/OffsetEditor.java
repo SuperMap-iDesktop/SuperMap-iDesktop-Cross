@@ -335,10 +335,7 @@ public class OffsetEditor extends AbstractEditor {
 		}
 
 		public OffsetEditModel() {
-			this.tip.getContentPanel().setLayout(new BorderLayout());
-			this.tip.getContentPanel().add(this.label, BorderLayout.CENTER);
-			this.tip.getContentPanel().setSize(150, 20);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(this.label);
 		}
 
 		public void clear() {

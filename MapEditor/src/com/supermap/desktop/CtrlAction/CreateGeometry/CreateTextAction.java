@@ -45,7 +45,7 @@ import java.util.List;
 // @formatter:off
 /**
  * 封装 MapControl 上文本绘制的操作
- * 1：JTextArea 没有办法根据文本内容的改变自适应大小，因此目前不支持输入文本的时候换行，按回车等于直接应用。
+ * 1：Shift + Enter 换行，Enter 提交编辑。
  * 2：目前的 Java 组件，MapControl 在 Action.CreateText 的时候，无法选中已有的文本对象进行绘制。
  * 3：组件提供的文本绘制思路是，在 TrackedListener 的时候，取出  GeoText，设置完内容，执行完 TrackedListener 的回调方法之后，
  * 		会将这个 GeoText 添加到地图。但是这样的思路需要阻塞方法，等待文本输入，实在太不易用。
@@ -117,45 +117,7 @@ public class CreateTextAction {
 	/**
 	 * Shift + Enter 换行，Enter 结束编辑
 	 */
-	private KeyListener keyListener = new KeyAdapter() {
-
-		private List<Integer> pressedKeys = new ArrayList<Integer>();
-
-		/**
-		 * Invoked when a key has been pressed.
-		 */
-		public void keyPressed(KeyEvent e) {
-			if (!pressedKeys.contains(e.getKeyCode())) {
-				pressedKeys.add(new Integer(e.getKeyCode()));
-			}
-		}
-
-		/**
-		 * Invoked when a key has been released.
-		 */
-		public void keyReleased(KeyEvent e) {
-
-			try {
-				// 如果按下的只有 enter，那么就在释放按键的时候结束编辑
-				if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
-					commitEditing();
-				}
-
-				// 如果按下的第一个按键是 Shift，第二个按键是 Enter，并且释放的按键也是 Enter，那么就换行
-				if (pressedKeys.size() == 2 && pressedKeys.get(0) == KeyEvent.VK_SHIFT && pressedKeys.get(1) == KeyEvent.VK_ENTER
-						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
-					CreateTextAction.this.textFieldInput.setText(CreateTextAction.this.textFieldInput.getText() + System.lineSeparator());
-				}
-
-				// 从按下的按键中移除释放的按键
-				if (pressedKeys.contains(e.getKeyCode())) {
-					pressedKeys.remove(new Integer(e.getKeyCode()));
-				}
-			} catch (Exception e2) {
-				Application.getActiveApplication().getOutput().output(e2);
-			}
-		}
-	};
+	private KeyListener keyListener = new TextActionKeyListener();
 
 	public CreateTextAction() {
 		this.textFieldInput.setBorder(null);
@@ -201,6 +163,7 @@ public class CreateTextAction {
 		} else {
 			this.mapControl.setAction(Action.SELECT2);
 		}
+		Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_CreateTextAction_Tip"));
 	}
 
 	private void startAction() {
@@ -216,11 +179,24 @@ public class CreateTextAction {
 		if (!this.textFieldInput.getText().isEmpty()) {
 			commitEditing();
 		}
+
+		reset();
+	}
+
+	private void cancel() {
+		reset();
+		this.mapControl.setAction(Action.SELECT2);
+	}
+
+	/**
+	 * 还原 mapControl 至原状态
+	 */
+	private void reset() {
+		this.textFieldInput.removeKeyListener(this.keyListener);
 		this.mapControl.remove(this.textFieldInput);
 		this.mapControl.setLayout(this.preLayout);
 		this.mapControl.removeTrackedListener(this.trackedListener);
 		this.mapControl.removeActionChangedListener(this.actionChangedListener);
-		this.textFieldInput.removeKeyListener(this.keyListener);
 	}
 
 	private void mapControlTracked(TrackedEvent e) {
@@ -318,8 +294,101 @@ public class CreateTextAction {
 			textWidth = Math.max(textWidth, lineWidth);
 		}
 
-		int lineCount = text.endsWith(System.lineSeparator()) ? lines.length + 1 : lines.length;
+		// 有一个换行符就增加一行的高度
+		int lineCount = 1 + getLineSeparatorCount(text);
 		int textHeight = fontMetrics.getHeight() * lineCount + 5 * (lineCount - 1);
 		this.textFieldInput.setSize(new Dimension(textWidth + 5, textHeight));
+	}
+
+	private int getLineSeparatorCount(String text) {
+		int lineSeparatorCount = 0;
+
+		int fromIndex = 0;
+		while (text.indexOf(System.lineSeparator(), fromIndex) >= 0) {
+			fromIndex = text.indexOf(System.lineSeparator(), fromIndex) + 1;
+			lineSeparatorCount++;
+		}
+		return lineSeparatorCount;
+	}
+
+	private class TextActionKeyListener extends KeyAdapter {
+
+		private List<Integer> pressedKeys = new ArrayList<Integer>();
+		private Timer timer = null;
+
+		public TextActionKeyListener() {
+
+			// 延迟 0.5S 从按下的按键中移除释放的 Shift 按键
+			timer = new Timer(500, new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent actionEvent) {
+					removeKey(KeyEvent.VK_SHIFT);
+				}
+			});
+			timer.setRepeats(false);
+		}
+
+		/**
+		 * Invoked when a key has been pressed.
+		 */
+		public void keyPressed(KeyEvent e) {
+
+			// 如果按 Shift 太快，导致上一次的 Shift 释放 Timer 还正在运行，就强制停止 Timer
+			if (e.getKeyCode() == KeyEvent.VK_SHIFT && this.timer.isRunning()) {
+				this.timer.stop();
+			}
+
+			if (!pressedKeys.contains(e.getKeyCode())) {
+				pressedKeys.add(new Integer(e.getKeyCode()));
+			}
+		}
+
+		/**
+		 * Invoked when a key has been released.
+		 */
+		public void keyReleased(final KeyEvent e) {
+
+			try {
+				// 如果按下的只有 enter，那么就在释放按键的时候结束编辑
+				if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
+					commitEditing();
+				}
+
+				// 如果按下的第一个按键是 Shift，第二个按键是 Enter，并且释放的按键也是 Enter，那么就换行
+				if (pressedKeys.size() == 2 && pressedKeys.get(0) == KeyEvent.VK_SHIFT && pressedKeys.get(1) == KeyEvent.VK_ENTER
+						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
+					CreateTextAction.this.textFieldInput.setText(CreateTextAction.this.textFieldInput.getText() + System.lineSeparator());
+				}
+
+				if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+					timer.start();
+				} else {
+					removeKey(e.getKeyCode());
+				}
+
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+					// 释放 enter 键的时候，如果 timer 还在运行，则强制结束 timer，并移除可能存在 Shift 记录
+					if (timer != null && timer.isRunning()) {
+						timer.stop();
+						removeKey(KeyEvent.VK_SHIFT);
+					}
+				}
+
+				// ESC 结束编辑
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE && CreateTextAction.this.mapControl != null) {
+					cancel();
+				}
+			} catch (Exception e2) {
+				Application.getActiveApplication().getOutput().output(e2);
+			}
+		}
+
+		private void removeKey(int keyCode) {
+			if (pressedKeys.contains(keyCode)) {
+				pressedKeys.remove(new Integer(keyCode));
+			}
+		}
 	}
 }

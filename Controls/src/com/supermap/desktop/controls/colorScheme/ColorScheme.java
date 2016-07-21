@@ -381,6 +381,10 @@ public class ColorScheme implements ICloneable {
 		if (!new File(customDirectory).exists()) {
 			new File(customDirectory).mkdirs();
 		}
+		if (!isLegitName(name)) {
+			// 不合法名称有重名
+			return getUniqueFilePath(customDirectory);
+		}
 		return customDirectory + getFileName(0, this.name);
 	}
 

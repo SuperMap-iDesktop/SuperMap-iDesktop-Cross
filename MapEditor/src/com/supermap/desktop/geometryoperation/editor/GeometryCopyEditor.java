@@ -273,10 +273,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 		public GeometryCopyEditModel() {
 			this.tip = new MapControlTip();
-			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
-			this.tip.getContentPanel().add(this.labelMsg);
-			this.tip.getContentPanel().setSize(150, 21);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(this.labelMsg);
 		}
 
 		public void setMsg(String msg) {

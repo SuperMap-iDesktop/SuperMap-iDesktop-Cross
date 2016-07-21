@@ -543,10 +543,7 @@ public class LineTrimEditor extends AbstractEditor {
 		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_LineEditor_SelectBaseLine"));
 
 		public LineTrimEditModel() {
-			this.tip.getContentPanel().setLayout(new BorderLayout());
-			this.tip.getContentPanel().add(this.labelTip, BorderLayout.CENTER);
-			this.tip.getContentPanel().setSize(200, 20);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(this.labelTip);
 		}
 
 		public void clear() {

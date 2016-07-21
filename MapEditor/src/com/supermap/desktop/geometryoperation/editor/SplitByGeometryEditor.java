@@ -550,10 +550,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 		public JLabel labelTip = new JLabel(MapEditorProperties.getString("String_SplitByGeometry_SelectTarget"));
 
 		public SplitByGeometryEditModel() {
-			this.tip.getContentPanel().setLayout(new BoxLayout(this.tip.getContentPanel(), BoxLayout.Y_AXIS));
-			this.tip.getContentPanel().add(this.labelTip);
-			this.tip.getContentPanel().setSize(200, 20);
-			this.tip.getContentPanel().setBackground(new Color(255, 255, 255, 150));
+			this.tip.addLabel(this.labelTip);
 		}
 
 		public void clear() {

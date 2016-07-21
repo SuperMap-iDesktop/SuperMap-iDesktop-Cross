@@ -6,7 +6,6 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -16,6 +15,8 @@ import java.util.HashMap;
 
 public class GlobalParameters {
 
+	private static String startupXml;
+	private static final String startupFileName = "SuperMap.Desktop.Startup.xml";
 
 	private GlobalParameters() {
 		// do nothing
@@ -440,14 +441,21 @@ public class GlobalParameters {
 		if (resources != null) {
 			return;
 		}
-		String startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+		startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+//		String appDataPath = FileUtilities.getAppDataPath();
+//		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
+//		if (appDataPath == null) {
+//			startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+//		} else {
+//			if (!new File(defaultFilePath).exists()) {
+//				startupXml = defaultFilePath;
+//			}
+//		}
+
 		if (startupXml == null) {
 			return;
 		}
 		Document startupDoc = XmlUtilities.getDocument(startupXml);
-		if (resources != null) {
-			resources.clear();
-		}
 		resources = new HashMap<>();
 		if (startupDoc != null) {
 			NodeList childNodes = startupDoc.getChildNodes();
@@ -522,6 +530,13 @@ public class GlobalParameters {
 
 	//endregion
 	private static void init() {
+		initLogInfo();
+		initCamera();
+
+		// TODO: 2016/3/29 新增节点在此初始化
+	}
+
+	private static void initLogInfo() {
 		// 日志路径
 		String value = getValue("_startup_log", "logFolder");
 		setLogFolder(PathUtilities.getFullPathName(value, false));
@@ -547,10 +562,9 @@ public class GlobalParameters {
 			booleanValue = Boolean.valueOf(value);
 			setLogException(booleanValue);
 		}
-		initCamera();
-		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
+	//region 相机相关设置
 	private static void initCamera() {
 		String value;
 		value = getValue("_startup_camera", "altitude");
@@ -651,9 +665,10 @@ public class GlobalParameters {
 		return cameraAltitude;
 	}
 	//endregion
+	//endregion
 
 	public static boolean isShowFormClosingInfo() {
-		boolean result = false;
+		boolean result = true;
 		String value = getValue("_startup_workspace", "closenotify");
 		if (value != null) {
 			result = Boolean.valueOf(value);
