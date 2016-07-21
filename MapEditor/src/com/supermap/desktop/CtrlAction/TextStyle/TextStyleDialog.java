@@ -38,6 +38,7 @@ public class TextStyleDialog extends SmDialog {
 	private boolean isDisposed;
 	private EditHistory editHistory;
 	private EditEnvironment environment;
+	private boolean isModify = false;
 
 	private static volatile TextStyleDialog dialog;
 
@@ -101,6 +102,7 @@ public class TextStyleDialog extends SmDialog {
 		this.textBasicPanel.setTextStyle(tempTextStyle);
 		this.textBasicPanel.setTextStyleSet(true);
 		this.textBasicPanel.initTextBasicPanel();
+		this.textBasicPanel.initCheckBoxState();
 		this.textBasicPanel.enabled(true);
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.buttonClose = ComponentFactory.createButtonClose();

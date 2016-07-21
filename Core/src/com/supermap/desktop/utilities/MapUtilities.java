@@ -295,7 +295,7 @@ public class MapUtilities {
 		// 设置动态投影
 		for (Dataset dataset : datasets) {
 			if (!map.isDynamicProjection() && dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-				if (map.getLayers().getCount() > 0 && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+				if (!dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
 					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
 							CoreProperties.getString("String_TitleCoordSys"))) {
 						map.setDynamicProjection(true);

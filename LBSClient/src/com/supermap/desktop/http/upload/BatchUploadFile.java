@@ -28,6 +28,8 @@ public class BatchUploadFile extends Thread {
 	// 文件长度
 	// 是否第一个文件
 	private boolean first = true;
+	
+	private boolean stop = false;
 
 	// 是否停止下载
 
@@ -45,22 +47,23 @@ public class BatchUploadFile extends Thread {
 					createFile = new CreateFile(this.downloadInfo);
 					createFile.start();
 					boolean isCreated = false;
-					while (!isCreated&&!createFile.isFailed()) {
-						Thread.sleep(1000);
-						UploadUtils.fireSteppedEvent(this, downloadInfo, getRandomProgress(), 0);
-						isCreated = createFile.isCreated();
-						// 上传失败或上传结束
-						if (isCreated||createFile.isFailed()) {
-							UploadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
-						}
-						
-					}
+//					while (!isCreated&&!createFile.isFailed()) {
+//						Thread.sleep(1000);
+//						UploadUtils.fireSteppedEvent(this, downloadInfo, getRandomProgress(), 0);
+//						isCreated = createFile.isCreated();
+//						// 上传失败或上传结束
+//						if (isCreated||createFile.isFailed()) {
+//							UploadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
+//						}
+//						
+//					}
 					
 				} catch (IOException e) {
 					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				} 
+//				catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
 
 				// Step2：用要被写入的文件数据，提交另一个HTTP PUT请求到上边返回的Header中的location的URL。
 		}

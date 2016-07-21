@@ -38,7 +38,7 @@ public class TextStyleEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean isEditable = false;
 		isEditable = isLayerEditabled(isEditable);
-		if (null!=dialog) {
+		if (null != dialog) {
 			dialog.enabled(isEditable);
 		}
 		return isEditable && environment.getEditProperties().getSelectedGeometryCount() >= 1
@@ -102,9 +102,11 @@ public class TextStyleEditor extends AbstractEditor {
 	}
 
 	private void removeEvents(EditEnvironment environment) {
-		environment.getMapControl().removeGeometryAddedListener(geometryAddedListener);
-		environment.getMapControl().removeGeometryDeletedListener(geometryDeletedListener);
-		environment.getMapControl().removeGeometryModifiedListener(geometryModifiedListener);
+		if (null != environment.getMapControl()) {
+			environment.getMapControl().removeGeometryAddedListener(geometryAddedListener);
+			environment.getMapControl().removeGeometryDeletedListener(geometryDeletedListener);
+			environment.getMapControl().removeGeometryModifiedListener(geometryModifiedListener);
+		}
 	}
 
 	private void registEvents(EditEnvironment environment) {
@@ -186,5 +188,5 @@ public class TextStyleEditor extends AbstractEditor {
 		}
 		return recordset;
 	}
-	
+
 }

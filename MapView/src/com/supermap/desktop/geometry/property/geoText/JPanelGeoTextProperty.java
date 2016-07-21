@@ -195,6 +195,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 			this.textStyle = ((GeoText3D) this.geometry).getTextStyle().clone();
 		}
 		initComponents();
+		panelBasicSet.initCheckBoxState();
 		panelBasicSet.enabled(true);
 		initResources();
 		removeEvents();
@@ -242,6 +243,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
 
 	@Override
 	public void enabled(boolean enabled) {
+		this.panelBasicSet.initCheckBoxState();
 		this.panelBasicSet.enabled(enabled);
 		this.panelTextPart.enabled(enabled);
 		this.panelTextPart.setRotationEnabled(enabled);

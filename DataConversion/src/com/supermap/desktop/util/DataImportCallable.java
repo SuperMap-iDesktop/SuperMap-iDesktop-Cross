@@ -6,6 +6,8 @@ import com.supermap.data.Datasources;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceType;
 import com.supermap.data.conversion.DataImport;
 import com.supermap.data.conversion.FileType;
 import com.supermap.data.conversion.ImportResult;
@@ -20,8 +22,13 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +40,7 @@ import java.util.concurrent.CancellationException;
 public class DataImportCallable extends UpdateProgressCallable {
 	private ArrayList<ImportFileInfo> fileInfos;
 	private JTable table;
+	private ImportSetting importSetting;
 
 	public DataImportCallable(List<ImportFileInfo> fileInfos, JTable table) {
 		this.fileInfos = (ArrayList<ImportFileInfo>) fileInfos;
@@ -53,7 +61,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 				DataImport dataImport = new DataImport();
 				ImportSettings importSettings = dataImport.getImportSettings();
 				ImportFileInfo fileInfo = fileInfos.get(i);
-				ImportSetting importSetting = fileInfo.getImportSetting();
+				importSetting = fileInfo.getImportSetting();
 				importSetting.setSourceFilePath(fileInfo.getFilePath());
 				if (importSetting instanceof ImportSettingWOR) {
 					Workspace workspace = Application.getActiveApplication().getWorkspace();
@@ -95,6 +103,18 @@ public class DataImportCallable extends UpdateProgressCallable {
 					}
 				}
 			});
+			if (importSetting instanceof ImportSettingWOR) {
+				// 刷新地图节点
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+						DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
+						MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+						UICommonToolkit.getWorkspaceManager().getWorkspaceTree().refreshNode((DefaultMutableTreeNode) treeNode.getChildAt(1));
+					}
+				});
+			}
 		}
 		return true;
 	}
@@ -180,7 +200,7 @@ public class DataImportCallable extends UpdateProgressCallable {
 							.getActiveApplication()
 							.getOutput()
 							.output(MessageFormat.format(successImportInfo, sucessSetting.getSourceFilePath(), "->", targetDatasetName, sucessSetting
-									.getTargetDatasource().getAlias(), String.valueOf((time / names.length)/ 1000.0)));
+									.getTargetDatasource().getAlias(), String.valueOf((time / names.length) / 1000.0)));
 				}
 			}
 

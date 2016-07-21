@@ -446,8 +446,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		}
 		//@formatter:on
 	}
-
-	private void initCheckBoxState() {
+	@Override
+	public void initCheckBoxState() {
 		if (null != this.textStyle) {
 			this.checkBoxBorder.setSelected(textStyle.getBold());
 			this.checkBoxStrickout.setSelected(textStyle.getStrikeout());
@@ -764,7 +764,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	 */
 	@Override
 	public void enabled(boolean enabled) {
-		initCheckBoxState();
 		this.labelAlign.setEnabled(enabled);
 		this.labelBGColor.setEnabled(enabled);
 		this.labelFontColor.setEnabled(enabled);

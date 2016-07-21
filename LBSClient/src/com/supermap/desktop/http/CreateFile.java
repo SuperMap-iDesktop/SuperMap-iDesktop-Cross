@@ -1,6 +1,8 @@
 package com.supermap.desktop.http;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
@@ -15,11 +17,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
- * <b>function:</b> 单线程下载文件
+ * <b>function:</b> 单线程上传文件
  * 
  * @author hoojo
  * @createDate 2011-9-22 下午02:55:10
@@ -34,7 +35,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 public class CreateFile extends Thread {
 
 	// 待上传文件信息
-	private FileInfo downloadInfo;
+	private FileInfo uploadInfo;
 
 	// 上传是否完成
 	private boolean isCreated = false;
@@ -45,7 +46,7 @@ public class CreateFile extends Thread {
 
 	public CreateFile(FileInfo downloadInfo) throws IOException {
 		super();
-		this.downloadInfo = downloadInfo;
+		this.uploadInfo = downloadInfo;
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
@@ -54,20 +55,21 @@ public class CreateFile extends Thread {
 		this.createFile();
 		// this.createDir();
 		// this.renameFile();
-//		appendFile();
+		// appendFile();
 	}
 
 	// 创建文件
 	private void createFile() {
 		try {
+			// 第一步创建一个空文件
 			String locationURL = "";
-			
-			String webFile = this.downloadInfo.getUrl();
-			
+
+			String webFile = this.uploadInfo.getUrl();
+
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.downloadInfo.getFileName());
+			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.uploadInfo.getFileName());
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
 			HttpPut requestPut = new HttpPut(webFile);
@@ -77,7 +79,74 @@ public class CreateFile extends Thread {
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
 					Header locationHeader = response.getFirstHeader("Location");
 					if (locationHeader == null) {
-						System.out.println("登陆不成功，请稍后再试!");
+						Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
+						return;
+					} else {
+						// 获取登陆成功之后跳转链接
+						locationURL = locationHeader.getValue();
+					}
+				}
+			}
+			// // 利用Append命令在文件中追加内容
+			// appendFile();
+
+			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+				requestPut = new HttpPut(locationURL);
+				String fullPath = this.uploadInfo.getFilePath();
+				if (!fullPath.endsWith("\\")) {
+					fullPath += "\\";
+				}
+				fullPath += this.uploadInfo.getFileName();
+				// File file = new File(fullPath);
+				// FileEntity fileEntity = new FileEntity(file);
+				// requestPut.setEntity(fileEntity);
+				response = new DefaultHttpClient().execute(requestPut);
+				if (response != null && response.getStatusLine().getStatusCode() == 201) {
+					// Application.getActiveApplication().getOutput()
+					// .output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
+					// isCreated = true;
+					Application.getActiveApplication().getOutput().output("HDFS file create success");
+					appendFile();
+				} else {
+					// Application.getActiveApplication().getOutput()
+					// .output("File: \"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndFailed"));
+					// isFailed = true;
+					Application.getActiveApplication().getOutput().output("HDFS file create failed");
+				}
+			}
+			// byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
+
+			// System.out.println("response enttiy " + new String(bytes2, "utf-8"));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+		}
+	}
+
+	// 创建文件
+	private void appendFile() {
+		try {
+			String locationURL = "";
+
+			String webFile = this.uploadInfo.getUrl();
+
+			if (!webFile.endsWith("/")) {
+				webFile += "/";
+			}
+			webFile = String.format("%s%s?user.name=root&op=APPEND", webFile, this.uploadInfo.getFileName());
+			HttpClient client = new DefaultHttpClient();
+			HttpPost requestPost = new HttpPost(webFile);
+
+			HttpResponse response = client.execute(requestPost);
+			if (response != null) {
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+					Header locationHeader = response.getFirstHeader("Location");
+					if (locationHeader == null) {
+						Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
 						return;
 					} else {
 						// 获取登陆成功之后跳转链接
@@ -87,18 +156,27 @@ public class CreateFile extends Thread {
 			}
 
 			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
-				requestPut = new HttpPut(locationURL);
-				String fullPath = this.downloadInfo.getFilePath();
+				requestPost = new HttpPost(locationURL);
+				String fullPath = this.uploadInfo.getFilePath();
 				if (!fullPath.endsWith("\\")) {
 					fullPath += "\\";
 				}
-				fullPath += this.downloadInfo.getFileName();
+				fullPath += this.uploadInfo.getFileName();
+				// 上传文件
 				File file = new File(fullPath);
+				// 数据输入流,用于读取文件数据
+				DataInputStream in = new DataInputStream(new FileInputStream(file));
+				byte[] bufferOut = new byte[1024];
+				int bytes = 0;
+				// 每次读1KB数据
+				while ((bytes = in.read(bufferOut)) != -1) {
+					
+//					Application.getActiveApplication().getOutput().output(in.readLine());
+				}
 				FileEntity fileEntity = new FileEntity(file);
-				requestPut.setEntity(fileEntity);
-				HttpClient allocateClient = new DefaultHttpClient();
-				response = allocateClient.execute(requestPut);
-				if (response != null && response.getStatusLine().getStatusCode() == 201) {
+				requestPost.setEntity(fileEntity);
+				response = new DefaultHttpClient().execute(requestPost);
+				if (response != null && response.getStatusLine().getStatusCode() == 200) {
 					Application.getActiveApplication().getOutput()
 							.output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
 					isCreated = true;
@@ -110,7 +188,7 @@ public class CreateFile extends Thread {
 			}
 			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
 
-			System.out.println("response enttiy " + new String(bytes2, "utf-8"));
+//			System.out.println("response enttiy " + new String(bytes2, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -120,75 +198,11 @@ public class CreateFile extends Thread {
 		} finally {
 		}
 	}
-	
-	// 创建文件
-		private void appendFile() {
-			try {
-				String locationURL = "";
-				
-				String webFile = this.downloadInfo.getUrl();
-				
-				if (!webFile.endsWith("/")) {
-					webFile += "/";
-				}
-				webFile = String.format("%s%s?user.name=root&op=APPEND", webFile, this.downloadInfo.getFileName());
-				HttpClient client = new DefaultHttpClient();
-				HttpPost requestPost = new HttpPost(webFile);
 
-				HttpResponse response = client.execute(requestPost);
-				if (response != null) {
-					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
-						Header locationHeader = response.getFirstHeader("Location");
-						if (locationHeader == null) {
-							System.out.println("登陆不成功，请稍后再试!");
-							return;
-						} else {
-							// 获取登陆成功之后跳转链接
-							locationURL = locationHeader.getValue();
-						}
-					}
-				}
-
-				if (!StringUtilities.isNullOrEmptyString(locationURL)) {
-					requestPost = new HttpPost(locationURL);
-					String fullPath = this.downloadInfo.getFilePath();
-					if (!fullPath.endsWith("\\")) {
-						fullPath += "\\";
-					}
-					fullPath += this.downloadInfo.getFileName();
-					File file = new File(fullPath);
-					FileEntity fileEntity = new FileEntity(file);
-					requestPost.setEntity(fileEntity);
-					response = new DefaultHttpClient().execute(requestPost);
-					if (response != null && response.getStatusLine().getStatusCode() == 200) {
-						Application.getActiveApplication().getOutput()
-								.output("File:\"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndString"));
-						isCreated = true;
-					} else {
-						Application.getActiveApplication().getOutput()
-								.output("File: \"" + fullPath + "\"" + LBSClientProperties.getString("String_UploadEndFailed"));
-						isFailed = true;
-					}
-				}
-				byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-
-				System.out.println("response enttiy " + new String(bytes2, "utf-8"));
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-			}
-		}
-	
-	
-	
 	private void createDir() {
 		try {
 			// 创建目录
-			String webFile = this.downloadInfo.getUrl();
+			String webFile = this.uploadInfo.getUrl();
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
@@ -239,7 +253,7 @@ public class CreateFile extends Thread {
 	private void renameFile() {
 		try {
 			// 重命名文件
-			String webFile = this.downloadInfo.getUrl();
+			String webFile = this.uploadInfo.getUrl();
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";

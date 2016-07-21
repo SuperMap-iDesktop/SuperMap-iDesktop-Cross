@@ -29,13 +29,13 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final int COLUMN_INDEX_Permission = 0;
-	private static final int COLUMN_INDEX_Owner = 1;
-	private static final int COLUMN_INDEX_Group = 2;
-	private static final int COLUMN_INDEX_Size = 3;
-	private static final int COLUMN_INDEX_Replication = 4;
-	private static final int COLUMN_INDEX_BlockSize = 5;
-	private static final int COLUMN_INDEX_Name = 6;
+	private static final int COLUMN_INDEX_Permission = 5;
+	private static final int COLUMN_INDEX_Owner = 3;
+	private static final int COLUMN_INDEX_Group = 4;
+	private static final int COLUMN_INDEX_Size = 1;
+	private static final int COLUMN_INDEX_Replication = 6;
+	private static final int COLUMN_INDEX_BlockSize = 2;
+	private static final int COLUMN_INDEX_Name = 0;
 	private static final int ROW_HEADER_WIDTH = 70;
 
 	private JPopupMenu contextPopuMenu;
@@ -68,8 +68,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	public FormLBSControl(String title, Icon icon, Component component) {
 		super(title, icon, component);
 		initializeComponents();
-		initializeResources();
 		registEvents();
+		this.setTitle(("Browse Directory"));
 	}
 
 	public FormLBSControl(String title) {
@@ -141,20 +141,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		scrollPaneFormLBSControl.setViewportView(table);
 		this.setLayout(gLayout);
 		// @formatter:on
-	}
-
-	private void initializeResources() {
-		if (table != null) {
-			this.setTitle(("Browse Directory"));
-			this.labelServerURL.setText(LBSClientProperties.getString("String_ServerURL"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Permission).setHeaderValue("Permission");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Owner).setHeaderValue("Owner");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Group).setHeaderValue(("Group"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Size).setHeaderValue("Size");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Replication).setHeaderValue("Replication");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_BlockSize).setHeaderValue(("BlockSize"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Name).setHeaderValue("Name");
-		}
 	}
 
 	/**
@@ -307,7 +293,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		 *
 		 */
 		private static final long serialVersionUID = 1L;
-		private String[] title = new String[] { "Permission", "Owner", "Group", "Size", "Replication", "BlockSize", "Name" };
+		private String[] title = new String[]{"Name","Size","BlockSize","Owner","Group","Permission","Replication"};
+//		private String[] title = new String[] { "Permission", "Owner", "Group", "Size", "Replication", "BlockSize", "Name" };
 
 		/**
 		 * 构造函数。
@@ -342,13 +329,14 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 			// 初始化内容存储
 			Vector<Object> content = new Vector<Object>(this.columnNames.size());
-			content.add(define.getPermission());
+			content.add(define.getName());
+			content.add(define.getSize());
+			content.add(define.getBlockSize());
 			content.add(define.getOwner());
 			content.add(define.getGroup());
-			content.add(define.getSize());
+			content.add(define.getPermission());
 			content.add(define.getReplication());
-			content.add(define.getBlockSize());
-			content.add(define.getName());
+			
 
 			// 追加内容
 			contents.add(content);

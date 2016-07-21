@@ -57,6 +57,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 		this.textStylePanel.setProperty(false);
 		this.textStylePanel.setUnityVisible(true);
 		this.textStylePanel.initTextBasicPanel();
+		this.textStylePanel.initCheckBoxState();
 		this.textStylePanel.enabled(true);
 		this.setLayout(new GridBagLayout());
 		//@formatter:off
