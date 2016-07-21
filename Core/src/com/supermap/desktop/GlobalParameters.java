@@ -3,7 +3,6 @@ package com.supermap.desktop;
 import com.supermap.data.AltitudeMode;
 import com.supermap.desktop.utilities.AltitudeModeUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -12,7 +11,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.File;
 import java.util.HashMap;
 
 public class GlobalParameters {
@@ -443,15 +441,16 @@ public class GlobalParameters {
 		if (resources != null) {
 			return;
 		}
-		String appDataPath = FileUtilities.getAppDataPath();
-		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
-		if (appDataPath == null) {
-			startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
-		} else {
-			if (!new File(defaultFilePath).exists()) {
-				startupXml = defaultFilePath;
-			}
-		}
+		startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+//		String appDataPath = FileUtilities.getAppDataPath();
+//		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
+//		if (appDataPath == null) {
+//			startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+//		} else {
+//			if (!new File(defaultFilePath).exists()) {
+//				startupXml = defaultFilePath;
+//			}
+//		}
 
 		if (startupXml == null) {
 			return;
@@ -669,7 +668,7 @@ public class GlobalParameters {
 	//endregion
 
 	public static boolean isShowFormClosingInfo() {
-		boolean result = false;
+		boolean result = true;
 		String value = getValue("_startup_workspace", "closenotify");
 		if (value != null) {
 			result = Boolean.valueOf(value);
