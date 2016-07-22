@@ -37,6 +37,8 @@ import java.util.HashMap;
  * 　　　　　　　　　┗┓┓┏━┳┓┏┛ + + + +
  * 　　　　　　　　　　┃┫┫　┃┫┫
  * 　　　　　　　　　　┗┻┛　┗┻┛+ + + +
+ *
+ * 初始化资源，节点名称不能有 "_" 字符
  */
 
 public class GlobalParameters {
@@ -301,7 +303,7 @@ public class GlobalParameters {
 		if (value != null) {
 			logFolder = value;
 		}
-		System.setProperty("com.supermap.desktop.log4j.home", value);
+		System.setProperty("com.supermap.desktop.log4j.home", logFolder);
 	}
 	//endregion
 
@@ -471,10 +473,10 @@ public class GlobalParameters {
 		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
 		String startUpFile = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
 		String loadXmlPath = null;
+		// loadXmlPath为加载的配置文件，startupXml为保存的路径
 		if (appDataPath == null) {
 			if (new File(startUpFile).exists()) {
 				startupXml = startUpFile;
-
 			} else {
 				return;
 			}
@@ -498,7 +500,7 @@ public class GlobalParameters {
 			loadXmlPath = startupXml;
 		}
 
-		Document startupDoc = XmlUtilities.getDocument(startupXml);
+		Document startupDoc = XmlUtilities.getDocument(loadXmlPath);
 		resources = new HashMap<>();
 		if (startupDoc != null) {
 			NodeList childNodes = startupDoc.getChildNodes();
