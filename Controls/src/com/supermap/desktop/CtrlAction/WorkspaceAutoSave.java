@@ -72,6 +72,7 @@ public class WorkspaceAutoSave {
 		workspaceClosingListener = new WorkspaceClosingListener() {
 			@Override
 			public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
+				// 工作空间关闭可能是要打开当前保存的工作空间，所以先关闭一次
 				closeTempWorkspace();
 				workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
 			}
@@ -81,7 +82,7 @@ public class WorkspaceAutoSave {
 		task = new TimerTask() {
 			@Override
 			public void run() {
-				autoSave();
+				autoSave(false);
 			}
 		};
 	}
@@ -92,13 +93,13 @@ public class WorkspaceAutoSave {
 		workspace.addSavedListener(new WorkspaceSavedListener() {
 			@Override
 			public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-				autoSave();
+				autoSave(true);
 			}
 		});
 		workspace.addSavedAsListener(new WorkspaceSavedAsListener() {
 			@Override
 			public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-				autoSave();
+				autoSave(true);
 			}
 		});
 		timer.schedule(task, period / 6, period);
@@ -126,20 +127,23 @@ public class WorkspaceAutoSave {
 		return appDataPath + StringUtilities.getUniqueName(defaultName, list) + ".xml";
 	}
 
-	private void autoSave() {
+	private void autoSave(boolean isIgnoreModified) {
 		Workspace activeWorkspace = Application.getActiveApplication().getWorkspace();
+
 		synchronized (activeWorkspace) {
+			if (!isIgnoreModified && !activeWorkspace.isModified()) {
+				return;
+			}
 			activeWorkspace.addClosingListener(workspaceClosingListener);
 			WorkspaceConnectionInfo connectionInfo = activeWorkspace.getConnectionInfo();
 			WorkspaceType type = connectionInfo.getType();
 			if (type != WorkspaceType.DEFAULT && type != WorkspaceType.SMWU && type != WorkspaceType.SXWU) {
-				if (workspace != null) {
-					workspace.close();
-					workspace = null;
-				}
-//				if (tempWorkspaceFile != null && tempWorkspaceFile.exists()) {
-//					tempWorkspaceFile.delete();
-//				}
+				// 当前工作空间不属于需要保存的类型
+				WorkspaceUtilities.deleteFileWorkspace(lastServer);
+				lastServer = null;
+				closeTempWorkspace();
+				WorkspaceUtilities.deleteFileWorkspace(lastServer);
+				lastServer = null;
 				try {
 					randomAccessFile.setLength(0);
 				} catch (IOException e) {
@@ -156,18 +160,17 @@ public class WorkspaceAutoSave {
 						workspace.changePassword(workspace.getConnectionInfo().getPassword(), activeWorkspace.getConnectionInfo().getPassword());
 					}
 				} else {
-					if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
-						new File(lastServer).delete();
-						lastServer = null;
-					}
+					// 之前手动保存的工作空间删除
+					WorkspaceUtilities.deleteFileWorkspace(lastServer);
+					lastServer = null;
+
 					closeTempWorkspace();
 					if (workspace == null) {
 						workspace = new Workspace();
 					}
-					if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
-						new File(lastServer).delete();
-						lastServer = null;
-					}
+					WorkspaceUtilities.deleteFileWorkspace(lastServer);
+					lastServer = null;
+
 					String tempWorkspaceFilePath = getTempWorkspaceFilePath(connectionInfo.getType());
 					workspaceConnectionInfo = new WorkspaceConnectionInfo(tempWorkspaceFilePath);
 					workspaceConnectionInfo.setServer(tempWorkspaceFilePath);
@@ -218,10 +221,8 @@ public class WorkspaceAutoSave {
 		rootNode.appendChild(workspacePath);
 
 		// 工作空间连接信息
-		Element workspaceConnectionInfoNode = document.createElement("WorkspaceConnection");
 		Element workspaceConnectionNode = WorkspaceConnectionInfoUtilities.toXml(workspace.getConnectionInfo(), document);
-		workspaceConnectionInfoNode.appendChild(workspaceConnectionNode);
-		rootNode.appendChild(workspaceConnectionInfoNode);
+		rootNode.appendChild(workspaceConnectionNode);
 
 		// 数据源连接信息
 		Element datasourcesNode = document.createElement("Datasources");
@@ -293,10 +294,8 @@ public class WorkspaceAutoSave {
 			workspace.close();
 			workspace = null;
 		}
-		if (!StringUtilities.isNullOrEmpty(lastServer) && new File(lastServer).exists()) {
-			if (!new File(lastServer).delete()) {
-				LogUtilities.outPut("Delete TempWorkspace Failed On Exit ");
-			}
+		if (!WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
+			LogUtilities.outPut("Delete TempWorkspace Failed On Exit ");
 		}
 		return false;
 	}
