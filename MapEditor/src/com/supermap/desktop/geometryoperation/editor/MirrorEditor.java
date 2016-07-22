@@ -1,12 +1,11 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -21,11 +20,8 @@ import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
-import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
-import com.supermap.desktop.geometry.Abstract.IPoint3DFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
-import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
@@ -55,6 +51,29 @@ public class MirrorEditor extends AbstractEditor {
 			mapControlTracking(environment, e);
 		}
 
+		@Override
+		public void undone(EditEnvironment environment, EventObject arg0) {
+			MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
+
+			if (editModel.isTracking) {
+				editModel.isTracking = false;
+				MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
+				environment.getMap().refreshTrackingLayer();
+			}
+		}
+
+		@Override
+		public void redone(EditEnvironment environment, EventObject arg0) {
+			MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
+
+			if (!editModel.isTracking) {
+				editModel.isTracking = true;
+			}
+		}
+
+		/*
+		 * 不用 tracked 是因为右键取消 CREATELINE Action 也会触发 tracked 从而无法真正取消
+		 */
 		@Override
 		public void mousePressed(EditEnvironment environment, MouseEvent e) {
 			MirrorEditModel editModel = (MirrorEditModel) environment.getEditModel();
@@ -132,10 +151,10 @@ public class MirrorEditor extends AbstractEditor {
 		try {
 			MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 			GeoLine geoLine = (GeoLine) e.getGeometry();
-			// 判断一下，当前绘制的线长度为0时，不执行镜像
 			editModel.point1 = geoLine.getPart(0).getItem(0);
 			editModel.point2 = geoLine.getPart(0).getItem(1);
 
+			// 判断一下，当前绘制的线长度为0时，不执行镜像
 			if (editModel.point1.equals(editModel.point2)) {
 				return;
 			}
