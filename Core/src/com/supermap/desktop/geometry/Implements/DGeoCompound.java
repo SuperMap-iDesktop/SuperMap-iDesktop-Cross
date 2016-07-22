@@ -79,7 +79,7 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 				if (geometry instanceof IMultiPartFeature<?>) {
 					ListUtilities.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
 				} else {
-					geometries.add(temp[i]);
+					geometries.add(geometry.getGeometry());
 				}
 			}
 			return geometries.toArray(new Geometry[geometries.size()]);
