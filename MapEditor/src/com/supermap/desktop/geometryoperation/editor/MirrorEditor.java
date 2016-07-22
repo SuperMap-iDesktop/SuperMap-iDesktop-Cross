@@ -115,7 +115,7 @@ public class MirrorEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
 				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), IPointFeature.class,
-						ILineFeature.class, IRegionFeature.class, ICompoundFeature.class, IPoint3DFeature.class, ILine3DFeature.class, IRegion3DFeature.class);
+						ILineFeature.class, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	@Override
