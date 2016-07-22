@@ -2,7 +2,9 @@ package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceSavedAsEvent;
 import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
 import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -182,41 +184,29 @@ public class WorkspaceRecovery {
 						Field isOpenedWorkspace = clazz.getDeclaredFields()[0];
 						isOpenedWorkspace.setAccessible(true);
 						WorkspaceConnectionInfo connectionInfo = Application.getActiveApplication().getWorkspace().getConnectionInfo();
-//						final String deleteServer = connectionInfo.getServer();
+						final String deleteServer = connectionInfo.getServer();
 						isOpenedWorkspace.setBoolean(connectionInfo, false);
 						connectionInfo.setServer(workSpaceFilePath);
 						isOpenedWorkspace.setBoolean(connectionInfo, true);
-//						workspaceSavedAsListener = new WorkspaceSavedAsListener() {
-//							@Override
-//							public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-//								if (new File(deleteServer).exists()) {
-//									if (new File(deleteServer).delete()) {
-//										workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
-//										workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
-//									}
-//								} else {
-//									workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
-//									workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
-//								}
-//							}
-//						};
-//						workspaceSavedListener = new WorkspaceSavedListener() {
-//							@Override
-//							public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-//								if (new File(deleteServer).exists()) {
-//									if (new File(deleteServer).delete()) {
-//										workspaceSavedEvent.getWorkspace().removeSavedListener(this);
-//										workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
-//									}
-//								} else {
-//									workspaceSavedEvent.getWorkspace().removeSavedListener(this);
-//									workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
-//								}
-//							}
-//						};
-//						Application.getActiveApplication().getWorkspace().addSavedAsListener(workspaceSavedAsListener);
-//
-//						Application.getActiveApplication().getWorkspace().addSavedListener(workspaceSavedListener);
+						workspaceSavedAsListener = new WorkspaceSavedAsListener() {
+							@Override
+							public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
+								FileUtilities.delete(deleteServer);
+								workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
+								workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
+							}
+						};
+						workspaceSavedListener = new WorkspaceSavedListener() {
+							@Override
+							public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
+								FileUtilities.delete(deleteServer);
+								workspaceSavedEvent.getWorkspace().removeSavedListener(this);
+								workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
+							}
+						};
+						Application.getActiveApplication().getWorkspace().addSavedAsListener(workspaceSavedAsListener);
+
+						Application.getActiveApplication().getWorkspace().addSavedListener(workspaceSavedListener);
 					}
 				}
 			} catch (Exception e) {
@@ -280,19 +270,15 @@ public class WorkspaceRecovery {
 				try {
 					Node rootNode = document.getChildNodes().item(0);
 					if (rootNode != null) {
-						Node workspaceConnection = XmlUtilities.getChildElementNodeByName(rootNode, "WorkspaceConnection");
-						if (workspaceConnection != null) {
-							Node workspaceConnectionInfo = XmlUtilities.getChildElementNodeByName(workspaceConnection, "WorkspaceConnectionInfo");
-							if (workspaceConnectionInfo != null) {
-								Node server = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfo, "Server");
-								if (server != null) {
-									NodeList childNodes = server.getChildNodes();
-									if (childNodes != null && childNodes.getLength() > 0) {
-
-										String workspacePath = childNodes.item(0).getNodeValue();
-										if (!StringUtilities.isNullOrEmpty(workspacePath) && new File(workspacePath).exists()) {
-											new File(workspacePath).delete();
-										}
+						Node workspaceConnectionInfo = XmlUtilities.getChildElementNodeByName(rootNode, "WorkspaceConnectionInfo");
+						if (workspaceConnectionInfo != null) {
+							Node server = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfo, "Server");
+							if (server != null) {
+								NodeList childNodes = server.getChildNodes();
+								if (childNodes != null && childNodes.getLength() > 0) {
+									String workspacePath = childNodes.item(0).getNodeValue();
+									if (!StringUtilities.isNullOrEmpty(workspacePath) && new File(workspacePath).exists()) {
+										WorkspaceUtilities.deleteFileWorkspace(workspacePath);
 									}
 								}
 							}
