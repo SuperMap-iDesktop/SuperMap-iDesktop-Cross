@@ -91,7 +91,7 @@ public class DGeometryFactory {
 				return new DGeoRegion3D((GeoRegion3D) geometry);
 			}
 		}
-		return null;
+		return new DGeoNormal(geometry);
 	}
 
 	public static IGeometry createNew(GeometryType type) {
