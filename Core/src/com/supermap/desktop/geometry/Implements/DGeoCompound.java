@@ -76,7 +76,7 @@ public class DGeoCompound extends AbstractGeometry implements IMultiPartFeature<
 			for (int i = 0; i < temp.length; i++) {
 				IGeometry geometry = DGeometryFactory.create(temp[i]);
 
-				if (geometry instanceof IMultiPartFeature<?>) {
+				if (geometry instanceof IMultiPartFeature<?> && ((IMultiPartFeature<?>) geometry).getPartCount() > 1) {
 					ListUtilities.addArray(geometries, ((IMultiPartFeature<?>) geometry).divide());
 				} else {
 					geometries.add(geometry.getGeometry());
