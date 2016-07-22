@@ -60,7 +60,11 @@ sidebar:
     BufferAnalyst_Example: 缓冲区应用实例
     FindRasterVaule: 栅格查询
     Map: 地图制图
+    Thematic: 专题图
     ThematicMap: 专题图概述
+    CreatThematicMap: 创建专题图
+    UniqueValueProperties: 单值专题图
+    RangesMapGroupDia: 分段专题图
     Style: 设置图层风格
     LayerSetting: 图层属性
     Measuregroup: 地图量算

@@ -40,7 +40,11 @@ docs:
     BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
     FindRasterVaule: /SuperMap-iDesktop-Cross/docs/DataAnalyst/FindRasterVaule.html
   Map:
-    ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
+    Thematic:
+      ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
+      CreatThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CreatThematicMap.html
+      UniqueValueProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/UniqueValueProperties.html
+      RangesMapGroupDia: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/RangesMapGroupDia.html
     Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
     Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
     LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
