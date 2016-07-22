@@ -304,7 +304,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 								geoStyle = null;
 							}
 							if (geometry != null) {
-								geoStyle = oldGeo.getStyle().clone();
+								geoStyle = oldGeo.getStyle() == null ? null : oldGeo.getStyle().clone();
 								if (geometry != oldGeo) {
 									oldGeo.dispose();// 转换前的几何对象应该及时释放掉。
 								}
