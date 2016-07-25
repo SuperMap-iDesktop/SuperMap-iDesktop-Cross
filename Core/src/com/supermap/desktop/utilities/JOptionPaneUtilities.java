@@ -1,7 +1,7 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IOptionPane;
-import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.*;
 
@@ -44,7 +44,7 @@ public class JOptionPaneUtilities {
 		if (iOptionPane != null) {
 			iOptionPane.showErrorMessageDialog(message);
 		} else {
-			JOptionPane.showMessageDialog(null, message, CoreProperties.getString("String_MessageBox_Title"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, message, GlobalParameters.getDesktopTitle(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

@@ -37,7 +37,7 @@ import java.util.HashMap;
  * 　　　　　　　　　┗┓┓┏━┳┓┏┛ + + + +
  * 　　　　　　　　　　┃┫┫　┃┫┫
  * 　　　　　　　　　　┗┻┛　┗┻┛+ + + +
- *
+ * <p>
  * 初始化资源，节点名称不能有 "_" 字符
  */
 
@@ -50,11 +50,11 @@ public class GlobalParameters {
 		// do nothing
 	}
 
-/*	*//**
-	 * 获取或设置一个值，指示是否显示启动画面，初始值为true。
-	 *
-	 * @return
-	 *//*
+/**
+ * 获取或设置一个值，指示是否显示启动画面，初始值为true。
+ *
+ * @return
+ *//*
 	private static Boolean g_showSplash = true;
 
 	public static Boolean isShowSplash() {
@@ -223,20 +223,21 @@ public class GlobalParameters {
 		g_showScreenTip = value;
 	}
 
-	*//**
+	*/
+	/**
 	 * 获取或设置桌面标题，初始值为：SuperMap iDesktop 7C。
-	 *//*
-	private static String g_desktopTitle = "";
+	 */
+	private static String desktopTitle = "SuperMap iDesktop 8C";
 
 	public static String getDesktopTitle() {
-		return g_desktopTitle;
+		return desktopTitle;
 	}
 
-	public static void setDesktopTitle(String value) {
-		g_desktopTitle = value;
+	public static void setDesktopTitle(String title) {
+		desktopTitle = title;
 	}
 
-	*//**
+	/**
 	 * 获取或设置数值的可见小数位数，初始值为4。
 	 *//*
 	private static int m_nDecimalPlaces = 4;
@@ -577,8 +578,15 @@ public class GlobalParameters {
 	private static void init() {
 		initLogInfo();
 		initCamera();
-
+		initDesktopTitle();
 		// TODO: 2016/3/29 新增节点在此初始化
+	}
+
+	private static void initDesktopTitle() {
+		String value = getValue("_startup_mainForm", "text");
+		if (value != null) {
+			setDesktopTitle(value);
+		}
 	}
 
 	private static void initLogInfo() {
