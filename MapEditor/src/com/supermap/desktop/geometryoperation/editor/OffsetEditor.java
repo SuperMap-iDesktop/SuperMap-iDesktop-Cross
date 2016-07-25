@@ -248,7 +248,7 @@ public class OffsetEditor extends AbstractEditor {
 				editModel.desDataset.getTolerance().setDefault();
 			}
 
-			Object[] data = EditorUtilties.getMinDistance(mouseLocation, points, editModel.desDataset.getTolerance().getNodeSnap());
+			Object[] data = EditorUtilities.getMinDistance(mouseLocation, points, editModel.desDataset.getTolerance().getNodeSnap());
 			double distance = (Double) data[0];
 			int segment = (Integer) data[2];
 
@@ -256,7 +256,7 @@ public class OffsetEditor extends AbstractEditor {
 				segment--;
 			}
 
-			if (!EditorUtilties.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
+			if (!EditorUtilities.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
 				distance = -distance;
 			}
 			editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_OffsetDistance"), distance));

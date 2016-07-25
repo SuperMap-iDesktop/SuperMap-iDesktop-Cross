@@ -10,7 +10,7 @@ import com.supermap.mapping.SnapMode;
 import com.supermap.mapping.SnappedElement;
 import com.supermap.ui.MapControl;
 
-public class EditorUtilties {
+public class EditorUtilities {
 
 	/**
 	 * 获取点到线的最短距离、点到线的最短距离关键点（垂足在线上则是垂足否则返回端点）、关键点所在的线段序号

@@ -283,7 +283,7 @@ public class LineExtendEditor extends AbstractEditor {
 			if (dataset.getTolerance().getNodeSnap() == 0) {
 				dataset.getTolerance().setDefault();
 			}
-			Object[] result = EditorUtilties.getMinDistance(pnt2D, desLinePoints, dataset.getTolerance().getNodeSnap());
+			Object[] result = EditorUtilities.getMinDistance(pnt2D, desLinePoints, dataset.getTolerance().getNodeSnap());
 			Point2D perpendicularFoot = (Point2D) result[1];
 			Integer segment = (Integer) result[2];
 
@@ -291,9 +291,9 @@ public class LineExtendEditor extends AbstractEditor {
 			boolean bExtendFirstPart = true;
 			double dForeLength = 0.0;
 			for (int i = 0; i < segment; i++) {
-				dForeLength += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
+				dForeLength += EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
 			}
-			dForeLength += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(segment), perpendicularFoot);
+			dForeLength += EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(segment), perpendicularFoot);
 			double dTotalLength = desLine.getLength();
 			if ((dForeLength >= (dTotalLength / 2.0))) {
 				// 记录后半段的最后一段线段的两个端点点号
@@ -318,7 +318,7 @@ public class LineExtendEditor extends AbstractEditor {
 						desLinePoints.getItem(nEndPntNumber), true);
 				if (pntIntersection != Point2D.getEMPTY()) {
 					// 交点在基线的延长线上，不作为可用点
-					boolean bValid = EditorUtilties.isPointInLineRect(pntIntersection, baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), dataset
+					boolean bValid = EditorUtilities.isPointInLineRect(pntIntersection, baseLinePoints.getItem(i), baseLinePoints.getItem(i + 1), dataset
 							.getTolerance().getNodeSnap());
 					// 交点是所要延伸的线上的点，不作为可用交点
 					if (bValid
@@ -345,8 +345,8 @@ public class LineExtendEditor extends AbstractEditor {
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
-					dTemp1 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
-					dTemp2 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
+					dTemp1 = EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
+					dTemp2 = EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
 					if (dTemp1 < dTemp2 && dDistance > dTemp1) {
 						dDistance = dTemp1;
 						nKey = i;
@@ -361,8 +361,8 @@ public class LineExtendEditor extends AbstractEditor {
 				double dTemp1 = 0.0;
 				double dTemp2 = 0.0;
 				for (int i = 0; i < pntIntersections.getCount(); i++) {
-					dTemp1 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
-					dTemp2 = EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
+					dTemp1 = EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(nStartPntNumber), pntIntersections.getItem(i));
+					dTemp2 = EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(nEndPntNumber), pntIntersections.getItem(i));
 					if (dTemp1 > dTemp2 && dDistance > dTemp2) {
 						dDistance = dTemp1;
 						nKey = i;
