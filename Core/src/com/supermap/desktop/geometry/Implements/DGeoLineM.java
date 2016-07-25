@@ -8,11 +8,12 @@ import com.supermap.data.PointMs;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.AbstractGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineConvertor;
+import com.supermap.desktop.geometry.Abstract.ILineMFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Abstract.IReverse;
 
-public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<PointMs>, ILineConvertor, IRegionConvertor, IReverse {
+public class DGeoLineM extends AbstractGeometry implements ILineMFeature, IMultiPartFeature<PointMs>, ILineConvertor, IRegionConvertor, IReverse {
 
 	private GeoLineM geoLineM;
 
@@ -22,7 +23,8 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 	}
 
 	/**
-	 * @param segment 本类本参数无效
+	 * @param segment
+	 *            本类本参数无效
 	 * @return
 	 */
 	@Override
@@ -31,7 +33,8 @@ public class DGeoLineM extends AbstractGeometry implements IMultiPartFeature<Poi
 	}
 
 	/**
-	 * @param segment 本类本参数无效
+	 * @param segment
+	 *            本类本参数无效
 	 * @return
 	 */
 	@Override

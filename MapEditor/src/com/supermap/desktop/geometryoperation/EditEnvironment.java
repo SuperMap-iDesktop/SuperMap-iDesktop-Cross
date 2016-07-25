@@ -16,6 +16,7 @@ import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.ILineMFeature;
 import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
 import com.supermap.desktop.geometry.Abstract.INormalFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
@@ -482,6 +483,8 @@ public class EditEnvironment {
 			return IPointFeature.class;
 		} else if (dGeometry instanceof ILineFeature) {
 			return ILineFeature.class;
+		} else if (dGeometry instanceof ILineMFeature) {
+			return ILineMFeature.class;
 		} else if (dGeometry instanceof IRegionFeature) {
 			return IRegionFeature.class;
 		} else if (dGeometry instanceof ITextFeature) {
