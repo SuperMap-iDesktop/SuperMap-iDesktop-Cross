@@ -293,7 +293,8 @@ public class MapUtilities {
 	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
 		// 设置动态投影
-		if (datasets.length == 1) {
+		if (map.getLayers().getCount() == 0) {
+			// 第一次打开地图时不需要判断是否打开动态投影
 			return;
 		}
 		for (Dataset dataset : datasets) {

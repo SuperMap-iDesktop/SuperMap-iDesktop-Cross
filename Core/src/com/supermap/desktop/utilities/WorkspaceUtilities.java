@@ -699,7 +699,7 @@ class RepeatDatasourceDeal {
 		for (int i = datasourceAOnly.size() - 1; i >= 0; i--) {
 			Datasource datasourceA = datasourceAOnly.get(i);
 			for (int j = datasourceBOnly.size() - 1; j >= 0; j--) {
-				Datasource datasourceB = datasourceAOnly.get(i);
+				Datasource datasourceB = datasourceBOnly.get(j);
 				if (datasourceA.toString().equalsIgnoreCase(datasourceB.toString())) {
 					datasourceAOnly.remove(datasourceA);
 					datasourceBOnly.remove(datasourceB);

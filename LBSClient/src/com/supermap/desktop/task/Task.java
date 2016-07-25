@@ -20,13 +20,13 @@ public class Task extends JPanel implements ITask {
 	private static final int buttonHeight = 23;
 	private transient SwingWorker<Boolean, Object> worker = null;
 
-	JLabel labelTitle;//
-	private JLabel labelLogo;
+	JLabel labelTitle;// 标题
+	protected JLabel labelLogo;// 图标
 	JProgressBar progressBar = null;
-	SmButton buttonRun;
-	protected SmButton buttonRemove;
-	JLabel labelProcess;
-	JLabel labelStatus;
+	SmButton buttonRun;// 赞成
+	protected SmButton buttonRemove;// 删除
+	JLabel labelProcess; // 进度信息
+	JLabel labelStatus; // 状态
 	GroupLayout groupLayout = new GroupLayout(this);
 	protected Boolean isCancel = false;
 	protected FileInfo fileInfo;
@@ -36,6 +36,10 @@ public class Task extends JPanel implements ITask {
 		this.fileInfo = downloadInfo;
 		initializeComponents();
 		registEvents();
+	}
+
+	public Task() {
+		this(null);
 	}
 
 	public void registEvents() {
@@ -155,8 +159,6 @@ public class Task extends JPanel implements ITask {
 		return this.isCancel;
 	}
 
-	
-
 	@Override
 	public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
 		// 默认实现，后续进行初始化操作
@@ -184,7 +186,7 @@ public class Task extends JPanel implements ITask {
 	@Override
 	public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

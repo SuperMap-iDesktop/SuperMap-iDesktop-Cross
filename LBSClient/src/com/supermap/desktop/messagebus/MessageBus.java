@@ -69,6 +69,7 @@ public class MessageBus {
 		@Override
 		public void run() {
 			try {
+				System.err.println(111);
 				runningTasts = 0;
 				ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(tcp_url);
 				Connection conn = factory.createConnection();
@@ -141,6 +142,7 @@ public class MessageBus {
 		@Override
 		public void run() {
 			try {
+				System.err.println(222);
 				ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(tcp_url);
 				Connection conn = factory.createConnection();
 				conn.start();

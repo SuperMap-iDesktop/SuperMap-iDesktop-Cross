@@ -1,78 +1,334 @@
 package com.supermap.desktop.http.upload;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Random;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.CreateFile;
+import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.http.download.FileInfo;
-import com.supermap.desktop.utilities.CommonUtilities;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
- * <b>function:</b> 分批量下载文件
  * 
- * @author hoojo
- * @createDate 2011-9-22 下午05:51:54
- * @file BatchDownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
+ * @author xie
+ *
  */
 public class BatchUploadFile extends Thread {
-	// 下载文件信息
-	private FileInfo downloadInfo;
-	// 子线程下载
-	// private UploadFile[] fileItems;
+	// 文件信息
+	private FileInfo uploadInfo;
+	// 一组开始上传位置
+	private long[] startPos;
+	// 一组结束上传位置
+	private long[] endPos;
+	// 一组原始文件大小
+	private long[] segmentLengths;
+	// 休眠时间
+	private static final int SLEEP_SECONDS = 1000;
+	// 子线程上传
+	private UploadFile[] fileItems;
 	// 文件长度
+	private long fileSize;
 	// 是否第一个文件
 	private boolean first = true;
-	
+	// 是否停止上传
 	private boolean stop = false;
+	// 临时文件信息
+	private File tempFile;
 
-	// 是否停止下载
-
-	public BatchUploadFile(FileInfo downloadInfo) {
-		this.downloadInfo = downloadInfo;
+	public BatchUploadFile(FileInfo uploadInfo) {
+		this.uploadInfo = uploadInfo;
+		// 单线程实现上传
+		uploadInfo.setSplitter(1);
+		String tempPath = this.uploadInfo.getFilePath()+".position";
+		tempFile = new File(tempPath);
+		// 如果存在读入点位置的文件
+		if (tempFile.exists()) {
+			first = false;
+			// 就直接读取内容
+			try {
+				readPosInfo();
+				// 文件长度直接取自最后一段的结束位置
+				fileSize = endPos[endPos.length - 1];
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// 数组的长度就要分成多少段的数量
+			startPos = new long[uploadInfo.getSplitter()];
+			endPos = new long[uploadInfo.getSplitter()];
+			segmentLengths = new long[uploadInfo.getSplitter()];
+		}
 	}
 
 	@Override
 	public void run() {
-		// 首次上传，创建文件
-			CreateFile createFile = null;
-			// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
-			if (this.downloadInfo.isHDFSFile()) {
-				try {
-					createFile = new CreateFile(this.downloadInfo);
-					createFile.start();
-//					boolean isCreated = false;
-//					while (!isCreated&&!createFile.isFailed()) {
-//						Thread.sleep(1000);
-//						UploadUtils.fireSteppedEvent(this, downloadInfo, getRandomProgress(), 0);
-//						isCreated = createFile.isCreated();
-//						// 上传失败或上传结束
-//						if (isCreated||createFile.isFailed()) {
-//							UploadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
-//						}
-//						
-//					}
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				} 
-//				catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
+		  // 首次上传，获取上传文件长度
+        if (first)
+        {
+            /**
+                 * eg start: 1, 3, 5, 7, 9 end: 3, 5, 7, 9, length
+                 */
+            for (int i = 0, len = this.segmentLengths.length; i < len; i++)
+            {
+                int size = (int) (i * (uploadInfo.getFileSize() / len));
+                this.startPos[i] = size;
 
-				// Step2：用要被写入的文件数据，提交另一个HTTP PUT请求到上边返回的Header中的location的URL。
+                // 设置最后一个结束点的位置
+                if (i == len - 1)
+                {
+                    this.endPos[i] = uploadInfo.getFileSize();
+                }
+                else
+                {
+                    size = (int) ((i + 1) * (uploadInfo.getFileSize() / len));
+                    this.endPos[i] = size;
+                }
+                this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
+                Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
+            }
+        }
+
+        try
+        {
+        	// 创建一个空文件
+        	String locationURL = new CreateFile(uploadInfo).createFile();
+        	
+        	
+            if (!StringUtilities.isNullOrEmpty(locationURL))
+            {
+
+              String  url = MessageFormat.format("{0}{1}?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
+                // 创建单线程下载对象数组
+                fileItems = new UploadFile[this.segmentLengths.length];
+                for (int i = 0; i < this.segmentLengths.length; i++)
+                {
+                    // 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
+					fileItems[i] = new UploadFile(url, this.uploadInfo.getFilePath(),
+					    startPos[i], endPos[i], segmentLengths[i], i);
+					fileItems[i].start();
+					Application.getActiveApplication().getOutput().output("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
+                }
+                
+                // 循环写入下载文件长度信息
+              
+            }
+        }catch(Exception ex){
+        	ex.printStackTrace();
+        }
+        
+	}
+
+	/**
+	 * 获取文件的上传完成的大小
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public long getFinishedSize() throws IOException {
+		long finished = 0;
+		try {
+			if (fileItems != null) {
+				for (int i = 0; i < fileItems.length; i++) {
+					if (fileItems[i] != null) {
+						finished += fileItems[i].getLength() - (fileItems[i].getEndPos() - fileItems[i].getStartPos());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
+		return finished;
 	}
 
-	private int getRandomProgress() {
-		Random random = new Random(System.currentTimeMillis());
-		return random.nextInt(100);
+	/**
+	 * 获取文件的上传进度
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public int getDownloadProcess() throws IOException {
+		int process = 0;
+		try {
+			long finished = this.getFinishedSize();
+			if (this.fileSize != 0) {
+				process = (int) (finished * 100 / this.fileSize);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return process;
 	}
 
+	/**
+	 * 获取文件的剩余上传时间
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public int getRemainTime() throws IOException {
+		int remainTime = 0;
+		try {
+			long finished = this.getFinishedSize();
+			remainTime = (int) ((this.fileSize - finished) / (500 * 1024));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return remainTime;
+	}
+
+	/**
+	 * 获取文件的上传信息
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public String getDownloadInformation() throws IOException {
+		String information = "";
+		try {
+			information = String.format("%s/%s", convertFileSize(this.getFinishedSize()), convertFileSize(this.fileSize));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return information;
+	}
+
+	public static String convertFileSize(long size) {
+		long kb = 1024;
+		long mb = kb * 1024;
+		long gb = mb * 1024;
+
+		if (size >= gb) {
+			return String.format("%.1f GB", (float) size / gb);
+		} else if (size >= mb) {
+			float f = (float) size / mb;
+			return String.format(f > 100 ? "%.0f MB" : "%.1f MB", f);
+		} else if (size >= kb) {
+			float f = (float) size / kb;
+			return String.format(f > 100 ? "%.0f KB" : "%.1f KB", f);
+		} else
+			return String.format("%d B", size);
+	}
+
+	/**
+	 * 获取文件的上传进度
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public Boolean isFinished() throws IOException {
+		Boolean result = true;
+		try {
+			if (fileItems != null) {
+				for (int i = 0; i < fileItems.length; i++) {
+					if (fileItems[i] != null && !fileItems[i].isUploadOver()) {
+						result = false;
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	/**
+	 * 停止上传
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public void stopDownload() throws IOException {
+		this.stop = true;
+	}
+
+	/**
+	 * 继续上传
+	 * 
+	 * @author huchenpu
+	 * @createDate 2016-5-22
+	 * @throws IOException
+	 */
+	public void resumeDownload(){
+		try {
+			this.stop = false;
+			readPosInfo();
+			this.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * 将写入点数据保存在临时文件中
+	 * 
+	 * @author hoojo
+	 * @createDate 2011-9-23 下午05:25:37
+	 * @throws IOException
+	 */
+	private void writePosInfo() throws IOException {
+		DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
+		dos.writeInt(startPos.length);
+		for (int i = 0; i < startPos.length; i++) {
+			dos.writeLong(fileItems[i].getStartPos());
+			dos.writeLong(fileItems[i].getEndPos());
+			dos.writeLong(fileItems[i].getLength());
+			// LogUtils.info("[" + fileItem[i].getStartPos() + "#" + fileItem[i].getEndPos() + "]");
+		}
+		dos.close();
+	}
+
+	/**
+	 * <b>function:</b>读取写入点的位置信息
+	 * 
+	 * @author hoojo
+	 * @createDate 2011-9-23 下午05:30:29
+	 * @throws IOException
+	 */
+	private void readPosInfo() throws IOException {
+		DataInputStream dis = new DataInputStream(new FileInputStream(tempFile));
+		int startPosLength = dis.readInt();
+		startPos = new long[startPosLength];
+		endPos = new long[startPosLength];
+		segmentLengths = new long[startPosLength];
+		for (int i = 0; i < startPosLength; i++) {
+			startPos[i] = dis.readLong();
+			endPos[i] = dis.readLong();
+			segmentLengths[i] = dis.readLong();
+		}
+		dis.close();
+	}
+
+
+	public FileInfo getDownloadInfo() {
+		return uploadInfo;
+	}
+
+	public void setDownloadInfo(FileInfo downloadInfo) {
+		this.uploadInfo = downloadInfo;
+	}
+	
 }

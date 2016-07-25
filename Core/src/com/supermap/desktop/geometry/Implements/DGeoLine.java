@@ -2,6 +2,7 @@ package com.supermap.desktop.geometry.Implements;
 
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.data.Point2Ds;
 import com.supermap.desktop.Application;
@@ -93,10 +94,13 @@ public class DGeoLine extends AbstractGeometry implements IMultiPartFeature<Poin
 	@Override
 	public Geometry[] divide() {
 		if (this.geoLine != null) {
+			GeoStyle geoStyle = this.geoLine.getStyle();
 			Geometry[] geometries = new Geometry[this.geoLine.getPartCount()];
 
 			for (int i = 0; i < this.geoLine.getPartCount(); i++) {
-				geometries[i] = new GeoLine(this.geoLine.getPart(i));
+				GeoLine line = new GeoLine(this.geoLine.getPart(i));
+				line.setStyle(geoStyle == null ? null : geoStyle.clone());
+				geometries[i] = line;
 			}
 			return geometries;
 		}

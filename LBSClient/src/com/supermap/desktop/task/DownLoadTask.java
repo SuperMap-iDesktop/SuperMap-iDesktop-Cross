@@ -21,8 +21,12 @@ import com.supermap.desktop.utilities.CommonUtilities;
 
 public class DownLoadTask extends Task {
 
-	private ActionListener buttonNowRunListener;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ActionListener buttonNowRemoveListener;
+	private ActionListener buttonNowRunListener;
 	public DownLoadTask(FileInfo downloadInfo) {
 		super(downloadInfo);
 		
@@ -61,7 +65,6 @@ public class DownLoadTask extends Task {
 			this.buttonRun.setIcon(CommonUtilities.getImageIcon("Image_Stop.png"));
 		}
 	}	
-
 	private void buttonRemoveClicked() throws IOException {
 		if (!DownloadUtils.getBatchDownloadFileWorker(fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
