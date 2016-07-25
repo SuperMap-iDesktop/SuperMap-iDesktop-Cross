@@ -5,8 +5,12 @@ import java.util.concurrent.CancellationException;
 import javax.swing.SwingUtilities;
 
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-
-public class AttributeQueryTask extends CommonTask{
+/**
+ * 属性查询
+ * @author xie
+ *
+ */
+public class AttributeQueryTask extends Task{
 
 	/**
 	 * 
@@ -15,6 +19,8 @@ public class AttributeQueryTask extends CommonTask{
 
 	public AttributeQueryTask() {
 		super();
+		this.labelStatus.setVisible(false);
+		this.progressBar.setString("");
 //		progressBar.setString(LBSClientProperties.getString("String_AttributeQuery"));
 	}
 	

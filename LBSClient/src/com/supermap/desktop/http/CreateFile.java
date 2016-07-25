@@ -1,11 +1,10 @@
 package com.supermap.desktop.http;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -16,7 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
-import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -33,15 +31,17 @@ import com.supermap.desktop.utilities.StringUtilities;
  * @version 1.0
  */
 @SuppressWarnings("deprecation")
-public class CreateFile extends Thread {
+public class CreateFile {
 
 	// 待上传文件信息
 	private FileInfo uploadInfo;
 
 	// 上传是否完成
 	private boolean isCreated = false;
-
+	//
 	private boolean isFailed;
+	
+	
 
 	private static final int BUFF_LENGTH = 1024 * 8;
 
@@ -51,27 +51,20 @@ public class CreateFile extends Thread {
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
-	@Override
-	public void run() {
-		this.createFile();
-		// this.createDir();
-		// this.renameFile();
-		// appendFile();
-	}
+	
 
 	// 创建文件
-	private void createFile() {
+	public String createFile() {
+		String locationURL = "";
 		try {
 			// 第一步创建一个空文件
-			String locationURL = "";
 
 			String webFile = this.uploadInfo.getUrl();
 
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			File uploadFile = new File(this.uploadInfo.getFilePath());
-			webFile = String.format("%s%s?user.name=root&op=CREATE", webFile, this.uploadInfo.getFileName());
+			webFile = MessageFormat.format("{0}{1}?user.name=root&op=CREATE", webFile, this.uploadInfo.getFileName());
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
 			HttpPut requestPut = new HttpPut(webFile);
@@ -82,7 +75,6 @@ public class CreateFile extends Thread {
 					Header locationHeader = response.getFirstHeader("Location");
 					if (locationHeader == null) {
 						Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
-						return;
 					} else {
 						// 获取登陆成功之后跳转链接
 						locationURL = locationHeader.getValue();
@@ -100,7 +92,6 @@ public class CreateFile extends Thread {
 				if (response != null && response.getStatusLine().getStatusCode() == 201) {
 					Application.getActiveApplication().getOutput().output("HDFS file create success");
 					// 文件创建成功后利用Append命令在文件中追加内容
-					appendFile(uploadFile);
 				} else {
 					Application.getActiveApplication().getOutput().output("HDFS file create failed");
 				}
@@ -113,10 +104,11 @@ public class CreateFile extends Thread {
 			e.printStackTrace();
 		} finally {
 		}
+		return locationURL;
 	}
 
 	// 创建文件
-	private void appendFile(File uploadFile) {
+	public void appendFile() {
 		try {
 			String locationURL = "";
 
@@ -126,10 +118,8 @@ public class CreateFile extends Thread {
 				webFile += "/";
 			}
 			webFile = String.format("%s%s?user.name=root&op=APPEND", webFile, this.uploadInfo.getFileName());
-			HttpClient client = new DefaultHttpClient();
 			HttpPost requestPost = new HttpPost(webFile);
-
-			HttpResponse response = client.execute(requestPost);
+			HttpResponse response = new DefaultHttpClient().execute(requestPost);
 			if (response != null) {
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
 					Header locationHeader = response.getFirstHeader("Location");
@@ -152,8 +142,7 @@ public class CreateFile extends Thread {
 				fullPath += this.uploadInfo.getFileName();
 				// 上传文件
 				File file = new File(fullPath);
-				// 数据输入流,用于读取文件数据
-				// 每次读1KB数据
+				
 				FileEntity fileEntity = new FileEntity(file);
 				requestPost.setEntity(fileEntity);
 				response = new DefaultHttpClient().execute(requestPost);

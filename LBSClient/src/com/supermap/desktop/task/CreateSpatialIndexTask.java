@@ -5,7 +5,7 @@ import javax.swing.SwingUtilities;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 
-public class CreateSpatialIndexTask extends CommonTask {
+public class CreateSpatialIndexTask extends Task {
 	/**
 	 * 
 	 */

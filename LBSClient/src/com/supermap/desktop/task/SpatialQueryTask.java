@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 
-public class SpatialQueryTask extends CommonTask{
+public class SpatialQueryTask extends Task{
 
 	public SpatialQueryTask() {
 		super();

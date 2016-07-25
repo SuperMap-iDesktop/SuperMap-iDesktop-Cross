@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 
-public class KernelDensityRealtimeTask extends CommonTask{
+public class KernelDensityRealtimeTask extends Task{
 	/**
 	 * 
 	 */

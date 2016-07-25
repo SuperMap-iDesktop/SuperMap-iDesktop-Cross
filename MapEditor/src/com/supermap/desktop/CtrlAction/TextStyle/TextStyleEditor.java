@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.*;
@@ -21,12 +22,12 @@ public class TextStyleEditor extends AbstractEditor {
 	private IEditController editController = new EditControllerAdapter() {
 		@Override
 		public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0) {
-			resetRecordset(environment);
+			resetRecordset(environment.getMap());
 		}
 
 		@Override
 		public void undone(EditEnvironment environment, EventObject arg0) {
-			resetRecordset(environment);
+			resetRecordset(environment.getMap());
 		}
 	};
 	private MouseAdapter layerMouseListener;
@@ -36,26 +37,27 @@ public class TextStyleEditor extends AbstractEditor {
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
-		boolean isEditable = false;
-		isEditable = isLayerEditabled(isEditable);
+		boolean editable = isEditable(environment.getMap());
 		if (null != dialog) {
-			dialog.enabled(isEditable);
+			dialog.enabled(editable);
 		}
-		return isEditable && environment.getEditProperties().getSelectedGeometryCount() >= 1
+		return editable && environment.getEditProperties().getSelectedGeometryCount() >= 1
 				&& ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
 
 	}
 
-	private boolean isLayerEditabled(boolean isEditable) {
-		if (Application.getActiveApplication().getActiveForm() instanceof IFormMap
-				&& ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers().length > 0) {
-			Layer activeLayer = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0];
-
-			if (activeLayer != null && !activeLayer.isDisposed() && activeLayer.isEditable()) {
-				isEditable = true;
+	private boolean isEditable(Map map) {
+		try {
+			ArrayList<Layer> layers = MapUtilities.getLayers(map);
+			for (Layer layer : layers) {
+				if (layer.getDataset() == getActiveRecordset(map).getDataset() && layer.isEditable()) {
+					return true;
+				}
 			}
+		} catch (Exception ignore) {
+			// 地图dispose没接口判断
 		}
-		return isEditable;
+		return false;
 	}
 
 	@Override
@@ -63,8 +65,8 @@ public class TextStyleEditor extends AbstractEditor {
 		if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
 			environment.setEditController(this.editController);
 			dialog = TextStyleDialog.createInstance(environment);
-			if (null != getActiveRecordset(environment)) {
-				dialog.showDialog(getActiveRecordset(environment));
+			if (null != getActiveRecordset(environment.getMap())) {
+				dialog.showDialog(getActiveRecordset(environment.getMap()));
 			}
 		}
 		this.layerMouseListener = new MouseAdapter() {
@@ -72,7 +74,7 @@ public class TextStyleEditor extends AbstractEditor {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (null != dialog) {
-					dialog.enabled(isLayerEditabled(false));
+					dialog.enabled(isEditable(environment.getMap()));
 				}
 			}
 		};
@@ -80,21 +82,21 @@ public class TextStyleEditor extends AbstractEditor {
 
 			@Override
 			public void geometryAdded(GeometryEvent arg0) {
-				resetRecordset(environment);
+				resetRecordset(environment.getMap());
 			}
 		};
 		this.geometryDeletedListener = new GeometryDeletedListener() {
 
 			@Override
 			public void geometryDeleted(GeometryEvent arg0) {
-				resetRecordset(environment);
+				resetRecordset(environment.getMap());
 			}
 		};
 		this.geometryModifiedListener = new GeometryModifiedListener() {
 
 			@Override
 			public void geometryModified(GeometryEvent arg0) {
-				resetRecordset(environment);
+				resetRecordset(environment.getMap());
 			}
 		};
 
@@ -119,13 +121,13 @@ public class TextStyleEditor extends AbstractEditor {
 			@Override
 			public void activeFormChanged(final ActiveFormChangedEvent e) {
 				if (e.getNewActiveForm() instanceof IFormMap) {
-					resetRecordset((IFormMap) e.getNewActiveForm());
+					resetRecordset(((IFormMap) e.getNewActiveForm()).getMapControl().getMap());
 					((IFormMap) e.getNewActiveForm()).getMapControl().addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
 
 						@Override
 						public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
-							resetRecordset((IFormMap) e.getNewActiveForm());
-							dialog.enabled(isLayerEditabled(false));
+							resetRecordset(((IFormMap) e.getNewActiveForm()).getMapControl().getMap());
+							dialog.enabled(isEditable(((IFormMap) e.getNewActiveForm()).getMapControl().getMap()));
 						}
 					});
 				} else {
@@ -150,43 +152,26 @@ public class TextStyleEditor extends AbstractEditor {
 		}
 	}
 
-	private void resetRecordset(IFormMap formMap) {
-		if (null != dialog && null != getActiveRecordset(formMap)) {
-			dialog.showDialog(getActiveRecordset(formMap));
-		} else if (null == getActiveRecordset(formMap)) {
+	private void resetRecordset(Map map) {
+		if (null != dialog && null != getActiveRecordset(map)) {
+			dialog.showDialog(getActiveRecordset(map));
+		} else if (null == getActiveRecordset(map)) {
 			removeDialog();
 		}
 	}
 
-	private void resetRecordset(EditEnvironment environment) {
-		if (null != dialog && null != getActiveRecordset(environment)) {
-			dialog.showDialog(getActiveRecordset(environment));
-		} else if (null == getActiveRecordset(environment)) {
-			removeDialog();
-		}
-	}
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
 		removeEvents(environment);
 	}
 
-	private Recordset getActiveRecordset(IFormMap formMap) {
+	private Recordset getActiveRecordset(Map map) {
 		Recordset recordset = null;
-		if (formMap.getMapControl().getMap().findSelection(true).length > 0) {
+		if (map.findSelection(true).length > 0) {
 			Selection selection = MapUtilities.getActiveMap().findSelection(true)[0];
 			recordset = selection.toRecordset();
 		}
 		return recordset;
 	}
-
-	private Recordset getActiveRecordset(EditEnvironment environment) {
-		Recordset recordset = null;
-		if (environment.getMap().findSelection(true).length > 0) {
-			Selection selection = MapUtilities.getActiveMap().findSelection(true)[0];
-			recordset = selection.toRecordset();
-		}
-		return recordset;
-	}
-
 }
