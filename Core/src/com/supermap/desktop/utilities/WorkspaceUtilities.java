@@ -653,6 +653,26 @@ public class WorkspaceUtilities {
 		return copyWorkspace;
 	}
 
+	public static boolean deleteFileWorkspace(String workSpaceFilePath) {
+		if (StringUtilities.isNullOrEmpty(workSpaceFilePath)) {
+			return true;
+		}
+		String end = workSpaceFilePath.substring(workSpaceFilePath.length() - 5, workSpaceFilePath.length());
+		if (!FileUtilities.delete(workSpaceFilePath)) {
+			return false;
+		}
+		if (end.equalsIgnoreCase(".sxwu")) {
+			String prefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
+			boolean deleteBru = FileUtilities.delete(prefix + "bru");
+			boolean deleteLsl = FileUtilities.delete(prefix + "lsl");
+			boolean deleteSym = FileUtilities.delete(prefix + "sym");
+			// 不加变量直接写在条件里会导致前面的删除失败时，后面的就不进行操作了
+			if (!deleteBru || !deleteLsl || !deleteSym) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
 

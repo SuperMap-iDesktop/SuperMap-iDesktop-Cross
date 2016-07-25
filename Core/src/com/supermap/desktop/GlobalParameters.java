@@ -3,6 +3,7 @@ package com.supermap.desktop;
 import com.supermap.data.AltitudeMode;
 import com.supermap.desktop.utilities.AltitudeModeUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -11,7 +12,34 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
 import java.util.HashMap;
+
+/**
+ * 　　　　　　　　┏┓　　　┏┓+ +
+ * 　　　　　　　┏┛┻━━━┛┻┓ + +
+ * 　　　　　　　┃　　　　　　　┃
+ * 　　　　　　　┃　　　━　　　┃ ++ + + +
+ * 　　　　　　 ████━████ ┃+
+ * 　　　　　　　┃　　　　　　　┃ +
+ * 　　　　　　　┃　　　┻　　　┃
+ * 　　　　　　　┃　　　　　　　┃ + +
+ * 　　　　　　　┗━┓　　　┏━┛
+ * 　　　　　　　　　┃　　　┃
+ * 　　　　　　　　　┃　　　┃ + + + +
+ * 　　　　　　　　　┃　　　┃　　　　Code is far away from bug with the animal protecting
+ * 　　　　　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug
+ * 　　　　　　　　　┃　　　┃
+ * 　　　　　　　　　┃　　　┃　　+
+ * 　　　　　　　　　┃　 　　┗━━━┓ + +
+ * 　　　　　　　　　┃ 　　　　　　　┣┓
+ * 　　　　　　　　　┃ 　　　　　　　┏┛
+ * 　　　　　　　　　┗┓┓┏━┳┓┏┛ + + + +
+ * 　　　　　　　　　　┃┫┫　┃┫┫
+ * 　　　　　　　　　　┗┻┛　┗┻┛+ + + +
+ *
+ * 初始化资源，节点名称不能有 "_" 字符
+ */
 
 public class GlobalParameters {
 
@@ -275,7 +303,7 @@ public class GlobalParameters {
 		if (value != null) {
 			logFolder = value;
 		}
-		System.setProperty("com.supermap.desktop.log4j.home", value);
+		System.setProperty("com.supermap.desktop.log4j.home", logFolder);
 	}
 	//endregion
 
@@ -441,21 +469,38 @@ public class GlobalParameters {
 		if (resources != null) {
 			return;
 		}
-		startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
-//		String appDataPath = FileUtilities.getAppDataPath();
-//		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
-//		if (appDataPath == null) {
-//			startupXml = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
-//		} else {
-//			if (!new File(defaultFilePath).exists()) {
-//				startupXml = defaultFilePath;
-//			}
-//		}
-
-		if (startupXml == null) {
-			return;
+		String appDataPath = FileUtilities.getAppDataPath();
+		String defaultFilePath = appDataPath + "Startup" + File.separator + startupFileName;
+		String startUpFile = PathUtilities.getFullPathName(_XMLTag.FILE_STARTUP_XML, false);
+		String loadXmlPath = null;
+		// loadXmlPath为加载的配置文件，startupXml为保存的路径
+		if (appDataPath == null) {
+			if (new File(startUpFile).exists()) {
+				startupXml = startUpFile;
+			} else {
+				return;
+			}
+		} else {
+			if (!new File(defaultFilePath).exists()) {
+				if (new File(startUpFile).exists()) {
+					//
+					loadXmlPath = FileUtilities.copyFile(startUpFile, defaultFilePath, true) ? startUpFile : defaultFilePath;
+					startupXml = defaultFilePath;
+				} else {
+					// 路径获得，文件不存在，包内文件也不存在，留着路径后面保存时直接保存
+					startupXml = defaultFilePath;
+					return;
+				}
+			} else {
+				// 文件存在直接读取
+				startupXml = defaultFilePath;
+			}
 		}
-		Document startupDoc = XmlUtilities.getDocument(startupXml);
+		if (loadXmlPath == null) {
+			loadXmlPath = startupXml;
+		}
+
+		Document startupDoc = XmlUtilities.getDocument(loadXmlPath);
 		resources = new HashMap<>();
 		if (startupDoc != null) {
 			NodeList childNodes = startupDoc.getChildNodes();

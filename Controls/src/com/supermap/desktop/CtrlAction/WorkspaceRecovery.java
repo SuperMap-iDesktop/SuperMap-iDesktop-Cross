@@ -8,6 +8,7 @@ import com.supermap.data.WorkspaceSavedEvent;
 import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.properties.CoreProperties;
@@ -86,6 +87,7 @@ public class WorkspaceRecovery {
 					Document document = XmlUtilities.getDocument(file.getPath());
 					if (document != null && JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_ExistUnSaveWorkspace")) == JOptionPane.OK_OPTION) {
 						recoveryFromFile(file);
+						ToolbarUIUtilities.updataToolbarsState();
 					} else {
 						deleteAutoSaveConfigFile(file);
 					}
@@ -95,6 +97,7 @@ public class WorkspaceRecovery {
 	}
 
 	private void recoveryFromFile(File file) {
+
 		FileLocker fileLocker = new FileLocker(file);
 		if (fileLocker.tryLock()) {
 			RandomAccessFile randomAccessFile = fileLocker.getRandomAccessFile();
@@ -112,9 +115,19 @@ public class WorkspaceRecovery {
 						workSpaceFilePath = workspacePath.getChildNodes().item(0).getNodeValue();
 					}
 
-					Node workspaceConnection = XmlUtilities.getChildElementNodeByName(root, "WorkspaceConnection");
-					Node workspaceConnectionInfoNode = XmlUtilities.getChildElementNodeByName(workspaceConnection, "WorkspaceConnectionInfo");
+
+					Node workspaceConnectionInfoNode = XmlUtilities.getChildElementNodeByName(root, "WorkspaceConnectionInfo");
 					final WorkspaceConnectionInfo workspaceConnectionInfo = WorkspaceConnectionInfoUtilities.fromXml(workspaceConnectionInfoNode);
+
+					String server = workspaceConnectionInfo.getServer();
+					String recoveringWorkspacePath = getRecoveringWorkspacePath(server);
+					//备份一下
+					if (copyWorkspaceToRecoveringPath(server, recoveringWorkspacePath)) {
+						workspaceConnectionInfo.setServer(recoveringWorkspacePath);
+						WorkspaceUtilities.deleteFileWorkspace(server);
+					} else {
+						LogUtilities.outPut("Copy Recovery Workspace Failed.");
+					}
 
 
 					Node datasources = XmlUtilities.getChildElementNodeByName(root, "Datasources");
@@ -178,29 +191,17 @@ public class WorkspaceRecovery {
 						workspaceSavedAsListener = new WorkspaceSavedAsListener() {
 							@Override
 							public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-								if (new File(deleteServer).exists()) {
-									if (new File(deleteServer).delete()) {
-										workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
-										workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
-									}
-								} else {
-									workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
-									workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
-								}
+								FileUtilities.delete(deleteServer);
+								workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
+								workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
 							}
 						};
 						workspaceSavedListener = new WorkspaceSavedListener() {
 							@Override
 							public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-								if (new File(deleteServer).exists()) {
-									if (new File(deleteServer).delete()) {
-										workspaceSavedEvent.getWorkspace().removeSavedListener(this);
-										workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
-									}
-								} else {
-									workspaceSavedEvent.getWorkspace().removeSavedListener(this);
-									workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
-								}
+								FileUtilities.delete(deleteServer);
+								workspaceSavedEvent.getWorkspace().removeSavedListener(this);
+								workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
 							}
 						};
 						Application.getActiveApplication().getWorkspace().addSavedAsListener(workspaceSavedAsListener);
@@ -216,6 +217,42 @@ public class WorkspaceRecovery {
 			}
 		}
 	}
+
+	private boolean copyWorkspaceToRecoveringPath(String workSpaceFilePath, String recoveringWorkspacePath) {
+		String end = workSpaceFilePath.substring(workSpaceFilePath.length() - 5, workSpaceFilePath.length());
+		// 复制工作空间
+		if (!FileUtilities.copyFile(workSpaceFilePath, recoveringWorkspacePath, true)) {
+			return false;
+		}
+		if (end.equalsIgnoreCase(".sxwu")) {
+			String recoveringWorkspacePrefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
+			String recoveringWorkspacePathPrefix = recoveringWorkspacePath.substring(0, recoveringWorkspacePath.length() - 4);
+			if (!FileUtilities.copyFile(recoveringWorkspacePrefix + "bru", recoveringWorkspacePathPrefix + "bru", true) ||
+					!FileUtilities.copyFile(recoveringWorkspacePrefix + "lsl", recoveringWorkspacePathPrefix + "lsl", true) ||
+					!FileUtilities.copyFile(recoveringWorkspacePrefix + "sym", recoveringWorkspacePathPrefix + "sym", true)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 获得一个空的恢复目录
+	 *
+	 * @return 恢复目录路径
+	 */
+	private String getRecoveringWorkspacePath(String workSpaceFilePath) {
+		String defaultPath = FileUtilities.getAppDataPath() + "tempWorkspace" + File.separator + "RecoveringWorkspace";
+		int i = 0;
+		String path = defaultPath + File.separator;
+		while (new File(path).exists() && !FileUtilities.delete(path)) {
+			i++;
+			path = defaultPath + (i == 0 ? "" : "_" + i) + File.separator;
+		}
+		String name = new File(workSpaceFilePath).getName();
+		return path + name;
+	}
+
 
 	private OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo workspaceConnectionInfo) {
 		CursorUtilities.setWaitCursor();
@@ -233,19 +270,15 @@ public class WorkspaceRecovery {
 				try {
 					Node rootNode = document.getChildNodes().item(0);
 					if (rootNode != null) {
-						Node workspaceConnection = XmlUtilities.getChildElementNodeByName(rootNode, "WorkspaceConnection");
-						if (workspaceConnection != null) {
-							Node workspaceConnectionInfo = XmlUtilities.getChildElementNodeByName(workspaceConnection, "WorkspaceConnectionInfo");
-							if (workspaceConnectionInfo != null) {
-								Node server = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfo, "Server");
-								if (server != null) {
-									NodeList childNodes = server.getChildNodes();
-									if (childNodes != null && childNodes.getLength() > 0) {
-
-										String workspacePath = childNodes.item(0).getNodeValue();
-										if (!StringUtilities.isNullOrEmpty(workspacePath) && new File(workspacePath).exists()) {
-											new File(workspacePath).delete();
-										}
+						Node workspaceConnectionInfo = XmlUtilities.getChildElementNodeByName(rootNode, "WorkspaceConnectionInfo");
+						if (workspaceConnectionInfo != null) {
+							Node server = XmlUtilities.getChildElementNodeByName(workspaceConnectionInfo, "Server");
+							if (server != null) {
+								NodeList childNodes = server.getChildNodes();
+								if (childNodes != null && childNodes.getLength() > 0) {
+									String workspacePath = childNodes.item(0).getNodeValue();
+									if (!StringUtilities.isNullOrEmpty(workspacePath) && new File(workspacePath).exists()) {
+										WorkspaceUtilities.deleteFileWorkspace(workspacePath);
 									}
 								}
 							}
