@@ -280,9 +280,7 @@ public class FileUtilities {
 			}
 		} else {
 			// 创建目的目录
-			System.out.println("目的目录不存在，准备创建。。。");
 			if (!destDir.mkdirs()) {
-				System.out.println("复制目录失败：创建目的目录失败！");
 				return false;
 			}
 		}
@@ -303,11 +301,7 @@ public class FileUtilities {
 					break;
 			}
 		}
-		if (!flag) {
-			return false;
-		} else {
-			return true;
-		}
+		return flag;
 	}
 
 }

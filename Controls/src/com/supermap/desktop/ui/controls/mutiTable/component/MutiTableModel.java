@@ -3,14 +3,13 @@
  */
 package com.supermap.desktop.ui.controls.mutiTable.component;
 
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.table.AbstractTableModel;
-
-import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
 
 /**
  * @author 李海軍
@@ -188,7 +187,9 @@ public class MutiTableModel extends AbstractTableModel {
 	 */
 	public void removeRow(int row) {
 		contents.remove(row);
-		rowTagContents.remove(row);
+		if (rowTagContents.size() > row) {
+			rowTagContents.remove(row);
+		}
 	}
 
 	/**
@@ -201,6 +202,8 @@ public class MutiTableModel extends AbstractTableModel {
 		for (int ii = 0; ii < count; ii++) {
 			if (contents.size() > row) {
 				contents.remove(row);
+			}
+			if (rowTagContents.size() > row) {
 				rowTagContents.remove(row);
 			}
 		}
@@ -213,14 +216,16 @@ public class MutiTableModel extends AbstractTableModel {
 	 */
 	public void removeRows(int[] rows) {
 		// 初始化内容存储
-		Vector<Object> removeVector = new Vector<Object>(rows.length);
-		ArrayList<Object> removeRowTag = new ArrayList<Object>(rows.length);
-		for (int i = 0; i < rows.length; i++) {
-			removeVector.add(contents.get(rows[i]));
-			removeRowTag.add(this.rowTagContents.get(rows[i]));
+		Vector<Object> removeVector = new Vector<>(rows.length);
+		ArrayList<Object> removeRowTag = new ArrayList<>(rows.length);
+		for (int row : rows) {
+			removeVector.add(contents.get(row));
+			if (removeRowTag.size() > row) {
+				removeRowTag.add(this.rowTagContents.get(row));
+			}
 		}
 		contents.removeAll(removeVector);
-		removeRowTag.removeAll(removeRowTag);
+		rowTagContents.removeAll(removeRowTag);
 	}
 
 	/*
