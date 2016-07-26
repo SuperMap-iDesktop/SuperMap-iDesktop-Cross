@@ -64,7 +64,11 @@ public abstract class UploadUtils {
     	return batchUPloadFile;
     }
 	
-    private static transient CopyOnWriteArrayList<FileSteppedListener> stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
+    public static Map<FileInfo, BatchUploadFile> getHashMap() {
+		return hashMap;
+	}
+
+	private static transient CopyOnWriteArrayList<FileSteppedListener> stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
 	public static synchronized void addNewWindowListener(FileSteppedListener listener) {
 		if (stepListeners == null) {
 			stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();

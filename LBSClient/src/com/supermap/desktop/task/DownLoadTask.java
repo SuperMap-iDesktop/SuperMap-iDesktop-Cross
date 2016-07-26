@@ -68,7 +68,7 @@ public class DownLoadTask extends Task {
 	private void buttonRemoveClicked() throws IOException {
 		if (!DownloadUtils.getBatchDownloadFileWorker(fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
-			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(ControlsProperties.getString("String_DownLoadInfo"),
+			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"),
 					this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				DownloadUtils.getBatchDownloadFileWorker(fileInfo).stopDownload();
 				removeDownloadInfoItem();
@@ -85,7 +85,7 @@ public class DownLoadTask extends Task {
 	private void removeDownloadInfoItem() {
 		CommonUtilities.removeItem(this);
 		Application.getActiveApplication().getOutput()
-				.output(MessageFormat.format(ControlsProperties.getString("String_RemoveDownLoadMessionInfo"), this.fileInfo.getFileName()));
+				.output(MessageFormat.format(LBSClientProperties.getString("String_RemoveDownLoadMessionInfo"), this.fileInfo.getFileName()));
 	}
 	@Override
 	public void setCancel(boolean isCancel) {

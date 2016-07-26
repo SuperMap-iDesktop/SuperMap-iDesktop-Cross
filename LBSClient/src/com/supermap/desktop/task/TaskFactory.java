@@ -22,7 +22,7 @@ public class TaskFactory implements ITaskFactory {
 		}
 		if (taskEnum.equals(TaskEnum.UPLOADTASK)) {
 			// 上传任务
-			task = new UploadTask();
+			task = new UploadTask(fileInfo);
 		}
 		if (taskEnum.equals(TaskEnum.KERNELDENSITYTASK)) {
 			// 计算热度图任务

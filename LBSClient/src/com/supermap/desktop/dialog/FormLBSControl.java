@@ -18,6 +18,7 @@ import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.http.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
@@ -294,7 +295,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		 */
 		private static final long serialVersionUID = 1L;
 		private String[] title = new String[]{"Name","Size","BlockSize","Owner","Group","Permission","Replication"};
-//		private String[] title = new String[] { "Permission", "Owner", "Group", "Size", "Replication", "BlockSize", "Name" };
 
 		/**
 		 * 构造函数。
@@ -387,7 +387,18 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			this.setText(String.valueOf(index + 1));
+			HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+			if (define.isDir()) {
+				this.setText(LBSClientProperties.getString("String_File"));
+				this.setIcon(new ImageIcon(
+				FileChooserControl.class
+						.getResource("/com/supermap/desktop/controlsresources/Image_DatasetGroup_Normal.png")));
+			}else{
+				this.setText(LBSClientProperties.getString("String_Dir"));
+				this.setIcon(new ImageIcon(
+				FileChooserControl.class
+						.getResource("/com/supermap/desktop/controlsresources/file.png")));
+			}
 			this.setPreferredSize(new Dimension(100, 50));
 			return this;
 		}

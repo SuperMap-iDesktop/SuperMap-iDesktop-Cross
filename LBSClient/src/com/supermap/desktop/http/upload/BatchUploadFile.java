@@ -284,7 +284,7 @@ public class BatchUploadFile extends Thread {
 	 * @createDate 2016-5-22
 	 * @throws IOException
 	 */
-	public void stopDownload() throws IOException {
+	public void stopUpload() throws IOException {
 		this.stop = true;
 	}
 
