@@ -9,7 +9,7 @@
     </splashItems>
   </splash>
   <!--工作空间关闭时，是否提示保存-->
-  <workspace closenotify="true" visoncheck="true">
+  <workspace closenotify="true" closeMemoryDatasourceNotify="true" visoncheck="true">
   </workspace>
   <!--是否显示工具提示-->
   <ribbon panelShow="true" screenTipShow="true"/>

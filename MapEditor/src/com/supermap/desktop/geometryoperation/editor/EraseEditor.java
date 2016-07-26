@@ -1,17 +1,5 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
 import com.supermap.data.DatasetType;
 import com.supermap.data.EditHistory;
 import com.supermap.data.EditType;
@@ -44,12 +32,20 @@ import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 // @formatter:off
 /**
  * 擦除，选中面特性对象或者CAD复合对象时，激活功能。
  * 按下 Ctrl，切换擦除内部或者外部
- * @author highsad
  *
+ * @author highsad
  */
 // @formatter:on
 public class EraseEditor extends AbstractEditor {
@@ -91,6 +87,7 @@ public class EraseEditor extends AbstractEditor {
 					// 判断如果只按下了 Ctrl 键，则进行擦除模式的切换
 					if (editModel.pressedKey == KeyEvent.VK_CONTROL) {
 						setIsEraseExternal(!editModel.isEraseExternal, editModel);
+						environment.getMapControl().repaint();
 					}
 				} finally {
 					editModel.pressedKey = 0;
@@ -171,7 +168,7 @@ public class EraseEditor extends AbstractEditor {
 
 	/**
 	 * 获取擦除对象的 Tracking 风格
-	 * 
+	 *
 	 * @return
 	 */
 	private GeoStyle getSourceStyle() {
@@ -245,8 +242,7 @@ public class EraseEditor extends AbstractEditor {
 
 	/**
 	 * 擦除对象
-	 * 
-	 * @param geometry
+	 *
 	 * @return
 	 */
 	private Geometry erase(EditHistory editHistory, Recordset recordset, EraseEditModel editModel) {
@@ -284,11 +280,10 @@ public class EraseEditor extends AbstractEditor {
 
 	/**
 	 * 擦除内部
-	 * 
+	 *
 	 * @param editHistory
 	 * @param recordset
-	 * @param geometry
-	 *            被擦除对象
+	 * @param geometry    被擦除对象
 	 * @return
 	 */
 	private Geometry eraseInside(EditHistory editHistory, Recordset recordset, IGeometry geometry, EraseEditModel editModel) {
@@ -342,10 +337,8 @@ public class EraseEditor extends AbstractEditor {
 	/**
 	 * @param editHistory
 	 * @param recordset
-	 * @param geometry
-	 *            被擦除对象
-	 * @param editModel
-	 *            与 EditEnvironment 绑定的过程数据
+	 * @param geometry    被擦除对象
+	 * @param editModel   与 EditEnvironment 绑定的过程数据
 	 * @return
 	 */
 	private Geometry eraseExternal(EditHistory editHistory, Recordset recordset, IGeometry geometry, EraseEditModel editModel) {
@@ -389,7 +382,7 @@ public class EraseEditor extends AbstractEditor {
 
 	/**
 	 * 擦除复合对象
-	 * 
+	 *
 	 * @param geoCompound
 	 * @return
 	 */
@@ -438,10 +431,16 @@ public class EraseEditor extends AbstractEditor {
 
 			@Override
 			public void run() {
+//				Container parent = editModel.labelChangeMode.getParent();
 				if (isEraseExternal) {
+//					parent.remove(editModel.labelChangeMode);
 					editModel.labelChangeMode.setText(MapEditorProperties.getString("String_EraseEditor_EraseTipExternal"));
+//					editModel.tip.addLabel(editModel.labelChangeMode);
 				} else {
+//					parent.remove(editModel.labelChangeMode);
 					editModel.labelChangeMode.setText(MapEditorProperties.getString("String_EraseEditor_EraseTipInside"));
+//					editModel.tip.addLabel(editModel.labelChangeMode);
+
 				}
 			}
 		});

@@ -60,6 +60,7 @@ public class MirrorEditor extends AbstractEditor {
 
 			if (editModel.isTracking) {
 				editModel.isTracking = false;
+				editModel.setTipMessage(MapEditorProperties.getString("String_GeometryOperation_MirrorInfo"));
 				MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 				environment.getMap().refreshTrackingLayer();
 			}
@@ -71,6 +72,7 @@ public class MirrorEditor extends AbstractEditor {
 
 			if (!editModel.isTracking) {
 				editModel.isTracking = true;
+				editModel.setTipMessage(MapEditorProperties.getString("String_LeftClickToEnd"));
 			}
 		}
 

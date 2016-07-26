@@ -101,6 +101,7 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
@@ -108,7 +109,6 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.LayoutUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
@@ -1678,6 +1678,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			DefaultMutableTreeNode addDatasourceNode = new DefaultMutableTreeNode(openedDatasourceNodeData);
 
 			treeModelTemp.insertNodeInto(addDatasourceNode, treeNodeDatasources, treeNodeDatasources.getChildCount());
+			TreePath path = JTreeUIUtilities.getPath(addDatasourceNode);
+			WorkspaceTree.this.expandPath(path);
 
 			addDataset(event.getDatasource(), addDatasourceNode);
 
@@ -2252,7 +2254,12 @@ public class WorkspaceTree extends JTree implements IDisposable {
 								}
 								// 打开数据源类型的文件
 								if (datasourceType == getFileType(file)) {
-									DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false,true);
+									DatasourceOpenFileUtilties.resetReadOnlyProperties();
+									Datasource datasource = DatasourceOpenFileUtilties.openDatasourceFile(file, false);
+//									if (datasource != null) {
+//
+//									}
+//									DatasourceUtilities.openFileDatasource(file.getAbsolutePath(), null, false,true);
 								}
 							}
 							dtde.dropComplete(true);// 指示拖拽操作已完成
