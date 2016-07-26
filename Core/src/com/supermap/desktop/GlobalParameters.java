@@ -54,7 +54,8 @@ public class GlobalParameters {
  * 获取或设置一个值，指示是否显示启动画面，初始值为true。
  *
  * @return
- *//*
+ */
+/*
 	private static Boolean g_showSplash = true;
 
 	public static Boolean isShowSplash() {
@@ -579,6 +580,7 @@ public class GlobalParameters {
 		initLogInfo();
 		initCamera();
 		initDesktopTitle();
+		initWorkspaceInfo();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
@@ -646,6 +648,7 @@ public class GlobalParameters {
 			setCameraTilt(Double.valueOf(value));
 		}
 	}
+
 
 	//region 相机高度模式
 	private static AltitudeMode cameraAltitudeMode = AltitudeMode.ABSOLUTE;
@@ -720,14 +723,95 @@ public class GlobalParameters {
 	//endregion
 	//endregion
 
+	//region 工作空间相关提示
+	private static void initWorkspaceInfo() {
+		initIsShowFormClosingInfo();
+		initAutoCloseEmptyWindow();
+		initCloseMemoryDatasourceNotify();
+		initWorkspaceCloseNotify();
+	}
+
+	//region 自动关闭空窗口
+	private static boolean isAutoCloseEmptyWindow = false;
+
+	private static void initAutoCloseEmptyWindow() {
+		String value = getValue("_startup_dataWindow", "showCloseInfoForm");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setIsAutoCloseEmptyWindow(result);
+		}
+	}
+
+	public static boolean isAutoCloseEmptyWindow() {
+		return isAutoCloseEmptyWindow;
+	}
+
+
+	public static void setIsAutoCloseEmptyWindow(boolean isAutoCloseEmptyWindow) {
+		GlobalParameters.isAutoCloseEmptyWindow = isAutoCloseEmptyWindow;
+	}
+
+	//endregion
+	//region 关闭窗口提示保存
+	private static void initIsShowFormClosingInfo() {
+		String value = getValue("_startup_dataWindow", "showCloseInfoForm");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setIsShowFormClosingInfo(result);
+		}
+	}
+
+	private static boolean isShowFormClosingInfo = true;
+
+	public static void setIsShowFormClosingInfo(boolean isShowFormClosingInfo) {
+		GlobalParameters.isShowFormClosingInfo = isShowFormClosingInfo;
+	}
+
 	public static boolean isShowFormClosingInfo() {
-		boolean result = true;
+		return isShowFormClosingInfo;
+	}
+	//endregion
+	//region 关闭工作空间提示有内存数据源
+
+	private static boolean isCloseMemoryDatasourceNotify = true;
+
+	private static void initCloseMemoryDatasourceNotify() {
+		String value = getValue("_startup_workspace", "closeMemoryDatasourceNotify");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setIsCloseMemoryDatasourceNotify(result);
+		}
+	}
+
+	public static boolean isCloseMemoryDatasourceNotify() {
+		return isCloseMemoryDatasourceNotify;
+	}
+
+	public static void setIsCloseMemoryDatasourceNotify(boolean isCloseMemoryDatasourceNotify) {
+		GlobalParameters.isCloseMemoryDatasourceNotify = isCloseMemoryDatasourceNotify;
+	}
+
+	//endregion
+	//region 关闭工作空间提示保存
+	private static boolean isWorkspaceCloseNotify = true;
+
+	private static void initWorkspaceCloseNotify() {
 		String value = getValue("_startup_workspace", "closenotify");
 		if (value != null) {
-			result = Boolean.valueOf(value);
+			boolean result = Boolean.valueOf(value);
+			setIsWorkspaceCloseNotify(result);
 		}
-		return result;
 	}
+
+	public static boolean isWorkspaceCloseNotify() {
+		return isWorkspaceCloseNotify;
+	}
+
+	public static void setIsWorkspaceCloseNotify(boolean isWorkspaceCloseNotify) {
+		GlobalParameters.isWorkspaceCloseNotify = isWorkspaceCloseNotify;
+	}
+	//endregion
+	//endregion
 
 
 }

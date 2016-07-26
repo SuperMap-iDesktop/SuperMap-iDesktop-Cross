@@ -54,11 +54,20 @@ public class JDialogSettings extends SmDialog {
 	}
 
 	private void initComponents() {
-		this.setSize(400, 300);
+		this.setSize(600, 400);
 		this.setLocationRelativeTo(null);
 		this.setTitle(GlobalParameters.getDesktopTitle());
 		listModel = new DefaultListModel<>();
 		jList.setModel(listModel);
+		jList.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel listCellRendererComponent = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				listCellRendererComponent.setHorizontalAlignment(CENTER);
+				listCellRendererComponent.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
+				return listCellRendererComponent;
+			}
+		});
 		for (String list : lists) {
 			if (getRightPanel(list) != null) {
 				listModel.addElement(list);
@@ -69,12 +78,12 @@ public class JDialogSettings extends SmDialog {
 	private void initLayout() {
 		panelButtons.setLayout(new GridBagLayout());
 		panelButtons.add(smButtonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE));
-		panelButtons.add(smButtonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+		panelButtons.add(smButtonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
 
 		panelRight.setLayout(new GridBagLayout());
 
 		this.setLayout(new GridBagLayout());
-		this.add(jList, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+		this.add(jList, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH).setIpad(50, 0));
 		this.add(panelRight, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.BOTH));
 		this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 10, 10).setFill(GridBagConstraints.BOTH));
 	}

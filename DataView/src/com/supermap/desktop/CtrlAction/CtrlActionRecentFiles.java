@@ -5,8 +5,9 @@ import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.dataview.DataViewProperties;
-import com.supermap.desktop.dataviewresources.utilties.DatasourceOpenFileUtilties;
 import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.implement.CtrlAction;
@@ -72,7 +73,7 @@ public class CtrlActionRecentFiles extends CtrlAction {
 						Datasource datasource = DatasourceOpenFileUtilties.openFileDatasource(file);
 						if (datasource == null) {
 							Application.getActiveApplication().getOutput()
-									.output(MessageFormat.format(DataViewProperties.getString("String_DataSource_Openfail"), file.getPath()));
+									.output(MessageFormat.format(ControlsProperties.getString("String_DataSource_Openfail"), file.getPath()));
 						}
 					}
 				} else {

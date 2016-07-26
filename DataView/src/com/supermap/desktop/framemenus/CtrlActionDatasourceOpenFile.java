@@ -3,7 +3,7 @@ package com.supermap.desktop.framemenus;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dataviewresources.utilties.DatasourceOpenFileUtilties;
+import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 
 public class CtrlActionDatasourceOpenFile extends CtrlAction {

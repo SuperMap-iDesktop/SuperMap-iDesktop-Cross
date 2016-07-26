@@ -1,20 +1,14 @@
 package com.supermap.desktop.geometryoperation.control;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
+import com.supermap.ui.MapControl;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import com.supermap.ui.MapControl;
 
 public class MapControlTip {
 	private MapControl mapControl;
