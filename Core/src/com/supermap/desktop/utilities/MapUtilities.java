@@ -16,7 +16,7 @@ public class MapUtilities {
 	private MapUtilities() {
 		// 工具类不提供构造函数
 	}
-
+	
 	/**
 	 * 获取MapControl
 	 *
@@ -292,25 +292,33 @@ public class MapUtilities {
 	// return layerCaption;
 	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
-		// 设置动态投影
-		if (map.getLayers().getCount() == 0) {
-			// 第一次打开地图时不需要判断是否打开动态投影
-			return;
+		
+		if (map.getLayers().getCount() == 0 && datasets.length == 1) {
+			// 打开新地图时，如果只有一个数据集添加上来，不需要设置动态投影
+			return ;
+		} else {
+			// 其他情况下都需要判断是否设置动态投影
+			resetDynamic(datasets, map);
 		}
+	}
+
+	private static boolean resetDynamic(Dataset[] datasets, Map map) {
+		// 设置动态投影
+		boolean dynamicHasReset = false;
 		for (Dataset dataset : datasets) {
-			if (!map.isDynamicProjection() && dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-				if (!dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
-					if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
-							CoreProperties.getString("String_TitleCoordSys"))) {
-						map.setDynamicProjection(true);
-						break;
-					} else {
-						break;
-					}
+			if (!map.isDynamicProjection() && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+				if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
+						CoreProperties.getString("String_TitleCoordSys"))) {
+					map.setDynamicProjection(true);
+					dynamicHasReset = true;
+					break;
+				} else {
+					dynamicHasReset = true;
+					break;
 				}
 			}
 		}
-
+		return dynamicHasReset;
 	}
 
 	/**

@@ -1,23 +1,26 @@
 package com.supermap.desktop.http.upload;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.http.LogUtils;
-import com.supermap.desktop.http.SaveItemFile;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * <b>function:</b> 单线程上传文件
@@ -48,6 +51,8 @@ public class UploadFile extends Thread {
 
 	private OutputStream outputStream;
 
+	private FileInputStream stream;
+	
 	private InputStream inputStream;
 
 	private boolean isUploadOver;
@@ -55,7 +60,7 @@ public class UploadFile extends Thread {
 	// 上传速度
 	private long speed;
 
-	private static int BUFF_LENGTH = 1024 * 256;
+	private static int BUFF_LENGTH = 1024 * 8;
 
 	/**
 	 * @param url
@@ -79,64 +84,68 @@ public class UploadFile extends Thread {
 		this.threadId = threadId;
 		this.localPath = localPath;
 	}
-	
+
 	@Override
 	public void run() {
-		if (endPos > startPos) {
-			// 要上传的文件，每次上传4k
-			while (endPos > startPos && !isUploadOver) {
-				try {
-					URL url = new URL(this.url);
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		try {
+			int size = -1;
+			stream = new FileInputStream(new File(localPath));
+			byte[] buff = new byte[BUFF_LENGTH];
+			while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos) {
+				String locationURL = "";
+				HttpPost requestPost = new HttpPost(url);
+				HttpResponse response = new DefaultHttpClient().execute(requestPost);
+				if (response != null) {
+					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+						Header locationHeader = response.getFirstHeader("Location");
+						if (locationHeader == null) {
+							Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
+						} else {
+							// 获取登陆成功之后跳转链接
+							locationURL = locationHeader.getValue();
+						}
+					}
+				}
 
-					// 设置连接超时时间为10000ms
+				if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+					// 利用post请求往服务器上上传内容
+					URL nowURL = new URL(locationURL);
+					HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
 					connection.setConnectTimeout(3000);
-					// 设置读取数据超时时间为10000ms
+					// 设置读取数据超时时间为3000ms
 					connection.setReadTimeout(3000);
 					setHeader(connection);
 					connection.setDoOutput(true);
-					// //获取文件输出流，读取文件内容
-//					inputStream = connection.getInputStream();
+					connection.setRequestMethod("POST");
 					outputStream = connection.getOutputStream();
 					while (outputStream == null) {
 						outputStream = connection.getOutputStream();
 					}
-
 					if (outputStream != null) {
-						byte[] buff = new byte[BUFF_LENGTH];
-						while (startPos < endPos && !isUploadOver) {
-							// 写入文件内容，返回最后写入的长度
-							outputStream.write(buff, 0, BUFF_LENGTH);
-							outputStream.flush();
-							startPos += BUFF_LENGTH;
-							endPos += BUFF_LENGTH;
-						}
-						this.isUploadOver = true;
+						// 将文件写入字节流中
+						outputStream.write(buff, 0, size);
+						outputStream.flush();
+						startPos += size;
 					}
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-//						inputStream.close();
-						outputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					inputStream = connection.getInputStream();
+					// 写入文件到远程服务器
+					inputStream.read(buff);
 				}
 			}
-
-			if (endPos < startPos && !isUploadOver) {
-				Application.getActiveApplication().getOutput().output("Thread " + threadId + " startPos > endPos, not need download file !");
-				this.isUploadOver = true;
-			}
-
-			if (endPos == startPos && !isUploadOver) {
-				Application.getActiveApplication().getOutput().output("Thread " + threadId + " startPos = endPos, not need download file !");
-				this.isUploadOver = true;
-			}
+			outputStream.close();
+			stream.close();
+			inputStream.close();
+			isUploadOver = true;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+	
 		}
+
 	}
 
 	private void setHeader(URLConnection conn) {
@@ -149,8 +158,8 @@ public class UploadFile extends Thread {
 		conn.setRequestProperty("If-Modified-Since", "Fri, 22 Jan 2016 12:00:00 GMT");
 		conn.setRequestProperty("If-None-Match", "\"1261d8-4290-df64d224\"");
 		conn.setRequestProperty("Cache-conntrol", "max-age=0");
+		conn.setRequestProperty("Content-type", "application/x-java-serialized-object");
 		conn.setRequestProperty("Referer", "http://www.baidu.com");
-		conn.setRequestProperty("doOutput", "true");
 	}
 
 	public long getLength() {
@@ -168,5 +177,5 @@ public class UploadFile extends Thread {
 	public boolean isUploadOver() {
 		return isUploadOver;
 	}
-		
+
 }
