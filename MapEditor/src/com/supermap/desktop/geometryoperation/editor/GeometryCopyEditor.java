@@ -157,8 +157,8 @@ public class GeometryCopyEditor extends AbstractEditor {
 
 				if (editModel.trackingGeoCompound != null) {
 					editModel.trackingGeoCompound.offset(offsetX, offsetY);
-					GeoStyleUtilities.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilties.getTrackingLineStyle(),
-							EditorUtilties.getTrackingLineStyle3D());
+					GeoStyleUtilities.setGeometryStyle(editModel.trackingGeoCompound, EditorUtilities.getTrackingLineStyle(),
+							EditorUtilities.getTrackingLineStyle3D());
 
 					int index = environment.getMap().getTrackingLayer().indexOf(TAG_GEOMETRYCOPY);
 					if (index >= 0) {
@@ -246,7 +246,7 @@ public class GeometryCopyEditor extends AbstractEditor {
 	 */
 	private Point2D getMousePointOnMap(EditEnvironment environment, Point mousePointOnMapControl) {
 		Point2D mousePointOnMap = Point2D.getEMPTY();
-		mousePointOnMap = EditorUtilties.getSnapModePoint(environment.getMapControl());
+		mousePointOnMap = EditorUtilities.getSnapModePoint(environment.getMapControl());
 
 		if (mousePointOnMap == null || mousePointOnMap.equals(Point2D.getEMPTY())) {
 			mousePointOnMap = environment.getMap().pixelToMap(mousePointOnMapControl);
