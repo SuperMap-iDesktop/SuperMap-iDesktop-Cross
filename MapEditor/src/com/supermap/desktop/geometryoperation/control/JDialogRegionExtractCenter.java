@@ -258,8 +258,8 @@ public class JDialogRegionExtractCenter extends SmDialog {
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
 		this.checkBoxRemoveSrc.setEnabled(this.canRemoveSrc);
-		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonOK = ComponentFactory.createButtonOK();
+		this.buttonCancel = ComponentFactory.createButtonCancel();
 
 		this.textFieldNewDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 

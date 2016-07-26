@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.LogUtils;
+import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -49,7 +50,7 @@ public class BatchUploadFile extends Thread {
 		this.uploadInfo = uploadInfo;
 		// 单线程实现上传
 		uploadInfo.setSplitter(1);
-		String tempPath = this.uploadInfo.getFilePath()+".position";
+		String tempPath = this.uploadInfo.getFilePath() + ".position";
 		tempFile = new File(tempPath);
 		// 如果存在读入点位置的文件
 		if (tempFile.exists()) {
@@ -72,60 +73,82 @@ public class BatchUploadFile extends Thread {
 
 	@Override
 	public void run() {
-		  // 首次上传，获取上传文件长度
-        if (first)
-        {
-            /**
-                 * eg start: 1, 3, 5, 7, 9 end: 3, 5, 7, 9, length
-                 */
-            for (int i = 0, len = this.segmentLengths.length; i < len; i++)
-            {
-                int size = (int) (i * (uploadInfo.getFileSize() / len));
-                this.startPos[i] = size;
+		// 首次上传，获取上传文件长度
+		if (first) {
+			/**
+			 * eg start: 1, 3, 5, 7, 9 end: 3, 5, 7, 9, length
+			 */
+			for (int i = 0, len = this.segmentLengths.length; i < len; i++) {
+				int size = (int) (i * (uploadInfo.getFileSize() / len));
+				this.startPos[i] = size;
 
-                // 设置最后一个结束点的位置
-                if (i == len - 1)
-                {
-                    this.endPos[i] = uploadInfo.getFileSize();
-                }
-                else
-                {
-                    size = (int) ((i + 1) * (uploadInfo.getFileSize() / len));
-                    this.endPos[i] = size;
-                }
-                this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
-                Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
-            }
-        }
+				// 设置最后一个结束点的位置
+				if (i == len - 1) {
+					this.endPos[i] = uploadInfo.getFileSize();
+				} else {
+					size = (int) ((i + 1) * (uploadInfo.getFileSize() / len));
+					this.endPos[i] = size;
+				}
+				this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
+				Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
+			}
+		}
 
-        try
-        {
-        	// 创建一个空文件
-        	String locationURL = new CreateFile(uploadInfo).createFile();
-        	
-        	
-            if (!StringUtilities.isNullOrEmpty(locationURL))
-            {
+		try {
+			// 创建一个空文件
+			String locationURL = new CreateFile(uploadInfo).createFile();
 
-              String  url = MessageFormat.format("{0}{1}?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
-                // 创建单线程下载对象数组
-                fileItems = new UploadFile[this.segmentLengths.length];
-                for (int i = 0; i < this.segmentLengths.length; i++)
-                {
-                    // 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
-					fileItems[i] = new UploadFile(url, this.uploadInfo.getFilePath(),
-					    startPos[i], endPos[i], segmentLengths[i], i);
+			if (!StringUtilities.isNullOrEmpty(locationURL)) {
+
+				String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
+				// 创建单线程下载对象数组
+				fileItems = new UploadFile[this.segmentLengths.length];
+				for (int i = 0; i < this.segmentLengths.length; i++) {
+					// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
+					fileItems[i] = new UploadFile(webFile, this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName(), startPos[i],
+							endPos[i], segmentLengths[i], i);
 					fileItems[i].start();
 					Application.getActiveApplication().getOutput().output("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
-                }
-                
-                // 循环写入下载文件长度信息
-              
-            }
-        }catch(Exception ex){
-        	ex.printStackTrace();
-        }
-        
+				}
+
+				// 循环写入下载文件长度信息
+				Boolean isFinished = false;
+
+				while (!stop && !isFinished) {
+					try {
+						LogUtils.log("uploading……");
+						writePosInfo();
+						UploadUtils.fireSteppedEvent(this, uploadInfo, this.getUploadProcess(), this.getRemainTime());
+						isFinished = true;
+						Thread.sleep(SLEEP_SECONDS);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					try {
+						isFinished = this.isFinished();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					// 上传完成了删除进度文件
+					if (isFinished) {
+						this.tempFile.delete();
+						UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
+						Application
+								.getActiveApplication()
+								.getOutput()
+								.output(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName()
+										+ LBSClientProperties.getString("String_UploadEnd"));
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -159,7 +182,7 @@ public class BatchUploadFile extends Thread {
 	 * @createDate 2016-5-22
 	 * @throws IOException
 	 */
-	public int getDownloadProcess() throws IOException {
+	public int getUploadProcess() throws IOException {
 		int process = 0;
 		try {
 			long finished = this.getFinishedSize();
@@ -270,7 +293,7 @@ public class BatchUploadFile extends Thread {
 	 * @createDate 2016-5-22
 	 * @throws IOException
 	 */
-	public void resumeDownload(){
+	public void resumeDownload() {
 		try {
 			this.stop = false;
 			readPosInfo();
@@ -279,7 +302,7 @@ public class BatchUploadFile extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
@@ -322,7 +345,6 @@ public class BatchUploadFile extends Thread {
 		dis.close();
 	}
 
-
 	public FileInfo getDownloadInfo() {
 		return uploadInfo;
 	}
@@ -330,5 +352,5 @@ public class BatchUploadFile extends Thread {
 	public void setDownloadInfo(FileInfo downloadInfo) {
 		this.uploadInfo = downloadInfo;
 	}
-	
+
 }

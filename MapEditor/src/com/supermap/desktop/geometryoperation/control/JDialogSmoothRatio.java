@@ -66,6 +66,7 @@ public class JDialogSmoothRatio extends SmDialog {
 				.addGroup(gl.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSmoothRatio)
 						.addComponent(this.textFieldSmoothRatio, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(5, 5, Short.MAX_VALUE)
 				.addGroup(gl.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));

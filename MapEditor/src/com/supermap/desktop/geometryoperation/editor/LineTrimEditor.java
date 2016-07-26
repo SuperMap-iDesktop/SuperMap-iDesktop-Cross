@@ -160,7 +160,7 @@ public class LineTrimEditor extends AbstractEditor {
 			}
 
 			// 根据垂足所在的段的索引，获取交点索引
-			Object[] result = EditorUtilties.getMinDistance(pnt2D, desLinePoints, dataset.getTolerance().getNodeSnap());
+			Object[] result = EditorUtilities.getMinDistance(pnt2D, desLinePoints, dataset.getTolerance().getNodeSnap());
 			Integer segment = (Integer) result[2];
 			int key = -1;
 
@@ -327,13 +327,13 @@ public class LineTrimEditor extends AbstractEditor {
 
 		try {
 			for (int i = 0; i < segment; i++) {
-				distance += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
+				distance += EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(i), desLinePoints.getItem(i + 1));
 			}
 
 			if (segment == 0) {
-				distance += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(0), endPoint);
+				distance += EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(0), endPoint);
 			} else {
-				distance += EditorUtilties.compouteTwoPointDistance(desLinePoints.getItem(segment - 1), endPoint);
+				distance += EditorUtilities.compouteTwoPointDistance(desLinePoints.getItem(segment - 1), endPoint);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

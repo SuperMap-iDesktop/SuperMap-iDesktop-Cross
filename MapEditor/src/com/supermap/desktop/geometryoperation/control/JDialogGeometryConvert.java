@@ -20,6 +20,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -206,8 +207,8 @@ public class JDialogGeometryConvert extends SmDialog {
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
 		this.checkBoxRemoveSrc.setEnabled(this.canRemoveSrc);
-		this.buttonOK = new JButton(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancel = new JButton(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonOK = ComponentFactory.createButtonOK();
+		this.buttonCancel = ComponentFactory.createButtonCancel();
 
 		this.textFieldNewDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 

@@ -20,9 +20,12 @@ import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.ILineMFeature;
 import com.supermap.desktop.geometry.Abstract.IPointFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.IEditController;
@@ -57,6 +60,7 @@ public class MirrorEditor extends AbstractEditor {
 
 			if (editModel.isTracking) {
 				editModel.isTracking = false;
+				editModel.setTipMessage(MapEditorProperties.getString("String_GeometryOperation_MirrorInfo"));
 				MapUtilities.clearTrackingObjects(environment.getMap(), TAG_MIRROR);
 				environment.getMap().refreshTrackingLayer();
 			}
@@ -68,6 +72,7 @@ public class MirrorEditor extends AbstractEditor {
 
 			if (!editModel.isTracking) {
 				editModel.isTracking = true;
+				editModel.setTipMessage(MapEditorProperties.getString("String_LeftClickToEnd"));
 			}
 		}
 
@@ -134,7 +139,7 @@ public class MirrorEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getEditableSelectedGeometryCount() > 0
 				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableSelectedGeometryTypeFeatures(), IPointFeature.class,
-						ILineFeature.class, IRegionFeature.class, ICompoundFeature.class);
+						ILineFeature.class, ILineMFeature.class, IRegionFeature.class, ICompoundFeature.class);
 	}
 
 	@Override
@@ -167,7 +172,7 @@ public class MirrorEditor extends AbstractEditor {
 						recordset = layer.getSelection().toRecordset();
 						while (!recordset.isEOF()) {
 							Geometry g = recordset.getGeometry();
-							if (g.getType() != GeometryType.GEOTEXT) {
+							if (isMirrorSupport(g)) {
 								Geometry newGeometry = g.mirror(editModel.point1, editModel.point2);
 								environment.getMap().getTrackingLayer().add(newGeometry, TAG_MIRROR);
 								environment.getMap().refreshTrackingLayer();
@@ -211,7 +216,7 @@ public class MirrorEditor extends AbstractEditor {
 
 							while (!recordset.isEOF()) {
 								Geometry geometry = recordset.getGeometry();
-								if (geometry.getType() != GeometryType.GEOTEXT) {
+								if (isMirrorSupport(geometry)) {
 									Geometry newGeometry = geometry.mirror(editModel.point1, editModel.point2);
 									Map<String, Object> values = new HashMap<String, Object>();
 									FieldInfos fieldInfos = recordset.getFieldInfos();
@@ -252,6 +257,12 @@ public class MirrorEditor extends AbstractEditor {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refresh();
 		}
+	}
+
+	private boolean isMirrorSupport(Geometry geometry) {
+		IGeometry dGeometry = DGeometryFactory.create(geometry);
+		return dGeometry instanceof IPointFeature || dGeometry instanceof ILineFeature || dGeometry instanceof ILineMFeature
+				|| dGeometry instanceof IRegionFeature || dGeometry instanceof ICompoundFeature;
 	}
 
 	/**
