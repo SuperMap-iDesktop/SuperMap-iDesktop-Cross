@@ -18,7 +18,7 @@ public class MapUtilities {
 	private MapUtilities() {
 		// 工具类不提供构造函数
 	}
-	private static boolean isShowDialog = false;
+
 	/**
 	 * 获取MapControl
 	 *
@@ -294,10 +294,10 @@ public class MapUtilities {
 	// return layerCaption;
 	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
-		
-		if (map.getLayers().getCount() == 0 && datasets.length == 1 && isShowDialog) {
+
+		if (map.getLayers().getCount() == 0 && datasets.length == 1) {
 			// 打开新地图时，如果只有一个数据集添加上来，不需要设置动态投影
-			return ;
+			return;
 		} else {
 			// 其他情况下都需要判断是否设置动态投影
 			resetDynamic(datasets, map);
@@ -313,11 +313,9 @@ public class MapUtilities {
 						CoreProperties.getString("String_TitleCoordSys"))) {
 					map.setDynamicProjection(true);
 					dynamicHasReset = true;
-					isShowDialog = true;
 					break;
 				} else {
 					dynamicHasReset = true;
-					isShowDialog = true;
 					break;
 				}
 			}
