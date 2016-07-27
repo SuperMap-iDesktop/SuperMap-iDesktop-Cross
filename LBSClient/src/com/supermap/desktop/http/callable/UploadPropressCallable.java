@@ -12,11 +12,11 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 public class UploadPropressCallable extends UpdateProgressCallable{
 
 	private Boolean isSucceed;
-	private FileInfo downloadInfo;
+	private FileInfo fileInfo;
 	private File file;
 	
 	public UploadPropressCallable(FileInfo downloadInfo,File file) {
-		this.downloadInfo = downloadInfo;
+		this.fileInfo = downloadInfo;
 		this.file = file;
 	}
 	
@@ -41,7 +41,7 @@ public class UploadPropressCallable extends UpdateProgressCallable{
 		try {
 			isSucceed = false;
 			UploadUtils.addNewWindowListener(steppedListener);
-			UploadUtils.upload(downloadInfo, file.getParentFile().getPath(), file.getName(), file.length(), true);
+			UploadUtils.upload(fileInfo, file.getParentFile().getPath(), file.getName(), file.length(), true);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

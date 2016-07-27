@@ -14,7 +14,7 @@ public class CtrlActionDownLoadHDFS extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
 			control.downLoad();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -26,8 +26,7 @@ public class CtrlActionDownLoadHDFS extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		if (null != Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm()
-				&& Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof IFormLBSControl) {
+		if (null != Application.getActiveApplication().getActiveForm()&& Application.getActiveApplication().getActiveForm() instanceof IFormLBSControl) {
 			enable = true;
 		}
 		return enable;

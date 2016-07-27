@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -52,7 +53,7 @@ public class UploadFile extends Thread {
 	private OutputStream outputStream;
 
 	private FileInputStream stream;
-	
+
 	private InputStream inputStream;
 
 	private boolean isUploadOver;
@@ -143,9 +144,17 @@ public class UploadFile extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-	
+
+		}
+		if (endPos < startPos && !isUploadOver) {
+			LogUtils.log("Thread " + threadId + " startPos > endPos, not need upload file !");
+			this.isUploadOver = true;
 		}
 
+		if (endPos == startPos && !isUploadOver) {
+			LogUtils.log("Thread " + threadId + " startPos = endPos, not need upload file !");
+			this.isUploadOver = true;
+		}
 	}
 
 	private void setHeader(URLConnection conn) {

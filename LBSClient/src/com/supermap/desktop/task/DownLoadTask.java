@@ -66,17 +66,17 @@ public class DownLoadTask extends Task {
 		}
 	}	
 	private void buttonRemoveClicked() throws IOException {
-		if (!DownloadUtils.getBatchDownloadFileWorker(fileInfo).isFinished()) {
+		if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
 			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"),
 					this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
-				DownloadUtils.getBatchDownloadFileWorker(fileInfo).stopDownload();
+				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
 
 			}
 			return;
 		}
-		if (DownloadUtils.getBatchDownloadFileWorker(fileInfo).isFinished()) {
+		if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			removeDownloadInfoItem();
 			return;
 		}
@@ -84,6 +84,7 @@ public class DownLoadTask extends Task {
 }
 	private void removeDownloadInfoItem() {
 		CommonUtilities.removeItem(this);
+		DownloadUtils.getHashMap().remove(this.fileInfo);
 		Application.getActiveApplication().getOutput()
 				.output(MessageFormat.format(LBSClientProperties.getString("String_RemoveDownLoadMessionInfo"), this.fileInfo.getFileName()));
 	}
@@ -138,7 +139,10 @@ public class DownLoadTask extends Task {
 					if (percent != 100) {
 						labelStatus.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
 					} else {
+						progressBar.setVisible(false);
 						labelStatus.setText(LBSClientProperties.getString("String_FileDownLoadFinished"));
+						// 刷新大数据展示列表
+						CommonUtilities.getActiveLBSControl().refresh();
 						buttonRun.setEnabled(false);
 					}
 				}

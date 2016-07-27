@@ -12,14 +12,13 @@ import javax.swing.SwingUtilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.http.upload.BatchUploadFile;
 import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
 
-public class UploadTask extends Task{
+public class UploadTask extends Task {
 
 	/**
 	 * 
@@ -57,7 +56,7 @@ public class UploadTask extends Task{
 		this.buttonRun.addActionListener(buttonNowRunListener);
 		this.buttonRemove.addActionListener(buttonNowRemoveListener);
 	}
-	
+
 	private void buttonRunClicked() {
 		this.setCancel(!this.isCancel);
 
@@ -66,12 +65,12 @@ public class UploadTask extends Task{
 		} else {
 			this.buttonRun.setIcon(CommonUtilities.getImageIcon("Image_Stop.png"));
 		}
-	}	
+	}
+
 	private void buttonRemoveClicked() throws IOException {
 		if (!UploadUtils.getBatchUploadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
-			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_UpLoadInfo"),
-					this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
+			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_UpLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				UploadUtils.getBatchUploadFileWorker(fileInfo).stopUpload();
 				removeUploadInfoItem();
 
@@ -82,13 +81,16 @@ public class UploadTask extends Task{
 			removeUploadInfoItem();
 			return;
 		}
-		
-}
+
+	}
+
 	private void removeUploadInfoItem() {
 		CommonUtilities.removeItem(this);
+		UploadUtils.getHashMap().remove(this.fileInfo);
 		Application.getActiveApplication().getOutput()
 				.output(MessageFormat.format(LBSClientProperties.getString("String_RemoveUpLoadMessionInfo"), this.fileInfo.getFileName()));
 	}
+
 	@Override
 	public void setCancel(boolean isCancel) {
 		try {
@@ -124,7 +126,7 @@ public class UploadTask extends Task{
 			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
-	
+
 	@Override
 	public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -140,7 +142,10 @@ public class UploadTask extends Task{
 					if (percent != 100) {
 						labelStatus.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
 					} else {
+						progressBar.setVisible(false);
 						labelStatus.setText(LBSClientProperties.getString("String_UploadEnd"));
+						// 刷新大数据展示列表
+						CommonUtilities.getActiveLBSControl().refresh();
 						buttonRun.setEnabled(false);
 					}
 				}

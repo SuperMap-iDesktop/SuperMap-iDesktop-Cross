@@ -55,15 +55,17 @@ public class FileInfo {
 
 	/***
 	 * @param url
-	 *            下载地址
+	 *            地址
 	 * @param fileName
 	 *            文件名称
 	 * @param filePath
-	 *            文件保存路径
+	 *            文件路径
 	 * @param fileSize
 	 *            file size
 	 * @param splitter
 	 *            分成多少段或是多少个线程下载
+	 ** @param isHDFSFile
+	 *            是否为HDFS文件
 	 */
 	public FileInfo(String url, String fileName, String filePath, long fileSize, int splitter, Boolean isHDFSFile) {
 		super();

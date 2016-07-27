@@ -44,4 +44,9 @@ public interface IFormLBSControl extends IForm {
 	 * @return
 	 */
 	JTable getTable();
+
+	/**
+	 * 刷新
+	 */
+	void refresh();
 }

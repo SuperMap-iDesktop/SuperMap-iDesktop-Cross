@@ -1,5 +1,6 @@
 package com.supermap.desktop.http.upload;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,7 +24,7 @@ import com.supermap.desktop.http.download.FileInfo;
  */
 public abstract class UploadUtils {
 	
-	public static Map<FileInfo, BatchUploadFile> hashMap = new HashMap<FileInfo, BatchUploadFile>();
+	public static Map<FileInfo, BatchUploadFile> hashMap = Collections.synchronizedMap(new HashMap());
  
     public static FileInfo upload(String url) {
         FileInfo bean = new FileInfo(url);
