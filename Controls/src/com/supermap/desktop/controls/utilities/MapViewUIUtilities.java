@@ -110,7 +110,6 @@ public class MapViewUIUtilities {
 			String name = MapUtilities.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", datasetsToMap.get(0).getName(), datasetsToMap.get(0).getDatasource().getAlias()), true);
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-			MapUtilities.setDynamic(datasets, formMap.getMapControl().getMap());
 			addDatasetsToMap(formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), addToHead);
 
 			// 打开到新地图时，全幅显示，不使用 EntireView，因为窗口打开之后会动态调整 MapControl 的大小，从而导致此前设置的全幅效果不对

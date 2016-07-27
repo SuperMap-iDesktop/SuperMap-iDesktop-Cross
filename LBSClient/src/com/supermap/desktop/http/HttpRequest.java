@@ -31,6 +31,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 
 public class HttpRequest {
 	static private final Log LOG = LogFactory
@@ -59,8 +60,8 @@ public class HttpRequest {
 				}
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output("发送GET请求出现异常！");
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
+			e.printStackTrace();
 		}
 		// 使用finally块来关闭输入流
 		finally {
@@ -109,8 +110,8 @@ public class HttpRequest {
 			
 			inputStream = connection.getInputStream();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output("发送GET请求出现异常！");
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
+			e.printStackTrace();
 		}
 		return inputStream;
 	}

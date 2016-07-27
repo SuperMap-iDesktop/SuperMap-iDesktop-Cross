@@ -6,25 +6,25 @@ import javax.swing.SwingUtilities;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.HttpRequest;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 
 public class WebHDFS {
 
 	public static String webURL = "http://192.168.14.1:50070/webhdfs/v1/data/NY_trip_data/";
 	public static String webFile = "trip_data_1.csv";
 	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
+	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
 
-	public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication,
-	                                String blockSize, String name, Boolean isDir) {
+	public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
 
-		HDFSDefine define = new HDFSDefine(permission, owner, group, size, replication,
-				blockSize, name, isDir);
+		HDFSDefine define = new HDFSDefine(permission, owner, group, size, replication, blockSize, name, isDir);
 		return define;
 	}
 
 	public static String getHDFSFileURL() {
 		String serverPath = webURL;
-//		serverPath = serverPath.replace("webhdfs/v1/", "");
-//		serverPath = serverPath.replace("http", "hdfs");
+		// serverPath = serverPath.replace("webhdfs/v1/", "");
+		// serverPath = serverPath.replace("http", "hdfs");
 		serverPath += webFile;
 		return serverPath;
 	}
@@ -64,6 +64,7 @@ public class WebHDFS {
 	}
 
 	private static Boolean getFileResult = false;
+
 	public static Boolean getFile(String urlPath, String localPath) {
 		getFileResult = false;
 		// 需要实现断点续传
@@ -192,13 +193,13 @@ public class WebHDFS {
 					isDir = true;
 				}
 
-				if (!isFolderOnly || (isFolderOnly && isDir) ) {
+				if (!isFolderOnly || (isFolderOnly && isDir)) {
 					HDFSDefine hdfsDefine = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
 					defines.add(hdfsDefine);
 				}
 			}
 		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+			
 		}
 
 		return defines.toArray(new HDFSDefine[defines.size()]);
@@ -214,8 +215,7 @@ public class WebHDFS {
 		String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "";
 		Boolean isDir = false;
 
-		public HDFSDefine(String permission, String owner, String group, String size, String replication,
-		                  String blockSize, String name, Boolean isDir) {
+		public HDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
 			this.permission = permission;
 			this.owner = owner;
 			this.group = group;

@@ -2,6 +2,7 @@ package com.supermap.desktop.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Vector;
@@ -18,6 +19,7 @@ import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.http.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
@@ -41,6 +43,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private JPopupMenu contextPopuMenu;
 	private JLabel labelServerURL;
 	private JTextField textServerURL;
+	private JButton buttonRefresh;
+	private JButton buttonBack;
 	private JList rowHeader;
 	private JScrollPane scrollPaneFormLBSControl;
 	private JTable table;
@@ -49,7 +53,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				buttonBrowserActionPerformed();
+				refresh();
 			}
 		}
 	};
@@ -64,12 +68,25 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			table_MouseReleased(e);
 		}
 	};
+	private ActionListener refreshListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			refresh();
+		}
+	};
 
 	public FormLBSControl(String title, Icon icon, Component component) {
 		super(title, icon, component);
 		initializeComponents();
+		initializeResources();
 		registEvents();
 		this.setTitle(("Browse Directory"));
+	}
+
+	private void initializeResources() {
+		this.buttonRefresh.setText(LBSClientProperties.getString("String_Refresh"));
+		this.buttonBack.setText(LBSClientProperties.getString("String_Back"));
 	}
 
 	public FormLBSControl(String title) {
@@ -83,6 +100,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private void registEvents() {
 		removeEvents();
 		this.textServerURL.addKeyListener(this.textServerURLKeyListener);
+		this.buttonRefresh.addActionListener(refreshListener);
 		this.table.addMouseListener(this.tableMouseListener);
 		this.addListener(new DockingWindowAdapter() {
 			@Override
@@ -106,6 +124,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.labelServerURL = new JLabel();
 		this.textServerURL = new JTextField(WebHDFS.webURL);
 		this.table = new JTable();
+		this.buttonRefresh = new JButton("Refresh");
+		this.buttonBack = new JButton("Back");
+		this.buttonBack.setEnabled(false);
 		HDFSTableModel tableModel = new HDFSTableModel();
 		this.table.setModel(tableModel);
 		this.table.putClientProperty("terminateEditOnFocusLost", true);
@@ -131,12 +152,16 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		// @formatter:off
 		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(gLayout.createSequentialGroup().addComponent(this.labelServerURL)
-						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(this.buttonRefresh, 60, 60, 60)
+						.addComponent(this.buttonBack ,60, 60, 60))
 				.addComponent(scrollPaneFormLBSControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		gLayout.setVerticalGroup(gLayout.createSequentialGroup()
 				.addGroup(gLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelServerURL)
-						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.buttonBack, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(scrollPaneFormLBSControl, 100, 200, Short.MAX_VALUE));
 		scrollPaneFormLBSControl.setViewportView(table);
 		this.setLayout(gLayout);
@@ -153,7 +178,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		try {
 			HDFSTableModel tableModel = (HDFSTableModel) this.table.getModel();
 			tableModel.addRow(hdfsDefine);
-			this.table.updateUI();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -210,7 +234,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		for (WebHDFS.HDFSDefine define : defines) {
 			this.addFileInfo(define);
 		}
-
+		this.table.updateUI();
 		if (0 < table.getRowCount()) {
 			table.setRowSelectionInterval(0, 0);
 		}
@@ -219,9 +243,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	}
 
 	/**
-	 * 浏览按钮点击事件
+	 * 刷新按钮点击事件
 	 */
-	private void buttonBrowserActionPerformed() {
+	public void refresh() {
 		try {
 			listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
 		} catch (Exception ex) {
@@ -293,8 +317,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		 *
 		 */
 		private static final long serialVersionUID = 1L;
-		private String[] title = new String[]{"Name","Size","BlockSize","Owner","Group","Permission","Replication"};
-//		private String[] title = new String[] { "Permission", "Owner", "Group", "Size", "Replication", "BlockSize", "Name" };
+		private String[] title = new String[] { "Name", "Size", "BlockSize", "Owner", "Group", "Permission", "Replication" };
 
 		/**
 		 * 构造函数。
@@ -336,7 +359,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			content.add(define.getGroup());
 			content.add(define.getPermission());
 			content.add(define.getReplication());
-			
 
 			// 追加内容
 			contents.add(content);
@@ -387,7 +409,14 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			this.setText(String.valueOf(index + 1));
+			HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+			if (define.isDir()) {
+				this.setToolTipText(LBSClientProperties.getString("String_Dir"));
+				this.setIcon(new ImageIcon(FileChooserControl.class.getResource("/com/supermap/desktop/controlsresources/Image_DatasetGroup_Normal.png")));
+			} else {
+				this.setToolTipText(LBSClientProperties.getString("String_File"));
+				this.setIcon(new ImageIcon(FileChooserControl.class.getResource("/com/supermap/desktop/controlsresources/file.png")));
+			}
 			this.setPreferredSize(new Dimension(100, 50));
 			return this;
 		}
@@ -431,16 +460,19 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 						if (define.isDir()) {
 							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
-								fileSelected = true;
+								// 删除文件夹下的所有文件
+								deleteDir(webURL + define.getName());
+								// 删除空文件夹
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+								deleteFile.start();
+								refresh();
 							}
 						} else {
 							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-								fileSelected = true;
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+								deleteFile.start();
+								refresh();
 							}
-						}
-						if (fileSelected) {
-							DeleteFile deleteFile = new DeleteFile(webURL, webFile);
-							deleteFile.start();
 						}
 					}
 				} else if (table.getSelectedRowCount() > 1) {
@@ -459,10 +491,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				} else {
 				}
 
-				if (!fileSelected) {
-					UICommonToolkit.showMessageDialog("please select a file to delete");
-				}
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -470,6 +498,18 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			CursorUtilities.setDefaultCursor();
+		}
+	}
+
+	private void deleteDir(String url) throws IOException {
+		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
+		for (WebHDFS.HDFSDefine tempDefine : defines) {
+			if (tempDefine.isDir()) {
+				deleteDir(tempDefine.getFullPath() + tempDefine.getName());
+			} else {
+				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName());
+				deleteFile.start();
+			}
 		}
 	}
 

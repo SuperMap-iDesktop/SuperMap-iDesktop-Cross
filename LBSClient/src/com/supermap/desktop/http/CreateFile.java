@@ -16,6 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
@@ -40,8 +41,6 @@ public class CreateFile {
 	private boolean isCreated = false;
 	//
 	private boolean isFailed;
-	
-	
 
 	private static final int BUFF_LENGTH = 1024 * 8;
 
@@ -50,9 +49,11 @@ public class CreateFile {
 		this.uploadInfo = downloadInfo;
 	}
 
-	@SuppressWarnings({ "deprecation", "resource" })
-	
+	public CreateFile() {
+		super();
+	}
 
+	@SuppressWarnings({ "deprecation", "resource" })
 	// 创建文件
 	public String createFile() {
 		String locationURL = "";
@@ -142,7 +143,7 @@ public class CreateFile {
 				fullPath += this.uploadInfo.getFileName();
 				// 上传文件
 				File file = new File(fullPath);
-				
+
 				FileEntity fileEntity = new FileEntity(file);
 				requestPost.setEntity(fileEntity);
 				response = new DefaultHttpClient().execute(requestPost);
@@ -156,9 +157,9 @@ public class CreateFile {
 					isFailed = true;
 				}
 			}
-//			byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-//
-//			System.out.println("response enttiy " + new String(bytes2, "utf-8"));
+			// byte[] bytes2 = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
+			//
+			// System.out.println("response enttiy " + new String(bytes2, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -169,49 +170,20 @@ public class CreateFile {
 		}
 	}
 
-	private void createDir() {
+	public void createDir(String url, String name) {
 		try {
 			// 创建目录
-			String webFile = this.uploadInfo.getUrl();
-			String locationURL = "";
+			String webFile = url;
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = String.format("%s%s?user.name=root&op=MKDIRS", webFile, "dir4");
-			HttpClient client = new DefaultHttpClient();
+			webFile = String.format("%s%s?user.name=root&op=MKDIRS", webFile, name);
 			HttpPut requestPut = new HttpPut(webFile);
-			HttpResponse response = client.execute(requestPut);
-			if (response != null) {
-				System.out.println(response.getStatusLine().getStatusCode());
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-					Header locationHeader = response.getFirstHeader("Location");
-					if (locationHeader == null) {
-						System.out.println("登陆不成功，请稍后再试!");
-						return;
-					} else {
-						// 获取登陆成功之后跳转链接
-						locationURL = locationHeader.getValue();
-					}
-				}
-				Header headers[] = response.getAllHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					System.out.println(headers[i].getName() + "   " + headers[i].getValue());
-				}
+			HttpResponse response = new DefaultHttpClient().execute(requestPut);
+			if (response != null && response.getStatusLine().getStatusCode() == 200) {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(LBSClientProperties.getString("String_MakeDirectorySuccess"), name));
+				CommonUtilities.getActiveLBSControl().refresh();
 			}
-
-			if (!"".equals(locationURL)) {
-				requestPut = new HttpPut(locationURL);
-				response = client.execute(requestPut);
-
-				if (response != null) {
-
-				}
-			}
-
-			System.out.println(response.getStatusLine());
-			byte[] bytes = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-
-			System.out.println("response enttiy " + new String(bytes, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -220,49 +192,27 @@ public class CreateFile {
 		}
 	}
 
-	private void renameFile() {
+	public void renameFile(String url, String name, String newName) {
 		try {
 			// 重命名文件
-			String webFile = this.uploadInfo.getUrl();
+			String webFile = url;
 			String locationURL = "";
+			String rootPath = webFile.substring(webFile.lastIndexOf("/v1")+3, webFile.lastIndexOf("/"));
+			if (!rootPath.endsWith("/")) {
+				rootPath += "/";
+			}
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = String.format("%s%s?user.name=root&op=RENAME&destination=%s", webFile, "test0.csv", "test1.csv");
+			webFile = String.format("%s%s?user.name=root&op=RENAME&destination=%s", webFile, name, rootPath + newName);
 			HttpClient client = new DefaultHttpClient();
 			HttpPut requestPut = new HttpPut(webFile);
 			HttpResponse response = client.execute(requestPut);
-			if (response != null) {
-				System.out.println(response.getStatusLine().getStatusCode());
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-					Header locationHeader = response.getFirstHeader("Location");
-					if (locationHeader == null) {
-						System.out.println("登陆不成功，请稍后再试!");
-						return;
-					} else {
-						// 获取登陆成功之后跳转链接
-						locationURL = locationHeader.getValue();
-					}
-				}
-				Header headers[] = response.getAllHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					System.out.println(headers[i].getName() + "   " + headers[i].getValue());
-				}
+			if (response != null && response.getStatusLine().getStatusCode() == 200) {
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(LBSClientProperties.getString("String_RenameSuccess"), name, newName));
+				CommonUtilities.getActiveLBSControl().refresh();
 			}
-
-			if (!"".equals(locationURL)) {
-				requestPut = new HttpPut(locationURL);
-				response = client.execute(requestPut);
-
-				if (response != null) {
-
-				}
-			}
-
-			System.out.println(response.getStatusLine());
-			byte[] bytes = org.apache.commons.compress.utils.IOUtils.toByteArray(response.getEntity().getContent());
-
-			System.out.println("response enttiy " + new String(bytes, "utf-8"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

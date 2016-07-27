@@ -1,5 +1,6 @@
 package com.supermap.desktop.http.upload;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,7 +24,7 @@ import com.supermap.desktop.http.download.FileInfo;
  */
 public abstract class UploadUtils {
 	
-	public static Map<FileInfo, BatchUploadFile> hashMap = new HashMap<FileInfo, BatchUploadFile>();
+	public static Map<FileInfo, BatchUploadFile> hashMap = Collections.synchronizedMap(new HashMap());
  
     public static FileInfo upload(String url) {
         FileInfo bean = new FileInfo(url);
@@ -64,7 +65,11 @@ public abstract class UploadUtils {
     	return batchUPloadFile;
     }
 	
-    private static transient CopyOnWriteArrayList<FileSteppedListener> stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
+    public static Map<FileInfo, BatchUploadFile> getHashMap() {
+		return hashMap;
+	}
+
+	private static transient CopyOnWriteArrayList<FileSteppedListener> stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
 	public static synchronized void addNewWindowListener(FileSteppedListener listener) {
 		if (stepListeners == null) {
 			stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();

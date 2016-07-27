@@ -9,6 +9,8 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 
+import org.jdesktop.swingx.JXTipOfTheDay.ShowOnStartupChoice;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ public class MapUtilities {
 	private MapUtilities() {
 		// 工具类不提供构造函数
 	}
-	
+
 	/**
 	 * 获取MapControl
 	 *
@@ -292,10 +294,10 @@ public class MapUtilities {
 	// return layerCaption;
 	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
-		
+
 		if (map.getLayers().getCount() == 0 && datasets.length == 1) {
 			// 打开新地图时，如果只有一个数据集添加上来，不需要设置动态投影
-			return ;
+			return;
 		} else {
 			// 其他情况下都需要判断是否设置动态投影
 			resetDynamic(datasets, map);

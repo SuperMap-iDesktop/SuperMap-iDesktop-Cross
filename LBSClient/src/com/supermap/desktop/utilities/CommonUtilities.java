@@ -9,6 +9,7 @@ import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
 import com.supermap.desktop.http.download.FileInfo;
@@ -66,30 +67,18 @@ public class CommonUtilities {
 		IDockbar dockbarPropertyContainer = CommonUtilities.getDockBar();
 		if (null != dockbarPropertyContainer) {
 			FileManagerContainer fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getComponent();
-			UploadUtils.hashMap.clear();
 			fileManagerContainer.removeItem(task);
 		}
 	}
-//	/**
-//	 * 获取资源图片
-//	 * @param imagePath
-//	 * @return
-//	 */
-//	public static ImageIcon getImageIcon(String imagePath) {
-//		ImageIcon imageIcon = null;
-//		try {
-//			String[] pathPrams = new String[] { PathUtilities.getRootPathName(), "../LBSClient/reosurces/", imagePath };
-//			imagePath = PathUtilities.combinePath(pathPrams, false);
-//			File imageFile = new File(imagePath);
-//			if (imageFile.exists()) {
-//				imageIcon = new ImageIcon(imagePath);
-//			}
-//		} catch (Exception exception) {
-//			Application.getActiveApplication().getOutput().output(exception);
-//		}
-//
-//		return imageIcon;
-//	}
+	
+	public static IFormLBSControl getActiveLBSControl(){
+		IFormLBSControl result = null;
+		if (null!=Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormLBSControl) {
+			result = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
+		}
+		return result;
+	}
+	
 	/**
 	 * 获取图片资源
 	 * @param path

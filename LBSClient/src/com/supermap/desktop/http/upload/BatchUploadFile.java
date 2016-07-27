@@ -68,80 +68,82 @@ public class BatchUploadFile extends Thread {
 			startPos = new long[uploadInfo.getSplitter()];
 			endPos = new long[uploadInfo.getSplitter()];
 			segmentLengths = new long[uploadInfo.getSplitter()];
+			
 		}
 	}
 
 	@Override
 	public void run() {
-		// 首次上传，获取上传文件长度
-		if (first) {
-			/**
-			 * eg start: 1, 3, 5, 7, 9 end: 3, 5, 7, 9, length
-			 */
-			for (int i = 0, len = this.segmentLengths.length; i < len; i++) {
-				int size = (int) (i * (uploadInfo.getFileSize() / len));
-				this.startPos[i] = size;
-
-				// 设置最后一个结束点的位置
-				if (i == len - 1) {
-					this.endPos[i] = uploadInfo.getFileSize();
-				} else {
-					size = (int) ((i + 1) * (uploadInfo.getFileSize() / len));
-					this.endPos[i] = size;
-				}
-				this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
-				Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
-			}
-		}
-
 		try {
-			// 创建一个空文件
-			String locationURL = new CreateFile(uploadInfo).createFile();
+			// 首次上传，获取上传文件长度
+			if (first) {
+				/**
+				 * eg start: 1, 3, 5, 7, 9 end: 3, 5, 7, 9, length
+				 */
+				for (int i = 0, len = this.segmentLengths.length; i < len; i++) {
+					int size = (int) (i * (uploadInfo.getFileSize() / len));
+					this.startPos[i] = size;
 
-			if (!StringUtilities.isNullOrEmpty(locationURL)) {
-
-				String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
-				// 创建单线程下载对象数组
-				fileItems = new UploadFile[this.segmentLengths.length];
-				for (int i = 0; i < this.segmentLengths.length; i++) {
-					// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
-					fileItems[i] = new UploadFile(webFile, this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName(), startPos[i],
-							endPos[i], segmentLengths[i], i);
-					fileItems[i].start();
-					Application.getActiveApplication().getOutput().output("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
+					// 设置最后一个结束点的位置
+					if (i == len - 1) {
+						this.endPos[i] = uploadInfo.getFileSize();
+					} else {
+						size = (int) ((i + 1) * (uploadInfo.getFileSize() / len));
+						this.endPos[i] = size;
+					}
+					this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
+					Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
 				}
+			}
+			if (!stop) {
+				// 创建一个空文件
+				String locationURL = new CreateFile(uploadInfo).createFile();
 
-				// 循环写入下载文件长度信息
-				Boolean isFinished = false;
+				if (!StringUtilities.isNullOrEmpty(locationURL)) {
 
-				while (!stop && !isFinished) {
-					try {
-						LogUtils.log("uploading……");
-						writePosInfo();
-						UploadUtils.fireSteppedEvent(this, uploadInfo, this.getUploadProcess(), this.getRemainTime());
-						isFinished = true;
-						Thread.sleep(SLEEP_SECONDS);
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
+					// 创建单线程下载对象数组
+					fileItems = new UploadFile[this.segmentLengths.length];
+					for (int i = 0; i < this.segmentLengths.length; i++) {
+						// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
+						fileItems[i] = new UploadFile(webFile, this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName(), startPos[i],
+								endPos[i], segmentLengths[i], i);
+						fileItems[i].start();
+						Application.getActiveApplication().getOutput().output("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
 					}
 
-					try {
-						isFinished = this.isFinished();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					// 循环写入下载文件长度信息
+					Boolean isFinished = false;
 
-					// 上传完成了删除进度文件
-					if (isFinished) {
-						this.tempFile.delete();
-						UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
-						Application
-								.getActiveApplication()
-								.getOutput()
-								.output(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName()
-										+ LBSClientProperties.getString("String_UploadEnd"));
+					while (!stop && !isFinished) {
+						try {
+							LogUtils.log("uploading……");
+							writePosInfo();
+							UploadUtils.fireSteppedEvent(this, uploadInfo, this.getUploadProcess(), this.getRemainTime());
+							isFinished = true;
+							Thread.sleep(SLEEP_SECONDS);
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
+						try {
+							isFinished = this.isFinished();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						// 上传完成了删除进度文件
+						if (isFinished) {
+							this.tempFile.delete();
+							UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
+							Application
+									.getActiveApplication()
+									.getOutput()
+									.output(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName()
+											+ LBSClientProperties.getString("String_UploadEnd"));
+						}
 					}
 				}
 			}
@@ -186,8 +188,8 @@ public class BatchUploadFile extends Thread {
 		int process = 0;
 		try {
 			long finished = this.getFinishedSize();
-			if (this.fileSize != 0) {
-				process = (int) (finished * 100 / this.fileSize);
+			if (this.uploadInfo.getFileSize() != 0) {
+				process = (int) (finished * 100 / this.uploadInfo.getFileSize());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,7 +209,7 @@ public class BatchUploadFile extends Thread {
 		int remainTime = 0;
 		try {
 			long finished = this.getFinishedSize();
-			remainTime = (int) ((this.fileSize - finished) / (500 * 1024));
+			remainTime = (int) ((this.uploadInfo.getFileSize() - finished) / (500 * 1024));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -282,7 +284,7 @@ public class BatchUploadFile extends Thread {
 	 * @createDate 2016-5-22
 	 * @throws IOException
 	 */
-	public void stopDownload() throws IOException {
+	public void stopUpload() throws IOException {
 		this.stop = true;
 	}
 

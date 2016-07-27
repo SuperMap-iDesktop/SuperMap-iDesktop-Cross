@@ -48,12 +48,6 @@ public class CombinationEditor extends AbstractEditor {
 			if (formCombination.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				MouseMotionListener[] listeners = environment.getMapControl().getMouseMotionListeners();
-				// 用来验证崩溃缺陷的
-				// for (MouseMotionListener mouseMotionListener : listeners) {
-				// if (mouseMotionListener.getClass().getSimpleName().equals("MapControl_this_mouseMotionAdapter")) {
-				// environment.getMapControl().removeMouseMotionListener(mouseMotionListener);
-				// }
-				// }
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
 				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
 			}

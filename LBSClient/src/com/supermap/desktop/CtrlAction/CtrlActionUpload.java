@@ -29,7 +29,7 @@ public class CtrlActionUpload extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
 			String modelName = "HDFSFileUpload";
 			if (!SmFileChoose.isModuleExist(modelName)) {
 				SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), LBSClientProperties.getString("String_SelectFile"),
@@ -45,10 +45,10 @@ public class CtrlActionUpload extends CtrlAction {
 
 				if (file.exists() && fileManagerContainer != null) {
 					String webPath = control.getURL();
-					FileInfo downloadInfo = new FileInfo(webPath);
+					FileInfo uploadInfo = new FileInfo(webPath, file.getName(), file.getParentFile().getPath(), file.length(), 1, false);
 					ITaskFactory taskFactory = TaskFactory.getInstance();
-					ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, downloadInfo);
-					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(downloadInfo, file);
+					ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
+					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(uploadInfo, file);
 					task.doWork(uploadProgressCallable);
 					fileManagerContainer.addItem(task);
 				}
