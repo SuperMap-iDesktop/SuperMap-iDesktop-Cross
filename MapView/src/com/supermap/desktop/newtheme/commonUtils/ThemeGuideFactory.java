@@ -188,8 +188,8 @@ public class ThemeGuideFactory {
 			result = getMapControl().getMap().getLayers().add(dataset, theme, true);
 			if (null != layer) {
 				// 复制关联表信息到新图层中
-//				result.setDisplayFilter(layer.getDisplayFilter());
-//				result.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
+				// result.setDisplayFilter(layer.getDisplayFilter());
+				// result.getDisplayFilter().setJoinItems(layer.getDisplayFilter().getJoinItems());
 				for (int i = 0; i < layer.getDisplayFilter().getJoinItems().getCount(); i++) {
 					result.getDisplayFilter().getJoinItems().add(layer.getDisplayFilter().getJoinItems().get(i));
 				}
@@ -443,9 +443,7 @@ public class ThemeGuideFactory {
 			Point2D point2DStart = getMapControl().getMap().pixelToMap(pointStart);
 			Point2D point2DEnd = getMapControl().getMap().pixelToMap(pointEnd);
 			themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
-			if (Double.compare(themeGraph.getMaxGraphSize() / 10, 10.0) < 0) {
-				themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
-			}
+			themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 			themeGraph.setAxesDisplayed(false);
 			Layer themeGraphLayer = initCurrentTheme(datasetVector, layer, themeGraph);
 			ThemeChangePanel themeGraphContainer = new ThemeGraphContainer(themeGraphLayer, true);

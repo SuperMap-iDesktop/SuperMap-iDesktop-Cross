@@ -94,7 +94,7 @@ public class CreateFile {
 					Application.getActiveApplication().getOutput().output("HDFS file create success");
 					// 文件创建成功后利用Append命令在文件中追加内容
 				} else {
-					Application.getActiveApplication().getOutput().output("HDFS file create failed");
+					
 				}
 			}
 		} catch (MalformedURLException e) {

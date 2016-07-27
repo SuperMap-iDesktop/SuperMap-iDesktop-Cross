@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.GroupLayout.Alignment;
 
 import com.supermap.Interface.ITask;
-import com.supermap.desktop.http.download.FileInfo;
 
 public class FileManagerContainer extends JPanel {
 

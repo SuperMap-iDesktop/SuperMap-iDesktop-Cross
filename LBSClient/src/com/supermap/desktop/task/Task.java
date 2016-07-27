@@ -64,7 +64,7 @@ public class Task extends JPanel implements ITask {
 		labelTitle = new JLabel("file name");
 		labelLogo = new JLabel(CommonUtilities.getImageIcon("image_datasource.png"));
 		this.buttonRun = new SmButton(CommonUtilities.getImageIcon("Image_Stop.png"));
-		this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("Image_Delete.png"));
+		this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("image_delete1.png"));
 		labelProcess = new JLabel("-0%");
 		labelStatus = new JLabel("Remain time:0");
 		groupLayout.setAutoCreateContainerGaps(true);

@@ -650,12 +650,12 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2)
 				+ Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
 		if (themeGraph.getMaxGraphSize() / 10 < 10) {
-			this.themeGraph.setBarWidthRatio(themeGraph.getMaxGraphSize() / 10);
+			this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
 		}
 		DecimalFormat decfmt = new DecimalFormat("#.######");
 		this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 		this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-		this.spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
+		this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
 	}
 
 	class LocalDefualTableModel extends DefaultTableModel {
@@ -1084,7 +1084,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			double barWidth = (double) spinnerBarWidth.getValue();
-			themeGraph.setBarWidthRatio(barWidth);
+			themeGraph.setBarWidth(barWidth);
 			refreshMapAtOnce();
 		}
 	}
@@ -1408,46 +1408,45 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 		private void setMaxGraphSize() {
 			boolean isAutoScale = checkBoxAutoScale.isSelected();
 			themeGraph.setGraphSizeFixed(isAutoScale);
-//			if (!isAutoScale) {
-//				Point2D pointStart = new Point2D(0, 0);
-//				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
-//				Point2D point2DStart = map.mapToLogical(pointStart);
-//				Point2D point2DEnd = map.mapToLogical(pointEnd);
-//				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
-//				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
-//				Point2D point2DMinEnd = map.mapToLogical(pointMinEnd);
-//				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
-//					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
-//				}
-//				Point2D pointStart1 = new Point2D(0, 0);
-//				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidthRatio(), themeGraph.getBarWidthRatio());
-//				Point2D point2DStart1 = map.mapToLogical(pointStart1);
-//				Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
-//				if (10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX())-10<0) {
-//					themeGraph.setBarWidthRatio(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
-//				}
-//			} else {
-//				Point2D pointStart = new Point2D(0, 0);
-//				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
-//				Point2D point2DStart = map.logicalToMap(pointStart);
-//				Point2D point2DEnd = map.logicalToMap(pointEnd);
-//				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
-//				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
-//				Point2D point2DMinEnd = map.logicalToMap(pointMinEnd);
-//				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
-//					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
-//				}
-//				Point2D pointStart1 = new Point2D(0, 0);
-//				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidthRatio(), themeGraph.getBarWidthRatio());
-//				Point2D point2DStart1 = map.logicalToMap(pointStart1);
-//				Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
-//				themeGraph.setBarWidthRatio(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
-//			}
-//			themeGraph.setGraphSizeFixed(!isAutoScale);
+
+			if (!isAutoScale) {
+				Point2D pointStart = new Point2D(0, 0);
+				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
+				Point2D point2DStart = map.mapToLogical(pointStart);
+				Point2D point2DEnd = map.mapToLogical(pointEnd);
+				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
+				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
+				Point2D point2DMinEnd = map.mapToLogical(pointMinEnd);
+				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
+					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
+				}
+				Point2D pointStart1 = new Point2D(0, 0);
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D point2DStart1 = map.mapToLogical(pointStart1);
+				Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
+				themeGraph.setBarWidth(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+			} else {
+				Point2D pointStart = new Point2D(0, 0);
+				Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
+				Point2D point2DStart = map.logicalToMap(pointStart);
+				Point2D point2DEnd = map.logicalToMap(pointEnd);
+				themeGraph.setMaxGraphSize(Math.abs(point2DEnd.getX() - point2DStart.getX()));
+				Point2D pointMinEnd = new Point2D(themeGraph.getMinGraphSize(), themeGraph.getMinGraphSize());
+				Point2D point2DMinEnd = map.logicalToMap(pointMinEnd);
+				if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
+					themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
+				}
+				Point2D pointStart1 = new Point2D(0, 0);
+				Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+				Point2D point2DStart1 = map.logicalToMap(pointStart1);
+				Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
+				themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
+			}
+			themeGraph.setGraphSizeFixed(!isAutoScale);
 			DecimalFormat decfmt = new DecimalFormat("#.######");
 			textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
 			textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-			spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
+			spinnerBarWidth.setValue(themeGraph.getBarWidth());
 		}
 	}
 
@@ -1583,7 +1582,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					spinnerBarWidth.setEnabled(true);
 					spinnerRoseAngle.setEnabled(false);
 					spinnerStartAngle.setEnabled(false);
-					spinnerBarWidth.setValue(themeGraph.getBarWidthRatio());
+					spinnerBarWidth.setValue(themeGraph.getBarWidth());
 					setPanelEnableAndRefresh(true);
 					break;
 				case 12:
