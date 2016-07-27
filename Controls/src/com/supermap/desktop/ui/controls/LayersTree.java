@@ -7,6 +7,7 @@ import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.SortUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -73,13 +74,12 @@ import java.util.HashMap;
 
 /**
  * 图层管理树控件
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 public class LayersTree extends JTree {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private transient Map currentMap = null;
@@ -97,9 +97,10 @@ public class LayersTree extends JTree {
 	private DefaultMutableTreeNode dropTargetNode = null;
 	private DefaultMutableTreeNode draggedNode = null;
 	private DefaultTreeModel treeModeltemp;
+	private boolean isUp = false;
 
 	private static DataFlavor localObjectFlavor;
-	private static DataFlavor[] supportedFlavors = { localObjectFlavor };
+	private static DataFlavor[] supportedFlavors = {localObjectFlavor};
 
 	static {
 		try {
@@ -230,7 +231,7 @@ public class LayersTree extends JTree {
 
 	/**
 	 * 刷新指定图层，需要知道当前图层对应的treePath(路径)
-	 * 
+	 *
 	 * @param layer
 	 * @param treePath
 	 */
@@ -248,7 +249,7 @@ public class LayersTree extends JTree {
 		if (null != layerNode) {
 			tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
 			// 收起节点
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), false);
 			}
 			// 删除指定节点
@@ -260,7 +261,7 @@ public class LayersTree extends JTree {
 
 	/**
 	 * 针对专题图的刷新,通过传入当前图层来刷新 当前图层需在被选中状态下
-	 * 
+	 *
 	 * @param layer
 	 */
 	public void refreshNode(Layer layer) {
@@ -273,7 +274,7 @@ public class LayersTree extends JTree {
 	}
 
 	private void refreshNodeByTreeNode(Layer layer, DefaultMutableTreeNode lastselectDefaultMutableTreeNode) {
-		if (null==lastselectDefaultMutableTreeNode) {
+		if (null == lastselectDefaultMutableTreeNode) {
 			return;
 		}
 		TreeNodeData treeNodeData = (TreeNodeData) (lastselectDefaultMutableTreeNode).getUserObject();
@@ -292,7 +293,7 @@ public class LayersTree extends JTree {
 			// // 第三步：添加子树，
 			addLayerItem(layer, layerNode);
 			// 恢复到刷新之前的状态
-			for (; tempTreePath != null && tempTreePath.hasMoreElements();) {
+			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), true);
 			}
 			this.setSelectionPath(new TreePath(layerNode.getPath()));
@@ -390,7 +391,7 @@ public class LayersTree extends JTree {
 
 	/**
 	 * modify by xuzw 2010-07-19 根据图层获取树节点，为了在Layer3DTree中能使用，修改为protected modified by gouyu 2010-12-23 使用单一出口重构，增加对THEMERANGE、THEMEUNIQUE、THEMECUSTOM类型的编辑的控制
-	 * 
+	 *
 	 * @param layer
 	 * @return
 	 */
@@ -441,42 +442,42 @@ public class LayersTree extends JTree {
 					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_THEME));
 				}
 				switch (type) {
-				// ThemeType.UNIQUE
-				case 1:
-					result = setCaseUnique(layer, theme);
-					break;
-				// ThemeType.RANGE
-				case 2:
-					result = setCaseRange(layer, theme);
+					// ThemeType.UNIQUE
+					case 1:
+						result = setCaseUnique(layer, theme);
+						break;
+					// ThemeType.RANGE
+					case 2:
+						result = setCaseRange(layer, theme);
 
-					break;
-				// ThemeType.GRAPH
-				case 3:
-					setCaseGraph(layer, result, theme);
+						break;
+					// ThemeType.GRAPH
+					case 3:
+						setCaseGraph(layer, result, theme);
 
-					break;
-				// ThemeType.LABEL
-				case 7:
-					setCaseLabel(layer, result, theme);
+						break;
+					// ThemeType.LABEL
+					case 7:
+						setCaseLabel(layer, result, theme);
 
-					break;
-				// ThemeType.CUSTOM
-				case 8:
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.THEME_CUSTOM));
+						break;
+					// ThemeType.CUSTOM
+					case 8:
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.THEME_CUSTOM));
 
-					break;
-				// ThemeType.GRIDUNIQUE
-				case 11:
-					setCaseGridUnique(layer, result, theme);
+						break;
+					// ThemeType.GRIDUNIQUE
+					case 11:
+						setCaseGridUnique(layer, result, theme);
 
-					break;
-				// ThemeType.GRIDRANGE
-				case 12:
-					setCaseGridRange(layer, result, theme);
+						break;
+					// ThemeType.GRIDRANGE
+					case 12:
+						setCaseGridRange(layer, result, theme);
 
-					break;
-				default:
-					break;
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -580,7 +581,9 @@ public class LayersTree extends JTree {
 			// 将节点插入到与图层索引一致处
 			model.insertNodeInto(getNodeByLayer(layer), parentNode, event.getIndex());
 		}
-	};
+	}
+
+	;
 
 	private class GroupLayerRemovedListener implements LayerRemovedListener {
 		@Override
@@ -591,7 +594,9 @@ public class LayersTree extends JTree {
 			DefaultTreeModel model = (DefaultTreeModel) getModel();
 			model.removeNodeFromParent((MutableTreeNode) parentNode.getChildAt(event.getIndex()));
 		}
-	};
+	}
+
+	;
 
 	protected DefaultMutableTreeNode getGroupNodeByLayer(Layer layer) {
 		DefaultMutableTreeNode result = null;
@@ -813,25 +818,27 @@ public class LayersTree extends JTree {
 		public void keyTyped(KeyEvent e) {
 			int keyCode = e.getKeyChar();
 			switch (keyCode) {
-			case KeyEvent.VK_DELETE:
-				String layerName = removeLayersControlNode();
-				setSelectionRow(0);
-				layerRemoved(layerName);
-				break;
-			default:
-				break;
+				case KeyEvent.VK_DELETE:
+					String layerName = removeLayersControlNode();
+					setSelectionRow(0);
+					layerRemoved(layerName);
+					break;
+				default:
+					break;
 			}
 		}
 	}
+
 	/**
 	 * 修改图层属性
 	 */
 	public void firePropertyChangeWithLayerSelect() {
 		firePropertyChange("LayerChange", null, null);
 	}
-	
+
 	/**
 	 * 属性变化页面添加外接表事件
+	 *
 	 * @param layer
 	 */
 	public void fireLayerPropertyChanged(Layer layer) {
@@ -1281,9 +1288,8 @@ public class LayersTree extends JTree {
 
 	/**
 	 * DragGestureListener:当该（子）类的对象检测到拖动启动动作时，调用此接口
-	 * 
-	 * @author wangdy
 	 *
+	 * @author wangdy
 	 */
 	private class LayersTreeDragGestureListener implements DragGestureListener {
 		@Override
@@ -1336,7 +1342,7 @@ public class LayersTree extends JTree {
 
 	/**
 	 * 用于提供所涉及的 DropTarget 的 DnD 操作的通知
-	 * 
+	 *
 	 * @author wangdy
 	 */
 	private class LayersTreeDropTargetAdapter extends DropTargetAdapter {
@@ -1347,7 +1353,7 @@ public class LayersTree extends JTree {
 
 		private int oldRow = 0;
 		// 标志是向上还是向下拖动，true表示向上
-		private boolean isUp = false;
+
 
 		@Override
 		public void drop(DropTargetDropEvent dtde) {
@@ -1362,16 +1368,12 @@ public class LayersTree extends JTree {
 			try {
 				if (oldRow == -1 || dropTargetNodeIndex == -1 || draggedNodeIndex == dropTargetNodeIndex)
 					return;
-				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) getModel().getRoot();
-				((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
-				((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, parent, dropTargetNodeIndex);
-				currentMap.getLayers().moveTo(draggedNodeIndex, dropTargetNodeIndex);
-				setSelectionRow(dropTargetNodeIndex);
-				currentMap.refresh();
+				moveRow();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
 		}
+
 
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
@@ -1419,7 +1421,7 @@ public class LayersTree extends JTree {
 			if (null != getPathForLocation(dragPoint.x, dragPoint.y)) {
 				treePath = getPathForLocation(dragPoint.x, dragPoint.y);
 			}
-			if (treePath == null) {
+			if (isPathSelected(treePath) || treePath == null) {
 				dropTargetNode = null;
 				dropTargetNodeIndex = -1;
 				return;
@@ -1487,14 +1489,53 @@ public class LayersTree extends JTree {
 		}
 	}
 
+	private void moveRow() {
+		if (dropTargetNodeIndex == -1) {
+			return;
+		}
+		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) getModel().getRoot();
+		int[] selectionRows = getSelectionRows();
+		Integer[] integers = new Integer[selectionRows.length];
+		for (int i = 0; i < selectionRows.length; i++) {
+			integers[i] = selectionRows[i];
+		}
+		SortUIUtilities.sortList(integers);
+		int count = 0; // 记录有多少图层移动到本图层之前
+		int lowerCount = 0;// 记录有多少图层本来在目标图层之前
+		for (int i = selectionRows.length - 1; i >= 0; i--) {
+			int currentIndex = integers[i];
+			int tempTargetRow = LayersTree.this.dropTargetNodeIndex;
+			if (currentIndex >= tempTargetRow) {
+				currentIndex += count;
+			} else {
+				if (i != selectionRows.length - 1) {
+					tempTargetRow -= lowerCount;
+				}
+				lowerCount++;
+			}
+			count++;
+			draggedNode = (DefaultMutableTreeNode) parent.getChildAt(currentIndex);
+			((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
+			((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, parent, tempTargetRow);
+			currentMap.getLayers().moveTo(currentIndex, tempTargetRow);
+		}
+		if (isUp) {
+			lowerCount++;
+		}
+		setSelectionInterval(dropTargetNodeIndex - lowerCount + 1, dropTargetNodeIndex + selectionRows.length - lowerCount);
+		currentMap.refresh();
+		dropTargetNodeIndex = -1;
+	}
+
 	/**
 	 * Drag 和 Drop 操作为用户提供合适的“拖动结束”反馈
-	 * 
+	 *
 	 * @author wangdy
 	 */
 	private class MyDragSourceAdapter extends DragSourceAdapter {
 		@Override
 		public void dragDropEnd(DragSourceDropEvent dsde) {
+			moveRow();
 			dropTargetNode = null;
 			draggedNode = null;
 			LayersTree.this.repaint();
