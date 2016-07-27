@@ -39,6 +39,7 @@ import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
+import com.supermap.desktop.mapview.geometry.property.geometryNode.GeometryNodeFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
@@ -1442,7 +1443,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					ArrayList<IProperty> properties = new ArrayList<IProperty>();
 					properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 					properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
-					if (iGeometry != null) {
+					if (iGeometry != null && GeometryNodeFactory.isSupportGeometry(iGeometry)) {
 						properties.add(GeometryPropertyFactory.getGeometryNodePropertyControl(recordset));
 					}
 					if (geometry instanceof GeoText || geometry instanceof GeoText3D) {
