@@ -22,12 +22,15 @@ deploy:
   repo: https://github.com/SuperMap-iDesktop/SuperMap-iDesktop-Cross.git
   branch: gh-pages
 
-duoshuo_shortname: qinlj
+duoshuo_shortname: supermap-cross-support
 duoshuo_share: true
 google_analytics: UA-4910098-10
 fb_admins: 100000247608790
 algolia:
   github:
+    api_key: 87c625ea3b3f57f243d590e3c59b0748
+    index_name: supermap-idesktop
+  localhost:
     api_key: 87c625ea3b3f57f243d590e3c59b0748
     index_name: supermap-idesktop
   support:

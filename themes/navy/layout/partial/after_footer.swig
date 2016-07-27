@@ -18,7 +18,8 @@
 {% endif %}
 <!-- Algolia -->
 {% if config.algolia %}
-<script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2.1.2/docsearch.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2.1.2/docsearch.min.js"></script>
 <script type="text/javascript">
 document.getElementById('search-input-wrap').classList.add('on');
 var host=window.location.host;
@@ -30,7 +31,15 @@ if(host=='{{ config.host.github }}')
     inputSelector: '#search-input'
   });
 }
-else if(host=='{{ config.host.support }}')
+else if(host=='{{ config.host.localhost }}')
+{
+  docsearch({
+    apiKey: '{{ config.algolia['localhost'].api_key }}',
+    indexName: '{{ config.algolia['localhost'].index_name }}',
+    inputSelector: '#search-input'
+  });
+}
+else(host=='{{ config.host.support }}')
 {
   docsearch({
     apiKey: '{{ config.algolia['support'].api_key }}',
