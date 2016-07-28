@@ -1,7 +1,7 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.SystemUIUtilities;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.PathUtilities;
 
 import java.awt.*;
@@ -26,8 +26,8 @@ public class MainFrame extends FormBase implements WindowListener {
 
 		this.setSize(1000, 640);
 		this.setExtendedState(MAXIMIZED_BOTH);
-		this.setText(GlobalParameters.getDesktopTitle());
-		this.setName(GlobalParameters.getDesktopTitle());
+		this.setText(CoreProperties.getString("String_MessageBox_Title"));
+		this.setName(CoreProperties.getString("String_MessageBox_Title"));
 		// 换成自己的图标：
 		String path = PathUtilities.getRootPathName();
 		String[] paths = new String[2];
