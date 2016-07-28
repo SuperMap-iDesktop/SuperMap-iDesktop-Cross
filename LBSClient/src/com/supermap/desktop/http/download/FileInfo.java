@@ -1,32 +1,25 @@
 package com.supermap.desktop.http.download;
 
 /**
- * <b>function:</b> 下载文件信息类
- * 
- * @author hoojo
- * @createDate 2011-9-21 下午05:14:58
- * @file DownloadInfo.java
- * @package com.hoo.entity
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
+ * 文件信息类
+ * @author 
+ *
  */
 public class FileInfo {
-	// 下载文件url
+	// 文件url
 	private String url;
-	// 下载文件名称
+	// 文件名称
 	private String fileName;
-	// 下载文件路径
+	// 文件路径
 	private String filePath;
 	// file size
 	private long fileSize;
-	// 分成多少段下载， 每一段用一个线程完成下载
+	// 分成多少段， 每一段用一个线程完成
 	private int splitter;
-	// 分成多少段下载， 每一段用一个线程完成下载
+	// 分成多少段， 每一段用一个线程完成
 	private Boolean isHDFSFile;
 
-	// 下载文件默认保存路径
+	// 文件默认保存路径
 	private final static String FILE_PATH = "C:/temp";
 	// 默认分块数、线程数
 	private final static int SPLITTER_NUM = 5;
@@ -37,7 +30,7 @@ public class FileInfo {
 
 	/**
 	 * @param url
-	 *            下载地址
+	 *            地址
 	 */
 	public FileInfo(String url) {
 		this(url, SPLITTER_NUM);
@@ -45,9 +38,9 @@ public class FileInfo {
 
 	/**
 	 * @param url
-	 *            下载地址url
+	 *            地址url
 	 * @param splitter
-	 *            分成多少段或是多少个线程下载
+	 *            分成多少段或是多少个线程
 	 */
 	public FileInfo(String url, int splitter) {
 		this(url, null, null, -1, splitter, false);
@@ -63,7 +56,7 @@ public class FileInfo {
 	 * @param fileSize
 	 *            file size
 	 * @param splitter
-	 *            分成多少段或是多少个线程下载
+	 *            分成多少段或是多少个线程
 	 ** @param isHDFSFile
 	 *            是否为HDFS文件
 	 */

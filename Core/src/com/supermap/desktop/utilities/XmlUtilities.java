@@ -33,6 +33,41 @@ public class XmlUtilities {
 	private XmlUtilities() {
 		// 工具类不提供构造函数
 	}
+	/**
+	 * 根据文件获取Document
+	 * @param file
+	 * @param i
+	 * @return
+	 */
+	public static Document getDocument(File file, int i) {
+		Document document = null;
+		if (i < 3000) {
+			try {
+				Thread.sleep((long) (Math.random() * i));
+				if (file.exists()) {
+					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+					documentBuilder.setErrorHandler(new DefaultHandler() {
+						@Override
+						public void fatalError(SAXParseException e) throws SAXException {
+							// 不输出到控制台
+							throw e;
+						}
+					});
+					document = documentBuilder.parse(file);
+				}
+			} catch (Exception e) {
+				// 文件正在写或文件错误,重新取文件
+				if (i == 0) {
+					i++;
+				} else {
+					i += i;
+				}
+				document = getDocument(file, i);
+			}
+		}
+		return document;
+	}
 
 	public static Document getDocument(String filePath) {
 		return getDocument(filePath, 0);
@@ -110,9 +145,12 @@ public class XmlUtilities {
 	/**
 	 * 将指定的Node写到指定的OutputStream流中。
 	 *
-	 * @param os       将要写入的流。
-	 * @param node     将要写入的节点。
-	 * @param encoding 编码。
+	 * @param os
+	 *            将要写入的流。
+	 * @param node
+	 *            将要写入的节点。
+	 * @param encoding
+	 *            编码。
 	 */
 	public static void writeXml(OutputStream os, Node node, String encoding) throws TransformerException {
 		TransformerFactory transFactory = TransformerFactory.newInstance();

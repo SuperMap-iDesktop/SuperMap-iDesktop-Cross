@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
 import com.supermap.Interface.ITask;
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.http.download.FileInfo;
@@ -65,7 +66,7 @@ public class Task extends JPanel implements ITask {
 		labelLogo = new JLabel(CommonUtilities.getImageIcon("image_datasource.png"));
 		this.buttonRun = new SmButton(CommonUtilities.getImageIcon("Image_Stop.png"));
 		this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("image_delete1.png"));
-		labelProcess = new JLabel("-0%");
+		labelProcess = new JLabel("");
 		labelStatus = new JLabel("Remain time:0");
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -169,24 +170,29 @@ public class Task extends JPanel implements ITask {
 		// 默认实现，后续进行初始化操作
 	}
 
-	public FileInfo getDownloadInfo() {
+	public FileInfo getFileInfo() {
 		return fileInfo;
 	}
 
-	public void setDownloadInfo(FileInfo downloadInfo) {
+	public void setFileInfo(FileInfo downloadInfo) {
 		this.fileInfo = downloadInfo;
 	}
 
 	@Override
 	public void setCancel(boolean isCancel) {
-		// TODO Auto-generated method stub
+		// DoNothing
 
 	}
 
 	@Override
 	public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-		// TODO Auto-generated method stub
+		// DoNothing
 
+	}
+
+	@Override
+	public TaskEnum getTaskType() {
+		return null;
 	}
 
 }

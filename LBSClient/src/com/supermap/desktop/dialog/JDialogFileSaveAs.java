@@ -1,11 +1,8 @@
 package com.supermap.desktop.dialog;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.io.File;
+import java.text.MessageFormat;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -14,16 +11,17 @@ import com.supermap.Interface.ITask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.http.*;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
 import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.task.DownLoadTask;
 import com.supermap.desktop.task.TaskFactory;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.CommonUtilities;
-import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.*;
 
 /**
  * 文件下载对话框
@@ -47,6 +45,8 @@ public class JDialogFileSaveAs extends SmDialog {
 	private JButton buttonOK;
 	private JButton buttonCancel;
 
+	private String fileName = "";
+
 	private String webURL;
 	private String webFile;
 	private String localPath;
@@ -57,7 +57,15 @@ public class JDialogFileSaveAs extends SmDialog {
 
 	public JDialogFileSaveAs() {
 		initializeComponents();
+		initializeResources();
 		registEvnets();
+	}
+
+	private void initializeResources() {
+		this.labelServerURL.setText(LBSClientProperties.getString("String_URL"));
+		this.buttonBrowser.setText(LBSClientProperties.getString("String_Scale"));
+		this.labelLocalPath.setText(LBSClientProperties.getString("String_LocalPath"));
+		this.buttonOK.setText(LBSClientProperties.getString("String_Download"));
 	}
 
 	private void registEvnets() {
@@ -89,7 +97,7 @@ public class JDialogFileSaveAs extends SmDialog {
 			public void windowClosed(WindowEvent e) {
 				removeEvents();
 			}
-			
+
 		});
 	}
 
@@ -108,16 +116,16 @@ public class JDialogFileSaveAs extends SmDialog {
 		this.setSize(600, 150);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		this.labelServerURL = new JLabel("服务器地址:");
+		this.labelServerURL = new JLabel("url");
 		this.textServerURL = new JTextField("Web URL");
 		this.textServerURL.setEditable(false);
-		this.buttonBrowser = new JButton("浏览");
+		this.buttonBrowser = new JButton("");
 
-		this.labelLocalPath = new JLabel("本地路径:");
+		this.labelLocalPath = new JLabel("");
 		this.textLocalPath = new JTextField("Local Path");
 
-		this.buttonOK = new SmButton("下载");
-		this.buttonCancel = new SmButton(CommonProperties.getString("String_Button_Cancel"));
+		this.buttonOK = new SmButton("");
+		this.buttonCancel = ComponentFactory.createButtonCancel();
 		GroupLayout gLayout = new GroupLayout(this.getContentPane());
 		gLayout.setAutoCreateContainerGaps(true);
 		gLayout.setAutoCreateGaps(true);
@@ -191,7 +199,7 @@ public class JDialogFileSaveAs extends SmDialog {
 	public void setLocalPath(String localPath) {
 		this.localPath = localPath;
 		if (this.textLocalPath != null) {
-			this.textLocalPath.setText(this.localPath);
+			this.textLocalPath.setText(this.localPath + fileName);
 		}
 	}
 
@@ -199,14 +207,14 @@ public class JDialogFileSaveAs extends SmDialog {
 		try {
 			String modelName = "HDFSFileDownload";
 			if (!SmFileChoose.isModuleExist(modelName)) {
-				SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), "选择文件", modelName, "SaveOne");
+				SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), LBSClientProperties.getString("String_ChooseFile"),
+						modelName, "GetDirectories");
 			}
-			SmFileChoose smFileChoose = new SmFileChoose(this.webFile);
-			smFileChoose.setAcceptAllFileFilterUsed(true);
-
+			SmFileChoose smFileChoose = new SmFileChoose(modelName);
+			smFileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int state = smFileChoose.showDefaultDialog();
 			if (state == JFileChooser.APPROVE_OPTION) {
-				this.textLocalPath.setText(smFileChoose.getFilePath());
+				this.textLocalPath.setText(smFileChoose.getFilePath() + File.separator + fileName);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -223,14 +231,18 @@ public class JDialogFileSaveAs extends SmDialog {
 
 			FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
 			if (fileManagerContainer != null) {
+				File directory = new File(localPath);
+				if (!directory.exists()
+						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_isMakeDirectory"), localPath)) == JOptionPane.OK_OPTION) {
+					directory.mkdirs();
+				}
 				File file = new File(this.textLocalPath.getText());
 				FileInfo downloadInfo = new FileInfo(getWebFilePath(), file.getName(), file.getParentFile().getPath(), this.getFileSize(), 1, true);
 				ITaskFactory taskFactory = TaskFactory.getInstance();
-				ITask fileManager = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
-				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo);
-				fileManager.doWork(downloadProgressCallable);
-
-				fileManagerContainer.addItem(fileManager);
+				ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo,true);
+				task.doWork(downloadProgressCallable);
+				fileManagerContainer.addItem(task);
 			}
 
 			this.dispose();
@@ -250,4 +262,13 @@ public class JDialogFileSaveAs extends SmDialog {
 		this.dialogResult = DialogResult.CANCEL;
 		removeEvents();
 	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 }

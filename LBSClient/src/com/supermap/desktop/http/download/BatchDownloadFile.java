@@ -1,11 +1,6 @@
 package com.supermap.desktop.http.download;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,7 +69,7 @@ public class BatchDownloadFile extends Thread {
 	@Override
 	public void run() {
 		// 首次下载，获取下载文件长度
-		if (first) {
+		if (first && null != downloadInfo) {
 			// 如果是HDFS文件，直接从 downloadInfo 中获取文件长度
 			if (!downloadInfo.isHDFSFile()) {
 				fileSize = this.getFileSize();// 获取文件长度
@@ -156,7 +151,7 @@ public class BatchDownloadFile extends Thread {
 					e.printStackTrace();
 				}
 
-				// 下载完成了删除进度文件
+				// 下载完成了删除进度文件,删除任务
 				if (isFinished) {
 					this.tempFile.delete();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
@@ -309,7 +304,7 @@ public class BatchDownloadFile extends Thread {
 	 * @createDate 2016-5-22
 	 * @throws IOException
 	 */
-	public void resumeDownload(){
+	public void resumeDownload() {
 		try {
 			this.stop = false;
 			readPosInfo();
@@ -318,7 +313,7 @@ public class BatchDownloadFile extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
@@ -406,5 +401,5 @@ public class BatchDownloadFile extends Thread {
 	public void setDownloadInfo(FileInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
 	}
-	
+
 }

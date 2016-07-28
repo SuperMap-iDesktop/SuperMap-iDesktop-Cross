@@ -527,7 +527,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					dialogFileSaveAs.setWebURL(this.textServerURL.getText());
 					dialogFileSaveAs.setWebFile(define.getName());
 					dialogFileSaveAs.setFileSize(Long.parseLong(define.getSize()));
-					dialogFileSaveAs.setLocalPath("F:/temp/" + define.getName());
+					dialogFileSaveAs.setFileName(define.getName());
+					dialogFileSaveAs.setLocalPath("F:/temp/");
 					dialogFileSaveAs.showDialog();
 				}
 			}

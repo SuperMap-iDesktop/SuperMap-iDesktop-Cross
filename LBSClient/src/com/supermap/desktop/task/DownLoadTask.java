@@ -2,6 +2,7 @@ package com.supermap.desktop.task;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
@@ -9,6 +10,7 @@ import java.util.concurrent.CancellationException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -17,7 +19,7 @@ import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
-
+import com.supermap.desktop.utilities.ManagerXMLParser;
 
 public class DownLoadTask extends Task {
 
@@ -27,11 +29,15 @@ public class DownLoadTask extends Task {
 	private static final long serialVersionUID = 1L;
 	private ActionListener buttonNowRemoveListener;
 	private ActionListener buttonNowRunListener;
+
 	public DownLoadTask(FileInfo downloadInfo) {
 		super(downloadInfo);
-		
+
 	}
-	
+	public DownLoadTask() {
+		super();
+	}
+
 	public void registEvents() {
 		this.buttonNowRunListener = new ActionListener() {
 
@@ -55,7 +61,7 @@ public class DownLoadTask extends Task {
 		this.buttonRun.addActionListener(buttonNowRunListener);
 		this.buttonRemove.addActionListener(buttonNowRemoveListener);
 	}
-	
+
 	private void buttonRunClicked() {
 		this.setCancel(!this.isCancel);
 
@@ -64,30 +70,35 @@ public class DownLoadTask extends Task {
 		} else {
 			this.buttonRun.setIcon(CommonUtilities.getImageIcon("Image_Stop.png"));
 		}
-	}	
+	}
+
 	private void buttonRemoveClicked() throws IOException {
+		setCancel(true);
 		if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
 			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"),
 					this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
-
+				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
 			}
 			return;
 		}
 		if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			removeDownloadInfoItem();
+			ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
 			return;
 		}
 		
 }
+
 	private void removeDownloadInfoItem() {
 		CommonUtilities.removeItem(this);
 		DownloadUtils.getHashMap().remove(this.fileInfo);
 		Application.getActiveApplication().getOutput()
 				.output(MessageFormat.format(LBSClientProperties.getString("String_RemoveDownLoadMessionInfo"), this.fileInfo.getFileName()));
 	}
+
 	@Override
 	public void setCancel(boolean isCancel) {
 		try {
@@ -123,7 +134,7 @@ public class DownLoadTask extends Task {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
-	
+
 	@Override
 	public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -144,10 +155,15 @@ public class DownLoadTask extends Task {
 						// 刷新大数据展示列表
 						CommonUtilities.getActiveLBSControl().refresh();
 						buttonRun.setEnabled(false);
+						ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
 					}
 				}
 
 			}
 		});
+	}
+
+	public TaskEnum getTaskType() {
+		return TaskEnum.DOWNLOADTASK;
 	}
 }

@@ -28,7 +28,7 @@ public class UploadPropressCallable extends UpdateProgressCallable{
 				ITask fileManager = (ITask)getUpdate();
 				if (event != null 
 						&& event.getDownloadInfo() != null
-						&& event.getDownloadInfo().equals(fileManager.getDownloadInfo())) {
+						&& event.getDownloadInfo().equals(fileManager.getFileInfo())) {
 					updateProgress(event.getProgress(), String.valueOf(event.getRemainTime()), event.getDownloadInfo().getFileName());
 				}				
 			} catch (CancellationException e) {
