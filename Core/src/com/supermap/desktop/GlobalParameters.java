@@ -1,6 +1,7 @@
 package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.AltitudeModeUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -8,11 +9,13 @@ import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 /**
@@ -725,10 +728,31 @@ public class GlobalParameters {
 
 	//region 工作空间相关提示
 	private static void initWorkspaceInfo() {
+		initIsShowDataInNewWindow();
 		initIsShowFormClosingInfo();
 		initAutoCloseEmptyWindow();
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
+	}
+
+	//region 自动新建窗口浏览数据集数据
+	private static boolean isShowDataInNewWindow = true;
+
+	private static void initIsShowDataInNewWindow() {
+		String value = getValue("_startup_dataWindow", "autoNewWindow");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setIsShowDataInNewWindow(result);
+		}
+	}
+
+	public static boolean isShowDataInNewWindow() {
+		return isShowDataInNewWindow;
+	}
+	//endregion
+
+	public static void setIsShowDataInNewWindow(boolean isShowDataInNewWindow) {
+		GlobalParameters.isShowDataInNewWindow = isShowDataInNewWindow;
 	}
 
 	//region 自动关闭空窗口
@@ -810,8 +834,65 @@ public class GlobalParameters {
 	public static void setIsWorkspaceCloseNotify(boolean isWorkspaceCloseNotify) {
 		GlobalParameters.isWorkspaceCloseNotify = isWorkspaceCloseNotify;
 	}
-	//endregion
-	//endregion
 
+
+	//endregion
+	//endregion
+	public static void save() {
+		if (StringUtilities.isNullOrEmpty(startupXml)) {
+			return;
+		}
+		Document emptyDocument = XmlUtilities.getEmptyDocument();
+		if (emptyDocument != null) {
+			Element startup = emptyDocument.createElement("startup");
+			emptyDocument.appendChild(startup);
+
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_WorkspaceComment")));
+			Element workspace = emptyDocument.createElement("workspace");
+			workspace.setAttribute("closenotify", String.valueOf(isWorkspaceCloseNotify));
+			workspace.setAttribute("closeMemoryDatasourceNotify", String.valueOf(isCloseMemoryDatasourceNotify));
+			startup.appendChild(workspace);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_dataWindowComment")));
+			Element dataWindow = emptyDocument.createElement("dataWindow");
+			dataWindow.setAttribute("autoCloseEmptyWindow", String.valueOf(isAutoCloseEmptyWindow));
+			dataWindow.setAttribute("autoNewWindow", String.valueOf(isShowDataInNewWindow));
+			dataWindow.setAttribute("showCloseInfoForm", String.valueOf(isShowFormClosingInfo));
+			dataWindow.setAttribute("autoNewWindow", String.valueOf(isAutoCloseEmptyWindow));
+			startup.appendChild(dataWindow);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_cameraComment")));
+			Element camera = emptyDocument.createElement("camera");
+			camera.setAttribute("altitude", new BigDecimal(cameraAltitude).toString());
+			camera.setAttribute("altitudeMode", cameraAltitudeMode.name());
+			camera.setAttribute("heading", String.valueOf(cameraHeading));
+			camera.setAttribute("latitude", String.valueOf(cameraLatitude));
+			camera.setAttribute("longitude", String.valueOf(cameraLongitude));
+			camera.setAttribute("tilt", String.valueOf(cameraTilt));
+			startup.appendChild(camera);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_mainFormComment")));
+			Element mainForm = emptyDocument.createElement("mainForm");
+			mainForm.setAttribute("icon", "");
+			mainForm.setAttribute("text", desktopTitle);
+			startup.appendChild(mainForm);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_logComment")));
+			Element log = emptyDocument.createElement("log");
+			log.setAttribute("logFolder", logFolder);
+			log.setAttribute("outputToLog", String.valueOf(outputToLog));
+			startup.appendChild(log);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_InfoTypeComment")));
+			Element infoType = emptyDocument.createElement("InfoType");
+			infoType.setAttribute("Exception", String.valueOf(isLogException));
+			infoType.setAttribute("Information", String.valueOf(isLogInformation));
+			startup.appendChild(infoType);
+
+			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
+
+		}
+	}
 
 }

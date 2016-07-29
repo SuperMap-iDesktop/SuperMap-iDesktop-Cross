@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.settings;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.frame.FrameProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -38,7 +39,7 @@ public class JDialogSettings extends SmDialog {
 	private SmButton smButtonOk = new SmButton();
 	private SmButton smButtonCancle = new SmButton();
 
-	private HashMap<String, ISetting> rightPanels = new HashMap<>();
+	private HashMap<String, BaseSettingPanel> rightPanels = new HashMap<>();
 	private DefaultListModel<String> listModel;
 
 	public JDialogSettings() {
@@ -93,23 +94,24 @@ public class JDialogSettings extends SmDialog {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				panelRight.removeAll();
-				panelRight.add(getRightPanel(jList.getSelectedValue()).getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+				panelRight.add(getRightPanel(jList.getSelectedValue()), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 			}
 		});
 		smButtonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (ISetting iSetting : rightPanels.values()) {
+				for (BaseSettingPanel iSetting : rightPanels.values()) {
 					iSetting.apply();
 					iSetting.dispose();
 				}
+				GlobalParameters.save();
 				dispose();
 			}
 		});
 		smButtonCancle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (ISetting iSetting : rightPanels.values()) {
+				for (BaseSettingPanel iSetting : rightPanels.values()) {
 					iSetting.dispose();
 				}
 				dispose();
@@ -127,7 +129,7 @@ public class JDialogSettings extends SmDialog {
 		jList.setSelectedIndex(0);
 	}
 
-	private ISetting getRightPanel(String panelName) {
+	private BaseSettingPanel getRightPanel(String panelName) {
 		if (rightPanels.get(panelName) != null) {
 			return rightPanels.get(panelName);
 		}
@@ -165,12 +167,8 @@ public class JDialogSettings extends SmDialog {
 		return new EmptySetting();
 	}
 
-	private class EmptySetting implements ISetting {
+	private class EmptySetting extends BaseSettingPanel {
 
-		@Override
-		public JPanel getPanel() {
-			return new JPanel();
-		}
 
 		@Override
 		public void apply() {

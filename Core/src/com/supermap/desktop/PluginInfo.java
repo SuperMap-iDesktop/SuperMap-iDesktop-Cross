@@ -12,8 +12,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.FileNotFoundException;
-
 public class PluginInfo {
 
 	private Element frameMenusElement = null;
@@ -332,11 +330,7 @@ public class PluginInfo {
 					}
 				}
 
-				try {
 					XmlUtilities.saveXml(this.configLocation, document, document.getXmlEncoding());
-				} catch (FileNotFoundException e) {
-					Application.getActiveApplication().getOutput().output(e);
-				}
 			}
 		}
 	}

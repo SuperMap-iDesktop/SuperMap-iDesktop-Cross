@@ -19,7 +19,6 @@ import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,7 +41,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +48,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -1161,11 +1158,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	}
 
 	private void save() {
-		try {
 			XmlUtilities.saveXml(projectionConfigPath, projectionDoc, "UTF-8");
-		} catch (FileNotFoundException e) {
-			Application.getActiveApplication().getOutput().output(e);
-		}
 	}
 
 	private boolean removeGeoFormDoc(CoordSysDefine coordSysDefine) {

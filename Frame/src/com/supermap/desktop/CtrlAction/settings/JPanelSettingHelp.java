@@ -1,15 +1,9 @@
 package com.supermap.desktop.CtrlAction.settings;
 
-import javax.swing.*;
-
 /**
  * @author XiaJT
  */
-public class JPanelSettingHelp extends JPanel implements ISetting {
-	@Override
-	public JPanel getPanel() {
-		return this;
-	}
+public class JPanelSettingHelp extends BaseSettingPanel {
 
 	@Override
 	public void apply() {
