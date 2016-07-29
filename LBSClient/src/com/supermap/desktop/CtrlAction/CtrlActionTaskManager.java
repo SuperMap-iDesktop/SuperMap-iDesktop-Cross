@@ -33,13 +33,14 @@ public class CtrlActionTaskManager extends CtrlAction {
 		FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
 		if (null != fileManagerContainer) {
 			ITaskFactory taskFactory = TaskFactory.getInstance();
-			ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, null);
 			List<String> taskPropertyLists = ManagerXMLParser.getTaskPropertyList();
 			JDialogTaskManager taskManager = new JDialogTaskManager(null, true);
 			taskManager.setDownloadTaskNumber(taskPropertyLists.size());
 			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverDownloadTask()) {
-				for (int i = 0; i < taskPropertyLists.size(); i++) {
-					FileInfo downloadInfo = new FileInfo(taskPropertyLists.get(i).split("=")[1]);
+				for (String attris : taskPropertyLists) {
+					String[] attriArray = attris.split(",");
+					FileInfo downloadInfo = new FileInfo(attriArray[0], attriArray[1], attriArray[2], Long.parseLong(attriArray[3]), 1, true);
+					ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
 					DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
 					task.doWork(downloadProgressCallable);
 					fileManagerContainer.addItem(task);

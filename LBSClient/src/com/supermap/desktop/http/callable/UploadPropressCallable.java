@@ -1,6 +1,5 @@
 package com.supermap.desktop.http.callable;
 
-import java.io.File;
 import java.util.concurrent.CancellationException;
 
 import com.supermap.Interface.ITask;
@@ -13,11 +12,9 @@ public class UploadPropressCallable extends UpdateProgressCallable{
 
 	private Boolean isSucceed;
 	private FileInfo fileInfo;
-	private File file;
 	
-	public UploadPropressCallable(FileInfo downloadInfo,File file) {
+	public UploadPropressCallable(FileInfo downloadInfo) {
 		this.fileInfo = downloadInfo;
-		this.file = file;
 	}
 	
 	private FileSteppedListener steppedListener = new FileSteppedListener() {
@@ -41,7 +38,7 @@ public class UploadPropressCallable extends UpdateProgressCallable{
 		try {
 			isSucceed = false;
 			UploadUtils.addNewWindowListener(steppedListener);
-			UploadUtils.upload(fileInfo, file.getParentFile().getPath(), file.getName(), file.length(), true);
+			UploadUtils.upload(fileInfo);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

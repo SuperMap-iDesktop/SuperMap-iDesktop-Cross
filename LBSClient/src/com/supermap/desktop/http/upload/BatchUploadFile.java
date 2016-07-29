@@ -50,7 +50,7 @@ public class BatchUploadFile extends Thread {
 		this.uploadInfo = uploadInfo;
 		// 单线程实现上传
 		uploadInfo.setSplitter(1);
-		String tempPath = this.uploadInfo.getFilePath() + ".position";
+		String tempPath = this.uploadInfo.getFilePath() + File.separator + uploadInfo.getFileName() + ".position";
 		tempFile = new File(tempPath);
 		// 如果存在读入点位置的文件
 		if (tempFile.exists()) {
@@ -155,10 +155,6 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * 获取文件的上传完成的大小
-	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public long getFinishedSize() throws IOException {
 		long finished = 0;
@@ -179,10 +175,6 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * 获取文件的上传进度
-	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public int getUploadProcess() throws IOException {
 		int process = 0;
@@ -255,9 +247,6 @@ public class BatchUploadFile extends Thread {
 	/**
 	 * 获取文件的上传进度
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public Boolean isFinished() throws IOException {
 		Boolean result = true;
@@ -279,21 +268,13 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * 停止上传
-	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public void stopUpload() throws IOException {
 		this.stop = true;
 	}
 
 	/**
-	 * 继续上传
-	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
+	 * 继续上传	
 	 */
 	public void resumeDownload() {
 		try {
@@ -309,10 +290,6 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * 将写入点数据保存在临时文件中
-	 * 
-	 * @author hoojo
-	 * @createDate 2011-9-23 下午05:25:37
-	 * @throws IOException
 	 */
 	private void writePosInfo() throws IOException {
 		DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
@@ -328,10 +305,6 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * <b>function:</b>读取写入点的位置信息
-	 * 
-	 * @author hoojo
-	 * @createDate 2011-9-23 下午05:30:29
-	 * @throws IOException
 	 */
 	private void readPosInfo() throws IOException {
 		DataInputStream dis = new DataInputStream(new FileInputStream(tempFile));
