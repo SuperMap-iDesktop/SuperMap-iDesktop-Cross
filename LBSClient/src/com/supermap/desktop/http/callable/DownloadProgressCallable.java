@@ -9,7 +9,6 @@ import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.utilities.ManagerXMLParser;
-import com.supermap.desktop.utilities.StringUtilities;
 
 public class DownloadProgressCallable extends UpdateProgressCallable {
 
@@ -17,7 +16,7 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 	FileInfo downloadInfo;
 	private boolean isNew;
 
-	public DownloadProgressCallable(FileInfo downloadInfo,boolean isNew) {
+	public DownloadProgressCallable(FileInfo downloadInfo, boolean isNew) {
 		this.downloadInfo = downloadInfo;
 		this.isNew = isNew;
 	}
@@ -43,7 +42,8 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 			if (isNew) {
 				DownloadUtils.addNewWindowListener(steppedListener);
 				DownloadUtils.download(this.downloadInfo);
-				String property = "URL=" + this.downloadInfo.toString();
+				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getFileName() + ",FilePath=" + downloadInfo.getFilePath()
+						+ ",FileSize=" + downloadInfo.getFileSize();
 				ManagerXMLParser.addTask(TaskEnum.DOWNLOADTASK, property);
 			} else {
 				DownloadUtils.addNewWindowListener(steppedListener);

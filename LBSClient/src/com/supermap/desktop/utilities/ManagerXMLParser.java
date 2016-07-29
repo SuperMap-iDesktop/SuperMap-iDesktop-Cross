@@ -46,7 +46,6 @@ public class ManagerXMLParser {
 						break;
 					}
 				}
-
 				try {
 					XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
 							document.getXmlEncoding());
@@ -73,7 +72,8 @@ public class ManagerXMLParser {
 			NodeList list = document.getElementsByTagName("DownLoadTask");
 			for (int i = 0; i < list.getLength(); i++) {
 				Element temp = (Element) list.item(i);
-				String tempStr = "URL=" + temp.getAttribute("URL");
+				String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("FilePath") + ","
+						+ temp.getAttribute("FileSize");
 				resultList.add(tempStr);
 			}
 		}
@@ -85,7 +85,7 @@ public class ManagerXMLParser {
 	 * 
 	 * @param taskType
 	 * @param property
-	 *            :属性字符串（如DownloadTask可设置为URL=......）
+	 *            :属性字符串（如DownloadTask可设置为URL=url,FilePath=filepath,......）
 	 */
 	public static void addTask(TaskEnum taskType, String property) {
 		// 如果文件存在则直接添加
@@ -96,8 +96,11 @@ public class ManagerXMLParser {
 				NodeList list = document.getElementsByTagName("DownLoadTasks");
 				Node downLoadTasksNode = list.item(0);
 				Element newDownLoadTaskElement = document.createElement("DownLoadTask");
-				String[] propertyArray = property.split("=");
-				newDownLoadTaskElement.setAttribute(propertyArray[0], propertyArray[1]);
+				String[] propertyArray = property.split(",");
+				for (String attributes : propertyArray) {
+					String[] attri = attributes.split("=");
+					newDownLoadTaskElement.setAttribute(attri[0], attri[1]);
+				}
 				if (null != downLoadTasksNode) {
 					downLoadTasksNode.appendChild(newDownLoadTaskElement);
 					try {
@@ -107,6 +110,25 @@ public class ManagerXMLParser {
 						e.printStackTrace();
 					}
 				}
+				break;
+			case UPLOADTASK:
+//				NodeList list = document.getElementsByTagName("DownLoadTasks");
+//				Node downLoadTasksNode = list.item(0);
+//				Element newDownLoadTaskElement = document.createElement("DownLoadTask");
+//				String[] propertyArray = property.split(",");
+//				for (String attributes : propertyArray) {
+//					String[] attri = attributes.split("=");
+//					newDownLoadTaskElement.setAttribute(attri[0], attri[1]);
+//				}
+//				if (null != downLoadTasksNode) {
+//					downLoadTasksNode.appendChild(newDownLoadTaskElement);
+//					try {
+//						XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+//								document.getXmlEncoding());
+//					} catch (FileNotFoundException e) {
+//						e.printStackTrace();
+//					}
+//				}
 				break;
 
 			default:

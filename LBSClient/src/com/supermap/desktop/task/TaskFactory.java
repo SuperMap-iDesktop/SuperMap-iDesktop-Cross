@@ -23,8 +23,6 @@ public class TaskFactory implements ITaskFactory {
 			// 下载任务
 			if (null != fileInfo) {
 				task = new DownLoadTask(fileInfo);
-			} else {
-				task = new DownLoadTask();
 			}
 			break;
 		case UPLOADTASK:

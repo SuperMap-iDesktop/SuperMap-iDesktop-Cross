@@ -34,9 +34,6 @@ public class DownLoadTask extends Task {
 		super(downloadInfo);
 
 	}
-	public DownLoadTask() {
-		super();
-	}
 
 	public void registEvents() {
 		this.buttonNowRunListener = new ActionListener() {
@@ -76,21 +73,20 @@ public class DownLoadTask extends Task {
 		setCancel(true);
 		if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
-			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"),
-					this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
+			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
-				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
+				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
 			}
 			return;
 		}
 		if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			removeDownloadInfoItem();
-			ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
+			ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
 			return;
 		}
-		
-}
+
+	}
 
 	private void removeDownloadInfoItem() {
 		CommonUtilities.removeItem(this);
@@ -153,9 +149,11 @@ public class DownLoadTask extends Task {
 						progressBar.setVisible(false);
 						labelStatus.setText(LBSClientProperties.getString("String_FileDownLoadFinished"));
 						// 刷新大数据展示列表
-						CommonUtilities.getActiveLBSControl().refresh();
+						if (null != CommonUtilities.getActiveLBSControl()) {
+							CommonUtilities.getActiveLBSControl().refresh();
+						}
 						buttonRun.setEnabled(false);
-						ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getFilePath() + File.separator + fileInfo.getFileName() + ".position");
+						ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getUrl());
 					}
 				}
 
