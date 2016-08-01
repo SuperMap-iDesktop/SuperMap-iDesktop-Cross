@@ -54,7 +54,7 @@ public class WorkspaceRecovery {
 		} finally {
 			// one change
 			workspaceRecovery = null;
-			WorkspaceAutoSave.getInstance().start();
+			WorkspaceTempSave.getInstance().start();
 		}
 	}
 
@@ -242,7 +242,7 @@ public class WorkspaceRecovery {
 	 * @return 恢复目录路径
 	 */
 	private String getRecoveringWorkspacePath(String workSpaceFilePath) {
-		String defaultPath = FileUtilities.getAppDataPath() + "tempWorkspace" + File.separator + "RecoveringWorkspace";
+		String defaultPath = FileUtilities.getAppDataPath() + "RecoveringWorkspace";
 		int i = 0;
 		String path = defaultPath + File.separator;
 		while (new File(path).exists() && !FileUtilities.delete(path)) {

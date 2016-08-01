@@ -91,7 +91,6 @@ public class SmRollingFileAppender extends RollingFileAppender {
 				LogLog.debug("Renaming file " + file + " to " + target);
 
 				renameSucceeded = file.renameTo(target);
-
 				// 如果重命名失败，重新打开文件，并在文件上追加
 				if (!renameSucceeded) {
 					try {

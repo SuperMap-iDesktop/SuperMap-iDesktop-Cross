@@ -2,15 +2,14 @@ package com.supermap.desktop.utilities;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-
-import org.jdesktop.swingx.JXTipOfTheDay.ShowOnStartupChoice;
-
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -37,7 +36,7 @@ public class MapUtilities {
 
 	/**
 	 * 获取当前地图
-	 * 
+	 *
 	 * @return
 	 */
 	public static Map getActiveMap() {
@@ -46,7 +45,7 @@ public class MapUtilities {
 
 	/**
 	 * 通过图层表达式获取当前地图
-	 * 
+	 *
 	 * @param map
 	 * @param caption
 	 * @return
@@ -70,11 +69,9 @@ public class MapUtilities {
 
 	/**
 	 * 递归实现通过标题查找专题图图层
-	 * 
-	 * @param layer
-	 *            当前查找图层
-	 * @param caption
-	 *            目标图层标题
+	 *
+	 * @param layer   当前查找图层
+	 * @param caption 目标图层标题
 	 * @return 目标图层
 	 */
 	public static Layer getLayer(Layer layer, String caption) {
@@ -95,11 +92,9 @@ public class MapUtilities {
 
 	/**
 	 * 通过给定的map和图层名称得到指定的图层
-	 * 
-	 * @param map
-	 *            当前查找的地图
-	 * @param name
-	 *            目标图层名称
+	 *
+	 * @param map  当前查找的地图
+	 * @param name 目标图层名称
 	 * @return 目标图层
 	 */
 	public static Layer findLayerByName(Map map, String name) {
@@ -124,11 +119,9 @@ public class MapUtilities {
 
 	/**
 	 * 递归获取指定名称的layer
-	 * 
-	 * @param layer
-	 *            当前查找图层
-	 * @param name
-	 *            目标图层名称
+	 *
+	 * @param layer 当前查找图层
+	 * @param name  目标图层名称
 	 * @return 目标图层
 	 */
 	public static Layer findLayer(Layer layer, String name) {
@@ -166,7 +159,7 @@ public class MapUtilities {
 
 	/**
 	 * 获取地图的所有子图层
-	 * 
+	 *
 	 * @param map
 	 * @return
 	 */
@@ -190,10 +183,9 @@ public class MapUtilities {
 
 	/**
 	 * 获取地图的所有子图层
-	 * 
+	 *
 	 * @param map
-	 * @param isCoverGroup
-	 *            是否包含图层分组
+	 * @param isCoverGroup 是否包含图层分组
 	 * @return
 	 */
 	public static ArrayList<Layer> getLayers(Map map, boolean isCoverGroup) {
@@ -219,7 +211,7 @@ public class MapUtilities {
 
 	/**
 	 * 获取图层分组的所有子图层
-	 * 
+	 *
 	 * @param layerGroup
 	 * @return
 	 */
@@ -242,10 +234,9 @@ public class MapUtilities {
 
 	/**
 	 * 获取图层分组的所有子图层
-	 * 
+	 *
 	 * @param layerGroup
-	 * @param isCoverGroup
-	 *            是否包含图层分组
+	 * @param isCoverGroup 是否包含图层分组
 	 * @return
 	 */
 	public static ArrayList<Layer> getLayers(LayerGroup layerGroup, boolean isCoverGroup) {
@@ -325,7 +316,7 @@ public class MapUtilities {
 
 	/**
 	 * 添加指定数据集到地图中
-	 * 
+	 *
 	 * @param map
 	 * @param dataset
 	 * @param addToHead
@@ -429,11 +420,9 @@ public class MapUtilities {
 
 	/**
 	 * 判断保存地图时名称是否可用
-	 * 
-	 * @param newMapName
-	 *            新地图名称
-	 * @param oldMapName
-	 *            原来的地图名称
+	 *
+	 * @param newMapName 新地图名称
+	 * @param oldMapName 原来的地图名称
 	 * @return true-可用 false-已存在
 	 */
 	public static boolean checkAvailableMapName(String newMapName, String oldMapName) {
@@ -464,11 +453,9 @@ public class MapUtilities {
 
 	/**
 	 * 获取具有指定前缀的可用地图名称
-	 * 
-	 * @param mapName
-	 *            地图名称前缀
-	 * @param isNewWindow
-	 *            是否为新窗体
+	 *
+	 * @param mapName     地图名称前缀
+	 * @param isNewWindow 是否为新窗体
 	 * @return
 	 */
 	public static String getAvailableMapName(String mapName, boolean isNewWindow) {
@@ -517,10 +504,8 @@ public class MapUtilities {
 	/**
 	 * 根据数据集查找非标签专题图的图层
 	 *
-	 * @param map
-	 *            查找的地图
-	 * @param dataset
-	 *            结果数据集
+	 * @param map     查找的地图
+	 * @param dataset 结果数据集
 	 * @return 找到的图层
 	 */
 	public static Layer findLayerByDatasetWithoutLabelTheme(Map map, Dataset dataset) {
@@ -537,7 +522,7 @@ public class MapUtilities {
 
 	/**
 	 * 计算一个屏幕像素在地图上的长度
-	 * 
+	 *
 	 * @param mapControl
 	 * @return
 	 */
@@ -551,7 +536,7 @@ public class MapUtilities {
 
 	/**
 	 * 移除 map 的 TrackingLayer 上指定 tag 的所有对象
-	 * 
+	 *
 	 * @param map
 	 * @param tag
 	 */
@@ -570,8 +555,7 @@ public class MapUtilities {
 	/**
 	 * 获取高亮的对象
 	 *
-	 * @param geometry
-	 *            需要高亮的对象
+	 * @param geometry 需要高亮的对象
 	 * @return 高亮风格的对象
 	 */
 	public static Geometry getHeightGeometry(Geometry geometry) {

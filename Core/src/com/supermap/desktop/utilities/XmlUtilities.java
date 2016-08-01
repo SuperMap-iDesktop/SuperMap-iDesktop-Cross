@@ -210,10 +210,10 @@ public class XmlUtilities {
 	 * @throws FileNotFoundException
 	 * @throws TransformerException
 	 */
-	public static void saveXml(final String fileName, final Node node, String encoding) throws FileNotFoundException {
+	public static void saveXml(final String fileName, final Node node, String encoding) {
 		try {
 			writeXml(new FileOutputStream(fileName), node, encoding);
-		} catch (TransformerException e) {
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
