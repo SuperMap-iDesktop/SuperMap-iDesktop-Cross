@@ -97,7 +97,9 @@ public class WorkspaceTempSave {
 	}
 
 	public void start() {
-		task.cancel();
+		if (task != null) {
+			task.cancel();
+		}
 		task = new TimerTask() {
 			@Override
 			public void run() {
