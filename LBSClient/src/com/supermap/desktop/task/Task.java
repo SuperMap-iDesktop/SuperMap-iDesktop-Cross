@@ -63,7 +63,7 @@ public class Task extends JPanel implements ITask {
 	public void initializeComponents() {
 
 		labelTitle = new JLabel("file name");
-		labelLogo = new JLabel(CommonUtilities.getImageIcon("image_datasource.png"));
+		labelLogo = new JLabel();
 		this.buttonRun = new SmButton(CommonUtilities.getImageIcon("Image_Stop.png"));
 		this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("image_delete1.png"));
 		labelProcess = new JLabel("");

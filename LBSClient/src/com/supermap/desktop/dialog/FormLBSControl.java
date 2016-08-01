@@ -191,7 +191,11 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				// if mouse double click foler, list folder files
 				if (define.isDir()) {
 					String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
-					String url = this.listDirectory(this.textServerURL.getText(), name, this.getIsOutputFolder());
+					String root = this.textServerURL.getText();
+					if (!root.endsWith("/")) {
+						root += "/"; 
+					}
+					String url = this.listDirectory(root, name, this.getIsOutputFolder());
 					this.textServerURL.setText(url);
 				} else {
 					this.buttonOKActionPerformed();
@@ -312,60 +316,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	 *
 	 * @author
 	 */
-	private class HDFSTableModel extends MutiTableModel {
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1L;
-		private String[] title = new String[] { "Name", "Size", "BlockSize", "Owner", "Group", "Permission", "Replication" };
-
-		/**
-		 * 构造函数。
-		 * 
-		 * @param columnNames
-		 */
-		public HDFSTableModel() {
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return title[column];
-		}
-
-		@Override
-		public int getColumnCount() {
-			return title.length;
-		}
-
-		/**
-		 * 添加指定数据的一行。<br>
-		 * 
-		 * @param define
-		 *            　数据
-		 * @throws Exception
-		 *             抛出数据数不正确的异常
-		 */
-		public void addRow(WebHDFS.HDFSDefine define) {
-			if (null == define) {
-				return;
-			}
-
-			// 初始化内容存储
-			Vector<Object> content = new Vector<Object>(this.columnNames.size());
-			content.add(define.getName());
-			content.add(define.getSize());
-			content.add(define.getBlockSize());
-			content.add(define.getOwner());
-			content.add(define.getGroup());
-			content.add(define.getPermission());
-			content.add(define.getReplication());
-
-			// 追加内容
-			contents.add(content);
-			this.setRowTagAt(define, this.getRowCount() - 1);
-		}
-	}
-
+	
 	class LeftTableHeaderListModel extends AbstractListModel {
 		private static final long serialVersionUID = 1L;
 

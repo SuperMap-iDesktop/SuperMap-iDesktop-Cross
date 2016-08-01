@@ -2,7 +2,11 @@ package com.supermap.desktop.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
 
@@ -22,14 +26,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 /**
  * <b>function:</b> 单线程上传文件
  * 
- * @author hoojo
- * @createDate 2011-9-22 下午02:55:10
- * @file DownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
  */
 @SuppressWarnings("deprecation")
 public class CreateFile {
@@ -65,7 +61,8 @@ public class CreateFile {
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = MessageFormat.format("{0}{1}?user.name=root&op=CREATE", webFile, this.uploadInfo.getFileName());
+			String fileName = new String(this.uploadInfo.getFileName().getBytes("GBK"), "UTF-8");
+			webFile = MessageFormat.format("{0}{1}?user.name=root&op=CREATE", webFile, fileName);
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
 			HttpPut requestPut = new HttpPut(webFile);
@@ -94,7 +91,7 @@ public class CreateFile {
 					Application.getActiveApplication().getOutput().output("HDFS file create success");
 					// 文件创建成功后利用Append命令在文件中追加内容
 				} else {
-					
+
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -106,6 +103,30 @@ public class CreateFile {
 		} finally {
 		}
 		return locationURL;
+	}
+
+	public InputStream getFileStatus(String url, String fileName) {
+		String webFile = String.format("%s%s?user.name=root&op=GETFILESTATUS", url, fileName);
+		InputStream inputStream = null;
+		URL nowURL;
+		try {
+			nowURL = new URL(webFile);
+			HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
+			connection.setConnectTimeout(3000);
+			// 设置读取数据超时时间为3000ms
+			connection.setReadTimeout(3000);
+			setHeader(connection);
+			connection.setDoInput(true);
+			connection.setRequestMethod("GET");
+			inputStream = connection.getInputStream();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return inputStream;
 	}
 
 	// 创建文件
@@ -192,12 +213,11 @@ public class CreateFile {
 		}
 	}
 
-	public void renameFile(String url, String name, String newName) {
+	public void renameFile(String url, String name, String newName, boolean isDir) {
 		try {
 			// 重命名文件
 			String webFile = url;
-			String locationURL = "";
-			String rootPath = webFile.substring(webFile.lastIndexOf("/v1")+3, webFile.lastIndexOf("/"));
+			String rootPath = webFile.substring(webFile.lastIndexOf("/v1") + 3, webFile.lastIndexOf("/"));
 			if (!rootPath.endsWith("/")) {
 				rootPath += "/";
 			}
@@ -205,12 +225,16 @@ public class CreateFile {
 				webFile += "/";
 			}
 			webFile = String.format("%s%s?user.name=root&op=RENAME&destination=%s", webFile, name, rootPath + newName);
-			HttpClient client = new DefaultHttpClient();
 			HttpPut requestPut = new HttpPut(webFile);
-			HttpResponse response = client.execute(requestPut);
+			HttpResponse response = new DefaultHttpClient().execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == 200) {
-				Application.getActiveApplication().getOutput()
-						.output(MessageFormat.format(LBSClientProperties.getString("String_RenameSuccess"), name, newName));
+				if (isDir) {
+					Application.getActiveApplication().getOutput()
+					.output(MessageFormat.format(LBSClientProperties.getString("String_RenameDirSuccess"), name, newName));
+				} else {
+					Application.getActiveApplication().getOutput()
+							.output(MessageFormat.format(LBSClientProperties.getString("String_RenameFileSuccess"), name, newName));
+				}
 				CommonUtilities.getActiveLBSControl().refresh();
 			}
 		} catch (MalformedURLException e) {

@@ -2,6 +2,9 @@ package com.supermap.desktop.CtrlAction;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -24,11 +27,26 @@ public class CtrlActionMkdir extends CtrlAction {
 	public void run() {
 		IFormLBSControl lbsControl = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
 		CreateDirDialog dialog = new CreateDirDialog();
-		if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getDirectoryName())) {
+		if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getDirectoryName())
+				&& !isVisibleName(lbsControl, dialog.getDirectoryName())) {
 			CreateFile createFile = new CreateFile();
 			createFile.createDir(lbsControl.getURL(), dialog.getDirectoryName());
+		}else{
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(LBSClientProperties.getString("String_DirectoryNameInvisible"), dialog.getDirectoryName()));
 		}
 
+	}
+
+	private boolean isVisibleName(IFormLBSControl lbsControl, String directoryName) {
+		boolean isVisibleName = false;
+		for (int i = 0; i < lbsControl.getTable().getRowCount(); i++) {
+			String tempName = lbsControl.getTable().getValueAt(i, 0).toString();
+			if (directoryName.equals(tempName)) {
+				isVisibleName = true;
+				break;
+			}
+		}
+		return isVisibleName;
 	}
 
 	@Override

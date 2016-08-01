@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -114,6 +116,7 @@ public class JDialogFileSaveAs extends SmDialog {
 
 	public void initializeComponents() {
 		this.setSize(600, 150);
+		this.setTitle(LBSClientProperties.getString("String_Download"));
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		this.labelServerURL = new JLabel("url");
@@ -126,37 +129,19 @@ public class JDialogFileSaveAs extends SmDialog {
 
 		this.buttonOK = new SmButton("");
 		this.buttonCancel = ComponentFactory.createButtonCancel();
-		GroupLayout gLayout = new GroupLayout(this.getContentPane());
-		gLayout.setAutoCreateContainerGaps(true);
-		gLayout.setAutoCreateGaps(true);
-		this.getContentPane().setLayout(gLayout);
 
 		// @formatter:off
-		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.CENTER)
-				.addGroup(gLayout.createSequentialGroup()
-						.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(this.labelServerURL)
-								.addComponent(this.labelLocalPath))
-						.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(this.textServerURL)
-								.addGroup(gLayout.createSequentialGroup()
-										.addComponent(this.textLocalPath, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-										.addComponent(this.buttonBrowser, 30, 30, 30))))
-				.addGroup(gLayout.createSequentialGroup()
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonOK, 75, 75, 75)
-						.addComponent(this.buttonCancel, 75, 75, 75)));
-		gLayout.setVerticalGroup(gLayout.createSequentialGroup()
-				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelServerURL)
-						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelLocalPath)
-						.addComponent(this.textLocalPath, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonBrowser, 23, 23, 23))
-				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonOK)
-						.addComponent(this.buttonCancel)));
+		getContentPane().setLayout(new GridBagLayout());
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(this.buttonOK,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		panelButton.add(this.buttonCancel,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		getContentPane().add(this.labelServerURL,new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 1));
+		getContentPane().add(this.textServerURL, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(3,5,5,5).setWeight(1, 1));
+		getContentPane().add(this.labelLocalPath,new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 1));
+		getContentPane().add(this.textLocalPath, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(3,5,5,3).setWeight(1, 1));
+		getContentPane().add(this.buttonBrowser, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(3,0,5,5).setWeight(0, 1));
+		getContentPane().add(panelButton,        new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		// @formatter:on		
 
 		this.setLocationRelativeTo(null);
@@ -212,7 +197,7 @@ public class JDialogFileSaveAs extends SmDialog {
 			}
 			SmFileChoose smFileChoose = new SmFileChoose(modelName);
 			smFileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int state = smFileChoose.showDefaultDialog();
+			int state = smFileChoose.showSaveDialog(null);
 			if (state == JFileChooser.APPROVE_OPTION) {
 				this.textLocalPath.setText(smFileChoose.getFilePath() + File.separator + fileName);
 			}
