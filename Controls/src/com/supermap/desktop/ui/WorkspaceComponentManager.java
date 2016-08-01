@@ -8,9 +8,11 @@ import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
@@ -462,7 +464,7 @@ public class WorkspaceComponentManager extends JComponent {
 
 				if (activeDatasets != null && !activeDatasets.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(activeDatasets.toArray(new Dataset[activeDatasets.size()]));
-					Application.getActiveApplication().setActiveDatasources(new Datasource[] { activeDatasets.get(0).getDatasource() });
+					Application.getActiveApplication().setActiveDatasources(new Datasource[]{activeDatasets.get(0).getDatasource()});
 				} else if (activeDatasources != null && !activeDatasources.isEmpty()) {
 					Application.getActiveApplication().setActiveDatasets(null);
 					Application.getActiveApplication().setActiveDatasources(activeDatasources.toArray(new Datasource[activeDatasources.size()]));
@@ -557,7 +559,14 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					MapViewUIUtilities.addDatasetsToNewWindow(new Dataset[] { (Dataset) selectedNodeData.getData() }, true);
+					if (!GlobalParameters.isShowDataInNewWindow() && Application.getActiveApplication().getActiveForm().getWindowType() == WindowType.MAP) {
+						// 添加到当前地图
+						MapViewUIUtilities.addDatasetsToMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap(),
+								new Dataset[]{(Dataset) selectedNodeData.getData()}, true);
+					} else {
+						// 添加到新地图
+						MapViewUIUtilities.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedNodeData.getData()}, true);
+					}
 				} else if (selectedNodeData.getType() == NodeDataType.MAP_NAME) {
 					TreePath[] selectedPaths = this.workspaceTree.getSelectionPaths();
 					for (int i = 0; i < selectedPaths.length; i++) {

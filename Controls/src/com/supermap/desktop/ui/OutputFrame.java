@@ -1,13 +1,13 @@
 package com.supermap.desktop.ui;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
 import com.supermap.desktop.utilities.LogUtilities;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -156,6 +156,9 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	@Override
 	public void output(Exception exception) {
 		try {
+			if (!GlobalParameters.isLogException()) {
+				return;
+			}
 			LogUtilities.error(exception.getMessage(), exception);
 			output(exception.getMessage(), InfoType.Exception);
 			StackTraceElement[] elements = exception.getStackTrace();
@@ -169,7 +172,9 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(Throwable e) {
-		LogUtilities.error(e.getMessage(), e);
+		if (!GlobalParameters.isLogException()) {
+			return;
+		}
 		output(e.getMessage(), InfoType.Exception);
 		StackTraceElement[] elements = e.getStackTrace();
 		for (StackTraceElement element : elements) {
@@ -212,9 +217,13 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	public void output(String message, InfoType type) {
 		try {
 			if (type == InfoType.Information) {
-				output(message, true);
+				if (GlobalParameters.isLogInformation()) {
+					output(message, true);
+				}
 			} else {
-				output(message, false);
+				if (GlobalParameters.isLogException()) {
+					output(message, false);
+				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

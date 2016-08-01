@@ -58,6 +58,8 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
 import com.supermap.mapping.LayerSelectableChangedEvent;
 import com.supermap.mapping.LayerSelectableChangedListener;
 import com.supermap.mapping.Layers;
@@ -132,6 +134,14 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	};
 
 	private MapControl mapControl = null;
+	private LayerRemovedListener layerRemovedListner = new LayerRemovedListener() {
+		@Override
+		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
+			if (GlobalParameters.isAutoCloseEmptyWindow() && mapControl.getMap().getLayers().getCount() == 0) {
+				Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
+			}
+		}
+	};
 	JScrollPane jScrollPaneChildWindow = null;
 	private LayersTree layersTree = null;
 	private transient EventListenerList eventListenerList = new EventListenerList();
@@ -580,8 +590,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private void registerEvents() {
 		if (!this.isRegisterEvents) {
 			// 防止多次注册
-
 			this.isRegisterEvents = true;
+			this.mapControl.getMap().getLayers().addLayerRemovedListener(layerRemovedListner);
 			this.mapControl.addKeyListener(this.mapKeyListener);
 			this.mapControl.addGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.mapControl.addGeometryAddedListener(this.geometryAddedListener);
@@ -594,7 +604,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.addMouseListener(this.mouseAdapter);
 			for (MouseListener mouseListener : mouseListeners) {
 				// 确保最先触发
-
 				this.mapControl.removeMouseListener(mouseListener);
 				this.mapControl.addMouseListener(mouseListener);
 			}
@@ -623,6 +632,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void unRegisterEvents() {
 		this.isRegisterEvents = false;
+		this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 		this.scaleBox.removeItemListener(this.itemListener);
 		this.pointXField.removeKeyListener(this.keyAdapter);
 		this.pointYField.removeKeyListener(this.keyAdapter);
@@ -1308,8 +1318,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 							PrjCoordSys recordCoordSys = recordset.getDataset().getPrjCoordSys();
 							PrjCoordSys mapCoordSys = this.getMapControl().getMap().getPrjCoordSys();
 							if (recordCoordSys.getType() != mapCoordSys.getType()) {
-								Point2Ds points = new Point2Ds(new Point2D[] { new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
-										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop()) });
+								Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(layerSelectionBounds.getLeft(), layerSelectionBounds.getBottom()),
+										new Point2D(layerSelectionBounds.getRight(), layerSelectionBounds.getTop())});
 								CoordSysTransParameter transParameter = new CoordSysTransParameter();
 								try {
 									CoordSysTranslator.convert(points, recordCoordSys, mapCoordSys, transParameter, CoordSysTransMethod.MTH_COORDINATE_FRAME);
@@ -1435,7 +1445,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				Selection selection = selections[0];
 				int firstSelectedID = selection.get(0);
 				DatasetVector datasetVector = selection.getDataset();
-				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[] { firstSelectedID }, CursorType.DYNAMIC);
+				Recordset recordset = RecordsetFinalizer.INSTANCE.queryRecordset(datasetVector, new int[]{firstSelectedID}, CursorType.DYNAMIC);
 
 				if (recordset.getGeometry() != null) {
 					Geometry geometry = recordset.getGeometry();

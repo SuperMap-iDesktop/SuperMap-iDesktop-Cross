@@ -587,7 +587,7 @@ public class FormManager implements IFormManager {
 						message = String.format(ControlsProperties.getString("String_SaveLayoutPrompt"), form.getText());
 					}
 					if (isNeedSave) {
-						int result = UICommonToolkit.showConfirmDialogWithCancel(message);
+						int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
 						if (result == JOptionPane.YES_OPTION) {
 							form.save();
 							form.clean();

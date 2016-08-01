@@ -53,14 +53,14 @@ public class WorkspaceTempSave {
 			autoSave(true);
 		}
 	};
-	;
+
 	private WorkspaceSavedAsListener workspaceSavedAsListener = new WorkspaceSavedAsListener() {
 		@Override
 		public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
 			autoSave(true);
 		}
 	};
-	;
+
 
 	private WorkspaceTempSave() {
 		// 获取数据目录
@@ -106,6 +106,7 @@ public class WorkspaceTempSave {
 				autoSave(false);
 			}
 		};
+		addListeners();
 		timer.schedule(task, period / 6, period);
 	}
 
@@ -148,7 +149,7 @@ public class WorkspaceTempSave {
 		Workspace activeWorkspace = Application.getActiveApplication().getWorkspace();
 
 		synchronized (activeWorkspace) {
-			if (!isIgnoreModified && !activeWorkspace.isModified()) {
+			if (!isIgnoreModified && !WorkspaceUtilities.isWorkspaceModified()) {
 				return;
 			}
 			activeWorkspace.addClosingListener(workspaceClosingListener);
@@ -285,7 +286,7 @@ public class WorkspaceTempSave {
 
 
 	public boolean exit() {
-		Application.getActiveApplication().getWorkspace().removeClosingListener(workspaceClosingListener);
+		removeListeners();
 		task.cancel();
 		if (fileLock != null) {
 			try {
@@ -325,7 +326,4 @@ public class WorkspaceTempSave {
 		return workspaceTempSave;
 	}
 
-	public void stop() {
-		exit();
-	}
 }

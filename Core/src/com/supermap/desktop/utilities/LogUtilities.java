@@ -23,7 +23,7 @@ public class LogUtilities {
 	 * @param message 信息
 	 */
 	public static void outPut(String message) {
-		if (GlobalParameters.isOutPutToLog() && GlobalParameters.isLogInformation()) {
+		if (GlobalParameters.isOutPutToLog()) {
 			StackTraceElement stackTrace = new Throwable().getStackTrace()[1];
 			String[] split = stackTrace.getClassName().split("\\.");
 			String classname = split[split.length - 1];
@@ -41,7 +41,7 @@ public class LogUtilities {
 	 */
 
 	public static void error(String message, Throwable throwable) {
-		if (GlobalParameters.isOutPutToLog() && GlobalParameters.isLogException()) {
+		if (GlobalParameters.isOutPutToLog()) {
 			log.error(message, throwable);
 		}
 	}
