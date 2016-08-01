@@ -2,11 +2,14 @@ package com.supermap.desktop.CtrlAction;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.dialog.HDFSTableModel;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
@@ -26,7 +29,8 @@ public class CtrlActionRename extends CtrlAction {
 			RenameDialog dialog = new RenameDialog(oldName);
 			if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getNewName())) {
 				CreateFile createFile = new CreateFile();
-				createFile.renameFile(lbsControl.getURL(), oldName, dialog.getNewName());
+				HDFSDefine define = (HDFSDefine) ((HDFSTableModel) lbsControl.getTable().getModel()).getRowTagAt(lbsControl.getTable().getSelectedRow());
+				createFile.renameFile(lbsControl.getURL(), oldName, dialog.getNewName(),define.isDir());
 			}
 		}
 
@@ -104,19 +108,19 @@ public class CtrlActionRename extends CtrlAction {
 			//@formatter:off
 			JPanel panelButton = new JPanel();
 			panelButton.setLayout(new GridBagLayout());
-			panelButton.add(this.buttonSure,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-			panelButton.add(this.buttonCancel,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+			panelButton.add(this.buttonSure,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
+			panelButton.add(this.buttonCancel,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
 			this.setLayout(new GridBagLayout());
-			this.add(this.labelNewName,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setInsets(10));
-			this.add(this.textFieldDirName,new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(4, 0).setInsets(10).setFill(GridBagConstraints.HORIZONTAL));
+			this.add(this.labelNewName,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0,10,0,0));
+			this.add(this.textFieldDirName,new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(4, 1).setInsets(0,10,0,10).setFill(GridBagConstraints.HORIZONTAL));
 			this.add(panelButton,          new GridBagConstraintsHelper(0, 1, 5, 1).setAnchor(GridBagConstraints.EAST).setWeight(5, 0));
 			//@formatter:on
-			this.setSize(340, 110);
+			this.setSize(450, 120);
 		}
 
 		private void initResources() {
-			this.labelNewName.setText(LBSClientProperties.getString("String_DirectoryName"));
-			this.setTitle(LBSClientProperties.getString("String_MakeDirectory"));
+			this.labelNewName.setText(LBSClientProperties.getString("String_FileName"));
+			this.setTitle(LBSClientProperties.getString("String_TitleRename"));
 		}
 
 		public String getNewName() {

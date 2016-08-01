@@ -1,12 +1,26 @@
 package com.supermap.desktop.CtrlAction;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import com.supermap.desktop.Application;
+import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.HttpRequest;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.CommonUtilities;
 
 public class WebHDFS {
 
@@ -79,11 +93,47 @@ public class WebHDFS {
 		});
 		return getFileResult;
 	}
-
-	public static HDFSDefine getFileStatus(String urlPath) {
+	
+	private static String getHttpString(InputStream stream) {
+		String result = "";
+		BufferedReader in = null;
+		try {
+			InputStream inputStream = stream;
+			
+			// 定义 BufferedReader输入流来读取URL的响应
+			if (inputStream != null) {
+				in = new BufferedReader(new InputStreamReader(inputStream));
+				String line;
+				while ((line = in.readLine()) != null) {
+					result += line;
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
+			e.printStackTrace();
+		}
+		// 使用finally块来关闭输入流
+		finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}
+	public static HDFSDefine getFileStatus(String url,String name) {
 		HDFSDefine define = null;
+		CreateFile file = new CreateFile();
+		String result = getHttpString(file.getFileStatus(url, name));
+		define = parseStringToDefine(define, result);
 
-		String result = HttpRequest.getHttpString(urlPath, "op=GETFILESTATUS");
+		return define;
+	}
+
+	private static HDFSDefine parseStringToDefine(HDFSDefine define, String result) {
 		String[] temps = result.split("\"|,|:|\\[|\\]|\\{|\\}|\\\r|\\\n");
 		ArrayList<String> results = new ArrayList<String>();
 		for (String temp : temps) {
@@ -127,6 +177,14 @@ public class WebHDFS {
 
 			define = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
 		}
+		return define;
+	}
+
+	public static HDFSDefine getFileStatus(String urlPath) {
+		HDFSDefine define = null;
+
+		String result = HttpRequest.getHttpString(urlPath, "op=GETFILESTATUS");
+		define = parseStringToDefine(define, result);
 
 		return define;
 	}
