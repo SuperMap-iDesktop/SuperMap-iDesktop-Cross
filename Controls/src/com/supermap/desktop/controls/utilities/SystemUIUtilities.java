@@ -1,6 +1,6 @@
 package com.supermap.desktop.controls.utilities;
 
-import com.supermap.desktop.CtrlAction.WorkspaceAutoSave;
+import com.supermap.desktop.CtrlAction.WorkspaceTempSave;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 /**
@@ -13,7 +13,7 @@ public class SystemUIUtilities {
 
 	public static void exit() {
 		if (WorkspaceUtilities.closeWorkspace()) {
-			WorkspaceAutoSave.getInstance().exit();
+			WorkspaceTempSave.getInstance().exit();
 			System.exit(0);
 		}
 	}

@@ -20,9 +20,9 @@ public abstract class BaseSettingPanel extends JPanel {
 	private void init() {
 		initComponents();
 		initLayout();
-		initListeners();
 		initResources();
 		initComponentStates();
+		initListeners();
 	}
 
 	protected void initComponents() {

@@ -54,7 +54,7 @@ public class WorkspaceRecovery {
 		} finally {
 			// one change
 			workspaceRecovery = null;
-			WorkspaceAutoSave.getInstance().start();
+			WorkspaceTempSave.getInstance().start();
 		}
 	}
 

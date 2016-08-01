@@ -584,6 +584,7 @@ public class GlobalParameters {
 		initCamera();
 		initDesktopTitle();
 		initWorkspaceInfo();
+		initThemeRefresh();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
@@ -594,14 +595,15 @@ public class GlobalParameters {
 		}
 	}
 
+
 	private static void initLogInfo() {
 		// 日志路径
-		String value = getValue("_startup_log", "logFolder");
-		setLogFolder(PathUtilities.getFullPathName(value, false));
+//		String value = getValue("_startup_log", "logFolder");
+		setLogFolder(PathUtilities.getFullPathName(getLogFolder(), false));
 		boolean booleanValue;
 
 		// 日志是否输出
-		value = getValue("_startup_log", "outputToLog");
+		String value = getValue("_startup_log", "outputToLog");
 		if (value != null) {
 			booleanValue = Boolean.valueOf(value);
 			setOutputToLog(booleanValue);
@@ -733,7 +735,11 @@ public class GlobalParameters {
 		initAutoCloseEmptyWindow();
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
+		initWorkspaceRecovery();
+		initWorkspaceAutoSave();
+		initWorkspaceAutoSaveTime();
 	}
+
 
 	//region 自动新建窗口浏览数据集数据
 	private static boolean isShowDataInNewWindow = true;
@@ -749,12 +755,13 @@ public class GlobalParameters {
 	public static boolean isShowDataInNewWindow() {
 		return isShowDataInNewWindow;
 	}
-	//endregion
+
 
 	public static void setIsShowDataInNewWindow(boolean isShowDataInNewWindow) {
 		GlobalParameters.isShowDataInNewWindow = isShowDataInNewWindow;
 	}
 
+	//endregion
 	//region 自动关闭空窗口
 	private static boolean isAutoCloseEmptyWindow = false;
 
@@ -837,7 +844,84 @@ public class GlobalParameters {
 
 
 	//endregion
+	//region 工作空间崩溃恢复
+	private static boolean isWorkspaceRecovery = true;
+
+	private static void initWorkspaceRecovery() {
+		String value = getValue("_startup_workspace", "workspaceRecovery");
+		if (value != null) {
+			setIsWorkspaceRecovery(Boolean.valueOf(value));
+		}
+	}
+
+	public static boolean isWorkspaceRecovery() {
+		return isWorkspaceRecovery;
+	}
+
+	public static void setIsWorkspaceRecovery(boolean isWorkspaceRecovery) {
+		GlobalParameters.isWorkspaceRecovery = isWorkspaceRecovery;
+	}
+
 	//endregion
+
+	//region 自动保存工作空间
+	private static boolean isWorkspaceAutoSave = true;
+
+	private static void initWorkspaceAutoSave() {
+		String value = getValue("_startup_workspace", "workspaceAutoSave");
+		if (value != null) {
+			setIsWorkspaceAutoSave(Boolean.valueOf(value));
+		}
+	}
+
+	public static boolean isWorkspaceAutoSave() {
+		return isWorkspaceAutoSave;
+	}
+
+	public static void setIsWorkspaceAutoSave(boolean isWorkspaceAutoSave) {
+		GlobalParameters.isWorkspaceAutoSave = isWorkspaceAutoSave;
+	}
+	//endregion
+
+	//region 自动保存工作空间时间
+	private static int workspaceAutoSaveTime = 10;
+
+	private static void initWorkspaceAutoSaveTime() {
+		String value = getValue("_startup_workspace", "workspaceAutoSaveTime");
+		if (value != null) {
+			setWorkspaceAutoSaveTime(Integer.valueOf(value));
+		}
+	}
+
+	public static int getWorkspaceAutoSaveTime() {
+		return workspaceAutoSaveTime;
+	}
+
+	public static void setWorkspaceAutoSaveTime(int workspaceAutoSaveTime) {
+		GlobalParameters.workspaceAutoSaveTime = workspaceAutoSaveTime;
+	}
+	//endregion
+	//endregion
+
+	//region 专题图自动刷新
+	private static void initThemeRefresh() {
+		String value = getValue("_startup_theme", "refresh");
+		if (value != null) {
+			setThemeRefresh(Boolean.valueOf(value));
+		}
+	}
+
+	private static boolean themeRefresh = true;
+
+	public static boolean isThemeRefresh() {
+		return themeRefresh;
+	}
+
+	public static void setThemeRefresh(boolean themeRefresh) {
+		GlobalParameters.themeRefresh = themeRefresh;
+	}
+	//endregion
+
 	public static void save() {
 		if (StringUtilities.isNullOrEmpty(startupXml)) {
 			return;
@@ -852,6 +936,10 @@ public class GlobalParameters {
 			Element workspace = emptyDocument.createElement("workspace");
 			workspace.setAttribute("closenotify", String.valueOf(isWorkspaceCloseNotify));
 			workspace.setAttribute("closeMemoryDatasourceNotify", String.valueOf(isCloseMemoryDatasourceNotify));
+			workspace.setAttribute("workspaceRecovery", String.valueOf(isWorkspaceRecovery));
+			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
+			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
+
 			startup.appendChild(workspace);
 
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_dataWindowComment")));
@@ -889,6 +977,10 @@ public class GlobalParameters {
 			infoType.setAttribute("Exception", String.valueOf(isLogException));
 			infoType.setAttribute("Information", String.valueOf(isLogInformation));
 			startup.appendChild(infoType);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_themeComment")));
+			Element theme = emptyDocument.createElement("theme");
+			theme.setAttribute("refresh", String.valueOf(themeRefresh));
 
 			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
 

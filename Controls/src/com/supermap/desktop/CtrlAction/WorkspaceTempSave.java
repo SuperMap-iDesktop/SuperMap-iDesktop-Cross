@@ -34,9 +34,9 @@ import java.util.TimerTask;
 /**
  * @author XiaJT
  */
-public class WorkspaceAutoSave {
+public class WorkspaceTempSave {
 
-	private static WorkspaceAutoSave workspaceAutoSave = null;
+	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
 	private int period = 60000; // 1 min
@@ -47,8 +47,22 @@ public class WorkspaceAutoSave {
 	private Workspace workspace;
 	private WorkspaceClosingListener workspaceClosingListener;
 	private String lastServer;
+	private WorkspaceSavedListener workspaceSavedListener = new WorkspaceSavedListener() {
+		@Override
+		public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
+			autoSave(true);
+		}
+	};
+	;
+	private WorkspaceSavedAsListener workspaceSavedAsListener = new WorkspaceSavedAsListener() {
+		@Override
+		public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
+			autoSave(true);
+		}
+	};
+	;
 
-	private WorkspaceAutoSave() {
+	private WorkspaceTempSave() {
 		// 获取数据目录
 		String filePath = getFilePath();
 		if (StringUtilities.isNullOrEmpty(filePath)) {
@@ -79,32 +93,33 @@ public class WorkspaceAutoSave {
 		};
 
 		timer = new Timer("WorkspaceSave", true);
+
+	}
+
+	public void start() {
+		task.cancel();
 		task = new TimerTask() {
 			@Override
 			public void run() {
 				autoSave(false);
 			}
 		};
-	}
-
-	public void start() {
-		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		workspace.addClosingListener(workspaceClosingListener);
-		workspace.addSavedListener(new WorkspaceSavedListener() {
-			@Override
-			public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-				autoSave(true);
-			}
-		});
-		workspace.addSavedAsListener(new WorkspaceSavedAsListener() {
-			@Override
-			public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-				autoSave(true);
-			}
-		});
 		timer.schedule(task, period / 6, period);
 	}
 
+	private void addListeners() {
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.addClosingListener(workspaceClosingListener);
+		workspace.addSavedListener(workspaceSavedListener);
+		workspace.addSavedAsListener(workspaceSavedAsListener);
+	}
+
+	private void removeListeners() {
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.removeClosingListener(workspaceClosingListener);
+		workspace.removeSavedListener(workspaceSavedListener);
+		workspace.removeSavedAsListener(workspaceSavedAsListener);
+	}
 	private String getFilePath() {
 		String appDataPath = FileUtilities.getAppDataPath();
 
@@ -301,10 +316,14 @@ public class WorkspaceAutoSave {
 	}
 
 
-	public static WorkspaceAutoSave getInstance() {
-		if (workspaceAutoSave == null) {
-			workspaceAutoSave = new WorkspaceAutoSave();
+	public static WorkspaceTempSave getInstance() {
+		if (workspaceTempSave == null) {
+			workspaceTempSave = new WorkspaceTempSave();
 		}
-		return workspaceAutoSave;
+		return workspaceTempSave;
+	}
+
+	public void stop() {
+		exit();
 	}
 }
