@@ -46,12 +46,8 @@ public class ManagerXMLParser {
 						break;
 					}
 				}
-				try {
-					XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
-							document.getXmlEncoding());
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+						document.getXmlEncoding());
 				break;
 
 			default:
@@ -103,12 +99,8 @@ public class ManagerXMLParser {
 				}
 				if (null != downLoadTasksNode) {
 					downLoadTasksNode.appendChild(newDownLoadTaskElement);
-					try {
-						XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
-								document.getXmlEncoding());
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
+					XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+							document.getXmlEncoding());
 				}
 				break;
 			case UPLOADTASK:
