@@ -39,13 +39,21 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private int period = 60000; // 1 min
+	private int period = 60000; // 1 min/
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
-	private WorkspaceClosingListener workspaceClosingListener;
+	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
+		@Override
+		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
+			// 工作空间关闭可能是要打开当前保存的工作空间，所以先关闭一次
+			closeTempWorkspace();
+			workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
+		}
+	};
+	;
 	private String lastServer;
 	private WorkspaceSavedListener workspaceSavedListener = new WorkspaceSavedListener() {
 		@Override
@@ -63,6 +71,10 @@ public class WorkspaceTempSave {
 
 
 	private WorkspaceTempSave() {
+
+	}
+
+	public void start() {
 		// 获取数据目录
 		String filePath = getFilePath();
 		if (StringUtilities.isNullOrEmpty(filePath)) {
@@ -83,20 +95,6 @@ public class WorkspaceTempSave {
 			LogUtilities.outPut("create new autoSaveWorkspaceConfigFile failed. AutoSave exit.");
 			return;
 		}
-		workspaceClosingListener = new WorkspaceClosingListener() {
-			@Override
-			public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
-				// 工作空间关闭可能是要打开当前保存的工作空间，所以先关闭一次
-				closeTempWorkspace();
-				workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
-			}
-		};
-
-		timer = new Timer("WorkspaceSave", true);
-
-	}
-
-	public void start() {
 		if (task != null) {
 			task.cancel();
 		}
@@ -106,6 +104,10 @@ public class WorkspaceTempSave {
 				autoSave(false);
 			}
 		};
+		if (timer != null) {
+			timer.cancel();
+		}
+		timer = new Timer("WorkspaceTempSave", true);
 		addListeners();
 		timer.schedule(task, period / 6, period);
 	}
@@ -288,6 +290,7 @@ public class WorkspaceTempSave {
 	public boolean exit() {
 		removeListeners();
 		task.cancel();
+		timer.cancel();
 		if (fileLock != null) {
 			try {
 				fileLock.release();

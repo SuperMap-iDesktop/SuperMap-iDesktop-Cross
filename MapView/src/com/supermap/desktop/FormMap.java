@@ -78,6 +78,7 @@ import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.RedoneListener;
+import com.supermap.ui.SelectionMode;
 import com.supermap.ui.TrackMode;
 import com.supermap.ui.UndoneListener;
 
@@ -517,6 +518,20 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		// 坐标和投影 不可编辑
 
 		initUneditableStatus();
+		initGloableSetting();
+	}
+
+	private void initGloableSetting() {
+		int selectedIndex = GlobalParameters.getPositiveSelect();
+		SelectionMode selectionMode = SelectionMode.CONTAIN_INNER_POINT;
+		if (selectedIndex == 1) {
+			selectionMode = SelectionMode.INTERSECT;
+		} else if (selectedIndex == 2) {
+			selectionMode = SelectionMode.CONTAIN_OBJECT;
+		}
+		this.getMapControl().setSelectionMode(selectionMode);
+
+		this.mapControl.getMap().setMaxVisibleVertex(GlobalParameters.getMaxVisibleVertex());
 	}
 
 	private void resetSmStatusbarLayout() {
@@ -1427,6 +1442,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		Map map = this.getMapControl().getMap();
 		map.open(mapName);
 		registerEvents();
+		this.mapControl.getMap().setMaxVisibleVertex(GlobalParameters.getMaxVisibleVertex());
 		map.refresh();
 		UICommonToolkit.getLayersManager().setMap(map);
 	}

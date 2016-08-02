@@ -591,8 +591,11 @@ public class GlobalParameters {
 		initDesktopTitle();
 		initWorkspaceInfo();
 		initThemeRefresh();
+		initMaxVisibleVertex();
+		initEdit();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
+
 
 	private static void initDesktopTitle() {
 		String value = getValue("_startup_mainForm", "text");
@@ -931,6 +934,51 @@ public class GlobalParameters {
 	}
 	//endregion
 
+	//region 最大可见节点数
+	private static int maxVisibleVertex = 3600000;
+
+	private static void initMaxVisibleVertex() {
+		String value = getValue("_startup_maxVisibleVertex", "maxCount");
+		if (value != null) {
+			setMaxVisibleVertex(Integer.valueOf(value));
+		}
+	}
+
+	public static int getMaxVisibleVertex() {
+		return maxVisibleVertex;
+	}
+
+	public static void setMaxVisibleVertex(int maxVisibleVertex) {
+		GlobalParameters.maxVisibleVertex = maxVisibleVertex;
+	}
+	//endregion
+
+	//region 编辑回退设置
+	private static void initEdit() {
+		initPositiveselect();
+	}
+
+	//region 选择模式
+	private static int positiveSelect = 0;
+
+	private static void initPositiveselect() {
+		String value = getValue("_startup_edit", "positiveselect");
+		if (value != null) {
+			setPositiveSelect(Integer.valueOf(value));
+		}
+	}
+
+	public static int getPositiveSelect() {
+		return positiveSelect;
+	}
+
+	public static void setPositiveSelect(int positiveSelect) {
+		GlobalParameters.positiveSelect = positiveSelect;
+	}
+	//endregion
+
+	//endregion
+
 	public static void save() {
 		if (StringUtilities.isNullOrEmpty(startupXml)) {
 			return;
@@ -990,6 +1038,17 @@ public class GlobalParameters {
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_themeComment")));
 			Element theme = emptyDocument.createElement("theme");
 			theme.setAttribute("refresh", String.valueOf(themeRefresh));
+			startup.appendChild(theme);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_maxVisibleVertexComment")));
+			Element maxVisibleVertexNode = emptyDocument.createElement("maxVisibleVertex");
+			maxVisibleVertexNode.setAttribute("maxCount", new BigDecimal(maxVisibleVertex).toString());
+			startup.appendChild(maxVisibleVertexNode);
+
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_editComment")));
+			Element edit = emptyDocument.createElement("edit");
+			edit.setAttribute("positiveselect", String.valueOf(positiveSelect));
+			startup.appendChild(edit);
 
 			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
 

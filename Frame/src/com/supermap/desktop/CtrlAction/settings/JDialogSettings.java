@@ -55,7 +55,7 @@ public class JDialogSettings extends SmDialog {
 	}
 
 	private void initComponents() {
-		this.setSize(600, 400);
+		this.setSize(700, 450);
 		this.setLocationRelativeTo(null);
 		this.setTitle(CoreProperties.getString("String_MessageBox_Title"));
 		listModel = new DefaultListModel<>();
@@ -157,7 +157,7 @@ public class JDialogSettings extends SmDialog {
 		}
 		if (panelName.equals(FrameProperties.getString("String_Option_Help"))) {
 			JPanelSettingHelp panelSettingHelp = new JPanelSettingHelp();
-			rightPanels.put(FrameProperties.getString("String_Resources"), panelSettingHelp);
+			rightPanels.put(FrameProperties.getString("String_Option_Help"), panelSettingHelp);
 			return panelSettingHelp;
 		}
 		if (panelName.equals(FrameProperties.getString("String_Resources"))) {
