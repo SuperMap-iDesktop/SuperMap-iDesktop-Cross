@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.LogUtils;
@@ -12,14 +13,7 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 /**
  * <b>function:</b> 分批量下载文件
  * 
- * @author hoojo
- * @createDate 2011-9-22 下午05:51:54
- * @file BatchDownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
+ * @author:xie
  */
 public class BatchDownloadFile extends Thread {
 	// 下载文件信息
@@ -42,6 +36,8 @@ public class BatchDownloadFile extends Thread {
 	private boolean stop = false;
 	// 临时文件信息
 	private File tempFile;
+	// 下载速度
+	private long speed;
 
 	public BatchDownloadFile(FileInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
@@ -115,7 +111,8 @@ public class BatchDownloadFile extends Thread {
 			for (int i = 0; i < startPos.length; i++) {
 				try {
 					// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
-					String url = this.downloadInfo.getUrl();
+					String fileName = URLEncoder.encode(this.downloadInfo.getFileName(), "UTF-8");
+					String url = this.downloadInfo.getUrl() + fileName;
 					if (this.downloadInfo.isHDFSFile()) {
 						url = String.format("%s?op=OPEN&offset=%d&length=%d", url, startPos[i], endPos[i] - startPos[i]);
 					}
@@ -136,6 +133,7 @@ public class BatchDownloadFile extends Thread {
 				try {
 					LogUtils.log("downloading……");
 					writePosInfo();
+					getSpeed();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, this.getDownloadProcess(), this.getRemainTime());
 					isFinished = true;
 					Thread.sleep(SLEEP_SECONDS);
@@ -162,12 +160,17 @@ public class BatchDownloadFile extends Thread {
 		}
 	}
 
+	private void getSpeed() {
+		speed = 0;
+		for (int i = 0; i < fileItems.length; i++) {
+			speed += fileItems[i].getSpeed();
+		}
+		speed = speed / fileItems.length;
+	}
+
 	/**
 	 * 获取文件的下载完成的大小
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public long getFinishedSize() throws IOException {
 		long finished = 0;
@@ -189,9 +192,6 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 获取文件的下载进度
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public int getDownloadProcess() throws IOException {
 		int process = 0;
@@ -210,15 +210,12 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 获取文件的剩余下载时间
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public int getRemainTime() throws IOException {
 		int remainTime = 0;
 		try {
 			long finished = this.getFinishedSize();
-			remainTime = (int) ((this.fileSize - finished) / (500 * 1024));
+			remainTime = (int) ((this.fileSize - finished) / (1024 * 500));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -229,9 +226,6 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 获取文件的下载信息
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public String getDownloadInformation() throws IOException {
 		String information = "";
@@ -264,9 +258,6 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 获取文件的下载进度
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public Boolean isFinished() throws IOException {
 		Boolean result = true;
@@ -289,20 +280,17 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 停止下载
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public void stopDownload() throws IOException {
 		this.stop = true;
+		for (int i = 0; i < fileItems.length; i++) {
+			fileItems[i].stopDownload();
+		}
 	}
 
 	/**
 	 * 继续下载
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public void resumeDownload() {
 		try {
@@ -319,9 +307,6 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * 将写入点数据保存在临时文件中
 	 * 
-	 * @author hoojo
-	 * @createDate 2011-9-23 下午05:25:37
-	 * @throws IOException
 	 */
 	private void writePosInfo() throws IOException {
 		DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
@@ -338,9 +323,6 @@ public class BatchDownloadFile extends Thread {
 	/**
 	 * <b>function:</b>读取写入点的位置信息
 	 * 
-	 * @author hoojo
-	 * @createDate 2011-9-23 下午05:30:29
-	 * @throws IOException
 	 */
 	private void readPosInfo() throws IOException {
 		DataInputStream dis = new DataInputStream(new FileInputStream(tempFile));

@@ -3,19 +3,27 @@ package com.supermap.desktop.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
@@ -61,7 +69,7 @@ public class CreateFile {
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			String fileName = new String(this.uploadInfo.getFileName().getBytes("GBK"), "UTF-8");
+			String fileName = URLEncoder.encode( this.uploadInfo.getFileName(), "UTF-8" );
 			webFile = MessageFormat.format("{0}{1}?user.name=root&op=CREATE", webFile, fileName);
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
@@ -106,6 +114,11 @@ public class CreateFile {
 	}
 
 	public InputStream getFileStatus(String url, String fileName) {
+		try {
+			fileName = URLEncoder.encode(fileName, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		String webFile = String.format("%s%s?user.name=root&op=GETFILESTATUS", url, fileName);
 		InputStream inputStream = null;
 		URL nowURL;

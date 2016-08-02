@@ -110,7 +110,7 @@ public class JDialogFileSaveAs extends SmDialog {
 	}
 
 	private String getWebFilePath() {
-		String webFilePath = this.webURL + this.webFile;
+		String webFilePath = this.webURL;
 		return webFilePath;
 	}
 

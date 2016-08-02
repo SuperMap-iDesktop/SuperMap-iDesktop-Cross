@@ -467,7 +467,7 @@ public class JDialogHDFSFiles extends SmDialog {
 							}
 						}
 						
-						DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+						DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
 						deleteFile.start();
 					}
 				} else if (table.getSelectedRowCount() > 1) {
@@ -479,7 +479,7 @@ public class JDialogHDFSFiles extends SmDialog {
 								webFile = define.getName();
 								webURL = this.textServerURL.getText();
 								
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
 								deleteFile.start();
 							}
 						}

@@ -53,7 +53,7 @@ public class HttpRequest {
 			
 			// 定义 BufferedReader输入流来读取URL的响应
 			if (inputStream != null) {
-				in = new BufferedReader(new InputStreamReader(inputStream));
+				in = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
 				String line;
 				while ((line = in.readLine()) != null) {
 					result += line;
@@ -73,6 +73,11 @@ public class HttpRequest {
 				e2.printStackTrace();
 			}
 		}
+//		try {
+//			result = new String(result.getBytes("iso-8859-1"), "utf-8");
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		} 
 		return result;
 	}
 	
@@ -95,6 +100,8 @@ public class HttpRequest {
 			// 设置通用的请求属性
 			connection.setRequestProperty("accept", "*/*");
 			connection.setRequestProperty("connection", "Keep-Alive");
+			connection.setRequestProperty("Accept-Encoding", "utf-8");
+			connection.setRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 			connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 //			connection.setConnectTimeout(3000);
 			connection.setDoInput(true);

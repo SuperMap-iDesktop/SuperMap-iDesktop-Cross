@@ -193,7 +193,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
 					String root = this.textServerURL.getText();
 					if (!root.endsWith("/")) {
-						root += "/"; 
+						root += "/";
 					}
 					String url = this.listDirectory(root, name, this.getIsOutputFolder());
 					this.textServerURL.setText(url);
@@ -316,7 +316,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	 *
 	 * @author
 	 */
-	
+
 	class LeftTableHeaderListModel extends AbstractListModel {
 		private static final long serialVersionUID = 1L;
 
@@ -401,41 +401,33 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			try {
 				Boolean fileSelected = false;
 				String webFile = "";
-				String webURL = "";
-
+				String webURL =  this.textServerURL.getText();
 				if (table.getSelectedRowCount() == 1) {
 					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
 					if (define != null) {
 						webFile = define.getName();
-						webURL = this.textServerURL.getText();
-
 						if (define.isDir()) {
 							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
-								// 删除文件夹下的所有文件
-								deleteDir(webURL + define.getName());
-								// 删除空文件夹
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
-								deleteFile.start();
-								refresh();
+								deleteDir(webFile, webURL, define);
 							}
 						} else {
 							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
 								deleteFile.start();
-								refresh();
 							}
 						}
 					}
 				} else if (table.getSelectedRowCount() > 1) {
 					int[] indexs = table.getSelectedRows();
-					if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), indexs.length)) == JOptionPane.OK_OPTION) {
+					if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), indexs.length)) == JOptionPane.OK_OPTION) {
 						for (int index : indexs) {
 							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-							if (define != null) {
-								webFile = define.getName();
-								webURL = this.textServerURL.getText();
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile);
+							if (define != null && !define.isDir()) {
+								// 非文件夹
+								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(),false);
 								deleteFile.start();
+							} else if (define != null && define.isDir()) {
+								deleteDir(define.getName(), webURL, define);
 							}
 						}
 					}
@@ -452,13 +444,29 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		}
 	}
 
-	private void deleteDir(String url) throws IOException {
+	/**
+	 * 删除文件夹时需要先删除文件夹下面的文件然后再删除空文件夹
+	 * 
+	 * @param webFile
+	 * @param webURL
+	 * @param define
+	 * @throws IOException
+	 */
+	private void deleteDir(String webFile, String webURL, HDFSDefine define) throws IOException {
+		// 删除文件夹下的所有文件
+		deleteFilesInDir(webURL + define.getName());
+		// 删除空文件夹
+		DeleteFile deleteFile = new DeleteFile(webURL, webFile,true);
+		deleteFile.start();
+	}
+
+	private void deleteFilesInDir(String url) throws IOException {
 		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
 		for (WebHDFS.HDFSDefine tempDefine : defines) {
 			if (tempDefine.isDir()) {
-				deleteDir(tempDefine.getFullPath() + tempDefine.getName());
+				deleteFilesInDir(tempDefine.getFullPath() + tempDefine.getName());
 			} else {
-				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName());
+				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName(),false);
 				deleteFile.start();
 			}
 		}

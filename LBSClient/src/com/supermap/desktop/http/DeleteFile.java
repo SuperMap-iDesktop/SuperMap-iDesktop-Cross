@@ -38,10 +38,13 @@ public class DeleteFile extends Thread {
 	// 文件名称
 	private String fileName;
 
-	public DeleteFile(String url, String fileName) throws IOException {
+	private boolean isDirectory;
+
+	public DeleteFile(String url, String fileName, boolean isDirctory) throws IOException {
 		super();
 		this.url = url;
 		this.fileName = fileName;
+		this.isDirectory = isDirctory;
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
@@ -51,7 +54,7 @@ public class DeleteFile extends Thread {
 	}
 
 	// 删除文件
-	private void deleteFile() {
+	private synchronized void deleteFile() {
 		try {
 			String webFile = this.url;
 			String locationURL = "";
@@ -64,12 +67,27 @@ public class DeleteFile extends Thread {
 
 			HttpResponse response = client.execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(LBSClientProperties.getString("String_DeleteSuccess"), this.fileName));
+				if (isDirectory) {
+					Application.getActiveApplication().getOutput()
+							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirSuccess"), this.fileName));
+				} else {
+					Application.getActiveApplication().getOutput()
+							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFileSuccess"), this.fileName));
+				}
 				// 刷新大数据展示列表
 				CommonUtilities.getActiveLBSControl().refresh();
 				isDeleted = true;
 			} else {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFailed"), this.fileName));
+				if (isDirectory) {
+					Application.getActiveApplication().getOutput()
+					.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirFailed"), this.fileName));
+				} else {
+					Application.getActiveApplication().getOutput()
+							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFileFailed"), this.fileName));
+				}
+				// 刷新大数据展示列表
+				CommonUtilities.getActiveLBSControl().refresh();
+				isDeleted = false;
 			}
 
 		} catch (MalformedURLException e) {
