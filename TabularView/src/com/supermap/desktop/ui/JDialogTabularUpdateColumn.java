@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -996,14 +994,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void secondFieldChanged() {
 		String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
 		FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
+		String text = textFieldSecondField.getText();
 		if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
 			if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-				textFieldOperationEQ.setText(Convert.getDateStr(textFieldSecondField.getText()));
+				textFieldOperationEQ.setText(Convert.getDateStr(text));
 				buttonApply.setEnabled(true);
-			} else if(fieldType.equals(FieldType.BYTE)){
-				
-			}else
-			{
+			} else if (fieldType.equals(FieldType.BYTE) && StringUtilities.isNumber(text)) {
+				textFieldOperationEQ.setText(text);
+				buttonApply.setEnabled(true);
+			} else {
 				updateEQ(fieldType, "");
 			}
 		} else if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
@@ -1023,7 +1022,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			buttonApply.setEnabled(true);
 			return;
 		}
-		if (UpdateColumnUtilties.isIntegerType(fieldType)||fieldType.equals(FieldType.SINGLE)||fieldType.equals(FieldType.DOUBLE) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+		if (UpdateColumnUtilties.isIntegerType(fieldType) || fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)
+				|| fieldType.equals(FieldType.BYTE) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			if (!checkBoxInversion.isSelected()) {
 				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
 			} else {
@@ -1031,9 +1031,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			}
 			buttonApply.setEnabled(true);
 			return;
-		}
-		if (fieldType.equals(FieldType.BYTE)) {
-			
 		}
 		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			textFieldOperationEQ.setText(info);
@@ -1460,7 +1457,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				newValue = Convert.toDateTime(expression);
 			}
 			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
-		}else if(fieldType.equals(FieldType.BYTE)){
+		} else if (fieldType.equals(FieldType.BYTE)) {
+			// 字节型
+			if (StringUtilities.isNullOrEmptyString(expression)) {
+				newValue = (byte) 0;
+			} else {
+				newValue = (byte) Convert.toInteger(expression);
+			}
 			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		}
 	}
