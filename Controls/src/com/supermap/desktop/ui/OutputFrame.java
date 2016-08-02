@@ -149,7 +149,9 @@ public class OutputFrame extends JScrollPane implements IOutput {
 
 	@Override
 	public void output(String message) {
-		output(message, true);
+		if (GlobalParameters.isLogInformation()) {
+			output(message, true);
+		}
 
 	}
 

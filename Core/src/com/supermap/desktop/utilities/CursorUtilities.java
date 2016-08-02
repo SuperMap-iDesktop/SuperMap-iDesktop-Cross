@@ -1,12 +1,10 @@
 package com.supermap.desktop.utilities;
 
-import java.awt.Cursor;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMain;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CursorUtilities {
 
@@ -39,9 +37,17 @@ public class CursorUtilities {
 		}
 	}
 
+	public static void setHandCursor() {
+		IFormMain formMain = Application.getActiveApplication().getMainFrame();
+
+		if (formMain instanceof JFrame) {
+			((JFrame) formMain).setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+	}
+
 	/**
 	 * 设置指定控件的光标为等待光标
-	 * 
+	 *
 	 * @param component
 	 */
 	public static void setWaitCursor(JComponent component) {
@@ -50,10 +56,15 @@ public class CursorUtilities {
 
 	/**
 	 * 设置指定控件的光标为默认光标
-	 * 
+	 *
 	 * @param component
 	 */
 	public static void setDefaultCursor(JComponent component) {
 		component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
+
+	public static void setHandCursor(JComponent component) {
+		component.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	}
+
 }

@@ -125,7 +125,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		initPanelRuntimeSetting();
 		this.setLayout(new GridBagLayout());
 		this.add(panelBasicSetting, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
-		this.add(panelRuntimeSetting, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(panelRuntimeSetting, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 	}
 
 	private void initPanelBasicSetting() {
