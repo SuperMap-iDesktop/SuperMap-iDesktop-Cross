@@ -2,6 +2,7 @@ package com.supermap.desktop.newtheme.commonPanel;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
@@ -94,7 +95,7 @@ public class ThemeMainContainer extends JPanel {
 		this.setLayout(new GridBagLayout());
 		this.scrollPane.setBorder(null);
 		// @formatter:off
-		this.checkBoxRefreshAtOnce.setSelected(true);
+		this.checkBoxRefreshAtOnce.setSelected(GlobalParameters.isThemeRefresh());
 		this.add(this.labelThemeLayer,       new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(10, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.WEST));
 		this.add(this.textFieldThemeLayer,   new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(90, 0).setInsets(10, 10, 5, 10).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 		this.add(this.scrollPane,            new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));

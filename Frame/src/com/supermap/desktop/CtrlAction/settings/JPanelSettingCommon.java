@@ -45,6 +45,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 	 */
 	private JCheckBox checkBoxAutoSaveWorkspace;
 
+	private JLabel labelAutoSaveTime;
 	private SmTextFieldLegit smTextFieldLegitAutoSaveTime;
 	private JLabel labelAutoSaveTimeUnit;
 
@@ -63,7 +64,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxCloseMemoryDatasourceNotify = new JCheckBox();
 		checkBoxIsAutoCloseEmptyMap = new JCheckBox();
 		checkBoxAutoSaveWorkspace = new JCheckBox();
+		labelAutoSaveTime = new JLabel();
 		smTextFieldLegitAutoSaveTime = new SmTextFieldLegit();
+		labelAutoSaveTimeUnit = new JLabel();
 
 		Dimension size = new Dimension(100, 23);
 		smTextFieldLegitAutoSaveTime.setPreferredSize(size);
@@ -78,10 +81,10 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 			public void itemStateChanged(ItemEvent e) {
 				Object source = e.getSource();
 				if (source != null && source instanceof Component) {
-					if (changedValues.containsKey(source)) {
+					if (changedValues.contains(source)) {
 						changedValues.remove(source);
 					} else {
-						changedValues.put(((Component) source), null);
+						changedValues.add((Component) source);
 					}
 				}
 			}
@@ -99,10 +102,12 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		this.add(checkBoxWorkspaceRecovery, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
 		this.add(checkBoxAutoSaveWorkspace, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 6, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 7, 2, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTime, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 7, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 7, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 8, 3, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 	}
 
 	@Override
@@ -125,6 +130,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxIsAutoCloseEmptyMap.setText(FrameProperties.getString("String_CloseEmptyWindow"));
 		checkBoxWorkspaceRecovery.setText(FrameProperties.getString("String_WorkspaceRecovery"));
 		checkBoxAutoSaveWorkspace.setText(FrameProperties.getString("String_AutoSaveWorkspace"));
+		labelAutoSaveTime.setText(FrameProperties.getString("String_AutoSaveWorkspaceTime"));
 		labelAutoSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
 	}
 
@@ -142,7 +148,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 
 	@Override
 	public void apply() {
-		for (Component component : changedValues.keySet()) {
+		for (Component component : changedValues) {
 			if (component == checkBoxShowDataInNowWindow) {
 				GlobalParameters.setIsShowDataInNewWindow(checkBoxShowDataInNowWindow.isSelected());
 			}

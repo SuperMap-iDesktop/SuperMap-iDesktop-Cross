@@ -26,9 +26,9 @@ public class JDialogSettings extends SmDialog {
 	public static final String[] lists = new String[]{
 			FrameProperties.getString("String_Option_Common"),
 			FrameProperties.getString("String_Option_Environment"),
-			FrameProperties.getString("String_Option_Server"),
+//			FrameProperties.getString("String_Option_Server"),
 			FrameProperties.getString("String_Option_Edit"),
-			FrameProperties.getString("String_Option_Help"),
+//			FrameProperties.getString("String_Option_Help"),
 			FrameProperties.getString("String_Resources"),
 
 	};
@@ -95,6 +95,8 @@ public class JDialogSettings extends SmDialog {
 			public void valueChanged(ListSelectionEvent e) {
 				panelRight.removeAll();
 				panelRight.add(getRightPanel(jList.getSelectedValue()), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+				panelRight.revalidate();
+				panelRight.repaint();
 			}
 		});
 		smButtonOk.addActionListener(new ActionListener() {

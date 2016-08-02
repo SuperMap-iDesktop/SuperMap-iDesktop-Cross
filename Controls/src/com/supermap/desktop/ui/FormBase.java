@@ -6,29 +6,16 @@ import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.CtrlAction.WorkspaceAutoSave;
 import com.supermap.desktop.CtrlAction.WorkspaceRecovery;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IDockbar;
-import com.supermap.desktop.Interface.IDockbarManager;
-import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormMain;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.Interface.IFrameMenuManager;
-import com.supermap.desktop.Interface.IPropertyManager;
-import com.supermap.desktop.Interface.IStatusbarManager;
-import com.supermap.desktop.Interface.IToolbarManager;
+import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.property.JDialogDataPropertyContainer;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.NodeDataType;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
@@ -182,7 +169,12 @@ public class FormBase extends JFrame implements IFormMain {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					WorkspaceRecovery.getInstance().run();
+					if (GlobalParameters.isWorkspaceRecovery()) {
+						WorkspaceRecovery.getInstance().run();
+					}
+					if (GlobalParameters.isWorkspaceAutoSave()) {
+						WorkspaceAutoSave.getInstance().start();
+					}
 				}
 			});
 

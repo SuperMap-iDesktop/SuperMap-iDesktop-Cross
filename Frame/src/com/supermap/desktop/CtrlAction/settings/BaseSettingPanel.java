@@ -2,18 +2,18 @@ package com.supermap.desktop.CtrlAction.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
  */
 public abstract class BaseSettingPanel extends JPanel {
 
-	protected HashMap<Component, Object> changedValues;
+	protected ArrayList<Component> changedValues;
 
 	public BaseSettingPanel() {
 		super();
-		changedValues = new HashMap<>();
+		changedValues = new ArrayList<>();
 		init();
 	}
 

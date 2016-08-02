@@ -231,13 +231,19 @@ public class GlobalParameters {
 	/**
 	 * 获取或设置桌面标题，初始值为：SuperMap iDesktop 7C。
 	 */
-	private static String desktopTitle = "SuperMap iDesktop 8C";
+	private static String desktopTitle = "";
 
 	public static String getDesktopTitle() {
+		if (StringUtilities.isNullOrEmpty(desktopTitle)) {
+			return CoreProperties.getString("String_MessageBox_Title");
+		}
 		return desktopTitle;
 	}
 
 	public static void setDesktopTitle(String title) {
+		if (title.equals(CoreProperties.getString("String_MessageBox_Title"))) {
+			title = "";
+		}
 		desktopTitle = title;
 	}
 
@@ -591,6 +597,9 @@ public class GlobalParameters {
 	private static void initDesktopTitle() {
 		String value = getValue("_startup_mainForm", "text");
 		if (value != null) {
+			if (value.equals(CoreProperties.getString("String_Old_Title"))) {
+				value = "";
+			}
 			setDesktopTitle(value);
 		}
 	}

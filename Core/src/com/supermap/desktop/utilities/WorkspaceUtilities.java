@@ -490,7 +490,6 @@ public class WorkspaceUtilities {
 		try {
 			boolean needSave = false;
 			boolean isContinue = true;
-			Component parent = (Component) Application.getActiveApplication().getMainFrame();
 			// 提示保存内存型数据源
 			if (DatasourceUtilities.isContainMemoryDatasource(Application.getActiveApplication().getWorkspace())) {
 				String[] datasources = DatasourceUtilities.getMemoryDatasources(Application.getActiveApplication().getWorkspace());
@@ -500,7 +499,7 @@ public class WorkspaceUtilities {
 				}
 				datasourcesName += datasources[datasources.length - 1];//
 				String message = MessageFormat.format(CommonProperties.getString("String_Message_CloseMemoryDatasource"), datasourcesName);
-				result = JOptionPaneUtilities.showConfirmDialog(message);
+				result = GlobalParameters.isCloseMemoryDatasourceNotify() ? JOptionPaneUtilities.showConfirmDialog(message) : JOptionPane.YES_OPTION;
 				if (result == JOptionPane.NO_OPTION || result == JOptionPane.CLOSED_OPTION) {
 					isContinue = false;
 				} else {
