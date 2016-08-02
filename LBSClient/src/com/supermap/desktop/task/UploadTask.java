@@ -9,6 +9,7 @@ import java.util.concurrent.CancellationException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -17,6 +18,7 @@ import com.supermap.desktop.http.upload.BatchUploadFile;
 import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
+import com.supermap.desktop.utilities.ManagerXMLParser;
 
 public class UploadTask extends Task {
 
@@ -69,17 +71,23 @@ public class UploadTask extends Task {
 	}
 
 	private void buttonRemoveClicked() throws IOException {
+		// 先暂停上传
+		setCancel(true);
 		if (!UploadUtils.getBatchUploadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
 			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_UpLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				UploadUtils.getBatchUploadFileWorker(fileInfo).stopUpload();
 				removeUploadInfoItem();
-
+				// 未完成的任务暂存在恢复任务列表中，可实现恢复
+				// ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
+			}else{
+				setCancel(true);
 			}
 			return;
 		}
 		if (UploadUtils.getBatchUploadFileWorker(this.fileInfo).isFinished()) {
 			removeUploadInfoItem();
+			ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
 			return;
 		}
 
@@ -146,8 +154,11 @@ public class UploadTask extends Task {
 						progressBar.setVisible(false);
 						labelStatus.setText(LBSClientProperties.getString("String_UploadEnd"));
 						// 刷新大数据展示列表
-						CommonUtilities.getActiveLBSControl().refresh();
+						if (null != CommonUtilities.getActiveLBSControl()) {
+							CommonUtilities.getActiveLBSControl().refresh();
+						}
 						buttonRun.setEnabled(false);
+						ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, fileInfo.getUrl());
 					}
 				}
 			}

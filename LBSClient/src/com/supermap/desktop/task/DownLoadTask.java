@@ -71,13 +71,18 @@ public class DownLoadTask extends Task {
 	}
 
 	private void buttonRemoveClicked() throws IOException {
+		// 先暂停下载
 		setCancel(true);
 		if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
 			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
 				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
-				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
+				// 未完成的任务暂存在恢复任务列表中，可实现恢复
+				// ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
+			}else{
+				// 继续下载
+				setCancel(false);
 			}
 			return;
 		}

@@ -13,14 +13,7 @@ import com.supermap.desktop.http.SaveItemFile;
  
 /**
  * <b>function:</b> 单线程下载文件
- * @author hoojo
- * @createDate 2011-9-22 下午02:55:10
- * @file DownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
+ * @author xie
  */
 public class DownloadFile extends Thread {
     
@@ -39,6 +32,10 @@ public class DownloadFile extends Thread {
     private boolean isDownloadOver = false;
  
     private SaveItemFile itemFile;
+    
+    private boolean isStop = false;
+    // 计算下载速度
+    private long speed;
     
     private static final int BUFF_LENGTH = 1024 * 8;
     
@@ -63,7 +60,12 @@ public class DownloadFile extends Thread {
     
     @Override
     public void run() {
-        while (endPos > startPos && !isDownloadOver) {
+    	 //以下两个变量用来统计传输速度
+        long timeSpanSeconds = 0;
+        long range = 0;
+        speed = 0L;
+        long startTime = System.currentTimeMillis();
+        while (endPos > startPos && !isDownloadOver && !isStop) {
             try {
             	URL url = new URL(this.url);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -87,6 +89,15 @@ public class DownloadFile extends Thread {
                     while ((size = inputStream.read(buff)) > 0 && startPos < endPos && !isDownloadOver) {
                         //写入文件内容，返回最后写入的长度
                         startPos += itemFile.write(buff, 0, size);
+                        range += size;
+                        timeSpanSeconds += System.currentTimeMillis() - startTime;
+                        if (timeSpanSeconds > 1000)
+                        {
+                            speed = (range * 1000) / timeSpanSeconds;
+                            timeSpanSeconds = 0;
+                            range = 0;
+                            startTime = System.currentTimeMillis();
+                        }
                     }
                     LogUtils.log("#over#Thread: " + threadId + ", startPos: " + startPos + ", endPos: " + endPos);
                     LogUtils.log("Thread " + threadId + " is execute over!");
@@ -120,9 +131,6 @@ public class DownloadFile extends Thread {
     
     /**
      * <b>function:</b> 打印下载文件头部信息
-     * @author hoojo
-     * @createDate 2011-9-22 下午05:44:35
-     * @param conn HttpURLConnection
      */
     public static void printHeader(URLConnection conn) {
         int i = 1;
@@ -139,9 +147,6 @@ public class DownloadFile extends Thread {
     
     /**
      * <b>function:</b> 设置URLConnection的头部信息，伪装请求信息
-     * @author hoojo
-     * @createDate 2011-9-28 下午05:29:43
-     * @param con
      */
     public static void setHeader(URLConnection conn) {
     	conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
@@ -173,4 +178,13 @@ public class DownloadFile extends Thread {
     public long getLength() {
         return length;
     }
+    
+    public void stopDownload(){
+    	this.isStop = true;
+    }
+
+	public long getSpeed() {
+		return speed;
+	}
+    
 }

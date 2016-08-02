@@ -38,18 +38,29 @@ public class ManagerXMLParser {
 			Document document = getCurrentDocument();
 			switch (taskType) {
 			case DOWNLOADTASK:
-				NodeList list = document.getElementsByTagName("DownLoadTask");
-				for (int i = 0; i < list.getLength(); i++) {
-					Element temp = (Element) list.item(i);
+				NodeList downloadList = document.getElementsByTagName("DownloadTask");
+				for (int i = 0; i < downloadList.getLength(); i++) {
+					Element temp = (Element) downloadList.item(i);
 					if (!StringUtilities.isNullOrEmpty(property) && temp.getAttribute("URL").equals(property)) {
-						list.item(i).getParentNode().removeChild(temp);
+						downloadList.item(i).getParentNode().removeChild(temp);
 						break;
 					}
 				}
 				XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
 						document.getXmlEncoding());
 				break;
-
+			case UPLOADTASK:
+				NodeList uploadList = document.getElementsByTagName("UploadTask");
+				for (int i = 0; i < uploadList.getLength(); i++) {
+					Element temp = (Element) uploadList.item(i);
+					if (!StringUtilities.isNullOrEmpty(property) && temp.getAttribute("URL").equals(property)) {
+						uploadList.item(i).getParentNode().removeChild(temp);
+						break;
+					}
+				}
+				XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+						document.getXmlEncoding());
+				break;
 			default:
 				break;
 			}
@@ -57,21 +68,58 @@ public class ManagerXMLParser {
 	}
 
 	/**
+	 * 获取任务总数
+	 * 
+	 * @return
+	 */
+	public static int getTotalTaskCount() {
+		int count = 0;
+		if (null != getCurrentDocument()) {
+			Document document = getCurrentDocument();
+			NodeList downloadList = document.getElementsByTagName("DownloadTask");
+			NodeList uploadList = document.getElementsByTagName("UploadTask");
+			count = downloadList.getLength() + uploadList.getLength();
+		}
+		return count;
+	}
+
+	/**
 	 * 获取属性信息List
 	 * 
 	 * @return
 	 */
-	public static List<String> getTaskPropertyList() {
+	public static List<String> getTaskPropertyList(TaskEnum taskType) {
 		List<String> resultList = new CopyOnWriteArrayList<String>();
 		if (null != getCurrentDocument()) {
 			Document document = getCurrentDocument();
-			NodeList list = document.getElementsByTagName("DownLoadTask");
-			for (int i = 0; i < list.getLength(); i++) {
-				Element temp = (Element) list.item(i);
-				String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("FilePath") + ","
-						+ temp.getAttribute("FileSize");
-				resultList.add(tempStr);
+
+			switch (taskType) {
+			case DOWNLOADTASK:
+				NodeList downloadList = document.getElementsByTagName("DownloadTask");
+				resultList.clear();
+				for (int i = 0; i < downloadList.getLength(); i++) {
+					Element temp = (Element) downloadList.item(i);
+					String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("FilePath") + ","
+							+ temp.getAttribute("FileSize");
+					resultList.add(tempStr);
+				}
+
+				break;
+			case UPLOADTASK:
+				NodeList uploadList = document.getElementsByTagName("UploadTask");
+				resultList.clear();
+				for (int i = 0; i < uploadList.getLength(); i++) {
+					Element temp = (Element) uploadList.item(i);
+					String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("FilePath") + ","
+							+ temp.getAttribute("FileSize");
+					resultList.add(tempStr);
+				}
+				break;
+
+			default:
+				break;
 			}
+
 		}
 		return resultList;
 	}
@@ -89,38 +137,34 @@ public class ManagerXMLParser {
 			Document document = getCurrentDocument();
 			switch (taskType) {
 			case DOWNLOADTASK:
-				NodeList list = document.getElementsByTagName("DownLoadTasks");
-				Node downLoadTasksNode = list.item(0);
-				Element newDownLoadTaskElement = document.createElement("DownLoadTask");
-				String[] propertyArray = property.split(",");
-				for (String attributes : propertyArray) {
+				NodeList downloadList = document.getElementsByTagName("DownloadTasks");
+				Node downLoadTasksNode = downloadList.item(0);
+				Element newDownloadTaskElement = document.createElement("DownloadTask");
+				String[] propertyArrayForDownload = property.split(",");
+				for (String attributes : propertyArrayForDownload) {
 					String[] attri = attributes.split("=");
-					newDownLoadTaskElement.setAttribute(attri[0], attri[1]);
+					newDownloadTaskElement.setAttribute(attri[0], attri[1]);
 				}
 				if (null != downLoadTasksNode) {
-					downLoadTasksNode.appendChild(newDownLoadTaskElement);
+					downLoadTasksNode.appendChild(newDownloadTaskElement);
 					XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
 							document.getXmlEncoding());
 				}
 				break;
 			case UPLOADTASK:
-//				NodeList list = document.getElementsByTagName("DownLoadTasks");
-//				Node downLoadTasksNode = list.item(0);
-//				Element newDownLoadTaskElement = document.createElement("DownLoadTask");
-//				String[] propertyArray = property.split(",");
-//				for (String attributes : propertyArray) {
-//					String[] attri = attributes.split("=");
-//					newDownLoadTaskElement.setAttribute(attri[0], attri[1]);
-//				}
-//				if (null != downLoadTasksNode) {
-//					downLoadTasksNode.appendChild(newDownLoadTaskElement);
-//					try {
-//						XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
-//								document.getXmlEncoding());
-//					} catch (FileNotFoundException e) {
-//						e.printStackTrace();
-//					}
-//				}
+				NodeList uploadList = document.getElementsByTagName("UploadTasks");
+				Node uploadTasksNode = uploadList.item(0);
+				Element newUploadTaskElement = document.createElement("UploadTask");
+				String[] propertyArrayForUpload = property.split(",");
+				for (String attributes : propertyArrayForUpload) {
+					String[] attri = attributes.split("=");
+					newUploadTaskElement.setAttribute(attri[0], attri[1]);
+				}
+				if (null != uploadTasksNode) {
+					uploadTasksNode.appendChild(newUploadTaskElement);
+					XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+							document.getXmlEncoding());
+				}
 				break;
 
 			default:
@@ -147,8 +191,8 @@ public class ManagerXMLParser {
 			tasks.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
 			tasks.setAttribute("version", "8.1.x");
 			document.appendChild(tasks);
-			Element downLoadTasks = document.createElement("DownLoadTasks");
-			Element upLoadTasks = document.createElement("UpLoadTasks");
+			Element downLoadTasks = document.createElement("DownloadTasks");
+			Element upLoadTasks = document.createElement("UploadTasks");
 			Element kernelDensityTasks = document.createElement("KernelDensityTasks");
 			tasks.appendChild(downLoadTasks);
 			tasks.appendChild(upLoadTasks);

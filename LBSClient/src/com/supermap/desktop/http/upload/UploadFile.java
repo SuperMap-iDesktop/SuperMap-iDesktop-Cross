@@ -1,20 +1,9 @@
 package com.supermap.desktop.http.upload;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.http.*;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -39,8 +28,8 @@ public class UploadFile extends Thread {
 
 	// 上传文件url
 	private String url;
-	// 本地文件路径
-	private String localPath;
+	// 本地文件
+	private File localFile;
 	// 上传文件起始位置
 	private long startPos;
 	// 上传文件结束位置
@@ -58,16 +47,20 @@ public class UploadFile extends Thread {
 
 	private boolean isUploadOver;
 
+	private boolean isStop;
+
 	// 上传速度
 	private long speed;
 
-	private static int BUFF_LENGTH = 1024 * 8;
+	private static int BUFF_LENGTH = 1024 * 256;
+
+	private int startLength;
 
 	/**
 	 * @param url
 	 *            上传文件url
-	 * @param name
-	 *            文件名称
+	 * @param localFile
+	 *            上传文件
 	 * @param startPos
 	 *            上传文件起点
 	 * @param endPos
@@ -76,67 +69,89 @@ public class UploadFile extends Thread {
 	 *            线程id
 	 * @throws IOException
 	 */
-	public UploadFile(String url, String localPath, long startPos, long endPos, long length, int threadId) {
+	public UploadFile(String url, File localFile, long startPos, long endPos, long length, int threadId) {
 		this.url = url;
+		this.localFile = localFile;
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.length = length;
 		// 上传通过Append实现，只能支持单线程
 		this.threadId = threadId;
-		this.localPath = localPath;
+		this.startLength = (int) startPos;
 	}
 
 	@Override
 	public void run() {
 		try {
 			int size = -1;
-			stream = new FileInputStream(new File(localPath));
-			byte[] buff = new byte[BUFF_LENGTH];
-			while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos) {
-				String locationURL = "";
-				HttpPost requestPost = new HttpPost(url);
-				HttpResponse response = new DefaultHttpClient().execute(requestPost);
-				if (response != null) {
-					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
-						Header locationHeader = response.getFirstHeader("Location");
-						if (locationHeader == null) {
-							Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
-						} else {
-							// 获取登陆成功之后跳转链接
-							locationURL = locationHeader.getValue();
+			stream = new FileInputStream(localFile);
+			// 跳过startLength开始读取文件，保证文件上传长度正确
+			if (startLength < endPos) {
+				stream.skip(startLength);
+				byte[] buff = new byte[BUFF_LENGTH];
+				// 以下两个变量用来统计传输速度
+				long timeSpanSeconds = 0;
+				long range = 0;
+				speed = 0L;
+				long startTime = System.currentTimeMillis();
+				while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos && !isStop) {
+					String locationURL = "";
+					HttpPost requestPost = new HttpPost(url);
+					HttpResponse response = new DefaultHttpClient().execute(requestPost);
+					if (response != null) {
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+							Header locationHeader = response.getFirstHeader("Location");
+							if (locationHeader == null) {
+								Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
+							} else {
+								// 获取登陆成功之后跳转链接
+								locationURL = locationHeader.getValue();
+							}
+						}
+					}
+
+					if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+						// 利用post请求往服务器上上传内容
+						URL nowURL = new URL(locationURL);
+						HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
+						connection.setConnectTimeout(3000);
+						// 设置读取数据超时时间为3000ms
+						connection.setReadTimeout(3000);
+						setHeader(connection);
+						connection.setDoOutput(true);
+						connection.setRequestMethod("POST");
+						outputStream = connection.getOutputStream();
+						while (outputStream == null) {
+							outputStream = connection.getOutputStream();
+						}
+						if (outputStream != null) {
+							// 将文件写入字节流中
+							outputStream.write(buff, 0, size);
+							outputStream.flush();
+							startPos += size;
+							range += size;
+							timeSpanSeconds += System.currentTimeMillis() - startTime;
+							if (timeSpanSeconds > 1000) {
+								speed = (range * 1000) / timeSpanSeconds;
+								timeSpanSeconds = 0;
+								range = 0;
+								startTime = System.currentTimeMillis();
+							}
+							if (null != connection.getInputStream()) {
+								inputStream = connection.getInputStream();
+								// 写入文件到远程服务器
+								inputStream.read(buff);
+							}
 						}
 					}
 				}
-
-				if (!StringUtilities.isNullOrEmptyString(locationURL)) {
-					// 利用post请求往服务器上上传内容
-					URL nowURL = new URL(locationURL);
-					HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
-					connection.setConnectTimeout(3000);
-					// 设置读取数据超时时间为3000ms
-					connection.setReadTimeout(3000);
-					setHeader(connection);
-					connection.setDoOutput(true);
-					connection.setRequestMethod("POST");
-					outputStream = connection.getOutputStream();
-					while (outputStream == null) {
-						outputStream = connection.getOutputStream();
-					}
-					if (outputStream != null) {
-						// 将文件写入字节流中
-						outputStream.write(buff, 0, size);
-						outputStream.flush();
-						startPos += size;
-					}
-					inputStream = connection.getInputStream();
-					// 写入文件到远程服务器
-					inputStream.read(buff);
+				if (endPos <= startPos && null != outputStream && null != inputStream) {
+					outputStream.close();
+					stream.close();
+					inputStream.close();
+					isUploadOver = true;
 				}
 			}
-			outputStream.close();
-			stream.close();
-			inputStream.close();
-			isUploadOver = true;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -187,4 +202,15 @@ public class UploadFile extends Thread {
 		return isUploadOver;
 	}
 
+	public long getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(long speed) {
+		this.speed = speed;
+	}
+
+	public void stopUpload() {
+		this.isStop = true;
+	}
 }

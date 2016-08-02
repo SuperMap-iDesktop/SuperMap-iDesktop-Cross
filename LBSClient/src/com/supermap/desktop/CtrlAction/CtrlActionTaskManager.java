@@ -10,6 +10,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dialog.JDialogTaskManager;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
+import com.supermap.desktop.http.callable.UploadPropressCallable;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.task.TaskFactory;
@@ -33,28 +34,30 @@ public class CtrlActionTaskManager extends CtrlAction {
 		FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
 		if (null != fileManagerContainer) {
 			ITaskFactory taskFactory = TaskFactory.getInstance();
-			List<String> taskPropertyLists = ManagerXMLParser.getTaskPropertyList();
+			List<String> downloadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.DOWNLOADTASK);
+			List<String> uploadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.UPLOADTASK);
 			JDialogTaskManager taskManager = new JDialogTaskManager(null, true);
-			taskManager.setDownloadTaskNumber(taskPropertyLists.size());
-			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverDownloadTask()) {
-				for (String attris : taskPropertyLists) {
-					String[] attriArray = attris.split(",");
-					FileInfo downloadInfo = new FileInfo(attriArray[0], attriArray[1], attriArray[2], Long.parseLong(attriArray[3]), 1, true);
-					ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+			taskManager.setDownloadTaskCount(downloadTaskPropertyLists.size());
+			taskManager.setUploadTaskCount(uploadTaskPropertyLists.size());
+			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverTask()) {
+				for (String downloadAttris : downloadTaskPropertyLists) {
+					String[] attriArrayForDownload = downloadAttris.split(",");
+					FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], attriArrayForDownload[2], Long.parseLong(attriArrayForDownload[3]), 1, true);
+					ITask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
 					DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
-					task.doWork(downloadProgressCallable);
-					fileManagerContainer.addItem(task);
+					downloadTask.doWork(downloadProgressCallable);
+					fileManagerContainer.addItem(downloadTask);
+				}
+				for (String uploadAttris : uploadTaskPropertyLists) {
+					String[] attriArrayForUpload = uploadAttris.split(",");
+					FileInfo uploadInfo = new FileInfo(attriArrayForUpload[0], attriArrayForUpload[1], attriArrayForUpload[2], Long.parseLong(attriArrayForUpload[3]), 1, true);
+					ITask uploadTask = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
+					UploadPropressCallable downloadProgressCallable = new UploadPropressCallable(uploadInfo, false);
+					uploadTask.doWork(downloadProgressCallable);
+					fileManagerContainer.addItem(uploadTask);
 				}
 			}
 		}
 	}
 
-	@Override
-	public boolean enable() {
-		boolean enable = false;
-		if (null != ManagerXMLParser.getTaskPropertyList() && ManagerXMLParser.getTaskPropertyList().size() > 0) {
-			enable = true;
-		}
-		return enable;
-	}
 }

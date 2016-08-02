@@ -16,16 +16,19 @@ import com.supermap.desktop.ui.controls.SmDialog;
 public class JDialogTaskManager extends SmDialog {
 
 	private JLabel labelDownloadTask;
+	private JLabel labelUploadTask;
 	private JTextField textFieldDownloadTask;
+	private JTextField textFieldUploadTask;
 	private JButton buttonOk;
 	private JButton buttonCancel;
-	private JRadioButton checkboxRecover;
-	private boolean isRecoverDownloadTask;
+	private JCheckBox checkboxRecoverDownloadTask;
+	private JCheckBox checkboxRecoverUploadTask;
+	private boolean isRecoverTask;
 	private ActionListener buttonOkListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			isRecoverDownloadTask = checkboxRecover.isSelected();
+			isRecoverTask = checkboxRecoverDownloadTask.isSelected() || checkboxRecoverUploadTask.isSelected();
 			dialogResult = DialogResult.OK;
 			JDialogTaskManager.this.dispose();
 		}
@@ -47,7 +50,7 @@ public class JDialogTaskManager extends SmDialog {
 		initComponents();
 		initResources();
 		registEvents();
-		this.setSize(300, 120);
+		this.setSize(400, 160);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -63,35 +66,57 @@ public class JDialogTaskManager extends SmDialog {
 	}
 
 	private void initResources() {
-		this.labelDownloadTask.setText(LBSClientProperties.getString("String_DownLoadTask"));
-		this.checkboxRecover.setText(LBSClientProperties.getString("String_Recover"));
+		this.labelDownloadTask.setText(LBSClientProperties.getString("String_DownloadTask"));
+		this.labelUploadTask.setText(LBSClientProperties.getString("String_UploadTask"));
+		this.checkboxRecoverUploadTask.setText(LBSClientProperties.getString("String_Recover"));
+		this.checkboxRecoverDownloadTask.setText(LBSClientProperties.getString("String_Recover"));
 	}
 
 	private void initComponents() {
 		this.labelDownloadTask = new JLabel();
+		this.labelUploadTask = new JLabel();
 		this.textFieldDownloadTask = new JTextField();
+		this.textFieldUploadTask = new JTextField();
 		this.textFieldDownloadTask.setEditable(false);
+		this.textFieldUploadTask.setEditable(false);
 		this.buttonOk = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
-		this.checkboxRecover = new JRadioButton();
+		this.checkboxRecoverDownloadTask = new JCheckBox();
+		this.checkboxRecoverUploadTask = new JCheckBox();
+		this.checkboxRecoverDownloadTask.setSelected(true);
+		this.checkboxRecoverUploadTask.setSelected(true);
+		this.buttonOk.setEnabled(false);
 		//@formatter:off
 		this.setLayout(new GridBagLayout());
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOk,                   new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-		panelButton.add(this.buttonCancel,               new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-		getContentPane().add(this.labelDownloadTask,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
-		getContentPane().add(this.textFieldDownloadTask, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setIpad(100, 0).setWeight(0, 0));
-		getContentPane().add(this.checkboxRecover,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
-		getContentPane().add(panelButton,                new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		panelButton.add(this.buttonOk,                         new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		panelButton.add(this.buttonCancel,                     new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+		getContentPane().add(this.labelDownloadTask,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(1, 1));
+		getContentPane().add(this.textFieldDownloadTask,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5).setIpad(200, 0).setWeight(1, 1));
+		getContentPane().add(this.checkboxRecoverDownloadTask, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(1, 1));
+		getContentPane().add(this.labelUploadTask,             new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(1, 1));
+		getContentPane().add(this.textFieldUploadTask,         new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5).setIpad(200, 0).setWeight(1, 1));
+		getContentPane().add(this.checkboxRecoverUploadTask,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(1, 1));
+		getContentPane().add(panelButton,                      new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		//@formatter:on
 	}
 
-	public boolean isRecoverDownloadTask() {
-		return isRecoverDownloadTask;
+	public boolean isRecoverTask() {
+		return isRecoverTask;
 	}
 
-	public void setDownloadTaskNumber(int i) {
+	public void setDownloadTaskCount(int i) {
+		if (i > 0) {
+			this.buttonOk.setEnabled(true);
+		}
 		this.textFieldDownloadTask.setText(String.valueOf(i));
+	}
+
+	public void setUploadTaskCount(int i) {
+		if (i > 0) {
+			this.buttonOk.setEnabled(true);
+		}
+		this.textFieldUploadTask.setText(String.valueOf(i));
 	}
 }

@@ -1,9 +1,6 @@
 package com.supermap.desktop.http.download;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.supermap.desktop.http.LogUtils;
@@ -13,14 +10,7 @@ import com.supermap.desktop.http.callable.FileSteppedListener;
 /**
  * <b>function:</b> 分块多线程下载工具类
  * 
- * @author hoojo
- * @createDate 2011-9-28 下午05:22:18
- * @file DownloadUtils.java
- * @package com.hoo.util
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
+ * @author xie
  */
 public abstract class DownloadUtils {
 

@@ -1,22 +1,16 @@
 package com.supermap.desktop.http.upload;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
+import java.io.*;
+import java.net.URLEncoder;
 
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.LogUtils;
-import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.ManagerXMLParser;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
@@ -46,30 +40,33 @@ public class BatchUploadFile extends Thread {
 	// 临时文件信息
 	private File tempFile;
 
+	private int speed;
+
 	public BatchUploadFile(FileInfo uploadInfo) {
 		this.uploadInfo = uploadInfo;
 		// 单线程实现上传
-		uploadInfo.setSplitter(1);
-		String tempPath = this.uploadInfo.getFilePath() + File.separator + uploadInfo.getFileName() + ".position";
-		tempFile = new File(tempPath);
+		// uploadInfo.setSplitter(1);
+		// String tempPath = this.uploadInfo.getFilePath() + File.separator + uploadInfo.getFileName() + ".position";
+		// tempFile = new File(tempPath);
 		// 如果存在读入点位置的文件
-		if (tempFile.exists()) {
-			first = false;
-			// 就直接读取内容
-			try {
-				readPosInfo();
-				// 文件长度直接取自最后一段的结束位置
-				fileSize = endPos[endPos.length - 1];
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			// 数组的长度就要分成多少段的数量
-			startPos = new long[uploadInfo.getSplitter()];
-			endPos = new long[uploadInfo.getSplitter()];
-			segmentLengths = new long[uploadInfo.getSplitter()];
-			
-		}
+		// if (tempFile.exists()) {
+		// first = false;
+		// // 就直接读取内容
+		// try {
+		// // readPosInfo();
+		// // 文件长度直接取自最后一段的结束位置
+		// fileSize = endPos[endPos.length - 1];
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// } else {
+		// 数组的长度就要分成多少段的数量
+		// 上传时利用单线程实现
+		startPos = new long[1];
+		endPos = new long[1];
+		segmentLengths = new long[1];
+
+		// }
 	}
 
 	@Override
@@ -100,14 +97,20 @@ public class BatchUploadFile extends Thread {
 				String locationURL = new CreateFile(uploadInfo).createFile();
 
 				if (!StringUtilities.isNullOrEmpty(locationURL)) {
+					File uploadFile = new File(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName());
+					fileSize = uploadFile.length();
+					String fileName = URLEncoder.encode(this.uploadInfo.getFileName(), "UTF-8");
+					int buffersize = Integer.parseInt(WebHDFS.getFileStatus(this.uploadInfo.getUrl(), this.uploadInfo.getFileName()).getSize());
+					String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), fileName);
 
-					String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), this.uploadInfo.getFileName());
 					// 创建单线程下载对象数组
 					fileItems = new UploadFile[this.segmentLengths.length];
 					for (int i = 0; i < this.segmentLengths.length; i++) {
 						// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
-						fileItems[i] = new UploadFile(webFile, this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName(), startPos[i],
-								endPos[i], segmentLengths[i], i);
+						startPos[i] = buffersize;
+						endPos[i] = fileSize;
+						segmentLengths[i] = fileSize;
+						fileItems[i] = new UploadFile(webFile, uploadFile, startPos[i], endPos[i], segmentLengths[i], i);
 						fileItems[i].start();
 						Application.getActiveApplication().getOutput().output("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
 					}
@@ -118,7 +121,8 @@ public class BatchUploadFile extends Thread {
 					while (!stop && !isFinished) {
 						try {
 							LogUtils.log("uploading……");
-							writePosInfo();
+							// writePosInfo();
+							getSpeed();
 							UploadUtils.fireSteppedEvent(this, uploadInfo, this.getUploadProcess(), this.getRemainTime());
 							isFinished = true;
 							Thread.sleep(SLEEP_SECONDS);
@@ -136,13 +140,13 @@ public class BatchUploadFile extends Thread {
 
 						// 上传完成了删除进度文件
 						if (isFinished) {
-							this.tempFile.delete();
 							UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
 							Application
 									.getActiveApplication()
 									.getOutput()
 									.output(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName()
 											+ LBSClientProperties.getString("String_UploadEnd"));
+							ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, uploadInfo.getUrl());
 						}
 					}
 				}
@@ -151,6 +155,16 @@ public class BatchUploadFile extends Thread {
 			ex.printStackTrace();
 		}
 
+	}
+
+	private void getSpeed() {
+		this.speed = 0;
+		if (null != fileItems) {
+			for (int i = 0; i < fileItems.length; i++) {
+				speed += fileItems[i].getSpeed();
+			}
+			speed = speed / fileItems.length;
+		}
 	}
 
 	/**
@@ -176,7 +190,7 @@ public class BatchUploadFile extends Thread {
 	/**
 	 * 获取文件的上传进度
 	 */
-	public int getUploadProcess() throws IOException {
+	private int getUploadProcess() throws IOException {
 		int process = 0;
 		try {
 			long finished = this.getFinishedSize();
@@ -192,16 +206,14 @@ public class BatchUploadFile extends Thread {
 
 	/**
 	 * 获取文件的剩余上传时间
-	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
-	public int getRemainTime() throws IOException {
+	private int getRemainTime() throws IOException {
 		int remainTime = 0;
 		try {
 			long finished = this.getFinishedSize();
-			remainTime = (int) ((this.uploadInfo.getFileSize() - finished) / (500 * 1024));
+			if (this.speed != 0) {
+				remainTime = (int) ((this.uploadInfo.getFileSize() - finished) / (this.speed));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -212,9 +224,6 @@ public class BatchUploadFile extends Thread {
 	/**
 	 * 获取文件的上传信息
 	 * 
-	 * @author huchenpu
-	 * @createDate 2016-5-22
-	 * @throws IOException
 	 */
 	public String getDownloadInformation() throws IOException {
 		String information = "";
@@ -271,10 +280,15 @@ public class BatchUploadFile extends Thread {
 	 */
 	public void stopUpload() throws IOException {
 		this.stop = true;
+		if (null != fileItems) {
+			for (int i = 0; i < fileItems.length; i++) {
+				fileItems[i].stopUpload();
+			}
+		}
 	}
 
 	/**
-	 * 继续上传	
+	 * 继续上传
 	 */
 	public void resumeDownload() {
 		try {

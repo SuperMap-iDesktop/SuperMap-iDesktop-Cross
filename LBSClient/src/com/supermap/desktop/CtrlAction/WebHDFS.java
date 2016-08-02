@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -333,6 +335,11 @@ public class WebHDFS {
 		}
 
 		public String getName() {
+//			try {
+//				this.pathSuffix = URLEncoder.encode(pathSuffix, "GBK");
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//			}
 			return this.pathSuffix;
 		}
 
