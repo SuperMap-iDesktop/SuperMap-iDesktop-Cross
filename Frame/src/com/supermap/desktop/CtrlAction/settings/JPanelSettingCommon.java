@@ -1,11 +1,14 @@
 package com.supermap.desktop.CtrlAction.settings;
 
+import com.supermap.desktop.CtrlAction.WorkspaceAutoSave;
 import com.supermap.desktop.CtrlAction.WorkspaceTempSave;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.frame.FrameProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,6 +115,30 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 
 	@Override
 	protected void initListeners() {
+		smTextFieldLegitAutoSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+					return false;
+				}
+				try {
+					Integer integer = Integer.valueOf(textFieldValue);
+					if (integer == GlobalParameters.getWorkspaceAutoSaveTime()) {
+						changedValues.remove(smTextFieldLegitAutoSaveTime);
+					} else {
+						changedValues.add(smTextFieldLegitAutoSaveTime);
+					}
+				} catch (Exception e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 		checkBoxShowDataInNowWindow.addItemListener(itemListener);
 		checkBoxIsShowFormClosingInfo.addItemListener(itemListener);
 		checkBoxWorkspaceCloseNotify.addItemListener(itemListener);
@@ -148,6 +175,18 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 
 	@Override
 	public void apply() {
+		if (changedValues.contains(smTextFieldLegitAutoSaveTime)) {
+			changedValues.remove(smTextFieldLegitAutoSaveTime);
+			GlobalParameters.setWorkspaceAutoSaveTime(Integer.valueOf(smTextFieldLegitAutoSaveTime.getText()));
+			if (changedValues.contains(checkBoxAutoSaveWorkspace)) {
+				applyIsAutoSaveWorkSpace();
+			} else {
+				WorkspaceAutoSave.getInstance().exit();
+				WorkspaceAutoSave.getInstance().start();
+			}
+		} else if (changedValues.contains(checkBoxAutoSaveWorkspace)) {
+			applyIsAutoSaveWorkSpace();
+		}
 		for (Component component : changedValues) {
 			if (component == checkBoxShowDataInNowWindow) {
 				GlobalParameters.setIsShowDataInNewWindow(checkBoxShowDataInNowWindow.isSelected());
@@ -172,14 +211,17 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 					WorkspaceTempSave.getInstance().exit();
 				}
 			}
-			if (component == checkBoxAutoSaveWorkspace) {
-				// TODO: 2016/8/1
-				GlobalParameters.setIsWorkspaceAutoSave(checkBoxAutoSaveWorkspace.isSelected());
-			}
-			if (component == smTextFieldLegitAutoSaveTime) {
-				// TODO: 2016/8/1
-				GlobalParameters.setWorkspaceAutoSaveTime(Integer.valueOf(smTextFieldLegitAutoSaveTime.getBackUpValue()));
-			}
+
+		}
+	}
+
+	private void applyIsAutoSaveWorkSpace() {
+		changedValues.remove(checkBoxAutoSaveWorkspace);
+		GlobalParameters.setIsWorkspaceAutoSave(checkBoxAutoSaveWorkspace.isSelected());
+		if (checkBoxAutoSaveWorkspace.isSelected()) {
+			WorkspaceAutoSave.getInstance().start();
+		} else {
+			WorkspaceAutoSave.getInstance().exit();
 		}
 	}
 

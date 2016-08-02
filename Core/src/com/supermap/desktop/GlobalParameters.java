@@ -1045,7 +1045,7 @@ public class GlobalParameters {
 			maxVisibleVertexNode.setAttribute("maxCount", new BigDecimal(maxVisibleVertex).toString());
 			startup.appendChild(maxVisibleVertexNode);
 
-			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_maxVisibleVertexComment")));
+			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_editComment")));
 			Element edit = emptyDocument.createElement("edit");
 			edit.setAttribute("positiveselect", String.valueOf(positiveSelect));
 			startup.appendChild(edit);

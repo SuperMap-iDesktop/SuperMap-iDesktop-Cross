@@ -4,7 +4,11 @@ import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -20,13 +24,6 @@ public class WorkspaceAutoSave {
 	private TimerTask task;
 
 	private WorkspaceAutoSave() {
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				save();
-			}
-		};
-		timer = new Timer();
 	}
 
 	private void save() {
@@ -62,10 +59,28 @@ public class WorkspaceAutoSave {
 
 	public void start() {
 		int workspaceAutoSaveTime = GlobalParameters.getWorkspaceAutoSaveTime() * 60000;
+		if (timer != null) {
+			timer.cancel();
+		}
+		timer = new Timer("workSpaceAutoSave", true);
+		if (task != null) {
+			task.cancel();
+		}
+		task = new TimerTask() {
+			@Override
+			public void run() {
+				save();
+			}
+		};
 		timer.schedule(task, workspaceAutoSaveTime, workspaceAutoSaveTime);
 	}
 
 	public static WorkspaceAutoSave getInstance() {
 		return workspaceAutoSave;
+	}
+
+	public void exit() {
+		task.cancel();
+		timer.cancel();
 	}
 }
