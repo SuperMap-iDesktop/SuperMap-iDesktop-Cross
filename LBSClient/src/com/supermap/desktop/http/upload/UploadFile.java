@@ -53,7 +53,7 @@ public class UploadFile extends Thread {
 	private long speed;
 
 	private static int BUFF_LENGTH = 1024 * 256;
-	
+
 	private int startLength;
 
 	/**
@@ -77,7 +77,7 @@ public class UploadFile extends Thread {
 		this.length = length;
 		// 上传通过Append实现，只能支持单线程
 		this.threadId = threadId;
-		this.startLength = (int) startPos; 
+		this.startLength = (int) startPos;
 	}
 
 	@Override
@@ -85,68 +85,72 @@ public class UploadFile extends Thread {
 		try {
 			int size = -1;
 			stream = new FileInputStream(localFile);
-			//跳过startLength开始读取文件，保证文件上传长度正确
-			stream.skip(startLength);
-			byte[] buff = new byte[BUFF_LENGTH];
-			// 以下两个变量用来统计传输速度
-			long timeSpanSeconds = 0;
-			long range = 0;
-			speed = 0L;
-			long startTime = System.currentTimeMillis();
-			while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos && !isStop) {
-				String locationURL = "";
-				HttpPost requestPost = new HttpPost(url);
-				HttpResponse response = new DefaultHttpClient().execute(requestPost);
-				if (response != null) {
-					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
-						Header locationHeader = response.getFirstHeader("Location");
-						if (locationHeader == null) {
-							Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
-						} else {
-							// 获取登陆成功之后跳转链接
-							locationURL = locationHeader.getValue();
+			// 跳过startLength开始读取文件，保证文件上传长度正确
+			if (startLength < endPos) {
+				stream.skip(startLength);
+				byte[] buff = new byte[BUFF_LENGTH];
+				// 以下两个变量用来统计传输速度
+				long timeSpanSeconds = 0;
+				long range = 0;
+				speed = 0L;
+				long startTime = System.currentTimeMillis();
+				while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos && !isStop) {
+					String locationURL = "";
+					HttpPost requestPost = new HttpPost(url);
+					HttpResponse response = new DefaultHttpClient().execute(requestPost);
+					if (response != null) {
+						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+							Header locationHeader = response.getFirstHeader("Location");
+							if (locationHeader == null) {
+								Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_UnlandFailed"));
+							} else {
+								// 获取登陆成功之后跳转链接
+								locationURL = locationHeader.getValue();
+							}
 						}
 					}
-				}
 
-				if (!StringUtilities.isNullOrEmptyString(locationURL)) {
-					// 利用post请求往服务器上上传内容
-					URL nowURL = new URL(locationURL);
-					HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
-					connection.setConnectTimeout(3000);
-					// 设置读取数据超时时间为3000ms
-					connection.setReadTimeout(3000);
-					setHeader(connection);
-					connection.setDoOutput(true);
-					connection.setRequestMethod("POST");
-					outputStream = connection.getOutputStream();
-					while (outputStream == null) {
+					if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+						// 利用post请求往服务器上上传内容
+						URL nowURL = new URL(locationURL);
+						HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
+						connection.setConnectTimeout(3000);
+						// 设置读取数据超时时间为3000ms
+						connection.setReadTimeout(3000);
+						setHeader(connection);
+						connection.setDoOutput(true);
+						connection.setRequestMethod("POST");
 						outputStream = connection.getOutputStream();
-					}
-					if (outputStream != null) {
-						// 将文件写入字节流中
-						outputStream.write(buff, 0, size);
-						outputStream.flush();
-						startPos += size;
-						range += size;
-						timeSpanSeconds += System.currentTimeMillis() - startTime;
-						if (timeSpanSeconds > 1000) {
-							speed = (range * 1000) / timeSpanSeconds;
-							timeSpanSeconds = 0;
-							range = 0;
-							startTime = System.currentTimeMillis();
+						while (outputStream == null) {
+							outputStream = connection.getOutputStream();
 						}
-						inputStream = connection.getInputStream();
-						// 写入文件到远程服务器
-						inputStream.read(buff);
+						if (outputStream != null) {
+							// 将文件写入字节流中
+							outputStream.write(buff, 0, size);
+							outputStream.flush();
+							startPos += size;
+							range += size;
+							timeSpanSeconds += System.currentTimeMillis() - startTime;
+							if (timeSpanSeconds > 1000) {
+								speed = (range * 1000) / timeSpanSeconds;
+								timeSpanSeconds = 0;
+								range = 0;
+								startTime = System.currentTimeMillis();
+							}
+							if (null != connection.getInputStream()) {
+								inputStream = connection.getInputStream();
+								// 写入文件到远程服务器
+								inputStream.read(buff);
+							}
+						}
 					}
 				}
-			}
-			if (endPos <= startPos) {
-				outputStream.close();
-				stream.close();
-				inputStream.close();
-				isUploadOver = true;
+				if (endPos <= startPos && null != outputStream && null != inputStream) {
+					outputStream.close();
+					stream.close();
+					inputStream.close();
+					isUploadOver = true;
+				}
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

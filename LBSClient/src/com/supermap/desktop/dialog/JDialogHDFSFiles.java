@@ -405,7 +405,7 @@ public class JDialogHDFSFiles extends SmDialog {
 					FileInfo downloadInfo = new FileInfo(webPath);
 					ITaskFactory taskFactory = TaskFactory.getInstance();
 					ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, downloadInfo);
-					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(downloadInfo);
+					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(downloadInfo,true);
 					task.doWork(uploadProgressCallable);
 					fileManagerContainer.addItem(task);
 				}

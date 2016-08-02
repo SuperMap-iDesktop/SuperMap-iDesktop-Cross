@@ -6,9 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.ManagerXMLParser;
 
 /**
  * <b>function:</b> 分批量下载文件
@@ -154,6 +156,7 @@ public class BatchDownloadFile extends Thread {
 					this.tempFile.delete();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
 					Application.getActiveApplication().getOutput().output(this.downloadInfo + LBSClientProperties.getString("String_DownLoadFinished"));
+					ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.downloadInfo.getUrl());
 				}
 			}
 			LogUtils.info("Download task is finished!");

@@ -14,6 +14,7 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 
 	private Boolean isSucceed;
 	FileInfo downloadInfo;
+	// 是否为新任务
 	private boolean isNew;
 
 	public DownloadProgressCallable(FileInfo downloadInfo, boolean isNew) {
@@ -40,15 +41,13 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 		try {
 			isSucceed = false;
 			if (isNew) {
-				DownloadUtils.addNewWindowListener(steppedListener);
-				DownloadUtils.download(this.downloadInfo);
+				// 是新任务，则将任务节点添加到xml文件中
 				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getFileName() + ",FilePath=" + downloadInfo.getFilePath()
 						+ ",FileSize=" + downloadInfo.getFileSize();
 				ManagerXMLParser.addTask(TaskEnum.DOWNLOADTASK, property);
-			} else {
-				DownloadUtils.addNewWindowListener(steppedListener);
-				DownloadUtils.download(this.downloadInfo);
 			}
+			DownloadUtils.addNewWindowListener(steppedListener);
+			DownloadUtils.download(this.downloadInfo);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

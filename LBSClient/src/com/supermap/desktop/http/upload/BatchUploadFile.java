@@ -3,12 +3,14 @@ package com.supermap.desktop.http.upload;
 import java.io.*;
 import java.net.URLEncoder;
 
+import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.utilities.ManagerXMLParser;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
@@ -43,9 +45,9 @@ public class BatchUploadFile extends Thread {
 	public BatchUploadFile(FileInfo uploadInfo) {
 		this.uploadInfo = uploadInfo;
 		// 单线程实现上传
-//		uploadInfo.setSplitter(1);
-//		String tempPath = this.uploadInfo.getFilePath() + File.separator + uploadInfo.getFileName() + ".position";
-//		tempFile = new File(tempPath);
+		// uploadInfo.setSplitter(1);
+		// String tempPath = this.uploadInfo.getFilePath() + File.separator + uploadInfo.getFileName() + ".position";
+		// tempFile = new File(tempPath);
 		// 如果存在读入点位置的文件
 		// if (tempFile.exists()) {
 		// first = false;
@@ -59,7 +61,7 @@ public class BatchUploadFile extends Thread {
 		// }
 		// } else {
 		// 数组的长度就要分成多少段的数量
-		//上传时利用单线程实现
+		// 上传时利用单线程实现
 		startPos = new long[1];
 		endPos = new long[1];
 		segmentLengths = new long[1];
@@ -144,6 +146,7 @@ public class BatchUploadFile extends Thread {
 									.getOutput()
 									.output(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName()
 											+ LBSClientProperties.getString("String_UploadEnd"));
+							ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, uploadInfo.getUrl());
 						}
 					}
 				}
@@ -156,10 +159,12 @@ public class BatchUploadFile extends Thread {
 
 	private void getSpeed() {
 		this.speed = 0;
-		for (int i = 0; i < fileItems.length; i++) {
-			speed += fileItems[i].getSpeed();
+		if (null != fileItems) {
+			for (int i = 0; i < fileItems.length; i++) {
+				speed += fileItems[i].getSpeed();
+			}
+			speed = speed / fileItems.length;
 		}
-		speed = speed / fileItems.length;
 	}
 
 	/**
@@ -275,8 +280,10 @@ public class BatchUploadFile extends Thread {
 	 */
 	public void stopUpload() throws IOException {
 		this.stop = true;
-		for (int i = 0; i < fileItems.length; i++) {
-			fileItems[i].stopUpload();
+		if (null != fileItems) {
+			for (int i = 0; i < fileItems.length; i++) {
+				fileItems[i].stopUpload();
+			}
 		}
 	}
 

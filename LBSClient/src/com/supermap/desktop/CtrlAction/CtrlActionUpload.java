@@ -48,7 +48,7 @@ public class CtrlActionUpload extends CtrlAction {
 					FileInfo uploadInfo = new FileInfo(webPath, file.getName(), file.getParentFile().getPath(), file.length(), 1, false);
 					ITaskFactory taskFactory = TaskFactory.getInstance();
 					ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
-					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(uploadInfo);
+					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(uploadInfo,true);
 					task.doWork(uploadProgressCallable);
 					fileManagerContainer.addItem(task);
 				}
