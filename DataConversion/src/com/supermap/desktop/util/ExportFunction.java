@@ -60,10 +60,10 @@ public class ExportFunction {
 		String targetFilePath = System.getProperty("user.dir") + File.separator;
 		if (0 < exportTable.getRowCount()) {
 			selected = exportTable.getRowCount() - 1;
-			//复制第一条记录的目录为新添加项的目标目录
-			targetFilePath=((ExportModel)exportTable.getModel()).getTagValueAt(0).getFilePath();
+			// 复制第一条记录的目录为新添加项的目标目录
+			targetFilePath = ((ExportModel) exportTable.getModel()).getTagValueAt(0).getFilePath();
 		}
-		
+
 		for (int i = 0; i < count.length; i++) {
 			ExportFileInfo tempOut = ((ChildExportModel) table.getModel()).getTagValueAt(count[i]);
 			String datasetName = tempOut.getDatasetName();
@@ -76,7 +76,7 @@ public class ExportFunction {
 			if (0 < tempOut.getFileTypes().length) {
 				fileType = tempOut.getFileTypes()[0];
 
-			} else{
+			} else {
 				fileType = FileType.DWG;
 			}
 			// 初始化exportSetting
@@ -137,7 +137,6 @@ public class ExportFunction {
 
 		}
 	}
-
 
 	// 单独选中一条数据时刷新
 	public static void getRigthPanelAsSet(DataExportFrame frame, JTable table) {
@@ -423,7 +422,7 @@ public class ExportFunction {
 			List<String> fileTypeInfos = new ArrayList<String>();
 			for (int i = 0; i < fileTypes.size(); i++) {
 				// TODO 导出为Microsoft 文本文件未实现，此处先屏蔽
-				if (!"CSV".equals(fileTypes.get(i))) {
+				if (!"CSV".equals(fileTypes.get(i)) && null != DatasetUtil.getDatasetName("", fileTypes.get(i), 1)) {
 					fileTypeInfos.add(DatasetUtil.getDatasetName("", fileTypes.get(i), 1));
 				}
 			}
@@ -431,7 +430,7 @@ public class ExportFunction {
 		} else {
 			comboBox.setModel(new DefaultComboBoxModel<String>());
 		}
-		if (comboBox.getItemCount()>0) {
+		if (comboBox.getItemCount() > 0) {
 			comboBox.setSelectedIndex(0);
 		}
 	}

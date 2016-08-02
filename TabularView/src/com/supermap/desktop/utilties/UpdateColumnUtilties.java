@@ -282,6 +282,8 @@ public class UpdateColumnUtilties {
 				return desValue;
 			}
 			desValue = (desValue instanceof Double && Double.compare((double) desValue, 0.0) > 0) ? true : false;
+		}else if(fieldType.equals(FieldType.BYTE)){
+			desValue = (byte)Convert.toInteger(desValue.toString());
 		}
 
 		return desValue;

@@ -22,15 +22,27 @@ public class DatasetUtil {
 		if ("GRD".equalsIgnoreCase(result_fileType)) {
 			result_fileType = "GRID";
 		}
-		String tempFileType = "String_FileType" + result_fileType;
+		String tempFileType = "String_FileType" + fileType;
 		if (tempStr.contains(dataset.toLowerCase()) && 0 == flag) {
 			result_dataset = DataConversionProperties.getString(tempStr);
 
 		} else if (tempFileType.contains(result_fileType)) {
-
-			result_fileType = DataConversionProperties.getString(tempFileType);
+			boolean isVisibleName = true;
+			try {
+				DataConversionProperties.getString(tempFileType);
+			} catch (Exception e) {
+				// 此处通过抛出异常来确定导出类型是否已经对应
+				isVisibleName = false;
+			}
+			if (isVisibleName) {
+				result_fileType = DataConversionProperties.getString(tempFileType);
+			}
 		}
-		datasetMap.put(tempFileType, result_fileType);
+		if (!result_fileType.equals(fileType)) {
+			datasetMap.put(tempFileType, result_fileType);
+		}else{
+			result_fileType = null;
+		}
 		return flag == 0 ? result_dataset : result_fileType;
 	}
 
