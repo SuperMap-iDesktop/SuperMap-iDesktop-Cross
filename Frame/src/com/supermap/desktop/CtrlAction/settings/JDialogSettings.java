@@ -74,6 +74,7 @@ public class JDialogSettings extends SmDialog {
 				listModel.addElement(list);
 			}
 		}
+		this.getRootPane().setDefaultButton(smButtonOk);
 	}
 
 	private void initLayout() {

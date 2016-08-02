@@ -39,7 +39,7 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private int period = 60000; // 1 min/
+	private int period = 60000; // 1 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
