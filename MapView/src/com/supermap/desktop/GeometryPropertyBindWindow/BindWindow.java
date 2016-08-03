@@ -69,7 +69,7 @@ public class BindWindow implements IBindWindow {
 		for (int i = 0; i < selectRows.length; i++) {
 			idRows[i] = (int) this.formTabular.getRowIndexMap().get(selectRows[i]);
 		}
-		if (null != this.layer.getDataset()) {
+		if (!layer.isDiposed() && null != this.layer.getDataset()) {
 			DatasetVector datasetVector = (DatasetVector) this.layer.getDataset();
 			Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
 			Selection selection = new Selection();

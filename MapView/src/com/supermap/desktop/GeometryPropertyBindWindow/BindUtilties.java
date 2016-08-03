@@ -10,11 +10,12 @@ import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.ui.MapControl;
 
 public class BindUtilties {
 	private static SplitWindow splitWindow;
 	private static IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-	private static Map map;
+	private static MapControl mapControl;
 	private static IFormTabular tabular;
 	private static DockingWindow newTabWindow;
 	private static IPropertyBindWindow propertyBindWindow;
@@ -41,7 +42,7 @@ public class BindUtilties {
 	}
 
 	public static void windowBindProperty(IFormMap formMap, TabWindow tabWindow, Layer layer) {
-		map = formMap.getMapControl().getMap();
+		mapControl = formMap.getMapControl();
 		newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
 		tabSize += 1;
 		if (null == splitWindow) {
@@ -51,7 +52,7 @@ public class BindUtilties {
 		}
 		propertyBindWindow = new PropertyBindWindow();
 		propertyBindWindow.setFormMap(formMap);
-		propertyBindWindow.setBindProperty(new BindProperty(map));
+		propertyBindWindow.setBindProperty(new BindProperty(mapControl));
 		propertyBindWindow.setBindWindow(new BindWindow(tabular), layer);
 		propertyBindWindow.registEvents();
 		newTabWindow.addListener(new DockingWindowAdapter() {

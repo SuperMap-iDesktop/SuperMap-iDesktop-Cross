@@ -4,31 +4,38 @@ import java.util.Vector;
 
 import com.supermap.data.*;
 import com.supermap.mapping.*;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.MapControl;
 
 public class BindProperty implements IBindProperty {
 
+	private MapControl mapControl;
 	private Map map;
 	private MapDrawingListener mapDrawingListener;
 	private boolean selectRowChange;
 	private Vector<PropertySelectChangeListener> propertySelectChangeListener;
+	private GeometrySelectChangedListener geometrySelectChangedListener;
 
-	public BindProperty(Map map) {
-		this.map = map;
+	public BindProperty(MapControl mapControl) {
+		this.mapControl = mapControl;
+		this.map = mapControl.getMap();
 		registEvents();
 	}
 
 	private void registEvents() {
-		this.mapDrawingListener = new MapDrawingListener() {
-
+		this.geometrySelectChangedListener = new GeometrySelectChangedListener() {
+			
 			@Override
-			public void mapDrawing(MapDrawingEvent arg0) {
-				if (arg0.getMap().equals(map)) {
+			public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
+				if (arg0.getCount()>0) {
 					queryTabularTable();
 				}
+				
 			}
 		};
 		removeEvents();
-		this.map.addDrawingListener(this.mapDrawingListener);
+		this.mapControl.addGeometrySelectChangedListener(geometrySelectChangedListener);
 	}
 
 	private void queryTabularTable() {
@@ -112,7 +119,7 @@ public class BindProperty implements IBindProperty {
 
 	@Override
 	public void removeEvents() {
-		this.map.removeDrawingListener(this.mapDrawingListener);
+		this.mapControl.removeGeometrySelectChangedListener(geometrySelectChangedListener);
 	}
 
 	public boolean isSelectRowChange() {
@@ -150,7 +157,7 @@ public class BindProperty implements IBindProperty {
 	@Override
 	public void dispose() {
 		removeEvents();
-		this.map = null;
+		this.mapControl = null;
 		this.mapDrawingListener = null;
 	}
 

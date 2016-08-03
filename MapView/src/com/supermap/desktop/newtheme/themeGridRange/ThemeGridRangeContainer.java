@@ -10,20 +10,9 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.MathUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.*;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -33,6 +22,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -479,13 +469,26 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					// 最后一条的拆分中值
 					splitValue = (item.getStart() + ((int) item.getStart()) + 1) / 2;
 				}
-				String diff = new DecimalFormat("#.####").format(item.getEnd() - item.getStart());
+				DecimalFormat format = new DecimalFormat("#.####");
+				String diff = format.format(item.getEnd() - item.getStart());
 				// 首尾项不同时才能进行拆分
 				if (!"0.0001".equals(diff)) {
-					String startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(item.getStart()),
-							String.valueOf(splitValue));
-					String endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(splitValue),
-							String.valueOf(item.getEnd()));
+					String startCaption = "";
+					String endCaption = "";
+					if (selectRow == 0) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					} else if (selectRow == tableRangeInfo.getRowCount() - 1) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue), "Max");
+					} else {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					}
 					themeGridRange.split(selectRow, splitValue, item.getColor(), startCaption, item.getColor(), endCaption);
 					isMergeOrSplit = true;
 					rangeCount = themeGridRange.getCount();
@@ -505,8 +508,15 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 			int endIndex = selectedRows[selectedRows.length - 1];
 			ThemeGridRangeItem startItem = themeGridRange.getItem(startIndex);
 			ThemeGridRangeItem endItem = themeGridRange.getItem(endIndex);
-			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
-					String.valueOf(endItem.getEnd()));
+			String caption = "";
+			if (startIndex == 0) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", String.valueOf(endItem.getEnd()));
+			} else if (endIndex == tableRangeInfo.getRowCount() - 1) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()), "Max");
+			} else {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
+						String.valueOf(endItem.getEnd()));
+			}
 			themeGridRange.merge(startIndex, selectedRows.length, startItem.getColor(), caption);
 			isMergeOrSplit = true;
 			getTable();

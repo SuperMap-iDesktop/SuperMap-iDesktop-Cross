@@ -1,12 +1,6 @@
 package com.supermap.desktop.newtheme.themeRange;
 
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
@@ -20,21 +14,9 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.MathUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.*;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -43,6 +25,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +38,11 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-
+/**
+ * 分段专题图
+ * @author xie
+ *
+ */
 public class ThemeRangeContainer extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
@@ -425,12 +412,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				this.tableRangeInfo.setValueAt(rangeItem.getEnd(), i, TABLE_COLUMN_RANGEVALUE);
 			}
 			String caption = rangeItem.getCaption();
-//			if (this.captiontype.contains("-")) {
-//				caption = caption.replaceAll("<= X <", "-");
-//				caption = caption.replaceAll("< X <", "-");
-//			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
-//				caption = caption.replaceAll(" - ", " <= X < ");
-//			}
+			if (this.captiontype.contains("-")) {
+				caption = caption.replaceAll("<= X <", "-");
+				caption = caption.replaceAll("< X <", "-");
+			} else if (this.captiontype.contains("<=x<") && !caption.contains(" X <")) {
+				caption = caption.replaceAll(" - ", " <= X < ");
+			}
 			rangeItem.setCaption(caption);
 			this.tableRangeInfo.setValueAt(rangeItem.getCaption(), i, TABLE_COLUMN_CAPTION);
 		}
@@ -527,7 +514,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.tableRangeInfo.putClientProperty("terminateEditOnFocusLost", true);
 		this.tableRangeInfo.getModel().addTableModelListener(this.tableModelListener);
 		this.layersTree.addPropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-//		this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
+		// this.layersTree.addPropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -553,7 +540,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.spinnerRangeLength.removeChangeListener(this.changeListener);
 		this.tableRangeInfo.getModel().removeTableModelListener(this.tableModelListener);
 		this.layersTree.removePropertyChangeListener("LayerChange", this.layersTreePropertyChangeListener);
-//		this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
+		// this.layersTree.removePropertyChangeListener("LayerPropertyChanged", this.layerPropertyChangeListener);
 	}
 
 	/**
@@ -684,13 +671,26 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					splitValue = (item.getStart() + ((int) item.getStart()) + 1) / 2;
 				}
 				String rangePrecision = comboBoxRangePrecision.getSelectedItem().toString();
+				DecimalFormat format = new DecimalFormat(rangePrecision.replace("1", "0"));
 				String diff = String.valueOf(item.getEnd() - item.getStart());
 				// 首尾项差值和舍入精度不同时才能进行拆分
 				if (!rangePrecision.equals(diff)) {
-					String startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(item.getStart()),
-							String.valueOf(splitValue));
-					String endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(splitValue),
-							String.valueOf(item.getEnd()));
+					String startCaption = "";
+					String endCaption = "";
+					if (selectRow == 0) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					} else if (selectRow == tableRangeInfo.getRowCount() - 1) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue), "Max");
+					} else {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					}
 					themeRange.split(selectRow, splitValue, item.getStyle(), startCaption, item.getStyle(), endCaption);
 					isMergeOrSplit = true;
 					getTable();
@@ -710,8 +710,15 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			int endIndex = selectedRows[selectedRows.length - 1];
 			ThemeRangeItem startItem = themeRange.getItem(startIndex);
 			ThemeRangeItem endItem = themeRange.getItem(endIndex);
-			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
-					String.valueOf(endItem.getEnd()));
+			String caption = "";
+			if (startIndex == 0) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", String.valueOf(endItem.getEnd()));
+			} else if (endIndex == tableRangeInfo.getRowCount() - 1) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()), "Max");
+			} else {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
+						String.valueOf(endItem.getEnd()));
+			}
 			themeRange.merge(startIndex, selectedRows.length, startItem.getStyle(), caption);
 			isMergeOrSplit = true;
 			getTable();

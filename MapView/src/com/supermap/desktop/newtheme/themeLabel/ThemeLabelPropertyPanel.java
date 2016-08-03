@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
@@ -49,10 +50,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	// panelLabelEffectSet
 	private JCheckBox checkBoxFlowVisual = new JCheckBox();// 流动显示
 	private JCheckBox checkBoxShowSubscription = new JCheckBox();// 显示上下标
-	private JLabel labelShowSubscription = new JLabel("?");
+	private JLabel labelShowSubscription = new JLabel();
 	private JCheckBox checkBoxShowSmallLabel = new JCheckBox();// 显示小对象标签
 	private JCheckBox checkBoxShowLabelVertical = new JCheckBox();// 竖排显示标签
-	private JLabel labelShowLabelVertical = new JLabel("?");
+	private JLabel labelShowLabelVertical = new JLabel();
 	private JCheckBox checkBoxAutoAvoidance = new JCheckBox();// 自动避让
 	private JComboBox<String> comboBoxAutoAvoidance = new JComboBox<>();
 	private JCheckBox checkBoxDraftLine = new JCheckBox();// 显示牵引线
@@ -119,11 +120,13 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.checkBoxFlowVisual.setSelected(true);
 		this.checkBoxFlowVisual.setText(MapViewProperties.getString("String_CheckBox_ShowFlow"));
 		this.checkBoxShowSubscription.setText(MapViewProperties.getString("String_TextExpression"));
+		this.labelShowSubscription.setIcon(new ImageIcon(ThemeLabelPropertyPanel.class.getResource("/com/supermap/desktop/coreresources/Image_Help.png")));
 		this.labelShowSubscription.setToolTipText(MapViewProperties.getString("String_TextExpression_InformationText"));
 		this.checkBoxShowSmallLabel.setSelected(true);
 		this.checkBoxShowSmallLabel.setText(MapViewProperties.getString("String_SmallGeometry"));
 		this.checkBoxShowLabelVertical.setText(MapViewProperties.getString("String_IsVertical"));
 		this.labelShowLabelVertical.setToolTipText(MapViewProperties.getString("String_IsVertical_InformationText"));
+		this.labelShowLabelVertical.setIcon(new ImageIcon(ThemeLabelPropertyPanel.class.getResource("/com/supermap/desktop/coreresources/Image_Help.png")));
 		this.checkBoxAutoAvoidance.setSelected(true);
 		this.checkBoxAutoAvoidance.setText(MapViewProperties.getString("String_CheckBox_AutoAvoid"));
 		this.checkBoxDraftLine.setText(MapViewProperties.getString("String_ShowLeaderLine"));
@@ -296,11 +299,11 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		initComboBoxTextPrecision();
 		panelLabelEffectSet.setLayout(new GridBagLayout());
 		panelLabelEffectSet.add(this.checkBoxFlowVisual,       new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,10));
+		panelLabelEffectSet.add(this.checkBoxShowSubscription, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(5,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowSubscription,    new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,0,5,10));
 		panelLabelEffectSet.add(this.checkBoxShowSmallLabel,   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(60, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
-		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,10));
+		panelLabelEffectSet.add(this.checkBoxShowLabelVertical,new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
+		panelLabelEffectSet.add(this.labelShowLabelVertical,   new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 0).setInsets(0,0,5,10));
 		panelLabelEffectSet.add(this.checkBoxAutoAvoidance,    new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelEffectSet.add(this.comboBoxAutoAvoidance,    new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(80, 0).setInsets(0,10,5,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelLabelEffectSet.add(this.checkBoxDraftLine,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 0).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));

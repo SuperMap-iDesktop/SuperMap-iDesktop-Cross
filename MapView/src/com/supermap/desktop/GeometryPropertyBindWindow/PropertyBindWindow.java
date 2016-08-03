@@ -42,12 +42,12 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		};
 		this.formMapMouseListener = new MouseAdapter() {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-					bindWindow.refreshFormTabular(new int[0]);
-				}
-			}
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+//					bindWindow.refreshFormTabular(new int[0]);
+//				}
+//			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
