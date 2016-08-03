@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 
 import org.apache.http.*;
@@ -30,7 +31,7 @@ import com.supermap.desktop.utilities.CommonUtilities;
  * @version 1.0
  */
 @SuppressWarnings("deprecation")
-public class DeleteFile{
+public class DeleteFile {
 
 	private boolean isDeleted;
 	// 文件url
@@ -48,16 +49,16 @@ public class DeleteFile{
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
-
 	// 删除文件
-	public  void deleteFile() {
+	public void deleteFile() {
 		try {
 			String webFile = url;
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			webFile = String.format("%s%s?user.name=root&op=DELETE", webFile, this.fileName);
+			String tempFileName = URLEncoder.encode(this.fileName, "UTF-8");
+			webFile = String.format("%s%s?user.name=root&op=DELETE", webFile, tempFileName);
 			HttpClient client = new DefaultHttpClient();
 			HttpDelete requestPut = new HttpDelete(webFile);
 
@@ -74,7 +75,7 @@ public class DeleteFile{
 			} else {
 				if (isDirectory) {
 					Application.getActiveApplication().getOutput()
-					.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirFailed"), this.fileName));
+							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirFailed"), this.fileName));
 				} else {
 					Application.getActiveApplication().getOutput()
 							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFileFailed"), this.fileName));
