@@ -2,10 +2,8 @@ package com.supermap.desktop.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -20,7 +18,7 @@ import com.supermap.desktop.http.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.*;
@@ -399,9 +397,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		// 从hdfs文件系统中删除文件
 		try {
 			try {
-				Boolean fileSelected = false;
 				String webFile = "";
-				String webURL =  this.textServerURL.getText();
+				String webURL = this.textServerURL.getText();
 				if (table.getSelectedRowCount() == 1) {
 					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
 					if (define != null) {
@@ -412,26 +409,57 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 							}
 						} else {
 							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
-								deleteFile.start();
+								DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
+								deleteFile.deleteFile();
 							}
 						}
 					}
 				} else if (table.getSelectedRowCount() > 1) {
 					int[] indexs = table.getSelectedRows();
-					if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), indexs.length)) == JOptionPane.OK_OPTION) {
+					int dirCount = 0;
+					int fileCount = 0;
+					for (int i = 0; i < indexs.length; i++) {
+						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(i);
+						if (define.isDir()) {
+							dirCount++;
+						} else {
+							fileCount++;
+						}
+					}
+					if (fileCount == indexs.length
+							&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFiles"), indexs.length)) == JOptionPane.OK_OPTION) {
+						// 全是文件
 						for (int index : indexs) {
 							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-							if (define != null && !define.isDir()) {
-								// 非文件夹
-								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(),false);
-								deleteFile.start();
-							} else if (define != null && define.isDir()) {
+							if (define != null) {
+								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+								deleteFile.deleteFile();
+							}
+						}
+					} else if (dirCount == indexs.length
+							&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirs"), indexs.length)) == JOptionPane.OK_OPTION) {
+						// 全是文件夹
+						for (int index : indexs) {
+							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+							if (define != null) {
 								deleteDir(define.getName(), webURL, define);
 							}
 						}
+					} else if (fileCount != indexs.length
+							&& dirCount != indexs.length
+							&& UICommonToolkit
+									.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), fileCount, dirCount)) == JOptionPane.OK_OPTION) {
+						// 有文件和文件夹
+						for (int index : indexs) {
+							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+							if (define != null && define.isDir()) {
+								deleteDir(define.getName(), webURL, define);
+							} else {
+								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+								deleteFile.deleteFile();
+							}
+						}
 					}
-				} else {
 				}
 
 			} catch (IOException e) {
@@ -440,6 +468,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
+			refresh();
 			CursorUtilities.setDefaultCursor();
 		}
 	}
@@ -456,8 +485,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		// 删除文件夹下的所有文件
 		deleteFilesInDir(webURL + define.getName());
 		// 删除空文件夹
-		DeleteFile deleteFile = new DeleteFile(webURL, webFile,true);
-		deleteFile.start();
+		DeleteFile deleteFile = new DeleteFile(webURL, webFile, true);
+		deleteFile.deleteFile();
 	}
 
 	private void deleteFilesInDir(String url) throws IOException {
@@ -466,8 +495,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			if (tempDefine.isDir()) {
 				deleteFilesInDir(tempDefine.getFullPath() + tempDefine.getName());
 			} else {
-				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName(),false);
-				deleteFile.start();
+				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName(), false);
+				deleteFile.deleteFile();
 			}
 		}
 	}

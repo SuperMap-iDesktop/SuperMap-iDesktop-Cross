@@ -79,8 +79,8 @@ public class UploadTask extends Task {
 				UploadUtils.getBatchUploadFileWorker(fileInfo).stopUpload();
 				removeUploadInfoItem();
 				// 未完成的任务暂存在恢复任务列表中，可实现恢复
-				// ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
-			}else{
+				ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
+			} else {
 				setCancel(true);
 			}
 			return;

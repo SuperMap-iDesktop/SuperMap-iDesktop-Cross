@@ -7,11 +7,8 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 
-import com.supermap.Interface.ITask;
-import com.supermap.Interface.ITaskFactory;
-import com.supermap.Interface.TaskEnum;
+import com.supermap.Interface.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.http.*;
@@ -199,7 +196,11 @@ public class JDialogFileSaveAs extends SmDialog {
 			smFileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int state = smFileChoose.showSaveDialog(null);
 			if (state == JFileChooser.APPROVE_OPTION) {
-				this.textLocalPath.setText(smFileChoose.getFilePath() + File.separator + fileName);
+				String path = smFileChoose.getFilePath();
+				if (!smFileChoose.getFilePath().endsWith(File.separator)) {
+					path += File.separator;
+				}
+				this.textLocalPath.setText(path + fileName);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -217,15 +218,12 @@ public class JDialogFileSaveAs extends SmDialog {
 			FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
 			if (fileManagerContainer != null) {
 				File directory = new File(localPath);
-				if (!directory.exists()
-						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_isMakeDirectory"), localPath)) == JOptionPane.OK_OPTION) {
-					directory.mkdirs();
-				}
+				directory.mkdirs();
 				File file = new File(this.textLocalPath.getText());
 				FileInfo downloadInfo = new FileInfo(getWebFilePath(), file.getName(), file.getParentFile().getPath(), this.getFileSize(), 1, true);
 				ITaskFactory taskFactory = TaskFactory.getInstance();
 				ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
-				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo,true);
+				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, true);
 				task.doWork(downloadProgressCallable);
 				fileManagerContainer.addItem(task);
 			}

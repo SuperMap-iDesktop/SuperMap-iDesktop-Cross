@@ -155,7 +155,8 @@ public class BatchDownloadFile extends Thread {
 				if (isFinished) {
 					this.tempFile.delete();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
-					Application.getActiveApplication().getOutput().output(this.downloadInfo + LBSClientProperties.getString("String_DownLoadFinished"));
+					Application.getActiveApplication().getOutput()
+							.output(this.downloadInfo.getFileName() + LBSClientProperties.getString("String_DownLoadFinished"));
 					ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.downloadInfo.getUrl());
 				}
 			}
@@ -385,6 +386,14 @@ public class BatchDownloadFile extends Thread {
 
 	public void setDownloadInfo(FileInfo downloadInfo) {
 		this.downloadInfo = downloadInfo;
+	}
+
+	public File getTempFile() {
+		return tempFile;
+	}
+
+	public void setTempFile(File tempFile) {
+		this.tempFile = tempFile;
 	}
 
 }
