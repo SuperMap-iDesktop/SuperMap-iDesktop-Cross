@@ -310,7 +310,7 @@ public class WorkspaceTempSave {
 				// ignore
 			}
 		}
-		if (autoSaveWorkspaceConfigFile.exists()) {
+		if (autoSaveWorkspaceConfigFile != null && autoSaveWorkspaceConfigFile.exists()) {
 			if (!autoSaveWorkspaceConfigFile.delete()) {
 				LogUtilities.outPut("Delete AutoSaveWorkspaceConfigFile Failed On Exit ");
 			}
@@ -319,8 +319,9 @@ public class WorkspaceTempSave {
 			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
 			workspace = null;
+
 		}
-		if (!WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
+		if (lastServer != null && !WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
 			LogUtilities.outPut("Delete TempWorkspace Failed On Exit ");
 		}
 		return false;
