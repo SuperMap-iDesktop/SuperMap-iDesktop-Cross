@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilities;
 
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -9,11 +10,14 @@ import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormLBSControl;
+import com.supermap.desktop.dialog.JDialogTaskManager;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.TaskManagerContainer;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
+import com.supermap.desktop.http.callable.UploadPropressCallable;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.task.TaskFactory;
+import com.supermap.desktop.ui.controls.DialogResult;
 
 /**
  * LBSClient项目公用方法类
@@ -42,8 +46,10 @@ public class CommonUtilities {
 		}
 		return fileManagerContainer;
 	}
+
 	/**
 	 * 获取任务管理界面，并激活dockbar
+	 * 
 	 * @return
 	 */
 	public static TaskManagerContainer getTaskManagerContainer() {
@@ -124,9 +130,46 @@ public class CommonUtilities {
 		if (fileManagerContainer != null) {
 			ITaskFactory taskFactory = TaskFactory.getInstance();
 			ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
-			DownloadProgressCallable uploadProgressCallable = new DownloadProgressCallable(downloadInfo,true);
+			DownloadProgressCallable uploadProgressCallable = new DownloadProgressCallable(downloadInfo, true);
 			task.doWork(uploadProgressCallable);
 			fileManagerContainer.addItem(task);
+		}
+	}
+
+	/**
+	 * 恢复任务
+	 * 
+	 * @param fileManagerContainer
+	 */
+	public static void recoverTask() {
+		FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
+		if (null != fileManagerContainer) {
+			ITaskFactory taskFactory = TaskFactory.getInstance();
+			List<String> downloadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.DOWNLOADTASK);
+			List<String> uploadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.UPLOADTASK);
+			JDialogTaskManager taskManager = new JDialogTaskManager(null, true);
+			taskManager.setDownloadTaskCount(downloadTaskPropertyLists.size());
+			taskManager.setUploadTaskCount(uploadTaskPropertyLists.size());
+			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverTask()) {
+				for (String downloadAttris : downloadTaskPropertyLists) {
+					String[] attriArrayForDownload = downloadAttris.split(",");
+					FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], "", attriArrayForDownload[2],
+							Long.parseLong(attriArrayForDownload[3]), 1, true);
+					ITask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+					DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
+					downloadTask.doWork(downloadProgressCallable);
+					fileManagerContainer.addItem(downloadTask);
+				}
+				for (String uploadAttris : uploadTaskPropertyLists) {
+					String[] attriArrayForUpload = uploadAttris.split(",");
+					FileInfo uploadInfo = new FileInfo(attriArrayForUpload[0], attriArrayForUpload[1], "", attriArrayForUpload[2],
+							Long.parseLong(attriArrayForUpload[3]), 1, true);
+					ITask uploadTask = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
+					UploadPropressCallable downloadProgressCallable = new UploadPropressCallable(uploadInfo, false);
+					uploadTask.doWork(downloadProgressCallable);
+					fileManagerContainer.addItem(uploadTask);
+				}
+			}
 		}
 	}
 

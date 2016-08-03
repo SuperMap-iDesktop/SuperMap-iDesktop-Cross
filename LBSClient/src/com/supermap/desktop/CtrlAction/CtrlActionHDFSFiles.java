@@ -24,6 +24,8 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.CommonUtilities;
+import com.supermap.desktop.utilities.ManagerXMLParser;
 
 public class CtrlActionHDFSFiles extends CtrlAction {
 
@@ -36,14 +38,17 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-//			JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-//			JDialogHDFSFiles dialog = new JDialogHDFSFiles();
-//			DialogResult result = dialog.showDialog();
-//			if (result == DialogResult.OK) {
-//				// WorkThead thread = new WorkThead();
-//				// thread.start();
-//			}
+			// JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
+			// JDialogHDFSFiles dialog = new JDialogHDFSFiles();
+			// DialogResult result = dialog.showDialog();
+			// if (result == DialogResult.OK) {
+			// // WorkThead thread = new WorkThead();
+			// // thread.start();
+			// }
 			CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
+			if (ManagerXMLParser.getTotalTaskCount() > 0) {
+				CommonUtilities.recoverTask();
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -59,8 +64,8 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 		@Override
 		public void run() {
 			try {
-//				lbsResultConsumer consumer = new lbsResultConsumer();
-//				consumer.doWork(topicNameRespond);
+				// lbsResultConsumer consumer = new lbsResultConsumer();
+				// consumer.doWork(topicNameRespond);
 			} finally {
 			}
 		}

@@ -4,8 +4,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.io.File;
-import java.text.MessageFormat;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
+import javax.print.URIException;
 import javax.swing.*;
 
 import com.supermap.Interface.*;
@@ -17,7 +19,6 @@ import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.task.TaskFactory;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.*;
@@ -37,6 +38,8 @@ public class JDialogFileSaveAs extends SmDialog {
 	private JLabel labelServerURL;
 	private JTextField textServerURL;
 	private JButton buttonBrowser;
+	private JLabel labelFileName;
+	private JTextField textFieldFileName;
 
 	private JLabel labelLocalPath;
 	private JTextField textLocalPath;
@@ -45,7 +48,8 @@ public class JDialogFileSaveAs extends SmDialog {
 	private JButton buttonCancel;
 
 	private String fileName = "";
-
+	private String realName = "";
+	
 	private String webURL;
 	private String webFile;
 	private String localPath;
@@ -65,6 +69,7 @@ public class JDialogFileSaveAs extends SmDialog {
 		this.buttonBrowser.setText(LBSClientProperties.getString("String_Scale"));
 		this.labelLocalPath.setText(LBSClientProperties.getString("String_LocalPath"));
 		this.buttonOK.setText(LBSClientProperties.getString("String_Download"));
+		this.labelFileName.setText(LBSClientProperties.getString("String_FileName"));
 	}
 
 	private void registEvnets() {
@@ -112,7 +117,7 @@ public class JDialogFileSaveAs extends SmDialog {
 	}
 
 	public void initializeComponents() {
-		this.setSize(600, 150);
+		this.setSize(600, 180);
 		this.setTitle(LBSClientProperties.getString("String_Download"));
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -123,6 +128,8 @@ public class JDialogFileSaveAs extends SmDialog {
 
 		this.labelLocalPath = new JLabel("");
 		this.textLocalPath = new JTextField("Local Path");
+		this.labelFileName = new JLabel();
+		this.textFieldFileName = new JTextField();
 
 		this.buttonOK = new SmButton("");
 		this.buttonCancel = ComponentFactory.createButtonCancel();
@@ -131,14 +138,16 @@ public class JDialogFileSaveAs extends SmDialog {
 		getContentPane().setLayout(new GridBagLayout());
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOK,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-		panelButton.add(this.buttonCancel,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-		getContentPane().add(this.labelServerURL,new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 1));
-		getContentPane().add(this.textServerURL, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(3,5,5,5).setWeight(1, 1));
-		getContentPane().add(this.labelLocalPath,new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 1));
-		getContentPane().add(this.textLocalPath, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(3,5,5,3).setWeight(1, 1));
-		getContentPane().add(this.buttonBrowser, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(3,0,5,5).setWeight(0, 1));
-		getContentPane().add(panelButton,        new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		panelButton.add(this.buttonOK,               new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 10));
+		panelButton.add(this.buttonCancel,           new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 10));
+		getContentPane().add(this.labelServerURL,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(10,10,0,0).setWeight(0, 1));
+		getContentPane().add(this.textServerURL,     new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,0,10).setWeight(1, 1));
+		getContentPane().add(this.labelFileName,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(10,10,0,0).setWeight(0, 1));
+		getContentPane().add(this.textFieldFileName, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,0,10).setWeight(1, 1));
+		getContentPane().add(this.labelLocalPath,    new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(10,10,0,0).setWeight(0, 1));
+		getContentPane().add(this.textLocalPath,     new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10,10,0,0).setWeight(1, 1));
+		getContentPane().add(this.buttonBrowser,     new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(10,5,0,10).setWeight(0, 1));
+		getContentPane().add(panelButton,            new GridBagConstraintsHelper(0, 3, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		// @formatter:on		
 
 		this.setLocationRelativeTo(null);
@@ -181,7 +190,7 @@ public class JDialogFileSaveAs extends SmDialog {
 	public void setLocalPath(String localPath) {
 		this.localPath = localPath;
 		if (this.textLocalPath != null) {
-			this.textLocalPath.setText(this.localPath + fileName);
+			this.textLocalPath.setText(this.localPath);
 		}
 	}
 
@@ -200,7 +209,7 @@ public class JDialogFileSaveAs extends SmDialog {
 				if (!smFileChoose.getFilePath().endsWith(File.separator)) {
 					path += File.separator;
 				}
-				this.textLocalPath.setText(path + fileName);
+				this.textLocalPath.setText(path);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -217,10 +226,13 @@ public class JDialogFileSaveAs extends SmDialog {
 
 			FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
 			if (fileManagerContainer != null) {
+				if (!localPath.endsWith(File.separator)) {
+					localPath += File.separator;
+				}
 				File directory = new File(localPath);
 				directory.mkdirs();
-				File file = new File(this.textLocalPath.getText());
-				FileInfo downloadInfo = new FileInfo(getWebFilePath(), file.getName(), file.getParentFile().getPath(), this.getFileSize(), 1, true);
+				File file = new File(localPath + fileName);
+				FileInfo downloadInfo = new FileInfo(getWebFilePath(), file.getName(),realName, file.getParentFile().getPath(), this.getFileSize(), 1, true);
 				ITaskFactory taskFactory = TaskFactory.getInstance();
 				ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
 				DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, true);
@@ -246,12 +258,26 @@ public class JDialogFileSaveAs extends SmDialog {
 		removeEvents();
 	}
 
-	public String getFileName() {
-		return fileName;
-	}
-
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+		if (!this.localPath.endsWith("/")) {
+			this.localPath += "/";
+		}
+		String file = this.localPath + fileName;
+		int count = 0;
+		String name = fileName.substring(0, fileName.lastIndexOf("."));
+		String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		this.realName =name+fileType;
+		while (true) {
+			if (new File(file).exists()) {
+				++count;
+				this.realName =name + "(" + count + ")" + fileType;
+				file = this.localPath + realName;
+			} else {
+				break;
+			}
+		}
+		this.textFieldFileName.setText(this.realName);
 	}
 
 }

@@ -29,7 +29,7 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 			try {
 				ITask fileManager = (ITask) getUpdate();
 				if (event != null && event.getDownloadInfo() != null && event.getDownloadInfo().equals(fileManager.getFileInfo())) {
-					updateProgress(event.getProgress(), String.valueOf(event.getRemainTime()), event.getDownloadInfo().getFileName());
+					updateProgress(event.getProgress(), String.valueOf(event.getRemainTime()), event.getDownloadInfo().getRealName());
 				}
 			} catch (CancellationException e) {
 			}
@@ -42,7 +42,7 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 			isSucceed = false;
 			if (isNew) {
 				// 是新任务，则将任务节点添加到xml文件中
-				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getFileName() + ",FilePath=" + downloadInfo.getFilePath()
+				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getRealName() + ",FilePath=" + downloadInfo.getFilePath()
 						+ ",FileSize=" + downloadInfo.getFileSize();
 				ManagerXMLParser.addTask(TaskEnum.DOWNLOADTASK, property);
 			}

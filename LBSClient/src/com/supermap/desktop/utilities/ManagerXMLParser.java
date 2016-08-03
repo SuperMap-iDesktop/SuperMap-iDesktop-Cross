@@ -33,7 +33,7 @@ public class ManagerXMLParser {
 	 * @param property
 	 * 
 	 */
-	public static void removeTask(TaskEnum taskType, String property) {
+	public static void removeTask(TaskEnum taskType, String url, String realName) {
 		if (null != getCurrentDocument()) {
 			Document document = getCurrentDocument();
 			switch (taskType) {
@@ -41,7 +41,8 @@ public class ManagerXMLParser {
 				NodeList downloadList = document.getElementsByTagName("DownloadTask");
 				for (int i = 0; i < downloadList.getLength(); i++) {
 					Element temp = (Element) downloadList.item(i);
-					if (!StringUtilities.isNullOrEmpty(property) && temp.getAttribute("URL").equals(property)) {
+					if (!StringUtilities.isNullOrEmpty(url) && !StringUtilities.isNullOrEmpty(realName) && temp.getAttribute("FileName").equals(realName)
+							&& temp.getAttribute("URL").equals(url)) {
 						downloadList.item(i).getParentNode().removeChild(temp);
 						break;
 					}
@@ -53,7 +54,8 @@ public class ManagerXMLParser {
 				NodeList uploadList = document.getElementsByTagName("UploadTask");
 				for (int i = 0; i < uploadList.getLength(); i++) {
 					Element temp = (Element) uploadList.item(i);
-					if (!StringUtilities.isNullOrEmpty(property) && temp.getAttribute("URL").equals(property)) {
+					if (!StringUtilities.isNullOrEmpty(url) && !StringUtilities.isNullOrEmpty(realName) && temp.getAttribute("FileName").equals(realName)
+							&& temp.getAttribute("URL").equals(url)) {
 						uploadList.item(i).getParentNode().removeChild(temp);
 						break;
 					}

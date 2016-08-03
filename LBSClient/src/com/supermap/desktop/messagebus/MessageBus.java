@@ -33,7 +33,7 @@ public class MessageBus {
 	private static final String producerCommand = "gitstark-Server";
 	private static final String consumerName = "gitstark-Result";
 	private static final String tcp_url = "tcp://192.168.14.2:61616";
-	
+
 	// 任务暂时不能并行，用个变量，临时解决下不。只有该值为0的时候才能继续发送任务
 	private static int runningTasts = 0;
 
@@ -87,7 +87,7 @@ public class MessageBus {
 							Thread.sleep(100);
 							continue;
 						}
-							
+
 						TextMessage msg = session.createTextMessage(command);
 						if (command.contains("HDFSGridIndexBuild")) {
 							task = taskFactory.getTask(TaskEnum.CREATESPATIALINDEXTASK, null);
@@ -264,7 +264,7 @@ public class MessageBus {
 			HDFSDefine define = WebHDFS.getFileStatus(url);
 			long fileSize = Long.parseLong(define.getSize());
 
-			FileInfo downloadInfo = new FileInfo(url, fileName, localPath, fileSize, 1, true);
+			FileInfo downloadInfo = new FileInfo(url, fileName, "", localPath, fileSize, 1, true);
 			DownloadUtils.download(downloadInfo);
 
 			if (!localPath.endsWith("/")) {
@@ -278,7 +278,7 @@ public class MessageBus {
 			showResultThread.setDownloadInfo(downloadInfo);
 			showResultThread.setLocalPath(localPath);
 			showResultThread.start();
-			
+
 			CommonUtilities.addDownLoadTask(downloadInfo);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

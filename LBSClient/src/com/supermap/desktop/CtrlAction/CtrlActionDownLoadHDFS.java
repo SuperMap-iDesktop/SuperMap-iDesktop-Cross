@@ -17,7 +17,7 @@ public class CtrlActionDownLoadHDFS extends CtrlAction {
 	public void run() {
 		try {
 			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
-			control.downLoad();
+			control.download();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {

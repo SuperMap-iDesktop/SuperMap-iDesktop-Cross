@@ -119,7 +119,7 @@ public class BatchDownloadFile extends Thread {
 						url = String.format("%s?op=OPEN&offset=%d&length=%d", url, startPos[i], endPos[i] - startPos[i]);
 					}
 
-					fileItems[i] = new DownloadFile(url, this.downloadInfo.getFilePath() + File.separator + downloadInfo.getFileName(), startPos[i], endPos[i],
+					fileItems[i] = new DownloadFile(url, downloadInfo.getFilePath() + File.separator + downloadInfo.getRealName(), startPos[i], endPos[i],
 							length[i], i);
 					fileItems[i].start();// 启动线程，开始下载
 					LogUtils.log("Thread: " + i + ", startPos: " + startPos[i] + ", endPos: " + endPos[i]);
@@ -156,8 +156,8 @@ public class BatchDownloadFile extends Thread {
 					this.tempFile.delete();
 					DownloadUtils.fireSteppedEvent(this, downloadInfo, 100, 0);
 					Application.getActiveApplication().getOutput()
-							.output(this.downloadInfo.getFileName() + LBSClientProperties.getString("String_DownLoadFinished"));
-					ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.downloadInfo.getUrl());
+							.output(this.downloadInfo.getRealName() + LBSClientProperties.getString("String_DownLoadFinished"));
+					ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.downloadInfo.getUrl(), this.downloadInfo.getRealName());
 				}
 			}
 			LogUtils.info("Download task is finished!");
@@ -287,8 +287,10 @@ public class BatchDownloadFile extends Thread {
 	 */
 	public void stopDownload() throws IOException {
 		this.stop = true;
-		for (int i = 0; i < fileItems.length; i++) {
-			fileItems[i].stopDownload();
+		if (null != fileItems) {
+			for (int i = 0; i < fileItems.length; i++) {
+				fileItems[i].stopDownload();
+			}
 		}
 	}
 
