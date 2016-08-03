@@ -559,7 +559,7 @@ public class WorkspaceComponentManager extends JComponent {
 				String nodeText = selectedNodeData.getData().toString();
 
 				if (selectedNodeData.getData() instanceof Dataset) {
-					if (!GlobalParameters.isShowDataInNewWindow() && Application.getActiveApplication().getActiveForm().getWindowType() == WindowType.MAP) {
+					if (!GlobalParameters.isShowDataInNewWindow() && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm().getWindowType() == WindowType.MAP) {
 						// 添加到当前地图
 						MapViewUIUtilities.addDatasetsToMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap(),
 								new Dataset[]{(Dataset) selectedNodeData.getData()}, true);

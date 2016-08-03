@@ -1,7 +1,5 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import java.util.Map;
-
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Recordset;
@@ -12,6 +10,9 @@ import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.ListUtilities;
+
+import java.text.MessageFormat;
+import java.util.Map;
 
 public class LineToRegionEditor extends GeometryConvertEditor {
 
@@ -39,7 +40,7 @@ public class LineToRegionEditor extends GeometryConvertEditor {
 			try {
 				geoRegion = ((IRegionConvertor) srcGeometry).convertToRegion(120);
 			} catch (UnsupportedOperationException e) {
-				Application.getActiveApplication().getOutput().output(e.getMessage());
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapEditorProperties.getString("String_ConversionObjectFailedMessage"), srcGeometry.getGeometry().getID()));
 			}
 
 			if (geoRegion != null) {

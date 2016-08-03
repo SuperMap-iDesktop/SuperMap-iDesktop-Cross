@@ -14,7 +14,7 @@
   <!--是否显示工具提示-->
   <ribbon panelShow="true" screenTipShow="true"/>
   <!--窗口的全局选项控制-->
-  <dataWindow autoCloseEmptyWindow="false" autoNewWindow="true" autoRemoveEmptyLayer="true" showCloseInfoForm="true">
+  <dataWindow autoCloseEmptyWindow="false" autoNewWindow="true" autoRemoveEmptyLayer="false" showCloseInfoForm="true">
   </dataWindow>
   <!--有输出提示时，是否自动弹出输出窗口-->
   <output autoPopUp="true">

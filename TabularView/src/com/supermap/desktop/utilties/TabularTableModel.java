@@ -10,7 +10,6 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.table.AbstractTableModel;
-
 import java.sql.Time;
 import java.util.HashMap;
 
@@ -137,6 +136,9 @@ public class TabularTableModel extends AbstractTableModel {
 		if (this.recordset != null && !this.recordset.isClosed()) {
 			this.recordset.dispose();
 			this.recordset = null;
+		}
+		if (recordset == null) {
+			return;
 		}
 		this.recordset = recordset;
 		recordset.moveFirst();

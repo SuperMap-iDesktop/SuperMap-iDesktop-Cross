@@ -18,6 +18,8 @@ import com.supermap.desktop.utilities.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -245,8 +247,28 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 						directories += File.separator;
 					}
 					fileChooserControlFileCache.getEditor().setText(directories);
-					changedValues.add(fileChooserControlFileCache);
+//					changedValues.add(fileChooserControlFileCache);
 				}
+			}
+		});
+		fileChooserControlFileCache.getEditor().getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changed();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changed();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changed();
+			}
+
+			private void changed() {
+				changedValues.add(fileChooserControlFileCache);
 			}
 		});
 	}
