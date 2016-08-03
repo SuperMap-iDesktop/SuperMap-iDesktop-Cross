@@ -31,33 +31,7 @@ public class CtrlActionTaskManager extends CtrlAction {
 	 */
 	@Override
 	public void run() {
-		FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
-		if (null != fileManagerContainer) {
-			ITaskFactory taskFactory = TaskFactory.getInstance();
-			List<String> downloadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.DOWNLOADTASK);
-			List<String> uploadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.UPLOADTASK);
-			JDialogTaskManager taskManager = new JDialogTaskManager(null, true);
-			taskManager.setDownloadTaskCount(downloadTaskPropertyLists.size());
-			taskManager.setUploadTaskCount(uploadTaskPropertyLists.size());
-			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverTask()) {
-				for (String downloadAttris : downloadTaskPropertyLists) {
-					String[] attriArrayForDownload = downloadAttris.split(",");
-					FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], attriArrayForDownload[2], Long.parseLong(attriArrayForDownload[3]), 1, true);
-					ITask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
-					DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
-					downloadTask.doWork(downloadProgressCallable);
-					fileManagerContainer.addItem(downloadTask);
-				}
-				for (String uploadAttris : uploadTaskPropertyLists) {
-					String[] attriArrayForUpload = uploadAttris.split(",");
-					FileInfo uploadInfo = new FileInfo(attriArrayForUpload[0], attriArrayForUpload[1], attriArrayForUpload[2], Long.parseLong(attriArrayForUpload[3]), 1, true);
-					ITask uploadTask = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
-					UploadPropressCallable downloadProgressCallable = new UploadPropressCallable(uploadInfo, false);
-					uploadTask.doWork(downloadProgressCallable);
-					fileManagerContainer.addItem(uploadTask);
-				}
-			}
-		}
+		CommonUtilities.recoverTask();
 	}
 
 }

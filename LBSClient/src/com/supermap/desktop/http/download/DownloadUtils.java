@@ -27,7 +27,7 @@ public abstract class DownloadUtils {
 	}
 
 	public static FileInfo download(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
-		FileInfo bean = new FileInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
+		FileInfo bean = new FileInfo(url, fileName, "", filePath, fileSize, threadNum, isHDFSFile);
 		return download(bean);
 	}
 

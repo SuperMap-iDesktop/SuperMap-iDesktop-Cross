@@ -79,7 +79,7 @@ public class UploadTask extends Task {
 				UploadUtils.getBatchUploadFileWorker(fileInfo).stopUpload();
 				removeUploadInfoItem();
 				// 未完成的任务暂存在恢复任务列表中，可实现恢复
-				ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
+				ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getFileName());
 			} else {
 				setCancel(true);
 			}
@@ -87,7 +87,7 @@ public class UploadTask extends Task {
 		}
 		if (UploadUtils.getBatchUploadFileWorker(this.fileInfo).isFinished()) {
 			removeUploadInfoItem();
-			ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl());
+			ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getFileName());
 			return;
 		}
 
@@ -158,7 +158,7 @@ public class UploadTask extends Task {
 							CommonUtilities.getActiveLBSControl().refresh();
 						}
 						buttonRun.setEnabled(false);
-						ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, fileInfo.getUrl());
+						ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, fileInfo.getUrl(), fileInfo.getFileName());
 					}
 				}
 			}

@@ -10,9 +10,10 @@ import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.http.callable.FileEvent;
 import com.supermap.desktop.http.callable.FileSteppedListener;
 import com.supermap.desktop.http.download.FileInfo;
- 
+
 /**
  * <b>function:</b> 分块多线程下载工具类
+ * 
  * @author hoojo
  * @createDate 2011-9-28 下午05:22:18
  * @file DownloadUtils.java
@@ -23,53 +24,54 @@ import com.supermap.desktop.http.download.FileInfo;
  * @version 1.0
  */
 public abstract class UploadUtils {
-	
+
 	public static Map<FileInfo, BatchUploadFile> hashMap = Collections.synchronizedMap(new HashMap());
- 
-    public static FileInfo upload(String url) {
-        FileInfo bean = new FileInfo(url);
-        return upload(bean);
-    }
-    
-    public static FileInfo upload(String url, int threadNum) {
-        FileInfo bean = new FileInfo(url, threadNum);
-        return upload(bean);
-    }
-    
-    public static FileInfo upload(FileInfo bean, String localFilePath, String fileName, long fileSize, Boolean isHDFSFile) {
-    	bean.setFilePath(localFilePath);
-    	bean.setFileName(fileName);
-    	bean.setFileSize(fileSize);
-    	bean.setHDFSFile(isHDFSFile);
-        return upload(bean);
-    }
-    
-    public static FileInfo upload(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
-        FileInfo bean = new FileInfo(url, fileName, filePath, fileSize, threadNum, isHDFSFile);
-        return upload(bean);
-    }
-    
-    public static FileInfo upload(FileInfo bean) {
-        LogUtils.info(bean);
-        BatchUploadFile down = new BatchUploadFile(bean);
-        hashMap.put(bean, down);
-        down.start();
-        return bean;
-    }
-    
-    public static BatchUploadFile getBatchUploadFileWorker(FileInfo bean) {
-    	BatchUploadFile batchUPloadFile = null;
-    	if (hashMap.containsKey(bean)) {
-    		batchUPloadFile = hashMap.get(bean);
-    	}
-    	return batchUPloadFile;
-    }
-	
-    public static Map<FileInfo, BatchUploadFile> getHashMap() {
+
+	public static FileInfo upload(String url) {
+		FileInfo bean = new FileInfo(url);
+		return upload(bean);
+	}
+
+	public static FileInfo upload(String url, int threadNum) {
+		FileInfo bean = new FileInfo(url, threadNum);
+		return upload(bean);
+	}
+
+	public static FileInfo upload(FileInfo bean, String localFilePath, String fileName, long fileSize, Boolean isHDFSFile) {
+		bean.setFilePath(localFilePath);
+		bean.setFileName(fileName);
+		bean.setFileSize(fileSize);
+		bean.setHDFSFile(isHDFSFile);
+		return upload(bean);
+	}
+
+	public static FileInfo upload(String url, String fileName, String filePath, long fileSize, int threadNum, Boolean isHDFSFile) {
+		FileInfo bean = new FileInfo(url, fileName, "", filePath, fileSize, threadNum, isHDFSFile);
+		return upload(bean);
+	}
+
+	public static FileInfo upload(FileInfo bean) {
+		LogUtils.info(bean);
+		BatchUploadFile down = new BatchUploadFile(bean);
+		hashMap.put(bean, down);
+		down.start();
+		return bean;
+	}
+
+	public static BatchUploadFile getBatchUploadFileWorker(FileInfo bean) {
+		BatchUploadFile batchUPloadFile = null;
+		if (hashMap.containsKey(bean)) {
+			batchUPloadFile = hashMap.get(bean);
+		}
+		return batchUPloadFile;
+	}
+
+	public static Map<FileInfo, BatchUploadFile> getHashMap() {
 		return hashMap;
 	}
 
 	private static transient CopyOnWriteArrayList<FileSteppedListener> stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
+
 	public static synchronized void addNewWindowListener(FileSteppedListener listener) {
 		if (stepListeners == null) {
 			stepListeners = new CopyOnWriteArrayList<FileSteppedListener>();
@@ -85,9 +87,9 @@ public abstract class UploadUtils {
 			stepListeners.remove(listener);
 		}
 	}
-	
-    public static void fireSteppedEvent(Object source, FileInfo uploadInfo, int progress, int remainTime) {
-    	if (stepListeners != null) {
+
+	public static void fireSteppedEvent(Object source, FileInfo uploadInfo, int progress, int remainTime) {
+		if (stepListeners != null) {
 			CopyOnWriteArrayList<FileSteppedListener> listeners = stepListeners;
 			Iterator<FileSteppedListener> iter = listeners.iterator();
 			while (iter.hasNext()) {

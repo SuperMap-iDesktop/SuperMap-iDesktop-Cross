@@ -17,6 +17,7 @@ import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.http.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.docking.*;
@@ -100,6 +101,23 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.textServerURL.addKeyListener(this.textServerURLKeyListener);
 		this.buttonRefresh.addActionListener(refreshListener);
 		this.table.addMouseListener(this.tableMouseListener);
+		this.table.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_F2) {
+					if (getSelectRow() > -1) {
+						String oldName = (String) getTable().getValueAt(getSelectRow(), 0);
+						RenameDialog dialog = new RenameDialog(oldName);
+						if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getNewName())) {
+							CreateFile createFile = new CreateFile();
+							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) getTable().getModel()).getRowTagAt(getTable().getSelectedRow());
+							createFile.renameFile(getURL(), oldName, dialog.getNewName(), define.isDir());
+						}
+					}
+				}
+			}
+		});
 		this.addListener(new DockingWindowAdapter() {
 			@Override
 			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
@@ -502,7 +520,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	}
 
 	@Override
-	public void downLoad() {
+	public void download() {
 		// 下载文件
 		try {
 			Boolean fileSelected = false;
@@ -515,8 +533,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					dialogFileSaveAs.setWebURL(this.textServerURL.getText());
 					dialogFileSaveAs.setWebFile(define.getName());
 					dialogFileSaveAs.setFileSize(Long.parseLong(define.getSize()));
-					dialogFileSaveAs.setFileName(define.getName());
 					dialogFileSaveAs.setLocalPath("F:/temp/");
+					dialogFileSaveAs.setFileName(define.getName());
 					dialogFileSaveAs.showDialog();
 				}
 			}

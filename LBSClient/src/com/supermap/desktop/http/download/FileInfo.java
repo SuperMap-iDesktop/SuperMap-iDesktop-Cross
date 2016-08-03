@@ -2,7 +2,8 @@ package com.supermap.desktop.http.download;
 
 /**
  * 文件信息类
- * @author 
+ * 
+ * @author
  *
  */
 public class FileInfo {
@@ -10,6 +11,8 @@ public class FileInfo {
 	private String url;
 	// 文件名称
 	private String fileName;
+	// 真实名称
+	private String realName;
 	// 文件路径
 	private String filePath;
 	// file size
@@ -43,7 +46,7 @@ public class FileInfo {
 	 *            分成多少段或是多少个线程
 	 */
 	public FileInfo(String url, int splitter) {
-		this(url, null, null, -1, splitter, false);
+		this(url, null, null, null, -1, splitter, false);
 	}
 
 	/***
@@ -60,13 +63,14 @@ public class FileInfo {
 	 ** @param isHDFSFile
 	 *            是否为HDFS文件
 	 */
-	public FileInfo(String url, String fileName, String filePath, long fileSize, int splitter, Boolean isHDFSFile) {
+	public FileInfo(String url, String fileName, String realName, String filePath, long fileSize, int splitter, Boolean isHDFSFile) {
 		super();
 		if (url == null || "".equals(url)) {
 			throw new RuntimeException("url is not null!");
 		}
-		
+
 		this.url = url;
+		this.realName = realName;
 		this.fileName = (fileName == null || "".equals(fileName)) ? getFileName(url) : fileName;
 		this.filePath = (filePath == null || "".equals(filePath)) ? FILE_PATH : filePath;
 		this.fileSize = fileSize;
@@ -132,50 +136,22 @@ public class FileInfo {
 	public Boolean isHDFSFile() {
 		return this.isHDFSFile;
 	}
-	
+
 	public void setHDFSFile(Boolean isHDFSFile) {
 		this.isHDFSFile = isHDFSFile;
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.url + "#" + this.fileName + "#" + this.filePath + "#" + this.splitter;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {		
-		Boolean result = true;
-        if (obj instanceof FileInfo) {
-        	FileInfo downloadInfo = (FileInfo) obj;
-            if (!this.url.equals(downloadInfo.getUrl())) {
-            	result = false;
-            }
-            
-            if (result && !this.fileName.equals(downloadInfo.getFileName())) {
-            	result = false;
-            }
-            
-            if (result && !this.filePath.equals(downloadInfo.getFilePath())) {
-            	result = false;
-            }
-            
-            if (result && !(this.fileSize == downloadInfo.getFileSize())) {
-            	result = false;
-            }
-            
-            if (result && !(this.splitter == downloadInfo.getSplitter())) {
-            	result = false;
-            }
-            
-            if (result && !this.isHDFSFile.equals(downloadInfo.isHDFSFile())) {
-            	result = false;
-            }
-        }
-        return result;
-    }
-        
-	@Override
-    public int hashCode() {
-        return 1;            
-    }
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
 }

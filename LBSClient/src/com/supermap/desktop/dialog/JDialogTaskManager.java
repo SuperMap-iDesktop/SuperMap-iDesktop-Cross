@@ -70,7 +70,7 @@ public class JDialogTaskManager extends SmDialog {
 		this.labelUploadTask.setText(LBSClientProperties.getString("String_UploadTask"));
 		this.checkboxRecoverUploadTask.setText(LBSClientProperties.getString("String_Recover"));
 		this.checkboxRecoverDownloadTask.setText(LBSClientProperties.getString("String_Recover"));
-		this.setTitle(LBSClientProperties.getString("String_RecoverTask"));
+		this.setTitle(LBSClientProperties.getString("String_TaskManager"));
 	}
 
 	private void initComponents() {

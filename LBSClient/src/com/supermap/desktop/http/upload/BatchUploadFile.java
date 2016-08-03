@@ -141,13 +141,9 @@ public class BatchUploadFile extends Thread {
 						// 上传完成了删除进度文件
 						if (isFinished) {
 							UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
-							String filePath = this.uploadInfo.getFilePath();
-							if (!filePath.equals(File.separator)) {
-								filePath += File.separator;
-							}
 							Application.getActiveApplication().getOutput()
-									.output(filePath + this.uploadInfo.getFileName() + LBSClientProperties.getString("String_UploadEnd"));
-							ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, uploadInfo.getUrl());
+									.output(this.uploadInfo.getFileName() + LBSClientProperties.getString("String_UploadEnd"));
+							ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, uploadInfo.getUrl(), uploadInfo.getFileName());
 						}
 					}
 				}

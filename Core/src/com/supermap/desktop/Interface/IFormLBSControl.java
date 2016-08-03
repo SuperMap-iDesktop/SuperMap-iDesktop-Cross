@@ -29,7 +29,7 @@ public interface IFormLBSControl extends IForm {
 	/**
 	 * 从hdfs文件中下载
 	 */
-	void downLoad();
+	void download();
 
 	/**
 	 * 获取当前所在的
