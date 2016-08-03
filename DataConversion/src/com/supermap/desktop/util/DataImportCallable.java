@@ -183,7 +183,6 @@ public class DataImportCallable extends UpdateProgressCallable {
 								if (indexName.length() > 30) {
 									indexName = indexName.substring(0, 30);
 								}
-								indexName = indexName.replace(DataConversionProperties.getString("String_Horizatal"), "");
 								((DatasetVector) dataset).buildFieldIndex(new String[] { fieldName }, indexName);
 							}
 
