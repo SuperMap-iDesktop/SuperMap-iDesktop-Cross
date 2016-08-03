@@ -92,7 +92,7 @@ public class JPanelSettingEdit extends BaseSettingPanel {
 				} catch (NumberFormatException e) {
 					return false;
 				}
-				return false;
+				return true;
 			}
 
 			@Override
