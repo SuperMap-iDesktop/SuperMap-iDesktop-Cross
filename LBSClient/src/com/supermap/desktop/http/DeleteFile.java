@@ -30,7 +30,7 @@ import com.supermap.desktop.utilities.CommonUtilities;
  * @version 1.0
  */
 @SuppressWarnings("deprecation")
-public class DeleteFile extends Thread {
+public class DeleteFile{
 
 	private boolean isDeleted;
 	// 文件url
@@ -48,15 +48,11 @@ public class DeleteFile extends Thread {
 	}
 
 	@SuppressWarnings({ "deprecation", "resource" })
-	@Override
-	public void run() {
-		this.deleteFile();
-	}
 
 	// 删除文件
-	private synchronized void deleteFile() {
+	public  void deleteFile() {
 		try {
-			String webFile = this.url;
+			String webFile = url;
 			String locationURL = "";
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
@@ -74,8 +70,6 @@ public class DeleteFile extends Thread {
 					Application.getActiveApplication().getOutput()
 							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFileSuccess"), this.fileName));
 				}
-				// 刷新大数据展示列表
-				CommonUtilities.getActiveLBSControl().refresh();
 				isDeleted = true;
 			} else {
 				if (isDirectory) {
@@ -85,8 +79,6 @@ public class DeleteFile extends Thread {
 					Application.getActiveApplication().getOutput()
 							.output(MessageFormat.format(LBSClientProperties.getString("String_DeleteFileFailed"), this.fileName));
 				}
-				// 刷新大数据展示列表
-				CommonUtilities.getActiveLBSControl().refresh();
 				isDeleted = false;
 			}
 

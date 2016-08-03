@@ -1,8 +1,6 @@
 package com.supermap.desktop.task;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.awt.event.*;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
@@ -14,12 +12,9 @@ import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.http.download.BatchDownloadFile;
-import com.supermap.desktop.http.download.DownloadUtils;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.http.download.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.utilities.CommonUtilities;
-import com.supermap.desktop.utilities.ManagerXMLParser;
+import com.supermap.desktop.utilities.*;
 
 public class DownLoadTask extends Task {
 
@@ -76,11 +71,14 @@ public class DownLoadTask extends Task {
 		if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			SmOptionPane optionPane = new SmOptionPane();
 			if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
+				if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).getTempFile().exists()) {
+					DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).getTempFile().delete();
+				}
 				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
 				// 未完成的任务暂存在恢复任务列表中，可实现恢复
-				// ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
-			}else{
+				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl());
+			} else {
 				// 继续下载
 				setCancel(false);
 			}

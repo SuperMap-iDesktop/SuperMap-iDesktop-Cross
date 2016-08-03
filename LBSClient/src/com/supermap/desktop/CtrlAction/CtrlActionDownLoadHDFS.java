@@ -1,7 +1,9 @@
 package com.supermap.desktop.CtrlAction;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
 import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.dialog.HDFSTableModel;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilities.CursorUtilities;
 
@@ -26,8 +28,12 @@ public class CtrlActionDownLoadHDFS extends CtrlAction {
 	@Override
 	public boolean enable() {
 		boolean enable = false;
-		if (null != Application.getActiveApplication().getActiveForm()&& Application.getActiveApplication().getActiveForm() instanceof IFormLBSControl) {
-			enable = true;
+		if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormLBSControl) {
+			IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
+			if (control.getSelectRow() > -1 && !((HDFSDefine) ((HDFSTableModel) control.getTable().getModel()).getRowTagAt(control.getSelectRow())).isDir()) {
+				// 不能下载文件夹，选中文件夹时灰选
+				enable = true;
+			}
 		}
 		return enable;
 	}
