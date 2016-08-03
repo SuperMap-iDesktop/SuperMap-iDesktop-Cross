@@ -1,13 +1,5 @@
 package com.supermap.desktop.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingBIL;
@@ -48,26 +40,26 @@ import com.supermap.data.conversion.ImportSettingVCT;
 import com.supermap.data.conversion.ImportSettingWOR;
 import com.supermap.data.conversion.MultiBandImportMode;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.FileTypeLocale;
+import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.DataImportFrame;
-import com.supermap.desktop.ui.ImportPanelEXCEL;
-import com.supermap.desktop.ui.ImportPanelGJB;
-import com.supermap.desktop.ui.ImportPanelLIDAR;
-import com.supermap.desktop.ui.ImportPanelModel;
+import com.supermap.desktop.ui.ImportPanelArcGIS;
 import com.supermap.desktop.ui.ImportPanelCSV;
 import com.supermap.desktop.ui.ImportPanelD;
 import com.supermap.desktop.ui.ImportPanelE00;
-import com.supermap.desktop.ui.ImportPanelSCV;
-import com.supermap.desktop.ui.ImportPanelArcGIS;
+import com.supermap.desktop.ui.ImportPanelEXCEL;
+import com.supermap.desktop.ui.ImportPanelGJB;
 import com.supermap.desktop.ui.ImportPanelGRID;
 import com.supermap.desktop.ui.ImportPanelIMG;
 import com.supermap.desktop.ui.ImportPanelKML;
-import com.supermap.desktop.ui.ImportPanelMapInfo;
+import com.supermap.desktop.ui.ImportPanelLIDAR;
 import com.supermap.desktop.ui.ImportPanelMapGIS;
+import com.supermap.desktop.ui.ImportPanelMapInfo;
+import com.supermap.desktop.ui.ImportPanelModel;
 import com.supermap.desktop.ui.ImportPanelPI;
+import com.supermap.desktop.ui.ImportPanelSCV;
 import com.supermap.desktop.ui.ImportPanelSHP;
 import com.supermap.desktop.ui.ImportPanelSIT;
 import com.supermap.desktop.ui.ImportPanelTIF;
@@ -75,10 +67,16 @@ import com.supermap.desktop.ui.ImportPanelVECTOR;
 import com.supermap.desktop.ui.ImportPanelVandG;
 import com.supermap.desktop.ui.ImportPanelWOR;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author Administrator 通用的方法类包括右边界面刷新，初始化右边界面等方法
@@ -993,11 +991,10 @@ public class CommonFunction {
 	 */
 	public static void importData(JTable table, List<ImportFileInfo> fileInfos) {
 		try {
-			int[] selected = table.getSelectedRows();
 			final JTable jTable = table;
 			final List<ImportFileInfo> fileInfosTemp = fileInfos;
 			// 导入表中数据
-			if (selected.length > 0) {
+			if (table.getRowCount() > 0) {
 				final FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.setTitle(DataConversionProperties.getString("String_FormImport_FormText"));
 				if (null != formProgress) {

@@ -125,6 +125,7 @@ public class WorkspaceTempSave {
 		workspace.removeSavedListener(workspaceSavedListener);
 		workspace.removeSavedAsListener(workspaceSavedAsListener);
 	}
+
 	private String getFilePath() {
 		String appDataPath = FileUtilities.getAppDataPath();
 
@@ -289,8 +290,12 @@ public class WorkspaceTempSave {
 
 	public boolean exit() {
 		removeListeners();
-		task.cancel();
-		timer.cancel();
+		if (task != null) {
+			task.cancel();
+		}
+		if (timer != null) {
+			timer.cancel();
+		}
 		if (fileLock != null) {
 			try {
 				fileLock.release();
@@ -305,7 +310,7 @@ public class WorkspaceTempSave {
 				// ignore
 			}
 		}
-		if (autoSaveWorkspaceConfigFile.exists()) {
+		if (autoSaveWorkspaceConfigFile != null && autoSaveWorkspaceConfigFile.exists()) {
 			if (!autoSaveWorkspaceConfigFile.delete()) {
 				LogUtilities.outPut("Delete AutoSaveWorkspaceConfigFile Failed On Exit ");
 			}
@@ -314,8 +319,9 @@ public class WorkspaceTempSave {
 			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
 			workspace = null;
+
 		}
-		if (!WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
+		if (lastServer != null && !WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
 			LogUtilities.outPut("Delete TempWorkspace Failed On Exit ");
 		}
 		return false;
