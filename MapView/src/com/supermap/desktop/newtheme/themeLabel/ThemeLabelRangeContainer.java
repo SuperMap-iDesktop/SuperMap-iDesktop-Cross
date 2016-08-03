@@ -1,10 +1,6 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.ColorGradientType;
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.enums.UnitValue;
@@ -17,33 +13,16 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.MathUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.desktop.utilities.*;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
+import javax.swing.event.*;
+import javax.swing.table.*;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.*;
+import java.beans.*;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -52,7 +31,7 @@ import java.util.List;
 /**
  * 标签分段风格专题图
  *
- * @author Administrator
+ * @author xie
  */
 public class ThemeLabelRangeContainer extends ThemeChangePanel {
 
@@ -384,7 +363,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	public void registActionListener() {
 		this.unityListener = new ItemListener() {
-			
+
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -519,13 +498,26 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 					// 最后一条的拆分中值
 					splitValue = (item.getStart() + ((int) item.getStart()) + 1) / 2;
 				}
-				String diff = new DecimalFormat("#.####").format(item.getEnd() - item.getStart());
+				DecimalFormat format = new DecimalFormat("#.####");
+				String diff = format.format(item.getEnd() - item.getStart());
 				// 首尾项不同时才能进行拆分
 				if (!"0.0001".equals(diff)) {
-					String startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(item.getStart()),
-							String.valueOf(splitValue));
-					String endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(splitValue),
-							String.valueOf(item.getEnd()));
+					String startCaption = "";
+					String endCaption = "";
+					if (selectRow == 0) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					} else if (selectRow == tableLabelInfo.getRowCount() - 1) {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue), "Max");
+					} else {
+						startCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(item.getStart()),
+								format.format(splitValue));
+						endCaption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), format.format(splitValue),
+								format.format(item.getEnd()));
+					}
 					themeLabel.split(selectRow, splitValue, item.getStyle(), startCaption, item.getStyle(), endCaption);
 					isMergeOrSplit = true;
 					getTable();
@@ -546,8 +538,15 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 			ThemeLabelItem startItem = themeLabel.getItem(startIndex);
 			ThemeLabelItem endItem = themeLabel.getItem(endIndex);
 			// 合并后的子项的表达式
-			String caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
-					String.valueOf(endItem.getEnd()));
+			String caption = "";
+			if (startIndex == 0) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat1"), "Min", String.valueOf(endItem.getEnd()));
+			} else if (endIndex == tableLabelInfo.getRowCount() - 1) {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()), "Max");
+			} else {
+				caption = MessageFormat.format(MapViewProperties.getString("String_RangeFormat"), String.valueOf(startItem.getStart()),
+						String.valueOf(endItem.getEnd()));
+			}
 			themeLabel.merge(startIndex, selectedRows.length, startItem.getStyle(), caption);
 			isMergeOrSplit = true;
 			labelCount = themeLabel.getCount();

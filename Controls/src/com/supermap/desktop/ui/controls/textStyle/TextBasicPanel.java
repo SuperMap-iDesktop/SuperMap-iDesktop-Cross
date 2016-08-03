@@ -85,7 +85,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	private JCheckBox checkBoxBGOpaque;// 背景透明
 	private JCheckBox checkBoxOutline;// 轮廓
 	private JSpinner spinnerOutLineWidth;
-	//	private JSlider sliderOutLineWidth;// 轮廓宽度
+	// private JSlider sliderOutLineWidth;// 轮廓宽度
 	private JLabel labelStringAlignment;// 文本对齐方式
 	private JComboBox<String> comboBoxStringAlignment;
 	private TextStyle textStyle;
@@ -301,20 +301,20 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				int stringAlignment = comboBoxStringAlignment.getSelectedIndex();
 				switch (stringAlignment) {
-					case 0:
-						textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.LEFT);
-						break;
-					case 1:
-						textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.CENTER);
-						break;
-					case 2:
-						textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.RIGHT);
-						break;
-					case 3:
-						textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.DISTRIBUTED);
-						break;
-					default:
-						break;
+				case 0:
+					textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.LEFT);
+					break;
+				case 1:
+					textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.CENTER);
+					break;
+				case 2:
+					textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.RIGHT);
+					break;
+				case 3:
+					textStyleTypeMap.put(TextStyleType.STRINGALIGNMENT, StringAlignment.DISTRIBUTED);
+					break;
+				default:
+					break;
 				}
 				fireTextStyleChanged(TextStyleType.STRINGALIGNMENT);
 			}
@@ -368,7 +368,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.checkBoxStrickout.addActionListener(this.checkboxListener);
 		this.checkBoxUnderline.addActionListener(this.checkboxListener);
 		this.comboBoxStringAlignment.addItemListener(this.comboboxListener);
-//		this.spinnerOutLineWidth.addChangeListener(this.outLineWidthChangeListener);
+		// this.spinnerOutLineWidth.addChangeListener(this.outLineWidthChangeListener);
 
 	}
 
@@ -458,7 +458,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			JPanel jPanel = new JPanel();
 			jPanel.setLayout(new GridBagLayout());
 			jPanel.add(this.checkBoxOutline,        new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,0,0,0));
-			jPanel.add(this.spinnerOutLineWidth, new GridBagConstraintsHelper(1,0,1,1).setFill(GridBagConstraints.HORIZONTAL).setWeight(78,1).setAnchor(GridBagConstraints.CENTER).setInsets(2,10,0,0));
+			jPanel.add(this.spinnerOutLineWidth,    new GridBagConstraintsHelper(1, 0, 1,1).setFill(GridBagConstraints.HORIZONTAL).setWeight(78,1).setAnchor(GridBagConstraints.CENTER).setInsets(2,10,0,0));
 			jPanel.add(new JLabel(CommonProperties.getString("String_Label_Pixel")), new GridBagConstraintsHelper(2,0,1,1).setFill(GridBagConstraints.NONE).setWeight(1,1).setAnchor(GridBagConstraints.CENTER).setInsets(2,10,0,0));
 
 			this.panelEffect.add(jPanel,                 new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
@@ -481,6 +481,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			this.checkBoxOutline.setSelected(textStyle.getOutline());
 			this.checkBoxBGOpaque.setSelected(!textStyle.getBackOpaque());
 			this.checkBoxOutline.setEnabled(!textStyle.getBackOpaque());
+			this.spinnerInclinationAngl.setEnabled(textStyle.getItalic());
 		}
 	}
 
@@ -688,9 +689,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.buttonBGColorSelect.setColor(this.textStyle.getBackColor());
 		this.labelStringAlignment = new JLabel();
 		this.comboBoxStringAlignment = new JComboBox<String>();
-		this.comboBoxStringAlignment.setModel(new DefaultComboBoxModel<String>(new String[]{ControlsProperties.getString("String_AlignLeft"),
+		this.comboBoxStringAlignment.setModel(new DefaultComboBoxModel<String>(new String[] { ControlsProperties.getString("String_AlignLeft"),
 				ControlsProperties.getString("String_AlignCenter"), ControlsProperties.getString("String_AlignRight"),
-				ControlsProperties.getString("String_AlignDistributed")}));
+				ControlsProperties.getString("String_AlignDistributed") }));
 		this.componentsMap = new HashMap<TextStyleType, JComponent>();
 		this.componentsMap.put(TextStyleType.STRINGALIGNMENT, comboBoxStringAlignment);
 		this.componentsMap.put(TextStyleType.FONTHEIGHT, this.spinnerFontHeight);
@@ -704,13 +705,13 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	 */
 	private void initComboBoxAlign() {
 		// 对齐方式名称
-		String[] TEXTALIGNMENT_NAMES = {ControlsProperties.getString("String_TextAlignment_LeftTop"),
+		String[] TEXTALIGNMENT_NAMES = { ControlsProperties.getString("String_TextAlignment_LeftTop"),
 				ControlsProperties.getString("String_TextAlignment_LeftMid"), ControlsProperties.getString("String_TextAlignment_LeftBottom"),
 				ControlsProperties.getString("String_TextAlignment_MidTop"), ControlsProperties.getString("String_TextAlignment_Mid"),
 				ControlsProperties.getString("String_TextAlignment_MidBottom"), ControlsProperties.getString("String_TextAlignment_RightTop"),
 				ControlsProperties.getString("String_TextAlignment_RightMid"), ControlsProperties.getString("String_TextAlignment_RightBottom"),
 				ControlsProperties.getString("String_TextAlignment_LeftBaseline"), ControlsProperties.getString("String_TextAlignment_RightBaseline"),
-				ControlsProperties.getString("String_TextAlignment_MidBaseline")};
+				ControlsProperties.getString("String_TextAlignment_MidBaseline") };
 		this.comboBoxAlign.setModel(new DefaultComboBoxModel<String>(TEXTALIGNMENT_NAMES));
 		initHashMapTextAlignment();
 		Object[] textAlignmentValues = hashMapTextAlignment.values().toArray();
@@ -728,9 +729,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	}
 
 	private void initHashMapTextAlignment() {
-		TextAlignment[] textAlignmentValues = {TextAlignment.TOPLEFT, TextAlignment.MIDDLELEFT, TextAlignment.BOTTOMLEFT, TextAlignment.TOPCENTER,
+		TextAlignment[] textAlignmentValues = { TextAlignment.TOPLEFT, TextAlignment.MIDDLELEFT, TextAlignment.BOTTOMLEFT, TextAlignment.TOPCENTER,
 				TextAlignment.MIDDLECENTER, TextAlignment.BOTTOMCENTER, TextAlignment.TOPRIGHT, TextAlignment.MIDDLERIGHT, TextAlignment.BOTTOMRIGHT,
-				TextAlignment.BASELINELEFT, TextAlignment.BASELINERIGHT, TextAlignment.BASELINECENTER};
+				TextAlignment.BASELINELEFT, TextAlignment.BASELINERIGHT, TextAlignment.BASELINECENTER };
 		for (int i = 0; i < textAlignmentValues.length; i++) {
 			hashMapTextAlignment.put(comboBoxAlign.getItemAt(i), textAlignmentValues[i]);
 		}
@@ -740,8 +741,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	 * 初始化字号下拉框和字高
 	 */
 	private void initComboBoxFontSize() {
-		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
-				"12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"}));
+		this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[] { "1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
+				"12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }));
 		this.comboBoxFontSize.setEditable(true);
 		this.comboBoxFontSize.setSelectedItem(this.textStyle.getFontHeight() * EXPERIENCE);
 		this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
@@ -778,7 +779,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontWidth.getEditor();
 		this.textFieldFontWidth = numberEditor.getTextField();
 		if (null != this.textStyle) {
-			this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(FontUtilities.fontWidthToMapWidth(textStyle.getFontWidth(), MapUtilities.getActiveMap(), textStyle.isSizeFixed()) / 10));
+			this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(FontUtilities.fontWidthToMapWidth(textStyle.getFontWidth(),
+					MapUtilities.getActiveMap(), textStyle.isSizeFixed()) / 10));
 		}
 	}
 
@@ -828,8 +830,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 		this.comboBoxFontSize.setEnabled(enabled);
 		this.spinnerFontHeight.setEnabled(enabled);
 		this.spinnerFontWidth.setEnabled(enabled);
-		this.spinnerInclinationAngl.setEnabled(enabled);
 		this.spinnerRotationAngl.setEnabled(enabled);
+		this.spinnerInclinationAngl.setEnabled(enabled && this.textStyle.getItalic());
 		this.buttonBGColorSelect.setEnabled(false);
 		this.buttonFontColorSelect.setEnabled(enabled);
 		this.checkBoxBGOpaque.setEnabled(enabled);

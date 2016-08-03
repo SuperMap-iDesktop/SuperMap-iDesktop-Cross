@@ -69,7 +69,7 @@ public class CreateFile {
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
-			String fileName = URLEncoder.encode( this.uploadInfo.getFileName(), "UTF-8" );
+			String fileName = URLEncoder.encode(this.uploadInfo.getFileName(), "UTF-8");
 			webFile = MessageFormat.format("{0}{1}?user.name=root&op=CREATE", webFile, fileName);
 			HttpClient client = new DefaultHttpClient();
 			// 发送http请求，没有自动重定向，也没有发送文件数据（即只是创建一个虚拟文件）
@@ -237,16 +237,18 @@ public class CreateFile {
 			if (!webFile.endsWith("/")) {
 				webFile += "/";
 			}
+			String tempName = name;
+			name = URLEncoder.encode(name, "UTF-8");
 			webFile = String.format("%s%s?user.name=root&op=RENAME&destination=%s", webFile, name, rootPath + newName);
 			HttpPut requestPut = new HttpPut(webFile);
 			HttpResponse response = new DefaultHttpClient().execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == 200) {
 				if (isDir) {
 					Application.getActiveApplication().getOutput()
-					.output(MessageFormat.format(LBSClientProperties.getString("String_RenameDirSuccess"), name, newName));
+							.output(MessageFormat.format(LBSClientProperties.getString("String_RenameDirSuccess"), tempName, newName));
 				} else {
 					Application.getActiveApplication().getOutput()
-							.output(MessageFormat.format(LBSClientProperties.getString("String_RenameFileSuccess"), name, newName));
+							.output(MessageFormat.format(LBSClientProperties.getString("String_RenameFileSuccess"), tempName, newName));
 				}
 				CommonUtilities.getActiveLBSControl().refresh();
 			}

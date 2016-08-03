@@ -254,7 +254,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private void resetCheckBoxState(boolean isRotate) {
 		this.checkBoxFixedFontAngl.setEnabled(isRotate);
 		this.checkBoxRemoveRepeatLabel.setEnabled(isRotate);
-		this.comboBoxLineDirection.setEnabled(isRotate);
+		this.comboBoxLineDirection.setEnabled(isRotate && themeLabel.isAngleFixed());
 		this.spinnerFontSpace.setEnabled(isRotate);
 		this.textFieldRepeatInterval.setEnabled(isRotate);
 		this.checkBoxRepeatIntervalFixed.setEnabled(isRotate);
@@ -911,7 +911,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		themeLabelTemp.setOptimizeMutilineAlignment(themeLabel.isOptimizeMutilineAlignment());
 		StringAlignment stringAlignment = this.themeLabel.getUniformStyle().getStringAlignment();
 		themeLabelTemp.getUniformStyle().setStringAlignment(stringAlignment);
-		if (themeLabelTemp.getCount()>0) {
+		if (themeLabelTemp.getCount() > 0) {
 			for (int i = 0; i < themeLabelTemp.getCount(); i++) {
 				themeLabelTemp.getItem(i).getStyle().setStringAlignment(stringAlignment);
 			}

@@ -100,8 +100,12 @@ public class BatchUploadFile extends Thread {
 					File uploadFile = new File(this.uploadInfo.getFilePath() + File.separator + this.uploadInfo.getFileName());
 					fileSize = uploadFile.length();
 					String fileName = URLEncoder.encode(this.uploadInfo.getFileName(), "UTF-8");
-					int buffersize = Integer.parseInt(WebHDFS.getFileStatus(this.uploadInfo.getUrl(), this.uploadInfo.getFileName()).getSize());
-					String webFile = String.format("%s%s?user.name=root&op=APPEND", this.uploadInfo.getUrl(), fileName);
+					String url = this.uploadInfo.getUrl();
+					if (!url.endsWith("/")) {
+						url += "/";
+					}
+					int buffersize = Integer.parseInt(WebHDFS.getFileStatus(url, this.uploadInfo.getFileName()).getSize());
+					String webFile = String.format("%s%s?user.name=root&op=APPEND", url, fileName);
 
 					// 创建单线程下载对象数组
 					fileItems = new UploadFile[this.segmentLengths.length];
