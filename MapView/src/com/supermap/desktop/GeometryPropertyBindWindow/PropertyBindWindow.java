@@ -1,13 +1,13 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PropertyBindWindow implements IPropertyBindWindow {
 
@@ -22,11 +22,7 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	private MouseAdapter formMapMouseListener;
 
 	public PropertyBindWindow() {
-
-	}
-
-	@Override
-	public void registEvents() {
+		// 只需要初始化一次
 		this.selectRowsChangeListener = new PropertySelectChangeListener() {
 
 			@Override
@@ -59,6 +55,11 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 			}
 
 		};
+	}
+
+	@Override
+	public void registEvents() {
+
 		removeEvents();
 		formMap.getMapControl().addMouseListener(formMapMouseListener);
 		bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);

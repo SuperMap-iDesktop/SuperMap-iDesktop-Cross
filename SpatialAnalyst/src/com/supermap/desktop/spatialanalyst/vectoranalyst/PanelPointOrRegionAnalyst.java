@@ -70,8 +70,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private boolean isComboBoxDatasetNotNull = true;
 	private boolean isBufferSucceed;
 	private boolean isShowInMap;
-	private boolean isRadiusNumSuitable;
-	private boolean isHasResultDatasource;
+	private boolean isRadiusNumSuitable = true;
+	private boolean isHasResultDatasource = true;
 	private DoSome some;
 	private BufferProgressCallable bufferProgressCallable;
 	private final static int DEFAULT_MIN = 4;
