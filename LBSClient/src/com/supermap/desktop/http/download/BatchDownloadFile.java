@@ -114,7 +114,11 @@ public class BatchDownloadFile extends Thread {
 				try {
 					// 创建指定个数单线程下载对象，每个线程独立完成指定块内容的下载
 					String fileName = URLEncoder.encode(this.downloadInfo.getFileName(), "UTF-8");
-					String url = this.downloadInfo.getUrl() + fileName;
+					String tempUrl = this.downloadInfo.getUrl();
+					if (!tempUrl.endsWith("/")) {
+						tempUrl += "/";
+					}
+					String url = tempUrl + fileName;
 					if (this.downloadInfo.isHDFSFile()) {
 						url = String.format("%s?op=OPEN&offset=%d&length=%d", url, startPos[i], endPos[i] - startPos[i]);
 					}
