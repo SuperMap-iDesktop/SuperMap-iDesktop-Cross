@@ -36,7 +36,6 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import com.supermap.mapping.Layer;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -56,7 +55,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -732,6 +730,9 @@ public class JDialogSQLQuery extends SmDialog {
 		public void valueChanged(TreeSelectionEvent e) {
 			if (joinItems.getCount() > 0) {
 				joinItems.removeRange(0, joinItems.getCount());
+			}
+			if (workspaceTree.getLastSelectedPathComponent() == null) {
+				return;
 			}
 			Object data = ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
 			if (data instanceof Dataset) {

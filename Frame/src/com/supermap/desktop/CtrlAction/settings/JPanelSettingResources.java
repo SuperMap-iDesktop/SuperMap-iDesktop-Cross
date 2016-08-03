@@ -21,7 +21,6 @@ public class JPanelSettingResources extends BaseSettingPanel {
 	private JLabel labelCopyright;
 	private SmURLLabel labelSupport;
 	private SmURLLabel labelOnlineBuy;
-	private JLabel labelContact;
 
 	@Override
 	protected void initComponents() {
@@ -30,7 +29,6 @@ public class JPanelSettingResources extends BaseSettingPanel {
 		labelCopyright = new JLabel();
 		labelSupport = new SmURLLabel("http://support.supermap.com.cn/", CoreProperties.getString("String_Label_TechnicSupport"));
 		labelOnlineBuy = new SmURLLabel("http://istore.supermap.com.cn/Product/product.aspx", CoreProperties.getString("String_LinkLabel_ProductCenter"));
-		labelContact = new JLabel();
 	}
 
 	@Override
@@ -41,8 +39,7 @@ public class JPanelSettingResources extends BaseSettingPanel {
 		this.add(labelCopyright, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
 		this.add(labelSupport, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
 		this.add(labelOnlineBuy, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
-		this.add(labelContact, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 	}
 
 
@@ -51,7 +48,6 @@ public class JPanelSettingResources extends BaseSettingPanel {
 		labelProductName.setText(MessageFormat.format(CoreProperties.getString("String_ProductName"), GlobalParameters.getDesktopTitle()));
 		labelVersion.setText(CoreProperties.getString("String_ProductVersion"));
 		labelCopyright.setText(CoreProperties.getString("String_Copyright"));
-		labelContact.setText(CoreProperties.getString("String_Label_Contact"));
 	}
 
 

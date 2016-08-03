@@ -840,7 +840,6 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	private void refreshStates() {
 		refreshTextAreaDetails();
 		refreshPath();
-		toolBar.updateUI();
 	}
 
 	/**

@@ -6,7 +6,7 @@ import com.supermap.desktop.dataview.DataViewProperties;
  * Created by Administrator on 2015/12/8.
  */
 public class SqlUtilties {
-	private static final String[] needSizeChar = new String[]{"'", "\"", "(", "[", "{", "<"};
+	private static final String[] needSizeChar = new String[]{"'", "\"", "(", "[", "{"};
 
 	private SqlUtilties() {
 		//公共类不提供构造方法
