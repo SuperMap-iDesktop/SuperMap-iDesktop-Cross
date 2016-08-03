@@ -647,7 +647,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private void unRegisterEvents() {
 		this.isRegisterEvents = false;
-		this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 		this.scaleBox.removeItemListener(this.itemListener);
 		this.pointXField.removeKeyListener(this.keyAdapter);
 		this.pointYField.removeKeyListener(this.keyAdapter);
@@ -657,6 +656,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.pointYField.getDocument().removeDocumentListener(this.pointDocumentListener);
 		removeDrag();
 		if (this.mapControl != null) {
+			this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 			this.mapControl.removeKeyListener(this.mapKeyListener);
 			this.mapControl.removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.mapControl.removeGeometryAddedListener(this.geometryAddedListener);
@@ -668,7 +668,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.removeMouseListener(this.mouseAdapter);
 			this.mapControl.removeMouseWheelListener(this.localMouseWheelListener);
 
-			if (this.mapControl != null && this.mapControl.getMap() != null) {
+			if (this.mapControl.getMap() != null) {
 				this.mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
 				this.mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
 				this.mapControl.getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
