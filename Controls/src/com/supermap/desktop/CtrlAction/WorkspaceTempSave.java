@@ -125,6 +125,7 @@ public class WorkspaceTempSave {
 		workspace.removeSavedListener(workspaceSavedListener);
 		workspace.removeSavedAsListener(workspaceSavedAsListener);
 	}
+
 	private String getFilePath() {
 		String appDataPath = FileUtilities.getAppDataPath();
 
@@ -289,8 +290,12 @@ public class WorkspaceTempSave {
 
 	public boolean exit() {
 		removeListeners();
-		task.cancel();
-		timer.cancel();
+		if (task != null) {
+			task.cancel();
+		}
+		if (timer != null) {
+			timer.cancel();
+		}
 		if (fileLock != null) {
 			try {
 				fileLock.release();
