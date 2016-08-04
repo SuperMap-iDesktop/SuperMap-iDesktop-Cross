@@ -1004,7 +1004,6 @@ public class GlobalParameters {
 			dataWindow.setAttribute("autoCloseEmptyWindow", String.valueOf(isAutoCloseEmptyWindow));
 			dataWindow.setAttribute("autoNewWindow", String.valueOf(isShowDataInNewWindow));
 			dataWindow.setAttribute("showCloseInfoForm", String.valueOf(isShowFormClosingInfo));
-			dataWindow.setAttribute("autoNewWindow", String.valueOf(isAutoCloseEmptyWindow));
 			startup.appendChild(dataWindow);
 
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_cameraComment")));

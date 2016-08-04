@@ -123,6 +123,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				}
 				try {
 					Integer integer = Integer.valueOf(textFieldValue);
+					if (integer <= 0) {
+						return false;
+					}
 					if (integer == GlobalParameters.getWorkspaceAutoSaveTime()) {
 						changedValues.remove(smTextFieldLegitAutoSaveTime);
 					} else {

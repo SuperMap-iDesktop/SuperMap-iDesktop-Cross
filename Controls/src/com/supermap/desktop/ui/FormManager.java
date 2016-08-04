@@ -261,6 +261,10 @@ public class FormManager implements IFormManager {
 	public boolean close(IForm form) {
 		boolean result = false;
 		try {
+//			if (activeForm == form) {
+//				setActiveForm(null);
+//				refreshMenusAndToolbars(null);
+//			}
 			this.childForms.remove(form);
 			form.clean();
 			((DockingWindow) form).close();
@@ -315,7 +319,7 @@ public class FormManager implements IFormManager {
 
 		try {
 			if (isSave) {
-				result = this.saveForms(forms, GlobalParameters.isShowFormClosingInfo());
+				result = this.saveForms(forms, true);
 			} else {
 				for (int i = 0; i < forms.length; i++) {
 					forms[i].setNeedSave(false);
@@ -372,7 +376,7 @@ public class FormManager implements IFormManager {
 		boolean result = false;
 
 		try {
-			if (notify) {
+			if (notify && GlobalParameters.isShowFormClosingInfo()) {
 				ArrayList<IForm> canSaveForms = new ArrayList<IForm>();
 				for (IForm child : forms) {
 					boolean canSaved = false;

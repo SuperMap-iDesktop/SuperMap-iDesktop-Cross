@@ -1,8 +1,5 @@
 package com.supermap.desktop.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -26,6 +23,9 @@ import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatasetUtilities {
 
 	private DatasetUtilities() {
@@ -34,7 +34,7 @@ public class DatasetUtilities {
 
 	/**
 	 * 判断数据集名称是否合法
-	 * 
+	 *
 	 * @param newDatasetName
 	 * @param datasource
 	 * @return
@@ -104,8 +104,7 @@ public class DatasetUtilities {
 	/**
 	 * 判断数据集是否已经打开
 	 *
-	 * @param dataset
-	 *            需要判断的数据集
+	 * @param dataset 需要判断的数据集
 	 * @return true-数据集已打开 false-数据集未打开
 	 */
 	public static boolean isDatasetOpened(Dataset dataset) {
@@ -195,14 +194,20 @@ public class DatasetUtilities {
 	/**
 	 * 删除图层中包含对应数据集的图层。 组件的方法有缺陷而且不改，所以自行实现。
 	 *
-	 * @param layers
-	 *            需要删除地图的layers对象
-	 * @param closeDatasets
-	 *            关闭的数据集集合
+	 * @param layers        需要删除地图的layers对象
+	 * @param closeDatasets 关闭的数据集集合
 	 * @return
 	 */
 	public static void removeByDatasets(Layers layers, Dataset... closeDatasets) {
 		for (Dataset datasetTemp : closeDatasets) {
+			try {
+				// layer移除之后可能关闭窗口，做个判断
+				if (layers.getCount() <= 0) {
+					return;
+				}
+			} catch (Exception e) {
+				return;
+			}
 			if (datasetTemp.getType() == DatasetType.NETWORK || datasetTemp.getType() == DatasetType.NETWORK3D) {
 				removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset());
 			}
@@ -213,8 +218,7 @@ public class DatasetUtilities {
 	/**
 	 * 关闭数据集
 	 *
-	 * @param closeDataset
-	 *            需要关闭的数据集
+	 * @param closeDataset 需要关闭的数据集
 	 */
 	public static void closeDataset(Dataset... closeDataset) {
 		try {
@@ -236,14 +240,16 @@ public class DatasetUtilities {
 				// 删除时考虑地图与场景
 
 				int formNumber = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
-				for (int i = 0; i < formNumber; i++) {
+				for (int i = formNumber - 1; i >= 0; i--) {
 					IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
 					if (form instanceof IFormMap) {
 						((IFormMap) form).removeActiveLayersByDatasets(closeDataset);
 						Map map = ((IFormMap) form).getMapControl().getMap();
 						Layers layers = map.getLayers();
 						removeByDatasets(layers, closeDataset);
-						map.refresh();
+						if (Application.getActiveApplication().getMainFrame().getFormManager().isContain(((IFormMap) form))) {
+							map.refresh();
+						}
 					} else if (form instanceof IFormScene) {
 						Scene scene = ((IFormScene) form).getSceneControl().getScene();
 						TerrainLayers terrainLayers = scene.getTerrainLayers();
@@ -291,8 +297,7 @@ public class DatasetUtilities {
 	/**
 	 * 关闭数据集
 	 *
-	 * @param closeDatasets
-	 *            ：需要关闭的数据集集合类
+	 * @param closeDatasets ：需要关闭的数据集集合类
 	 */
 	public static void closeDataset(Datasets closeDatasets) {
 		if (null == closeDatasets || 0 == closeDatasets.getCount()) {
@@ -317,10 +322,8 @@ public class DatasetUtilities {
 	/**
 	 * 根据已有的数据集名，获取指定前缀字符串的唯一数据集名
 	 *
-	 * @param datasetName
-	 *            指定的数据集名称
-	 * @param allDatasetNames
-	 *            即将增加的数据集的名称
+	 * @param datasetName     指定的数据集名称
+	 * @param allDatasetNames 即将增加的数据集的名称
 	 * @return 可用数据集名称
 	 */
 	public static String getAvailableDatasetName(String datasetName, String[] allDatasetNames) {
@@ -365,12 +368,8 @@ public class DatasetUtilities {
 	/**
 	 * 根据已有的数据源和即将创建的数据集，获取指定前缀字符串的唯一数据集名
 	 *
-	 * @param datasource
-	 *            保存数据集的数据源
-	 * @param datasetName
-	 *            指定的数据集名称
-	 * @param allDatasetNames
-	 *            即将增加的数据集的名称
+	 * @param datasource      保存数据集的数据源
+	 * @param datasetName     指定的数据集名称
 	 * @return 可用数据集名称
 	 */
 	public static String getAvailableDatasetName(Datasource datasource, String datasetName, String[] newDatasetNames) {

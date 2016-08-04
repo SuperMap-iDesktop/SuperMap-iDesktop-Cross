@@ -509,7 +509,7 @@ public class WorkspaceUtilities {
 
 			if (isContinue) {
 				if (WorkspaceUtilities.isWorkspaceModified()) {
-					if (GlobalParameters.isShowFormClosingInfo()) {
+					if (GlobalParameters.isWorkspaceCloseNotify()) {
 						result = JOptionPaneUtilities.showConfirmDialogWithCancel(CoreProperties.getString("String_SaveWorkspacePrompt"));
 						if (result == JOptionPane.NO_OPTION) {
 							if (Application.getActiveApplication().getMainFrame().getFormManager().closeAll(false)) {

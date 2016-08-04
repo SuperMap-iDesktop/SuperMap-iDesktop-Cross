@@ -10,6 +10,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoText;
 import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
+import com.supermap.data.InternalHandle;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSys;
@@ -51,6 +52,7 @@ import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilities.ActionUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.MapControlUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
@@ -109,6 +111,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -139,7 +142,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
 			if (GlobalParameters.isAutoCloseEmptyWindow() && mapControl.getMap().getLayers().getCount() == 0) {
-				Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
+				FormMap.this.close();
 			}
 		}
 	};
@@ -447,17 +450,17 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (buttonType == MouseEvent.BUTTON1) {
 			// 重新计算选中值
 
-			Layers layers = mapControl.getMap().getLayers();
-			int count = 0;
-			for (int i = 0; i < layers.getCount(); i++) {
-				if (layers.get(i).getSelection() != null) {
-					count += layers.get(i).getSelection().getCount();
-				}
-			}
-			((SmLabel) getStatusbar().get(SELECT_NUMBER)).setText(String.valueOf(count));
-			if (clickCount == 2 && count > 0) {
-				// 双击显示对象属性
+//			Layers layers = mapControl.getMap().getLayers();
+//			int count = 0;
+//			for (int i = 0; i < layers.getCount(); i++) {
+//				if (layers.get(i).getSelection() != null) {
+//					count += layers.get(i).getSelection().getCount();
+//				}
+//			}
+//			((SmLabel) getStatusbar().get(SELECT_NUMBER)).setText(String.valueOf(count));
+			if (clickCount == 2 && mapControl.getMap().findSelection(true).length > 0) {
 
+				// 双击显示对象属性
 				JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
 				dialogPropertyContainer.setVisible(true);
 				setSelectedGeometryProperty();
@@ -606,6 +609,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (!this.isRegisterEvents) {
 			// 防止多次注册
 			this.isRegisterEvents = true;
+			this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 			this.mapControl.getMap().getLayers().addLayerRemovedListener(layerRemovedListner);
 			this.mapControl.addKeyListener(this.mapKeyListener);
 			this.mapControl.addGeometrySelectChangedListener(this.geometrySelectChangedListener);
@@ -656,7 +660,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.pointYField.getDocument().removeDocumentListener(this.pointDocumentListener);
 		removeDrag();
 		if (this.mapControl != null) {
-			this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 			this.mapControl.removeKeyListener(this.mapKeyListener);
 			this.mapControl.removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
 			this.mapControl.removeGeometryAddedListener(this.geometryAddedListener);
@@ -954,14 +957,26 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@Override
 	public void clean() {
 		unRegisterEvents();
+		if (this.mapControl != null && this.mapControl.getMap() != null && this.mapControl.getMap().getLayers() != null) {
+			this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
+		}
 		if (layersTree.getMap() == this.getMapControl().getMap()) {
 			this.layersTree.setMap(null);
 		}
+		Layers layers = this.mapControl.getMap().getLayers();
 		this.mapControl.getMap().close();
 		this.mapControl.delete();
 		this.mapControl.dispose();
 		this.mapControl = null;
 		this.layersTree = null;
+		try {
+			Method method = InternalHandle.class.getDeclaredMethod("clearHandle", null);
+			method.setAccessible(true);
+			method.invoke(layers);
+			method.setAccessible(false);
+		} catch (Exception e) {
+			LogUtilities.outPut("clean handle failed while formMap exit.");
+		}
 	}
 
 	@Override
