@@ -101,6 +101,7 @@ public class JDialogTopoAdvance extends SmDialog {
 	}
 
 	private void registActionListener() {
+		unregistActionListener();
 		this.buttonSure.addActionListener(this.listener);
 		this.buttonQuite.addActionListener(this.listener);
 		this.buttonMore.addActionListener(this.listener);
@@ -316,6 +317,12 @@ public class JDialogTopoAdvance extends SmDialog {
 	@Override
 	public void setDialogResult(DialogResult dialogResult) {
 		this.dialogResult = dialogResult;
+	}
+
+	@Override
+	public void setVisible(boolean b) {
+		registActionListener();
+		super.setVisible(b);
 	}
 
 	private void quiteButtonClicked() {

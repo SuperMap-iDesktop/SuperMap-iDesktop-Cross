@@ -1,6 +1,8 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.JoinItems;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
@@ -25,8 +27,12 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -311,10 +317,10 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	private void setDisplayAttributeFilterValue() {
 		String attributeFilter = textFieldDisplayFilter.getText() == null ? "" : textFieldDisplayFilter.getText();
-		if (!StringUtilities.isNullOrEmpty(textFieldDisplayFilter.getText())) {
+//		if (!StringUtilities.isNullOrEmpty(textFieldDisplayFilter.getText())) {
 			getModifiedLayerPropertyModel().setDisplayAttributeFilter(attributeFilter);
 			checkChanged();
-		}
+//		}
 	}
 
 	@Override
