@@ -114,9 +114,9 @@ public class UploadFile extends Thread {
 						// 利用post请求往服务器上上传内容
 						URL nowURL = new URL(locationURL);
 						HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
-						connection.setConnectTimeout(3000);
+						connection.setConnectTimeout(30000);
 						// 设置读取数据超时时间为3000ms
-						connection.setReadTimeout(3000);
+						connection.setReadTimeout(30000);
 						setHeader(connection);
 						connection.setDoOutput(true);
 						connection.setRequestMethod("POST");
