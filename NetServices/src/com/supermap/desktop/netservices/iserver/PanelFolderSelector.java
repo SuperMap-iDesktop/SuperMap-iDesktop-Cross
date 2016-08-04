@@ -1,41 +1,31 @@
 package com.supermap.desktop.netservices.iserver;
 
-import java.awt.BorderLayout;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
-import java.net.URL;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.EventListenerList;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.FileSizeType;
-import com.supermap.desktop.event.SelectedChangeListener;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.ListUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class PanelFolderSelector extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -50,6 +40,8 @@ public class PanelFolderSelector extends JPanel {
 	private boolean isShowHidden = true;
 	private JTable table;
 	private EventListenerList listenerList = new EventListenerList();
+	private TristateCheckBox checkBoxSelectedAll;
+	private boolean isIgnore = false;
 
 	private PanelFolderSelector() {
 		initializeComponent();
@@ -88,16 +80,49 @@ public class PanelFolderSelector extends JPanel {
 	}
 
 	private void initializeComponent() {
+		this.checkBoxSelectedAll = new TristateCheckBox();
 		this.table = new JTable();
+
+		table.getTableHeader().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (table.getTableHeader().columnAtPoint(e.getPoint()) == 0) {
+					checkBoxSelectedAll.setSelected(checkBoxSelectedAll.isSelectedEx() == null || !checkBoxSelectedAll.isSelectedEx());
+					table.getTableHeader().repaint();
+					isIgnore = true;
+					boolean isSelected = checkBoxSelectedAll.isSelected();
+					for (int i = 0; i < table.getRowCount(); i++) {
+						table.setValueAt(isSelected, i, 0);
+					}
+					isIgnore = false;
+
+				}
+			}
+		});
 		final FolderSelectorTableModel tableModel = new FolderSelectorTableModel();
 		tableModel.addTableCellValueChangeListener(new TableCellValueChangeListener() {
 
 			@Override
 			public void tableCellValueChange(TableCellValueChangeEvent e) {
 				PanelFolderSelector.this.tableCellValueChange(tableModel.getFile(e.getRow()));
+				if (!isIgnore) {
+					isIgnore = true;
+					checkSelectedAllState();
+					isIgnore = false;
+				}
 			}
 		});
 		this.table.setModel(tableModel);
+		table.getColumnModel().getColumn(0).setMaxWidth(30);
+		table.getColumnModel().getColumn(0).setMinWidth(30);
+		table.getColumnModel().getColumn(0).setHeaderRenderer(new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JPanel jPanel = new JPanel();
+				jPanel.add(checkBoxSelectedAll);
+				return jPanel;
+			}
+		});
 		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SELECTED).setPreferredWidth(15);
 		this.table.getColumnModel().getColumn(FolderSelectorTableModel.TYPE).setPreferredWidth(15);
 		this.table.getColumnModel().getColumn(FolderSelectorTableModel.SIZE).setPreferredWidth(30);
@@ -108,14 +133,28 @@ public class PanelFolderSelector extends JPanel {
 		this.add(scrollTable, BorderLayout.CENTER);
 	}
 
+	private void checkSelectedAllState() {
+		TableModel tableModel = table.getModel();
+		Boolean isSelected = (Boolean) tableModel.getValueAt(0, 0);
+		for (int i = 0; i < tableModel.getRowCount(); i++) {
+			if (tableModel.getValueAt(i, 0) != isSelected) {
+				checkBoxSelectedAll.setSelectedEx(null);
+				break;
+			}
+			if (i == tableModel.getRowCount() - 1) {
+				checkBoxSelectedAll.setSelectedEx(isSelected);
+			}
+		}
+		table.getTableHeader().repaint();
+	}
+
 	private void tableCellValueChange(SelectableFile file) {
 		fireFileSelectedChange(new FileSelectedChangeEvent(this, file));
 	}
 
 	/**
 	 * 更新 TableModel 的数据
-	 * 
-	 * @param rootFile
+	 *
 	 */
 	private void updateTableModel(ArrayList<SelectableFile> files) {
 		if (files == null || files.size() == 0) {
@@ -133,11 +172,12 @@ public class PanelFolderSelector extends JPanel {
 			modelData.addAll(getDirectories(files));
 		}
 		((FolderSelectorTableModel) this.table.getModel()).setFiles(modelData);
+		checkSelectedAllState();
 	}
 
 	/**
 	 * 获取文件集合
-	 * 
+	 *
 	 * @return
 	 */
 	private ArrayList<SelectableFile> getSingleFiles(ArrayList<SelectableFile> files) {
@@ -153,7 +193,7 @@ public class PanelFolderSelector extends JPanel {
 
 	/**
 	 * 获取目录集合
-	 * 
+	 *
 	 * @return
 	 */
 	private ArrayList<SelectableFile> getDirectories(ArrayList<SelectableFile> files) {
@@ -170,7 +210,7 @@ public class PanelFolderSelector extends JPanel {
 	private class FolderSelectorTableModel extends AbstractTableModel {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
@@ -254,8 +294,7 @@ public class PanelFolderSelector extends JPanel {
 		/**
 		 * Returns <code>Object.class</code> regardless of <code>columnIndex</code>.
 		 *
-		 * @param columnIndex
-		 *            the column being queried
+		 * @param columnIndex the column being queried
 		 * @return the Object.class
 		 */
 		@Override
@@ -287,10 +326,8 @@ public class PanelFolderSelector extends JPanel {
 		/**
 		 * Returns false. This is the default implementation for all cells.
 		 *
-		 * @param rowIndex
-		 *            the row being queried
-		 * @param columnIndex
-		 *            the column being queried
+		 * @param rowIndex    the row being queried
+		 * @param columnIndex the column being queried
 		 * @return false
 		 */
 		@Override
@@ -314,7 +351,7 @@ public class PanelFolderSelector extends JPanel {
 
 		/**
 		 * 使用文件集合填充 Model
-		 * 
+		 *
 		 * @param files
 		 */
 		public void setFiles(ArrayList<SelectableFile> files) {

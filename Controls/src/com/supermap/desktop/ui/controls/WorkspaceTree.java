@@ -103,6 +103,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
@@ -112,8 +113,6 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.LayoutUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
-import com.supermap.mapping.Map;
-import com.supermap.ui.Action;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -2040,26 +2039,12 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	public void openNewMap() {
 		IFormMap formMap = null;
 		Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+		MapViewUIUtilities.addDatasetsToNewWindow(datasets, true);
 		if (0 < datasets.length) {
 			// 有选中的数据集时才能打开新地图
 			// 拖动实现将数据集打开到新地图
 			for (Dataset dataset : datasets) {
-				if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-					if (formMap == null) {
-						String name = MapUtilities.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
-						formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-					}
-					if (formMap != null) {
-						Map map = formMap.getMapControl().getMap();
-						MapUtilities.addDatasetToMap(map, dataset, true);
-//						map.refresh();
-						UICommonToolkit.getLayersManager().setMap(map);
-						// 新建的地图窗口，修改默认的Action为漫游
-
-						formMap.getMapControl().setAction(Action.PAN);
-					}
-
-				} else if (dataset.getType() == DatasetType.TABULAR) {
+				if (dataset.getType() == DatasetType.TABULAR) {
 					// 如果带有纯属性数据集，在单独的属性窗口中打开
 					IFormTabular formTabular = (IFormTabular) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TABULAR,
 							String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()));

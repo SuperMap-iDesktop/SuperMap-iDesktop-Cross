@@ -1,14 +1,8 @@
 package com.supermap.desktop.geometryoperation;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
-
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
@@ -33,7 +27,6 @@ import com.supermap.mapping.LayerEditableChangedEvent;
 import com.supermap.mapping.LayerEditableChangedListener;
 import com.supermap.mapping.LayerRemovedEvent;
 import com.supermap.mapping.LayerRemovedListener;
-import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
@@ -54,9 +47,15 @@ import com.supermap.ui.TrackedListener;
 import com.supermap.ui.TrackingEvent;
 import com.supermap.ui.TrackingListener;
 import com.supermap.ui.UndoneListener;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Recordset;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
 
 // @formatter:off
 /**
@@ -386,6 +385,9 @@ public class EditEnvironment {
 		try {
 			// 选中对象数目
 			resetGeometryStatus();
+			if (!Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+				return;
+			}
 
 			List<Layer> layers = MapUtilities.getLayers(this.formMap.getMapControl().getMap());
 			for (int i = 0; i < layers.size(); i++) {
@@ -517,6 +519,10 @@ public class EditEnvironment {
 	private void layersStatusChange() {
 		try {
 			resetLayersStatus();
+
+			if (!Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+				return;
+			}
 
 			for (int i = 0; i < this.formMap.getMapControl().getEditableLayers().length; i++) {
 				Layer layer = this.formMap.getMapControl().getEditableLayers()[i];

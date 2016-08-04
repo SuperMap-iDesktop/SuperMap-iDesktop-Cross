@@ -4,23 +4,18 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
-import com.supermap.ui.Action;
 
 import javax.swing.table.DefaultTableModel;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -297,29 +292,11 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		if (!addToCurrentWindow.isEmpty()) {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
-			for (Dataset dataset : addToCurrentWindow) {
-				map.getLayers().add(dataset, true);
-
-				map.refresh();
-				UICommonToolkit.getLayersManager().setMap(map);
-			}
+			MapViewUIUtilities.addDatasetsToMap(map, addToCurrentWindow.toArray(new Dataset[addToCurrentWindow.size()]), true);
 		}
 
 		if (!addToNewWindow.isEmpty()) {
-			String name = MapUtilities.getAvailableMapName(MessageFormat.format("{0}@{1}", addToNewWindow.get(0).getName(), addToNewWindow.get(0).getDatasource().getAlias()), true);
-			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-
-			if (formMap != null) {
-				Map map = formMap.getMapControl().getMap();
-				for (Dataset dataset : addToNewWindow) {
-					map.getLayers().add(dataset, true);
-				}
-
-				map.refresh();
-				UICommonToolkit.getLayersManager().setMap(map);
-
-				formMap.getMapControl().setAction(Action.PAN);
-			}
+			MapViewUIUtilities.addDatasetsToNewWindow(addToNewWindow.toArray(new Dataset[addToCurrentWindow.size()]), true);
 		}
 	}
 }

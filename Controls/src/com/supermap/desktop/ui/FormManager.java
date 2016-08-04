@@ -261,13 +261,14 @@ public class FormManager implements IFormManager {
 	public boolean close(IForm form) {
 		boolean result = false;
 		try {
+//			if (activeForm == form) {
+//				setActiveForm(null);
+//				refreshMenusAndToolbars(null);
+//			}
 			this.childForms.remove(form);
 			form.clean();
 			((DockingWindow) form).close();
 			((DockingWindow) form).removeAll();
-			if (childForms.size() == 0) {
-				setActiveForm(null);
-			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

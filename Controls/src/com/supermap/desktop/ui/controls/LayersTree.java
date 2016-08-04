@@ -1043,24 +1043,24 @@ public class LayersTree extends JTree {
 					}
 				}
 			}
-
-			// notify by huchenpu 2015-06-30
-			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
-			if (layer != null && selections.length > 1) {
-				java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
-				for (TreePath selection : selections) {
-					Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
+			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
+			for (TreePath selection : selections) {
+				Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
+				if (layerSelected.getTheme() == null) {
 					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
 				}
-
+			}
+			// notify by huchenpu 2015-06-30
+			// 多选需要让用户指定设置哪些风格，现在暂时先只处理第一个图层
+			if (layer != null && geoStyleList.size() > 1) {
 				JDialogSymbolsChange jDialogSymbolsChange = new JDialogSymbolsChange(symbolType, geoStyleList);
 				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
 					this.currentMap.refresh();
 				}
 				this.updateUI();
 				// }
-			} else if (layer != null && selections.length == 1) {
-				GeoStyle layerStyle = ((LayerSettingVector) layer.getAdditionalSetting()).getStyle();
+			} else if (layer != null && geoStyleList.size() == 1) {
+				GeoStyle layerStyle = geoStyleList.get(0);
 				final Layer finalLayer = layer;
 				GeoStyle geostyle = changeGeoStyle(layerStyle, symbolType, new ISymbolApply() {
 					@Override

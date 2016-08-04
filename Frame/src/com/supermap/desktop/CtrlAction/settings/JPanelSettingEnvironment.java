@@ -11,9 +11,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
-import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -34,8 +31,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	private JPanel panelBasicSetting;
 
-	private JLabel labelTitle;// 桌面标题
-	private SmTextFieldLegit smTextFieldLegitTitle;
+//	private JLabel labelTitle;// 桌面标题
+//	private SmTextFieldLegit smTextFieldLegitTitle;
 
 	private JLabel labelOMPNumThreads; // 并行计算线程数
 	private JSpinner spinnerOMPNumThreads;
@@ -101,8 +98,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		openCLCapability = Environment.checkOpenCLCapability();
 		panelBasicSetting = new JPanel();
 		panelBasicSetting.setBorder(BorderFactory.createTitledBorder(FrameProperties.getString("String_CaptionBaseSetting")));
-		labelTitle = new JLabel();
-		smTextFieldLegitTitle = new SmTextFieldLegit();
+//		labelTitle = new JLabel();
+//		smTextFieldLegitTitle = new SmTextFieldLegit();
 		labelOMPNumThreads = new JLabel();
 		spinnerOMPNumThreads = new JSpinner(new SpinnerNumberModel(Environment.getOMPNumThreads(), 1, 16, 1));
 		labelAnalystMemorySize = new JLabel();
@@ -133,8 +130,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	private void initPanelBasicSetting() {
 		panelBasicSetting.setLayout(new GridBagLayout());
-		panelBasicSetting.add(labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		panelBasicSetting.add(smTextFieldLegitTitle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+//		panelBasicSetting.add(labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+//		panelBasicSetting.add(smTextFieldLegitTitle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 
 		panelBasicSetting.add(labelOMPNumThreads, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 		panelBasicSetting.add(spinnerOMPNumThreads, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
@@ -164,22 +161,22 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	@Override
 	protected void initListeners() {
-		smTextFieldLegitTitle.setSmTextFieldLegit(new ISmTextFieldLegit() {
-			@Override
-			public boolean isTextFieldValueLegit(String textFieldValue) {
-
-				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
-					return false;
-				}
-				changedValues.add(smTextFieldLegitTitle);
-				return true;
-			}
-
-			@Override
-			public String getLegitValue(String currentValue, String backUpValue) {
-				return backUpValue;
-			}
-		});
+//		smTextFieldLegitTitle.setSmTextFieldLegit(new ISmTextFieldLegit() {
+//			@Override
+//			public boolean isTextFieldValueLegit(String textFieldValue) {
+//
+//				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+//					return false;
+//				}
+//				changedValues.add(smTextFieldLegitTitle);
+//				return true;
+//			}
+//
+//			@Override
+//			public String getLegitValue(String currentValue, String backUpValue) {
+//				return backUpValue;
+//			}
+//		});
 
 		final JFormattedTextField OMPNumThreadsTextField = ((JSpinner.NumberEditor) spinnerOMPNumThreads.getEditor()).getTextField();
 		OMPNumThreadsTextField.addCaretListener(new CaretListener() {
@@ -281,7 +278,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	@Override
 	protected void initResources() {
-		labelTitle.setText(FrameProperties.getString("String_DesktopName"));
+//		labelTitle.setText(FrameProperties.getString("String_DesktopName"));
 		labelOMPNumThreads.setText(FrameProperties.getString("String_OMPThreadsNum"));
 		labelAnalystMemorySize.setText(FrameProperties.getString("String_AnalystMemorySize"));
 		checkBoxSceneAntialias.setText(FrameProperties.getString("String_UseSceneAntialias"));
@@ -294,7 +291,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	@Override
 	protected void initComponentStates() {
-		smTextFieldLegitTitle.setText(GlobalParameters.getDesktopTitle());
+//		smTextFieldLegitTitle.setText(GlobalParameters.getDesktopTitle());
 		comboBoxAnalystMemorySize.setSelectedIndex(Environment.getAnalystMemorySize() >= 0 ? 0 : 1);
 		checkBoxSceneAntialias.setSelected(Environment.isSceneAntialias());
 		if (cudaCapability != CUDACapability.CAPABLE && openCLCapability != OpenCLCapability.CAPABLE) {
@@ -311,10 +308,11 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 	@Override
 	public void apply() {
 		for (Component changedValue : changedValues) {
-			if (changedValue == smTextFieldLegitTitle) {
-				GlobalParameters.setDesktopTitle(smTextFieldLegitTitle.getBackUpValue());
-				Application.getActiveApplication().getMainFrame().setText(GlobalParameters.getDesktopTitle());
-			} else if (changedValue == spinnerOMPNumThreads) {
+//			if (changedValue == smTextFieldLegitTitle) {
+//				GlobalParameters.setDesktopTitle(smTextFieldLegitTitle.getBackUpValue());
+//				Application.getActiveApplication().getMainFrame().setText(GlobalParameters.getDesktopTitle());
+//			} else
+			if (changedValue == spinnerOMPNumThreads) {
 				Environment.setOMPNumThreads(((Number) spinnerOMPNumThreads.getValue()).intValue());
 			} else if (changedValue == comboBoxAnalystMemorySize) {
 				int selectedIndex = comboBoxAnalystMemorySize.getSelectedIndex();

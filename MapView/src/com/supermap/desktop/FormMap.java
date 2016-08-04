@@ -142,7 +142,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
 			if (GlobalParameters.isAutoCloseEmptyWindow() && mapControl.getMap().getLayers().getCount() == 0) {
-				Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
+				FormMap.this.close();
 			}
 		}
 	};
@@ -450,17 +450,17 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (buttonType == MouseEvent.BUTTON1) {
 			// 重新计算选中值
 
-			Layers layers = mapControl.getMap().getLayers();
-			int count = 0;
-			for (int i = 0; i < layers.getCount(); i++) {
-				if (layers.get(i).getSelection() != null) {
-					count += layers.get(i).getSelection().getCount();
-				}
-			}
-			((SmLabel) getStatusbar().get(SELECT_NUMBER)).setText(String.valueOf(count));
-			if (clickCount == 2 && count > 0) {
-				// 双击显示对象属性
+//			Layers layers = mapControl.getMap().getLayers();
+//			int count = 0;
+//			for (int i = 0; i < layers.getCount(); i++) {
+//				if (layers.get(i).getSelection() != null) {
+//					count += layers.get(i).getSelection().getCount();
+//				}
+//			}
+//			((SmLabel) getStatusbar().get(SELECT_NUMBER)).setText(String.valueOf(count));
+			if (clickCount == 2 && mapControl.getMap().findSelection(true).length > 0) {
 
+				// 双击显示对象属性
 				JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
 				dialogPropertyContainer.setVisible(true);
 				setSelectedGeometryProperty();
