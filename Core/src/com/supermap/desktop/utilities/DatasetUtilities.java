@@ -149,6 +149,7 @@ public class DatasetUtilities {
 	public static void removeByDatasets(Layers layers, Dataset... closeDatasets) {
 		for (Dataset datasetTemp : closeDatasets) {
 			try {
+				// layer移除之后可能关闭窗口，做个判断
 				if (layers.getCount() <= 0) {
 					return;
 				}
