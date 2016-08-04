@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -19,7 +20,6 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.docking.*;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.*;
@@ -30,12 +30,12 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final int COLUMN_INDEX_Permission = 5;
-	private static final int COLUMN_INDEX_Owner = 3;
-	private static final int COLUMN_INDEX_Group = 4;
-	private static final int COLUMN_INDEX_Size = 1;
-	private static final int COLUMN_INDEX_Replication = 6;
-	private static final int COLUMN_INDEX_BlockSize = 2;
+	// private static final int COLUMN_INDEX_Permission = 5;
+	// private static final int COLUMN_INDEX_Owner = 3;
+	// private static final int COLUMN_INDEX_Group = 4;
+	// private static final int COLUMN_INDEX_Size = 1;
+	// private static final int COLUMN_INDEX_Replication = 6;
+	// private static final int COLUMN_INDEX_BlockSize = 2;
 	private static final int COLUMN_INDEX_Name = 0;
 	private static final int ROW_HEADER_WIDTH = 70;
 
@@ -45,6 +45,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private JButton buttonRefresh;
 	private JButton buttonBack;
 	private JList rowHeader;
+	private ArrayList<String> urlList;
 	private JScrollPane scrollPaneFormLBSControl;
 	private JTable table;
 	private Boolean isOutputFolder = false;
@@ -159,6 +160,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		}
 		initializeLayout();
 		listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
+		if (0 < table.getRowCount()) {
+			table.setRowSelectionInterval(0, 0);
+		}
 	}
 
 	private void initializeLayout() {
@@ -255,10 +259,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			this.addFileInfo(define);
 		}
 		this.table.updateUI();
-		if (0 < table.getRowCount()) {
-			table.setRowSelectionInterval(0, 0);
-		}
-
 		return urlPath;
 	}
 
@@ -414,75 +414,70 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	public void delete() {
 		// 从hdfs文件系统中删除文件
 		try {
-			try {
-				String webFile = "";
-				String webURL = this.textServerURL.getText();
-				if (table.getSelectedRowCount() == 1) {
-					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-					if (define != null) {
-						webFile = define.getName();
-						if (define.isDir()) {
-							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
-								deleteDir(webFile, webURL, define);
-							}
-						} else {
-							if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
-								deleteFile.deleteFile();
-							}
+			String webFile = "";
+			String webURL = this.textServerURL.getText();
+			if (table.getSelectedRowCount() == 1) {
+				HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
+				if (define != null) {
+					webFile = define.getName();
+					if (define.isDir()) {
+						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
+							deleteDir(webFile, webURL, define);
 						}
-					}
-				} else if (table.getSelectedRowCount() > 1) {
-					int[] indexs = table.getSelectedRows();
-					int dirCount = 0;
-					int fileCount = 0;
-					for (int i = 0; i < indexs.length; i++) {
-						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(i);
-						if (define.isDir()) {
-							dirCount++;
-						} else {
-							fileCount++;
-						}
-					}
-					if (fileCount == indexs.length
-							&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFiles"), indexs.length)) == JOptionPane.OK_OPTION) {
-						// 全是文件
-						for (int index : indexs) {
-							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-							if (define != null) {
-								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
-								deleteFile.deleteFile();
-							}
-						}
-					} else if (dirCount == indexs.length
-							&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirs"), indexs.length)) == JOptionPane.OK_OPTION) {
-						// 全是文件夹
-						for (int index : indexs) {
-							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-							if (define != null) {
-								deleteDir(define.getName(), webURL, define);
-							}
-						}
-					} else if (fileCount != indexs.length
-							&& dirCount != indexs.length
-							&& UICommonToolkit
-									.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), fileCount, dirCount)) == JOptionPane.OK_OPTION) {
-						// 有文件和文件夹
-						for (int index : indexs) {
-							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-							if (define != null && define.isDir()) {
-								deleteDir(define.getName(), webURL, define);
-							} else {
-								DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
-								deleteFile.deleteFile();
-							}
+					} else {
+						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
+							DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
+							deleteFile.deleteFile();
 						}
 					}
 				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
+			} else if (table.getSelectedRowCount() > 1) {
+				int[] indexs = table.getSelectedRows();
+				int dirCount = 0;
+				int fileCount = 0;
+				for (int i = 0; i < indexs.length; i++) {
+					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(i);
+					if (define.isDir()) {
+						dirCount++;
+					} else {
+						fileCount++;
+					}
+				}
+				if (fileCount == indexs.length
+						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFiles"), indexs.length)) == JOptionPane.OK_OPTION) {
+					// 全是文件
+					for (int index : indexs) {
+						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+						if (define != null) {
+							DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+							deleteFile.deleteFile();
+						}
+					}
+				} else if (dirCount == indexs.length
+						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirs"), indexs.length)) == JOptionPane.OK_OPTION) {
+					// 全是文件夹
+					for (int index : indexs) {
+						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+						if (define != null) {
+							deleteDir(define.getName(), webURL, define);
+						}
+					}
+				} else if (fileCount != indexs.length
+						&& dirCount != indexs.length
+						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), fileCount, dirCount)) == JOptionPane.OK_OPTION) {
+					// 有文件和文件夹
+					for (int index : indexs) {
+						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+						if (define != null && define.isDir()) {
+							deleteDir(define.getName(), webURL, define);
+						} else {
+							DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+							deleteFile.deleteFile();
+						}
+					}
+				}
 			}
+
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
@@ -501,22 +496,42 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	 */
 	private void deleteDir(String webFile, String webURL, HDFSDefine define) throws IOException {
 		// 删除文件夹下的所有文件
-		deleteFilesInDir(webURL + define.getName());
-		// 删除空文件夹
-		DeleteFile deleteFile = new DeleteFile(webURL, webFile, true);
-		deleteFile.deleteFile();
+		webFile = addSeparator(webURL);
+		String url = webURL + define.getName();
+		deleteFilesInDir(url);
+		
+	}
+
+	private String addSeparator(String url) {
+		String result = url;
+		if (!result.endsWith("/")) {
+			result += "/";
+		}
+		return result;
 	}
 
 	private void deleteFilesInDir(String url) throws IOException {
+		url = addSeparator(url);
 		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
 		for (WebHDFS.HDFSDefine tempDefine : defines) {
 			if (tempDefine.isDir()) {
-				deleteFilesInDir(tempDefine.getFullPath() + tempDefine.getName());
+				url = addSeparator(url);
+				deleteFilesInDir(url + tempDefine.getName());
 			} else {
 				DeleteFile deleteFile = new DeleteFile(url, tempDefine.getName(), false);
 				deleteFile.deleteFile();
 			}
 		}
+	}
+
+	private boolean hasFile(String url) {
+		addSeparator(url);
+		boolean hasFile = false;
+		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
+		if (defines.length > 0) {
+			hasFile = true;
+		}
+		return hasFile;
 	}
 
 	@Override
@@ -540,7 +555,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			}
 
 			if (!fileSelected) {
-				UICommonToolkit.showMessageDialog("please select a file");
+				UICommonToolkit.showMessageDialog(LBSClientProperties.getString("String_DeleteWarning"));
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

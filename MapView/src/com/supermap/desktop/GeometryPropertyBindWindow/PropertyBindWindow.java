@@ -27,7 +27,9 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 
 			@Override
 			public void selectChanged(int[] selectRows, Dataset dataset) {
-				if (!addRow && dataset.equals(bindWindow.getActiveLayer().getDataset())) {
+				if (null != dataset && !addRow && dataset.equals(bindWindow.getActiveLayer().getDataset())) {
+					bindWindow.refreshFormTabular(selectRows);
+				} else if (null == dataset) {
 					bindWindow.refreshFormTabular(selectRows);
 				}
 			}
@@ -35,19 +37,19 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.selectionChangeListener = new MapSelectionChangeListener() {
 
 			@Override
-			public void selectionChanged(Selection selection,Layer layer) {
+			public void selectionChanged(Selection selection, Layer layer) {
 				addRow = true;
-				bindProperty.refreshMap(selection,layer);
+				bindProperty.refreshMap(selection, layer);
 			}
 		};
 		this.formMapMouseListener = new MouseAdapter() {
 
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-//					bindWindow.refreshFormTabular(new int[0]);
-//				}
-//			}
+			// @Override
+			// public void mouseClicked(MouseEvent e) {
+			// if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+			// bindWindow.refreshFormTabular(new int[0]);
+			// }
+			// }
 
 			@Override
 			public void mouseEntered(MouseEvent e) {

@@ -153,8 +153,8 @@ public class CommonUtilities {
 			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverTask()) {
 				for (String downloadAttris : downloadTaskPropertyLists) {
 					String[] attriArrayForDownload = downloadAttris.split(",");
-					FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], "", attriArrayForDownload[2],
-							Long.parseLong(attriArrayForDownload[3]), 1, true);
+					FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], attriArrayForDownload[2],
+							attriArrayForDownload[3], Long.parseLong(attriArrayForDownload[4]), 1, true);
 					ITask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
 					DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
 					downloadTask.doWork(downloadProgressCallable);
@@ -169,6 +169,8 @@ public class CommonUtilities {
 					uploadTask.doWork(downloadProgressCallable);
 					fileManagerContainer.addItem(uploadTask);
 				}
+			} else {
+				ManagerXMLParser.removeAllTasks();
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.Recordset;
+import com.supermap.data.Tolerance;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
@@ -18,6 +19,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -26,6 +28,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 public class JDialogTopoAdvance extends SmDialog {
 
@@ -171,6 +174,7 @@ public class JDialogTopoAdvance extends SmDialog {
 		try {
 			if (null != targetDataset) {
 				this.comboBoxNotCutting = new DatasetComboBox(new Dataset[0]);
+				this.comboBoxNotCutting.addItem(null);
 				for (int i = 0; i < targetDataset.getDatasource().getDatasets().getCount(); i++) {
 					Dataset tempDataset = targetDataset.getDatasource().getDatasets().get(i);
 					if (tempDataset.getType() == DatasetType.POINT) {
@@ -179,9 +183,12 @@ public class JDialogTopoAdvance extends SmDialog {
 						this.comboBoxNotCutting.addItem(cell);
 					}
 				}
-				this.textFieldOvershootsTolerance.setText(Double.toString(targetDataset.getTolerance().getDangle()));
-				this.textFieldUndershootsTolerance.setText(Double.toString(targetDataset.getTolerance().getExtend()));
-				this.textFieldVertexTorance.setText(Double.toString(targetDataset.getTolerance().getNodeSnap()));
+				DecimalFormat format = new DecimalFormat("0.000");
+				DecimalFormat format1 = new DecimalFormat("0.00000");
+				Tolerance tolerance = DatasetUtilities.getDefaultTolerance(targetDataset);
+				this.textFieldOvershootsTolerance.setText(format.format(tolerance.getDangle()));
+				this.textFieldUndershootsTolerance.setText(format.format(tolerance.getExtend()));
+				this.textFieldVertexTorance.setText(format1.format(tolerance.getNodeSnap()));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -224,7 +231,7 @@ public class JDialogTopoAdvance extends SmDialog {
 			if (!StringUtilities.isNullOrEmpty(arcFilterString)) {
 				this.topologyProcessingOptions.setArcFilterString(arcFilterString);
 			}
-			if (0 < this.comboBoxNotCutting.getItemCount()) {
+			if (0 < this.comboBoxNotCutting.getItemCount() && null != this.comboBoxNotCutting.getSelectedItem()) {
 				String datasetName = this.comboBoxNotCutting.getSelectItem();
 				DatasetVector dataset = (DatasetVector) DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 				Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);

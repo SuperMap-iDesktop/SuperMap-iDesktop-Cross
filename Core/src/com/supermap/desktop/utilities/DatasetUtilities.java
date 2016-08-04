@@ -8,6 +8,9 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
@@ -44,6 +47,58 @@ public class DatasetUtilities {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 获取数据集的默认容限
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	public static Tolerance getDefaultTolerance(DatasetVector dataset) {
+		Tolerance tolerance = null;
+		try {
+			if (dataset != null) {
+				tolerance = new Tolerance();
+				Double extent = Math.max(dataset.getBounds().getHeight(), dataset.getBounds().getWidth());
+
+				// tolerance.NodeSnap = extent / 1000000.0f;
+				tolerance.setNodeSnap(dataset.getTolerance().getNodeSnap());
+				if (Double.compare(0.0, tolerance.getNodeSnap()) == 0) {
+
+					if (dataset != null) {
+						if (dataset.getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
+							tolerance.setNodeSnap(0.00001);
+						} else if (dataset.getPrjCoordSys().getType() == PrjCoordSysType.PCS_NON_EARTH) {
+							tolerance.setNodeSnap(extent / 1000000.0f);
+						} else {
+							tolerance.setNodeSnap(1);
+						}
+					}
+				}
+				// 修改长短悬线容限初始值
+				tolerance.setDangle((Math.abs(dataset.getTolerance().getDangle()) < 1E-6) ? dataset.getTolerance().getNodeSnap() * 100 : dataset.getTolerance()
+						.getDangle());
+				tolerance.setExtend((Math.abs(dataset.getTolerance().getExtend()) < 1E-6) ? dataset.getTolerance().getNodeSnap() * 100 : dataset.getTolerance()
+						.getExtend());
+				tolerance.setSmallPolygon(0.0);
+				tolerance.setGrain(extent / 1000.0f);
+				if (dataset.getType() == DatasetType.REGION) {
+					Boolean isOpen = dataset.isOpen();
+					int fieldIndex = dataset.getFieldInfos().indexOf("SMAREA");
+					if (fieldIndex >= 0) {
+						Double maxArea = dataset.statistic(fieldIndex, StatisticMode.MAX);
+						tolerance.setSmallPolygon(maxArea / 1000000.0f);
+					}
+					if (!isOpen) {
+						dataset.close();
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return tolerance;
 	}
 
 	/**

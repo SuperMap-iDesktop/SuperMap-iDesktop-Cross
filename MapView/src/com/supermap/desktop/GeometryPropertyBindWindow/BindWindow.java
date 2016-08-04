@@ -1,6 +1,8 @@
 package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -84,10 +86,10 @@ public class BindWindow implements IBindWindow {
 
 	@Override
 	public void refreshFormTabular(int[] addRows) {
-		int[] tempRows = new int[addRows.length];
-		for (int i = 0; i < tempRows.length; i++) {
+		List<Integer> tempRows = new ArrayList<Integer>();
+		for (int i = 0; i < addRows.length; i++) {
 			if (null != this.formTabular.getIdMap().get(addRows[i])) {
-				tempRows[i] = this.formTabular.getIdMap().get(addRows[i]);
+				tempRows.add(this.formTabular.getIdMap().get(addRows[i]));
 			}
 		}
 		if (this.formTabular.getRowCount() > 0) {

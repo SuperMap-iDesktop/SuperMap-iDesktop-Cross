@@ -12,6 +12,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 
 import com.supermap.Interface.*;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 
 public class ManagerXMLParser {
@@ -24,6 +25,30 @@ public class ManagerXMLParser {
 			document = XmlUtilities.getDocument(file, 0);
 		}
 		return document;
+	}
+	/**
+	 * 删除所有任务
+	 */
+	public static void removeAllTasks() {
+		try {
+			if (null != getCurrentDocument()) {
+				Document document = getCurrentDocument();
+				NodeList downloadList = document.getElementsByTagName("DownloadTask");
+				for (int i = 0; i < downloadList.getLength(); i++) {
+					Element temp = (Element) downloadList.item(i);
+					downloadList.item(i).getParentNode().removeChild(temp);
+				}
+				NodeList uploadList = document.getElementsByTagName("UploadTask");
+				for (int i = 0; i < uploadList.getLength(); i++) {
+					Element temp = (Element) uploadList.item(i);
+					uploadList.item(i).getParentNode().removeChild(temp);
+				}
+				XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
+						document.getXmlEncoding());
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 	}
 
 	/**
@@ -101,7 +126,7 @@ public class ManagerXMLParser {
 				resultList.clear();
 				for (int i = 0; i < downloadList.getLength(); i++) {
 					Element temp = (Element) downloadList.item(i);
-					String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("FilePath") + ","
+					String tempStr = temp.getAttribute("URL") + "," + temp.getAttribute("FileName") + "," + temp.getAttribute("RealName") + ","+ temp.getAttribute("FilePath") + ","
 							+ temp.getAttribute("FileSize");
 					resultList.add(tempStr);
 				}

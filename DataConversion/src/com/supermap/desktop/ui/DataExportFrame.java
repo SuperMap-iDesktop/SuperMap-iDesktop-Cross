@@ -187,8 +187,11 @@ public class DataExportFrame extends SmDialog {
 				temp.setFilePath(exportSetting.getTargetFilePath());
 				temp.setState(DataConversionProperties.getString("string_change"));
 				FileType fileType = null;
-				if (0 < temp.getFileTypes().length) {
+				// 暂时不支持导出为Microsoft类型的文件
+				if (0 < temp.getFileTypes().length && temp.getFileTypes()[0] != FileType.CSV) {
 					fileType = temp.getFileTypes()[0];
+				} else if (1 < temp.getFileTypes().length && temp.getFileTypes()[0] == FileType.CSV) {
+					fileType = temp.getFileTypes()[1];
 				} else {
 					fileType = FileType.NONE;
 				}

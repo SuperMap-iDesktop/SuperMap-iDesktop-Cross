@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -38,6 +39,7 @@ import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
@@ -541,10 +543,10 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void addRows(int[] addRows) {
+	public void addRows(List<Integer> addRows) {
 		this.jTableTabular.clearSelection();
-		for (int i = 0; i < addRows.length; i++) {
-			this.jTableTabular.addRowSelectionInterval(addRows[i], addRows[i]);
+		for (int i = 0; i < addRows.size(); i++) {
+			this.jTableTabular.addRowSelectionInterval(addRows.get(i), addRows.get(i));
 			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		}
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -604,7 +606,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			}
 			queryParameter.setAttributeFilter(stringBuilder.toString());
 		}
-
 
 		Recordset statisticRecordset = recordset.getDataset().query(queryParameter);
 

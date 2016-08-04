@@ -1,19 +1,12 @@
 package com.supermap.desktop.CtrlAction;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.HDFSTableModel;
 import com.supermap.desktop.dialog.RenameDialog;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.StringUtilities;
 

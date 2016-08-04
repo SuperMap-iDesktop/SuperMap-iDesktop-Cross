@@ -26,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.http.download.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.utilities.CommonUtilities;
@@ -230,7 +231,8 @@ public class CreateFile {
 		try {
 			// 重命名文件
 			String webFile = url;
-			String rootPath = webFile.substring(webFile.lastIndexOf("/v1") + 3, webFile.lastIndexOf("/"));
+			String rootPath = webFile.replace(WebHDFS.defaultURL, "");
+			rootPath = "/"+rootPath.replace(name, "");
 			if (!rootPath.endsWith("/")) {
 				rootPath += "/";
 			}
