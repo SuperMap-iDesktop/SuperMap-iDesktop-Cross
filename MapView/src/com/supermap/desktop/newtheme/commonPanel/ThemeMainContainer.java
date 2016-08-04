@@ -415,6 +415,8 @@ public class ThemeMainContainer extends JPanel {
 			} else if (null != panel && false == selected) {
 				panel.setRefreshAtOnce(selected);
 			}
+			GlobalParameters.setThemeRefresh(selected);
+			GlobalParameters.save();
 		}
 	}
 }

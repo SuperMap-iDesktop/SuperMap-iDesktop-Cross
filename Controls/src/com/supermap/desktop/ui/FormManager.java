@@ -265,6 +265,9 @@ public class FormManager implements IFormManager {
 			form.clean();
 			((DockingWindow) form).close();
 			((DockingWindow) form).removeAll();
+			if (childForms.size() == 0) {
+				setActiveForm(null);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -315,7 +318,7 @@ public class FormManager implements IFormManager {
 
 		try {
 			if (isSave) {
-				result = this.saveForms(forms, GlobalParameters.isShowFormClosingInfo());
+				result = this.saveForms(forms, true);
 			} else {
 				for (int i = 0; i < forms.length; i++) {
 					forms[i].setNeedSave(false);
@@ -372,7 +375,7 @@ public class FormManager implements IFormManager {
 		boolean result = false;
 
 		try {
-			if (notify) {
+			if (notify && GlobalParameters.isShowFormClosingInfo()) {
 				ArrayList<IForm> canSaveForms = new ArrayList<IForm>();
 				for (IForm child : forms) {
 					boolean canSaved = false;

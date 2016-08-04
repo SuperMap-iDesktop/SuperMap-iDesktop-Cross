@@ -1,8 +1,5 @@
 package com.supermap.desktop.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -22,6 +19,9 @@ import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatasetUtilities {
 
@@ -148,6 +148,13 @@ public class DatasetUtilities {
 	 */
 	public static void removeByDatasets(Layers layers, Dataset... closeDatasets) {
 		for (Dataset datasetTemp : closeDatasets) {
+			try {
+				if (layers.getCount() <= 0) {
+					return;
+				}
+			} catch (Exception e) {
+				return;
+			}
 			if (datasetTemp.getType() == DatasetType.NETWORK || datasetTemp.getType() == DatasetType.NETWORK3D) {
 				removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset());
 			}

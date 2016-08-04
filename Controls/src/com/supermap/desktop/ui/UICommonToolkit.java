@@ -216,7 +216,7 @@ public class UICommonToolkit {
 			SmOptionPane smOptionPane = getSmOptionPane();
 			smOptionPane.showMessageDialog(message);
 //			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-//			JOptionPane.showMessageDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//			JOptionPane.showMessageDialog(parent, message, GlobalParameters.getDesktopTitle(),
 //					JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -243,7 +243,7 @@ public class UICommonToolkit {
 		try {
 			result = getSmOptionPane().showConfirmDialog(message);
 //			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//			result = JOptionPane.showConfirmDialog(parent, message, GlobalParameters.getDesktopTitle(),
 //					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -281,7 +281,7 @@ public class UICommonToolkit {
 		try {
 			result = getSmOptionPane().showConfirmDialogWithCancle(message);
 //			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//			result = JOptionPane.showConfirmDialog(parent, message, GlobalParameters.getDesktopTitle(),
 //					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -294,7 +294,7 @@ public class UICommonToolkit {
 		try {
 			result = getSmOptionPane().showConfirmDialogYesNo(message);
 //			Component parent = (Component) Application.getActiveApplication().getMainFrame();
-//			result = JOptionPane.showConfirmDialog(parent, message, CoreProperties.getString("String_MessageBox_Title"),
+//			result = JOptionPane.showConfirmDialog(parent, message, GlobalParameters.getDesktopTitle(),
 //					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

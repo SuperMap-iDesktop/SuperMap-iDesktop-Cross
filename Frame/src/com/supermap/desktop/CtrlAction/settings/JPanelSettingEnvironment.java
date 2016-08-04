@@ -167,7 +167,12 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		smTextFieldLegitTitle.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				return !StringUtilities.isNullOrEmpty(textFieldValue);
+
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+					return false;
+				}
+				changedValues.add(smTextFieldLegitTitle);
+				return true;
 			}
 
 			@Override
@@ -249,6 +254,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 					fileChooserControlFileCache.getEditor().setText(directories);
 //					changedValues.add(fileChooserControlFileCache);
 				}
+
 			}
 		});
 		fileChooserControlFileCache.getEditor().getDocument().addDocumentListener(new DocumentListener() {

@@ -4,7 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.frame.FrameProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -57,7 +56,7 @@ public class JDialogSettings extends SmDialog {
 	private void initComponents() {
 		this.setSize(700, 450);
 		this.setLocationRelativeTo(null);
-		this.setTitle(CoreProperties.getString("String_MessageBox_Title"));
+		this.setTitle(GlobalParameters.getDesktopTitle());
 		listModel = new DefaultListModel<>();
 		jList.setModel(listModel);
 		jList.setCellRenderer(new DefaultListCellRenderer() {

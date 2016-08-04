@@ -1,7 +1,7 @@
 package com.supermap.desktop.dialog;
 
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -31,7 +31,7 @@ public class SmOptionPane extends SmDialog {
 	 * 与JOptionPane结果保持一致，此处用int类型存储结果
 	 */
 	private int result = JOptionPane.CLOSED_OPTION;
-	private String defaultTitle = CoreProperties.getString("String_MessageBox_Title");
+	private String defaultTitle = GlobalParameters.getDesktopTitle();
 
 	private static final Dimension size = new Dimension((int) (350 * SystemPropertyUtilities.getSystemSizeRate()),
 			(int) (160 * SystemPropertyUtilities.getSystemSizeRate()));
