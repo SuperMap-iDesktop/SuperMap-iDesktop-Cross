@@ -51,14 +51,14 @@ public class DataExportCallable extends UpdateProgressCallable {
 				}
 				tempExportSetting.setOverwrite(isCover);
 				tempExportSetting.setSourceData(dataset);
-				// 暂时不支持导出为Microsoft类型的文件
-				if (export.getTargetFileType() == FileType.CSV) {
-					tempExportSetting.setTargetFileType(FileType.DBF);
-					filePath = export.getFilePath() + export.getFileName() + DataConversionProperties.getString("string_index_pause")
-							+ FileType.DBF;
-				} else {
+//				// 暂时不支持导出为Microsoft类型的文件
+//				if (export.getTargetFileType() == FileType.CSV) {
+//					tempExportSetting.setTargetFileType(FileType.DBF);
+//					filePath = export.getFilePath() + export.getFileName() + DataConversionProperties.getString("string_index_pause")
+//							+ FileType.DBF;
+//				} else {
 					tempExportSetting.setTargetFileType(export.getTargetFileType());
-				}
+//				}
 				tempExportSetting.setTargetFilePath(filePath);
 				ExportSettings exportSettings = dataExport.getExportSettings();
 				exportSettings.add(tempExportSetting);

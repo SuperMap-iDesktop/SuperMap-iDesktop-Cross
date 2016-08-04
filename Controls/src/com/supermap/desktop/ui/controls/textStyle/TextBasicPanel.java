@@ -788,7 +788,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	 * 初始化旋转角度左侧textField值
 	 */
 	private void initTextFieldFontItalicAngl() {
-		this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(new Double(0), new Double(0), new Double(360), new Double(1)));
 		this.spinnerInclinationAngl.setEnabled(false);
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerInclinationAngl.getEditor();
 		this.textFieldFontItalicAngl = numberEditor.getTextField();
@@ -801,7 +801,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 	 * 初始化倾斜角度左侧textField值
 	 */
 	private void initTextFieldFontRotation() {
-		this.spinnerRotationAngl.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		this.spinnerRotationAngl.setModel(new SpinnerNumberModel(new Double(0), new Double(0), new Double(360), new Double(1)));
 		NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerRotationAngl.getEditor();
 		this.textFieldFontRotationAngl = numberEditor.getTextField();
 		if (null != this.textStyle) {

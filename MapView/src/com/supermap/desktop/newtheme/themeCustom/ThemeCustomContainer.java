@@ -13,6 +13,7 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.*;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 /**
@@ -99,46 +100,46 @@ public class ThemeCustomContainer extends ThemeChangePanel {
 			if (e.getSource().equals(comboBoxFillSymbol.getComponent(0))) {
 				// 填充风格
 				initComboBoxFillStyle();
-			}else if(e.getSource().equals(comboBoxFillOpaque.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillOpaque.getComponent(0))) {
 				// 透明度
 				initComboBoxFillOpaque();
-			}else if (e.getSource().equals(comboBoxFillForeColor.getComponent(0))) {
+			} else if (e.getSource().equals(comboBoxFillForeColor.getComponent(0))) {
 				// 填充前景色
 				initComboBoxFillForeColor();
-			}else if(e.getSource().equals(comboBoxFillBackColor.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillBackColor.getComponent(0))) {
 				// 填充背景色
 				initComboBoxFillBackColor();
-			}else if(e.getSource().equals(comboBoxFillGradientMode.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillGradientMode.getComponent(0))) {
 				// 渐变类型
 				initComboBoxFillGradientMode();
-			}else if(e.getSource().equals(comboBoxFillGradientAngle.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillGradientAngle.getComponent(0))) {
 				// // 渐变角度
 				initComboBoxFillGradientAngle();
-			}else if(e.getSource().equals(comboBoxFillGradientOffsetRatioX.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillGradientOffsetRatioX.getComponent(0))) {
 				// 渐变水平偏移
 				initComboBoxFillGradientOffsetRatioX();
-			}else if(e.getSource().equals(comboBoxFillGradientOffsetRatioY.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxFillGradientOffsetRatioY.getComponent(0))) {
 				// 渐变垂直偏移
 				initComboBoxFillGradientOffsetRatioY();
-			}else if(e.getSource().equals(comboBoxLineSymbol.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxLineSymbol.getComponent(0))) {
 				// 线风格
 				initComboBoxLineSymbol();
-			}else if(e.getSource().equals(comboBoxLineColor.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxLineColor.getComponent(0))) {
 				// 线颜色
 				initComboBoxLineColor();
-			}else if(e.getSource().equals(comboBoxLineWidth.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxLineWidth.getComponent(0))) {
 				// 线宽
 				initComboBoxLineWidth();
-			}else if(e.getSource().equals(comboBoxMarkerSymbol.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxMarkerSymbol.getComponent(0))) {
 				// 符号风格
 				initComboBoxMarkerSymbol();
-			}else if(e.getSource().equals(comboBoxMarkerColor.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxMarkerColor.getComponent(0))) {
 				// 符号颜色
 				initComboBoxMarkerColor();
-			}else if(e.getSource().equals(comboBoxMarkerSize.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxMarkerSize.getComponent(0))) {
 				// 符号大小
 				initComboBoxMarkerSize();
-			}else if(e.getSource().equals(comboBoxMarkerAngle.getComponent(0))){
+			} else if (e.getSource().equals(comboBoxMarkerAngle.getComponent(0))) {
 				// 符号角度
 				initComboBoxMarkerAngle();
 			}

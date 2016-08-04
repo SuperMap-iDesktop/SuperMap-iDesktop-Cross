@@ -1,34 +1,20 @@
 package com.supermap.desktop.http;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URLConnection;
-import java.net.URLEncoder;
+import java.net.*;
 import java.text.MessageFormat;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.utilities.CommonUtilities;
 
 /**
- * <b>function:</b> 单线程下载文件
+ * <b>function:</b> 删除文件
  * 
- * @author hoojo
- * @createDate 2011-9-22 下午02:55:10
- * @file DownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
  */
 @SuppressWarnings("deprecation")
 public class DeleteFile {
@@ -107,7 +93,7 @@ public class DeleteFile {
 		conn.setRequestProperty("Accept-Language", "en-us,en;q=0.7,zh-cn;q=0.3");
 		conn.setRequestProperty("Accept-Encoding", "utf-8");
 		conn.setRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
-		conn.setRequestProperty("Keep-Alive", "300");
+		conn.setRequestProperty("Keep-Alive", "3000");
 		conn.setRequestProperty("connnection", "keep-alive");
 		conn.setRequestProperty("If-Modified-Since", "Fri, 02 Jan 2009 17:00:05 GMT");
 		conn.setRequestProperty("If-None-Match", "\"1261d8-4290-df64d224\"");

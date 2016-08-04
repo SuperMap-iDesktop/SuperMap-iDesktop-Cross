@@ -1,6 +1,7 @@
 package com.supermap.desktop.Interface;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -52,7 +53,7 @@ public interface IFormTabular extends IForm {
 	/**
 	 * 添加选中项
 	 */
-	public void addRows(int[] addRows);
+	public void addRows(List<Integer> tempRows);
 
 	/**
 	 * 获取选中行的数目

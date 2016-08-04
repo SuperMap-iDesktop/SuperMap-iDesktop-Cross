@@ -67,6 +67,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private JLabel labelVertical = new JLabel();
 	private JTextField textFieldVertical = new JTextField();// 纵向
 	private JLabel labelVerticalUnity = new JLabel();
+	private JLabel labelFontSpaceUnity = new JLabel();
 	private Dimension textFieldDimension = new Dimension(400, 20);
 	private Dimension labelDimension = new Dimension(30, 20);
 	private transient Map map;
@@ -151,7 +152,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		} else {
 			labelUnity.setText("0.1mm");
 		}
-		this.comboBoxLineDirection.setEnabled(themeLabel.isAngleFixed());
+		this.comboBoxLineDirection.setEnabled(!themeLabel.isAngleFixed());
 	}
 
 	private void initTextFieldAndSpinnerValue() {
@@ -226,6 +227,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.checkBoxRemoveRepeatLabel.setText(MapViewProperties.getString("String_RemoveRepeat"));
 		this.labelLineDirection.setText(MapViewProperties.getString("String_LineDirection"));
 		this.labelFontSpace.setText(MapViewProperties.getString("String_SpaceRatio"));
+		this.labelFontSpaceUnity.setText(MapViewProperties.getString("String_SpaceRatioUnity"));
 		this.labelRepeatInterval.setText(MapViewProperties.getString("String_RepeatInterval"));
 		this.checkBoxRepeatIntervalFixed.setText(MapViewProperties.getString("String_RepeatIntervalFixed"));
 		this.checkBoxOptimizeMutilineAlignment.setText(MapViewProperties.getString("String_OptimizeMutilineAlignment"));
@@ -254,7 +256,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	private void resetCheckBoxState(boolean isRotate) {
 		this.checkBoxFixedFontAngl.setEnabled(isRotate);
 		this.checkBoxRemoveRepeatLabel.setEnabled(isRotate);
-		this.comboBoxLineDirection.setEnabled(isRotate && themeLabel.isAngleFixed());
+		this.comboBoxLineDirection.setEnabled(isRotate && !themeLabel.isAngleFixed());
 		this.spinnerFontSpace.setEnabled(isRotate);
 		this.textFieldRepeatInterval.setEnabled(isRotate);
 		this.checkBoxRepeatIntervalFixed.setEnabled(isRotate);
@@ -388,12 +390,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.textFieldRepeatInterval.setText("0");
 		this.labelUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
 		this.labelUnity.setPreferredSize(labelDimension);
+		this.labelFontSpaceUnity.setPreferredSize(labelDimension);
 		panelTemp.add(this.checkBoxFixedFontAngl,      new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
 		panelTemp.add(this.checkBoxRemoveRepeatLabel,  new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10));
 		panelTemp.add(this.labelLineDirection,         new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
 		panelTemp.add(this.comboBoxLineDirection,      new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelTemp.add(this.labelFontSpace,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
-		panelTemp.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTemp.add(this.spinnerFontSpace,           new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
+		panelTemp.add(this.labelFontSpaceUnity,        new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,0,2,0));
 		panelTemp.add(this.labelRepeatInterval,        new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 0).setInsets(2,10,2,10));
 		panelTemp.add(this.textFieldRepeatInterval,    new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(45, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
 		panelTemp.add(this.labelUnity,                 new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 0).setInsets(2,0,2,0));
@@ -663,7 +667,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		private void setFixedFontAngl() {
 			boolean isFixedFontAngl = checkBoxFixedFontAngl.isSelected();
 			themeLabel.setAngleFixed(isFixedFontAngl);
-			comboBoxLineDirection.setEnabled(isFixedFontAngl);
+			comboBoxLineDirection.setEnabled(!isFixedFontAngl);
 		}
 
 		/**

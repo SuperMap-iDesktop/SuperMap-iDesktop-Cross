@@ -25,13 +25,10 @@ public class BindProperty implements IBindProperty {
 
 	private void registEvents() {
 		this.geometrySelectChangedListener = new GeometrySelectChangedListener() {
-			
+
 			@Override
 			public void geometrySelectChanged(GeometrySelectChangedEvent arg0) {
-				if (arg0.getCount()>0) {
-					queryTabularTable();
-				}
-				
+				queryTabularTable();
 			}
 		};
 		removeEvents();
@@ -41,25 +38,27 @@ public class BindProperty implements IBindProperty {
 	private void queryTabularTable() {
 		// 地图选择集对应属性表
 		if (this.map.findSelection(true).length > 0) {
-			Recordset recordset = this.map.findSelection(true)[0].toRecordset();
-			int[] rows = new int[recordset.getAllFeatures().size()];
+			Recordset tempRecordset = this.map.findSelection(true)[0].toRecordset();
+			int[] rows = new int[tempRecordset.getAllFeatures().size()];
 			int i = 0;
-			recordset.moveFirst();
-			while (!recordset.isEOF()) {
-				rows[i] = recordset.getID();
+			tempRecordset.moveFirst();
+			while (!tempRecordset.isEOF()) {
+				rows[i] = tempRecordset.getID();
 				i++;
-				recordset.moveNext();
+				tempRecordset.moveNext();
 			}
 			if (rows.length > 0) {
-				firePropertySelectChanged(rows,recordset.getDataset());
+				firePropertySelectChanged(rows, tempRecordset.getDataset());
 			}
-			recordset.dispose();
+			tempRecordset.dispose();
+		} else {
+			firePropertySelectChanged(new int[0], null);
 		}
 
 	}
 
 	@Override
-	public void refreshMap(Selection selection,Layer layer) {
+	public void refreshMap(Selection selection, Layer layer) {
 		Selection tempSelection = selection;
 		Recordset recordset = tempSelection.toRecordset();
 		Geometry geo = recordset.getGeometry();
@@ -72,7 +71,7 @@ public class BindProperty implements IBindProperty {
 					new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop()) });
 			rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
 		}
-		if (null!=map.getLayers().get(layer.getName())) {
+		if (null != map.getLayers().get(layer.getName())) {
 			map.getLayers().get(layer.getName()).setSelection(tempSelection);
 			map.setCenter(rectangle2d.getCenter());
 			map.refresh();
@@ -144,12 +143,12 @@ public class BindProperty implements IBindProperty {
 	}
 
 	@Override
-	public void firePropertySelectChanged(int[] rows,Dataset dataset) {
+	public void firePropertySelectChanged(int[] rows, Dataset dataset) {
 		if (null != propertySelectChangeListener) {
 			Vector<PropertySelectChangeListener> listeners = propertySelectChangeListener;
 			int count = listeners.size();
 			for (int i = 0; i < count; i++) {
-				listeners.elementAt(i).selectChanged(rows,dataset);
+				listeners.elementAt(i).selectChanged(rows, dataset);
 			}
 		}
 	}
