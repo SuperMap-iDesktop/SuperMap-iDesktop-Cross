@@ -25,7 +25,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -85,6 +84,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			}
 		}
 	};
+	private JDialogTopoAdvance advance;
 
 	public JDialogTopoBuildRegions(JFrame owner, boolean model) {
 		super(owner, model);
@@ -459,7 +459,9 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				String datasourceName = this.comboBoxDatasource.getSelectItem();
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
-				JDialogTopoAdvance advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
+				if (advance == null || advance.getTargetDataset() != targetDataset) {
+					advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
+				}
 				advance.setVisible(true);
 			}
 		} catch (Exception e) {

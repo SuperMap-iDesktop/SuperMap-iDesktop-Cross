@@ -21,10 +21,10 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class JDialogDatasetLineTopo extends SmDialog {
 
@@ -60,6 +60,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 
 	private transient CommonCheckBoxListener checkBoxListener = new CommonCheckBoxListener();
 	private transient CommonButtonListener commonButtonListener = new CommonButtonListener();
+	private JDialogTopoAdvance advance;
 
 	public JDialogDatasetLineTopo(JFrame owner, boolean model) {
 		super(owner, model);
@@ -183,18 +184,26 @@ public class JDialogDatasetLineTopo extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			JComponent c = (JComponent) e.getSource();
 			if (c == buttonSure) {
-				topologyProcess();
+
+				Dataset selectedDataset = comboBoxDataset.getSelectedDataset();
+				if (selectedDataset != null) {
+					ArrayList<Dataset> datasets = new ArrayList<>();
+					datasets.add(selectedDataset);
+					java.util.List<Dataset> closedDatasets = DatasetUIUtilities.sureDatasetClosed(datasets);
+					if (closedDatasets.size() > 0) {
+						topologyProcess();
+					} else {
+						return;
+					}
+				}
 				unregistActionListener();
 				dispose();
-			}
-			if (c == buttonQuite) {
+			} else if (c == buttonQuite) {
 				dispose();
 				unregistActionListener();
-			}
-			if (c == buttonMore) {
+			} else if (c == buttonMore) {
 				openAdvanceDialog(topologyProcessingOptions);
-			}
-			if (c == comboBoxDatasource) {
+			} else if (c == comboBoxDatasource) {
 				changeComboBoxItem();
 			}
 		}
@@ -253,7 +262,9 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			String datasourceName = this.comboBoxDatasource.getSelectItem();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
-			JDialogTopoAdvance advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
+			if (advance == null || advance.getTargetDataset() != targetDataset) {
+				advance = new JDialogTopoAdvance(this, true, topologyProcessingOptions, (DatasetVector) targetDataset, datasource);
+			}
 			advance.setVisible(true);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
