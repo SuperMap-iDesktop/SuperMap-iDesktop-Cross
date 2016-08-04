@@ -45,7 +45,7 @@
   <themeStyle default="白色">
   </themeStyle>
   <!--SuperMap iDesktop 的标题及图标-->
-  <mainForm icon="" text="SuperMap iDesktop 8C">
+  <mainForm icon="" text="">
   </mainForm>
   <!--应用程序的区域语言-->
   <culture currentCulture="zh-CN" currentUICulture="zh-CN">
