@@ -23,7 +23,7 @@
 		// Extend our default options with those provided.
 		var opts = $.extend(defaults, options);
 		//Assign current element to variable, in this case is UL element
- 		var $this = $(this);
+ 		$this = $(this);
  		
  		//add a mark [+] to a multilevel menu
  		$this.find("li").each(function() {
@@ -85,37 +85,56 @@
   		});
 
 		function sidebarUnfold() {
-			$this.find("li a").click(function () {
+			$this.find("a").click(function () {
+
+				//获取点击<a>标签时，展开目录节点的id
 				function OpenNode() {
-					var OpenNodeId = '';
-					$this.find("li strong").each(function() {
+					OpenNodeId = '';
+					$this.find("li strong").each(function () {
 						if ($(this).parent().find("ul:first").is(":visible") != 0) {
-							if(OpenNodeId==''){
-								OpenNodeId= $(this).parent().attr('id');
-							}else {
-								OpenNodeId +=',' + $(this).parent().attr('id');
+							if (OpenNodeId == '') {
+								OpenNodeId = $(this).parent().attr('id');
+							} else {
+								OpenNodeId += ',' + $(this).parent().attr('id');
 							}
 						}
 					});
 					return OpenNodeId;
 				}
 
-				var redhref = $(this).attr('href');
-				redhref += '?'+OpenNode();
-				$(this).attr('href',redhref);
-			});
+				function Dochref(hrefpara) {
+					var isDochref = false;
+					var hrefpara1 = hrefpara.split("/");
+					var hrefpara2 = hrefpara1[hrefpara1.length - 1];
+					var hrefpara3 = hrefpara2.split(".");
+					var dochref = hrefpara3[hrefpara3.length - 2];
+					$this.find("li").each(function () {
+						isDochref = $(this).attr('id') == dochref;
+						return !isDochref;
+					});
 
-			var UrlParam = window.location.search.substr(1);
-			var UrlParamArray = UrlParam.split(',');
-			for (var i= 0;i < UrlParamArray.length;i++) {
-				var nodeid = document.getElementById(UrlParamArray[i]);
-				var nodeidjQuery = $(nodeid);
-				nodeidjQuery.find("ul:first").show();
-				nodeidjQuery.find("span:first").html(opts.openedSign);
-			}
+					return isDochref;
+				}
+
+				var redhref = $(this).attr('href');
+				if (Dochref(redhref) == true) {
+					redhref += '?' + OpenNode();
+					$(this).attr('href', redhref);
+				}
+			});
+		}
+		//刷新目录树，展开地址栏查询参数出记录的目录。
+		var UrlParam = window.location.search.substr(1);
+		var UrlParamArray = UrlParam.split(',');
+		for (var i = 0; i < UrlParamArray.length; i++) {
+			var nodeid = document.getElementById(UrlParamArray[i]);
+			var nodeidjQuery = $(nodeid);
+			nodeidjQuery.find("ul:first").show();
+			nodeidjQuery.find("span:first").html(opts.openedSign);
 		}
 		sidebarUnfold();
 
+		//当前页面对应目录高亮显示。
 		function sidebarHighlight() {
 			var currenthref = window.location.href;
 			var hrefparams = currenthref.split("/");
@@ -124,15 +143,58 @@
 			var filename = hrefparam2[hrefparam2.length-2];
 			$this.find("li").each(function () {
 				if ($(this).attr('id') == filename) {
+					if ($(this).parent().parent().find("ul:first").is(":visible") == 0){
+						$(this).parent().parent().find("ul:first").show()
+					}
 					$(this).find("a").css('color','#33a3dc');
 				}
 			});
 		}
 		sidebarHighlight();
+	},
+		expand: function () {
+			function articleclick() {
+				$this.find("a").click(function () {
+					/*function OpenNode() {
+					 $this.find("li strong").each(function () {
+					 if ($(this).parent().find("ul:first").is(":visible") != 0) {
+					 if (OpenNodeId == '') {
+					 OpenNodeId = $(this).parent().attr('id');
+					 } else {
+					 OpenNodeId += ',' + $(this).parent().attr('id');
+					 }
+					 }
+					 });
+					 return OpenNodeId;
+					 }*/
 
+					function Dochref(hrefpara) {
+						var isDochref = false;
+						var hrefpara1 = hrefpara.split("/");
+						var hrefpara2 = hrefpara1[hrefpara1.length - 1];
+						var hrefpara3 = hrefpara2.split(".");
+						var dochref = hrefpara3[hrefpara3.length - 2];
+						$this.find("li").each(function () {
+							isDochref = $(this).attr('id') == dochref;
+							return !isDochref;
+						});
+
+						return isDochref;
+					}
+
+					var redhref = $(this).attr('href');
+					if (Dochref(redhref) == true) {
+						redhref += '?' + OpenNode();
+						$(this).attr('href', redhref);
+					}
+				});
+			}
+
+			articleclick();
 		}
 
 	});
+
 })(jQuery);
 
 $(document).ready(function() {
@@ -142,5 +204,11 @@ $(document).ready(function() {
 		closedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-right"></i>',
 		openedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-down"></i>'
 	});
+	/*$(".article").accordion({
+		accordion:false,
+		speed: 500,
+		closedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-right"></i>',
+		openedSign: '&nbsp;&nbsp;<i class="fa fa-chevron-circle-down"></i>'
+	});*/
 });
 

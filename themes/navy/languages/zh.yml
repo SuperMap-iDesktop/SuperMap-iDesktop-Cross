@@ -63,9 +63,17 @@ sidebar:
     Thematic: 专题图
     ThematicMap: 专题图概述
     CreatThematicMap: 创建专题图
+    ModifyMap: 修改专题图
+    ModifyThematicMap: 公用属性
     UniqueValueProperties: 单值专题图
     RangesMapGroupDia: 分段专题图
+    LabelProperties: 标签专题图
+    GraphProperties: 统计专题图
+    GraduatedSymbolProperties: 等级符号专题图
+    DotDensityProperties: 点密度专题图
+    CustomizeProperties: 自定义专题图
     Style: 设置图层风格
+    OverlapDisplayed: 自动避让与压盖
     LayerSetting: 图层属性
     Measuregroup: 地图量算
     MapSetting_Basic: 地图属性-基本

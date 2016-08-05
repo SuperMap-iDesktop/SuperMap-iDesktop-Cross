@@ -43,9 +43,17 @@ docs:
     Thematic:
       ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
       CreatThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CreatThematicMap.html
+    ModifyMap:
+      ModifyThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/ModifyThematicMap.html
       UniqueValueProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/UniqueValueProperties.html
       RangesMapGroupDia: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/RangesMapGroupDia.html
+      LabelProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/LabelProperties.html
+      GraphProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraphProperties.html
+      GraduatedSymbolProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraduatedSymbolProperties.html
+      DotDensityProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/DotDensityProperties.html
+      CustomizeProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CustomizeProperties.html
     Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
+    OverlapDisplayed: /SuperMap-iDesktop-Cross/docs/Map/OverlapDisplayed.html
     Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
     LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
     MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
