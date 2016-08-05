@@ -1,20 +1,33 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.EventObject;
-
-import javax.swing.*;
-
-import com.supermap.data.*;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.geometryoperation.*;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
-import com.supermap.desktop.utilities.*;
-import com.supermap.mapping.*;
-import com.supermap.ui.*;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Selection;
+import com.supermap.ui.GeometryAddedListener;
+import com.supermap.ui.GeometryDeletedListener;
+import com.supermap.ui.GeometryEvent;
+import com.supermap.ui.GeometryModifiedListener;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.EventObject;
 
 public class TextStyleEditor extends AbstractEditor {
 
@@ -50,8 +63,17 @@ public class TextStyleEditor extends AbstractEditor {
 		try {
 			ArrayList<Layer> layers = MapUtilities.getLayers(map);
 			for (Layer layer : layers) {
-				if (layer.getDataset() == getActiveRecordset(map).getDataset() && layer.isEditable()) {
-					return true;
+				Recordset recordset = getActiveRecordset(map);
+				try {
+					if (recordset != null && layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
+						return true;
+					}
+				} catch (Exception e) {
+					// ignore
+				} finally {
+					if (recordset != null) {
+						recordset.dispose();
+					}
 				}
 			}
 		} catch (Exception ignore) {

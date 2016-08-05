@@ -171,7 +171,7 @@ public class DataCell extends JPanel {
 	 */
 	@Override
 	public String toString() {
-		return getDataName();
+		return getDataName() == null ? "" : getDataName();
 	}
 
 	public String getText() {
