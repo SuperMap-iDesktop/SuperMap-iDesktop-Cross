@@ -42,7 +42,7 @@ public class DownloadProgressCallable extends UpdateProgressCallable {
 			isSucceed = false;
 			if (isNew) {
 				// 是新任务，则将任务节点添加到xml文件中
-				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getRealName() + ",RealName=" + downloadInfo.getRealName()
+				String property = "URL=" + this.downloadInfo.getUrl() + ",FileName=" + downloadInfo.getFileName() + ",RealName=" + downloadInfo.getRealName()
 						+ ",FilePath=" + downloadInfo.getFilePath() + ",FileSize=" + downloadInfo.getFileSize();
 				ManagerXMLParser.addTask(TaskEnum.DOWNLOADTASK, property);
 			}

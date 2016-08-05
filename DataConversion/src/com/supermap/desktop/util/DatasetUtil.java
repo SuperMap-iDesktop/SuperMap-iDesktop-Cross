@@ -19,9 +19,6 @@ public class DatasetUtil {
 		String result_dataset = dataset;
 		String result_fileType = fileType;
 		String tempStr = "string_dataset_" + dataset.toLowerCase();
-		if ("GRD".equalsIgnoreCase(result_fileType)) {
-			result_fileType = "GRID";
-		}
 		String tempFileType = "String_FileType" + fileType;
 		if (tempStr.contains(dataset.toLowerCase()) && 0 == flag) {
 			result_dataset = DataConversionProperties.getString(tempStr);
@@ -102,7 +99,7 @@ public class DatasetUtil {
 		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeTAB"))) {
 			fileType = FileType.TAB;
 		}
-		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeGRID"))) {
+		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeGRD"))) {
 			fileType = FileType.GRD;
 		}
 		if (datasetName.equals(DataConversionProperties.getString("String_FileTypeE00"))) {
