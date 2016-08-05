@@ -319,7 +319,7 @@ public class GlobalParameters {
 	//endregion
 
 	//region LogInformation
-	private static boolean isLogInformation = false;
+	private static boolean isLogInformation = true;
 
 	public static void setLogInformation(boolean value) {
 		isLogInformation = value;
