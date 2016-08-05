@@ -462,7 +462,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 			jPanel.add(new JLabel(CommonProperties.getString("String_Label_Pixel")), new GridBagConstraintsHelper(2,0,1,1).setFill(GridBagConstraints.NONE).setWeight(1,1).setAnchor(GridBagConstraints.CENTER).setInsets(2,10,0,0));
 
 			this.panelEffect.add(jPanel,                 new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
-			this.spinnerOutLineWidth.setEnabled(this.checkBoxOutline.isSelected());
+//			this.spinnerOutLineWidth.setEnabled(this.checkBoxOutline.isSelected());
 		}else{
 			this.panelEffect.add(this.checkBoxOutline,        new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(2,10,0,10));
 		}
@@ -534,6 +534,10 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 				}
 			}
 		});
+		if (null != this.textStyle) {
+			spinnerOutLineWidth.setEnabled(textStyle.getOutline());
+			textfieldOutLineWidth.setText(String.valueOf(textStyle.getOutlineWidth()));
+		}
 	}
 
 	private void initTextStyleTypeMap() {
