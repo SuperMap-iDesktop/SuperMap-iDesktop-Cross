@@ -1,19 +1,16 @@
 package com.supermap.desktop;
 
 import com.supermap.data.Charset;
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
 import com.supermap.data.EngineInfo;
 import com.supermap.data.EngineType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
@@ -21,19 +18,9 @@ import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.realspace.Layer3DDataset;
-import com.supermap.realspace.Layer3Ds;
-import com.supermap.realspace.Scene;
-import com.supermap.realspace.TerrainLayers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CommonToolkit {
@@ -42,6 +29,35 @@ public class CommonToolkit {
 		// 默认实现
 	}
 
+	public static Tolerance getDefaultTolerance(DatasetVector dataset) {
+		Tolerance tolerance = null;
+		try {
+			if (dataset != null) {
+				tolerance = new Tolerance();
+				Double extent = Math.max(dataset.getBounds().getHeight(), dataset.getBounds().getWidth());
+
+				tolerance.setNodeSnap(extent / 1000000.0f);
+				tolerance.setDangle(extent / 10000.0f);
+				tolerance.setExtend(extent / 10000.0f);
+				tolerance.setSmallPolygon(0.0);
+				tolerance.setGrain(extent / 1000.0f);
+				if (dataset.getType() == DatasetType.REGION) {
+					boolean isOpen = dataset.isOpen();
+					int fieldIndex = dataset.getFieldInfos().indexOf("SMAREA");
+					if (fieldIndex >= 0) {
+						Double maxArea = dataset.statistic(fieldIndex, StatisticMode.MAX);
+						tolerance.setSmallPolygon(maxArea / 1000000.0f);
+					}
+					if (!isOpen) {
+						dataset.close();
+					}
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		return tolerance;
+	}
 	public static class ApplicationInfoWrap {
 		private ApplicationInfoWrap() {
 			// 不提供构造函数

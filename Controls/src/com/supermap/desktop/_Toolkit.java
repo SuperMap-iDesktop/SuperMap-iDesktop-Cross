@@ -1,18 +1,14 @@
 package com.supermap.desktop;
 
 public class _Toolkit {
-  private _Toolkit(){
-	  //  默认实现
-  }
-	
+	private _Toolkit() {
+		//  默认实现
+	}
+
 	//  此类将不再保留，请全部移植到 UICommonToolkit 里面
-	
-	
-	
-	
-	
-	
-//	const String g_strDesktopPublicKeyToken = "7cd7dcc384397b6e";
+
+
+	//	const String g_strDesktopPublicKeyToken = "7cd7dcc384397b6e";
 //    const String g_strTestPublicKeyToken = "23d8e753f5ab9fa4";
 //    #region Construct
 //    static _Toolkit()
@@ -2436,42 +2432,7 @@ public class _Toolkit {
 //    //}}  [7/17/2012 huchenpu]
 //
 //    // 获取数据集的默认容限
-//    public static Tolerance GetDefaultTolerance(DatasetVector dataset)
-//    {
-//        Tolerance tolerance = null;
-//        try
-//        {
-//            if (dataset != null)
-//            {
-//                tolerance = new Tolerance();
-//                Double extent = Math.Max(dataset.Bounds.Height, dataset.Bounds.Width);
-//
-//                tolerance.NodeSnap = extent / 1000000.0f;
-//                tolerance.Dangle = extent / 10000.0f;
-//                tolerance.Extend = extent / 10000.0f;
-//                tolerance.SmallPolygon = 0.0;
-//                tolerance.Grain = extent / 1000.0f;
-//                if (dataset.Type == DatasetType.Region)
-//                {
-//                    boolean isOpen = dataset.IsOpen;
-//                    int fieldIndex = dataset.FieldInfos.IndexOf("SMAREA");
-//                    if (fieldIndex >= 0)
-//                    {
-//                        Double maxArea = dataset.Statistic(fieldIndex, StatisticMode.Max);
-//                        tolerance.SmallPolygon = maxArea / 1000000.0f;
-//                    }
-//                    if (!isOpen)
-//                    {
-//                        dataset.Close();
-//                    }
-//                }
-//            }
-//        }
-//        catch
-//        {
-//        }
-//        return tolerance;
-//    }
+
 //
 //    /// <summary>
 //    /// 数据集排序

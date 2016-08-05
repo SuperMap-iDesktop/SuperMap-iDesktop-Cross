@@ -299,14 +299,15 @@ public class DataImportFrame extends SmDialog {
 	private void initPanelImportInfo() {
 		//@formatter:off
 		this.panelImportInfo.setLayout(new GridBagLayout());
-		JScrollPane pane = new JScrollPane();
+		JPanel pane = new JPanel();
+		pane.setLayout(new GridBagLayout());
 		this.panelImportInfo.add(this.labelTitle,   new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5).setWeight(1, 0));
 		this.panelImportInfo.add(pane,              new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.BOTH).setWeight(1, 1));
-		this.panelImportInfo.add(this.buttonImport, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setWeight(100, 0));
+		this.panelImportInfo.add(this.buttonImport, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		this.panelImportInfo.add(this.buttonClose,  new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5,0,5,5).setWeight(0, 0));
 		this.labelTitle.setPreferredSize(new Dimension(200,30));
 		pane.setBorder(null);
-		pane.setViewportView(panelParams);
+		pane.add(panelParams, new GridBagConstraintsHelper(0,0).setAnchor(GridBagConstraints.CENTER).setWeight(1,1).setFill(GridBagConstraints.BOTH));
 		this.panelParams.setLayout(new GridBagLayout());
 		this.panelParams.add(this.labelRemind, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER));
 		this.buttonImport.setEnabled(false);
@@ -316,8 +317,8 @@ public class DataImportFrame extends SmDialog {
 	private void initContentPane() {
 		//@formatter:off
 		this.contentPane.setLayout(new GridBagLayout());
-		this.contentPane.add(this.panelFiles,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(25, 1));
-		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(75, 1));
+		this.contentPane.add(this.panelFiles,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		//@formatter:on
 	}
 
