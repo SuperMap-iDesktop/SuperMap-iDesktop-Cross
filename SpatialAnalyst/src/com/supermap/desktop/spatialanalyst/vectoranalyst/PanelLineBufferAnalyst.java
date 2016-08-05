@@ -81,8 +81,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean isArcSegmentSuitable = true;
 	private boolean isComboBoxDatasetNotNull = true;
 	private boolean isShowInMap = true;
-	private boolean isRadiusNumSuitable;
-	private boolean isHasResultDatasource;
+	private boolean isRadiusNumSuitable = true;
+	private boolean isHasResultDatasource = true;
 	private DoSome some;
 	private DatasetVector resultDatasetVector;
 	private BufferProgressCallable bufferProgressCallable;

@@ -54,6 +54,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		formMap.showPopupMenu();
 		removeListener();
 		mapControl.remove(transparentBackground);
+		mapControl.setAction(Action.SELECT2);
 		TransparentBackground.queryGridMap.remove(mapControl);
 	}
 
@@ -61,7 +62,9 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-				hideTransparentBackground();
+				if (TransparentBackground.queryGridMap.containsKey(mapControl)) {
+					hideTransparentBackground();
+				}
 				mapControl.getMap().getTrackingLayer().clear();
 				mapControl.getMap().refresh();
 				mapControl.removeKeyListener(keyAdapter);
@@ -74,8 +77,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				hideTransparentBackground();
-			}
-			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 				getQueryInfo(e);
 			}
 		}
@@ -131,8 +133,8 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		Application
 				.getActiveApplication()
 				.getOutput()
-				.output(MessageFormat.format(SpatialAnalystProperties.getString("String_GridValueMessage"), pointCount)+ "\n" 
-						+transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
+				.output(MessageFormat.format(SpatialAnalystProperties.getString("String_GridValueMessage"), pointCount) + "\n"
+						+ transparentBackground.getjLabelDatasource().getText() + "\n" + transparentBackground.getjLabelDataset().getText() + "\n"
 						+ transparentBackground.getjLabelPointX().getText() + "\n" + transparentBackground.getjLabelPointY().getText() + "\n"
 						+ transparentBackground.getjLabelRowOfGrid().getText() + "\n" + transparentBackground.getjLabelColumnOfGrid().getText() + "\n"
 						+ transparentBackground.getjLabelGridValue().getText().replace("<html>", "").replace("<br>", "").replace("<html>", "") + "\n");
