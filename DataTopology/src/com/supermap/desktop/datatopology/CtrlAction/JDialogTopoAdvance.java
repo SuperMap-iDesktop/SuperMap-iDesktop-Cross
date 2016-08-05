@@ -1,15 +1,8 @@
 package com.supermap.desktop.datatopology.CtrlAction;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.Recordset;
-import com.supermap.data.Tolerance;
+import com.supermap.data.*;
 import com.supermap.data.topology.TopologyProcessingOptions;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CommonProperties;
@@ -22,11 +15,11 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -78,7 +71,7 @@ public class JDialogTopoAdvance extends SmDialog {
 	}
 
 	public JDialogTopoAdvance(JDialog owner, boolean model, TopologyProcessingOptions topologyProcessingOptions, DatasetVector targetDataset,
-	                          Datasource datasource) {
+			Datasource datasource) {
 		super(owner, model);
 		setLocationRelativeTo(owner);
 		this.datasource = datasource;
@@ -236,18 +229,16 @@ public class JDialogTopoAdvance extends SmDialog {
 			Tolerance tolerance = targetDataset.getTolerance();
 			double nodeSnap;
 			if (Math.abs(tolerance.getNodeSnap()) < 1E-10) {
-				nodeSnap = CommonToolkit.getDefaultTolerance(targetDataset).getNodeSnap();
+				nodeSnap = DatasetUtilities.getDefaultTolerance(targetDataset).getNodeSnap();
 			} else {
 				nodeSnap = tolerance.getNodeSnap();
 			}
-			textFieldVertexTorance.setText(DoubleUtilities.toString(Math.abs(nodeSnap), 3));
-			textFieldUndershootsTolerance.setText(DoubleUtilities.toString(Math.abs(tolerance.getExtend()) < 1E-10 ? nodeSnap * 100 : tolerance.getExtend(), 3));
-			textFieldOvershootsTolerance.setText(DoubleUtilities.toString(Math.abs(tolerance.getDangle()) < 1E-10 ? nodeSnap * 100 : tolerance.getDangle(), 3));
+			textFieldVertexTorance.setText(String.valueOf(Math.abs(nodeSnap)));
+			textFieldUndershootsTolerance.setText(String.valueOf(Math.abs(tolerance.getExtend()) < 1E-10 ? nodeSnap * 100 : tolerance.getExtend()));
+			textFieldOvershootsTolerance.setText(String.valueOf(Math.abs(tolerance.getDangle()) < 1E-10 ? nodeSnap * 100 : tolerance.getDangle()));
 			labelOvershootsToleranceUnit.setText(LengthUnit.convertForm(targetDataset.getPrjCoordSys().getCoordUnit()).toString());
 			labelUndershootsToleranceUnit.setText(LengthUnit.convertForm(targetDataset.getPrjCoordSys().getCoordUnit()).toString());
 			labelVertexToleranceUnit.setText(LengthUnit.convertForm(targetDataset.getPrjCoordSys().getCoordUnit()).toString());
-
-
 		}
 	}
 

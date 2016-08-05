@@ -1223,7 +1223,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		for (int i = 0; i < selectRows.length; i++) {
 			recordset.moveTo(selectRows[i]);
 			if (UpdateColumnUtilties.isMathInfo(method)) {
-				newValue = UpdateColumnUtilties.getMathInfo(method, recordset.getFieldValue(fristField).toString(), textFieldX.getText(), fieldType);
+				String textFieldXInfo = "";
+				if (null != textFieldX.getText()) {
+					textFieldXInfo = textFieldX.getText();
+				}
+				String fieldStr = "";
+				if (null != recordset.getFieldValue(fristField)) {
+					fieldStr = recordset.getFieldValue(fristField).toString();
+				}
+				newValue = UpdateColumnUtilties.getMathInfo(method, fieldStr, textFieldXInfo, fieldType);
 			} else if (UpdateColumnUtilties.isObjectConnect(method)) {
 				newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
 			} else if (UpdateColumnUtilties.isDaysInfo(method)) {
@@ -1461,8 +1469,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			// 字节型
 			if (StringUtilities.isNullOrEmptyString(expression)) {
 				newValue = (byte) 0;
-			} else {
+			} else if (Convert.toInteger(expression) < 128) {
 				newValue = (byte) Convert.toInteger(expression);
+			} else if (Convert.toInteger(expression) >= 128) {
+				newValue = (byte) 0;
 			}
 			updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
 		}

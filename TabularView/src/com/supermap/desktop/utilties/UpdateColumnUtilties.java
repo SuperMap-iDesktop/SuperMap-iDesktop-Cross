@@ -124,6 +124,9 @@ public class UpdateColumnUtilties {
 
 	public static Object getMathInfo(String method, String expression, String expression1, FieldType fieldType) {
 		Object desValue = null;
+		if (StringUtilities.isNullOrEmpty(expression)) {
+			expression = "0";
+		}
 		if ("Abs".equals(method)) {
 			desValue = Math.abs(Convert.toDouble(expression));
 		} else if ("Sqrt".equals(method)) {
@@ -282,8 +285,8 @@ public class UpdateColumnUtilties {
 				return desValue;
 			}
 			desValue = (desValue instanceof Double && Double.compare((double) desValue, 0.0) > 0) ? true : false;
-		}else if(fieldType.equals(FieldType.BYTE)){
-			desValue = (byte)Convert.toInteger(desValue.toString());
+		} else if (fieldType.equals(FieldType.BYTE)) {
+			desValue = (byte) Convert.toInteger(desValue.toString());
 		}
 
 		return desValue;
