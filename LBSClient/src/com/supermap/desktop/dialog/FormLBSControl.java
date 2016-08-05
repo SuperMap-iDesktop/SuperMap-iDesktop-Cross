@@ -3,6 +3,7 @@ package com.supermap.desktop.dialog;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -42,6 +43,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private JPopupMenu contextPopuMenu;
 	private JLabel labelServerURL;
 	private JTextField textServerURL;
+	private JButton buttonForward;
 	private JButton buttonRefresh;
 	private JButton buttonBack;
 	private JList rowHeader;
@@ -142,6 +144,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.textServerURL = new JTextField(WebHDFS.webURL);
 		this.table = new JTable();
 		this.buttonRefresh = new JButton("Refresh");
+		this.buttonForward = new JButton("Forward");
 		this.buttonBack = new JButton("Back");
 		this.buttonBack.setEnabled(false);
 		HDFSTableModel tableModel = new HDFSTableModel();
@@ -172,16 +175,18 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		// @formatter:off
 		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(gLayout.createSequentialGroup().addComponent(this.labelServerURL)
+						.addComponent(this.buttonBack ,60, 60, 60)
+						.addComponent(this.buttonForward,60,60,60)
 						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.buttonRefresh, 60, 60, 60)
-						.addComponent(this.buttonBack ,60, 60, 60))
+						.addComponent(this.buttonRefresh, 60, 60, 60))
 				.addComponent(scrollPaneFormLBSControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		gLayout.setVerticalGroup(gLayout.createSequentialGroup()
 				.addGroup(gLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelServerURL)
+						.addComponent(this.buttonBack , GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.buttonForward, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonBack, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(scrollPaneFormLBSControl, 100, 200, Short.MAX_VALUE));
 		scrollPaneFormLBSControl.setViewportView(table);
 		this.setLayout(gLayout);
@@ -422,7 +427,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					webFile = define.getName();
 					if (define.isDir()) {
 						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
-							deleteDir(webFile, webURL, define);
+							deleteDir(webURL, webFile);
 						}
 					} else {
 						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
@@ -459,7 +464,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					for (int index : indexs) {
 						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
 						if (define != null) {
-							deleteDir(define.getName(), webURL, define);
+							deleteDir(webURL, define.getName());
 						}
 					}
 				} else if (fileCount != indexs.length
@@ -469,7 +474,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					for (int index : indexs) {
 						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
 						if (define != null && define.isDir()) {
-							deleteDir(define.getName(), webURL, define);
+							deleteDir(webURL, define.getName());
 						} else {
 							DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
 							deleteFile.deleteFile();
@@ -489,17 +494,15 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	/**
 	 * 删除文件夹时需要先删除文件夹下面的文件然后再删除空文件夹
 	 * 
-	 * @param webFile
 	 * @param webURL
-	 * @param define
+	 * @param webFile
 	 * @throws IOException
 	 */
-	private void deleteDir(String webFile, String webURL, HDFSDefine define) throws IOException {
+	private void deleteDir(String webURL, String webFile) throws IOException {
 		// 删除文件夹下的所有文件
-		webFile = addSeparator(webURL);
-		String url = webURL + define.getName();
+		webURL = addSeparator(webURL);
+		String url = webURL + webFile;
 		deleteFilesInDir(url);
-		
 	}
 
 	private String addSeparator(String url) {
@@ -513,7 +516,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private void deleteFilesInDir(String url) throws IOException {
 		url = addSeparator(url);
 		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
-		for (WebHDFS.HDFSDefine tempDefine : defines) {
+		for (HDFSDefine tempDefine : defines) {
 			if (tempDefine.isDir()) {
 				url = addSeparator(url);
 				deleteFilesInDir(url + tempDefine.getName());
@@ -522,16 +525,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				deleteFile.deleteFile();
 			}
 		}
-	}
-
-	private boolean hasFile(String url) {
-		addSeparator(url);
-		boolean hasFile = false;
-		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
-		if (defines.length > 0) {
-			hasFile = true;
-		}
-		return hasFile;
 	}
 
 	@Override
