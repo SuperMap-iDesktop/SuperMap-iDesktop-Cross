@@ -67,12 +67,14 @@ import com.supermap.desktop.ui.ImportPanelVECTOR;
 import com.supermap.desktop.ui.ImportPanelVandG;
 import com.supermap.desktop.ui.ImportPanelWOR;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -918,15 +920,21 @@ public class CommonFunction {
 	}
 
 	public static void replace(JPanel parentPanel, JPanel newPanel) {
+//		parentPanel.removeAll();
+//		parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		for (int i = 0; i < parentPanel.getComponentCount(); i++) {
-			if (parentPanel.getComponent(i) instanceof JScrollPane) {
-				((JScrollPane) parentPanel.getComponent(i)).setViewportView(newPanel);
+			if (parentPanel.getComponent(i) instanceof JPanel) {
+
+				JPanel panel = (JPanel) parentPanel.getComponent(i);
+				panel.removeAll();
+				panel.add(newPanel, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+				break;
 			}
 		}
 		// parentPanel.add(newPanel, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraintsHelper.HORIZONTAL)
 		// .setWeight(1, 3));
 		// newPanel.setPreferredSize(new Dimension(483,300));
-		parentPanel.updateUI();
+		parentPanel.repaint();
 	}
 
 	/**

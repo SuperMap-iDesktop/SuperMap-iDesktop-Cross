@@ -182,45 +182,54 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
 	private void initPanelDatapath() {
 		//@formatter:off
 		this.panelDatapath.setLayout(new GridBagLayout());
-		this.panelDatapath.add(this.labelDatapath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
-		this.panelDatapath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(70, 1).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelDatapath.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelDatapath.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
-		this.panelDatapath.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 5).setIpad(20, 0));
+		this.panelDatapath.add(this.labelDatapath,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 5, 5));
+		this.panelDatapath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(10, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDatapath.add(this.buttonProperty,    new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+
+		this.panelDatapath.add(this.labelCharset,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0, 10, 10, 5));
+		this.panelDatapath.add(this.comboBoxCharset,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0, 0, 10, 5).setIpad(20, 0));
+		this.panelDatapath.add(new JPanel(), new GridBagConstraintsHelper(2,1,1,1).setAnchor(GridBagConstraints.WEST).setWeight(0,1).setFill(GridBagConstraints.BOTH));
 		//@formatter:on
 	}
 
 	private void initPanelTransform() {
 		//@formatter:off
 		this.panelTransform.setLayout(new GridBagLayout());
-		this.panelTransform.add(this.labelImportModel,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.panelTransform.add(this.comboBoxImportModel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelTransform.add(this.checkBoxImageInfo,   new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 1).setInsets(10, 0, 10, 10));
+		this.panelTransform.add(this.labelImportModel,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 10, 5).setIpad(30,0));
+		this.panelTransform.add(this.comboBoxImportModel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(10, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelTransform.add(this.checkBoxImageInfo,   new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(10, 0, 10, 10));
 		//@formatter:on
 	}
 
 	private void initPanelDataSet() {
 		//@formatter:off
 		this.panelDataSet.setLayout(new GridBagLayout());
-		this.panelDataSet.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
-		this.panelDataSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelDataSet.add(this.labelDataset,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
-		this.panelDataSet.add(this.textFieldResultSet, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelDataSet.add(this.labelCodingType,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
-		this.panelDataSet.add(this.comboBoxCodingType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDataSet.add(this.labelDatasource,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 5, 5).setIpad(18,0));
+		this.panelDataSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDataSet.add(this.labelDataset,       new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 0, 5, 5));
+		this.panelDataSet.add(this.textFieldResultSet, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+
+		this.panelDataSet.add(this.labelCodingType,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(0, 10, 10, 5).setIpad(18,0));
+		this.panelDataSet.add(this.comboBoxCodingType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelDataSet.add(new JPanel(), new GridBagConstraintsHelper(2,1,2,1).setAnchor(GridBagConstraints.WEST).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
 	private void initPanelArcGIS() {
+		this.setLayout(new GridBagLayout());
+		this.add(this.panelDataSet, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+		this.add(this.panelTransform, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+		this.add(this.panelDatapath, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 		//@formatter:off
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(this.panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE).
-				addComponent(this.panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
-				.addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
-				.addComponent(this.panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
-		this.setLayout(groupLayout);
+//		GroupLayout groupLayout = new GroupLayout(this);
+//		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+//				.addComponent(this.panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE).
+//				addComponent(this.panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
+//		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelDataSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+//				.addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+//				.addComponent(this.panelDatapath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+//		this.setLayout(groupLayout);
 		//@formatter:on
 	}
 
