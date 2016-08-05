@@ -42,10 +42,12 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private JPopupMenu contextPopuMenu;
 	private JLabel labelServerURL;
 	private JTextField textServerURL;
+	private JButton buttonForward;
 	private JButton buttonRefresh;
 	private JButton buttonBack;
 	private JList rowHeader;
 	private ArrayList<String> urlList;
+	private int urlPathIndex = 0;
 	private JScrollPane scrollPaneFormLBSControl;
 	private JTable table;
 	private Boolean isOutputFolder = false;
@@ -75,6 +77,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 			refresh();
 		}
 	};
+	private ActionListener urlActionListener;
 
 	public FormLBSControl(String title, Icon icon, Component component) {
 		super(title, icon, component);
@@ -85,8 +88,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	}
 
 	private void initializeResources() {
-		this.buttonRefresh.setText(LBSClientProperties.getString("String_Refresh"));
-		this.buttonBack.setText(LBSClientProperties.getString("String_Back"));
+		this.buttonBack.setIcon(CommonUtilities.getImageIcon("back.png"));
+		this.buttonForward.setIcon(CommonUtilities.getImageIcon("forward.png"));
+		this.buttonRefresh.setIcon(CommonUtilities.getImageIcon("scale.png"));
 	}
 
 	public FormLBSControl(String title) {
@@ -98,9 +102,42 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	}
 
 	private void registEvents() {
+		this.urlActionListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == buttonBack) {
+					if (urlPathIndex > 0) {
+						urlPathIndex--;
+						if (null != urlList.get(urlPathIndex)) {
+							listDirectory(urlList.get(urlPathIndex), "", getIsOutputFolder());
+							textServerURL.setText(urlList.get(urlPathIndex));
+							buttonForward.setEnabled(true);
+							if (urlPathIndex <= 0) {
+								buttonBack.setEnabled(false);
+							}
+						}
+					}
+				} else {
+					if (urlPathIndex < urlList.size() - 1) {
+						urlPathIndex++;
+						if (null != urlList.get(urlPathIndex)) {
+							listDirectory(urlList.get(urlPathIndex), "", getIsOutputFolder());
+							textServerURL.setText(urlList.get(urlPathIndex));
+							buttonBack.setEnabled(true);
+							if (urlPathIndex >= urlList.size() - 1) {
+								buttonForward.setEnabled(false);
+							}
+						}
+					}
+				}
+			}
+		};
 		removeEvents();
 		this.textServerURL.addKeyListener(this.textServerURLKeyListener);
-		this.buttonRefresh.addActionListener(refreshListener);
+		this.buttonBack.addActionListener(this.urlActionListener);
+		this.buttonForward.addActionListener(this.urlActionListener);
+		this.buttonRefresh.addActionListener(this.refreshListener);
 		this.table.addMouseListener(this.tableMouseListener);
 		this.table.addKeyListener(new KeyAdapter() {
 
@@ -132,6 +169,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 	private void removeEvents() {
 		this.textServerURL.removeKeyListener(this.textServerURLKeyListener);
+		this.buttonRefresh.removeActionListener(refreshListener);
 		this.table.removeMouseListener(this.tableMouseListener);
 	}
 
@@ -140,10 +178,14 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.scrollPaneFormLBSControl = new JScrollPane();
 		this.labelServerURL = new JLabel();
 		this.textServerURL = new JTextField(WebHDFS.webURL);
+		this.urlList = new ArrayList<String>();
+		urlList.add(WebHDFS.webURL);
 		this.table = new JTable();
-		this.buttonRefresh = new JButton("Refresh");
-		this.buttonBack = new JButton("Back");
+		this.buttonRefresh = new JButton();
+		this.buttonForward = new JButton();
+		this.buttonBack = new JButton();
 		this.buttonBack.setEnabled(false);
+		this.buttonForward.setEnabled(false);
 		HDFSTableModel tableModel = new HDFSTableModel();
 		this.table.setModel(tableModel);
 		this.table.putClientProperty("terminateEditOnFocusLost", true);
@@ -172,16 +214,18 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		// @formatter:off
 		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(gLayout.createSequentialGroup().addComponent(this.labelServerURL)
+						.addComponent(this.buttonBack ,60, 60, 60)
+						.addComponent(this.buttonForward,60,60,60)
 						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.buttonRefresh, 60, 60, 60)
-						.addComponent(this.buttonBack ,60, 60, 60))
+						.addComponent(this.buttonRefresh, 60, 60, 60))
 				.addComponent(scrollPaneFormLBSControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		gLayout.setVerticalGroup(gLayout.createSequentialGroup()
 				.addGroup(gLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelServerURL)
+						.addComponent(this.buttonBack , GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.buttonForward, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonBack, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(scrollPaneFormLBSControl, 100, 200, Short.MAX_VALUE));
 		scrollPaneFormLBSControl.setViewportView(table);
 		this.setLayout(gLayout);
@@ -217,6 +261,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					}
 					String url = this.listDirectory(root, name, this.getIsOutputFolder());
 					this.textServerURL.setText(url);
+					urlList.add(url);
+					urlPathIndex++;
+					this.buttonBack.setEnabled(true);
 				} else {
 					this.buttonOKActionPerformed();
 				}
@@ -420,31 +467,32 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
 				if (define != null) {
 					webFile = define.getName();
-					if (define.isDir()) {
-						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
-							deleteDir(webFile, webURL, define);
-						}
-					} else {
-						if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-							DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
-							deleteFile.deleteFile();
-						}
+					// if (define.isDir()) {
+					// if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) ==
+					// JOptionPane.OK_OPTION) {
+					// deleteDir(webURL, webFile);
+					// }
+					// } else {
+					if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
+						DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
+						deleteFile.deleteFile();
 					}
 				}
+				// }
 			} else if (table.getSelectedRowCount() > 1) {
 				int[] indexs = table.getSelectedRows();
-				int dirCount = 0;
-				int fileCount = 0;
-				for (int i = 0; i < indexs.length; i++) {
-					HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(i);
-					if (define.isDir()) {
-						dirCount++;
-					} else {
-						fileCount++;
-					}
-				}
-				if (fileCount == indexs.length
-						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFiles"), indexs.length)) == JOptionPane.OK_OPTION) {
+				// int dirCount = 0;
+				// int fileCount = 0;
+				// for (int i = 0; i < indexs.length; i++) {
+				// HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(i);
+				// if (define.isDir()) {
+				// dirCount++;
+				// } else {
+				// fileCount++;
+				// }
+				// }
+				// if (fileCount == indexs.length&&
+				if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFiles"), indexs.length)) == JOptionPane.OK_OPTION) {
 					// 全是文件
 					for (int index : indexs) {
 						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
@@ -453,29 +501,32 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 							deleteFile.deleteFile();
 						}
 					}
-				} else if (dirCount == indexs.length
-						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirs"), indexs.length)) == JOptionPane.OK_OPTION) {
-					// 全是文件夹
-					for (int index : indexs) {
-						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-						if (define != null) {
-							deleteDir(define.getName(), webURL, define);
-						}
-					}
-				} else if (fileCount != indexs.length
-						&& dirCount != indexs.length
-						&& UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), fileCount, dirCount)) == JOptionPane.OK_OPTION) {
-					// 有文件和文件夹
-					for (int index : indexs) {
-						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-						if (define != null && define.isDir()) {
-							deleteDir(define.getName(), webURL, define);
-						} else {
-							DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
-							deleteFile.deleteFile();
-						}
-					}
 				}
+				// else if (dirCount == indexs.length
+				// && UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDirs"), indexs.length)) ==
+				// JOptionPane.OK_OPTION) {
+				// // 全是文件夹
+				// for (int index : indexs) {
+				// HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+				// if (define != null) {
+				// deleteDir(webURL, define.getName());
+				// }
+				// }
+				// } else if (fileCount != indexs.length
+				// && dirCount != indexs.length
+				// && UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteSelect"), fileCount, dirCount)) ==
+				// JOptionPane.OK_OPTION) {
+				// // 有文件和文件夹
+				// for (int index : indexs) {
+				// HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+				// if (define != null && define.isDir()) {
+				// deleteDir(webURL, define.getName());
+				// } else {
+				// DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+				// deleteFile.deleteFile();
+				// }
+				// }
+				// }
 			}
 
 		} catch (Exception ex) {
@@ -489,17 +540,15 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	/**
 	 * 删除文件夹时需要先删除文件夹下面的文件然后再删除空文件夹
 	 * 
-	 * @param webFile
 	 * @param webURL
-	 * @param define
+	 * @param webFile
 	 * @throws IOException
 	 */
-	private void deleteDir(String webFile, String webURL, HDFSDefine define) throws IOException {
+	private void deleteDir(String webURL, String webFile) throws IOException {
 		// 删除文件夹下的所有文件
-		webFile = addSeparator(webURL);
-		String url = webURL + define.getName();
+		webURL = addSeparator(webURL);
+		String url = webURL + webFile;
 		deleteFilesInDir(url);
-		
 	}
 
 	private String addSeparator(String url) {
@@ -513,7 +562,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private void deleteFilesInDir(String url) throws IOException {
 		url = addSeparator(url);
 		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
-		for (WebHDFS.HDFSDefine tempDefine : defines) {
+		for (HDFSDefine tempDefine : defines) {
 			if (tempDefine.isDir()) {
 				url = addSeparator(url);
 				deleteFilesInDir(url + tempDefine.getName());
@@ -522,16 +571,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 				deleteFile.deleteFile();
 			}
 		}
-	}
-
-	private boolean hasFile(String url) {
-		addSeparator(url);
-		boolean hasFile = false;
-		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(url, "", getIsOutputFolder());
-		if (defines.length > 0) {
-			hasFile = true;
-		}
-		return hasFile;
 	}
 
 	@Override

@@ -89,7 +89,7 @@ public class BatchUploadFile extends Thread {
 						this.endPos[i] = size;
 					}
 					this.segmentLengths[i] = this.endPos[i] - this.startPos[i];
-					Application.getActiveApplication().getOutput().output("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
+					LogUtils.log("start-end Position[" + i + "]: " + this.startPos[i] + "-" + this.endPos[i]);
 				}
 			}
 			if (!stop) {

@@ -15,14 +15,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 /**
  * <b>function:</b> 单线程上传文件
  * 
- * @author hoojo
- * @createDate 2011-9-22 下午02:55:10
- * @file DownloadFile.java
- * @package com.hoo.download
- * @project MultiThreadDownLoad
- * @blog http://blog.csdn.net/IBM_hoojo
- * @email hoojo_@126.com
- * @version 1.0
  */
 public class UploadFile extends Thread {
 

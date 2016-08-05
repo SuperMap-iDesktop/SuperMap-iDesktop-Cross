@@ -1,10 +1,12 @@
 package com.supermap.desktop.http;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.text.MessageFormat;
 
 import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -34,21 +36,36 @@ public class DeleteFile {
 		this.isDirectory = isDirctory;
 	}
 
+	public DeleteFile() {
+
+	}
+
+
 	@SuppressWarnings({ "deprecation", "resource" })
 	// 删除文件
 	public void deleteFile() {
+
+		String webFile = url;
+		String locationURL = "";
+		if (!webFile.endsWith("/")) {
+			webFile += "/";
+		}
+		String tempFileName = "";
 		try {
-			String webFile = url;
-			String locationURL = "";
-			if (!webFile.endsWith("/")) {
-				webFile += "/";
-			}
-			String tempFileName = URLEncoder.encode(this.fileName, "UTF-8");
-			webFile = String.format("%s%s?user.name=root&op=DELETE", webFile, tempFileName);
-			HttpClient client = new DefaultHttpClient();
+			tempFileName = URLEncoder.encode(this.fileName, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		webFile = String.format("%s%s?user.name=root&op=DELETE", webFile, tempFileName);
+		delete(webFile);
+
+	}
+
+	public void delete(String webFile) {
+		try {
 			HttpDelete requestPut = new HttpDelete(webFile);
 
-			HttpResponse response = client.execute(requestPut);
+			HttpResponse response = new DefaultHttpClient().execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				if (isDirectory) {
 					Application.getActiveApplication().getOutput()
@@ -68,7 +85,6 @@ public class DeleteFile {
 				}
 				isDeleted = false;
 			}
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

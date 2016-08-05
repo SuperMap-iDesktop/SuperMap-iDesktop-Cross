@@ -187,11 +187,11 @@ public class DataExportFrame extends SmDialog {
 				temp.setFilePath(exportSetting.getTargetFilePath());
 				temp.setState(DataConversionProperties.getString("string_change"));
 				FileType fileType = null;
-				// 暂时不支持导出为Microsoft类型的文件
-				if (0 < temp.getFileTypes().length && temp.getFileTypes()[0] != FileType.CSV) {
+				// 暂时不支持导出为Microsoft,geojson类型的文件
+				if (0 < temp.getFileTypes().length && temp.getFileTypes()[0] != FileType.CSV && temp.getFileTypes()[0] != FileType.GEOJSON) {
 					fileType = temp.getFileTypes()[0];
-				} else if (1 < temp.getFileTypes().length && temp.getFileTypes()[0] == FileType.CSV) {
-					fileType = temp.getFileTypes()[1];
+				} else if (2 < temp.getFileTypes().length && temp.getFileTypes()[0] == FileType.CSV && temp.getFileTypes()[1] == FileType.GEOJSON) {
+					fileType = temp.getFileTypes()[2];
 				} else {
 					fileType = FileType.NONE;
 				}
