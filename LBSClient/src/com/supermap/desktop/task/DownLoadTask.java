@@ -77,7 +77,7 @@ public class DownLoadTask extends Task {
 				DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).stopDownload();
 				removeDownloadInfoItem();
 				// 未完成的任务暂存在恢复任务列表中，可实现恢复
-				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getRealName());
+				ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getFileName());
 			} else {
 				// 继续下载
 				setCancel(false);
@@ -86,7 +86,7 @@ public class DownLoadTask extends Task {
 		}
 		if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
 			removeDownloadInfoItem();
-			ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getRealName());
+			ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, this.fileInfo.getUrl(), this.fileInfo.getFileName());
 			return;
 		}
 
@@ -157,7 +157,7 @@ public class DownLoadTask extends Task {
 							CommonUtilities.getActiveLBSControl().refresh();
 						}
 						buttonRun.setEnabled(false);
-						ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getUrl(),fileInfo.getRealName());
+						ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getUrl(),fileInfo.getFileName());
 					}
 				}
 

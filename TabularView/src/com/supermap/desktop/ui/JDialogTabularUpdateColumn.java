@@ -42,7 +42,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private JLabel labelFieldType;// 字段类型
 	private JLabel labelUpdateScope;// 更新范围
 	private JRadioButton radioButtonUpdateColumn;// 整列更新
-	private JRadioButton checkBoxUpdateSelect;// 更新选中记录
+	private JRadioButton radioButtonUpdateSelect;// 更新选中记录
 	private JLabel labelSourceOfField;// 数值来源
 	private JComboBox<String> comboBoxSourceOfField;
 	private JCheckBox checkBoxInversion;// 反向
@@ -226,11 +226,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		initComboBoxUpdateField();
 		this.labelUpdateScope = new JLabel();
 		this.radioButtonUpdateColumn = new JRadioButton();
-		this.checkBoxUpdateSelect = new JRadioButton();
+		this.radioButtonUpdateSelect = new JRadioButton();
 		boolean updateColumn = tabular.getjTableTabular().getSelectedRowCount() > 0
 				&& tabular.getjTableTabular().getSelectedRowCount() == tabular.getRowCount() ? true : false;
 		this.radioButtonUpdateColumn.setSelected(updateColumn);
-		this.checkBoxUpdateSelect.setSelected(!updateColumn);
+		this.radioButtonUpdateSelect.setSelected(!updateColumn);
 		initComboBoxOperationField();
 		initComobBoxMethod();
 		initTextFieldOperationEQ();
@@ -238,6 +238,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN)) {
 			replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
 			setComboBoxSecondFieldItems(FieldType.BOOLEAN);
+			this.buttonApply.setEnabled(true);
 			this.textFieldOperationEQ.setText("True");
 		}
 		if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.LONGBINARY)) {
@@ -254,7 +255,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.contentPanel.add(this.labelFieldType,         new GridBagConstraintsHelper(5, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(10,10,5,10));
 		this.contentPanel.add(this.labelUpdateScope,       new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
 		this.contentPanel.add(this.radioButtonUpdateColumn,   new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0,10,5,0));
-		this.contentPanel.add(this.checkBoxUpdateSelect,   new GridBagConstraintsHelper(3, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0,10,5,10));
+		this.contentPanel.add(this.radioButtonUpdateSelect,   new GridBagConstraintsHelper(3, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0,10,5,10));
 		this.contentPanel.add(this.labelSourceOfField,     new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0,10,5,0));
 		this.contentPanel.add(this.comboBoxSourceOfField,  new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 1).setInsets(0,10,5,0).setFill(GridBagConstraints.HORIZONTAL));
 		this.contentPanel.add(this.checkBoxInversion,      new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 1).setInsets(0,10,5,10));
@@ -370,7 +371,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.labelOperationFieldType = new JLabel();
 		this.comboBoxOperationField.removeAllItems();
 		for (int i = 0; i < tabular.getRecordset().getFieldCount(); i++) {
-			this.comboBoxOperationField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
+			if (!tabular.getRecordset().getFieldInfos().get(i).getType().equals(FieldType.LONGBINARY)) {
+				this.comboBoxOperationField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
+			}
 		}
 		this.comboBoxOperationField.setEnabled(false);
 		this.labelOperationField.setPreferredSize(new Dimension(80, 23));
@@ -462,7 +465,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.labelUpdataField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelUpdataField"));
 		this.labelUpdateScope.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelUpdataBounds"));
 		this.radioButtonUpdateColumn.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_radioButtonUpdateTotalColumn"));
-		this.checkBoxUpdateSelect.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_radioButtonUpdateSelectedRows"));
+		this.radioButtonUpdateSelect.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_radioButtonUpdateSelectedRows"));
 		this.labelSourceOfField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelUpdataMode"));
 		this.checkBoxInversion.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_checkBoxReverse"));
 		this.labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelField"));
@@ -477,7 +480,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.comboBoxUpdateField.addItemListener(this.updateFieldListener);
 		this.comboBoxSourceOfField.addItemListener(this.comboBoxSourceOfFieldListener);
 		this.radioButtonUpdateColumn.addActionListener(this.checkBoxListener);
-		this.checkBoxUpdateSelect.addActionListener(this.checkBoxListener);
+		this.radioButtonUpdateSelect.addActionListener(this.checkBoxListener);
 		this.checkBoxInversion.addActionListener(this.checkBoxListener);
 		this.comboBoxOperationField.addItemListener(this.comboBoxOperationFieldListener);
 		this.comboBoxMethod.addItemListener(this.comboBoxMethodListener);
@@ -501,7 +504,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		this.comboBoxUpdateField.removeItemListener(this.updateFieldListener);
 		this.comboBoxSourceOfField.removeItemListener(this.comboBoxSourceOfFieldListener);
 		this.radioButtonUpdateColumn.removeActionListener(this.checkBoxListener);
-		this.checkBoxUpdateSelect.removeActionListener(this.checkBoxListener);
+		this.radioButtonUpdateSelect.removeActionListener(this.checkBoxListener);
 		this.checkBoxInversion.removeActionListener(this.checkBoxListener);
 		this.comboBoxOperationField.removeItemListener(this.comboBoxOperationFieldListener);
 		this.comboBoxMethod.removeItemListener(this.comboBoxMethodListener);
@@ -570,8 +573,18 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		checkBoxInversion.setEnabled(false);
 		labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelField"));
 		comboBoxOperationField.setEnabled(true);
+		FieldType updateFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
+		if (updateFieldType.equals(FieldType.DATETIME)) {
+			// 待更新字段为日期型时，运算字段只能有日期型字段
+			this.comboBoxOperationField.removeAllItems();
+			for (int i = 0; i < tabular.getRecordset().getFieldInfos().getCount(); i++) {
+				if (tabular.getRecordset().getFieldInfos().get(i).getType().equals(FieldType.DATETIME)) {
+					this.comboBoxOperationField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
+				}
+			}
+		}
 		labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
-				.get(comboBoxOperationField.getSelectedIndex()).getType()));
+				.get(comboBoxOperationField.getSelectedItem().toString()).getType()));
 		labelMethod.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelOperatorFunction"));
 		comboBoxMethod.setEnabled(true);
 		resetMethodItemsForMathModel();
@@ -630,7 +643,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelFirstField"));
 		comboBoxOperationField.setEnabled(true);
 		labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
-				.get(comboBoxOperationField.getSelectedIndex()).getType()));
+				.get(comboBoxOperationField.getSelectedItem().toString()).getType()));
 		labelMethod.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelOperatorType"));
 		updateComboboxMethod();
 		comboBoxMethod.setEnabled(true);
@@ -652,7 +665,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelField"));
 		comboBoxOperationField.setEnabled(true);
 		labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
-				.get(comboBoxOperationField.getSelectedIndex()).getType()));
+				.get(comboBoxOperationField.getSelectedItem().toString()).getType()));
 		labelMethod.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelOperatorType"));
 		updateComboboxMethod();
 		comboBoxMethod.setEnabled(true);
@@ -726,17 +739,22 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void resetTextFieldOperationEQ() {
 		String operationField = comboBoxOperationField.getSelectedItem().toString();
 		String method = comboBoxMethod.getSelectedItem().toString();
+		boolean isRevert = checkBoxInversion.isSelected();
 		if (StringUtilities.isNullOrEmptyString(textFieldSecondField.getText()) || !StringUtilities.isNumber(textFieldSecondField.getText())
 				&& FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
-			operationField = operationField + method + "0";
-		}
-		if (!StringUtilities.isNullOrEmptyString(textFieldSecondField.getText()) && StringUtilities.isNumber(textFieldSecondField.getText())
-				&& FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
-			operationField = operationField + method + textFieldSecondField.getText();
+			if (isRevert) {
+				operationField = "0" + method + operationField;
+			} else {
+				operationField = operationField + method + "0";
+			}
 		}
 		if (!StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())
 				&& !FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
-			operationField = operationField + method + textFieldSecondField.getText();
+			if (isRevert) {
+				operationField = textFieldSecondField.getText() + method + operationField;
+			} else {
+				operationField = operationField + method + textFieldSecondField.getText();
+			}
 		}
 		textFieldOperationEQ.setText(operationField);
 	}
@@ -765,12 +783,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void checkBoxChanged(ActionEvent e) {
 		if (e.getSource().equals(radioButtonUpdateColumn)) {
 			boolean updateColumn = radioButtonUpdateColumn.isSelected();
-			checkBoxUpdateSelect.setSelected(!updateColumn);
+			radioButtonUpdateSelect.setSelected(!updateColumn);
+			buttonApply.setEnabled(true);
 			return;
 		}
-		if (e.getSource().equals(checkBoxUpdateSelect)) {
-			boolean updateSelect = checkBoxUpdateSelect.isSelected();
+		if (e.getSource().equals(radioButtonUpdateSelect)) {
+			boolean updateSelect = radioButtonUpdateSelect.isSelected();
 			radioButtonUpdateColumn.setSelected(!updateSelect);
+			buttonApply.setEnabled(true);
 			return;
 		}
 		if (e.getSource().equals(checkBoxInversion)) {
@@ -796,7 +816,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				setSingleFieldInfo();
-				buttonApply.setEnabled(true);
+				resetOperationEnabled(tabular.getRecordset().getFieldInfos().get(comboBoxUpdateField.getSelectedItem().toString()).getType(), tabular
+						.getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType());
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -820,12 +841,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private void operationFieldChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
-			labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
-					.get(comboBoxOperationField.getSelectedItem().toString()).getType()));
+			FieldType updateFieldType = tabular.getRecordset().getFieldInfos().get(comboBoxUpdateField.getSelectedItem().toString()).getType();
+			FieldType operationField = tabular.getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType();
+			labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(operationField));
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
 				// 单字段运算
 				resetTextFieldOperationEQ();
-				buttonApply.setEnabled(true);
+				resetOperationEnabled(updateFieldType, operationField);
 				return;
 			}
 			if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -847,10 +869,20 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		}
 	}
 
+	private void resetOperationEnabled(FieldType updateFieldType, FieldType operationField) {
+		// 待更新字段为字符型，文本型时，不激活应用按钮
+		if ((updateFieldType.equals(FieldType.CHAR) || updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT))
+				&& operationField.equals(FieldType.DATETIME)) {
+			buttonApply.setEnabled(false);
+		} else {
+			buttonApply.setEnabled(true);
+		}
+	}
+
 	private void resetMethodInfo() {
+		resetMethodItemsForMathModel();
 		comboBoxMethod.setSelectedIndex(0);
 		comboBoxMethod.setEnabled(true);
-		resetMethodItemsForMathModel();
 	}
 
 	private void methodChanged(ItemEvent e) {
@@ -1022,23 +1054,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 			buttonApply.setEnabled(true);
 			return;
 		}
-		if (UpdateColumnUtilties.isIntegerType(fieldType) || fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)
-				|| fieldType.equals(FieldType.BYTE) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-			if (!checkBoxInversion.isSelected()) {
-				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
-			} else {
-				textFieldOperationEQ.setText(textFieldSecondField.getText() + info);
-			}
-			buttonApply.setEnabled(true);
-			return;
-		}
-		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-			textFieldOperationEQ.setText(info);
-			buttonApply.setEnabled(true);
-			return;
-		}
-		if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR))
-				&& !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+		if (!StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
 			if (!checkBoxInversion.isSelected()) {
 				textFieldOperationEQ.setText(info + textFieldSecondField.getText());
 			} else {
@@ -1193,6 +1209,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
 			} else if (UpdateColumnUtilties.isDaysInfo(method)) {
 				newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
+				newValue = newValue.toString();
 			} else {
 				newValue = UpdateColumnUtilties.getUpdataModeMathValueText(method, recordset.getFieldValue(fristField).toString(), textFieldX.getText(),
 						textFieldY.getText());
@@ -1352,6 +1369,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
 	private void resetFieldForOneField(int[] selectRows, boolean isText, FieldType fieldType) {
 		String fristField = comboBoxOperationField.getSelectedItem().toString();
+		FieldType operationFieldType = tabular.getRecordset().getFieldInfos().get(fristField).getType();
 		String updateField = comboBoxUpdateField.getSelectedItem().toString();
 		String method = comboBoxMethod.getSelectedItem().toString();
 		String value = textFieldSecondField.getText();
@@ -1371,6 +1389,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
 					beyoundMaxLength = true;
 					newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
+				}
+				if (operationFieldType.equals(FieldType.BOOLEAN)) {
+					newValue = newValue.toUpperCase();
 				}
 				recordset.setFieldValue(updateField, newValue);
 			} else {

@@ -4,10 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import javax.print.URIException;
 import javax.swing.*;
 
 import com.supermap.Interface.*;

@@ -214,6 +214,9 @@ public class UpdateColumnUtilties {
 	}
 
 	public static Object getDateInfo(String method, Date date) {
+		if (null == date) {
+			return 0;
+		}
 		GregorianCalendar ca = new GregorianCalendar();
 		ca.setTime(date);
 		Object desValue = null;
@@ -230,7 +233,7 @@ public class UpdateColumnUtilties {
 		} else if ("Day".equals(method)) {
 			desValue = ca.get(GregorianCalendar.DAY_OF_MONTH);
 		} else if ("Month".equals(method)) {
-			desValue = ca.get(GregorianCalendar.MONTH);
+			desValue = ca.get(GregorianCalendar.MONTH) + 1;
 		} else if ("Year".equals(method)) {
 			desValue = ca.get(GregorianCalendar.YEAR);
 		} else if ("DayOfYear".equals(method)) {

@@ -169,6 +169,7 @@ public class CommonUtilities {
 					uploadTask.doWork(downloadProgressCallable);
 					fileManagerContainer.addItem(uploadTask);
 				}
+				ManagerXMLParser.removeAllTasks();
 			} else {
 				ManagerXMLParser.removeAllTasks();
 			}

@@ -72,7 +72,8 @@ public class Convert {
 		try {
 			if (srcValue instanceof Date) {
 				result = (Date) srcValue;
-			} else if (!StringUtilities.isNullOrEmptyString(srcValue) && !StringUtilities.isNumber(getDateStr(srcValue.toString()))) {
+			} else if (!StringUtilities.isNullOrEmptyString(srcValue) && !StringUtilities.isNumber(getDateStr(srcValue.toString()))
+					&& !"".equals(getDateStr(srcValue.toString()))) {
 				result = resultFormat.parse(getDateStr(srcValue.toString()));
 			}
 		} catch (ParseException e) {

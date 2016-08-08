@@ -146,7 +146,7 @@ public class BatchUploadFile extends Thread {
 						if (isFinished) {
 							UploadUtils.fireSteppedEvent(this, uploadInfo, 100, 0);
 							Application.getActiveApplication().getOutput()
-									.output(this.uploadInfo.getFileName() + LBSClientProperties.getString("String_UploadEnd"));
+									.output(this.uploadInfo.getFileName() + " "+LBSClientProperties.getString("String_UploadEnd"));
 							ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, uploadInfo.getUrl(), uploadInfo.getFileName());
 						}
 					}
