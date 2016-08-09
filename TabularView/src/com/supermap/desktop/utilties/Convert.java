@@ -1,8 +1,7 @@
 package com.supermap.desktop.utilties;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.*;
+import java.util.*;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.tabularview.TabularViewProperties;
@@ -15,26 +14,31 @@ import com.supermap.desktop.utilities.StringUtilities;
  *
  */
 public class Convert {
-	private static SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+	public static SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
 
 	public static String getDateStr(String str) {
 		String success = "";
-		if (str.contains(".")) {
-			success = getDateInfo(str, success, ".");
-		} else if (str.contains("/")) {
-			success = getDateInfo(str, success, "/");
+		if (!StringUtilities.isNullOrEmpty(str)) {
+			success = getDateInfo(str, success);
 		}
 		return success;
 	}
 
-	private static String getDateInfo(String str, String success, String temp) {
+	private static String getDateInfo(String str, String success) {
 		SimpleDateFormat format;
+		String temp = ".";
+		if (str.contains("-")) {
+			str = str.replaceAll("-", ".");
+		} else if (str.contains("/")) {
+			str = str.replaceAll("/", ".");
+		}
 		String[] dateStr = str.split("\\" + temp);
-		if (dateStr.length == 1 && dateStr[0].length() == 4) {
+		// 串格式为yyyy.MM.dd类型格式的字符串
+		if(dateStr.length == 1 && dateStr[0].length() == 4){
 			format = new SimpleDateFormat("yyyy");
 			format.setLenient(false);
 			success = getResultStr(str, success, format);
-		} else if (dateStr.length == 2 && dateStr[0].length() == 4) {
+		}else if (dateStr.length == 2 && dateStr[0].length() == 4) {
 			format = new SimpleDateFormat("yyyy" + temp + "MM");
 			format.setLenient(false);
 			success = getResultStr(str, success, format);
@@ -53,6 +57,13 @@ public class Convert {
 				format.setLenient(false);
 				success = getResultStr(str, success, format);
 			}
+		}
+		// 格式为mm.dd类型格式的字符串
+		if (dateStr.length == 2 && Integer.valueOf(dateStr[0]) <= 12 && Integer.valueOf(dateStr[1]) <= 31) {
+			Calendar calendar = Calendar.getInstance();
+			format = new SimpleDateFormat("yyyy" + temp + "MM" + temp + "dd");
+			format.setLenient(false);
+			success = getResultStr(calendar.get(calendar.YEAR) + "." + str, success, format);
 		}
 		return success;
 	}

@@ -7,11 +7,20 @@ import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
+import javax.naming.BinaryRefAddr;
 import javax.swing.table.AbstractTableModel;
+
+import java.nio.LongBuffer;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * 属性表的TableModel
@@ -26,10 +35,12 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient FieldInfos fieldInfosDataset;
 	private int nowRow = 0;
 	// private TabularCache tabularCache = new TabularCache();
-	//用于存放行值和recordset的ID之间的关系
+	// 用于存放行值和recordset的ID之间的关系
 	private HashMap<Integer, Object> rowIndexMap = new HashMap<Integer, Object>();
-	//用于存放行值和ID与行值之间的关系
-	private HashMap<Object,Integer> idMap = new HashMap<Object,Integer>();
+	// 用于存放行值和ID与行值之间的关系
+	private HashMap<Object, Integer> idMap = new HashMap<Object, Integer>();
+	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
+
 	public TabularTableModel(Recordset recordset) {
 		setRecordset(recordset);
 	}
@@ -86,8 +97,13 @@ public class TabularTableModel extends AbstractTableModel {
 		Object value = null;
 		moveToRow(rowIndex);
 		value = recordset.getFieldValue(columnIndex);
-		// tabularCache.updateValue(key, value);
-		// }
+		if (value instanceof Double && null != value && Double.isInfinite((double) value)) {
+			value = TabularViewProperties.getString("String_Infinite");
+		} else if (value instanceof Float && null != value && Float.isInfinite((float) value)) {
+			value = TabularViewProperties.getString("String_Infinite");
+		} else if (recordset.getFieldInfos().get(columnIndex).getType().equals(FieldType.LONGBINARY) && null != value) {
+			value = "BinaryData";
+		}
 		return value;
 	}
 

@@ -71,8 +71,20 @@ public class UpdateColumnUtilties {
 		return false;
 	}
 
-	public static Object getUpdataModeMathValueText(String method, String srcString, String expression, String expression1) {
-		Object desValue = srcString;
+	public static Object getUpdataModeMathValueText(String method, Object srcObject, String expression, String expression1) {
+		String srcString = "";
+		if (srcObject instanceof Date && null != srcObject) {
+			srcString = Convert.resultFormat.format(srcObject);
+		} else if (srcObject instanceof Boolean && null != srcObject) {
+			if (srcObject.equals(true)) {
+				srcString = "True";
+			}else{
+				srcString = "False";
+			}
+		} else if (null != srcObject) {
+			srcString = srcObject.toString();
+		}
+		Object desValue = srcObject;
 		try {
 			int length = srcString.length();
 			if ("Left".equals(method)) {
@@ -93,19 +105,19 @@ public class UpdateColumnUtilties {
 			} else if ("TrimEnd".equals(method)) {
 				for (int i = 0; i < expression.toCharArray().length; i++) {
 					if (srcString.endsWith(expression.toCharArray()[i] + "")) {
-						srcString = srcString.substring(0, srcString.length() - 1);
+						srcObject = srcString.substring(0, srcString.length() - 1);
 						break;
 					}
 				}
-				desValue = srcString;
+				desValue = srcObject;
 			} else if ("TrimStart".equals(method)) {
 				for (int i = 0; i < expression.toCharArray().length; i++) {
 					if (srcString.startsWith(expression.toCharArray()[i] + "")) {
-						srcString = srcString.substring(1, srcString.length());
+						srcObject = srcString.substring(1, srcString.length());
 						break;
 					}
 				}
-				desValue = srcString;
+				desValue = srcObject;
 			} else if ("Trim".equals(method)) {
 				desValue = srcString.trim();
 			} else if ("LRemove".equals(method)) {

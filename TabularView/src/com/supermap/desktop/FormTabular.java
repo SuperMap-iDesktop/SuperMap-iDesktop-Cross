@@ -365,15 +365,15 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	 *
 	 * @author XiaJT
 	 */
-	private class dataTabelCellEditor extends DefaultCellEditor {
-		public dataTabelCellEditor(final JTextField textField) {
+	private class DataTabelCellEditor extends DefaultCellEditor {
+		public DataTabelCellEditor(final JTextField textField) {
 			super(textField);
 			textField.setHorizontalAlignment(JTextField.CENTER);
 
 			this.delegate = new EditorDelegate() {
 				@Override
 				public void setValue(Object value) {
-					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 					textField.setText((value != null) ? dateFormat.format(value) : "");
 				}
 
@@ -399,7 +399,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 			this.setText((value != null) ? dateFormat.format(value) : "");
 			return this;
 		}
@@ -487,7 +487,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		this.jTableTabular.setDefaultRenderer(Boolean.class, new booleanTableCellRenderer());
 
-		this.jTableTabular.setDefaultEditor(Time.class, new dataTabelCellEditor(new JTextField()));
+		this.jTableTabular.setDefaultEditor(Time.class, new DataTabelCellEditor(new JTextField()));
 		this.jTableTabular.setDefaultRenderer(Time.class, new DataTabelCellRender());
 		JTextField objectEditorControl = new JTextField();
 		objectEditorControl.setHorizontalAlignment(JTextField.CENTER);
