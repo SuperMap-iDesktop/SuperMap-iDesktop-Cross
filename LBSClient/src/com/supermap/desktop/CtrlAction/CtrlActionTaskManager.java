@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.dialog.JDialogTaskManager;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilities.CommonUtilities;
 
@@ -18,7 +19,17 @@ public class CtrlActionTaskManager extends CtrlAction {
 	 */
 	@Override
 	public void run() {
-		CommonUtilities.recoverTask();
+		if (null == JDialogTaskManager.getTaskManager()) {
+			CommonUtilities.recoverTask();
+		}
+	}
+	
+	@Override
+	public boolean enable() {
+		if (CommonUtilities.isTaskManagerOpened()) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -137,6 +137,24 @@ public class CommonUtilities {
 	}
 
 	/**
+	 * 判断任务恢复界面是否打开过
+	 */
+	public static boolean isTaskManagerOpened() {
+		boolean result = false;
+		int lbsFormCount = 0;
+		int formCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
+		for (int i = 0; i < formCount; i++) {
+			if (Application.getActiveApplication().getMainFrame().getFormManager().get(i) instanceof IFormLBSControl) {
+				lbsFormCount++;
+			}
+		}
+		if (lbsFormCount >= 1) {
+			result = true;
+		}
+		return result;
+	}
+
+	/**
 	 * 恢复任务
 	 * 
 	 * @param fileManagerContainer
@@ -147,7 +165,7 @@ public class CommonUtilities {
 			ITaskFactory taskFactory = TaskFactory.getInstance();
 			List<String> downloadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.DOWNLOADTASK);
 			List<String> uploadTaskPropertyLists = ManagerXMLParser.getTaskPropertyList(TaskEnum.UPLOADTASK);
-			JDialogTaskManager taskManager = new JDialogTaskManager(null, true);
+			JDialogTaskManager taskManager = JDialogTaskManager.getInstance();
 			taskManager.setDownloadTaskCount(downloadTaskPropertyLists.size());
 			taskManager.setUploadTaskCount(uploadTaskPropertyLists.size());
 			if (taskManager.showDialog().equals(DialogResult.OK) && taskManager.isRecoverTask()) {
@@ -169,7 +187,6 @@ public class CommonUtilities {
 					uploadTask.doWork(downloadProgressCallable);
 					fileManagerContainer.addItem(uploadTask);
 				}
-				ManagerXMLParser.removeAllTasks();
 			} else {
 				ManagerXMLParser.removeAllTasks();
 			}

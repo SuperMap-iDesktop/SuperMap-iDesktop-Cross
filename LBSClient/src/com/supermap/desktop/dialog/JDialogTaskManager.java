@@ -24,6 +24,8 @@ public class JDialogTaskManager extends SmDialog {
 	private JCheckBox checkboxRecoverDownloadTask;
 	private JCheckBox checkboxRecoverUploadTask;
 	private boolean isRecoverTask;
+	private static JDialogTaskManager taskManager;
+
 	private ActionListener buttonOkListener = new ActionListener() {
 
 		@Override
@@ -33,6 +35,14 @@ public class JDialogTaskManager extends SmDialog {
 			JDialogTaskManager.this.dispose();
 		}
 	};
+
+	public static JDialogTaskManager getInstance() {
+		if (null == taskManager) {
+			taskManager = new JDialogTaskManager();
+		}
+		return taskManager;
+	}
+
 	private ActionListener buttonCancelListener = new ActionListener() {
 
 		@Override
@@ -44,6 +54,10 @@ public class JDialogTaskManager extends SmDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private JDialogTaskManager() {
+		this(null, true);
+	}
 
 	public JDialogTaskManager(JFrame frame, boolean model) {
 		super(frame, model);
@@ -120,4 +134,13 @@ public class JDialogTaskManager extends SmDialog {
 		}
 		this.textFieldUploadTask.setText(String.valueOf(i));
 	}
+
+	public static JDialogTaskManager getTaskManager() {
+		return taskManager;
+	}
+
+	public static void setTaskManager(JDialogTaskManager taskManager) {
+		JDialogTaskManager.taskManager = taskManager;
+	}
+	
 }

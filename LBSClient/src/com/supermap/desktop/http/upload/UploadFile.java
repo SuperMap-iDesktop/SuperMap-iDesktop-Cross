@@ -44,7 +44,7 @@ public class UploadFile extends Thread {
 	// 上传速度
 	private long speed;
 
-	private static int BUFF_LENGTH = 1024 * 256;
+	private static int BUFF_LENGTH = 1024 * 128;
 
 	private int startLength;
 
