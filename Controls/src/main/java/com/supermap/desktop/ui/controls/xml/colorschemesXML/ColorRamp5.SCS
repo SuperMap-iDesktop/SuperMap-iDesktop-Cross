@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<ColorScheme><FileHeader>
+	<FileType>678370</FileType>
+	<Version>60000</Version>
+	<Name>ColorRamp5</Name>
+	<Author></Author>
+	<Description></Description>
+	<ColorSystem>1</ColorSystem>
+	<IntervalColorBuildMethod>0</IntervalColorBuildMethod>
+	<KeyColorCount>2</KeyColorCount>
+	<IntervalColorCount>128</IntervalColorCount>
+</FileHeader>
+	<DataBlock>
+		<KeyColor1>
+			<Name>D8F2ED</Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>216</Red>
+			<Green>242</Green>
+			<Blue>237</Blue>
+		</KeyColor1>
+		<KeyColor2>
+			<Name>154F4A</Name>
+			<ColorSystem>1</ColorSystem>
+			<Red>21</Red>
+			<Green>79</Green>
+			<Blue>74</Blue>
+		</KeyColor2>
+	</DataBlock>
+</ColorScheme>
