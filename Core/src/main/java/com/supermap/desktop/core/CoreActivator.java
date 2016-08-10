@@ -8,6 +8,8 @@ import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SplashScreenUtilities;
 import org.osgi.framework.*;
 
+import java.util.Date;
+
 public class CoreActivator implements BundleActivator {
 
 	static {
