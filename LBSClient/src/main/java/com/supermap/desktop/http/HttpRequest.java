@@ -143,6 +143,7 @@ public class HttpRequest {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			if (inputStream != null) {
+
 				try {
 					inputStream.close();
 				} catch (IOException e) {
