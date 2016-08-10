@@ -1,23 +1,12 @@
 package com.supermap.desktop.ui.controls.ComponentBorderPanel;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import java.awt.*;
 
 /**
- * 
+ * 带checkBox的Panel
  * @author xie
  *
  */

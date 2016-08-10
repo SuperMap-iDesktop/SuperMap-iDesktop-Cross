@@ -1462,6 +1462,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		UICommonToolkit.getLayersManager().setMap(map);
 	}
 
+	@Override
+	public int getSelectedCount() {
+		return Integer.valueOf(((SmLabel) getStatusbar().getComponent(SELECT_NUMBER)).getText());
+	}
+
 	/**
 	 * 由于数据源/数据集/工作空间/对象等的属性面板结构上还不完善，目前这个方法开放为 public 供右键菜单属性的时候更新数据，优化方案正在思考中
 	 */
