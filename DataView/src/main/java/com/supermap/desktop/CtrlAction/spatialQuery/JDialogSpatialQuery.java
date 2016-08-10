@@ -12,6 +12,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
@@ -160,11 +161,11 @@ public class JDialogSpatialQuery extends SmDialog {
 		smButtonOK.setText(DataViewProperties.getString("String_Query"));
 		smButtonCancel.setText(CommonProperties.getString(CommonProperties.Close));
 
-		this.buttonSelectAll.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectAll.png")));
+		this.buttonSelectAll.setIcon(CoreResources.getIcon("coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonSelectAll.setToolTipText(CommonProperties.getString(CommonProperties.selectAll));
-		this.buttonInvert.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_SelectInverse.png")));
+		this.buttonInvert.setIcon(CoreResources.getIcon("coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		this.buttonInvert.setToolTipText(CommonProperties.getString(CommonProperties.selectInverse));
-		this.buttonReset.setIcon(new ImageIcon(this.getClass().getResource("/com/supermap/desktop/coreresources/ToolBar/Image_ToolButton_UndoSysDefault.png")));
+		this.buttonReset.setIcon(CoreResources.getIcon("coreresources/ToolBar/Image_ToolButton_UndoSysDefault.png"));
 		this.buttonReset.setToolTipText(CommonProperties.getString(CommonProperties.Reset));
 	}
 

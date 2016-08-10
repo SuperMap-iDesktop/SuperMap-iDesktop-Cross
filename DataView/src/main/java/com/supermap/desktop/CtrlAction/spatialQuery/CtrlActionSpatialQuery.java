@@ -23,9 +23,6 @@ public class CtrlActionSpatialQuery extends CtrlAction {
 	@Override
 	public boolean enable() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof IFormMap && ((IFormMap) activeForm).getSelectedCount() > 0) {
-			return true;
-		}
-		return false;
+		return activeForm instanceof IFormMap;
 	}
 }
