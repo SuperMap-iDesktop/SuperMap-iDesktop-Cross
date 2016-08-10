@@ -44,4 +44,6 @@ public interface IFormMap extends IForm {
 	void setSelectedGeometryProperty();
 
 	void openMap(String mapName);
+
+	int getSelectedCount();
 }
