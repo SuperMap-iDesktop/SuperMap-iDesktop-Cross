@@ -109,7 +109,7 @@ public class CommonUtilities {
 		ImageIcon imageIcon = null;
 		try {
 			if (!StringUtilities.isNullOrEmptyString(path)) {
-				imageIcon = new ImageIcon(CommonUtilities.class.getResource("/main/java/com/supermap/desktop/lbsresources/Toolbar/" + path));
+				imageIcon = new ImageIcon(CommonUtilities.class.getResource("/lbsresources/Toolbar/" + path));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
