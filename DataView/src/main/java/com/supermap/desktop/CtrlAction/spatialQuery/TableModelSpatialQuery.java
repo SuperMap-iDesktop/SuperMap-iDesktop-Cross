@@ -16,7 +16,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 
 	private String[] columns = new String[]{
 			"",
-			DataViewProperties.getString("String_Type"),
+			com.supermap.desktop.dataview.DataViewProperties.getString("String_Type"),
 			DataViewProperties.getString("String__SearchedLayerName"),
 			DataViewProperties.getString("String_SpatialQueryMode"),
 			DataViewProperties.getString("String_TabularQueryCondition"),
