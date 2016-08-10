@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="gb2312"?>
+<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>60000</Version>
+    <Name>Enamel</Name>
+    <Author />
+    <Description />
+    <ColorSystem>4</ColorSystem>
+    <IntervalColorBuildMethod>1</IntervalColorBuildMethod>
+    <KeyColorCount>2</KeyColorCount>
+    <IntervalColorCount>0</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>4</ColorSystem>
+      <Hue>0</Hue>
+      <Saturation>60</Saturation>
+      <Value>60</Value>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>4</ColorSystem>
+      <Hue>360</Hue>
+      <Saturation>80</Saturation>
+      <Value>80</Value>
+    </KeyColor2>
+  </DataBlock>
+</ColorScheme>
