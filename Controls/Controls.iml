@@ -29,7 +29,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.addressmatching:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.addressmatching.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.addressmatching.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -38,7 +38,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.navigation:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.navigation.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.navigation.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -47,7 +47,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.networkanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.networkanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.networkanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -56,7 +56,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.spatialanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.spatialanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.spatialanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -65,7 +65,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.spatialstatistics:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.spatialstatistics.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.spatialstatistics.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -74,7 +74,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.terrainanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.terrainanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.terrainanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -83,7 +83,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.trafficanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.analyst.trafficanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.analyst.trafficanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -92,7 +92,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.data.conversion:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.data.conversion.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.data.conversion.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -101,7 +101,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.data:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.data.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.data.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -110,7 +110,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.data.processing:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.data.processing.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.data.processing.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -119,7 +119,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.data.topology:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.data.topology.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.data.topology.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -128,7 +128,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.layout:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.layout.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.layout.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -137,7 +137,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.license:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.license.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.license.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -146,7 +146,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.mapping:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.mapping.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.mapping.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -155,7 +155,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.realspace:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.realspace.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.realspace.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -164,7 +164,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.realspace.networkanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.realspace.networkanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.realspace.networkanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -173,7 +173,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.realspace.spatialanalyst:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.realspace.spatialanalyst.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.realspace.spatialanalyst.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -182,7 +182,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.tilestorage:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.tilestorage.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.tilestorage.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -191,7 +191,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.ui.controls:8.0.2-13911">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/bin/com.supermap.ui.controls.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.ui.controls.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

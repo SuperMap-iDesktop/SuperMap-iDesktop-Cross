@@ -76,133 +76,133 @@
             <artifactId>com.supermap.analyst.addressmatching</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.addressmatching.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.addressmatching.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.navigation</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.navigation.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.navigation.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.networkanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.networkanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.networkanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.spatialanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.spatialanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.spatialanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.spatialstatistics</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.spatialstatistics.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.spatialstatistics.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.terrainanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.terrainanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.terrainanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.analyst.trafficanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.analyst.trafficanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.analyst.trafficanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.data.conversion</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.data.conversion.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.data.conversion.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.data</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.data.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.data.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.data.processing</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.data.processing.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.data.processing.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.data.topology</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.data.topology.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.data.topology.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.layout</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.layout.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.layout.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.license</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.license.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.license.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.mapping</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.mapping.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.mapping.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.realspace</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.realspace.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.realspace.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.realspace.networkanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.realspace.networkanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.realspace.networkanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.realspace.spatialanalyst</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.realspace.spatialanalyst.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.realspace.spatialanalyst.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.tilestorage</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.tilestorage.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.tilestorage.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.ui.controls</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
-            <systemPath>${basedir}/bin/com.supermap.ui.controls.jar</systemPath>
+            <systemPath>${basedir}/../bin/com.supermap.ui.controls.jar</systemPath>
         </dependency>
     </dependencies>
 
