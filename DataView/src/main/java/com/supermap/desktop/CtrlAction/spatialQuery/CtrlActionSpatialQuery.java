@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.implement.CtrlAction;
 
 /**
@@ -23,6 +24,12 @@ public class CtrlActionSpatialQuery extends CtrlAction {
 	@Override
 	public boolean enable() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		return activeForm instanceof IFormMap;
+		if (activeForm == null || (!(activeForm instanceof IFormMap) && !(activeForm instanceof IFormScene))) {
+			return false;
+		}
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() <= 0) {
+			return false;
+		}
+		return true;
 	}
 }

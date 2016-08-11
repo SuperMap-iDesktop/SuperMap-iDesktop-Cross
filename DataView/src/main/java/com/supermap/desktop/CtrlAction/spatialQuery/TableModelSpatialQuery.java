@@ -1,11 +1,10 @@
 package com.supermap.desktop.CtrlAction.spatialQuery;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialQueryMode;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
-import com.supermap.desktop.ui.controls.comboBox.UIComboBox;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
@@ -21,12 +20,17 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 
 	private String[] columns = new String[]{
 			"",
-			com.supermap.desktop.dataview.DataViewProperties.getString("String_Type"),
+			DataViewProperties.getString("String_Type"),
 			DataViewProperties.getString("String__SearchedLayerName"),
 			DataViewProperties.getString("String_SpatialQueryMode"),
 			DataViewProperties.getString("String_TabularQueryCondition"),
 	};
 	private ArrayList<DatasetType> supportDatasetTypes;
+	public static final int ROW_INDEX_IS_SELECTED = 0;
+	public static final int ROW_INDEX_DATASET_TYPE = 1;
+	public static final int ROW_INDEX_LAYER_NAME = 2;
+	public static final int ROW_INDEX_SPATIAL_QUERY_MODE = 3;
+	public static final int ROW_INDEX_SQL = 4;
 
 	public TableModelSpatialQuery() {
 		super();
@@ -36,6 +40,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		supportDatasetTypes.add(DatasetType.LINE);
 		supportDatasetTypes.add(DatasetType.REGION);
 		supportDatasetTypes.add(DatasetType.NETWORK);
+		supportDatasetTypes.add(DatasetType.TEXT);
 	}
 
 	@Override
@@ -102,6 +107,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		} else if (column == 4) {
 			rowDatas.get(row).setSql((String) aValue);
 		}
+		fireTableCellUpdated(row, column);
 	}
 
 	public void setLayers(ArrayList<Layer> layers) {
@@ -109,10 +115,32 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			rowDatas.clear();
 		}
 		if (layers != null && layers.size() > 0) {
+			Datasource defaultDatasource;
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if (activeDatasources != null && activeDatasources.length > 0) {
+				defaultDatasource = activeDatasources[0];
+			} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+				defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+			} else {
+				return;
+			}
+			int i = 0;
 			for (Layer layer : layers) {
 				if (layer.getDataset() != null && supportDatasetTypes.contains(layer.getDataset().getType())) {
 					TableRowData rowData = new TableRowData(layer);
-					rowData.setResultDataset(rowDatas.size() == 0 ? defaultDatasetName : defaultDatasetName + "_" + rowDatas.size());
+					rowData.setResultDatasource(defaultDatasource);
+
+					for (; true; i++) {
+						String tempDatasetName = i == 0 ? defaultDatasetName : defaultDatasetName + "_" + rowDatas.size();
+						String resultName = defaultDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
+						if (tempDatasetName.equalsIgnoreCase(resultName)) {
+							rowData.setResultDataset(resultName);
+							i++;
+							break;
+						}
+					}
+
+
 					rowDatas.add(rowData);
 				}
 			}

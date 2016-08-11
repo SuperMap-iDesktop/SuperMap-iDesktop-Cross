@@ -7,6 +7,7 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.mapping.Layer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,6 +79,14 @@ public class DataCell extends JPanel {
 			this.dataName = dataset.getName();
 			init(url, this.dataName);
 		}
+	}
+
+	public void initLayer(Layer layer) {
+		Dataset dataset = layer.getDataset();
+		String datasetImagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
+		URL url = ControlsResources.getResourceURL(datasetImagePath);
+		dataName = layer.getCaption();
+		init(url, dataName);
 	}
 
 	/**
@@ -181,6 +190,7 @@ public class DataCell extends JPanel {
 
 	// region 构造函数
 
+
 	/**
 	 * 不支持传入图片路径方式构建
 	 * <p/>
@@ -223,6 +233,8 @@ public class DataCell extends JPanel {
 				} else {
 					icon = ((ImageIcon) object);
 				}
+			} else if (object instanceof Layer) {
+				initLayer(((Layer) object));
 			} else if (object instanceof String) {
 				String str = (String) object;
 				if (engineType != null) {
