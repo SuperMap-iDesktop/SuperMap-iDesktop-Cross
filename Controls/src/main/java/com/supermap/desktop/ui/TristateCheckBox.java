@@ -3,7 +3,12 @@ package com.supermap.desktop.ui;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ActionMapUIResource;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 // @formatter:off
 /**
@@ -177,7 +182,7 @@ public class TristateCheckBox extends JCheckBox {
 			} else { // either "null" or DONT_CARE
 				other.setArmed(true);
 				setPressed(true);
-				setSelected(false);
+				setSelected(true);
 			}
 			fireStateChange(new StateChangeEvent(TristateCheckBox.this, getState()));
 		}
