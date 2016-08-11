@@ -155,6 +155,15 @@ public class UpdateColumnUtilties {
 		if (isIntegerType(fieldType)) {
 			desValue = Convert.toInteger(desValue.toString());
 		}
+		if(fieldType.equals(FieldType.BYTE)){
+			if (StringUtilities.isNullOrEmptyString(desValue.toString())) {
+				desValue = (byte) 0;
+			} else if (Convert.toInteger(desValue.toString()) < 128 && Convert.toInteger(desValue.toString()) >= 0) {
+				desValue = (byte) Convert.toInteger(desValue.toString());
+			} else if (Convert.toInteger(desValue.toString()) >= 128 || Convert.toInteger(desValue.toString()) < 0) {
+				desValue = (byte) 0;
+			}
+		}
 		return desValue;
 	}
 
@@ -181,6 +190,14 @@ public class UpdateColumnUtilties {
 			desValue = Convert.toInteger(desValue.toString());
 		} else if (FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) {
 			desValue = desValue.toString();
+		}else if(fieldType.equals(FieldType.BYTE)){
+			if (StringUtilities.isNullOrEmptyString(desValue.toString())) {
+				desValue = (byte) 0;
+			} else if (Convert.toInteger(desValue.toString()) < 128 && Convert.toInteger(desValue.toString()) >= 0) {
+				desValue = (byte) Convert.toInteger(desValue.toString());
+			} else if (Convert.toInteger(desValue.toString()) >= 128 || Convert.toInteger(desValue.toString()) < 0) {
+				desValue = (byte) 0;
+			}
 		}
 		return desValue;
 	}
@@ -303,9 +320,14 @@ public class UpdateColumnUtilties {
 			}
 			desValue = (desValue instanceof Double && Double.compare((double) desValue, 0.0) > 0) ? true : false;
 		} else if (fieldType.equals(FieldType.BYTE)) {
-			desValue = (byte) Convert.toInteger(desValue.toString());
+			if (StringUtilities.isNullOrEmptyString(desValue.toString())) {
+				desValue = (byte) 0;
+			} else if (Convert.toInteger(desValue.toString()) < 128 && Convert.toInteger(desValue.toString()) >= 0) {
+				desValue = (byte) Convert.toInteger(desValue.toString());
+			} else if (Convert.toInteger(desValue.toString()) >= 128 || Convert.toInteger(desValue.toString()) < 0) {
+				desValue = (byte) 0;
+			}
 		}
-
 		return desValue;
 	}
 
