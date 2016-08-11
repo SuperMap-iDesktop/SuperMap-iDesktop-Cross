@@ -222,7 +222,7 @@ public class CreateFile {
 			// 重命名文件
 			String webFile = url;
 			String rootPath = webFile.replace(WebHDFS.defaultURL, "");
-			rootPath = "/"+rootPath.replace(name, "");
+			rootPath = "/"+rootPath;
 			if (!rootPath.endsWith("/")) {
 				rootPath += "/";
 			}
@@ -278,7 +278,7 @@ public class CreateFile {
 	 * 
 	 * @author hoojo
 	 * @createDate 2011-9-28 下午05:29:43
-	 * @param con
+	 * @param conn
 	 */
 	public static void setHeader(URLConnection conn) {
 		conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");

@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1421,9 +1423,25 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (isText) {
                 String newValue = "";
                 if (checkBoxInversion.isSelected()) {
-                    newValue = value.concat(recordset.getFieldValue(fristField).toString());
+                    if (null == recordset.getFieldValue(fristField)) {
+                        newValue = value + "";
+                    } else {
+                        if (recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = value.concat(new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(recordset.getFieldValue(fristField)));
+                        } else {
+                            newValue = value.concat(recordset.getFieldValue(fristField).toString());
+                        }
+                    }
                 } else {
-                    newValue = recordset.getFieldValue(fristField).toString().concat(value);
+                    if (null == recordset.getFieldValue(fristField)) {
+                        newValue = "" + value;
+                    } else {
+                        if (recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(recordset.getFieldValue(fristField)).concat(value);
+                        } else {
+                            newValue = recordset.getFieldValue(fristField).toString().concat(value);
+                        }
+                    }
                 }
                 if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
                     beyoundMaxLength = true;
