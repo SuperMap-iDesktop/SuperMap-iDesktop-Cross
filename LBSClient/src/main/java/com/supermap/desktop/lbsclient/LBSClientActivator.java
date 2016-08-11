@@ -45,6 +45,7 @@ public class LBSClientActivator implements BundleActivator {
 
 			if (type == WindowType.LBSCONTROL) {
 				IFormLBSControl formMap = showLBSControl(evt.getNewWindowName());
+				formMap .setText("FormHDFSManager");
 				evt.setNewWindow(formMap);
 			}
 

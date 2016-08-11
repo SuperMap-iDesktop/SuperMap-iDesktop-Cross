@@ -319,7 +319,11 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
      */
     public void refresh() {
         try {
-            listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
+            if (!urlList.get(urlList.size()-1).equals(this.textServerURL.getText())){
+                urlList.add(this.textServerURL.getText());
+                urlPathIndex = urlList.size()-1;
+                listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
+            }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         } finally {

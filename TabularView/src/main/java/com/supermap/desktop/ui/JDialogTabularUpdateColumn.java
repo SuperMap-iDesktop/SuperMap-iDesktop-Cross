@@ -211,6 +211,26 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             fileChooserClicked();
         }
     };
+    private KeyAdapter textFieldSecondFieldKeyListener = new KeyAdapter() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if (FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType()) && (StringUtilities.isNumber(String.valueOf(e.getKeyChar())) || String.valueOf(e.getKeyChar()).equals(".") || String.valueOf(e.getKeyChar()).equals("-"))) {
+                // 当待更新字段为数值型时不能输入文本型数据
+                return;
+            } else if (!FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
+                // 当待更新字段不为数值型时可随意输入
+                return;
+            } else {
+                e.consume();
+            }
+        }
+    };
+    private KeyAdapter textAreaOperationEQKeyListener= new KeyAdapter(){
+        @Override
+        public void keyReleased(KeyEvent e) {
+            buttonApply.setEnabled(true);
+        }
+    };
 
     public JDialogTabularUpdateColumn(IFormTabular tabular) {
         super();
@@ -278,7 +298,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.contentPanel.add(this.labelOperationFieldType, new GridBagConstraintsHelper(5, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 10));
         this.contentPanel.add(this.labelMethod, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
         this.contentPanel.add(this.comboBoxMethod, new GridBagConstraintsHelper(1, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
-        this.contentPanel.add(this.textFieldX, new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(20,0));
+        this.contentPanel.add(this.textFieldX, new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(20, 0));
         this.contentPanel.add(this.textFieldY, new GridBagConstraintsHelper(4, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.labelSecondField, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.textFieldSecondField, new GridBagConstraintsHelper(1, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 0).setFill(GridBagConstraints.HORIZONTAL));
@@ -290,32 +310,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         scrollPane.setViewportView(this.textAreaOperationEQ);
         //@formatter:on
     }
-
-//	private void removeContentPanel() {
-//		this.textAreaExpression = new JTextArea();
-//		this.buttonExpression = new JButton(ControlsProperties.getString("String_SQLExpression"));
-//		this.buttonExpression.addActionListener(expressionListener);
-//		this.contentPanel.remove(labelOperationField);
-//		this.contentPanel.remove(comboBoxOperationField);
-//		this.contentPanel.remove(labelOperationFieldType);
-//		this.contentPanel.remove(labelMethod);
-//		this.contentPanel.remove(comboBoxMethod);
-//		this.contentPanel.remove(textFieldX);
-//		this.contentPanel.remove(textFieldY);
-//		this.contentPanel.remove(labelSecondField);
-//		this.contentPanel.remove(textFieldSecondField);
-//		this.contentPanel.remove(comboBoxSecondField);
-//		this.contentPanel.remove(labelSecondFieldType);
-//		this.contentPanel.remove(labelOperationEQ);
-//		this.contentPanel.remove(textAreaOperationEQ);
-//		this.contentPanel.remove(labelEQTip);
-//		//@formatter:off
-//		this.contentPanel.add(this.labelOperationField, new GridBagConstraintsHelper(0, 3, 1, 4).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
-//		this.contentPanel.add(this.textAreaExpression,  new GridBagConstraintsHelper(1, 3, 4, 4).setAnchor(GridBagConstraints.WEST).setWeight(60, 1).setInsets(5, 10, 5, 0).setIpad(0, 80).setFill(GridBagConstraints.HORIZONTAL));
-//		this.contentPanel.add(this.buttonExpression,    new GridBagConstraintsHelper(4, 7, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(20, 1).setInsets(0, 10, 5, 0));
-//		this.labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelExpression"));
-//		//@formatter:on
-//	}
 
     private Component initButtonPanel() {
         JPanel panelButton = new JPanel();
@@ -350,10 +344,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void initTextFieldOperationEQText(FieldType type) {
-        if (FieldTypeUtilities.isNumber(type)) {
+        if (FieldTypeUtilities.isNumber(type) && (!StringUtilities.isNumber(textFieldSecondField.getText()))) {
+            this.textFieldSecondField.setText("0");
             this.textAreaOperationEQ.setText("0");
-        } else {
-            this.textAreaOperationEQ.setText("");
         }
     }
 
@@ -496,22 +489,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.textFieldX.getDocument().addDocumentListener(this.textFieldXChangedListener);
         this.textFieldY.getDocument().addDocumentListener(this.textFieldYChangedListener);
         this.textFieldSecondField.getDocument().addDocumentListener(this.textFieldSecondFieldListener);
-        this.textFieldSecondField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
+        this.textFieldSecondField.addKeyListener(this.textFieldSecondFieldKeyListener);
+        this.textAreaOperationEQ.addKeyListener(this.textAreaOperationEQKeyListener);
         this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
         this.buttonApply.addActionListener(this.buttonApplyListener);
         this.buttonClose.addActionListener(this.buttonCloseListener);
@@ -536,7 +515,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.comboBoxMethod.removeItemListener(this.comboBoxMethodListener);
         this.textFieldX.getDocument().removeDocumentListener(this.textFieldXChangedListener);
         this.textFieldY.getDocument().removeDocumentListener(this.textFieldYChangedListener);
+        this.textFieldSecondField.removeKeyListener(this.textFieldSecondFieldKeyListener);
         this.textFieldSecondField.getDocument().removeDocumentListener(this.textFieldSecondFieldListener);
+        this.textAreaOperationEQ.removeKeyListener(this.textAreaOperationEQKeyListener);
+        this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
         if (null != buttonExpression) {
             this.buttonExpression.removeActionListener(this.expressionListener);
         }
@@ -550,7 +532,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 //		removeContentPanel();
 //		textAreaExpression.setText(textAreaOperationEQ.getText());
         labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelField"));
-        comboBoxOperationField.setEnabled(true);
+        comboBoxOperationField.setEnabled(false);
         comboBoxMethod.setEnabled(false);
         textFieldX.setEnabled(false);
         textFieldY.setEnabled(false);
@@ -756,17 +738,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.buttonExpression.setEnabled(false);
         this.textAreaOperationEQ.setEnabled(false);
     }
-
-//	private void addNeededComponents() {
-//		// 判断当前界面中是否有表达式入口
-//		if (isExpressionSelect) {
-//			contentPanel.remove(textAreaExpression);
-//			contentPanel.remove(buttonExpression);
-//			addContentPanel();
-//			contentPanel.updateUI();
-//			isExpressionSelect = false;
-//		}
-//	}
 
     private void updateComboboxMethod() {
         resetMethodItems();
@@ -1074,6 +1045,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void secondFieldChanged() {
+
         String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
         FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
         String text = textFieldSecondField.getText();
@@ -1369,22 +1341,22 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 } else {
                     if (checkBoxInversion.isSelected()) {
                         if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue =dateFormat.format(recordset.getFieldValue(secondField)).concat(dateFormat.format(recordset.getFieldValue(fristField)));
-                        }else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)){
-                            newValue =dateFormat.format(recordset.getFieldValue(secondField)).concat(recordset.getFieldValue(fristField).toString());
-                        }else if(!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date){
-                            newValue =recordset.getFieldValue(secondField).toString().concat(dateFormat.format(recordset.getFieldValue(fristField)));
-                        }else{
-                            newValue =recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
+                            newValue = dateFormat.format(recordset.getFieldValue(secondField)).concat(dateFormat.format(recordset.getFieldValue(fristField)));
+                        } else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)) {
+                            newValue = dateFormat.format(recordset.getFieldValue(secondField)).concat(recordset.getFieldValue(fristField).toString());
+                        } else if (!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = recordset.getFieldValue(secondField).toString().concat(dateFormat.format(recordset.getFieldValue(fristField)));
+                        } else {
+                            newValue = recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
                         }
                     } else {
                         if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue =dateFormat.format(recordset.getFieldValue(fristField)).concat(dateFormat.format(recordset.getFieldValue(secondField)));
-                        }else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)){
-                            newValue =recordset.getFieldValue(fristField).toString().concat(dateFormat.format(recordset.getFieldValue(secondField)));
-                        }else if(!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date){
-                            newValue =dateFormat.format(recordset.getFieldValue(fristField)).concat(recordset.getFieldValue(secondField).toString());
-                        }else{
+                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(dateFormat.format(recordset.getFieldValue(secondField)));
+                        } else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)) {
+                            newValue = recordset.getFieldValue(fristField).toString().concat(dateFormat.format(recordset.getFieldValue(secondField)));
+                        } else if (!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(recordset.getFieldValue(secondField).toString());
+                        } else {
                             newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
                         }
                     }
