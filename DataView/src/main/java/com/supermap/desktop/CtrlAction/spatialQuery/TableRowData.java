@@ -9,17 +9,17 @@ import com.supermap.mapping.Layer;
  * @author XiaJT
  */
 public class TableRowData {
-	private boolean selected;
-	private Layer layer;
-	private SpatialQueryMode spatialQueryMode;
-	private String sql;
-	private boolean isShowInTabular;
-	private boolean isShowInMap;
-	private boolean isShowInScene;
-	private boolean isSave;
-	private Datasource resultDatasource;
-	private String  resultDataset;
-	private boolean onlySaveSpatialInfo;
+	private boolean selected = false;
+	private Layer layer = null;
+	private SpatialQueryMode spatialQueryMode = null;
+	private String sql = "";
+	private boolean isShowInTabular = true;
+	private boolean isShowInMap = true;
+	private boolean isShowInScene = false;
+	private boolean isSave = false;
+	private Datasource resultDatasource = null;
+	private String resultDataset = null;
+	private boolean onlySaveSpatialInfo = false;
 
 	public TableRowData(Layer layer) {
 		this.layer = layer;

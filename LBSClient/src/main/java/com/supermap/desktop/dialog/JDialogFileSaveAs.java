@@ -269,8 +269,15 @@ public class JDialogFileSaveAs extends SmDialog {
 		}
 		String file = this.localPath + fileName;
 		int count = 0;
-		String name = fileName.substring(0, fileName.lastIndexOf("."));
-		String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		String name = "";
+		String fileType = "";
+		if(fileName.contains(".")){
+			name = fileName.substring(0, fileName.lastIndexOf("."));
+			fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		}else{
+			name = fileName;
+			fileType = "";
+		}
 		this.realName =name+fileType;
 		while (true) {
 			if (new File(file).exists()) {
