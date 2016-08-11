@@ -177,7 +177,7 @@ public class TristateCheckBox extends JCheckBox {
 			} else { // either "null" or DONT_CARE
 				other.setArmed(true);
 				setPressed(true);
-				setSelected(true);
+				setSelected(false);
 			}
 			fireStateChange(new StateChangeEvent(TristateCheckBox.this, getState()));
 		}
