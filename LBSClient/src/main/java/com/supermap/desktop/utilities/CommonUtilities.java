@@ -133,6 +133,21 @@ public class CommonUtilities {
 			fileManagerContainer.addItem(task);
 		}
 	}
+	/**
+	 * 判断任务恢复界面是否打开过
+	 */
+	public static IFormLBSControl getFormHDFSManager() {
+		IFormLBSControl result = null;
+		int lbsFormCount = 0;
+		int formCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
+		for (int i = 0; i < formCount; i++) {
+			if (Application.getActiveApplication().getMainFrame().getFormManager().get(i) instanceof IFormLBSControl) {
+				result = (IFormLBSControl) Application.getActiveApplication().getMainFrame().getFormManager().get(i);
+				break;
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * 判断任务恢复界面是否打开过

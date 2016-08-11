@@ -18,15 +18,13 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +72,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private IFormTabular tabular;
     private JPanel contentPanel;
     private FileChooserControl fileChooser;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
     private Map<Integer, FieldInfo> fieldInfoMap = new HashMap<Integer, FieldInfo>();// 字段信息MAP，用于存放可更新的列
     private JButton buttonExpression; // 表达式调用入口
@@ -267,7 +266,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.contentPanel.add(this.comboBoxSourceOfField, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(55, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.checkBoxInversion, new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(5, 1).setInsets(0, 10, 5, 10));
         addContentPanel();
-        this.contentPanel.add(initButtonPanel(), new GridBagConstraintsHelper(0, 11, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.contentPanel.add(initButtonPanel(), new GridBagConstraintsHelper(0, 8, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
         //@formatter:on
     }
 
@@ -279,15 +278,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.contentPanel.add(this.labelOperationFieldType, new GridBagConstraintsHelper(5, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 10));
         this.contentPanel.add(this.labelMethod, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 10, 5, 0));
         this.contentPanel.add(this.comboBoxMethod, new GridBagConstraintsHelper(1, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
-        this.contentPanel.add(this.textFieldX, new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
+        this.contentPanel.add(this.textFieldX, new GridBagConstraintsHelper(3, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(20,0));
         this.contentPanel.add(this.textFieldY, new GridBagConstraintsHelper(4, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.labelSecondField, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.textFieldSecondField, new GridBagConstraintsHelper(1, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(this.labelSecondFieldType, new GridBagConstraintsHelper(5, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 10));
         this.contentPanel.add(this.labelOperationEQ, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
         this.contentPanel.add(scrollPane, new GridBagConstraintsHelper(1, 6, 4, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 3).setInsets(0, 10, 5, 0).setIpad(0, 30).setFill(GridBagConstraints.HORIZONTAL));
-        this.contentPanel.add(this.buttonExpression, new GridBagConstraintsHelper(5, 6, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 1).setInsets(0, 10, 5, 0));
-        this.contentPanel.add(this.labelEQTip, new GridBagConstraintsHelper(1, 10, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
+        this.contentPanel.add(this.labelEQTip, new GridBagConstraintsHelper(1, 7, 4, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 5, 0).setFill(GridBagConstraints.HORIZONTAL));
+        this.contentPanel.add(this.buttonExpression, new GridBagConstraintsHelper(4, 7, 1, 1).setAnchor(GridBagConstraints.NORTH).setWeight(10, 1).setInsets(0, 10, 5, 0));
         scrollPane.setViewportView(this.textAreaOperationEQ);
         //@formatter:on
     }
@@ -497,6 +496,22 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.textFieldX.getDocument().addDocumentListener(this.textFieldXChangedListener);
         this.textFieldY.getDocument().addDocumentListener(this.textFieldYChangedListener);
         this.textFieldSecondField.getDocument().addDocumentListener(this.textFieldSecondFieldListener);
+        this.textFieldSecondField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
         this.buttonApply.addActionListener(this.buttonApplyListener);
         this.buttonClose.addActionListener(this.buttonCloseListener);
@@ -1337,14 +1352,46 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             recordset.moveTo(selectRows[i]);
             if (isText) {
                 String newValue = "";
-                if (checkBoxInversion.isSelected()) {
-                    newValue = recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
+                if (null == recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
+                    newValue = "";
+                } else if (null == recordset.getFieldValue(fristField) && null != recordset.getFieldValue(secondField)) {
+                    if (recordset.getFieldValue(secondField) instanceof Date) {
+                        newValue = dateFormat.format(recordset.getFieldValue(fristField));
+                    } else {
+                        newValue = recordset.getFieldValue(secondField).toString();
+                    }
+                } else if (null != recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
+                    if (recordset.getFieldValue(fristField) instanceof Date) {
+                        newValue = dateFormat.format(recordset.getFieldValue(fristField));
+                    } else {
+                        newValue = recordset.getFieldValue(fristField).toString();
+                    }
                 } else {
-                    newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
-                }
-                if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
-                    beyoundMaxLength = true;
-                    newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
+                    if (checkBoxInversion.isSelected()) {
+                        if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue =dateFormat.format(recordset.getFieldValue(secondField)).concat(dateFormat.format(recordset.getFieldValue(fristField)));
+                        }else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)){
+                            newValue =dateFormat.format(recordset.getFieldValue(secondField)).concat(recordset.getFieldValue(fristField).toString());
+                        }else if(!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date){
+                            newValue =recordset.getFieldValue(secondField).toString().concat(dateFormat.format(recordset.getFieldValue(fristField)));
+                        }else{
+                            newValue =recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
+                        }
+                    } else {
+                        if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue =dateFormat.format(recordset.getFieldValue(fristField)).concat(dateFormat.format(recordset.getFieldValue(secondField)));
+                        }else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)){
+                            newValue =recordset.getFieldValue(fristField).toString().concat(dateFormat.format(recordset.getFieldValue(secondField)));
+                        }else if(!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date){
+                            newValue =dateFormat.format(recordset.getFieldValue(fristField)).concat(recordset.getFieldValue(secondField).toString());
+                        }else{
+                            newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
+                        }
+                    }
+                    if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
+                        beyoundMaxLength = true;
+                        newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
+                    }
                 }
                 recordset.setFieldValue(updateField, newValue);
             } else {
@@ -1421,9 +1468,25 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (isText) {
                 String newValue = "";
                 if (checkBoxInversion.isSelected()) {
-                    newValue = value.concat(recordset.getFieldValue(fristField).toString());
+                    if (null == recordset.getFieldValue(fristField)) {
+                        newValue = value + "";
+                    } else {
+                        if (recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = value.concat(dateFormat.format(recordset.getFieldValue(fristField)));
+                        } else {
+                            newValue = value.concat(recordset.getFieldValue(fristField).toString());
+                        }
+                    }
                 } else {
-                    newValue = recordset.getFieldValue(fristField).toString().concat(value);
+                    if (null == recordset.getFieldValue(fristField)) {
+                        newValue = "" + value;
+                    } else {
+                        if (recordset.getFieldValue(fristField) instanceof Date) {
+                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(value);
+                        } else {
+                            newValue = recordset.getFieldValue(fristField).toString().concat(value);
+                        }
+                    }
                 }
                 if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
                     beyoundMaxLength = true;

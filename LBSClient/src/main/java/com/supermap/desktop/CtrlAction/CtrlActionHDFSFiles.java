@@ -28,7 +28,11 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 			// // WorkThead thread = new WorkThead();
 			// // thread.start();
 			// }
-			CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
+			if (CommonUtilities.isTaskManagerOpened()){
+				Application.getActiveApplication().setActiveForm(CommonUtilities.getFormHDFSManager());
+			}else {
+				CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
+			}
 			if (ManagerXMLParser.getTotalTaskCount() > 0 && null==JDialogTaskManager.getTaskManager()) {
 				CommonUtilities.recoverTask();
 			}
