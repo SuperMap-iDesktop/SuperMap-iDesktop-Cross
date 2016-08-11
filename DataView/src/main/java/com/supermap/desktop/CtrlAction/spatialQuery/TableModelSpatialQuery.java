@@ -1,15 +1,16 @@
 package com.supermap.desktop.CtrlAction.spatialQuery;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.dataview.DataViewProperties;
+import com.supermap.desktop.ui.controls.comboBox.UIComboBox;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author XiaJT
@@ -118,12 +119,30 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
+	//region 是否保存数据集
 	public void setIsSave(int[] selectedRows, boolean isSave) {
 		for (int selectedRow : selectedRows) {
 			rowDatas.get(selectedRow).setSave(isSave);
 		}
 	}
 
+	public Boolean isSave(int[] rows) {
+		Boolean result = null;
+		for (int row : rows) {
+			if (result == null) {
+				result = rowDatas.get(row).isSave();
+			}else {
+				if (result != rowDatas.get(row).isSave()) {
+					result = null;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	//endregion
+
+	//region 结果数据源
 	public void setDatasource(int[] selectedRows, Datasource datasource) {
 		for (int selectedRow : selectedRows) {
 			if (datasource != rowDatas.get(selectedRow).getResultDatasource()) {
@@ -132,6 +151,22 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			}
 		}
 	}
+
+	public Datasource getResultDatasource(int[] rows) {
+		Datasource datasource = null;
+		for (int row : rows) {
+			if (datasource == null) {
+				datasource = rowDatas.get(row).getResultDatasource();
+			}else {
+				if (datasource != rowDatas.get(row).getResultDatasource()) {
+					datasource = null;
+					break;
+				}
+			}
+		}
+		return datasource;
+	}
+	//endregion
 
 	public boolean isSupportDatasetName(int row, String datasetName) {
 		if (StringUtilities.isNullOrEmpty(datasetName)) {
@@ -154,16 +189,41 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		return true;
 	}
 
+	//region 数据集名称
 	public void setDatasetName(int row, String datasetName) {
 		rowDatas.get(row).setResultDataset(datasetName);
 	}
 
+	public String getDatasetName(int row) {
+		return rowDatas.get(row).getResultDataset();
+	}
+	//endregion
+
+	//region 只保存空间信息
 	public void setIsOnlySaveSpatialInfo(int[] rows, boolean isOnlySaveSpatialInfo) {
 		for (int row : rows) {
 			rowDatas.get(row).setOnlySaveSpatialInfo(isOnlySaveSpatialInfo);
 		}
 	}
 
+	public Boolean isOnlySaveSpatialInfo(int[] rows) {
+		Boolean result = null;
+		for (int row : rows) {
+			if (result == null) {
+				result = rowDatas.get(row).isOnlySaveSpatialInfo();
+			}else {
+				if (result != rowDatas.get(row).isOnlySaveSpatialInfo()) {
+					result = null;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	//endregion
+
+
+	//region 是否在属性表中显示
 	public void setShowInTabular(int[] rows, boolean isShowInTabular) {
 		for (int row : rows) {
 			rowDatas.get(row).setShowInTabular(isShowInTabular);
@@ -178,12 +238,15 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			}else {
 				if (result != rowDatas.get(row).isShowInTabular()) {
 					result = null;
+					break;
 				}
 			}
 		}
 		return result;
 	}
+	//endregion
 
+	//region 是否在地图中显示
 	public void setShowInMap(int[] rows, boolean isShowInMap) {
 		for (int row : rows) {
 			rowDatas.get(row).setShowInMap(isShowInMap);
@@ -198,12 +261,15 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			} else {
 				if (result != rowDatas.get(row).isShowInMap()) {
 					result = null;
+					break;
 				}
 			}
 		}
 		return result;
 	}
+	//endregion
 
+	//region 是否在场景中显示
 	public void setShowInScene(int[] rows, boolean isShowInScene) {
 		for (int row : rows) {
 			rowDatas.get(row).setShowInScene(isShowInScene);
@@ -219,11 +285,13 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			} else {
 				if (result != rowDatas.get(row).isShowInScene()) {
 					result = null;
+					break;
 				}
 			}
 		}
 		return result;
 	}
+	//endregion
 
 
 //	private String getSuitDatasetName(Datasource datasource, int row) {
