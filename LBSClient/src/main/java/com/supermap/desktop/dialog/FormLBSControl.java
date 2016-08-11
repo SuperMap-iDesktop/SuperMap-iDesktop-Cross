@@ -88,7 +88,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
         initializeComponents();
         initializeResources();
         registEvents();
-        this.setTitle(("Browse Directory"));
+        this.setTitle(("FormHDFSManager"));
     }
 
     private void initializeResources() {
@@ -240,7 +240,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
     /**
      * 添加一行记录
      *
-     * @param rowIndex
+     * @param hdfsDefine
      */
     private void addFileInfo(WebHDFS.HDFSDefine hdfsDefine) {
         try {
@@ -428,6 +428,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+            this.setText(String.valueOf(index+1));
             if (define.isDir()) {
                 this.setToolTipText(LBSClientProperties.getString("String_Dir"));
                 this.setIcon(ControlsResources.getIcon("/controlsresources/Image_DatasetGroup_Normal.png"));
