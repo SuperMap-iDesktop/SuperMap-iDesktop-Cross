@@ -99,11 +99,11 @@ public class SQLExpressionDialog extends SmDialog {
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(this.jButtonOK,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
 		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 6, 3).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(3, 3));
-		getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(0, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,5,5,3).setWeight(0, 0).setIpad(10, 30));
-		getContentPane().add(this.jPanelFunction,       new GridBagConstraintsHelper(2, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,3).setWeight(0, 0).setIpad(0, 30));
-		getContentPane().add(this.jScrollPanel,         new GridBagConstraintsHelper(4, 3, 2, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,5).setWeight(0, 0).setIpad(20, 30));
-		getContentPane().add(panelButton,               new GridBagConstraintsHelper(0, 5, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 3, 3).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(3, 3));
+		getContentPane().add(this.jScrollPanel,         new GridBagConstraintsHelper(0, 3, 1, 2).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3,5,5,5).setWeight(0, 0).setIpad(260, 30));
+		getContentPane().add(this.jPanelFunction,       new GridBagConstraintsHelper(1, 3, 1, 2).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,3).setWeight(0, 0).setIpad(0, 30));
+		getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 3, 1, 2).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3,0,5,3).setWeight(0, 0));
+		getContentPane().add(panelButton,               new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 		//@formatter:on
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
@@ -239,24 +239,24 @@ public class SQLExpressionDialog extends SmDialog {
 		setOperatorButtonSize();
 		//@formatter:off
 		this.jPanelCommonOperator.setLayout(new GridBagLayout());
-		this.jPanelCommonOperator.add(this.jButtonPlus,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.jPanelCommonOperator.add(this.jButtonSubtract, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.jPanelCommonOperator.add(this.jButtonMultiply, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.jPanelCommonOperator.add(this.jButtonDivide,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		this.jPanelCommonOperator.add(this.jButtonAnd,      new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		
+		this.jPanelCommonOperator.add(this.jButtonPlus,     new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonSubtract, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonMultiply, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonDivide,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL));
+		this.jPanelCommonOperator.add(this.jButtonAnd,      new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL));
+
 		this.jPanelCommonOperator.add(this.jButtonMore,     new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonLess,     new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonEqual,    new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonBracket,  new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonNot,      new GridBagConstraintsHelper(4, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		
+
 		this.jPanelCommonOperator.add(this.jButtonMoreOrEqual, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonLessOrEqual, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonLeftBracket, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonRightBracket,new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonLike,        new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-		
+
 		this.jPanelCommonOperator.add(this.jButtonAndCompute,  new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		this.jPanelCommonOperator.add(this.jButtonOr,          new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
@@ -296,7 +296,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * // 显示对话框，过滤字段类型
-	 * 
+	 *
 	 * @param datasets
 	 * @param fieldTypes
 	 */
@@ -328,7 +328,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * // 显示对话框，不过滤字段类型
-	 * 
+	 *
 	 * @param datasets
 	 */
 	public DialogResult showDialog(String sqlExpression, Dataset... datasets) {
@@ -416,7 +416,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * // 填充TableFieldInfo，过滤字段类型
-	 * 
+	 *
 	 * @param datasets
 	 * @param fieldTypes
 	 */
@@ -502,7 +502,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * 点击Button之后，将Button上的字符内容输入到textArea中
-	 * 
+	 *
 	 * @param botton
 	 */
 	private void buttonOperator_Click(JButton botton) {
@@ -515,7 +515,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * 选择各项函数填充表达式文本框
-	 * 
+	 *
 	 * @param comboBox
 	 */
 	private void comboBoxFunction_SelectedIndexChanged(JComboBox<?> comboBox) {

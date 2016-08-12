@@ -309,14 +309,19 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	 *
 	 * @author XiaJT
 	 */
-	private class booleanTableCellRenderer extends JLabel implements TableCellRenderer {
+	private class BooleanTableCellRenderer extends JLabel implements TableCellRenderer {
 
-		public booleanTableCellRenderer() {
+		public BooleanTableCellRenderer() {
 			super();
 		}
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if (isSelected){
+				this.setBackground(COLOR_SYSTEM_SELECTED);
+			}else{
+				this.setBackground(Color.white);
+			}
 			if (value == null) {
 				this.setText("");
 			} else if (value.equals(true)) {
@@ -394,6 +399,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if(isSelected){
+				this.setBackground(COLOR_SYSTEM_SELECTED);
+			}else{
+				this.setBackground(Color.white);
+			}
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 			this.setText((value != null) ? dateFormat.format(value) : "");
 			return this;
@@ -480,7 +490,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		DefaultCellEditor booleanEditor = new DefaultCellEditor(booleanEditorControl);
 		this.jTableTabular.setDefaultEditor(Boolean.class, booleanEditor);
 
-		this.jTableTabular.setDefaultRenderer(Boolean.class, new booleanTableCellRenderer());
+		this.jTableTabular.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
 		this.jTableTabular.setDefaultEditor(Time.class, new DataTabelCellEditor(new JTextField()));
 		this.jTableTabular.setDefaultRenderer(Time.class, new DataTabelCellRender());

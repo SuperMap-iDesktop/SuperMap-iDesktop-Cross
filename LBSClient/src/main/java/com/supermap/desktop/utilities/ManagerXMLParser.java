@@ -33,24 +33,9 @@ public class ManagerXMLParser {
 	 * 删除所有任务
 	 */
 	public static void removeAllTasks() {
-		try {
-			if (null != getCurrentDocument()) {
-				Document document = getCurrentDocument();
-				NodeList downloadList = document.getElementsByTagName("DownloadTask");
-				for (int i = 0; i < downloadList.getLength(); i++) {
-					Element temp = (Element) downloadList.item(i);
-					downloadList.item(i).getParentNode().removeChild(temp);
-				}
-				NodeList uploadList = document.getElementsByTagName("UploadTask");
-				for (int i = 0; i < uploadList.getLength(); i++) {
-					Element temp = (Element) uploadList.item(i);
-					uploadList.item(i).getParentNode().removeChild(temp);
-				}
-				XmlUtilities.saveXml(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false), document,
-						document.getXmlEncoding());
-			}
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+		File taskManagerFile = new File(PathUtilities.getFullPathName(LBSClientProperties.getString("String_ManangerXMLPath"), false));
+		if (taskManagerFile.exists()){
+			taskManagerFile.delete();
 		}
 	}
 
@@ -58,7 +43,7 @@ public class ManagerXMLParser {
 	 * 删除任务节点
 	 * 
 	 * @param taskType
-	 * @param property
+	 * @param
 	 * 
 	 */
 	public static void removeTask(TaskEnum taskType, String url, String realName) {

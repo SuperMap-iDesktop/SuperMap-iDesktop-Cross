@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.JDialogTaskManager;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
@@ -31,7 +32,8 @@ public class CtrlActionHDFSFiles extends CtrlAction {
 			if (CommonUtilities.isTaskManagerOpened()){
 				Application.getActiveApplication().setActiveForm(CommonUtilities.getFormHDFSManager());
 			}else {
-				CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
+				IForm form = CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.LBSCONTROL);
+				form.setText("FormHDFSManager");
 			}
 			if (ManagerXMLParser.getTotalTaskCount() > 0 && null==JDialogTaskManager.getTaskManager()) {
 				CommonUtilities.recoverTask();
