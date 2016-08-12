@@ -208,11 +208,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
             <!--maven-bundle-plugin 把 bundle 视为可用 classes 的集合，如果有在 src/main/resources/ 之外的
                   非 Java 资源文件，需要自行处理拷贝打包的问题-->
             <plugin>

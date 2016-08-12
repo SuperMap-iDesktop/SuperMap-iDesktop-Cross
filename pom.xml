@@ -41,6 +41,9 @@
     <build>
         <pluginManagement>
             <plugins>
+
+                <!--maven-compiler-plugin 是默认 compiler，要更改所有 modue 的插件配置，只需要配置 pluginManagement 即可，
+                无需在 module 里显式配置 compiler plugin-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
