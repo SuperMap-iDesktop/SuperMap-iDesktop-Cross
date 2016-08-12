@@ -11,6 +11,11 @@
 
     <artifactId>Core</artifactId>
 
+    <!--Packaging = jar 会定义默认的 goal 来打包（maven-jar-plugin），本程序需要自定义打包过程，
+    方法一：设置 Packaging = bundle，本程序采用这种方式。
+    方法二：使用 maven-bundle-plugin 的 manifest goal，配合 maven-dependency-plugin、maven-resources-plugin 等实现。-->
+    <packaging>bundle</packaging>
+
     <!--<repositories>-->
     <!--<repository>-->
     <!--<id>supermap</id>-->
@@ -214,6 +219,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>3.2.0</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>bundle-package</id>
@@ -225,7 +231,6 @@
                     </execution>
                 </executions>
                 <configuration>
-
                     <!--指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF-->
                     <!--<manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>-->
                     <instructions>
