@@ -207,6 +207,21 @@
     </dependencies>
 
     <build>
+        <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+        </resource>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.png</include>
+                <include>**/*.gif</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+    </resources>
         <plugins>
             <!--maven-bundle-plugin 把 bundle 视为可用 classes 的集合，如果有在 src/main/resources/ 之外的
                   非 Java 资源文件，需要自行处理拷贝打包的问题-->
@@ -215,16 +230,19 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>3.2.0</version>
                 <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>bundle-package</id>
-                        <phase>package</phase>
-                        <inherited>true</inherited>
-                        <goals>
-                            <goal>bundle</goal>
-                        </goals>
-                    </execution>
-                </executions>
+
+                <!--Packaging = bundle，无需再进行 goal 的绑定。
+                如果 Packaging = jar，则需要绑定 goal 进行 Manifest 文件的生成-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>bundle-package</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<inherited>true</inherited>-->
+                        <!--<goals>-->
+                            <!--<goal>bundle</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
                 <configuration>
                     <!--指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF-->
                     <!--<manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>-->
@@ -238,7 +256,9 @@
                         <Bundle-Version>${bundle.version}</Bundle-Version>
                         <Bundle-Activator>com.supermap.desktop.core.CoreActivator</Bundle-Activator>
 
-                        <!--打包的资源文件，默认打包 maven 资源目录，也就是 src/main/resources/ 里的内容-->
+                        <!--打包的资源文件，默认打包 maven 资源目录，也就是 src/main/resources/ 里的内容。
+                        该配置与 maven-resources-plugin 冲突，并且没有 maven-resources-plugin 灵活，同时配置以 maven-resources-plugin 为准。
+                        建议使用 maven-resources-plugin，也就是 <Resources></Resources> 配置项。-->
                         <Include-Resource>{maven-resources}</Include-Resource>
 
                         <!--1. Requre-Bundle 为导入整个 Bundle，Import-Package 为导入指定的包，Import-Package更为灵活。
