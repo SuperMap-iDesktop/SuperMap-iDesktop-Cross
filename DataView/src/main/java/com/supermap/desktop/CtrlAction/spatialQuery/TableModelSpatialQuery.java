@@ -175,7 +175,9 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		for (int selectedRow : selectedRows) {
 			if (datasource != rowDatas.get(selectedRow).getResultDatasource()) {
 				rowDatas.get(selectedRow).setResultDatasource(datasource);
-				rowDatas.get(selectedRow).setResultDataset(datasource.getDatasets().getAvailableDatasetName(rowDatas.get(selectedRow).getResultDataset()));
+				if (datasource != null) {
+					rowDatas.get(selectedRow).setResultDataset(datasource.getDatasets().getAvailableDatasetName(rowDatas.get(selectedRow).getResultDataset()));
+				}
 			}
 		}
 	}
