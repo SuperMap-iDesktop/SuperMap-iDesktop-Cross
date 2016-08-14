@@ -154,14 +154,14 @@
                             不显式配置则默认为 ${pom.organization.name}。
                             *************************************************************
                             -->
-                            <!--<Bundle-Vendor></Bundle-Vendor>-->
+                            <!--<Bundle-Vendor>${pom.organization.name}</Bundle-Vendor>-->
 
                             <!--
                             *************************************************************
                             不显式配置则默认为 ${pom.organization.url}。
                             *************************************************************
                             -->
-                            <!--<Bundle-DocURL></Bundle-DocURL>-->
+                            <!--<Bundle-DocURL>${pom.organization.url}</Bundle-DocURL>-->
 
                             <!--
                             *************************************************************
@@ -176,6 +176,7 @@
                             *************************************************************
                             1. Requre-Bundle 为导入整个 Bundle，Import-Package 为导入指定的包，Import-Package更为灵活。
                             2. Import-Package 默认为 *，也就是导入所有引用的包，包括配置的依赖，但这些依赖并非 bundle，不能 Import。
+                            3. Require-Bundle 所导入的整个包，可以重复导出该 Bundle 已导出过的包。
                             *************************************************************
                             -->
                             <!--<Require-Bundle></Require-Bundle>-->
@@ -215,7 +216,17 @@
                             -->
                             <!--<Private-Package></Private-Package>-->
 
-                            <Embed-Dependency>*;scope=compile|system</Embed-Dependency>
+                            <!--
+                            *************************************************************
+                            需要注意的是 inline=true，设置这个属性是为了处理 Controls 对 Core 的非直接依赖导致的编译时依赖错误的问题。
+                            在 eclipse 或者 IDEA 等均有各自的依赖规则以及编译器处理 jar in jar 的依赖问题，maven-compiler-plugin 没有这样的特性。
+                            两种方案：
+                            1. Core 直接依赖第三方库，并在打包时 inline 第三方库，其他 bundle 均 Require-Bundle Core 或者 Import-Pakcage 使用 Core 导出的 package；
+                                目前采用这个方案。（尝试一下 Require-Bundle 在 Export-Package 里重复导出是否会被 inline）
+                            2. 所有 Bundle 均配置对应第三方库的依赖，打包的时候，将所有的依赖打包到指定的路径，不再 inline 或者 jar in jar。
+                            *************************************************************
+                            -->
+                            <Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>
 
                             <!--
                             *************************************************************
