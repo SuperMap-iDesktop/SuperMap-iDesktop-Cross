@@ -39,11 +39,29 @@
     </properties>
 
     <build>
+
+        <!--统一配置子模块的资源打包，不使用 maven-bundle-plugin 的 <Include_Resource> 标签-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.png</include>
+                    <include>**/*.gif</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <pluginManagement>
             <plugins>
 
-                <!--maven-compiler-plugin 是默认 compiler，要更改所有 modue 的插件配置，只需要配置 pluginManagement 即可，
-                无需在 module 里显式配置 compiler plugin-->
+                <!-- maven-compiler-plugin 是默认 compiler，要更改所有 modue 的插件配置，只需要配置 pluginManagement 即可，
+                无需在 module 里显式配置 compiler plugin。-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -52,10 +70,161 @@
                         <target>1.7</target>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
 
+                <!--maven-bundle-plugin 把 bundle 视为可用 classes 的集合，如果有在 src/main/resources/ 之外的非 Java 资源文件，需要自行处理拷贝打包的问题-->
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <extensions>true</extensions>
+
+                    <!--Packaging = bundle，无需再进行 goal 的绑定。如果 Packaging = jar，则需要绑定 goal 进行 Manifest 文件的生成。-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>bundle-package</id>-->
+                            <!--<phase>package</phase>-->
+                            <!--<inherited>true</inherited>-->
+                            <!--<goals>-->
+                                <!--<goal>bundle</goal>-->
+                            <!--</goals>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                    <configuration>
+
+                        <!--
+                        *************************************************************
+                        指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF。
+                        *************************************************************
+                        -->
+                        <!--<manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>-->
+                        <instructions>
+                            <Manifest-Version>1.0</Manifest-Version>
+
+                            <!--
+                            *************************************************************
+                            OSGI R4规范这个值只能是2。
+                            *************************************************************
+                            -->
+                            <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+
+                            <!--
+                            *************************************************************
+                            不显式配置则默认为 ${pom.name}。
+                            *************************************************************
+                            -->
+                            <!--<Bundle-Name>${pom.name}</Bundle-Name>-->
+
+                            <!--
+                            *************************************************************
+                            is computed using the shared Maven2OsgiConverter component, which uses the following algorithm:
+                            Get the symbolic name as groupId + "." + artifactId, with the following exceptions:
+                            1. if artifact.getFile is not null and the jar contains a OSGi Manifest with Bundle-SymbolicName property
+                               then that value is returned.
+                            2. if groupId has only one section (no dots) and artifact.getFile is not null then the first package name
+                               with classes is returned. eg. commons-logging:commons-logging -> org.apache.commons.logging.
+                            3. if artifactId is equal to last section of groupId then groupId is returned. eg. org.apache.maven:maven
+                               -> org.apache.maven.
+                            4. if artifactId starts with last section of groupId that portion is removed. eg. org.apache.maven:maven-core
+                               -> org.apache.maven.core The computed symbolic name is also stored in the $(maven-symbolicname) property
+                               in case you want to add attributes or directives to it.
+                               *************************************************************
+                               -->
+                            <!--<Bundle-SymbolicName></Bundle-SymbolicName>-->
+
+                            <!--
+                            *************************************************************
+                            不显式配置则默认 ${pom.version}，按 "MAJOR.MINOR.MICRO.QUALIFIER" 的形式格式化。
+                            Bundle-Version 和 Bundle-SymbolicName 共同作为一个 Bundle 的唯一标识。
+                            *************************************************************
+                            -->
+                            <Bundle-Version>${bundle.version}</Bundle-Version>
+
+                            <!--
+                            *************************************************************
+                            不显式配置则默认 ${pom.description}。
+                            *************************************************************
+                            -->
+                            <!--<Bundle-Description>${pom.description}</Bundle-Description>-->
+
+                            <!--########## 该项子模块必须自定义 ##########-->
+                            <!--<Bundle-Activator></Bundle-Activator>-->
+
+                            <!--
+                            *************************************************************
+                            不显式配置则默认为 ${pom.organization.name}。
+                            *************************************************************
+                            -->
+                            <!--<Bundle-Vendor></Bundle-Vendor>-->
+
+                            <!--
+                            *************************************************************
+                            不显式配置则默认为 ${pom.organization.url}。
+                            *************************************************************
+                            -->
+                            <!--<Bundle-DocURL></Bundle-DocURL>-->
+
+                            <!--
+                            *************************************************************
+                            打包的资源文件，默认打包 maven 资源目录，也就是 src/main/resources/ 里的内容。
+                            该配置与 maven-resources-plugin 互斥，并且没有 maven-resources-plugin 灵活，同时配置则以 maven-resources-plugin 为准。
+                            建议使用 maven-resources-plugin，也就是 <Resources></Resources> 配置项。
+                            *************************************************************
+                            -->
+                            <!--<Include-Resource>{maven-resources}</Include-Resource>-->
+
+                            <!--
+                            *************************************************************
+                            1. Requre-Bundle 为导入整个 Bundle，Import-Package 为导入指定的包，Import-Package更为灵活。
+                            2. Import-Package 默认为 *，也就是导入所有引用的包，包括配置的依赖，但这些依赖并非 bundle，不能 Import。
+                            *************************************************************
+                            -->
+                            <!--<Require-Bundle></Require-Bundle>-->
+
+                            <!--
+                            *************************************************************
+                            is assumed to be "*", which imports everything referred to by the bundle content, but not contained in the bundle.
+                             Any exported packages are also imported by default, to ensure a consistent class space.
+                             *************************************************************
+                            -->
+                            <Import-Package>
+                                org.osgi.framework,
+                                org.osgi.util.tracker
+                            </Import-Package>
+
+                            <!--
+                            *************************************************************
+                            Export-Package 和 Private-Package 会将所配置的包以内联（inline）的形式打到包里。
+                            *************************************************************
+                            -->
+                            <!--<Export-Package></Export-Package>-->
+
+                            <!--
+                            *************************************************************
+                            1. BND 的 exported 配置，功能与 Exported-Pakcage 一致，只是不处理依赖包的内联（inline），通常与 Embed-Dependency 搭配使用，
+                            避免因为 Exported-Package 的依赖内联，导致与 Embed-Dependency的相同包重复。
+                            2. 由于 Export-Package 会导致被导出的包内联，因此如果 Controls 导出了 Core 里的某些内容，则会导致 Core 的 inline，产生重复，因此使用
+                             exportcontents + Embed-Dependency 来进行更为灵活的处理。
+                             *************************************************************
+                             -->
+                            <!--<_exportcontents></_exportcontents>-->
+
+                            <!--
+                            *************************************************************
+                            Private-Package 默认为源码里 exported 之外的所有包。exported 的优先级高于 private，如果有相同的配置，则 exported 生效。
+                            *************************************************************
+                            -->
+                            <!--<Private-Package></Private-Package>-->
+
+                            <Embed-Dependency>*;scope=compile|system</Embed-Dependency>
+
+                            <!--
+                            *************************************************************
+                            指定 Embed 依赖相对包的根目录的路径。
+                            *************************************************************
+                            -->
+                            <Embed-Directory>lib</Embed-Directory>
+                        </instructions>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
