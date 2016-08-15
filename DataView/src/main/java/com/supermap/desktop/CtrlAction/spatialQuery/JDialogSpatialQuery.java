@@ -16,10 +16,12 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
 import javax.swing.*;
@@ -99,6 +101,30 @@ public class JDialogSpatialQuery extends SmDialog {
 
 	private void initComponent() {
 		initTable();
+		smTextFieldLegitDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (isIgnore) {
+					return true;
+				}
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+					return false;
+				}
+				if (comboBoxDatasource.getSelectedItem() == null) {
+					return false;
+				}
+				if (!((Datasource) comboBoxDatasource.getSelectedItem()).getDatasets().isAvailableDatasetName(textFieldValue)) {
+					return false;
+				}
+				tableModelSpatialQuery.setDatasetName(tableLayers.getSelectedRow(), textFieldValue);
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return null;
+			}
+		});
 		comboBoxSearchLayer.setMinimumSize(new Dimension(200, 23));
 		comboBoxSearchLayer.setRenderer(new ListCellRenderer<Layer>() {
 			@Override
@@ -312,14 +338,45 @@ public class JDialogSpatialQuery extends SmDialog {
 			public void itemStateChanged(ItemEvent e) {
 				boolean selected = checkBoxSaveResult.isSelected();
 				comboBoxDatasource.setEnabled(selected);
-				smTextFieldLegitDataset.setEditable(selected);
+				smTextFieldLegitDataset.setEditable(selected && comboBoxDatasource.getSelectedItem() != null);
 				checkBoxOnlySaveSpatial.setEnabled(selected);
 				if (!isIgnore) {
 					tableModelSpatialQuery.setIsSave(tableLayers.getSelectedRows(), selected);
 				}
 			}
 		});
-
+		comboBoxDatasource.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && !isIgnore) {
+					tableModelSpatialQuery.setDatasource(tableLayers.getSelectedRows(), ((Datasource) comboBoxDatasource.getSelectedItem()));
+				}
+			}
+		});
+		checkBoxOnlySaveSpatial.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (!isIgnore) {
+					tableModelSpatialQuery.setIsOnlySaveSpatialInfo(tableLayers.getSelectedRows(), checkBoxOnlySaveSpatial.isSelected());
+				}
+			}
+		});
+		checkBoxShowInTabular.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (!isIgnore) {
+					tableModelSpatialQuery.setShowInTabular(tableLayers.getSelectedRows(), checkBoxShowInTabular.isSelected());
+				}
+			}
+		});
+		checkBoxShowInMap.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (!isIgnore) {
+					tableModelSpatialQuery.setShowInMap(tableLayers.getSelectedRows(), checkBoxShowInMap.isSelected());
+				}
+			}
+		});
 		smButtonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
