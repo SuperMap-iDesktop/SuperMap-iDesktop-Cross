@@ -211,20 +211,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             fileChooserClicked();
         }
     };
-    private KeyAdapter textFieldSecondFieldKeyListener = new KeyAdapter() {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            if (FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType()) && (StringUtilities.isNumber(String.valueOf(e.getKeyChar())) || String.valueOf(e.getKeyChar()).equals(".") || String.valueOf(e.getKeyChar()).equals("-"))) {
-                // 当待更新字段为数值型时不能输入文本型数据
-                return;
-            } else if (!FieldTypeUtilities.isNumber(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType())) {
-                // 当待更新字段不为数值型时可随意输入
-                return;
-            } else {
-                e.consume();
-            }
-        }
-    };
     private KeyAdapter textAreaOperationEQKeyListener = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
@@ -239,6 +225,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         setSize(500, 360);
         setLocationRelativeTo(null);
         initComponents();
+        this.componentList.add(this.buttonApply);
+        this.componentList.add(this.buttonClose);
+        this.setFocusTraversalPolicy(this.policy);
+        this.getRootPane().setDefaultButton(this.buttonApply);
         initResources();
         registEvents();
     }
@@ -261,6 +251,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.buttonExpression = new JButton(ControlsProperties.getString("String_SQLExpression"));
         this.buttonExpression.setEnabled(false);
         initLayout();
+        initTextFieldOperationEQText(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType());
         if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN)) {
             replaceSecondField(comboBoxSecondField, textFieldSecondField, fileChooser);
             setComboBoxSecondFieldItems(FieldType.BOOLEAN);
@@ -325,7 +316,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private void initTextFieldOperationEQ() {
         this.labelOperationEQ = new JLabel();
         this.textAreaOperationEQ = new JTextArea();
-        initTextFieldOperationEQText(tabular.getRecordset().getFieldInfos().get(0).getType());
         this.textAreaOperationEQ.setEnabled(false);
         this.labelEQTip = new JLabel();
     }
@@ -347,6 +337,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         if (FieldTypeUtilities.isNumber(type) && (!StringUtilities.isNumber(textFieldSecondField.getText()))) {
             this.textFieldSecondField.setText("0");
             this.textAreaOperationEQ.setText("0");
+        }else if(type.equals(FieldType.DATETIME)){
+            this.textFieldSecondField.setText("null");
+            this.textAreaOperationEQ.setText("null");
+            buttonApply.setEnabled(true);
         }
     }
 
@@ -489,7 +483,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.textFieldX.getDocument().addDocumentListener(this.textFieldXChangedListener);
         this.textFieldY.getDocument().addDocumentListener(this.textFieldYChangedListener);
         this.textFieldSecondField.getDocument().addDocumentListener(this.textFieldSecondFieldListener);
-        this.textFieldSecondField.addKeyListener(this.textFieldSecondFieldKeyListener);
+//        this.textFieldSecondField.addKeyListener(this.textFieldSecondFieldKeyListener);
         this.textAreaOperationEQ.addKeyListener(this.textAreaOperationEQKeyListener);
         this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
         this.buttonApply.addActionListener(this.buttonApplyListener);
@@ -515,7 +509,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.comboBoxMethod.removeItemListener(this.comboBoxMethodListener);
         this.textFieldX.getDocument().removeDocumentListener(this.textFieldXChangedListener);
         this.textFieldY.getDocument().removeDocumentListener(this.textFieldYChangedListener);
-        this.textFieldSecondField.removeKeyListener(this.textFieldSecondFieldKeyListener);
         this.textFieldSecondField.getDocument().removeDocumentListener(this.textFieldSecondFieldListener);
         this.textAreaOperationEQ.removeKeyListener(this.textAreaOperationEQKeyListener);
         this.comboBoxSecondField.addItemListener(this.comboBoxSecondFieldListener);
@@ -839,8 +832,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
                 // 设置单字段运算界面
                 setSingleFieldInfo();
-                resetOperationEnabled(tabular.getRecordset().getFieldInfos().get(comboBoxUpdateField.getSelectedItem().toString()).getType(), tabular
-                        .getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType());
+//                resetOperationEnabled(tabular.getRecordset().getFieldInfos().get(comboBoxUpdateField.getSelectedItem().toString()).getType(), tabular
+//                        .getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType());
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -873,7 +866,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
                 // 单字段运算
                 resetTextFieldOperationEQ();
-                resetOperationEnabled(updateFieldType, operationField);
+//                resetOperationEnabled(updateFieldType, operationField);
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -895,15 +888,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         }
     }
 
-    private void resetOperationEnabled(FieldType updateFieldType, FieldType operationField) {
-        // 待更新字段为字符型，文本型时，不激活应用按钮
-        if ((updateFieldType.equals(FieldType.CHAR) || updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT))
-                && operationField.equals(FieldType.DATETIME)) {
-            buttonApply.setEnabled(false);
-        } else {
-            buttonApply.setEnabled(true);
-        }
-    }
+//    private void resetOperationEnabled(FieldType updateFieldType, FieldType operationField) {
+//        // 待更新字段为字符型，文本型时，不激活应用按钮
+//        if ((updateFieldType.equals(FieldType.CHAR) || updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT))
+//                && operationField.equals(FieldType.DATETIME)) {
+//            buttonApply.setEnabled(false);
+//        } else {
+//            buttonApply.setEnabled(true);
+//        }
+//    }
 
     private void resetMethodInfo() {
         resetMethodItemsForMathModel();
@@ -1083,16 +1076,25 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         if (FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
             textAreaOperationEQ.setText(info + "0");
             buttonApply.setEnabled(true);
-            return;
-        }
-        if (!StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+
+        }else if (FieldTypeUtilities.isNumber(fieldType) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
+            if (!checkBoxInversion.isSelected()) {
+                textAreaOperationEQ.setText(info + textFieldSecondField.getText());
+            } else {
+                textAreaOperationEQ.setText(textFieldSecondField.getText() + info);
+            }
+            if (StringUtilities.isNumber(textFieldSecondField.getText())){
+                buttonApply.setEnabled(true);
+            }else{
+                buttonApply.setEnabled(false);
+            }
+        }else if (!FieldTypeUtilities.isNumber(fieldType) &&!StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
             if (!checkBoxInversion.isSelected()) {
                 textAreaOperationEQ.setText(info + textFieldSecondField.getText());
             } else {
                 textAreaOperationEQ.setText(textFieldSecondField.getText() + info);
             }
             buttonApply.setEnabled(true);
-            return;
         }
     }
 
