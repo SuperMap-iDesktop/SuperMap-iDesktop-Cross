@@ -225,7 +225,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             }
         }
     };
-    private KeyAdapter textAreaOperationEQKeyListener= new KeyAdapter(){
+    private KeyAdapter textAreaOperationEQKeyListener = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
             buttonApply.setEnabled(true);
@@ -601,6 +601,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 if (tabular.getRecordset().getFieldInfos().get(i).getType().equals(FieldType.DATETIME)) {
                     this.comboBoxOperationField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
                 }
+            }
+        } else {
+            this.comboBoxOperationField.removeAllItems();
+            for (int i = 0; i < tabular.getRecordset().getFieldInfos().getCount(); i++) {
+                this.comboBoxOperationField.addItem(tabular.getRecordset().getFieldInfos().get(i).getName());
             }
         }
         labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
