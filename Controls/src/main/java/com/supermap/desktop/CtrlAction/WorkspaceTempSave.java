@@ -50,6 +50,12 @@ public class WorkspaceTempSave {
 	private Workspace workspace;
 	private int saveCount = 60;
 	private int currentCount = 0;
+	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
+		@Override
+		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+			currentCount = 0;
+		}
+	};
 	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
 		@Override
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
@@ -119,12 +125,7 @@ public class WorkspaceTempSave {
 
 	private void addListeners() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		workspace.addOpenedListener(new WorkspaceOpenedListener() {
-			@Override
-			public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-				currentCount = 0;
-			}
-		});
+		workspace.addOpenedListener(workspaceOpenedListener);
 		workspace.addClosingListener(workspaceClosingListener);
 		workspace.addSavedListener(workspaceSavedListener);
 		workspace.addSavedAsListener(workspaceSavedAsListener);
@@ -132,6 +133,7 @@ public class WorkspaceTempSave {
 
 	private void removeListeners() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.removeOpenedListener(workspaceOpenedListener);
 		workspace.removeClosingListener(workspaceClosingListener);
 		workspace.removeSavedListener(workspaceSavedListener);
 		workspace.removeSavedAsListener(workspaceSavedAsListener);
