@@ -122,7 +122,7 @@ public class WorkspaceTempSave {
 		workspace.addOpenedListener(new WorkspaceOpenedListener() {
 			@Override
 			public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-
+				currentCount = 0;
 			}
 		});
 		workspace.addClosingListener(workspaceClosingListener);
