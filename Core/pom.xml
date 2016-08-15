@@ -215,13 +215,13 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.core.CoreActivator</Bundle-Activator>
-                        <_exportcontents>
-                            Aladdin,
-                            com.alibaba.*,
+                        <Export-Package>
+                            {local-packages},
+                            Aladdin,com.alibaba.*,
                             com.supermap.*,
                             org.apache.*,
                             org.jdesktop.*
-                        </_exportcontents>
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

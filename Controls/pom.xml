@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>idesktop.cross</artifactId>
@@ -35,11 +35,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.controls.ControlsActivator</Bundle-Activator>
+                        <Export-Package>{local-packages}</Export-Package>
                         <Require-Bundle>${pom.groupId}.Core</Require-Bundle>
-                        <_exportcontents>
-                            com.supermap.*,
-                            net.infonode.*
-                        </_exportcontents>
                     </instructions>
                 </configuration>
             </plugin>

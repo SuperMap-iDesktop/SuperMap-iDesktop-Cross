@@ -68,6 +68,7 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
+                        <encoding>utf-8</encoding>
                     </configuration>
                 </plugin>
 
@@ -78,6 +79,7 @@
                     <version>3.2.0</version>
                     <extensions>true</extensions>
 
+                    <!--@formatter:off-->
                     <!--Packaging = bundle，无需再进行 goal 的绑定。如果 Packaging = jar，则需要绑定 goal 进行 Manifest 文件的生成。-->
                     <!--<executions>-->
                         <!--<execution>-->
@@ -89,6 +91,7 @@
                             <!--</goals>-->
                         <!--</execution>-->
                     <!--</executions>-->
+                    <!--@formatter:on-->
                     <configuration>
 
                         <!--
@@ -112,7 +115,7 @@
                             不显式配置则默认为 ${pom.name}。
                             *************************************************************
                             -->
-                            <!--<Bundle-Name>${pom.name}</Bundle-Name>-->
+                            <Bundle-Name>${pom.name}</Bundle-Name>
 
                             <!--
                             *************************************************************
@@ -144,7 +147,7 @@
                             不显式配置则默认 ${pom.description}。
                             *************************************************************
                             -->
-                            <!--<Bundle-Description>${pom.description}</Bundle-Description>-->
+                            <Bundle-Description>${pom.description}</Bundle-Description>
 
                             <!--########## 该项子模块必须自定义 ##########-->
                             <!--<Bundle-Activator></Bundle-Activator>-->
@@ -154,14 +157,14 @@
                             不显式配置则默认为 ${pom.organization.name}。
                             *************************************************************
                             -->
-                            <!--<Bundle-Vendor>${pom.organization.name}</Bundle-Vendor>-->
+                            <Bundle-Vendor>${pom.organization.name}</Bundle-Vendor>
 
                             <!--
                             *************************************************************
                             不显式配置则默认为 ${pom.organization.url}。
                             *************************************************************
                             -->
-                            <!--<Bundle-DocURL>${pom.organization.url}</Bundle-DocURL>-->
+                            <Bundle-DocURL>${pom.organization.url}</Bundle-DocURL>
 
                             <!--
                             *************************************************************
@@ -176,7 +179,7 @@
                             *************************************************************
                             1. Requre-Bundle 为导入整个 Bundle，Import-Package 为导入指定的包，Import-Package更为灵活。
                             2. Import-Package 默认为 *，也就是导入所有引用的包，包括配置的依赖，但这些依赖并非 bundle，不能 Import。
-                            3. Require-Bundle 所导入的整个包，可以重复导出该 Bundle 已导出过的包。
+                            3. Require-Bundle 所导入的整个包，可以重复导出该 Bundle 已导出过的包，但这样会导致 Required Bundle inline，maven-bundle-plugin 还是不够智能。
                             *************************************************************
                             -->
                             <!--<Require-Bundle></Require-Bundle>-->
@@ -194,17 +197,28 @@
 
                             <!--
                             *************************************************************
+                            不显式配置则默认导出本地源代码里的包，使用 {local-packages} 表示本地包
                             Export-Package 和 Private-Package 会将所配置的包以内联（inline）的形式打到包里。
+                            由于 OSGI bundle 间依赖的特殊性，类似Controls 对 Core 的非直接依赖会导致的编译时依赖错误。
+                            在 eclipse 或者 IDEA 等均有各自的依赖规则以及编译器处理 jar in jar 的依赖问题，maven-compiler-plugin 没有这样的特性。
+                            两种方案：
+                            1. Core 直接依赖第三方库，并在打包时 inline 第三方库，其他 bundle 均 Require-Bundle Core 或者 Import-Pakcage 使用 Core 导出的 package；
+                                目前采用这个方案。
+                            2. 所有 Bundle 均配置对应第三方库的依赖，打包的时候，将所有的依赖打包到指定的路径，不再 inline 或者 jar in jar。
+                            3. 如果打包的时候有需求打包为 jar in jar 的形式，则使用 _exportcontents + Embed-Dependency 进行灵活处理。
+                            4. 本项目采用依赖 inline 的方式来解决 jar in jar 编译时依赖错误的问题（见备注 1），并默认所有子模块导出本地包，并按需导出第三方依赖包。也即 Core
+                                导出本地包+第三方包，Controls 导出本地包，由此来解决 Controls 重复导出 Core 中包的问题。
+                            5. 本项目默认不导出任何包，子模块按需求自行配置。
                             *************************************************************
                             -->
-                            <!--<Export-Package></Export-Package>-->
+                            <Export-Package>!*</Export-Package>
 
                             <!--
                             *************************************************************
                             1. BND 的 exported 配置，功能与 Exported-Pakcage 一致，只是不处理依赖包的内联（inline），通常与 Embed-Dependency 搭配使用，
                             避免因为 Exported-Package 的依赖内联，导致与 Embed-Dependency的相同包重复。
-                            2. 由于 Export-Package 会导致被导出的包内联，因此如果 Controls 导出了 Core 里的某些内容，则会导致 Core 的 inline，产生重复，因此使用
-                             exportcontents + Embed-Dependency 来进行更为灵活的处理。
+                            2. 由于 Export-Package 会导致被导出的包内联，因此如果 Controls 导出了 Core 里的某些内容，则会导致 Core 的 inline，产生重复，因此可以使用
+                             _exportcontents + Embed-Dependency 来进行更为灵活的处理。
                              *************************************************************
                              -->
                             <!--<_exportcontents></_exportcontents>-->
@@ -218,22 +232,17 @@
 
                             <!--
                             *************************************************************
-                            需要注意的是 inline=true，设置这个属性是为了处理 Controls 对 Core 的非直接依赖导致的编译时依赖错误的问题。
-                            在 eclipse 或者 IDEA 等均有各自的依赖规则以及编译器处理 jar in jar 的依赖问题，maven-compiler-plugin 没有这样的特性。
-                            两种方案：
-                            1. Core 直接依赖第三方库，并在打包时 inline 第三方库，其他 bundle 均 Require-Bundle Core 或者 Import-Pakcage 使用 Core 导出的 package；
-                                目前采用这个方案。（尝试一下 Require-Bundle 在 Export-Package 里重复导出是否会被 inline）
-                            2. 所有 Bundle 均配置对应第三方库的依赖，打包的时候，将所有的依赖打包到指定的路径，不再 inline 或者 jar in jar。
+                            需要注意的是 inline=true，设置这个属性的原因见 <Export-Package> 备注。
                             *************************************************************
                             -->
-                            <Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>
+                            <!--<Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>-->
 
                             <!--
                             *************************************************************
                             指定 Embed 依赖相对包的根目录的路径。
                             *************************************************************
                             -->
-                            <Embed-Directory>lib</Embed-Directory>
+                            <!--<Embed-Directory>lib</Embed-Directory>-->
                         </instructions>
                     </configuration>
                 </plugin>
