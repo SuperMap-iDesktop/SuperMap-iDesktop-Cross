@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.spatialQuery;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
+import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
@@ -25,6 +26,8 @@ import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -126,6 +129,7 @@ public class JDialogSpatialQuery extends SmDialog {
 			}
 		});
 		comboBoxSearchLayer.setMinimumSize(new Dimension(200, 23));
+		comboBoxSearchLayer.setPreferredSize(new Dimension(200, 23));
 		comboBoxSearchLayer.setRenderer(new ListCellRenderer<Layer>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Layer> list, Layer value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -228,6 +232,28 @@ public class JDialogSpatialQuery extends SmDialog {
 			}
 		});
 		tableLayers.getColumnModel().getColumn(2).setPreferredWidth(100);
+		tableLayers.getColumnModel().getColumn(TableModelSpatialQuery.ROW_INDEX_SPATIAL_QUERY_MODE).setCellRenderer(new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel jLabel = new JLabel();
+				if (value != null && value instanceof SpatialQueryMode) {
+					jLabel.setText(getSpatialQueryDescribe(((DatasetType) table.getValueAt(row, TableModelSpatialQuery.ROW_INDEX_DATASET_TYPE)), ((SpatialQueryMode) value))[0]);
+				}
+				if (isSelected) {
+					jLabel.setOpaque(true);
+					jLabel.setBackground(table.getSelectionBackground());
+				}
+				return jLabel;
+			}
+		});
+	}
+
+	private String[] getSpatialQueryDescribe(DatasetType currentDatasetType, SpatialQueryMode... value) {
+		ArrayList<String> results = new ArrayList<>();
+		Layer selectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
+
+		return null;
+
 	}
 
 	//region 初始化布局
@@ -293,7 +319,8 @@ public class JDialogSpatialQuery extends SmDialog {
 		tableModelSpatialQuery.addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				if (e.getColumn() == 0 && !checkBoxSelectAllLock) {
+				// 全选，非选实现
+				if (e.getType() == TableModelEvent.UPDATE && e.getColumn() == 0 && !checkBoxSelectAllLock) {
 					Boolean result = (Boolean) tableModelSpatialQuery.getValueAt(0, 0);
 					for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
 						if (tableModelSpatialQuery.getValueAt(i, 0) != result) {
@@ -304,7 +331,10 @@ public class JDialogSpatialQuery extends SmDialog {
 					checkBoxSelectedAll.setSelectedEx(result);
 					tableLayers.getTableHeader().repaint();
 					tableLayers.setRowSelectionInterval(e.getFirstRow(), e.getLastRow());
+				} else if (e.getType() == TableModelEvent.DELETE || e.getType() == TableModelEvent.INSERT) {
+					checkToolBarButtonState();
 				}
+				checkSmButtonOkState();
 			}
 		});
 		comboBoxSearchLayer.addItemListener(new ItemListener() {
@@ -338,7 +368,7 @@ public class JDialogSpatialQuery extends SmDialog {
 			public void itemStateChanged(ItemEvent e) {
 				boolean selected = checkBoxSaveResult.isSelected();
 				comboBoxDatasource.setEnabled(selected);
-				smTextFieldLegitDataset.setEditable(selected && comboBoxDatasource.getSelectedItem() != null);
+				smTextFieldLegitDataset.setEditable(selected && comboBoxDatasource.getSelectedItem() != null && tableLayers.getSelectedRowCount() == 1);
 				checkBoxOnlySaveSpatial.setEnabled(selected);
 				if (!isIgnore) {
 					tableModelSpatialQuery.setIsSave(tableLayers.getSelectedRows(), selected);
@@ -383,7 +413,81 @@ public class JDialogSpatialQuery extends SmDialog {
 				dispose();
 			}
 		});
+		tableLayers.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				reLoadValue();
+			}
+		});
 	}
+
+	private void reLoadValue() {
+		if (!isIgnore) {
+			int[] selectedRows = tableLayers.getSelectedRows();
+			isIgnore = true;
+			if (selectedRows.length > 0) {
+				checkBoxSaveResult.setSelectedEx(tableModelSpatialQuery.isSave(selectedRows));
+				comboBoxDatasource.setSelectedItem(tableModelSpatialQuery.getResultDatasource(selectedRows));
+				smTextFieldLegitDataset.setText(tableModelSpatialQuery.getDatasetName(selectedRows));
+				checkBoxOnlySaveSpatial.setSelectedEx(tableModelSpatialQuery.isOnlySaveSpatialInfo(selectedRows));
+				checkBoxShowInTabular.setSelectedEx(tableModelSpatialQuery.isShowInTabular(selectedRows));
+				checkBoxShowInMap.setSelectedEx(tableModelSpatialQuery.isShowInMap(selectedRows));
+			}
+			checkPropertiesButtonState();
+			isIgnore = false;
+		}
+
+	}
+
+	//region 刷新按钮状态的方法。增加行或删除行时判断工具条按钮状态;选择行改变时更改属性按钮状态;属性改变时判断OK按钮状态
+
+	/**
+	 * 刷新工具条上按钮的状态
+	 */
+	private void checkToolBarButtonState() {
+		boolean enabled = tableLayers.getRowCount() > 0;
+		if (buttonSelectAll.isEnabled() ^ enabled) {
+			buttonSelectAll.setEnabled(enabled);
+			buttonInvert.setEnabled(enabled);
+			buttonReset.setEnabled(enabled);
+		}
+	}
+
+	/**
+	 * 刷新属性按钮的可用性状态
+	 */
+	private void checkPropertiesButtonState() {
+		boolean enabled = tableLayers.getSelectedRowCount() > 0;
+		if (enabled ^ checkBoxSaveResult.isEnabled()) {
+			checkBoxSaveResult.setEnabled(enabled);
+//			comboBoxDatasource.setEnabled(enabled);
+//			smTextFieldLegitDataset.setEditable(enabled);
+//			checkBoxOnlySaveSpatial.setEnabled(enabled);
+			checkBoxShowInTabular.setEnabled(enabled);
+			checkBoxShowInMap.setEnabled(enabled);
+		}
+		smTextFieldLegitDataset.setEditable(enabled && comboBoxDatasource.getSelectedItem() != null && tableLayers.getSelectedRowCount() == 1);
+	}
+
+	/**
+	 * 刷新确认按钮的状态
+	 */
+	private void checkSmButtonOkState() {
+		if (checkBoxSelectedAll.isSelectedEx() == Boolean.FALSE) {
+			smButtonOK.setEnabled(false);
+			return;
+		}
+		for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
+			if (((Boolean) tableModelSpatialQuery.getValueAt(i, 0)) && tableModelSpatialQuery.getValueAt(i, TableModelSpatialQuery.ROW_INDEX_SPATIAL_QUERY_MODE) != null
+					&& (tableModelSpatialQuery.isSave(i) || tableModelSpatialQuery.isShowInMap(i) || tableModelSpatialQuery.isShowInTabular(i)
+					|| tableModelSpatialQuery.isShowInScene(i))) {
+				smButtonOK.setEnabled(true);
+				break;
+			}
+		}
+		smButtonOK.setEnabled(false);
+	}
+	//endregion
 
 	private void initResources() {
 		this.setTitle(DataViewProperties.getString("String_SpatialQuery"));
@@ -409,6 +513,7 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void initComponentState() {
+		isIgnore = true;
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof IFormMap) {
 			ArrayList<Layer> layers = MapUtilities.getLayers(((IFormMap) activeForm).getMapControl().getMap());
@@ -423,12 +528,13 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 		checkBoxSaveResult.setSelectedEx(false);
 		if (tableModelSpatialQuery.getRowCount() > 0) {
-			comboBoxDatasource.setSelectedItem(tableModelSpatialQuery.getResultDatasource(new int[]{0}));
+			comboBoxDatasource.setSelectedItem(tableModelSpatialQuery.getResultDatasource(0));
 			smTextFieldLegitDataset.setText(tableModelSpatialQuery.getDatasetName(0));
 		} else {
 			comboBoxDatasource.setSelectedIndex(-1);
 			smTextFieldLegitDataset.setText("");
 		}
+		checkBoxSaveResult.setEnabled(false);
 		checkBoxShowInTabular.setSelected(true);
 		checkBoxShowInTabular.setEnabled(false);
 		checkBoxShowInMap.setSelected(true);
@@ -436,6 +542,7 @@ public class JDialogSpatialQuery extends SmDialog {
 		checkBoxAutoClose.setSelected(true);
 		checkBoxOnlySaveSpatial.setSelected(false);
 		smButtonOK.setEnabled(false);
+		isIgnore = false;
 	}
 
 	@Override

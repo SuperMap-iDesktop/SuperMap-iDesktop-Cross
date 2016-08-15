@@ -40,6 +40,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		supportDatasetTypes.add(DatasetType.LINE);
 		supportDatasetTypes.add(DatasetType.REGION);
 		supportDatasetTypes.add(DatasetType.NETWORK);
+		supportDatasetTypes.add(DatasetType.CAD);
 		supportDatasetTypes.add(DatasetType.TEXT);
 	}
 
@@ -139,11 +140,10 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 							break;
 						}
 					}
-
-
 					rowDatas.add(rowData);
 				}
 			}
+			fireTableRowsInserted(0, rowDatas.size());
 		}
 	}
 
@@ -154,7 +154,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Boolean isSave(int[] rows) {
+	public Boolean isSave(int... rows) {
 		Boolean result = null;
 		for (int row : rows) {
 			if (result == null) {
@@ -169,7 +169,6 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		return result;
 	}
 	//endregion
-
 	//region 结果数据源
 	public void setDatasource(int[] selectedRows, Datasource datasource) {
 		for (int selectedRow : selectedRows) {
@@ -182,7 +181,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Datasource getResultDatasource(int[] rows) {
+	public Datasource getResultDatasource(int... rows) {
 		Datasource datasource = null;
 		for (int row : rows) {
 			if (datasource == null) {
@@ -224,8 +223,11 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		rowDatas.get(row).setResultDataset(datasetName);
 	}
 
-	public String getDatasetName(int row) {
-		return rowDatas.get(row).getResultDataset();
+	public String getDatasetName(int... row) {
+		if (row.length != 1) {
+			return "";
+		}
+		return rowDatas.get(row[0]).getResultDataset();
 	}
 	//endregion
 
@@ -236,7 +238,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Boolean isOnlySaveSpatialInfo(int[] rows) {
+	public Boolean isOnlySaveSpatialInfo(int... rows) {
 		Boolean result = null;
 		for (int row : rows) {
 			if (result == null) {
@@ -260,7 +262,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Boolean isShowInTabular(int[] rows) {
+	public Boolean isShowInTabular(int... rows) {
 		Boolean result = null;
 		for (int row : rows) {
 			if (result == null) {
@@ -283,7 +285,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Boolean isShowInMap(int[] rows) {
+	public Boolean isShowInMap(int... rows) {
 		Boolean result = null;
 		for (int row : rows) {
 			if (result == null) {
@@ -306,7 +308,7 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 	}
 
-	public Boolean isShowInScene(int[] rows) {
+	public Boolean isShowInScene(int... rows) {
 		Boolean result = null;
 
 		for (int row : rows) {
