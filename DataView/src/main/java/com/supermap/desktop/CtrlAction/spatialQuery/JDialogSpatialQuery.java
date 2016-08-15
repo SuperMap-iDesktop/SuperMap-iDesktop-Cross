@@ -237,7 +237,10 @@ public class JDialogSpatialQuery extends SmDialog {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				JLabel jLabel = new JLabel();
 				if (value != null && value instanceof SpatialQueryMode) {
-					jLabel.setText(getSpatialQueryDescribe(((DatasetType) table.getValueAt(row, TableModelSpatialQuery.ROW_INDEX_DATASET_TYPE)), ((SpatialQueryMode) value))[0]);
+					String[] spatialQueryDescribe = getSpatialQueryDescribe(((DatasetType) table.getValueAt(row, TableModelSpatialQuery.ROW_INDEX_DATASET_TYPE)), ((SpatialQueryMode) value));
+					if (spatialQueryDescribe != null && spatialQueryDescribe.length > 0) {
+						jLabel.setText(spatialQueryDescribe[0]);
+					}
 				}
 				if (isSelected) {
 					jLabel.setOpaque(true);
@@ -251,7 +254,16 @@ public class JDialogSpatialQuery extends SmDialog {
 	private String[] getSpatialQueryDescribe(DatasetType currentDatasetType, SpatialQueryMode... value) {
 		ArrayList<String> results = new ArrayList<>();
 		Layer selectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
+		if (selectedLayer != null) {
+			DatasetType type = selectedLayer.getDataset().getType();
+			for (SpatialQueryMode spatialQueryMode : value) {
 
+			}
+			String suffixes;
+			if (type != DatasetType.CAD) {
+
+			}
+		}
 		return null;
 
 	}
