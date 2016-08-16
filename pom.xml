@@ -209,6 +209,7 @@
                             4. 本项目采用依赖 inline 的方式来解决 jar in jar 编译时依赖错误的问题（见备注 1），并默认所有子模块导出本地包，并按需导出第三方依赖包。也即 Core
                                 导出本地包+第三方包，Controls 导出本地包，由此来解决 Controls 重复导出 Core 中包的问题。
                             5. 本项目默认不导出任何包，子模块按需求自行配置。
+                            6. Export-Package 只会 inline 代码，而相关的一些 properties 等资源文件则不会打到包里，因此需要配合 Embed-Dependency inline=true 使用。
                             *************************************************************
                             -->
                             <Export-Package>!*</Export-Package>
