@@ -244,6 +244,16 @@
                             *************************************************************
                             -->
                             <!--<Embed-Directory>lib</Embed-Directory>-->
+
+                            <!--
+                            *************************************************************
+                            禁用 Require-Capability，这个属性是 Bundle 运行的环境约束，BND 会根据编译版本以及相关依赖包自动生成，很多时候生成的内容并不是我们想要的。
+                            1. 本项目可以约定为 1.7，即如下的 <Require-Capability> 配置。
+                            2. 本项目也可以直接禁用 Require-Capability，如下使用 <_noee>true</_noee> 配置，默认采用这种方案。
+                            *************************************************************
+                            -->
+                            <!--<Require-Capability>osgi.ee;filter:="(&amp;(osgi.ee=JavaSE)(version=1.7))"</Require-Capability>-->
+                            <_noee>true</_noee>
                         </instructions>
                     </configuration>
                 </plugin>
