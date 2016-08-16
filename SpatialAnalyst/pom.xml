@@ -41,7 +41,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.spatialanalyst.SpatialAnalystActivator</Bundle-Activator>
-                        <Require-Bundle>${pom.groupId}.Core,${pom.groupId}.Controls</Require-Bundle>
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Controls</Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

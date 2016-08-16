@@ -115,7 +115,7 @@
                             不显式配置则默认为 ${pom.name}。
                             *************************************************************
                             -->
-                            <Bundle-Name>${pom.name}</Bundle-Name>
+                            <Bundle-Name>${project.name}</Bundle-Name>
 
                             <!--
                             *************************************************************
@@ -147,7 +147,7 @@
                             不显式配置则默认 ${pom.description}。
                             *************************************************************
                             -->
-                            <Bundle-Description>${pom.description}</Bundle-Description>
+                            <Bundle-Description>${project.description}</Bundle-Description>
 
                             <!--########## 该项子模块必须自定义 ##########-->
                             <!--<Bundle-Activator></Bundle-Activator>-->
@@ -157,14 +157,14 @@
                             不显式配置则默认为 ${pom.organization.name}。
                             *************************************************************
                             -->
-                            <Bundle-Vendor>${pom.organization.name}</Bundle-Vendor>
+                            <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
 
                             <!--
                             *************************************************************
                             不显式配置则默认为 ${pom.organization.url}。
                             *************************************************************
                             -->
-                            <Bundle-DocURL>${pom.organization.url}</Bundle-DocURL>
+                            <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
 
                             <!--
                             *************************************************************
@@ -235,7 +235,7 @@
                             需要注意的是 inline=true，设置这个属性的原因见 <Export-Package> 备注。
                             *************************************************************
                             -->
-                            <!--<Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>-->
+                            <Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>
 
                             <!--
                             *************************************************************

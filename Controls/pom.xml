@@ -36,7 +36,7 @@
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.controls.ControlsActivator</Bundle-Activator>
                         <Export-Package>{local-packages}</Export-Package>
-                        <Require-Bundle>${pom.groupId}.Core</Require-Bundle>
+                        <Require-Bundle>${project.groupId}.Core</Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>
