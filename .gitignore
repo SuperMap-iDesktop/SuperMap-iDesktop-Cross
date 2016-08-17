@@ -24,7 +24,14 @@ Makefile
 bin/
 bundles/idesktop_bundles/
 bundles/bundle_cache/
-release/
+release/bin/
+release/bundles/
+release/Configuration/
+release/jre_64/
+release/Resources/
+release/Templates/
+release/WorkEnvironment/
+release/iDesktop.jar
 out/
 Assistant/target/
 Controls/target/

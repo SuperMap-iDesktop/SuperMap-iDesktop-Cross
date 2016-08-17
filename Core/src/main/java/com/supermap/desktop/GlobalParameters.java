@@ -2,8 +2,17 @@ package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilities.*;
-import org.w3c.dom.*;
+import com.supermap.desktop.utilities.AltitudeModeUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -739,6 +748,8 @@ public class GlobalParameters {
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
 		initWorkspaceRecovery();
+		initIsSaveSymbol();
+		initSymbolSaveTime();
 		initWorkspaceAutoSave();
 		initWorkspaceAutoSaveTime();
 	}
@@ -848,6 +859,8 @@ public class GlobalParameters {
 
 	//endregion
 	//region 工作空间崩溃恢复
+
+	//region 是否恢复工作空间
 	private static boolean isWorkspaceRecovery = true;
 
 	private static void initWorkspaceRecovery() {
@@ -864,7 +877,43 @@ public class GlobalParameters {
 	public static void setIsWorkspaceRecovery(boolean isWorkspaceRecovery) {
 		GlobalParameters.isWorkspaceRecovery = isWorkspaceRecovery;
 	}
+	//endregion
 
+	//region 是否保存符号库
+	private static boolean isSaveSymbol = true;
+
+	public static void initIsSaveSymbol() {
+		String value = getValue("_startup_workspace", "symbolRecovery");
+		if (value != null) {
+			setIsSaveSymbol(Boolean.valueOf(value));
+		}
+	}
+
+	public static boolean isSaveSymbol() {
+		return isSaveSymbol;
+	}
+
+	public static void setIsSaveSymbol(boolean isSaveSymbol) {
+		GlobalParameters.isSaveSymbol = isSaveSymbol;
+	}
+	//endregion
+
+	private static int symbolSaveTime = 60;
+
+	private static void initSymbolSaveTime() {
+		String value = getValue("_startup_workspace", "symbolRecoveryTime");
+		if (value != null) {
+			setSymbolSaveTime(Integer.valueOf(value));
+		}
+	}
+
+	public static void setSymbolSaveTime(int symbolSaveTime) {
+		GlobalParameters.symbolSaveTime = symbolSaveTime;
+	}
+
+	public static int getSymbolSaveTime() {
+		return symbolSaveTime;
+	}
 	//endregion
 
 	//region 自动保存工作空间
@@ -985,6 +1034,8 @@ public class GlobalParameters {
 			workspace.setAttribute("closenotify", String.valueOf(isWorkspaceCloseNotify));
 			workspace.setAttribute("closeMemoryDatasourceNotify", String.valueOf(isCloseMemoryDatasourceNotify));
 			workspace.setAttribute("workspaceRecovery", String.valueOf(isWorkspaceRecovery));
+			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
+			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
 			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
 			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
 
@@ -1044,5 +1095,6 @@ public class GlobalParameters {
 
 		}
 	}
+
 
 }

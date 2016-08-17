@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction.spatialQuery;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialQueryMode;
@@ -20,6 +21,18 @@ public class TableRowData {
 	private Datasource resultDatasource = null;
 	private String resultDataset = null;
 	private boolean onlySaveSpatialInfo = false;
+
+	public void reset() {
+		spatialQueryMode = null;
+		sql = "";
+		isShowInTabular = true;
+		isShowInMap = true;
+		isShowInScene = false;
+		isSave = false;
+		resultDatasource = null;
+		resultDataset = null;
+		onlySaveSpatialInfo = false;
+	}
 
 	public TableRowData(Layer layer) {
 		this.layer = layer;
@@ -113,4 +126,11 @@ public class TableRowData {
 	public void setOnlySaveSpatialInfo(boolean onlySaveSpatialInfo) {
 		this.onlySaveSpatialInfo = onlySaveSpatialInfo;
 	}
+
+
+	public Dataset getCurrentDataset() {
+		return layer.getDataset();
+	}
+
+
 }

@@ -1,8 +1,26 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.WorkspaceSavedAsEvent;
+import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
+import com.supermap.data.WorkspaceSavedListener;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
@@ -30,6 +48,14 @@ public class WorkspaceTempSave {
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
+	private int saveCount = 60;
+	private int currentCount = 0;
+	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
+		@Override
+		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+			currentCount = 0;
+		}
+	};
 	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
 		@Override
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
@@ -38,7 +64,7 @@ public class WorkspaceTempSave {
 			workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
 		}
 	};
-	;
+
 	private String lastServer;
 	private WorkspaceSavedListener workspaceSavedListener = new WorkspaceSavedListener() {
 		@Override
@@ -99,6 +125,7 @@ public class WorkspaceTempSave {
 
 	private void addListeners() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.addOpenedListener(workspaceOpenedListener);
 		workspace.addClosingListener(workspaceClosingListener);
 		workspace.addSavedListener(workspaceSavedListener);
 		workspace.addSavedAsListener(workspaceSavedAsListener);
@@ -106,6 +133,7 @@ public class WorkspaceTempSave {
 
 	private void removeListeners() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.removeOpenedListener(workspaceOpenedListener);
 		workspace.removeClosingListener(workspaceClosingListener);
 		workspace.removeSavedListener(workspaceSavedListener);
 		workspace.removeSavedAsListener(workspaceSavedAsListener);
@@ -187,6 +215,12 @@ public class WorkspaceTempSave {
 				}
 
 				workspace = WorkspaceUtilities.copyWorkspace(activeWorkspace, workspace);
+				if (GlobalParameters.isSaveSymbol() && (currentCount == 0 || currentCount >= saveCount)) {
+					currentCount = 1;
+					copySymbolLibrary(activeWorkspace);
+				} else {
+					currentCount++;
+				}
 				boolean saveSuccess;
 				if (workspaceConnectionInfo != null) {
 					saveSuccess = workspace.saveAs(workspaceConnectionInfo);
@@ -304,7 +338,6 @@ public class WorkspaceTempSave {
 			lastServer = workspace.getConnectionInfo().getServer();
 			workspace.close();
 			workspace = null;
-
 		}
 		if (lastServer != null && !WorkspaceUtilities.deleteFileWorkspace(lastServer)) {
 			LogUtilities.outPut("Delete TempWorkspace Failed On Exit ");
@@ -312,6 +345,33 @@ public class WorkspaceTempSave {
 		return false;
 	}
 
+	private void copySymbolLibrary(Workspace currentWorkspace) {
+		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
+		String markerSymbolFilePath = tempFolder + ".sym";
+		currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
+		workspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
+		if (new File(markerSymbolFilePath).exists()) {
+			new File(markerSymbolFilePath).delete();
+		}
+
+		String lineSymbolFilePath = tempFolder + ".lsl";
+		currentWorkspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
+		workspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
+		if (new File(lineSymbolFilePath).exists()) {
+			new File(lineSymbolFilePath).delete();
+		}
+
+		String fillSymbolFilePath = tempFolder + ".bru";
+		currentWorkspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
+		workspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
+		if (new File(fillSymbolFilePath).exists()) {
+			new File(fillSymbolFilePath).delete();
+		}
+	}
+
+	public void setSaveCount(int saveCount) {
+		this.saveCount = saveCount;
+	}
 
 	public static WorkspaceTempSave getInstance() {
 		if (workspaceTempSave == null) {
@@ -319,5 +379,4 @@ public class WorkspaceTempSave {
 		}
 		return workspaceTempSave;
 	}
-
 }
