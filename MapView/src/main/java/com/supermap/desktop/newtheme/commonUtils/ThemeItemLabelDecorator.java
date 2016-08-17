@@ -89,7 +89,7 @@ public class ThemeItemLabelDecorator {
 	/**
 	 * 根据给定的数据集类型构建指定类型的GeoMetry用于绘制图片
 	 * 
-	 * @param type
+	 * @param dataset
 	 * @return
 	 */
 	public static Geometry getGeometryByDatasetType(Dataset dataset) {
