@@ -2,8 +2,11 @@ package com.supermap.desktop.CtrlAction.spatialQuery;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
+import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -13,6 +16,7 @@ import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dataview.DataViewResources;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.CellRenders.TableSqlCellEditor;
@@ -29,6 +33,7 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.SpatialQueryModeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Selection;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -48,6 +53,8 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author XiaJT
@@ -93,6 +100,9 @@ public class JDialogSpatialQuery extends SmDialog {
 	private boolean isIgnore = false;
 	private boolean checkBoxSelectAllLock = false;
 
+	private HashMap<Integer, List<Integer>> mapShowSmIDs = new HashMap();
+	private List<IForm> showForms = new ArrayList<>();
+
 	public JDialogSpatialQuery() {
 		super(((JFrame) Application.getActiveApplication().getMainFrame()), false);
 		init();
@@ -103,12 +113,12 @@ public class JDialogSpatialQuery extends SmDialog {
 		supportSearchDatasetTypes.add(DatasetType.LINE);
 		supportSearchDatasetTypes.add(DatasetType.REGION);
 
-
 		initComponent();
 		initLayout();
 		initListener();
 		initResources();
 		setDescribe(SpatialQueryMode.CONTAIN, DatasetType.LINE, DatasetType.LINE);
+		checkBoxAutoClose.setSelected(true);
 		initComponentState();
 	}
 
@@ -187,17 +197,31 @@ public class JDialogSpatialQuery extends SmDialog {
 //			}
 //		});
 		compTitledPaneSearchResult = new CompTitledPane(checkBoxSaveResult, panelSearchResult);
-
+		textAreaDescribe.setLineWrap(true);
 		this.setSize(new Dimension(800, 600));
 		this.setLocationRelativeTo(null);
 
 		this.getRootPane().setDefaultButton(smButtonOK);
 	}
 
-	private void setDescribe(SpatialQueryMode contain, DatasetType searchLayerDatasetType, DatasetType currentDatasetType) {
+	private void setDescribe(SpatialQueryMode mode, DatasetType searchLayerDatasetType, DatasetType currentDatasetType) {
 		// TODO: 2016/8/16
 		String picName = "";
-		DataViewResources.getIcon("/dataviewresources/SpatialQuery/" + picName + ".png");
+		picName = mode.name().substring(0, 1) + mode.name().toLowerCase().substring(1) + "_" + getDatasetTypeDescribe(searchLayerDatasetType) + getDatasetTypeDescribe(currentDatasetType);
+		labelDescribeIcon.setIcon(DataViewResources.getIcon("/dataviewresources/SpatialQuery/" + picName + ".png"));
+		textAreaDescribe.setText(DataViewProperties.getString("String_SpatialQuery_" + mode.name()));
+
+	}
+
+	private String getDatasetTypeDescribe(DatasetType datasetType) {
+		if (datasetType == DatasetType.POINT || datasetType == DatasetType.CAD) {
+			return "P";
+		} else if (datasetType == DatasetType.LINE || datasetType == DatasetType.NETWORK) {
+			return "L";
+		} else if (datasetType == DatasetType.REGION) {
+			return "R";
+		}
+		return null;
 	}
 
 	private void initTable() {
@@ -396,6 +420,10 @@ public class JDialogSpatialQuery extends SmDialog {
 						}
 					} else if (e.getColumn() == TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) {
 						checkSmButtonOkState();
+						if (tableModelSpatialQuery.getValueAt(e.getFirstRow(), TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null) {
+							setDescribe((SpatialQueryMode) tableModelSpatialQuery.getValueAt(e.getFirstRow(), TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE), ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType()
+									, (DatasetType) tableModelSpatialQuery.getValueAt(e.getFirstRow(), TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+						}
 					}
 				} else if (e.getType() == TableModelEvent.DELETE || e.getType() == TableModelEvent.INSERT) {
 					checkToolBarButtonState();
@@ -498,15 +526,307 @@ public class JDialogSpatialQuery extends SmDialog {
 		buttonReset.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				isIgnore = true;
-//				tableModelSpatialQuery.Reset();
-//				tableLayers.clearSelection();
-//				isIgnore = false;
 				initComponentState();
 				tableLayers.clearSelection();
 			}
 		});
+		smButtonOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (query() && checkBoxAutoClose.isSelected()) {
+					dispose();
+				}
+			}
+		});
 	}
+
+	private boolean query() {
+		Recordset searchingFeatures = null;
+		try {
+			mapShowSmIDs.clear();
+			showForms.clear();
+			if (tableModelSpatialQuery.getRowCount() > 0) {
+				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryStart"));
+
+				if (comboBoxSearchLayer.getSelectedItem() != null) {
+					Selection selection = ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection();
+//					Selection selection = m_toolStripLabelSearchedCount.Tag as Selection;
+					if (selection != null && selection.getCount() > 0) {
+						searchingFeatures = selection.toRecordset();
+					} else {
+						// 场景处理
+//						Selection3D selection3D = m_toolStripLabelSearchedCount.Tag as Selection3D;
+//						if (selection3D != null && selection3D.getCount() > 0) {
+//							searchingFeatures = selection3D.ToRecordset();
+//						}
+					}
+
+					if (searchingFeatures != null && !searchingFeatures.isEOF()) {
+						for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
+							if (tableModelSpatialQuery.isQueryEnable(i)) {
+								Recordset currentResult = tableModelSpatialQuery.queryRecordset(i, searchingFeatures);
+								if (currentResult != null && !currentResult.isEOF()) {
+									if (tableModelSpatialQuery.isSave(i)) {
+										saveAsDataset(i, currentResult);
+									}
+									Boolean isResultRecordSetNeedRelease = true;
+									if (tableModelSpatialQuery.isShowInTabular(i)) {
+										showResultInTabular(currentResult, i);
+										isResultRecordSetNeedRelease = false;
+									}
+									if (tableModelSpatialQuery.isShowInMap(i) || tableModelSpatialQuery.isShowInScene(i)) {
+										mapShowSmIDs.put(i, getShowSmID(currentResult));
+									}
+									if (isResultRecordSetNeedRelease) {
+										currentResult.dispose();
+									}
+								} else {
+									Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryEndWithNoresult"));
+									return false;
+								}
+							}
+						}
+					}
+					if (mapShowSmIDs != null && mapShowSmIDs.size() > 0) {
+						showResultInMap();
+
+					}
+
+//						for (Int32 index = 0; index < m_targetSpatialQuerySetting.Count; index++) {
+//							SpatialQuerySetting item = m_targetSpatialQuerySetting[index];
+//							if (item.QueryResultInfo.IsSceneHighLight) {
+//								ShowResultInScene(m_targetSpatialQuerySetting);
+//								break;
+//							}
+//						}
+
+					relatingBrowse();
+
+					Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryEnd"));
+				} else {
+					Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryEndWithNoresult"));
+					return false;
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		} finally {
+			if (searchingFeatures != null) {
+				searchingFeatures.dispose();
+			}
+		}
+		return false;
+	}
+
+	private void relatingBrowse() {
+//		try
+//		{
+//			List<IForm> forms = new List<IForm>();
+//			if (m_dicForms != null &&
+//					m_dicForms.Count > 0)
+//			{
+//				Int32 nFormType = 0;
+//				Boolean bFormTabular = false;
+//				Boolean bFormMap = false;
+//				Boolean bFormScense = false;
+//				foreach (KeyValuePair<Int32, List<IForm>> pair in m_dicForms)
+//				{
+//					List<IForm> formList = pair.Value;
+//					if (formList.Count >= 1)
+//					{
+//						for (Int32 i = 0; i < formList.Count; i++)
+//						{
+//							if (!forms.Contains(formList[i]))
+//							{
+//								forms.Add(formList[i]);
+//								if (formList[i] is IFormTabular)
+//								{
+//									bFormTabular = true;
+//								}
+//                                    else if (formList[i] is IFormMap)
+//								{
+//									bFormMap = true;
+//								}
+//                                    else if (formList[i] is IFormScene)
+//								{
+//									bFormScense = true;
+//								}
+//							}
+//						}
+//					}
+//				}
+//
+//				if (bFormTabular &&
+//						bFormMap &&
+//						bFormScense)
+//				{
+//					nFormType = 3;
+//				}
+//				else if ((bFormTabular && bFormMap) ||
+//						(bFormMap && bFormScense) ||
+//						(bFormTabular && bFormScense))
+//				{
+//					nFormType = 2;
+//				}
+//
+//				if (nFormType >= 2)
+//				{
+//					//ControlBindWindow controlBindWindow = new ControlBindWindow();
+//					//BindWindowGroup bindGroup = new BindWindowGroup();
+//					//controlBindWindow.IsAddToCurrentGroups = true;
+//					//controlBindWindow.BindGroup = bindGroup;
+//					//controlBindWindow.MainForm = Application.ActiveApplication.MainForm as Form;
+//					//controlBindWindow.BindWindows(forms.ToArray(), nFormType);
+//					_Toolkit.BindForms(forms.ToArray(), true, true, true);
+//				}
+//			}
+//		}
+//		catch (Exception ex)
+//		{
+//			Application.ActiveApplication.Output.Output(ex);
+//		}
+	}
+
+	private void showResultInMap() {
+		try {
+			IFormMap formMap = null;
+
+			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			if (activeForm instanceof IFormMap) {
+				formMap = ((IFormMap) activeForm);
+				ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
+				for (Layer layer : layers) {
+					if (layer.getSelection() != null) {
+						layer.getSelection().clear();
+					}
+				}
+			}
+
+			boolean isNeedSetMapName = false;
+			if (formMap == null) {
+				isNeedSetMapName = true;
+				formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, "");
+			}
+
+			if (formMap != null) {
+				for (int row : mapShowSmIDs.keySet()) {
+					if (!tableModelSpatialQuery.isShowInMap(row)) {
+						continue;
+					}
+					Dataset dataset = tableModelSpatialQuery.getDataset(row);
+					if (dataset != null) {
+						if (isNeedSetMapName) {
+							String name = MapUtilities.getAvailableMapName(
+									MessageFormat.format("{0}@{1}", dataset.getName(), tableModelSpatialQuery.getResultDatasource(row).getAlias()), true);
+							formMap.setText(name);
+							isNeedSetMapName = false;
+						}
+						List<Integer> smIds = mapShowSmIDs.get(row);
+						if (smIds.size() > 0) {
+							AddLayerToCurrentMap(formMap, dataset, (String) tableModelSpatialQuery.getValueAt(row, TableModelSpatialQuery.COLUMN_INDEX_LAYER_NAME), smIds);
+						}
+					}
+
+				}
+				formMap.getMapControl().getMap().refreshTrackingLayer();
+				showForms.add(formMap);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private void AddLayerToCurrentMap(IFormMap formMap, Dataset searchedDataset, String layerName, List<Integer> smIDs) {
+//		try {
+//			if (formMap != null) {
+//				Layer relevantLayer = null;
+//				List<Layer> layers = SuperMap.Desktop.CommonToolkit.MapWrap.GetLayers(formMap.MapControl.Map);
+//				foreach(Layer layer in layers)
+//				{
+//					//解决缺陷UGDC-885,在专题图图层上高亮查询的结果，注释判断layer.Theme == null addby chenww
+//					if (layer.Name.Equals(layerName) && searchedDataset == layer.Dataset) {
+//						relevantLayer = layer;
+//						break;
+//					}
+//				}
+//				if (relevantLayer == null) {
+//					relevantLayer = SuperMap.Desktop.CommonToolkit.MapWrap.AddDatasetToMap(formMap.MapControl.Map, searchedDataset, true);
+//				}
+//
+//				if (relevantLayer != null && smIDs.Count > 0) {
+//					HightLightResultsOnMapWnd(relevantLayer, smIDs);
+//				}
+//			}
+//		} catch (Exception ex) {
+//			Application.ActiveApplication.Output.Output(ex);
+//		}
+	}
+
+	private void HightLightResultsOnMapWnd(Layer layer, List<Integer> smIDs) {
+//		try {
+//			if (layer != null) {
+//				layer.Selection.Clear();
+//				layer.Selection.IsDefaultStyleEnabled = false;
+//
+//				layer.Selection.AddRange(smIDs.ToArray());
+//				//默认风格是半透明，显示效果要好
+//				layer.Selection.IsDefaultStyleEnabled = true;
+//				//GeoStyle style = layer.Selection.Style;
+//				//style.FillSymbolID = 0;
+//				//style.FillForeColor = Color.FromArgb(125, 179, 179, 255);
+//				//style.LineColor = Color.FromArgb(255, 0, 0, 255);
+//			}
+//		} catch (Exception ex) {
+//			Application.ActiveApplication.Output.Output(ex);
+//		}
+	}
+
+	private java.util.List<Integer> getShowSmID(Recordset resultRecord) {
+		java.util.List<Integer> smIDs = new ArrayList<Integer>();
+		try {
+			resultRecord.moveFirst();
+			while (!resultRecord.isEOF()) {
+				smIDs.add(resultRecord.getID());
+				resultRecord.moveNext();
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return smIDs;
+	}
+
+	private void saveAsDataset(int i, Recordset recordset) {
+		Datasource datasource = tableModelSpatialQuery.getResultDatasource(i);
+		if (datasource != null) {
+			String datasetName = tableModelSpatialQuery.getDatasetName(i);
+			datasetName = StringUtilities.isNullOrEmpty(datasetName) ? "SpatialQuery" : datasetName;
+			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+			tableModelSpatialQuery.setDatasetName(i, datasetName);
+			DatasetVector datasetVector = (DatasetVector) tableModelSpatialQuery.getDataset(i);
+			if (tableModelSpatialQuery.isOnlySaveSpatialInfo(i)) {
+				DatasetVectorInfo info = new DatasetVectorInfo();
+				info.setType(recordset.getDataset().getType());
+				info.setName(datasetName);
+				DatasetVector dtv = datasource.getDatasets().create(info);
+				dtv.setCharset(datasetVector.getCharset());
+				dtv.setPrjCoordSys(datasetVector.getPrjCoordSys());
+				Boolean bAppend = dtv.append(recordset);
+
+				if (!bAppend) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+				}
+			} else {
+				DatasetVector dtv = (DatasetVector) datasource.getDatasets().createFromTemplate(datasetName, datasetVector);
+				dtv.append(recordset);
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+			}
+		}
+	}
+
+	private void showResultInTabular(Recordset currentResult, int i) {
+
+	}
+
 
 	private void reLoadValue() {
 		if (!isIgnore) {
@@ -562,9 +882,7 @@ public class JDialogSpatialQuery extends SmDialog {
 			return;
 		}
 		for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
-			if (((Boolean) tableModelSpatialQuery.getValueAt(i, 0)) && tableModelSpatialQuery.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null
-					&& (tableModelSpatialQuery.isSave(i) || tableModelSpatialQuery.isShowInMap(i) || tableModelSpatialQuery.isShowInTabular(i)
-					|| tableModelSpatialQuery.isShowInScene(i))) {
+			if (tableModelSpatialQuery.isQueryEnable(i)) {
 				smButtonOK.setEnabled(true);
 				return;
 			}
@@ -623,7 +941,7 @@ public class JDialogSpatialQuery extends SmDialog {
 		checkBoxShowInTabular.setEnabled(false);
 		checkBoxShowInMap.setSelected(true);
 		checkBoxShowInMap.setEnabled(false);
-		checkBoxAutoClose.setSelected(true);
+
 		checkBoxOnlySaveSpatial.setSelected(false);
 		smButtonOK.setEnabled(false);
 		isIgnore = false;
