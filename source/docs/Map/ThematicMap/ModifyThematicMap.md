@@ -2,7 +2,7 @@
 title: 修改专题图
 ---
 
-通过默认模板创建的专题图通常都不能达到用户的需求，可通过修改“专题图”面板中提供的参数设置，使专题图的显示效果满足用户需求。各类型专题图的参数设置有所不同。
+　　通过默认模板创建的专题图通常都不能达到用户的需求，可通过修改“专题图”面板中提供的参数设置，使专题图的显示效果满足用户需求。各类型专题图的参数设置有所不同。
 
 #### 通用参数
 
@@ -73,3 +73,12 @@ title: 修改专题图
 
 　　[分段专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/RangesMapGroupDia.html)
 
+　　[标签专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/LabelProperties.html)
+
+　　[统计专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraphProperties.html)
+
+　　[点密度专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/DotDensityProperties.html)
+
+　　[等级符号专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraduatedSymbolProperties.html)
+
+　　[自定义专题图](/SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CustomizeProperties.html)
