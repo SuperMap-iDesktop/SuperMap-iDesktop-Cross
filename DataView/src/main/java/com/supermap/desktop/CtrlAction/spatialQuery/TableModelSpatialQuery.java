@@ -1,7 +1,9 @@
 package com.supermap.desktop.CtrlAction.spatialQuery;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
+import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
@@ -26,11 +28,11 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			DataViewProperties.getString("String_TabularQueryCondition"),
 	};
 	private ArrayList<DatasetType> supportDatasetTypes;
-	public static final int ROW_INDEX_IS_SELECTED = 0;
-	public static final int ROW_INDEX_DATASET_TYPE = 1;
-	public static final int ROW_INDEX_LAYER_NAME = 2;
-	public static final int ROW_INDEX_SPATIAL_QUERY_MODE = 3;
-	public static final int ROW_INDEX_SQL = 4;
+	public static final int COLUMN_INDEX_IS_SELECTED = 0;
+	public static final int COLUMN_INDEX_DATASET_TYPE = 1;
+	public static final int COLUMN_INDEX_LAYER_NAME = 2;
+	public static final int COLUMN_INDEX_SPATIAL_QUERY_MODE = 3;
+	public static final int COLUMN_INDEX_SQL = 4;
 
 	public TableModelSpatialQuery() {
 		super();
@@ -143,7 +145,13 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 					rowDatas.add(rowData);
 				}
 			}
-			fireTableRowsInserted(0, rowDatas.size());
+//			fireTableRowsInserted(0, rowDatas.size());
+		}
+	}
+
+	public void Reset() {
+		for (TableRowData rowData : rowDatas) {
+			rowData.reset();
 		}
 	}
 
@@ -323,6 +331,21 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		}
 		return result;
 	}
+
+	public Dataset getDataset(int row) {
+		return rowDatas.get(row).getCurrentDataset();
+	}
+
+	public Recordset queryRecordset(int row, Recordset searchingFeatures) {
+		// TODO: 2016/8/17
+		return rowDatas.get(row).queryRecordset(searchingFeatures);
+	}
+
+	public boolean isQueryEnable(int row) {
+		return rowDatas.get(row).isQueryEnable();
+	}
+
+
 	//endregion
 
 

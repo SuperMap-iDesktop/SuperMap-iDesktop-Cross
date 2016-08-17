@@ -1,10 +1,21 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
+import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
@@ -616,27 +627,7 @@ public class WorkspaceUtilities {
 			}
 		}
 
-		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
-		String markerSymbolFilePath = tempFolder + ".sym";
-		workspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
-		copyWorkspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
-		if (new File(markerSymbolFilePath).exists()) {
-			new File(markerSymbolFilePath).delete();
-		}
 
-		String lineSymbolFilePath = tempFolder + ".lsl";
-		workspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
-		copyWorkspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
-		if (new File(lineSymbolFilePath).exists()) {
-			new File(lineSymbolFilePath).delete();
-		}
-
-		String fillSymbolFilePath = tempFolder + ".bru";
-		workspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
-		copyWorkspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
-		if (new File(fillSymbolFilePath).exists()) {
-			new File(fillSymbolFilePath).delete();
-		}
 
 		return copyWorkspace;
 	}
