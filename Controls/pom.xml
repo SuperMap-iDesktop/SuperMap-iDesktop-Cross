@@ -33,6 +33,7 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
+                    <buildDirectory>${project.basedir}/../bundles/require_bundles/</buildDirectory>
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.controls.ControlsActivator</Bundle-Activator>
                         <Export-Package>{local-packages}</Export-Package>

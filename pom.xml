@@ -78,6 +78,16 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <configuration>
                         <filesets>
+
+                            <!--核心插件所在路径（Core and Controls and Frame）-->
+                            <fileset>
+                                <directory>${project.basedir}/../bundles/require_bundles/</directory>
+                                <includes>
+                                    <include>${project.name}.jar</include>
+                                </includes>
+                            </fileset>
+
+                            <!--普通插件所在路径-->
                             <fileset>
                                 <directory>${project.basedir}/../bundles/idesktop_bundles/</directory>
                                 <includes>
@@ -121,7 +131,8 @@
                         <!--
                         *************************************************************
                         生成的 jar 文件所在路径。不显示配置则默认为 project.build.directory，也就是 target。统一默认配置为 bundles/idesktop_bundles/，
-                        以配合 Felix 配置文件 config.properties 的优先级设置。
+                        以配合 Felix 配置文件 config.properties 的优先级设置，该路径设置 felix.auto.deploy.dir，用以自动发布普通功能性插件。
+                        如有特殊需求则自行配置，如 Core、Controls、Frame 则配置为 bundles/require_bundles/。
                         *************************************************************
                         -->
                         <buildDirectory>${project.basedir}/../bundles/idesktop_bundles/</buildDirectory>
