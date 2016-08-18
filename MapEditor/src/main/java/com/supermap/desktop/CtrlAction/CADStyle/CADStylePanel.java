@@ -230,7 +230,9 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
             }
         });
         if (geostyle != null) {
-            resetGeoStyle(recordset, geostyle);
+            if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
+                resetGeoStyle(MapUtilities.getActiveMap().findSelection(true)[0].toRecordset(), geostyle);
+            }
         }
     }
 
