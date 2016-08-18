@@ -189,18 +189,18 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
         return panelSymbol;
     }
 
-    private void resetGeoStyle(GeoStyle newGeoStyle) {
-        recordset.moveFirst();
-        while (!recordset.isEOF()) {
-            editHistory.add(EditType.MODIFY, recordset, true);
-            if (!recordset.isReadOnly()) {
-                recordset.edit();
-                Geometry tempGeometry = recordset.getGeometry();
+    private void resetGeoStyle(Recordset tempRecordset, GeoStyle newGeoStyle) {
+        tempRecordset.moveFirst();
+        while (!tempRecordset.isEOF()) {
+            editHistory.add(EditType.MODIFY, tempRecordset, true);
+            if (!tempRecordset.isReadOnly()) {
+                tempRecordset.edit();
+                Geometry tempGeometry = tempRecordset.getGeometry();
                 tempGeometry.setStyle(newGeoStyle);
-                recordset.setGeometry(tempGeometry);
+                tempRecordset.setGeometry(tempGeometry);
                 tempGeometry.dispose();
-                recordset.update();
-                recordset.moveNext();
+                tempRecordset.update();
+                tempRecordset.moveNext();
             }
         }
         editHistory.batchEnd();
@@ -224,11 +224,13 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
         GeoStyle geostyle = changeGeoStyle(beforeGeoStyle, symbolType, new ISymbolApply() {
             @Override
             public void apply(GeoStyle geoStyle) {
-                resetGeoStyle(geoStyle);
+                if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
+                    resetGeoStyle(MapUtilities.getActiveMap().findSelection(true)[0].toRecordset(), geoStyle);
+                }
             }
         });
         if (geostyle != null) {
-            resetGeoStyle(geostyle);
+            resetGeoStyle(recordset, geostyle);
         }
     }
 
