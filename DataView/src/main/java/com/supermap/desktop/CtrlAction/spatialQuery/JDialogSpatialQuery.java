@@ -12,6 +12,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
@@ -102,6 +103,7 @@ public class JDialogSpatialQuery extends SmDialog {
 
 	private HashMap<Integer, List<Integer>> mapShowSmIDs = new HashMap();
 	private List<IForm> showForms = new ArrayList<>();
+	private IForm currentForm;
 
 	public JDialogSpatialQuery() {
 		super(((JFrame) Application.getActiveApplication().getMainFrame()), false);
@@ -533,6 +535,9 @@ public class JDialogSpatialQuery extends SmDialog {
 		smButtonOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (tableLayers.getCellEditor() != null) {
+					tableLayers.getCellEditor().stopCellEditing();
+				}
 				if (query() && checkBoxAutoClose.isSelected()) {
 					dispose();
 				}
@@ -545,12 +550,12 @@ public class JDialogSpatialQuery extends SmDialog {
 		try {
 			mapShowSmIDs.clear();
 			showForms.clear();
+			currentForm = Application.getActiveApplication().getActiveForm();
 			if (tableModelSpatialQuery.getRowCount() > 0) {
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryStart"));
 
 				if (comboBoxSearchLayer.getSelectedItem() != null) {
 					Selection selection = ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection();
-//					Selection selection = m_toolStripLabelSearchedCount.Tag as Selection;
 					if (selection != null && selection.getCount() > 0) {
 						searchingFeatures = selection.toRecordset();
 					} else {
@@ -570,12 +575,12 @@ public class JDialogSpatialQuery extends SmDialog {
 										saveAsDataset(i, currentResult);
 									}
 									Boolean isResultRecordSetNeedRelease = true;
+									if (tableModelSpatialQuery.isShowInMap(i) || tableModelSpatialQuery.isShowInScene(i)) {
+										mapShowSmIDs.put(i, getShowSmID(currentResult));
+									}
 									if (tableModelSpatialQuery.isShowInTabular(i)) {
 										showResultInTabular(currentResult, i);
 										isResultRecordSetNeedRelease = false;
-									}
-									if (tableModelSpatialQuery.isShowInMap(i) || tableModelSpatialQuery.isShowInScene(i)) {
-										mapShowSmIDs.put(i, getShowSmID(currentResult));
 									}
 									if (isResultRecordSetNeedRelease) {
 										currentResult.dispose();
@@ -589,7 +594,6 @@ public class JDialogSpatialQuery extends SmDialog {
 					}
 					if (mapShowSmIDs != null && mapShowSmIDs.size() > 0) {
 						showResultInMap();
-
 					}
 
 //						for (Int32 index = 0; index < m_targetSpatialQuerySetting.Count; index++) {
@@ -615,10 +619,11 @@ public class JDialogSpatialQuery extends SmDialog {
 				searchingFeatures.dispose();
 			}
 		}
-		return false;
+		return true;
 	}
 
 	private void relatingBrowse() {
+		// TODO: 2016/8/18 关联浏览未实现
 //		try
 //		{
 //			List<IForm> forms = new List<IForm>();
@@ -691,7 +696,7 @@ public class JDialogSpatialQuery extends SmDialog {
 		try {
 			IFormMap formMap = null;
 
-			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			IForm activeForm = currentForm;
 			if (activeForm instanceof IFormMap) {
 				formMap = ((IFormMap) activeForm);
 				ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
@@ -723,7 +728,7 @@ public class JDialogSpatialQuery extends SmDialog {
 						}
 						List<Integer> smIds = mapShowSmIDs.get(row);
 						if (smIds.size() > 0) {
-							AddLayerToCurrentMap(formMap, dataset, (String) tableModelSpatialQuery.getValueAt(row, TableModelSpatialQuery.COLUMN_INDEX_LAYER_NAME), smIds);
+							addLayerToCurrentMap(formMap, dataset, (String) tableModelSpatialQuery.getValueAt(row, TableModelSpatialQuery.COLUMN_INDEX_LAYER_NAME), smIds);
 						}
 					}
 
@@ -736,49 +741,53 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 	}
 
-	private void AddLayerToCurrentMap(IFormMap formMap, Dataset searchedDataset, String layerName, List<Integer> smIDs) {
-//		try {
-//			if (formMap != null) {
-//				Layer relevantLayer = null;
-//				List<Layer> layers = SuperMap.Desktop.CommonToolkit.MapWrap.GetLayers(formMap.MapControl.Map);
-//				foreach(Layer layer in layers)
-//				{
-//					//解决缺陷UGDC-885,在专题图图层上高亮查询的结果，注释判断layer.Theme == null addby chenww
-//					if (layer.Name.Equals(layerName) && searchedDataset == layer.Dataset) {
-//						relevantLayer = layer;
-//						break;
-//					}
-//				}
-//				if (relevantLayer == null) {
-//					relevantLayer = SuperMap.Desktop.CommonToolkit.MapWrap.AddDatasetToMap(formMap.MapControl.Map, searchedDataset, true);
-//				}
-//
-//				if (relevantLayer != null && smIDs.Count > 0) {
-//					HightLightResultsOnMapWnd(relevantLayer, smIDs);
-//				}
-//			}
-//		} catch (Exception ex) {
-//			Application.ActiveApplication.Output.Output(ex);
-//		}
+	private void addLayerToCurrentMap(IFormMap formMap, Dataset searchedDataset, String layerName, List<Integer> smIDs) {
+		try {
+			if (formMap != null) {
+				Layer relevantLayer = null;
+				ArrayList<Layer> layers = MapUtilities.getLayers(formMap.getMapControl().getMap());
+				for (Layer layer : layers) {
+					//解决缺陷UGDC-885,在专题图图层上高亮查询的结果，注释判断layer.Theme == null addby chenww
+					if (layer.getName().equals(layerName) && searchedDataset == layer.getDataset()) {
+						relevantLayer = layer;
+						break;
+					}
+				}
+				if (relevantLayer == null) {
+					MapUtilities.addDatasetToMap(formMap.getMapControl().getMap(), searchedDataset, true);
+				}
+
+				if (relevantLayer != null && smIDs.size() > 0) {
+					hightLightResultsOnMapWnd(relevantLayer, smIDs);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
 	}
 
-	private void HightLightResultsOnMapWnd(Layer layer, List<Integer> smIDs) {
-//		try {
-//			if (layer != null) {
-//				layer.Selection.Clear();
-//				layer.Selection.IsDefaultStyleEnabled = false;
-//
-//				layer.Selection.AddRange(smIDs.ToArray());
-//				//默认风格是半透明，显示效果要好
-//				layer.Selection.IsDefaultStyleEnabled = true;
-//				//GeoStyle style = layer.Selection.Style;
-//				//style.FillSymbolID = 0;
-//				//style.FillForeColor = Color.FromArgb(125, 179, 179, 255);
-//				//style.LineColor = Color.FromArgb(255, 0, 0, 255);
-//			}
-//		} catch (Exception ex) {
-//			Application.ActiveApplication.Output.Output(ex);
-//		}
+	private void hightLightResultsOnMapWnd(Layer layer, List<Integer> smIDs) {
+		try {
+			if (layer != null) {
+				layer.getSelection().clear();
+//				layer.getSelection().setDefaultStyleEnabled(false);
+
+				Integer[] integers = smIDs.toArray(new Integer[smIDs.size()]);
+				int[] ids = new int[integers.length];
+				for (int i = 0; i < integers.length; i++) {
+					ids[i] = integers[i];
+				}
+				layer.getSelection().addRange(ids);
+				//默认风格是半透明，显示效果要好
+				layer.getSelection().setDefaultStyleEnabled(true);
+//				GeoStyle style = layer.getSelection().getStyle();
+//				style.FillSymbolID = 0;
+//				style.FillForeColor = Color.FromArgb(125, 179, 179, 255);
+//				style.LineColor = Color.FromArgb(255, 0, 0, 255);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
 	}
 
 	private java.util.List<Integer> getShowSmID(Recordset resultRecord) {
@@ -789,6 +798,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				smIDs.add(resultRecord.getID());
 				resultRecord.moveNext();
 			}
+			resultRecord.moveFirst();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -824,7 +834,19 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void showResultInTabular(Recordset currentResult, int i) {
-
+		IFormTabular formTabular = (IFormTabular) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TABULAR);
+		if (formTabular != null) {
+			String message;
+			if (tableModelSpatialQuery.isSave(i) && tableModelSpatialQuery.getResultDatasource(i) != null && !StringUtilities.isNullOrEmpty(tableModelSpatialQuery.getDatasetName(i))) {
+				message = MessageFormat.format("{0}@{1}", tableModelSpatialQuery.getDatasetName(i), tableModelSpatialQuery.getResultDatasource(i).getAlias());
+			} else {
+				Dataset currentDatasetVector = tableModelSpatialQuery.getDataset(i);
+				message = MessageFormat.format("{0}@{1}", currentDatasetVector.getName(), currentDatasetVector.getDatasource().getAlias());
+			}
+			formTabular.setText(message);
+			formTabular.setRecordset(currentResult);
+			showForms.add(formTabular);
+		}
 	}
 
 
