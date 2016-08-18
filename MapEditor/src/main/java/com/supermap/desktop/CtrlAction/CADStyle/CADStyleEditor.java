@@ -80,7 +80,7 @@ public class CADStyleEditor extends AbstractEditor {
     }
 
     private void resetRecordset(Map map) {
-        if (null != dialog && null != getActiveRecordset(map)) {
+        if (null != dialog && dialog.isDisposed() && null != getActiveRecordset(map)) {
             dialog.showDialog(getActiveRecordset(map));
         } else if (null == getActiveRecordset(map)) {
             removeDialog();
@@ -129,6 +129,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     private void removeDialog() {
         if (null != dialog) {
+            dialog.setDisposed(true);
             dialog.removeEvents();
             ((JPanel) dialog.getContentPane()).removeAll();
             ((JPanel) dialog.getContentPane()).updateUI();
@@ -141,14 +142,14 @@ public class CADStyleEditor extends AbstractEditor {
         Recordset recordset = getActiveRecordset(environment.getMap());
         if (null != dialog && editable == false) {
             dialog.enabled(false);
-        } else if (null != dialog && null != recordset) {
+        } else if (null != dialog && dialog.isDisposed() && null != recordset) {
             dialog.showDialog(recordset);
         }
         return editable && environment.getEditProperties().getSelectedGeometryCount() >= 1
                 && ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOPOINT, GeometryType.GEOPOINT3D, GeometryType.GEOMULTIPOINT,
-            GeometryType.GEOLINE,GeometryType.GEOLINE3D,GeometryType.GEOBSPLINE,GeometryType.GEOCARDINAL,GeometryType.GEOCURVE,GeometryType.GEOLINEM,GeometryType.GEOPARAMETRICLINE,GeometryType.GEOPARAMETRICLINECOMPOUND,GeometryType.GEOARC,
-                GeometryType.GEOCHORD,GeometryType.GEOCIRCLE,GeometryType.GEOCOMPOUND,GeometryType.GEOELLIPSE,GeometryType.GEOELLIPTICARC,GeometryType.GEOPARAMETRICREGION,GeometryType.GEOPARAMETRICREGIONCOMPOUND,
-                GeometryType.GEOPIE,GeometryType.GEOPIE3D,GeometryType.GEOREGION,GeometryType.GEOREGION3D,GeometryType.GEOROUNDRECTANGLE);
+                GeometryType.GEOLINE, GeometryType.GEOLINE3D, GeometryType.GEOBSPLINE, GeometryType.GEOCARDINAL, GeometryType.GEOCURVE, GeometryType.GEOLINEM, GeometryType.GEOPARAMETRICLINE, GeometryType.GEOPARAMETRICLINECOMPOUND, GeometryType.GEOARC,
+                GeometryType.GEOCHORD, GeometryType.GEOCIRCLE, GeometryType.GEOCOMPOUND, GeometryType.GEOELLIPSE, GeometryType.GEOELLIPTICARC, GeometryType.GEOPARAMETRICREGION, GeometryType.GEOPARAMETRICREGIONCOMPOUND,
+                GeometryType.GEOPIE, GeometryType.GEOPIE3D, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOROUNDRECTANGLE);
     }
 
     private boolean isEditable(Map map) {

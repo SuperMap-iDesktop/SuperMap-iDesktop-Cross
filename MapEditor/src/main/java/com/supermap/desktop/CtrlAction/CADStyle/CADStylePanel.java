@@ -2,10 +2,17 @@ package com.supermap.desktop.CtrlAction.CADStyle;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
+import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.ColorSelectionPanel;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 
@@ -45,6 +52,22 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     public static final int HORIZONTAL = 4;
     public static final int VERTICAL = 5;
     private Recordset recordset;
+    private JPanelSymbols panelSymbols;
+    private JPopupMenu popupMenuVertical;
+    private JPanel panelMore;
+
+    private SymbolSelectedChangedListener popuVerticalListener = new SymbolSelectedChangedListener() {
+
+        @Override
+        public void SymbolSelectedChangedEvent(Symbol symbol) {
+            resetSymbol(popupMenuVertical, symbol);
+        }
+
+        @Override
+        public void SymbolSelectedDoubleClicked() {
+            // Do nothing
+        }
+    };
 
 
     public CADStylePanel(int cadType, int alignment) {
@@ -75,10 +98,10 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                     switch (alignment) {
                         case HORIZONTAL:
-                            setHorizontalPopupmenu(cadType, e);
+                            setHorizontalPopupmenu(e);
                             break;
                         case VERTICAL:
-                            resetRecordsetSymbol(cadType, e);
+                            resetRecordsetSymbol(e);
                             break;
                         default:
                             break;
@@ -89,7 +112,7 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
         });
     }
 
-    private void setHorizontalPopupmenu(int cadtype, MouseEvent e) {
+    private void setHorizontalPopupmenu(MouseEvent e) {
         final JPopupMenu popupMenu = new JPopupMenu();
         ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
         popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
@@ -110,7 +133,7 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
                     }
                     if (cadType == MARKER_TYPE) {
                         // 修改点符号
-                        geoStyle.setFillBackColor(selectedColor);
+                        geoStyle.setLineColor(selectedColor);
                     } else if (cadType == LINE_TYPE) {
                         // 修改线符号
                         geoStyle.setLineColor(selectedColor);
@@ -118,6 +141,7 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
                         // 修改面符号
                         geoStyle.setFillForeColor(selectedColor);
                     }
+                    tempGeometry.setStyle(geoStyle);
                     recordset.setGeometry(tempGeometry);
                     tempGeometry.dispose();
                     recordset.update();
@@ -135,72 +159,151 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
 
     private JPanel getPanelSymbols(JPanel panelSymbols) {
         JPanel panelSymbol = new JPanel();
+        panelMore = new JPanel();
+        JLabel buttonMoreImage = new JLabel(ControlsResources.getIcon("/controlsresources/Image_SymbolDictionary.png"));
+        JLabel labelTitle = new JLabel(ControlsProperties.getString("String_SymbolLibraryManager"));
+        panelMore.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelMore.add(buttonMoreImage);
+        panelMore.add(labelTitle);
         JScrollPane jScrollPane = new JScrollPane(panelSymbols);
         jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         panelSymbol.setLayout(new GridBagLayout());
-        panelSymbol.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
+        panelSymbol.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 2));
+        panelSymbol.add(panelMore, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
+        panelMore.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                resetRecordsetGeoStyle();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                panelMore.setBackground(CADStylePanel.this.COLOR_SYSTEM_SELECTED);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                panelMore.setBackground(CADStylePanel.this.COLOR_SYSTEM_DEFAULT);
+            }
+        });
         return panelSymbol;
     }
 
-    private void resetRecordsetSymbol(final int cadType, MouseEvent e) {
-        final JPopupMenu popupMenuVertical = new JPopupMenu();
-        popupMenuVertical.setPreferredSize(new Dimension(460, 300));
+    private void resetGeoStyle(GeoStyle newGeoStyle) {
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            editHistory.add(EditType.MODIFY, recordset, true);
+            if (!recordset.isReadOnly()) {
+                recordset.edit();
+                Geometry tempGeometry = recordset.getGeometry();
+                tempGeometry.setStyle(newGeoStyle);
+                recordset.setGeometry(tempGeometry);
+                tempGeometry.dispose();
+                recordset.update();
+                recordset.moveNext();
+            }
+        }
+        editHistory.batchEnd();
+        popupMenuVertical.setVisible(false);
+        panelSymbols.removeSymbolSelectedChangedListener(this.popuVerticalListener);
+        MapUtilities.getActiveMap().refresh();
+    }
+
+    private void resetRecordsetGeoStyle() {
+        SymbolType symbolType = null;
+        GeoStyle beforeGeoStyle = new GeoStyle();
+        if (cadType == MARKER_TYPE) {
+            symbolType = SymbolType.MARKER;
+        } else if (cadType == LINE_TYPE) {
+            symbolType = SymbolType.LINE;
+        } else {
+            symbolType = SymbolType.FILL;
+        }
+        recordset.moveFirst();
+        beforeGeoStyle = recordset.getGeometry().getStyle().clone();
+        GeoStyle geostyle = changeGeoStyle(beforeGeoStyle, symbolType, new ISymbolApply() {
+            @Override
+            public void apply(GeoStyle geoStyle) {
+                resetGeoStyle(geoStyle);
+            }
+        });
+        if (geostyle != null) {
+            resetGeoStyle(geostyle);
+        }
+    }
+
+    private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType, ISymbolApply symbolApply) {
+        GeoStyle result = null;
+        SymbolDialog symbolDialog = null;
+        try {
+            CursorUtilities.setWaitCursor();
+            symbolDialog = SymbolDialogFactory.getSymbolDialog(symbolType);
+            DialogResult dialogResult = symbolDialog.showDialog(beforeStyle, symbolApply);
+            if (dialogResult == DialogResult.OK) {
+                result = symbolDialog.getCurrentGeoStyle();
+                panelMore.removeMouseListener(null);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        } finally {
+            CursorUtilities.setDefaultCursor();
+        }
+        return result;
+    }
+
+    private void resetRecordsetSymbol(MouseEvent e) {
+        popupMenuVertical = new JPopupMenu();
         Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-        JPanelSymbols panelSymbols = null;
         if (cadType == MARKER_TYPE) {
             panelSymbols = new JPanelSymbolsPoint();
+            popupMenuVertical.setPreferredSize(new Dimension(400, 300));
             panelSymbols.setSymbolGroup(resources, resources.getMarkerLibrary().getRootGroup());
         } else if (cadType == LINE_TYPE) {
             panelSymbols = new JPanelSymbolsLine();
             panelSymbols.setSymbolGroup(resources, resources.getLineLibrary().getRootGroup());
+            popupMenuVertical.setPreferredSize(new Dimension(460, 300));
         } else if (cadType == FILL_TYPE) {
             panelSymbols = new JPanelSymbolsFill();
             panelSymbols.setSymbolGroup(resources, resources.getFillLibrary().getRootGroup());
+            popupMenuVertical.setPreferredSize(new Dimension(460, 300));
         }
         panelSymbols.setGeoStyle(new GeoStyle());
         popupMenuVertical.add(getPanelSymbols(panelSymbols));
         popupMenuVertical.show(e.getComponent(), 0, (int) e.getComponent().getBounds().getHeight());
-        panelSymbols.addSymbolSelectedChangedListener(new SymbolSelectedChangedListener() {
+        panelSymbols.addSymbolSelectedChangedListener(this.popuVerticalListener);
+    }
 
-            @Override
-            public void SymbolSelectedChangedEvent(Symbol symbol) {
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    if (!recordset.isReadOnly()) {
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != tempGeometry.getStyle()) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        if (cadType == MARKER_TYPE) {
-                            // 修改点符号
-                            geoStyle.setSymbolMarker((SymbolMarker) symbol);
-                        } else if (cadType == LINE_TYPE) {
-                            // 修改线符号
-                            geoStyle.setSymbolLine((SymbolLine) symbol);
-                        } else if (cadType == FILL_TYPE) {
-                            // 修改面符号
-                            geoStyle.setSymbolFill((SymbolFill) symbol);
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+    private void resetSymbol(JPopupMenu popupMenuVertical, Symbol symbol) {
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            editHistory.add(EditType.MODIFY, recordset, true);
+            if (!recordset.isReadOnly()) {
+                recordset.edit();
+                Geometry tempGeometry = recordset.getGeometry();
+                GeoStyle geoStyle = new GeoStyle();
+                if (null != tempGeometry.getStyle()) {
+                    geoStyle = tempGeometry.getStyle();
                 }
-                editHistory.batchEnd();
-                popupMenuVertical.setVisible(false);
-                MapUtilities.getActiveMap().refresh();
+                if (cadType == MARKER_TYPE) {
+                    // 修改点符号
+                    geoStyle.setSymbolMarker((SymbolMarker) symbol);
+                } else if (cadType == LINE_TYPE) {
+                    // 修改线符号
+                    geoStyle.setSymbolLine((SymbolLine) symbol);
+                } else if (cadType == FILL_TYPE) {
+                    // 修改面符号
+                    geoStyle.setSymbolFill((SymbolFill) symbol);
+                }
+                tempGeometry.setStyle(geoStyle);
+                recordset.setGeometry(tempGeometry);
+                tempGeometry.dispose();
+                recordset.update();
+                recordset.moveNext();
             }
-
-            @Override
-            public void SymbolSelectedDoubleClicked() {
-                popupMenuVertical.setVisible(false);
-            }
-        });
+        }
+        editHistory.batchEnd();
+        popupMenuVertical.setVisible(false);
+        MapUtilities.getActiveMap().refresh();
     }
 
 
