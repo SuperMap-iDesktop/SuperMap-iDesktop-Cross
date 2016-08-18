@@ -872,7 +872,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
                 // 单字段运算
                 resetTextFieldOperationEQ();
-                buttonApply.setEnabled(true && isApply);
+                buttonApply.setEnabled(true);
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
