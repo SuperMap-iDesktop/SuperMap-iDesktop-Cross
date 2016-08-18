@@ -30,6 +30,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
+                    <finalName>${project.name}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>com.supermap.desktop.iDesktop.Startup</mainClass>
@@ -52,6 +53,54 @@
                 <configuration>
                     <!--默认输出到 target/classes-->
                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.11</version>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>generate exe</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>launch4j</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <configuration>
+                    <headerType>gui</headerType>
+                    <outfile>${project.build.directory}/SuperMap iDesktop Cross.exe</outfile>
+                    <jar>iDesktop.jar</jar>
+                    <dontWrapJar>true</dontWrapJar>
+                    <errTitle>SuperMap iDesktop Cross</errTitle>
+                    <icon></icon>
+                    <lib>./bin</lib>
+                    <classPath>
+                        <mainClass>com.supermap.desktop.iDesktop.Startup</mainClass>
+                    </classPath>
+                    <jre>
+                        <path>./jre/bin</path>
+                        <bundledJre64Bit>true</bundledJre64Bit>
+                        <minVersion>1.7.0_80</minVersion>
+                        <runtimeBits>64/32</runtimeBits>
+                        <opts>
+                            <opt>-Dfelix.config.properties=file:Configuration/config.properties</opt>
+                        </opts>
+                    </jre>
+                    <splash>
+                        <file>./Resources/Frame/iDesktop_Cross_Startup.gif</file>
+                    </splash>
+                    <versionInfo>
+                        <fileVersion>1.8.0.0</fileVersion>
+                        <txtFileVersion>1.8.Release</txtFileVersion>
+                        <fileDescription>SuperMap iDesktop Cross</fileDescription>
+                        <copyright>2015-2017</copyright>
+                        <productName>SuperMap iDesktop Cross</productName>
+                        <companyName>SuperMap</companyName>
+                        <internalName>SuperMap iDesktop Cross</internalName>
+                        <originalFilename>SuperMap iDesktop Cross.exe</originalFilename>
+                    </versionInfo>
                 </configuration>
             </plugin>
         </plugins>
