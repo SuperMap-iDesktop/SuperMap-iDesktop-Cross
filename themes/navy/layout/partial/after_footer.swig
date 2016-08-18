@@ -18,7 +18,8 @@
 {% endif %}
 <!-- Algolia -->
 {% if config.algolia %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2.1.2/docsearch.css" />
+<!--link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2.1.2/docsearch.css" /-->
+{{ css('css/docsearch') }}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2.1.2/docsearch.min.js"></script>
 <script type="text/javascript">
 document.getElementById('search-input-wrap').classList.add('on');
