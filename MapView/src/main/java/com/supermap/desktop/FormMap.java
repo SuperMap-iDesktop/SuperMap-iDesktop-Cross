@@ -1457,7 +1457,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		Map map = this.getMapControl().getMap();
 		map.open(mapName);
 		registerEvents();
-		this.mapControl.getMap().setMaxVisibleVertex(GlobalParameters.getMaxVisibleVertex());
 		map.refresh();
 		UICommonToolkit.getLayersManager().setMap(map);
 	}

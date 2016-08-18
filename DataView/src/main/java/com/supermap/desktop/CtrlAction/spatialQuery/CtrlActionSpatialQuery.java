@@ -11,14 +11,18 @@ import com.supermap.desktop.implement.CtrlAction;
  * @author XiaJT
  */
 public class CtrlActionSpatialQuery extends CtrlAction {
+	private JDialogSpatialQuery jDialogSpatialQuery;
+
 	public CtrlActionSpatialQuery(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
 	@Override
 	public void run() {
-		JDialogSpatialQuery jDialogSpatialQuery = new JDialogSpatialQuery();
-		jDialogSpatialQuery.showDialog();
+		if (jDialogSpatialQuery == null || !jDialogSpatialQuery.isShowing()) {
+			this.jDialogSpatialQuery = new JDialogSpatialQuery();
+		}
+		this.jDialogSpatialQuery.showDialog();
 	}
 
 	@Override
