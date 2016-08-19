@@ -33,9 +33,7 @@ public class TextStyleEditor extends AbstractEditor {
         } else if (null != dialog && null == recordset) {
             removeDialog();
         }
-        return editable && environment.getEditProperties().getSelectedGeometryCount() >= 1
-                && ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
-
+        return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
     }
 
     private boolean isEditable(Map map) {

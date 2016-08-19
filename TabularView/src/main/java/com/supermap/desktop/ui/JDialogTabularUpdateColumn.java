@@ -64,7 +64,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private JLabel labelOperationEQ;// 运算方程式
     private JTextArea textAreaOperationEQ;
     private JLabel labelEQTip;// 运算方式提示
-    private boolean isApply = false;
+    private boolean isApply = true;
 
 //    private boolean isExpressionSelect;// 前一个界面是否为表达式界面
 
