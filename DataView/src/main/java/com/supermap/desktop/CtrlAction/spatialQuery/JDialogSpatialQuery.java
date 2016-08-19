@@ -49,6 +49,7 @@ import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.SpatialQueryModeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerAddedEvent;
 import com.supermap.mapping.LayerAddedListener;
@@ -328,6 +329,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (!((Datasource) comboBoxDatasource.getSelectedItem()).getDatasets().isAvailableDatasetName(textFieldValue)) {
 					return false;
 				}
+
 				tableModelSpatialQuery.setDatasetName(tableLayers.getSelectedRow(), textFieldValue);
 				return true;
 			}
@@ -722,6 +724,18 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (query() && checkBoxAutoClose.isSelected()) {
 					dispose();
 				}
+			}
+		});
+		buttonSelectAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableLayers.setRowSelectionInterval(0, tableLayers.getRowCount() - 1);
+			}
+		});
+		buttonInvert.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TableUtilities.invertSelection(tableLayers);
 			}
 		});
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(activeFormChangedListener);
