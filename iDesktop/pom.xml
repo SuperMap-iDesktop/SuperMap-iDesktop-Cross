@@ -60,13 +60,13 @@
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <version>1.7.11</version>
                 <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>generate exe</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>launch4j</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
+                <!--<execution>-->
+                <!--<id>generate exe</id>-->
+                <!--<phase>package</phase>-->
+                <!--<goals>-->
+                <!--<goal>launch4j</goal>-->
+                <!--</goals>-->
+                <!--</execution>-->
                 <!--</executions>-->
                 <configuration>
                     <headerType>gui</headerType>
@@ -74,8 +74,10 @@
                     <jar>iDesktop.jar</jar>
                     <dontWrapJar>true</dontWrapJar>
                     <errTitle>SuperMap iDesktop Cross</errTitle>
-                    <icon></icon>
-                    <lib>./bin</lib>
+                    <icon>${project.basedir}/../Resources/Frame/iDesktop_Cross_256.png</icon>
+                    <libs>
+                        <lib>./bin</lib>
+                    </libs>
                     <classPath>
                         <mainClass>com.supermap.desktop.iDesktop.Startup</mainClass>
                     </classPath>
@@ -89,7 +91,7 @@
                         </opts>
                     </jre>
                     <splash>
-                        <file>./Resources/Frame/iDesktop_Cross_Startup.gif</file>
+                        <file>${project.basedir}/../Resources/Frame/iDesktop_Cross_Startup.gif</file>
                     </splash>
                     <versionInfo>
                         <fileVersion>1.8.0.0</fileVersion>
