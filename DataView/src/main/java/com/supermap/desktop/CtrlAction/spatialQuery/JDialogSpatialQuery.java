@@ -5,24 +5,40 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceAliasModifiedEvent;
+import com.supermap.data.DatasourceAliasModifiedListener;
+import com.supermap.data.DatasourceClosedEvent;
+import com.supermap.data.DatasourceClosedListener;
+import com.supermap.data.DatasourceCreatedEvent;
+import com.supermap.data.DatasourceCreatedListener;
+import com.supermap.data.DatasourceOpenedEvent;
+import com.supermap.data.DatasourceOpenedListener;
 import com.supermap.data.Datasources;
 import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dataview.DataViewResources;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.CellRenders.TableSqlCellEditor;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
@@ -33,8 +49,22 @@ import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.SpatialQueryModeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerAddedEvent;
+import com.supermap.mapping.LayerAddedListener;
+import com.supermap.mapping.LayerCaptionChangedEvent;
+import com.supermap.mapping.LayerCaptionChangedListener;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
 import com.supermap.mapping.Selection;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -50,6 +80,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -61,6 +93,9 @@ import java.util.List;
  * @author XiaJT
  */
 public class JDialogSpatialQuery extends SmDialog {
+
+
+	private Layer lastSelectedLayer;
 
 	private JToolBar toolBar = new JToolBar();
 	private SmButton buttonSelectAll = new SmButton();
@@ -79,6 +114,133 @@ public class JDialogSpatialQuery extends SmDialog {
 	private TristateCheckBox checkBoxSaveResult = new TristateCheckBox();
 	private JLabel labelDatasource = new JLabel();
 	private JComboBox<Datasource> comboBoxDatasource = new JComboBox<>();
+	private DatasourceAliasModifiedListener datasourceAliasModifiedListener = new DatasourceAliasModifiedListener() {
+		@Override
+		public void datasourceAliasModified(DatasourceAliasModifiedEvent datasourceAliasModifiedEvent) {
+			comboBoxDatasource.repaint();
+		}
+	};
+	private DatasourceCreatedListener datasourceCreatedListener = new DatasourceCreatedListener() {
+		@Override
+		public void datasourceCreated(DatasourceCreatedEvent datasourceCreatedEvent) {
+			comboBoxDatasourceAddItem(datasourceCreatedEvent.getDatasource());
+		}
+	};
+	private DatasourceOpenedListener datasourceOpenedListener = new DatasourceOpenedListener() {
+		@Override
+		public void datasourceOpened(DatasourceOpenedEvent datasourceOpenedEvent) {
+			comboBoxDatasourceAddItem(datasourceOpenedEvent.getDatasource());
+		}
+	};
+	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
+		@Override
+		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
+			removeDatasourcesListeners();
+			comboBoxDatasource.removeAllItems();
+			int[] rows = new int[tableLayers.getRowCount()];
+			for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
+				rows[i] = i;
+			}
+			tableModelSpatialQuery.setDatasource(rows, null);
+		}
+	};
+	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
+		@Override
+		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+			initDatasourcesListeners();
+			Datasources datasources = workspaceOpenedEvent.getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				comboBoxDatasourceAddItem(datasources.get(i));
+			}
+		}
+	};
+	private Datasources datasources;
+	private LayerCaptionChangedListener layerCaptionChangedListener = new LayerCaptionChangedListener() {
+		@Override
+		public void captionChanged(LayerCaptionChangedEvent layerCaptionChangedEvent) {
+			tableLayers.repaint();
+		}
+	};
+
+	private LayerRemovedListener layerRemovedListener = new LayerRemovedListener() {
+		@Override
+		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
+			tableModelSpatialQuery.removeLayer(layerRemovedEvent.getLayer());
+		}
+	};
+	private LayerAddedListener layerAddedListener = new LayerAddedListener() {
+		@Override
+		public void layerAdded(LayerAddedEvent layerAddedEvent) {
+			tableModelSpatialQuery.addLayer(layerAddedEvent.getLayer());
+		}
+	};
+	private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
+		@Override
+		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
+//					lastSelectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
+			if (geometrySelectChangedEvent.getCount() == 0) {
+				comboBoxSearchLayer.removeAllItems();
+				// 触发不了选中事件
+				for (int i = 0; i < tableLayers.getRowCount(); i++) {
+					tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+				}
+			} else {
+				isIgnore = true;
+				initComboBoxSearchLayerState();
+				// 如果刚好相同
+				isIgnore = false;
+				if (lastSelectedLayer == null && comboBoxSearchLayer.getItemCount() > 0) {
+					comboBoxSearchLayer.setSelectedIndex(0);
+				} else {
+					comboBoxSearchLayer.setSelectedItem(lastSelectedLayer);
+				}
+			}
+			lastSelectedLayer = ((Layer) comboBoxSearchLayer.getSelectedItem());
+			if (lastSelectedLayer != null) {
+				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), lastSelectedLayer.getSelection().getCount()));
+			} else {
+				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
+			}
+		}
+	};
+	private MapOpenedListener mapOpenedListener = new MapOpenedListener() {
+		@Override
+		public void mapOpened(MapOpenedEvent mapOpenedEvent) {
+			initFormListener();
+			initComponentState();
+		}
+	};
+
+
+	private void comboBoxDatasourceAddItem(Datasource datasource) {
+		if (datasource.isReadOnly()) {
+			return;
+		}
+		comboBoxDatasource.addItem(datasource);
+		int[] rows = new int[tableLayers.getRowCount()];
+		for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
+			rows[i] = i;
+		}
+		if (comboBoxDatasource.getItemCount() == 1) {
+			tableModelSpatialQuery.setDatasource(rows, datasource);
+		}
+	}
+
+	private DatasourceClosedListener datasourceClosedListener = new DatasourceClosedListener() {
+		@Override
+		public void datasourceClosed(DatasourceClosedEvent datasourceClosedEvent) {
+			if (JComboBoxUIUtilities.getItemIndex(comboBoxDatasource, datasourceClosedEvent.getDatasource()) == -1) {
+				return;
+			}
+			comboBoxDatasource.removeItem(datasourceClosedEvent.getDatasource());
+			Datasource datasource = comboBoxDatasource.getItemCount() > 0 ? comboBoxDatasource.getItemAt(0) : null;
+			for (int i = 0; i < tableLayers.getRowCount(); i++) {
+				if (tableModelSpatialQuery.getResultDatasource(i) == datasourceClosedEvent.getDatasource()) {
+					tableModelSpatialQuery.setDatasource(new int[]{i}, datasource);
+				}
+			}
+		}
+	};
 	private JLabel labelDataset = new JLabel();
 	private SmTextFieldLegit smTextFieldLegitDataset = new SmTextFieldLegit();
 	private TristateCheckBox checkBoxOnlySaveSpatial = new TristateCheckBox();
@@ -104,6 +266,25 @@ public class JDialogSpatialQuery extends SmDialog {
 	private HashMap<Integer, List<Integer>> mapShowSmIDs = new HashMap();
 	private List<IForm> showForms = new ArrayList<>();
 	private IForm currentForm;
+	private ActiveFormChangedListener activeFormChangedListener = new ActiveFormChangedListener() {
+		@Override
+		public void activeFormChanged(ActiveFormChangedEvent e) {
+			if (isQuerying) {
+				tempForm = e.getNewActiveForm();
+				return;
+			}
+			if (e.getNewActiveForm() != currentForm) {
+				removeFormListeners();
+				currentForm = e.getNewActiveForm();
+				initFormListener();
+				initComponentState();
+				checkToolBarButtonState();
+			}
+		}
+	};
+
+	private boolean isQuerying = false;
+	private IForm tempForm = null;
 
 	public JDialogSpatialQuery() {
 		super(((JFrame) Application.getActiveApplication().getMainFrame()), false);
@@ -115,6 +296,12 @@ public class JDialogSpatialQuery extends SmDialog {
 		supportSearchDatasetTypes.add(DatasetType.LINE);
 		supportSearchDatasetTypes.add(DatasetType.REGION);
 
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				dispose();
+			}
+		});
 		initComponent();
 		initLayout();
 		initListener();
@@ -125,6 +312,7 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void initComponent() {
+		currentForm = Application.getActiveApplication().getActiveForm();
 		initTable();
 		smTextFieldLegitDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
@@ -141,6 +329,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (!((Datasource) comboBoxDatasource.getSelectedItem()).getDatasets().isAvailableDatasetName(textFieldValue)) {
 					return false;
 				}
+
 				tableModelSpatialQuery.setDatasetName(tableLayers.getSelectedRow(), textFieldValue);
 				return true;
 			}
@@ -207,7 +396,6 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void setDescribe(SpatialQueryMode mode, DatasetType searchLayerDatasetType, DatasetType currentDatasetType) {
-		// TODO: 2016/8/16
 		String picName = "";
 		picName = mode.name().substring(0, 1) + mode.name().toLowerCase().substring(1) + "_" + getDatasetTypeDescribe(searchLayerDatasetType) + getDatasetTypeDescribe(currentDatasetType);
 		labelDescribeIcon.setIcon(DataViewResources.getIcon("/dataviewresources/SpatialQuery/" + picName + ".png"));
@@ -407,19 +595,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				// 全选，非选实现
 				if (e.getType() == TableModelEvent.UPDATE) {
 					if (e.getColumn() == 0) {
-						if (!checkBoxSelectAllLock) {
-							Boolean result = (Boolean) tableModelSpatialQuery.getValueAt(0, 0);
-							for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
-								if (tableModelSpatialQuery.getValueAt(i, 0) != result) {
-									result = null;
-									break;
-								}
-							}
-							checkBoxSelectedAll.setSelectedEx(result);
-							tableLayers.getTableHeader().repaint();
-							tableLayers.setRowSelectionInterval(e.getFirstRow(), e.getLastRow());
-							checkSmButtonOkState();
-						}
+						checkSelectAllState(e);
 					} else if (e.getColumn() == TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) {
 						checkSmButtonOkState();
 						if (tableModelSpatialQuery.getValueAt(e.getFirstRow(), TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null) {
@@ -428,25 +604,33 @@ public class JDialogSpatialQuery extends SmDialog {
 						}
 					}
 				} else if (e.getType() == TableModelEvent.DELETE || e.getType() == TableModelEvent.INSERT) {
+					checkSelectAllState(e);
 					checkToolBarButtonState();
 				}
 //				checkSmButtonOkState();
 			}
 		});
 		comboBoxSearchLayer.addItemListener(new ItemListener() {
-			private Layer lastSelected;
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				if (tableLayers.getCellEditor() != null) {
+					tableLayers.getCellEditor().cancelCellEditing();
+				}
+				if (isIgnore) {
+					return;
+				}
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					Object selectedItem = comboBoxSearchLayer.getSelectedItem();
 					boolean isResetQueryMode = true;
 					if (selectedItem != null) {
 						Layer layer = (Layer) selectedItem;
 						labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), layer.getSelection().getCount()));
-						if (lastSelected != null && layer.getDataset().getType() == lastSelected.getDataset().getType()) {
+						if (lastSelectedLayer != null && layer.getDataset().getType() == lastSelectedLayer.getDataset().getType()) {
 							isResetQueryMode = false;
 						}
+					} else {
+						labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
 					}
 					// 新选择的图层类型不同或者为空重置查询方式
 					if (isResetQueryMode) {
@@ -454,8 +638,7 @@ public class JDialogSpatialQuery extends SmDialog {
 							tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
 						}
 					}
-				} else {
-					lastSelected = ((Layer) e.getItem());
+					lastSelectedLayer = ((Layer) selectedItem);
 				}
 			}
 		});
@@ -543,14 +726,111 @@ public class JDialogSpatialQuery extends SmDialog {
 				}
 			}
 		});
+		buttonSelectAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableLayers.setRowSelectionInterval(0, tableLayers.getRowCount() - 1);
+			}
+		});
+		buttonInvert.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TableUtilities.invertSelection(tableLayers);
+			}
+		});
+		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(activeFormChangedListener);
+		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
+		Application.getActiveApplication().getWorkspace().addOpenedListener(workspaceOpenedListener);
+
+		initDatasourcesListeners();
+		initFormListener();
+	}
+
+	private void checkSelectAllState(TableModelEvent e) {
+		if (!checkBoxSelectAllLock && tableModelSpatialQuery.getRowCount() > 0) {
+			Boolean result = (Boolean) tableModelSpatialQuery.getValueAt(0, 0);
+			for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
+				if (tableModelSpatialQuery.getValueAt(i, 0) != result) {
+					result = null;
+					break;
+				}
+			}
+			checkBoxSelectedAll.setSelectedEx(result);
+			tableLayers.getTableHeader().repaint();
+			if (e.getType() == TableModelEvent.UPDATE) {
+				tableLayers.setRowSelectionInterval(e.getFirstRow(), e.getLastRow());
+			}
+			checkSmButtonOkState();
+		}
+	}
+
+
+	private void initDatasourcesListeners() {
+		removeDatasourcesListeners();
+		this.datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		this.datasources.addClosedListener(datasourceClosedListener);
+		this.datasources.addOpenedListener(datasourceOpenedListener);
+		this.datasources.addCreatedListener(datasourceCreatedListener);
+		this.datasources.addAliasModifiedListener(datasourceAliasModifiedListener);
+	}
+
+	private void removeDatasourcesListeners() {
+		if (datasources != null) {
+			this.datasources.removeClosedListener(datasourceClosedListener);
+			this.datasources.removeOpenedListener(datasourceOpenedListener);
+			this.datasources.removeCreatedListener(datasourceCreatedListener);
+			this.datasources.removeAliasModifiedListener(datasourceAliasModifiedListener);
+			this.datasources = null;
+		}
+	}
+
+	private void initFormListener() {
+		removeFormListeners();
+		if (currentForm != null && currentForm instanceof IFormMap) {
+			MapControl mapControl = ((IFormMap) currentForm).getMapControl();
+			if (mapControl != null) {
+				mapControl.addGeometrySelectChangedListener(geometrySelectChangedListener);
+				if (mapControl.getMap() != null && mapControl.getMap().getLayers() != null) {
+					Map map = mapControl.getMap();
+					map.addMapOpenedListener(mapOpenedListener);
+					Layers layers = map.getLayers();
+					layers.addLayerAddedListener(layerAddedListener);
+					layers.addLayerRemovedListener(layerRemovedListener);
+					layers.addLayerCaptionChangedListener(layerCaptionChangedListener);
+				}
+			}
+		}
+
+
+	}
+
+	private void removeFormListeners() {
+		if (currentForm != null && currentForm instanceof IFormMap) {
+			try {
+				MapControl mapControl = ((IFormMap) currentForm).getMapControl();
+				if (mapControl != null) {
+					mapControl.removeGeometrySelectChangedListener(geometrySelectChangedListener);
+					if (mapControl.getMap() != null && mapControl.getMap().getLayers() != null) {
+						Map map = mapControl.getMap();
+						map.addMapOpenedListener(mapOpenedListener);
+						Layers layers = mapControl.getMap().getLayers();
+						layers.removeLayerAddedListener(layerAddedListener);
+						layers.removeLayerRemovedListener(layerRemovedListener);
+						layers.removeLayerCaptionChangedListener(layerCaptionChangedListener);
+					}
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
 	}
 
 	private boolean query() {
 		Recordset searchingFeatures = null;
+		isQuerying = true;
 		try {
 			mapShowSmIDs.clear();
 			showForms.clear();
-			currentForm = Application.getActiveApplication().getActiveForm();
 			if (tableModelSpatialQuery.getRowCount() > 0) {
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_SpatialQueryStart"));
 
@@ -615,6 +895,17 @@ public class JDialogSpatialQuery extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
+			isQuerying = false;
+			if (tempForm != null) {
+				if (tempForm != currentForm) {
+					removeFormListeners();
+					currentForm = tempForm;
+					initFormListener();
+					initComponentState();
+					checkToolBarButtonState();
+				}
+			}
+			tempForm = null;
 			if (searchingFeatures != null) {
 				searchingFeatures.dispose();
 			}
@@ -623,7 +914,7 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void relatingBrowse() {
-		// TODO: 2016/8/18 关联浏览未实现
+		// FIXME: 2016/8/19关联浏览未实现
 //		try
 //		{
 //			List<IForm> forms = new List<IForm>();
@@ -827,8 +1118,9 @@ public class JDialogSpatialQuery extends SmDialog {
 				}
 			} else {
 				DatasetVector dtv = (DatasetVector) datasource.getDatasets().createFromTemplate(datasetName, datasetVector);
-				dtv.append(recordset);
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+				if (!dtv.append(recordset)) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+				}
 			}
 		}
 	}
@@ -938,15 +1230,9 @@ public class JDialogSpatialQuery extends SmDialog {
 
 	private void initComponentState() {
 		isIgnore = true;
-		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof IFormMap) {
-			ArrayList<Layer> layers = MapUtilities.getLayers(((IFormMap) activeForm).getMapControl().getMap());
-			for (Layer layer : layers) {
-				if (layer.getSelection().getCount() > 0 && layer.getDataset() != null && supportSearchDatasetTypes.contains(layer.getDataset().getType())) {
-					comboBoxSearchLayer.addItem(layer);
-				}
-			}
-			tableModelSpatialQuery.setLayers(MapUtilities.getLayers((((IFormMap) activeForm).getMapControl()).getMap()));
+		initComboBoxSearchLayerState();
+		if (currentForm != null && currentForm instanceof IFormMap) {
+			tableModelSpatialQuery.setLayers(MapUtilities.getLayers((((IFormMap) currentForm).getMapControl()).getMap()));
 		} else {
 			tableModelSpatialQuery.setLayers(null);
 		}
@@ -963,15 +1249,39 @@ public class JDialogSpatialQuery extends SmDialog {
 		checkBoxShowInTabular.setEnabled(false);
 		checkBoxShowInMap.setSelected(true);
 		checkBoxShowInMap.setEnabled(false);
-
+		checkBoxSelectedAll.setSelected(false);
+		tableLayers.getTableHeader().repaint();
 		checkBoxOnlySaveSpatial.setSelected(false);
 		smButtonOK.setEnabled(false);
 		isIgnore = false;
 	}
 
+	private void initComboBoxSearchLayerState() {
+		comboBoxSearchLayer.removeAllItems();
+		if (currentForm != null && currentForm instanceof IFormMap) {
+
+			ArrayList<Layer> layers = MapUtilities.getLayers(((IFormMap) currentForm).getMapControl().getMap());
+			for (Layer layer : layers) {
+				if (layer.getDataset() != null && layer.getSelection().getCount() > 0 && supportSearchDatasetTypes.contains(layer.getDataset().getType())) {
+					comboBoxSearchLayer.addItem(layer);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public DialogResult showDialog() {
+		setDescribe(SpatialQueryMode.CONTAIN, DatasetType.LINE, DatasetType.LINE);
+		checkBoxAutoClose.setSelected(true);
+		initComponentState();
+		return super.showDialog();
+	}
+
 	@Override
 	public void dispose() {
-		// TODO: 2016/8/11 clean
+		removeDatasourcesListeners();
+		removeFormListeners();
 		super.dispose();
 	}
 

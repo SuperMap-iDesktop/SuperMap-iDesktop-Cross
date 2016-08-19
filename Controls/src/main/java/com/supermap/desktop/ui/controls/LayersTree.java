@@ -13,7 +13,32 @@ import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerAddedEvent;
+import com.supermap.mapping.LayerAddedListener;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerGroupAddedEvent;
+import com.supermap.mapping.LayerGroupAddedListener;
+import com.supermap.mapping.LayerGroupRemovedEvent;
+import com.supermap.mapping.LayerGroupRemovedListener;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
+import com.supermap.mapping.LayerSettingImage;
+import com.supermap.mapping.LayerSettingVector;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGraph;
+import com.supermap.mapping.ThemeGraphItem;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridRangeItem;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeGridUniqueItem;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeUnique;
+import com.supermap.mapping.ThemeUniqueItem;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -24,7 +49,16 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceAdapter;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -601,7 +635,7 @@ public class LayersTree extends JTree {
 			if (JOptionPane.OK_OPTION != UICommonToolkit.showConfirmDialog(message)) {
 				return layerName;
 			}
-			for (int i = 0; i < paths.length; i++) {
+			for (int i = paths.length - 1; i >= 0; i--) {
 				TreePath path = paths[i];
 				Object lastPathComponent = path.getLastPathComponent();
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastPathComponent;
@@ -635,7 +669,9 @@ public class LayersTree extends JTree {
 					((DefaultTreeModel) getModel()).removeNodeFromParent(node);
 				}
 			}
-			currentMap.refresh();
+			if (currentMap != null) {
+				currentMap.refresh();
+			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			// do nothing

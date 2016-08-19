@@ -45,11 +45,14 @@ public class DataCell extends JPanel {
 	 * @param datasource
 	 */
 	public void initDatasourceType(Datasource datasource) {
-		setData(datasource);
-		this.dataName = datasource.getAlias();
-		String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-		URL url = ControlsResources.getResourceURL(datasouceImagepath);
-		init(url, this.dataName);
+		if (datasource != null) {
+			setData(datasource);
+			this.dataName = datasource.getAlias();
+			String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
+			URL url = ControlsResources.getResourceURL(datasouceImagepath);
+			init(url, this.dataName);
+		}
+
 	}
 
 	/**

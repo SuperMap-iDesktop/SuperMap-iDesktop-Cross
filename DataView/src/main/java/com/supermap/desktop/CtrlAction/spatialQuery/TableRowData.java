@@ -159,4 +159,8 @@ public class TableRowData {
 		}
 		return query;
 	}
+
+	public Layer getLayer() {
+		return layer;
+	}
 }

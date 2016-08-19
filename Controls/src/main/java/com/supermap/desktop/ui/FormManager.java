@@ -2,7 +2,12 @@ package com.supermap.desktop.ui;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
@@ -10,7 +15,13 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.docking.*;
+import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.ui.docking.FloatingWindow;
+import com.supermap.desktop.ui.docking.OperationAbortedException;
+import com.supermap.desktop.ui.docking.RootWindow;
+import com.supermap.desktop.ui.docking.TabWindow;
+import com.supermap.desktop.ui.docking.View;
 import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 
 import javax.swing.*;
@@ -273,6 +284,7 @@ public class FormManager implements IFormManager {
 				close(this.childForms.get(i));
 			}
 			result = true;
+
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
