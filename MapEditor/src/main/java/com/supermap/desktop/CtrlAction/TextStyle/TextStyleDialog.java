@@ -188,6 +188,7 @@ public class TextStyleDialog extends SmDialog {
 						textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
 			}
 			recordset.setGeometry(tempGeometry);
+			tempGeometry.dispose();
 			recordset.update();
 			recordset.moveNext();
 		}

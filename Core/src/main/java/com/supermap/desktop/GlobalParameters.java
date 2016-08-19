@@ -780,7 +780,7 @@ public class GlobalParameters {
 	private static boolean isAutoCloseEmptyWindow = false;
 
 	private static void initAutoCloseEmptyWindow() {
-		String value = getValue("_startup_dataWindow", "showCloseInfoForm");
+		String value = getValue("_startup_dataWindow", "autoCloseEmptyWindow");
 		if (value != null) {
 			boolean result = Boolean.valueOf(value);
 			setIsAutoCloseEmptyWindow(result);
