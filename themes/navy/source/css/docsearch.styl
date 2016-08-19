@@ -38,7 +38,7 @@
   -moz-appearance none
   appearance none
   &:hover
-    box-shadow inset 0 0 0 1px #b3b3b3
+    box-shadow inset 0 0 0 1px #980000
   &::-webkit-input-placeholder
     color #AAAAAA
   &::-moz-placeholder
@@ -272,16 +272,20 @@
       top 0
       height 100%
       width 1px
-      background #980000
+      /*列表右边内容前边的竖线分割线*/
+      background #EAEAEA
       left -1px
   .algolia-docsearch-suggestion--category-header
     position relative
-    border-bottom 1px solid #ddd
+    border-bottom 1px solid #EAEAEA
     display none
     margin-top 8px
     padding 4px 0
     font-size 1em
-    color #33363D
+    /*标题字体颜色*/
+    color #FFFFF
+    /*标题背景色*/
+    background #1874CD
   .algolia-docsearch-suggestion--wrapper
     width 100%
     float left
@@ -294,8 +298,11 @@
     text-align right
     position relative
     padding 5.33333px 10.66667px
-    color #A4A7AE
+    /*子标题字体颜色*/
+    color #1C86EE
+    background #fff
     font-size 0.9em
+    
     word-wrap break-word
     &:before
       content ''
@@ -304,7 +311,8 @@
       top 0
       height 100%
       width 1px
-      background #ddd
+      /*子标题右侧竖线*/
+      background #fff
       right 0
     .algolia-docsearch-suggestion--highlight
       background-color inherit
@@ -313,7 +321,8 @@
     display none
   .algolia-docsearch-suggestion--title
     margin-bottom 4px
-    color #02060C
+    /*子标题子项标题字体颜色*/
+    color #708090
     font-size 0.9em
     font-weight bold
   .algolia-docsearch-suggestion--no-results
