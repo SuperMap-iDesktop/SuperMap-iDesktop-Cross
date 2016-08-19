@@ -268,6 +268,10 @@ public class JDialogSpatialQuery extends SmDialog {
 	private ActiveFormChangedListener activeFormChangedListener = new ActiveFormChangedListener() {
 		@Override
 		public void activeFormChanged(ActiveFormChangedEvent e) {
+			if (isQuerying) {
+				tempForm = e.getNewActiveForm();
+				return;
+			}
 			if (e.getNewActiveForm() != currentForm) {
 				removeFormListeners();
 				currentForm = e.getNewActiveForm();
@@ -277,6 +281,9 @@ public class JDialogSpatialQuery extends SmDialog {
 			}
 		}
 	};
+
+	private boolean isQuerying = false;
+	private IForm tempForm = null;
 
 	public JDialogSpatialQuery() {
 		super(((JFrame) Application.getActiveApplication().getMainFrame()), false);
@@ -806,6 +813,7 @@ public class JDialogSpatialQuery extends SmDialog {
 
 	private boolean query() {
 		Recordset searchingFeatures = null;
+		isQuerying = true;
 		try {
 			mapShowSmIDs.clear();
 			showForms.clear();
@@ -873,6 +881,17 @@ public class JDialogSpatialQuery extends SmDialog {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
+			isQuerying = false;
+			if (tempForm != null) {
+				if (tempForm != currentForm) {
+					removeFormListeners();
+					currentForm = tempForm;
+					initFormListener();
+					initComponentState();
+					checkToolBarButtonState();
+				}
+			}
+			tempForm = null;
 			if (searchingFeatures != null) {
 				searchingFeatures.dispose();
 			}
@@ -881,7 +900,7 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void relatingBrowse() {
-		// TODO: 2016/8/18 关联浏览未实现
+		// FIXME: 2016/8/19关联浏览未实现
 //		try
 //		{
 //			List<IForm> forms = new List<IForm>();
@@ -1085,8 +1104,9 @@ public class JDialogSpatialQuery extends SmDialog {
 				}
 			} else {
 				DatasetVector dtv = (DatasetVector) datasource.getDatasets().createFromTemplate(datasetName, datasetVector);
-				dtv.append(recordset);
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+				if (!dtv.append(recordset)) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
+				}
 			}
 		}
 	}
