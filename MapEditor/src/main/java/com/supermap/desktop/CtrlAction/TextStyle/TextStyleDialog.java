@@ -96,8 +96,10 @@ public class TextStyleDialog extends SmDialog {
 			((JPanel) this.getContentPane()).updateUI();
 			return;
 		}
-		initMainPanel();
-		registEvents();
+		if (isDisposed) {
+			initMainPanel();
+			registEvents();
+		}
 	}
 
 	private void initMainPanel() {

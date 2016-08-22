@@ -220,31 +220,30 @@ public class OffsetEditor extends AbstractEditor {
             Rectangle2D desGeometryRectangle = editModel.desGeometry.getBounds();
             // 获取待缩放图形中心点
             Point2D pointCenter = desGeometryRectangle.getCenter();
+            GeoLine tempGoeLine = null;
+            if (editModel.desGeometry instanceof GeoRegion) {
+                tempGoeLine = ((GeoRegion) editModel.desGeometry).convertToLine();
+            } else if (editModel.desGeometry instanceof GeoLine) {
+                tempGoeLine = (GeoLine) editModel.desGeometry;
+            }
+            // 获取geometry到鼠标点最近的点,用来算出缩放比例
+            Point2D nearestPoint = Geometrist.nearestPointToVertex(mouseLocation, tempGoeLine);
+            // 求出最近点到中心点的距离
+            double nOffsetX = nearestPoint.getX() - pointCenter.getX();
+            double nOffsetY = nearestPoint.getY() - pointCenter.getY();
+            double nearestPointToCenterDistance = Math.sqrt(nOffsetX * nOffsetX + nOffsetY * nOffsetY);
+
             // 求中心点到鼠标点的距离
-            // 如果垂足在线段上，取点到垂足的距离
             double dOffsetX = mouseLocation.getX() - pointCenter.getX();
             double dOffsetY = mouseLocation.getY() - pointCenter.getY();
             double centerToMouseDistance = Math.sqrt(dOffsetX * dOffsetX + dOffsetY * dOffsetY);
+
             if (editModel.desDataset.getTolerance().getNodeSnap() == 0) {
                 editModel.desDataset.getTolerance().setDefault();
             }
 
-            Object[] data = EditorUtilities.getMinDistance(mouseLocation, points, editModel.desDataset.getTolerance().getNodeSnap());
-            double distance = (Double) data[0];
-//            int segment = (Integer) data[2];
-//
-//            if (segment == points.getCount() - 1) {
-//                segment--;
-//            }
-//
-//            if (!EditorUtilities.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
-//                distance = -distance;
-//            }
-            if (editModel.desGeometry.hitTest(mouseLocation,0)){
-                distance = -distance;
-            }
             // 计算缩放因子
-            double resizeFactor = (centerToMouseDistance + distance) / centerToMouseDistance;
+            double resizeFactor = centerToMouseDistance / nearestPointToCenterDistance;
             if (resizeFactor - 0 > 0) {
                 editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_offsetFactor"), resizeFactor));
                 // 新图形的上下左右距离
@@ -253,33 +252,19 @@ public class OffsetEditor extends AbstractEditor {
                 double top = desGeometryRectangle.getTop() * resizeFactor;
                 double bottom = desGeometryRectangle.getBottom() * resizeFactor;
                 Rectangle2D newRectangle2D = new Rectangle2D(left, bottom, right, top);
-//            newRectangle2D.
                 Geometry tempGeometry = editModel.desGeometry.clone();
                 // 缩放后设置预览
                 tempGeometry.resize(newRectangle2D);
                 Point2D newPointCenter = tempGeometry.getBounds().getCenter();
                 Geometry resultGeometry = tempGeometry;
-//            tempGeometry.dispose();
-//            GeoLine tempLine = null;
-//            if (tempGeometry instanceof GeoLine) {
-//                tempLine = (GeoLine) tempGeometry;
-//            } else if (tempGeometry instanceof GeoRegion) {
-//                tempLine = ((GeoRegion) tempGeometry).convertToLine();
-//            }
-//            GeoLine resultLine = Geometrist.computeParallel(tempLine, distance);
-//
+
                 MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
-//            Geometry resultGeometry = null;
-//            if (tempGeometry instanceof GeoLine) {
-//                resultGeometry = resultLine;
-//            } else if (tempGeometry instanceof GeoRegion) {
-//                resultGeometry = resultLine.convertToRegion();
-//            }
+
                 resultGeometry.setStyle(getTrackingStyle());
+                //由于缩放后中心点发生变化，用offset方法来重新设置中心点
+                resultGeometry.offset(pointCenter.getX() - newPointCenter.getX(), pointCenter.getY() - newPointCenter.getY());
                 environment.getMap().getTrackingLayer().add(resultGeometry, TAG_OFFSET);
                 environment.getMap().refreshTrackingLayer();
-//            tempLine.dispose();
-//            resultLine.dispose();
                 resultGeometry.dispose();
                 tempGeometry.dispose();
             }
