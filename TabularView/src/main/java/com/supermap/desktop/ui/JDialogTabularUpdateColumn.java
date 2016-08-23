@@ -1383,6 +1383,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
     private void resetFieldForOneField(FieldType fieldType, int[] selectRows) {
         if (!updateExpression.equals(textAreaOperationEQ.getText())) {
+            // 如果输入的表达式与预期的表达式不相同则通过sql表达式获取结果
             updateModeQuery();
         } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
             // 文本型

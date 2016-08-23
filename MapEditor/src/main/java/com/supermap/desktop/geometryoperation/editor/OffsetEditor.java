@@ -266,7 +266,8 @@ public class OffsetEditor extends AbstractEditor {
 
     private GeoStyle getTrackingStyle() {
         GeoStyle trackingStyle = new GeoStyle();
-        trackingStyle.setLineSymbolID(2);
+        trackingStyle.setLineSymbolID(1);
+        trackingStyle.setLineWidth(0.2);
         trackingStyle.setFillOpaqueRate(0);
         return trackingStyle;
     }

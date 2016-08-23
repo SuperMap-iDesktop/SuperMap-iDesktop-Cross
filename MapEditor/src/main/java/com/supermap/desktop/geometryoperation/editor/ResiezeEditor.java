@@ -225,32 +225,17 @@ public class ResiezeEditor extends AbstractEditor {
 
             // 获取待缩放图形中心点
             Point2D pointCenter = desGeometryRectangle.getCenter();
-//            GeoLine tempGoeLine = null;
-//            if (editModel.desGeometry instanceof GeoRegion) {
-//                tempGoeLine = ((GeoRegion) editModel.desGeometry).convertToLine();
-//            } else if (editModel.desGeometry instanceof GeoLine) {
-//                tempGoeLine = (GeoLine) editModel.desGeometry;
-//            }
             // 获取鼠标点到边界线的距离，用来计算缩放比列
-            double offsetX = mouseLocation.getx() - pointCenter.getx();
+            double offsetX = mouseLocation.getX() - pointCenter.getX();
+            double distance = Math.sqrt(offsetX * offsetX);
 
-//            Point2D nearestPoint = Geometrist.nearestPointToVertex(mouseLocation, tempGoeLine);
-//            // 求出最近点到中心点的距离
-//            double nOffsetX = nearestPoint.getX() - pointCenter.getX();
-//            double nOffsetY = nearestPoint.getY() - pointCenter.getY();
-//            double nearestPointToCenterDistance = Math.sqrt(nOffsetX * nOffsetX + nOffsetY * nOffsetY);
-
-            // 求中心点到鼠标点的距离
-            double dOffsetX = mouseLocation.getX() - pointCenter.getX();
-            double dOffsetY = mouseLocation.getY() - pointCenter.getY();
-            double centerToMouseDistance = Math.sqrt(dOffsetX * dOffsetX + dOffsetY * dOffsetY);
 
             if (editModel.desDataset.getTolerance().getNodeSnap() == 0) {
                 editModel.desDataset.getTolerance().setDefault();
             }
 
-            // 计算缩放因子
-            double resizeFactor = centerToMouseDistance / nearestPointToCenterDistance;
+            // 计算缩放比例
+            double resizeFactor = (distance * 2) / witdh;
             if (resizeFactor - 0 > 0) {
                 editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_offsetFactor"), resizeFactor));
                 // 新图形的上下左右距离
