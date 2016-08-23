@@ -748,8 +748,8 @@ public class GlobalParameters {
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
 		initWorkspaceRecovery();
-		initIsSaveSymbol();
-		initSymbolSaveTime();
+//		initIsSaveSymbol();
+//		initSymbolSaveTime();
 //		initWorkspaceAutoSave();
 //		initWorkspaceAutoSaveTime();
 	}
@@ -880,40 +880,40 @@ public class GlobalParameters {
 	//endregion
 
 	//region 是否保存符号库
-	private static boolean isSaveSymbol = true;
-
-	public static void initIsSaveSymbol() {
-		String value = getValue("_startup_workspace", "symbolRecovery");
-		if (value != null) {
-			setIsSaveSymbol(Boolean.valueOf(value));
-		}
-	}
-
-	public static boolean isSaveSymbol() {
-		return isSaveSymbol;
-	}
-
-	public static void setIsSaveSymbol(boolean isSaveSymbol) {
-		GlobalParameters.isSaveSymbol = isSaveSymbol;
-	}
+//	private static boolean isSaveSymbol = true;
+//
+//	public static void initIsSaveSymbol() {
+//		String value = getValue("_startup_workspace", "symbolRecovery");
+//		if (value != null) {
+//			setIsSaveSymbol(Boolean.valueOf(value));
+//		}
+//	}
+//
+//	public static boolean isSaveSymbol() {
+//		return isSaveSymbol;
+//	}
+//
+//	public static void setIsSaveSymbol(boolean isSaveSymbol) {
+//		GlobalParameters.isSaveSymbol = isSaveSymbol;
+//	}
 	//endregion
 
-	private static int symbolSaveTime = 60;
+//	private static int symbolSaveTime = 60;
 
-	private static void initSymbolSaveTime() {
-		String value = getValue("_startup_workspace", "symbolRecoveryTime");
-		if (value != null) {
-			setSymbolSaveTime(Integer.valueOf(value));
-		}
-	}
-
-	public static void setSymbolSaveTime(int symbolSaveTime) {
-		GlobalParameters.symbolSaveTime = symbolSaveTime;
-	}
-
-	public static int getSymbolSaveTime() {
-		return symbolSaveTime;
-	}
+//	private static void initSymbolSaveTime() {
+//		String value = getValue("_startup_workspace", "symbolRecoveryTime");
+//		if (value != null) {
+//			setSymbolSaveTime(Integer.valueOf(value));
+//		}
+//	}
+//
+//	public static void setSymbolSaveTime(int symbolSaveTime) {
+//		GlobalParameters.symbolSaveTime = symbolSaveTime;
+//	}
+//
+//	public static int getSymbolSaveTime() {
+//		return symbolSaveTime;
+//	}
 	//endregion
 
 	//region 自动保存工作空间暂时关闭
@@ -1034,8 +1034,8 @@ public class GlobalParameters {
 			workspace.setAttribute("closenotify", String.valueOf(isWorkspaceCloseNotify));
 			workspace.setAttribute("closeMemoryDatasourceNotify", String.valueOf(isCloseMemoryDatasourceNotify));
 			workspace.setAttribute("workspaceRecovery", String.valueOf(isWorkspaceRecovery));
-			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
-			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
+//			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
+//			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
 //			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
 //			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
 
