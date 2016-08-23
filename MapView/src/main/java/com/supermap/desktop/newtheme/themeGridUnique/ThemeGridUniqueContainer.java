@@ -18,7 +18,12 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeGridUniqueItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -28,7 +33,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -398,19 +412,18 @@ public class ThemeGridUniqueContainer extends ThemeChangePanel {
 	 */
 	private void refreshColor() {
 		if (comboboxColor != null) {
-			int colorCount = ((Colors) comboboxColor.getSelectedItem()).getCount();
-			Colors colors = (Colors) comboboxColor.getSelectedItem();
+			Colors colors = comboboxColor.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
 			int rangeCount = themeUnique.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
 			if (rangeCount > 0) {
-				float ratio = (1f * colorCount) / (1f * rangeCount);
-				themeUnique.getItem(0).setColor(colors.get(0));
-				themeUnique.getItem(rangeCount - 1).setColor(colors.get(colorCount - 1));
-				for (int i = 1; i < rangeCount - 1; i++) {
-					int colorIndex = Math.round(i * ratio);
-					if (colorIndex == colorCount) {
-						colorIndex--;
-					}
-					themeUnique.getItem(i).setColor(colors.get(colorIndex));
+				for (int i = 0; i < rangeCount; i++) {
+					themeUnique.getItem(i).setColor(colors.get(i));
 				}
 			}
 		}

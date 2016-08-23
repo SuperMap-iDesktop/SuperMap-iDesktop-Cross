@@ -1,6 +1,11 @@
 package com.supermap.desktop.newtheme.themeGraph;
 
-import com.supermap.data.*;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Point2D;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -14,20 +19,47 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
+import com.supermap.desktop.ui.controls.LayersTree;
+import com.supermap.desktop.ui.controls.SteppedComboBox;
+import com.supermap.desktop.ui.controls.TableRowCellEditor;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.GraduatedMode;
+import com.supermap.mapping.GraphAxesTextDisplayMode;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGraph;
+import com.supermap.mapping.ThemeGraphItem;
+import com.supermap.mapping.ThemeGraphTextFormat;
+import com.supermap.mapping.ThemeGraphType;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -813,19 +845,21 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 	}
 
 	private void refreshColor() {
-		int colorCount = ((Colors) this.comboBoxColor.getSelectedItem()).getCount();
-		Colors colors = (Colors) this.comboBoxColor.getSelectedItem();
-		int themeGraphCount = this.themeGraph.getCount();
-		if (themeGraphCount > 0) {
-			float ratio = (1f * colorCount) / (1f * themeGraphCount);
-			this.themeGraph.getItem(0).getUniformStyle().setFillForeColor(colors.get(0));
-			this.themeGraph.getItem(themeGraphCount - 1).getUniformStyle().setFillForeColor(colors.get(colorCount - 1));
-			for (int i = 1; i < themeGraphCount - 1; i++) {
-				int colorIndex = Math.round(i * ratio);
-				if (colorIndex == colorCount) {
-					colorIndex--;
+
+		if (comboBoxColor != null) {
+			Colors colors = comboBoxColor.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
+			int rangeCount = themeGraph.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
+			if (rangeCount > 0) {
+				for (int i = 0; i < rangeCount; i++) {
+					this.themeGraph.getItem(i).getUniformStyle().setFillForeColor(colors.get(i));
 				}
-				this.themeGraph.getItem(i).getUniformStyle().setFillForeColor(colors.get(colorIndex));
 			}
 		}
 
