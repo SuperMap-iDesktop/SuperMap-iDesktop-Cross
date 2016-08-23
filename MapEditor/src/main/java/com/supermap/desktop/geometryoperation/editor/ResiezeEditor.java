@@ -17,10 +17,11 @@ import com.supermap.ui.TrackMode;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 
-public class OffsetEditor extends AbstractEditor {
+/**
+ * Created by xie on 2016/8/23.
+ */
+public class ResiezeEditor extends AbstractEditor {
 
     private static final String TAG_OFFSET = "Tag_offsetTracking";
     private static final Action MAPCONTROL_ACTION = Action.SELECT;
@@ -175,19 +176,13 @@ public class OffsetEditor extends AbstractEditor {
 
                 if (recordset != null) {
                     recordset.seekID(editModel.desGeometry.getID());
-                    Map<String, Object> values = new HashMap<String, Object>();
-                    FieldInfos fieldInfos = recordset.getFieldInfos();
-                    Object[] fieldValues = recordset.getValues();
-                    for (int i = 0; i < fieldValues.length; i++) {
-                        if (!fieldInfos.get(i).isSystemField()) {
-                            values.put(fieldInfos.get(i).getName(), fieldValues[i]);
-                        }
-                    }
-                    recordset.addNew(desGeometry, values);
+                    environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
+                    recordset.edit();
+                    recordset.setGeometry(desGeometry);
                     recordset.update();
                     desGeometry.dispose();
                 }
-                environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
+//                environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 
                 Selection[] selections = environment.getMap().findSelection(true);
                 for (Selection selection : selections) {
@@ -210,9 +205,11 @@ public class OffsetEditor extends AbstractEditor {
     }
 
     // @formatter:off
+
     /**
      * 平行线方法中的平行距离与线方向有关
      * 线方向的左边为正，线方向的右边为负
+     *
      * @param environment
      * @param mouseLocation
      */
@@ -222,43 +219,47 @@ public class OffsetEditor extends AbstractEditor {
 
         try {
             Point2Ds points = getPoint2Ds(editModel.desGeometry);
+            // 获取带缩放图形
+            Rectangle2D desGeometryRectangle = editModel.desGeometry.getBounds();
+            double witdh = desGeometryRectangle.getWidth();
+
+            // 获取待缩放图形中心点
+            Point2D pointCenter = desGeometryRectangle.getCenter();
+            // 获取鼠标点到边界线的距离，用来计算缩放比列
+            double offsetX = mouseLocation.getX() - pointCenter.getX();
+            double distance = Math.sqrt(offsetX * offsetX);
+
 
             if (editModel.desDataset.getTolerance().getNodeSnap() == 0) {
                 editModel.desDataset.getTolerance().setDefault();
             }
 
-            Object[] data = EditorUtilities.getMinDistance(mouseLocation, points, editModel.desDataset.getTolerance().getNodeSnap());
-            double distance = (Double) data[0];
-            int segment = (Integer) data[2];
+            // 计算缩放比例
+            double resizeFactor = (distance * 2) / witdh;
+            if (resizeFactor - 0 > 0) {
+                editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_offsetFactor"), resizeFactor));
+                // 新图形的上下左右距离
+                double left = desGeometryRectangle.getLeft() * resizeFactor;
+                double right = desGeometryRectangle.getRight() * resizeFactor;
+                double top = desGeometryRectangle.getTop() * resizeFactor;
+                double bottom = desGeometryRectangle.getBottom() * resizeFactor;
+                Rectangle2D newRectangle2D = new Rectangle2D(left, bottom, right, top);
+                Geometry tempGeometry = editModel.desGeometry.clone();
+                // 缩放后设置预览
+                tempGeometry.resize(newRectangle2D);
+                Point2D newPointCenter = tempGeometry.getBounds().getCenter();
+                Geometry resultGeometry = tempGeometry;
 
-            if (segment == points.getCount() - 1) {
-                segment--;
-            }
+                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
 
-            if (!EditorUtilities.isPntLeft(points.getItem(segment), points.getItem(segment + 1), mouseLocation)) {
-                distance = -distance;
+                resultGeometry.setStyle(getTrackingStyle());
+                //由于缩放后中心点发生变化，用offset方法来重新设置中心点
+                resultGeometry.offset(pointCenter.getX() - newPointCenter.getX(), pointCenter.getY() - newPointCenter.getY());
+                environment.getMap().getTrackingLayer().add(resultGeometry, TAG_OFFSET);
+                environment.getMap().refreshTrackingLayer();
+                resultGeometry.dispose();
+                tempGeometry.dispose();
             }
-            editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_OffsetDistance"), distance));
-
-            GeoLine tempLine = null;
-            if (editModel.desGeometry instanceof GeoLine) {
-                tempLine = (GeoLine) editModel.desGeometry;
-            } else if (editModel.desGeometry instanceof GeoRegion) {
-                tempLine = ((GeoRegion) editModel.desGeometry).convertToLine();
-            }
-            GeoLine resultLine = Geometrist.computeParallel(tempLine, distance);
-
-            MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
-            Geometry resultGeometry = null;
-            if (editModel.desGeometry instanceof GeoLine) {
-                resultGeometry = resultLine;
-            } else if (editModel.desGeometry instanceof GeoRegion) {
-                resultGeometry = resultLine.convertToRegion();
-            }
-            resultGeometry.setStyle(getTrackingStyle());
-            environment.getMap().getTrackingLayer().add(resultGeometry, TAG_OFFSET);
-            environment.getMap().refreshTrackingLayer();
-            resultGeometry.dispose();
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
