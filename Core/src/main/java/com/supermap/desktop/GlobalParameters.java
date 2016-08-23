@@ -748,10 +748,10 @@ public class GlobalParameters {
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
 		initWorkspaceRecovery();
-		initIsSaveSymbol();
-		initSymbolSaveTime();
-		initWorkspaceAutoSave();
-		initWorkspaceAutoSaveTime();
+//		initIsSaveSymbol();
+//		initSymbolSaveTime();
+//		initWorkspaceAutoSave();
+//		initWorkspaceAutoSaveTime();
 	}
 
 
@@ -880,78 +880,78 @@ public class GlobalParameters {
 	//endregion
 
 	//region 是否保存符号库
-	private static boolean isSaveSymbol = true;
-
-	public static void initIsSaveSymbol() {
-		String value = getValue("_startup_workspace", "symbolRecovery");
-		if (value != null) {
-			setIsSaveSymbol(Boolean.valueOf(value));
-		}
-	}
-
-	public static boolean isSaveSymbol() {
-		return isSaveSymbol;
-	}
-
-	public static void setIsSaveSymbol(boolean isSaveSymbol) {
-		GlobalParameters.isSaveSymbol = isSaveSymbol;
-	}
+//	private static boolean isSaveSymbol = true;
+//
+//	public static void initIsSaveSymbol() {
+//		String value = getValue("_startup_workspace", "symbolRecovery");
+//		if (value != null) {
+//			setIsSaveSymbol(Boolean.valueOf(value));
+//		}
+//	}
+//
+//	public static boolean isSaveSymbol() {
+//		return isSaveSymbol;
+//	}
+//
+//	public static void setIsSaveSymbol(boolean isSaveSymbol) {
+//		GlobalParameters.isSaveSymbol = isSaveSymbol;
+//	}
 	//endregion
 
-	private static int symbolSaveTime = 60;
+//	private static int symbolSaveTime = 60;
 
-	private static void initSymbolSaveTime() {
-		String value = getValue("_startup_workspace", "symbolRecoveryTime");
-		if (value != null) {
-			setSymbolSaveTime(Integer.valueOf(value));
-		}
-	}
-
-	public static void setSymbolSaveTime(int symbolSaveTime) {
-		GlobalParameters.symbolSaveTime = symbolSaveTime;
-	}
-
-	public static int getSymbolSaveTime() {
-		return symbolSaveTime;
-	}
+//	private static void initSymbolSaveTime() {
+//		String value = getValue("_startup_workspace", "symbolRecoveryTime");
+//		if (value != null) {
+//			setSymbolSaveTime(Integer.valueOf(value));
+//		}
+//	}
+//
+//	public static void setSymbolSaveTime(int symbolSaveTime) {
+//		GlobalParameters.symbolSaveTime = symbolSaveTime;
+//	}
+//
+//	public static int getSymbolSaveTime() {
+//		return symbolSaveTime;
+//	}
 	//endregion
 
-	//region 自动保存工作空间
-	private static boolean isWorkspaceAutoSave = true;
+	//region 自动保存工作空间暂时关闭
+//	private static boolean isWorkspaceAutoSave = true;
 
-	private static void initWorkspaceAutoSave() {
-		String value = getValue("_startup_workspace", "workspaceAutoSave");
-		if (value != null) {
-			setIsWorkspaceAutoSave(Boolean.valueOf(value));
-		}
-	}
-
-	public static boolean isWorkspaceAutoSave() {
-		return isWorkspaceAutoSave;
-	}
-
-	public static void setIsWorkspaceAutoSave(boolean isWorkspaceAutoSave) {
-		GlobalParameters.isWorkspaceAutoSave = isWorkspaceAutoSave;
-	}
+//	private static void initWorkspaceAutoSave() {
+//		String value = getValue("_startup_workspace", "workspaceAutoSave");
+//		if (value != null) {
+//			setIsWorkspaceAutoSave(Boolean.valueOf(value));
+//		}
+//	}
+//
+//	public static boolean isWorkspaceAutoSave() {
+//		return isWorkspaceAutoSave;
+//	}
+//
+//	public static void setIsWorkspaceAutoSave(boolean isWorkspaceAutoSave) {
+//		GlobalParameters.isWorkspaceAutoSave = isWorkspaceAutoSave;
+//	}
 	//endregion
 
 	//region 自动保存工作空间时间
-	private static int workspaceAutoSaveTime = 10;
-
-	private static void initWorkspaceAutoSaveTime() {
-		String value = getValue("_startup_workspace", "workspaceAutoSaveTime");
-		if (value != null) {
-			setWorkspaceAutoSaveTime(Integer.valueOf(value));
-		}
-	}
-
-	public static int getWorkspaceAutoSaveTime() {
-		return workspaceAutoSaveTime;
-	}
-
-	public static void setWorkspaceAutoSaveTime(int workspaceAutoSaveTime) {
-		GlobalParameters.workspaceAutoSaveTime = workspaceAutoSaveTime;
-	}
+//	private static int workspaceAutoSaveTime = 10;
+//
+//	private static void initWorkspaceAutoSaveTime() {
+//		String value = getValue("_startup_workspace", "workspaceAutoSaveTime");
+//		if (value != null) {
+//			setWorkspaceAutoSaveTime(Integer.valueOf(value));
+//		}
+//	}
+//
+//	public static int getWorkspaceAutoSaveTime() {
+//		return workspaceAutoSaveTime;
+//	}
+//
+//	public static void setWorkspaceAutoSaveTime(int workspaceAutoSaveTime) {
+//		GlobalParameters.workspaceAutoSaveTime = workspaceAutoSaveTime;
+//	}
 	//endregion
 	//endregion
 
@@ -1034,10 +1034,10 @@ public class GlobalParameters {
 			workspace.setAttribute("closenotify", String.valueOf(isWorkspaceCloseNotify));
 			workspace.setAttribute("closeMemoryDatasourceNotify", String.valueOf(isCloseMemoryDatasourceNotify));
 			workspace.setAttribute("workspaceRecovery", String.valueOf(isWorkspaceRecovery));
-			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
-			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
-			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
-			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
+//			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
+//			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
+//			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
+//			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
 
 			startup.appendChild(workspace);
 

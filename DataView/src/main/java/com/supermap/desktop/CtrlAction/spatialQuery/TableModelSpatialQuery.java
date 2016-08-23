@@ -358,7 +358,6 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 	}
 
 	public Recordset queryRecordset(int row, Recordset searchingFeatures) {
-		// TODO: 2016/8/17
 		return rowDatas.get(row).queryRecordset(searchingFeatures);
 	}
 

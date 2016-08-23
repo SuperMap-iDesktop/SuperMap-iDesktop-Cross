@@ -55,6 +55,56 @@
                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+            <!--<groupId>com.akathist.maven.plugins.launch4j</groupId>-->
+            <!--<artifactId>launch4j-maven-plugin</artifactId>-->
+            <!--<version>1.7.11</version>-->
+            <!--&lt;!&ndash;<executions>&ndash;&gt;-->
+            <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+            <!--&lt;!&ndash;<id>generate exe</id>&ndash;&gt;-->
+            <!--&lt;!&ndash;<phase>package</phase>&ndash;&gt;-->
+            <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+            <!--&lt;!&ndash;<goal>launch4j</goal>&ndash;&gt;-->
+            <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+            <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+            <!--&lt;!&ndash;</executions>&ndash;&gt;-->
+            <!--<configuration>-->
+            <!--<headerType>gui</headerType>-->
+            <!--<outfile>${project.build.directory}/SuperMap iDesktop Cross.exe</outfile>-->
+            <!--<jar>iDesktop.jar</jar>-->
+            <!--<dontWrapJar>true</dontWrapJar>-->
+            <!--<errTitle>SuperMap iDesktop Cross</errTitle>-->
+            <!--<icon>${project.basedir}/../Resources/Frame/iDesktop_Cross_256.png</icon>-->
+            <!--<libs>-->
+            <!--<lib>./bin</lib>-->
+            <!--</libs>-->
+            <!--<classPath>-->
+            <!--<mainClass>com.supermap.desktop.iDesktop.Startup</mainClass>-->
+            <!--</classPath>-->
+            <!--<jre>-->
+            <!--<path>./jre/bin</path>-->
+            <!--<bundledJre64Bit>true</bundledJre64Bit>-->
+            <!--<minVersion>1.7.0_80</minVersion>-->
+            <!--<runtimeBits>64/32</runtimeBits>-->
+            <!--<opts>-->
+            <!--<opt>-Dfelix.config.properties=file:Configuration/config.properties</opt>-->
+            <!--</opts>-->
+            <!--</jre>-->
+            <!--<splash>-->
+            <!--<file>${project.basedir}/../Resources/Frame/iDesktop_Cross_Startup.gif</file>-->
+            <!--</splash>-->
+            <!--<versionInfo>-->
+            <!--<fileVersion>1.8.0.0</fileVersion>-->
+            <!--<txtFileVersion>1.8.Release</txtFileVersion>-->
+            <!--<fileDescription>SuperMap iDesktop Cross</fileDescription>-->
+            <!--<copyright>2015-2017</copyright>-->
+            <!--<productName>SuperMap iDesktop Cross</productName>-->
+            <!--<companyName>SuperMap</companyName>-->
+            <!--<internalName>SuperMap iDesktop Cross</internalName>-->
+            <!--<originalFilename>SuperMap iDesktop Cross.exe</originalFilename>-->
+            <!--</versionInfo>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>

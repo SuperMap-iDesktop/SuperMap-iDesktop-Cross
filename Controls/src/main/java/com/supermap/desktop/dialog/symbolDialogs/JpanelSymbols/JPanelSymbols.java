@@ -59,7 +59,7 @@ public abstract class JPanelSymbols extends JPanel {
 			}
 		}
 	};
-	;
+
 	private MouseAdapter mouseAdapter1 = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent e) {

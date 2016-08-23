@@ -3,8 +3,11 @@ package com.supermap.desktop.CtrlAction;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -54,7 +57,8 @@ public class WorkspaceAutoSave {
 	}
 
 	public void start() {
-		int workspaceAutoSaveTime = GlobalParameters.getWorkspaceAutoSaveTime() * 60000;
+//		int workspaceAutoSaveTime = GlobalParameters.getWorkspaceAutoSaveTime() * 60000;
+		int workspaceAutoSaveTime = 60000;
 		if (timer != null) {
 			timer.cancel();
 		}
