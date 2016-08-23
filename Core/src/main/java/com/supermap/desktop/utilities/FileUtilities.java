@@ -2,7 +2,11 @@ package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 
 public class FileUtilities {
@@ -203,11 +207,7 @@ public class FileUtilities {
 		File srcFile = new File(srcFileName);
 
 		// 判断源文件是否存在
-		if (!srcFile.exists()) {
-			Application.getActiveApplication().getOutput().output("srcFile don't exit");
-			return false;
-		} else if (!srcFile.isFile()) {
-			Application.getActiveApplication().getOutput().output("srcFile not a File");
+		if (!srcFile.exists() || !srcFile.isFile()) {
 			return false;
 		}
 

@@ -636,21 +636,29 @@ public class WorkspaceUtilities {
 		if (StringUtilities.isNullOrEmpty(workSpaceFilePath)) {
 			return true;
 		}
-		String end = workSpaceFilePath.substring(workSpaceFilePath.length() - 5, workSpaceFilePath.length());
 		if (!FileUtilities.delete(workSpaceFilePath)) {
 			return false;
 		}
-		if (end.equalsIgnoreCase(".sxwu")) {
-			String prefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
-			boolean deleteBru = FileUtilities.delete(prefix + "bru");
-			boolean deleteLsl = FileUtilities.delete(prefix + "lsl");
-			boolean deleteSym = FileUtilities.delete(prefix + "sym");
-			// 不加变量直接写在条件里会导致前面的删除失败时，后面的就不进行操作了
-			if (!deleteBru || !deleteLsl || !deleteSym) {
-				return false;
-			}
-		}
+		deleteSymbolLibrary(workSpaceFilePath);
 		return true;
+	}
+
+	private static void deleteSymbolLibrary(String workspaceServer) {
+		String tempFolder = workspaceServer.substring(0, workspaceServer.length() - 4);
+		String markerSymbolFilePath = tempFolder + "sym";
+		if (new File(markerSymbolFilePath).exists()) {
+			new File(markerSymbolFilePath).delete();
+		}
+
+		String lineSymbolFilePath = tempFolder + "lsl";
+		if (new File(lineSymbolFilePath).exists()) {
+			new File(lineSymbolFilePath).delete();
+		}
+
+		String fillSymbolFilePath = tempFolder + "bru";
+		if (new File(fillSymbolFilePath).exists()) {
+			new File(fillSymbolFilePath).delete();
+		}
 	}
 
 }

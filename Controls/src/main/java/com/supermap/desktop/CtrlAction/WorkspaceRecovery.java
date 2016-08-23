@@ -1,6 +1,14 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosedEvent;
+import com.supermap.data.WorkspaceClosedListener;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceSavedAsEvent;
+import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
+import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
@@ -8,7 +16,15 @@ import com.supermap.desktop.dialog.JDialogGetPassword;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.FileLocker;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,6 +44,7 @@ public class WorkspaceRecovery {
 	private static WorkspaceRecovery workspaceRecovery = new WorkspaceRecovery();
 	private WorkspaceSavedListener workspaceSavedListener;
 	private WorkspaceSavedAsListener workspaceSavedAsListener;
+	private WorkspaceClosedListener workspaceClosedListener;
 
 	private WorkspaceRecovery() {
 
@@ -57,7 +74,6 @@ public class WorkspaceRecovery {
 					for (File file : files) {
 						if (file.getName().toLowerCase().endsWith(".xml")) {
 							if (file.length() > 0) {
-
 								FileLocker fileLock = new FileLocker(file);
 								if (fileLock.tryLock()) {
 									fileList.add(file);
@@ -116,7 +132,7 @@ public class WorkspaceRecovery {
 						LogUtilities.outPut("Copy Recovery Workspace Failed.");
 					}
 
-
+					final String deleteServer = recoveringWorkspacePath;
 					Node datasources = XmlUtilities.getChildElementNodeByName(root, "Datasources");
 					NodeList childNodes = datasources.getChildNodes();
 					ArrayList<DatasourceConnectionInfo> datasourceConnectionInfos = new ArrayList<>();
@@ -171,28 +187,41 @@ public class WorkspaceRecovery {
 						Field isOpenedWorkspace = clazz.getDeclaredFields()[0];
 						isOpenedWorkspace.setAccessible(true);
 						WorkspaceConnectionInfo connectionInfo = Application.getActiveApplication().getWorkspace().getConnectionInfo();
-						final String deleteServer = connectionInfo.getServer();
+
 						isOpenedWorkspace.setBoolean(connectionInfo, false);
 						connectionInfo.setServer(workSpaceFilePath);
 						isOpenedWorkspace.setBoolean(connectionInfo, true);
 						workspaceSavedAsListener = new WorkspaceSavedAsListener() {
 							@Override
 							public void workspaceSavedAs(WorkspaceSavedAsEvent workspaceSavedAsEvent) {
-								FileUtilities.delete(deleteServer);
+								WorkspaceUtilities.deleteFileWorkspace(deleteServer);
 								workspaceSavedAsEvent.getWorkspace().removeSavedAsListener(this);
 								workspaceSavedAsEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
+								workspaceSavedAsEvent.getWorkspace().removeClosedListener(workspaceClosedListener);
+
 							}
 						};
 						workspaceSavedListener = new WorkspaceSavedListener() {
 							@Override
 							public void workspaceSaved(WorkspaceSavedEvent workspaceSavedEvent) {
-								FileUtilities.delete(deleteServer);
+								WorkspaceUtilities.deleteFileWorkspace(deleteServer);
 								workspaceSavedEvent.getWorkspace().removeSavedListener(this);
 								workspaceSavedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
+								workspaceSavedEvent.getWorkspace().removeClosedListener(workspaceClosedListener);
+							}
+						};
+
+						workspaceClosedListener = new WorkspaceClosedListener() {
+							@Override
+							public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
+								WorkspaceUtilities.deleteFileWorkspace(deleteServer);
+								workspaceClosedEvent.getWorkspace().removeClosedListener(this);
+								workspaceClosedEvent.getWorkspace().removeSavedAsListener(workspaceSavedAsListener);
+								workspaceClosedEvent.getWorkspace().removeSavedListener(workspaceSavedListener);
 							}
 						};
 						Application.getActiveApplication().getWorkspace().addSavedAsListener(workspaceSavedAsListener);
-
+						Application.getActiveApplication().getWorkspace().addClosedListener(workspaceClosedListener);
 						Application.getActiveApplication().getWorkspace().addSavedListener(workspaceSavedListener);
 					}
 				}
@@ -206,21 +235,15 @@ public class WorkspaceRecovery {
 	}
 
 	private boolean copyWorkspaceToRecoveringPath(String workSpaceFilePath, String recoveringWorkspacePath) {
-		String end = workSpaceFilePath.substring(workSpaceFilePath.length() - 5, workSpaceFilePath.length());
 		// 复制工作空间
 		if (!FileUtilities.copyFile(workSpaceFilePath, recoveringWorkspacePath, true)) {
 			return false;
 		}
-		if (end.equalsIgnoreCase(".sxwu")) {
-			String recoveringWorkspacePrefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
-			String recoveringWorkspacePathPrefix = recoveringWorkspacePath.substring(0, recoveringWorkspacePath.length() - 4);
-			if (!FileUtilities.copyFile(recoveringWorkspacePrefix + "bru", recoveringWorkspacePathPrefix + "bru", true) ||
-					!FileUtilities.copyFile(recoveringWorkspacePrefix + "lsl", recoveringWorkspacePathPrefix + "lsl", true) ||
-					!FileUtilities.copyFile(recoveringWorkspacePrefix + "sym", recoveringWorkspacePathPrefix + "sym", true)) {
-				return false;
-			}
-		}
-		return true;
+		String recoveringWorkspacePrefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
+		String recoveringWorkspacePathPrefix = recoveringWorkspacePath.substring(0, recoveringWorkspacePath.length() - 4);
+		return !(!FileUtilities.copyFile(recoveringWorkspacePrefix + "bru", recoveringWorkspacePathPrefix + "bru", true) ||
+				!FileUtilities.copyFile(recoveringWorkspacePrefix + "lsl", recoveringWorkspacePathPrefix + "lsl", true) ||
+				!FileUtilities.copyFile(recoveringWorkspacePrefix + "sym", recoveringWorkspacePathPrefix + "sym", true));
 	}
 
 	/**
@@ -243,9 +266,28 @@ public class WorkspaceRecovery {
 
 	private OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo workspaceConnectionInfo) {
 		CursorUtilities.setWaitCursor();
-		Application.getActiveApplication().getWorkspace().open(workspaceConnectionInfo);
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		workspace.open(workspaceConnectionInfo);
+		OpenWorkspaceResult openWorkspaceResult = WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
+		if (openWorkspaceResult == OpenWorkspaceResult.SUCCESSED && workspaceConnectionInfo.getServer().endsWith("smwu")) {// sxwu会自动读取符号库
+			String server = workspaceConnectionInfo.getServer().substring(0, workspaceConnectionInfo.getServer().length() - 5);
+			String markerSymbolFilePath = server + ".sym";
+			if (new File(markerSymbolFilePath).exists()) {
+				workspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
+			}
+
+			String lineSymbolFilePath = server + ".lsl";
+			if (new File(lineSymbolFilePath).exists()) {
+				workspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
+			}
+
+			String fillSymbolFilePath = server + ".bru";
+			if (new File(fillSymbolFilePath).exists()) {
+				workspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
+			}
+		}
 		CursorUtilities.setDefaultCursor();
-		return WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
+		return openWorkspaceResult;
 	}
 
 	private void deleteAutoSaveConfigFile(File file) {

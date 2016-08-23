@@ -800,8 +800,6 @@ public class JDialogSpatialQuery extends SmDialog {
 				}
 			}
 		}
-
-
 	}
 
 	private void removeFormListeners() {
