@@ -59,15 +59,17 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 		TreePath[] treeSelectionPaths = workspaceTree.getSelectionPaths();
-		for (TreePath treePath : treeSelectionPaths) {
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
-			if (selectedNodeData != null) {
-				Object nodeData = selectedNodeData.getData();
-				if (nodeData instanceof Datasource) {
-					Datasource datasource = (Datasource) nodeData;
-					if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
-						workspaceTree.refreshNode(selectedNode);
+		if (treeSelectionPaths != null) {
+			for (TreePath treePath : treeSelectionPaths) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+				TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+				if (selectedNodeData != null) {
+					Object nodeData = selectedNodeData.getData();
+					if (nodeData instanceof Datasource) {
+						Datasource datasource = (Datasource) nodeData;
+						if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
+							workspaceTree.refreshNode(selectedNode);
+						}
 					}
 				}
 			}
