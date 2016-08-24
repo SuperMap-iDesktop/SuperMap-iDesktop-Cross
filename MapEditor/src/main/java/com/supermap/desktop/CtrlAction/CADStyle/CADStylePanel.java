@@ -127,9 +127,9 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
                     editHistory.add(EditType.MODIFY, recordset, true);
                     recordset.edit();
                     Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
+                    GeoStyle geoStyle = tempGeometry.getStyle();
+                    if (null == geoStyle) {
+                        geoStyle = new GeoStyle();
                     }
                     if (cadType == MARKER_TYPE) {
                         // 修改点符号
@@ -278,15 +278,19 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     }
 
     private void resetSymbol(JPopupMenu popupMenuVertical, Symbol symbol) {
+        if (null == symbol) {
+            popupMenuVertical.setVisible(false);
+            return;
+        }
         recordset.moveFirst();
         while (!recordset.isEOF()) {
             editHistory.add(EditType.MODIFY, recordset, true);
             if (!recordset.isReadOnly()) {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry();
-                GeoStyle geoStyle = new GeoStyle();
-                if (null != tempGeometry.getStyle()) {
-                    geoStyle = tempGeometry.getStyle();
+                GeoStyle geoStyle = tempGeometry.getStyle();
+                if (null == tempGeometry.getStyle()) {
+                    geoStyle = new GeoStyle();
                 }
                 if (cadType == MARKER_TYPE) {
                     // 修改点符号

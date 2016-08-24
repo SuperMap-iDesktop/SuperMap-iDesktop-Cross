@@ -3,24 +3,22 @@ package com.supermap.desktop.CtrlAction.TextStyle;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.data.TextStyle;
-import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.Selection;
-import com.supermap.ui.GeometrySelectChangedEvent;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.EventObject;
 
 public class TextStyleEditor extends AbstractEditor {
 
-    private TextStyleDialog dialog;
+    private TextStyleContainer dialog;
+    private static IDockbar dockbarTextStyleContainer;
+    private final String TEXTSTYLECONTAINER = "com.supermap.desktop.CtrlAction.TextStyle.TextStyleContainer";
 
     @Override
     public boolean enble(EditEnvironment environment) {
@@ -62,12 +60,22 @@ public class TextStyleEditor extends AbstractEditor {
     }
 
     @Override
-    public void activate(final EditEnvironment environment) {
+    public void activate(EditEnvironment environment) {
         if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
-            dialog = TextStyleDialog.createInstance(environment);
-            if (null != getActiveRecordset(environment.getMap())) {
-                dialog.showDialog(getActiveRecordset(environment.getMap()));
-            }
+//            dialog = TextStyleContainer.createInstance(environment);
+//            try {
+//                dockbarTextStyleContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(TEXTSTYLECONTAINER));
+//                if (dockbarTextStyleContainer != null && null != dockbarTextStyleContainer.getComponent()) {
+//                    dialog = (TextStyleContainer) dockbarTextStyleContainer.getComponent();
+//                    if (null != getActiveRecordset(environment.getMap())) {
+//                        dialog.setEnvironment(environment);
+//                        dialog.showDialog(getActiveRecordset(environment.getMap()));
+//                    }
+//                }
+//
+//            } catch (Exception ex) {
+//                Application.getActiveApplication().getOutput().output(ex);
+//            }
         }
     }
 
@@ -76,8 +84,8 @@ public class TextStyleEditor extends AbstractEditor {
         if (null != dialog) {
             TextStyle textStyle = dialog.getTempTextStyle();
             textStyle = null;
-            ((JPanel) dialog.getContentPane()).removeAll();
-            ((JPanel) dialog.getContentPane()).updateUI();
+            dialog.removeAll();
+            dialog.updateUI();
         }
     }
 

@@ -48,7 +48,13 @@ public class CADStyleEditor extends AbstractEditor {
         if (null != dialog && editable == false) {
             dialog.enabled(false);
         } else if (null != dialog && null != recordset) {
-            dialog.showDialog(recordset);
+            if (0 < dialog.getContentPane().getComponentCount()) {
+                dialog.enabled(false);
+                dialog.setRecordset(recordset);
+                dialog.setEnabled();
+            } else {
+                dialog.showDialog(recordset);
+            }
         } else if (null != dialog && null == recordset) {
             removeDialog();
         }
