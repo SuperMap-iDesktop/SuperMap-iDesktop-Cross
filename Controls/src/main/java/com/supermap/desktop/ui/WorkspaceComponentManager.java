@@ -16,6 +16,7 @@ import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
+import sun.reflect.generics.tree.Tree;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -728,5 +729,76 @@ public class WorkspaceComponentManager extends JComponent {
 			popupMenu = getDatasetPopupMenu();
 		}
 		return popupMenu;
+	}
+
+	public void selectDatasources(Datasource[] datasources) {
+		if (this.workspaceTree != null
+				&& isDatasourcesAllInWorkspace(datasources)) {
+
+			// 获取对应数据源的 TreePath
+			ArrayList<TreePath> paths = new ArrayList<>();
+			for (int i = 0; i < datasources.length; i++) {
+				TreePath path = findDatasourcePath(datasources[i]);
+
+				if (path != null) {
+					paths.add(path);
+				}
+			}
+
+			// 选中指定的数据源
+			if (paths.size() > 0) {
+				this.workspaceTree.addSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+			}
+
+			// 展开 Datasources 节点
+			DefaultMutableTreeNode datasourcesNode = this.workspaceTree.getDatasourcesNode();
+			TreePath datasourcesPath = new TreePath(datasourcesNode.getPath());
+			this.workspaceTree.expandPath(datasourcesPath);
+		}
+	}
+
+	private TreePath findDatasourcePath(Datasource datasource) {
+		TreePath path = null;
+
+		if (this.workspaceTree != null
+				&& datasource != null
+				&& datasource.getWorkspace() == this.getWorkspace()) {
+			DefaultMutableTreeNode datasourcesNode = this.workspaceTree.getDatasourcesNode();
+
+			for (int i = 0; datasourcesNode != null && i < datasourcesNode.getChildCount(); i++) {
+				DefaultMutableTreeNode datasourceNode = (DefaultMutableTreeNode) datasourcesNode.getChildAt(i);
+				TreeNodeData datasourceNodeData = (TreeNodeData) datasourceNode.getUserObject();
+
+				if (datasourceNodeData != null) {
+					Object nodeData = datasourceNodeData.getData();
+
+					if (nodeData == datasource) {
+						path = new TreePath(datasourceNode.getPath());
+						break;
+					}
+				}
+			}
+		}
+		return path;
+	}
+
+	/*
+	* 判断是否所有数据源都属于当前工作空间
+	*/
+	private boolean isDatasourcesAllInWorkspace(Datasource[] datasources) {
+		boolean isDatasourcesAllInWorkspace = true;
+
+		if (this.workspaceTree != null
+				&& this.workspaceTree.getWorkspace() != null
+				&& datasources != null
+				&& datasources.length > 0) {
+			for (int i = 0; i < datasources.length; i++) {
+				if (datasources[i] != null && datasources[i].getWorkspace() != this.workspaceTree.getWorkspace()) {
+					isDatasourcesAllInWorkspace = false;
+					break;
+				}
+			}
+		}
+		return isDatasourcesAllInWorkspace;
 	}
 }

@@ -290,13 +290,13 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
                 }
                 if (cadType == MARKER_TYPE) {
                     // 修改点符号
-                    geoStyle.setSymbolMarker((SymbolMarker) symbol);
+                    geoStyle.setMarkerSymbolID(((SymbolMarker) symbol).getID());
                 } else if (cadType == LINE_TYPE) {
                     // 修改线符号
-                    geoStyle.setSymbolLine((SymbolLine) symbol);
+                    geoStyle.setLineSymbolID(((SymbolLine) symbol).getID());
                 } else if (cadType == FILL_TYPE) {
                     // 修改面符号
-                    geoStyle.setSymbolFill((SymbolFill) symbol);
+                    geoStyle.setFillSymbolID(((SymbolFill) symbol).getID());
                 }
                 tempGeometry.setStyle(geoStyle);
                 recordset.setGeometry(tempGeometry);

@@ -221,7 +221,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         super();
         this.tabular = tabular;
         setTitle(TabularViewProperties.getString("String_FormTabularUpdataColumn_Title") + tabular.getText());
-        setSize(500, 320);
+        setSize(540, 320);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = this.getSize();
 
@@ -792,6 +792,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 result = expression[1].trim() + method + expression[0].trim();
             }
             textAreaOperationEQ.setText(result);
+            updateExpression = result;
             buttonApply.setEnabled(true && isApply);
         }
     }
@@ -834,7 +835,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
                 // 单字段运算
                 resetTextFieldOperationEQ();
-                buttonApply.setEnabled(true);
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -842,7 +842,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 String fristField = comboBoxOperationField.getSelectedItem().toString();
                 String operation = comboBoxMethod.getSelectedItem().toString();
                 String secondField = comboBoxSecondField.getSelectedItem().toString();
-                textAreaOperationEQ.setText(fristField + operation + secondField);
+                updateExpression = fristField + operation + secondField;
+                textAreaOperationEQ.setText(updateExpression);
                 buttonApply.setEnabled(true);
                 return;
             }
@@ -885,6 +886,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                                 + comboBoxSecondField.getSelectedItem().toString());
                     }
                 }
+                updateExpression = textAreaOperationEQ.getText();
                 buttonApply.setEnabled(true);
                 return;
             }
@@ -1022,6 +1024,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void updateEQ(FieldType fieldType, String info) {
+        if ("0".equals(textAreaOperationEQ.getText())) {
+            info = "";
+        }
         if (FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
             textAreaOperationEQ.setText(info + "0");
             buttonApply.setEnabled(true);
@@ -1125,6 +1130,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 recordset.setFieldValue(updateField, Convert.toDouble(resultSet.getFieldValue(resultField)));
             } else if (fieldType.equals(FieldType.BOOLEAN)) {
                 recordset.setFieldValue(updateField, Convert.toBoolean(resultSet.getFieldValue(resultField)));
+            } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
+                recordset.setFieldValue(updateField, resultSet.getFieldValue(resultField).toString());
             }
         }
         recordset.getBatch().update();
@@ -1268,7 +1275,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void resetFieldForTwoField(FieldType fieldType, int[] selectRows) {
-        if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
+        if (!updateExpression.equals(textAreaOperationEQ.getText())) {
+            updateModeQuery();
+        } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
             // 文本型
             resetFieldForTwoField(selectRows, true, fieldType);
         } else {
@@ -1610,6 +1619,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                             + comboBoxSecondField.getSelectedItem().toString());
                 }
             }
+            updateExpression = textAreaOperationEQ.getText();
             if (null != tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString())) {
                 labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
                         .get(comboBoxSecondField.getSelectedItem().toString()).getType()));

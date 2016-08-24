@@ -221,21 +221,27 @@ public class ResiezeEditor extends AbstractEditor {
             Point2Ds points = getPoint2Ds(editModel.desGeometry);
             // 获取带缩放图形
             Rectangle2D desGeometryRectangle = editModel.desGeometry.getBounds();
-            double witdh = desGeometryRectangle.getWidth();
 
             // 获取待缩放图形中心点
             Point2D pointCenter = desGeometryRectangle.getCenter();
             // 获取鼠标点到边界线的距离，用来计算缩放比列
             double offsetX = mouseLocation.getX() - pointCenter.getX();
-            double distance = Math.sqrt(offsetX * offsetX);
-
+            double offsetY = mouseLocation.getY() - pointCenter.getY();
+            double distance = 0.0;
+            double resizeFactor = 0.0;
+            // 计算缩放比例
+            if (Math.abs(offsetX) - Math.abs(offsetY) > 0) {
+                distance = Math.sqrt(offsetX * offsetX);
+                resizeFactor = (distance * 2) / desGeometryRectangle.getWidth();
+            } else {
+                distance = Math.sqrt(offsetY * offsetY);
+                resizeFactor = (distance * 2) / desGeometryRectangle.getHeight();
+            }
 
             if (editModel.desDataset.getTolerance().getNodeSnap() == 0) {
                 editModel.desDataset.getTolerance().setDefault();
             }
 
-            // 计算缩放比例
-            double resizeFactor = (distance * 2) / witdh;
             if (resizeFactor - 0 > 0) {
                 editModel.setMsg(MessageFormat.format(MapEditorProperties.getString("String_Tip_Edit_offsetFactor"), resizeFactor));
                 // 新图形的上下左右距离
