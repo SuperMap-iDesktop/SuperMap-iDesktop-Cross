@@ -17,8 +17,6 @@ import com.supermap.ui.TrackMode;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OffsetEditor extends AbstractEditor {
 
@@ -175,19 +173,22 @@ public class OffsetEditor extends AbstractEditor {
 
                 if (recordset != null) {
                     recordset.seekID(editModel.desGeometry.getID());
-                    Map<String, Object> values = new HashMap<String, Object>();
-                    FieldInfos fieldInfos = recordset.getFieldInfos();
-                    Object[] fieldValues = recordset.getValues();
-                    for (int i = 0; i < fieldValues.length; i++) {
-                        if (!fieldInfos.get(i).isSystemField()) {
-                            values.put(fieldInfos.get(i).getName(), fieldValues[i]);
-                        }
-                    }
-                    recordset.addNew(desGeometry, values);
+                    environment.getMapControl().getEditHistory().add(EditType.MODIFY, recordset, true);
+                    recordset.edit();
+                    recordset.setGeometry(desGeometry);
+//                    Map<String, Object> values = new HashMap<String, Object>();
+//                    FieldInfos fieldInfos = recordset.getFieldInfos();
+//                    Object[] fieldValues = recordset.getValues();
+//                    for (int i = 0; i < fieldValues.length; i++) {
+//                        if (!fieldInfos.get(i).isSystemField()) {
+//                            values.put(fieldInfos.get(i).getName(), fieldValues[i]);
+//                        }
+//                    }
+//                    recordset.addNew(desGeometry, values);
                     recordset.update();
                     desGeometry.dispose();
                 }
-                environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
+//                environment.getMapControl().getEditHistory().add(EditType.ADDNEW, recordset, true);
 
                 Selection[] selections = environment.getMap().findSelection(true);
                 for (Selection selection : selections) {
@@ -210,9 +211,11 @@ public class OffsetEditor extends AbstractEditor {
     }
 
     // @formatter:off
+
     /**
      * 平行线方法中的平行距离与线方向有关
      * 线方向的左边为正，线方向的右边为负
+     *
      * @param environment
      * @param mouseLocation
      */
