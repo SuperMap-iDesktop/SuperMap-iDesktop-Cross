@@ -2,19 +2,15 @@ package com.supermap.desktop.CtrlAction.CADStyle;
 
 import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
-import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.geometryoperation.IEditController;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.ui.GeometrySelectChangedEvent;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.EventObject;
 
 /**
  * Created by xie on 2016/8/10.
@@ -33,7 +29,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     @Override
     public void deactivate(EditEnvironment environment) {
-
+        removeDialog();
     }
 
     private void removeDialog() {
