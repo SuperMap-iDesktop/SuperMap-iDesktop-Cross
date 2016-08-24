@@ -69,8 +69,6 @@ public class DatasourceUtilities {
 	/**
 	 * 根据指定名称获取指定数据源下的数据集
 	 *
-	 * @param datasetName
-	 * @param datasource
 	 * @return
 	 */
 	private DatasourceUtilities() {
@@ -554,5 +552,20 @@ public class DatasourceUtilities {
 
 	public static boolean isFileType(EngineType engineType) {
 		return engineType == EngineType.IMAGEPLUGINS || engineType == EngineType.UDB || engineType == EngineType.VECTORFILE;
+	}
+
+	public static DatasourceConnectionInfo cloneInfo(DatasourceConnectionInfo srcInfo) {
+		DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+		info.setAlias(srcInfo.getAlias());
+		info.setAutoConnect(srcInfo.isAutoConnect());
+		info.setServer(srcInfo.getServer());
+		info.setDatabase(srcInfo.getDatabase());
+		info.setDriver(srcInfo.getDriver());
+		info.setEngineType(srcInfo.getEngineType());
+		info.setOpenLinkTable(srcInfo.isOpenLinkTable());
+		info.setReadOnly(srcInfo.isReadOnly());
+		info.setUser(srcInfo.getUser());
+		info.setPassword(srcInfo.getPassword());
+		return info;
 	}
 }

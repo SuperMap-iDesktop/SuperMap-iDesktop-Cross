@@ -11,9 +11,12 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.io.File;
+import java.text.MessageFormat;
 
 public class CtrlActionDatasourceRefresh extends CtrlAction {
 
@@ -32,21 +35,32 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 
 			// 内存数据源不能刷新
 			if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
-				if (!datasource.isOpened()) {
-					Workspace workspace = datasource.getWorkspace();
-					DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
-					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-					info.setAlias(srcInfo.getAlias());
-					info.setServer(srcInfo.getServer());
-					info.setUser(srcInfo.getUser());
-					info.setPassword(srcInfo.getPassword());
 
-					datasource.close();
-					Datasource newDatasource = workspace.getDatasources().open(info);
-					if (newDatasource != null && newDatasource.isOpened()) {
-						datasources[i] = datasource;
+				// 因为被占用而打开失败的文件型数据源的 reopen 组件不支持，自行实现
+				if (!datasource.isOpened()) {
+					DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
+
+					// 组件不提供判断占用的方法
+					if (!isDatasourceOccupied(srcInfo.getServer())){
+						Workspace workspace = datasource.getWorkspace();
+						DatasourceConnectionInfo info=DatasourceUtilities.cloneInfo(srcInfo);
+
+						datasource.close();
+						Datasource newDatasource = null;
+						try {
+							newDatasource = workspace.getDatasources().open(info);
+						} catch (Exception e) {
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_RefreshDatasouce_Failed"), info.getAlias()));
+						}
+						if (newDatasource != null) {
+							datasources[i] = newDatasource;
+						} else {
+							datasources[i] = null;
+						}
+						isReopened = true;
+					}else{
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_RefreshDatasouce_Failed"), srcInfo.getAlias()));
 					}
-					isReopened = true;
 				} else {
 					datasource.refresh();
 				}
@@ -54,7 +68,9 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 		}
 
 		if (isReopened) {
-			Application.getActiveApplication().setActiveDatasources(datasources);
+
+			// 数据源 reopen 是关闭再打开，因此需要重新选中结果数据
+			UICommonToolkit.getWorkspaceManager().selectDatasources(datasources);
 		}
 
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
@@ -74,6 +90,14 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 				}
 			}
 		}
+	}
+
+	/*
+	* 判断指定的数据源是否被占用
+	*/
+	private boolean isDatasourceOccupied(String datasourcePath) {
+		File file = new File(datasourcePath);
+		return !file.renameTo(file);
 	}
 
 	@Override
