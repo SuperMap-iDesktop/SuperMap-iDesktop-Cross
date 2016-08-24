@@ -287,14 +287,22 @@ public class JDialogSpatialQuery extends SmDialog {
 	private IForm tempForm = null;
 
 	public JDialogSpatialQuery() {
-		super(((JFrame) Application.getActiveApplication().getMainFrame()), false);
+		super((JFrame) Application.getActiveApplication().getMainFrame(), false);
 		init();
 	}
 
 	private void init() {
 		supportSearchDatasetTypes.add(DatasetType.POINT);
+		supportSearchDatasetTypes.add(DatasetType.POINT3D);
 		supportSearchDatasetTypes.add(DatasetType.LINE);
+		supportSearchDatasetTypes.add(DatasetType.LINE3D);
+		supportSearchDatasetTypes.add(DatasetType.LINEM);
+		supportSearchDatasetTypes.add(DatasetType.NETWORK);
+		supportSearchDatasetTypes.add(DatasetType.NETWORK3D);
 		supportSearchDatasetTypes.add(DatasetType.REGION);
+		supportSearchDatasetTypes.add(DatasetType.REGION3D);
+		supportSearchDatasetTypes.add(DatasetType.CAD);
+		supportSearchDatasetTypes.add(DatasetType.TEXT);
 
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -404,14 +412,14 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private String getDatasetTypeDescribe(DatasetType datasetType) {
-		if (datasetType == DatasetType.POINT || datasetType == DatasetType.CAD) {
-			return "P";
-		} else if (datasetType == DatasetType.LINE || datasetType == DatasetType.NETWORK) {
+		int datasetTypeValue = SpatialQueryModeUtilities.getDatasetTypeValue(datasetType);
+		if (datasetTypeValue == 1) {
 			return "L";
-		} else if (datasetType == DatasetType.REGION) {
+		}
+		if (datasetTypeValue == 2) {
 			return "R";
 		}
-		return null;
+		return "P";
 	}
 
 	private void initTable() {
@@ -499,7 +507,7 @@ public class JDialogSpatialQuery extends SmDialog {
 		if (selectedLayer != null) {
 			DatasetType type = selectedLayer.getDataset().getType();
 			String suffixes = null;
-			if (type != DatasetType.CAD) {
+			if (currentDatasetType != DatasetType.CAD) {
 				suffixes = "_" + DatasetTypeUtilities.toString(type) + DatasetTypeUtilities.toString(currentDatasetType);
 			}
 			if (!StringUtilities.isNullOrEmpty(suffixes)) {
@@ -508,7 +516,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				return SpatialQueryModeUtilities.toString(spatialQueryMode);
 			}
 		}
-		return null;
+		return "";
 	}
 
 	//region 初始化布局

@@ -466,7 +466,6 @@ public class JDialogColorScheme extends SmDialog {
 	}
 
 	private void editColorSchemeAtRow(int selectedRow) {
-		// FIXME: 2016/8/23
 		ColorScheme colorSchemeClone = tableColorScheme.getColorScheme(selectedRow).clone();
 		ColorSchemeEditorDialog colorSchemeEditorDialog = new ColorSchemeEditorDialog(colorSchemeClone);
 		ArrayList<String> names = new ArrayList<>();
