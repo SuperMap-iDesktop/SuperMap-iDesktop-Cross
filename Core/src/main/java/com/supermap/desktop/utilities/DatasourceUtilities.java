@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -554,6 +555,9 @@ public class DatasourceUtilities {
 		return engineType == EngineType.IMAGEPLUGINS || engineType == EngineType.UDB || engineType == EngineType.VECTORFILE;
 	}
 
+	/*
+	* 复制指定的 DatasourceConnectionInfo
+	* */
 	public static DatasourceConnectionInfo cloneInfo(DatasourceConnectionInfo srcInfo) {
 		DatasourceConnectionInfo info = new DatasourceConnectionInfo();
 		info.setAlias(srcInfo.getAlias());
@@ -567,5 +571,67 @@ public class DatasourceUtilities {
 		info.setUser(srcInfo.getUser());
 		info.setPassword(srcInfo.getPassword());
 		return info;
+	}
+
+	/**
+	 * 刷新指定的数据源，返回结果，对于打开失败的文件型数据源刷新之后会返回一个新的数据源对象
+	 * @param datasource 要刷新的数据源
+	 * @return 刷新结果
+	 */
+	public static Datasource refreshDatasource(Datasource datasource) {
+		Datasource result = datasource;
+
+		// 内存数据源不支持刷新
+		if (datasource != null
+				&& !isMemoryDatasource(datasource)) {
+
+			// 因为被占用而打开失败的文件型数据源的 reopen 组件不支持，自行实现
+			if (!datasource.isOpened()) {
+				DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
+
+				// 组件不提供判断占用的方法
+				if (!isDatasourceOccupied(srcInfo.getServer())) {
+					Workspace workspace = datasource.getWorkspace();
+					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(srcInfo);
+
+					datasource.close();
+					Datasource newDatasource = null;
+					try {
+						newDatasource = workspace.getDatasources().open(info);
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), info.getAlias()));
+					}
+					if (newDatasource != null) {
+						result = newDatasource;
+					} else {
+						result = null;
+					}
+				} else {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), srcInfo.getAlias()));
+				}
+			} else {
+				datasource.refresh();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 判断指定的数据源是否内存数据源
+	 * @param datasource
+	 * @return
+	 */
+	public static boolean isMemoryDatasource(Datasource datasource) {
+		return datasource.getConnectionInfo().getServer().equalsIgnoreCase(CoreProperties.getString("String_DatasourceServer_Memory"));
+	}
+
+	/**
+	 * 判断指定的数据源是否被占用
+	 * @param datasourcePath
+	 * @return
+	 */
+	private static boolean isDatasourceOccupied(String datasourcePath) {
+		File file = new File(datasourcePath);
+		return !file.renameTo(file);
 	}
 }
