@@ -381,20 +381,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 		checkBoxSelectedAll.setSelected(false);
 		panelDescribe.setMinimumSize(new Dimension(20, 120));
-//		comboBoxSearchLayer.setRenderer(new ListCellRenderer<Layer>() {
-//			@Override
-//			public Component getListCellRendererComponent(JList<? extends Layer> list, Layer value, int index, boolean isSelected, boolean cellHasFocus) {
-//				JLabel jLabel = new JLabel();
-//				if (value != null) {
-//					jLabel.setText(value.getCaption());
-//				}
-//				if (isSelected) {
-//					jLabel.setOpaque(true);
-//					jLabel.setBackground(list.getSelectionBackground());
-//				}
-//				return jLabel;
-//			}
-//		});
 		compTitledPaneSearchResult = new CompTitledPane(checkBoxSaveResult, panelSearchResult);
 		textAreaDescribe.setLineWrap(true);
 		this.setSize(new Dimension(800, 600));
@@ -408,7 +394,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		picName = mode.name().substring(0, 1) + mode.name().toLowerCase().substring(1) + "_" + getDatasetTypeDescribe(searchLayerDatasetType) + getDatasetTypeDescribe(currentDatasetType);
 		labelDescribeIcon.setIcon(DataViewResources.getIcon("/dataviewresources/SpatialQuery/" + picName + ".png"));
 		textAreaDescribe.setText(DataViewProperties.getString("String_SpatialQuery_" + mode.name()));
-
 	}
 
 	private String getDatasetTypeDescribe(DatasetType datasetType) {

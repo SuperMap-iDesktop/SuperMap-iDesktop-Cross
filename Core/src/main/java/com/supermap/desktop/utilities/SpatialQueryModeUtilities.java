@@ -67,14 +67,22 @@ public class SpatialQueryModeUtilities {
 	}
 
 	public static SpatialQueryMode[] getSupportSpatialQueryModes(DatasetType searchLayerType, DatasetType currentLayerType) {
+		int srcDim = getDatasetTypeValue(searchLayerType);
 		if (currentLayerType == DatasetType.CAD) {
-			return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
+			if (srcDim == 0) {
+				return new SpatialQueryMode[]{CONTAIN, DISJOINT, IDENTITY, INTERSECT, TOUCH, WITHIN};
+			} else if (srcDim == 1) {
+				return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
+			} else if (srcDim == 2) {
+				return new SpatialQueryMode[]{CONTAIN, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
+			} else if (srcDim == -1) {
+				return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
+			}
 		}
 		if (searchLayerType == DatasetType.CAD) {
 			// CAD图层只能查询CAD图层
 			return new SpatialQueryMode[0];
 		}
-		int srcDim = getDatasetTypeValue(searchLayerType);
 		int queryDim = getDatasetTypeValue(currentLayerType);
 		if (srcDim == -1 || queryDim == -1) {
 			return new SpatialQueryMode[0];
@@ -197,13 +205,6 @@ public class SpatialQueryModeUtilities {
 		if (datasetType == DatasetType.REGION || datasetType == DatasetType.TEXT || datasetType == DatasetType.REGION3D) {
 			return 2;
 		}
-//		if (datasetType == DatasetType.TEXT) {
-//			return 4;
-//		}
-//		if (datasetType == DatasetType.CAD) {
-//			return 4;
-//		}
 		return -1;
-//		throw new UnsupportedOperationException(datasetType.name());
 	}
 }
