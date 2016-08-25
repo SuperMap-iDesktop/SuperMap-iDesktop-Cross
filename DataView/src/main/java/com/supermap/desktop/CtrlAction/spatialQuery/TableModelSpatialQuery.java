@@ -38,10 +38,21 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		super();
 		rowDatas = new ArrayList<>();
 		supportDatasetTypes = new ArrayList<>();
+//		supportDatasetTypes.add(DatasetType.POINT);
+//		supportDatasetTypes.add(DatasetType.LINE);
+//		supportDatasetTypes.add(DatasetType.REGION);
+//		supportDatasetTypes.add(DatasetType.NETWORK);
+//		supportDatasetTypes.add(DatasetType.CAD);
+//		supportDatasetTypes.add(DatasetType.TEXT);
 		supportDatasetTypes.add(DatasetType.POINT);
+		supportDatasetTypes.add(DatasetType.POINT3D);
 		supportDatasetTypes.add(DatasetType.LINE);
-		supportDatasetTypes.add(DatasetType.REGION);
+		supportDatasetTypes.add(DatasetType.LINE3D);
+		supportDatasetTypes.add(DatasetType.LINEM);
 		supportDatasetTypes.add(DatasetType.NETWORK);
+		supportDatasetTypes.add(DatasetType.NETWORK3D);
+		supportDatasetTypes.add(DatasetType.REGION);
+		supportDatasetTypes.add(DatasetType.REGION3D);
 		supportDatasetTypes.add(DatasetType.CAD);
 		supportDatasetTypes.add(DatasetType.TEXT);
 	}

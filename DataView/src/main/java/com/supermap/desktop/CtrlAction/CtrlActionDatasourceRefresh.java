@@ -11,9 +11,12 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.io.File;
+import java.text.MessageFormat;
 
 public class CtrlActionDatasourceRefresh extends CtrlAction {
 
@@ -29,32 +32,15 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 
 		for (int i = 0; i < datasources.length; i++) {
 			Datasource datasource = datasources[i];
-
-			// 内存数据源不能刷新
-			if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
-				if (!datasource.isOpened()) {
-					Workspace workspace = datasource.getWorkspace();
-					DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
-					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-					info.setAlias(srcInfo.getAlias());
-					info.setServer(srcInfo.getServer());
-					info.setUser(srcInfo.getUser());
-					info.setPassword(srcInfo.getPassword());
-
-					datasource.close();
-					Datasource newDatasource = workspace.getDatasources().open(info);
-					if (newDatasource != null && newDatasource.isOpened()) {
-						datasources[i] = datasource;
-					}
-					isReopened = true;
-				} else {
-					datasource.refresh();
-				}
-			}
+			Datasource refreshedDatasource = DatasourceUtilities.refreshDatasource(datasource);
+			isReopened = (!isReopened && datasource != refreshedDatasource);
+			datasources[i] = refreshedDatasource;
 		}
 
 		if (isReopened) {
-			Application.getActiveApplication().setActiveDatasources(datasources);
+
+			// 数据源 reopen 是关闭再打开的，因此需要重新选中结果数据
+			UICommonToolkit.getWorkspaceManager().selectDatasources(datasources);
 		}
 
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
@@ -67,7 +53,7 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 					Object nodeData = selectedNodeData.getData();
 					if (nodeData instanceof Datasource) {
 						Datasource datasource = (Datasource) nodeData;
-						if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
+						if (!DatasourceUtilities.isMemoryDatasource(datasource)) {
 							workspaceTree.refreshNode(selectedNode);
 						}
 					}
@@ -83,7 +69,7 @@ public class CtrlActionDatasourceRefresh extends CtrlAction {
 		if (datasources != null && datasources.length > 0) {
 			for (Datasource datasource : datasources) {
 				// 内存数据源不能刷新
-				if (!datasource.getConnectionInfo().getServer().equalsIgnoreCase(DataViewProperties.getString("String_DatasourceServer_Memory"))) {
+				if (!DatasourceUtilities.isMemoryDatasource(datasource)) {
 					enable = true;
 					break;
 				}

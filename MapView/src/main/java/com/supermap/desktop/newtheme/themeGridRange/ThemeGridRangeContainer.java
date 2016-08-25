@@ -17,7 +17,13 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridRangeItem;
+import com.supermap.mapping.ThemeType;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -28,7 +34,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -279,19 +290,18 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 */
 	private void refreshColor() {
 		if (comboBoxColorStyle != null) {
-			int colorCount = ((Colors) comboBoxColorStyle.getSelectedItem()).getCount();
-			Colors colors = (Colors) comboBoxColorStyle.getSelectedItem();
-			int themeRangeCount = themeGridRange.getCount();
-			if (themeRangeCount > 0) {
-				float ratio = (1f * colorCount) / (1f * themeRangeCount);
-				themeGridRange.getItem(0).setColor(colors.get(0));
-				themeGridRange.getItem(themeRangeCount - 1).setColor(colors.get(colorCount - 1));
-				for (int i = 1; i < themeRangeCount - 1; i++) {
-					int colorIndex = Math.round(i * ratio);
-					if (colorIndex == colorCount) {
-						colorIndex--;
-					}
-					themeGridRange.getItem(i).setColor(colors.get(colorIndex));
+			Colors colors = comboBoxColorStyle.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
+			int rangeCount = themeGridRange.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
+			if (rangeCount > 0) {
+				for (int i = 0; i < rangeCount; i++) {
+					themeGridRange.getItem(i).setColor(colors.get(i));
 				}
 			}
 		}
