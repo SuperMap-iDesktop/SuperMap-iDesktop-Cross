@@ -235,8 +235,8 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 	/**
 	 * 获取表达式项
 	 *
-	 * @param jComboBoxField
-	 */
+     * @param
+     */
 	private void getSqlExpression() {
 		SQLExpressionDialog sqlDialog = new SQLExpressionDialog();
 		Dataset[] datasets = ThemeUtil.getDatasets(this.layer, datasetVector);

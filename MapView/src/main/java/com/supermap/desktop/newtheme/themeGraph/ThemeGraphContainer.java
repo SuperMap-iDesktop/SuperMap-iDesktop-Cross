@@ -1,11 +1,6 @@
 package com.supermap.desktop.newtheme.themeGraph;
 
-import com.supermap.data.Colors;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Point2D;
-import com.supermap.data.SymbolType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -19,52 +14,24 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
-import com.supermap.desktop.ui.controls.LayersTree;
-import com.supermap.desktop.ui.controls.SteppedComboBox;
-import com.supermap.desktop.ui.controls.TableRowCellEditor;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.GraduatedMode;
-import com.supermap.mapping.GraphAxesTextDisplayMode;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGraphTextFormat;
-import com.supermap.mapping.ThemeGraphType;
-import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * @author xie 统计专题图实现类
@@ -1002,6 +969,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 			addItemDialog.setVisible(true);
 			if (addItemDialog.getDialogResult() == DialogResult.OK) {
 				ArrayList<String> tempList = addItemDialog.getResultList();
+				Colors colors = comboBoxColor.getSelectedItem();
+
+				Color[] colors1 = new Color[colors.getCount()];
+				for (int i = 0; i < colors.getCount(); i++) {
+					colors1[i] = colors.get(i);
+				}
+				colors = Colors.makeGradient(tempList.size(), colors1);
 				for (int i = 0; i < tempList.size(); i++) {
 					ThemeGraphItem item = new ThemeGraphItem();
 					String graphExpression = tempList.get(i);
@@ -1009,11 +983,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
 					item.setGraphExpression(graphExpression);
 					item.setCaption(caption);
 					GeoStyle newGeoStyle = new GeoStyle();
-					Colors colors = (Colors) comboBoxColor.getSelectedItem();
-					int colorCount = colors.getCount();
-					Random random = new Random();
-					int randomCount = random.nextInt(colorCount);
-					newGeoStyle.setFillForeColor(colors.get((randomCount)));
+
+					newGeoStyle.setFillForeColor(colors.get((i)));
 					newGeoStyle.setLineWidth(0.1);
 					item.setUniformStyle(newGeoStyle);
 					if (!itemExist(item, existItems)) {
