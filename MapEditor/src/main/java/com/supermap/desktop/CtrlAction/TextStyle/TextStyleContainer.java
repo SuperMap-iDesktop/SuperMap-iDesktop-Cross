@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.TextStyle;
 
 import com.supermap.data.*;
-import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -12,8 +11,8 @@ import com.supermap.desktop.ui.controls.textStyle.TextStyleChangeListener;
 import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -25,8 +24,6 @@ public class TextStyleContainer extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private transient JButton buttonClose;
-
     private transient ITextStyle textBasicPanel;
 
     private Geometry geometry;
@@ -36,80 +33,98 @@ public class TextStyleContainer extends JPanel {
     private Recordset recordset;
     private transient TextStyleChangeListener textStyleChangeListener;
     private ActionListener buttonCloseListener;
-    private boolean isDisposed;
+    private boolean isModify;
     private EditHistory editHistory;
     private EditEnvironment environment;
+    private JScrollPane scrollPane = new JScrollPane();
+    public static JPanel panelTextInfo = new JPanel();
 
-    private static volatile TextStyleContainer dialog;
-
-//    public static TextStyleContainer createInstance(EditEnvironment environment) {
-//        if (null == dialog) {
-//            dialog = new TextStyleContainer(environment);
-//            dialog.setVisible(true);
-//        }
-//        return dialog;
-//    }
-
-    private TextStyleContainer() {
-        this.environment = environment;
-        isDisposed = false;
-        initMainPanel();
-        registEvents();
-//        this.setTitle(ControlsProperties.getString("String_TextStyleSet"));
-//        setLocationRelativeTo(null);
+    public TextStyleContainer() {
+        isModify = false;
+        this.setLayout(new GridBagLayout());
+        // @formatter:off
+        this.scrollPane.setBorder(new LineBorder(Color.lightGray));
+        this.add(this.scrollPane, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+        this.scrollPane.setViewportView(this.panelTextInfo);
+        // @formatter:on
     }
 
+    /**
+     * 资源化
+     */
+
     public void showDialog(Recordset recordset) {
-        if (null != this.recordset) {
-            this.recordset.dispose();
-        }
-        this.recordset = recordset;
-        this.recordset.moveFirst();
-        boolean hasGeoText = false;
-        while (!recordset.isEOF()) {
-            Geometry tempGeoMetry = recordset.getGeometry();
-            if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
-                if (tempGeoMetry instanceof GeoText) {
-                    text = ((GeoText) tempGeoMetry).getText();
-                    tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
-                    rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
-                    this.geometry = tempGeoMetry;
-                } else if (tempGeoMetry instanceof GeoText3D) {
-                    text = ((GeoText3D) tempGeoMetry).getText();
-                    tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
-                    this.geometry = tempGeoMetry;
-                }
-                hasGeoText = true;
-                break;
+        if (!isModify) {
+            if (null != this.recordset) {
+                this.recordset.dispose();
             }
-            recordset.moveNext();
+            this.recordset = recordset;
+            this.recordset.moveFirst();
+            boolean hasGeoText = false;
+            while (!recordset.isEOF()) {
+                Geometry tempGeoMetry = recordset.getGeometry();
+                if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
+                    if (tempGeoMetry instanceof GeoText) {
+                        text = ((GeoText) tempGeoMetry).getText();
+                        tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
+                        rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
+                        this.geometry = tempGeoMetry;
+                    } else if (tempGeoMetry instanceof GeoText3D) {
+                        text = ((GeoText3D) tempGeoMetry).getText();
+                        tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
+                        this.geometry = tempGeoMetry;
+                    }
+                    hasGeoText = true;
+                    break;
+                }
+                recordset.moveNext();
+            }
+            if (!hasGeoText) {
+                // 不为文本类型时显示为空
+                this.scrollPane.setViewportView(panelTextInfo);
+                return;
+            }
+            initMainPanel();
+            registEvents();
         }
-        if (!hasGeoText) {
-            // 不为文本类型时显示为空
-            this.removeAll();
-            this.updateUI();
-            return;
+    }
+
+    private void removePanels() {
+        if (null != panelTextInfo) {
+            remove(panelTextInfo);
         }
-        this.textBasicPanel.setTextStyle(tempTextStyle);
+        for (int i = getComponents().length - 1; i >= 0; i--) {
+            if (getComponent(i) instanceof JPanel) {
+                remove(getComponent(i));
+            }
+        }
+    }
+
+    public void setNullPanel() {
+        this.isModify = false;
+        this.tempTextStyle = null;
+        removePanels();
+        this.scrollPane.setViewportView(panelTextInfo);
     }
 
     private void initMainPanel() {
-//        JPanel panel = (JPanel) this.getContentPane();
-//        panel.removeAll();
         this.textBasicPanel = new TextBasicPanel();
-        this.textBasicPanel.setTextStyle(new TextStyle());
+        this.textBasicPanel.setTextStyle(tempTextStyle);
         this.textBasicPanel.setTextStyleSet(true);
         this.textBasicPanel.initTextBasicPanel();
         this.textBasicPanel.initCheckBoxState();
         this.textBasicPanel.enabled(true);
-        this.setLayout(new GridBagLayout());
-        this.buttonClose = ComponentFactory.createButtonClose();
-        //@formatter:off
-        this.add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
-        this.add(textBasicPanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
-        this.add(this.buttonClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(5, 10, 10, 10));
-        //@formatter:on
-        this.updateUI();
+        removePanels();
+        JPanel panelText = new JPanel();
+        panelText.setLayout(new GridBagLayout());
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new LineBorder(Color.gray));
+        panel.add(panelText, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+        panelText.add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+        panelText.add(textBasicPanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+        this.scrollPane.setViewportView(panel);
+        repaint();
     }
 
     public void registEvents() {
@@ -117,45 +132,13 @@ public class TextStyleContainer extends JPanel {
 
             @Override
             public void modify(TextStyleType newValue) {
+                isModify = true;
                 updateGeometries(newValue);
             }
         };
 
-        this.buttonCloseListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isDisposed) {
-                    disposeInfo();
-                }
-            }
-        };
-//        this.addWindowListener(new WindowAdapter() {
-//
-//            @Override
-//            public void windowClosing(WindowEvent e) {
-//                if (!isDisposed) {
-//                    disposeInfo();
-//                }
-//            }
-//
-//        });
         removeEvents();
         this.textBasicPanel.addTextStyleChangeListener(this.textStyleChangeListener);
-        this.buttonClose.addActionListener(this.buttonCloseListener);
-    }
-
-    ;
-
-    public void disposeInfo() {
-        if (null != dialog) {
-            removeEvents();
-//            dialog.dispose();
-            dialog = null;
-            recordset.dispose();
-            isDisposed = true;
-            environment.stopEditor();
-        }
     }
 
     private void updateGeometries(TextStyleType newValue) {
@@ -192,28 +175,22 @@ public class TextStyleContainer extends JPanel {
     }
 
     public void enabled(boolean enabled) {
-        if (null != textBasicPanel && null != buttonClose) {
+        if (null != textBasicPanel) {
             this.textBasicPanel.enabled(enabled);
-            this.buttonClose.setEnabled(enabled);
         }
     }
 
     ;
 
     private void removeEvents() {
-        this.buttonClose.removeActionListener(this.buttonCloseListener);
         this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
-    }
-
-    public TextStyle getTempTextStyle() {
-        return tempTextStyle;
-    }
-
-    public void setTempTextStyle(TextStyle tempTextStyle) {
-        this.tempTextStyle = tempTextStyle;
     }
 
     public void setEnvironment(EditEnvironment environment) {
         this.environment = environment;
+    }
+
+    public void setModify(boolean modify) {
+        isModify = modify;
     }
 }

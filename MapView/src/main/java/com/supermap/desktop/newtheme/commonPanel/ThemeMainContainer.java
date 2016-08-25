@@ -12,6 +12,7 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelComplicatedContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelRangeContainer;
 import com.supermap.desktop.newtheme.themeLabel.ThemeLabelUniformContainer;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
@@ -79,7 +80,7 @@ public class ThemeMainContainer extends JPanel {
      */
     private void initResources() {
         this.labelThemeLayer.setText(MapViewProperties.getString("String_Themelayers"));
-        this.checkBoxRefreshAtOnce.setText(MapViewProperties.getString("String_RefreshAtOnce"));
+        this.checkBoxRefreshAtOnce.setText(CoreProperties.getString("String_RefreshAtOnce"));
         this.buttonApply.setText(MapViewProperties.getString("String_Button_Apply"));
     }
 
@@ -87,8 +88,6 @@ public class ThemeMainContainer extends JPanel {
      * 界面布局入口
      */
     private void initComponents() {
-        GridBagLayout layout = new GridBagLayout();
-        this.setLayout(layout);
         this.textFieldThemeLayer.setEditable(false);
         this.textFieldThemeLayer.setBackground(Color.white);
         this.buttonApply.setEnabled(false);
