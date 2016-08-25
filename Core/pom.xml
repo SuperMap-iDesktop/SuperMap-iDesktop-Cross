@@ -14,7 +14,7 @@
     <!--Packaging = jar 会定义默认的 goal 来打包（maven-jar-plugin），本程序需要自定义打包过程，
     方法一：设置 Packaging = bundle，本程序采用这种方式。
     方法二：使用 maven-bundle-plugin 的 manifest goal，配合 maven-dependency-plugin、maven-resources-plugin 等实现。-->
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <!--<repositories>-->
     <!--<repository>-->

@@ -122,6 +122,13 @@
 
                         <!--
                         *************************************************************
+                        设置为 true，生成 manifest 文件则在内存中进行，设置为 false 则需要依赖 classes。
+                        *************************************************************
+                        -->
+                        <rebuildBundle>true</rebuildBundle>
+
+                        <!--
+                        *************************************************************
                         指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF。
                         *************************************************************
                         -->
@@ -295,5 +302,11 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
