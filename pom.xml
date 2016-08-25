@@ -71,6 +71,51 @@
                         <encoding>utf-8</encoding>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <finalName>${project.name}</finalName>
+
+                        <!--jar 生成到指定的路径-->
+                        <outputDirectory>${project.basedir}/../bundles/idesktop_bundles/</outputDirectory>
+                        <archive>
+
+                            <!--使用指定的 manifest 文件-->
+                            <manifestFile>${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        </archive>
+
+                        <!--指定打包文件的路径，配置之外的文件不打包，一般不用这个。-->
+                        <!--<includes></includes>-->
+                    </configuration>
+                </plugin>
+
+                <!--依赖处理-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.10</version>
+                    <executions>
+                        <execution>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+
+                        <!--provided 的依赖不打包-->
+                        <excludeScope>provided</excludeScope>
+
+                        <!--默认输出到 target/classes/lib-->
+                        <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                        <overWriteIfNewer>true</overWriteIfNewer>
+                        <overWriteReleases>false</overWriteReleases>
+                        <overWriteSnapshots>false</overWriteSnapshots>
+                    </configuration>
+                </plugin>
 
                 <!--maven-bundle-plugin 由于特殊的需求，在 bundles/idesktop_bundles/ 生成了 jar 文件，因此在 clean 的时候需要配置一下清理过程。-->
                 <plugin>
@@ -132,7 +177,7 @@
                         指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF。
                         *************************************************************
                         -->
-                        <!--<manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>-->
+                        <manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
                         <finalName>${project.name}</finalName>
 
                         <!--
@@ -279,14 +324,14 @@
                             需要注意的是 inline=true，设置这个属性的原因见 <Export-Package> 备注。
                             *************************************************************
                             -->
-                            <Embed-Dependency>*;scope=compile|system;inline=true</Embed-Dependency>
+                            <Embed-Dependency>*;scope=compile|system</Embed-Dependency>
 
                             <!--
                             *************************************************************
                             指定 Embed 依赖相对包的根目录的路径。
                             *************************************************************
                             -->
-                            <!--<Embed-Directory>lib</Embed-Directory>-->
+                            <Embed-Directory>lib</Embed-Directory>
 
                             <!--
                             *************************************************************
@@ -306,6 +351,10 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
