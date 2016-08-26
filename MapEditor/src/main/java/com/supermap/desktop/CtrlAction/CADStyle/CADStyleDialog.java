@@ -127,6 +127,7 @@ public class CADStyleDialog extends SmDialog {
     public CADStyleDialog(EditEnvironment environment) {
         super();
         this.environment = environment;
+        this.isDisposed = false;
         this.setSize(300, 440);
         this.setTitle(MapEditorProperties.getString("String_CADStyle"));
         this.setLocationRelativeTo(null);
@@ -142,10 +143,7 @@ public class CADStyleDialog extends SmDialog {
     }
 
     public void showDialog(Recordset recordset) {
-        if (null != this.recordset) {
-            this.recordset.dispose();
-        }
-        this.recordset = recordset;
+        setRecordset(recordset);
         editHistory = MapUtilities.getMapControl().getEditHistory();
         initComponents();
         initResources();
@@ -436,6 +434,13 @@ public class CADStyleDialog extends SmDialog {
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);
         }
+    }
+
+    public void setRecordset(Recordset recordset) {
+        if (null != this.recordset) {
+            this.recordset.dispose();
+        }
+        this.recordset = recordset;
     }
 }
 
