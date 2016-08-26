@@ -40,6 +40,31 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--依赖处理-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <!--provided 的依赖不打包-->
+                    <includeScope>runtime</includeScope>
+
+                    <!--默认输出到 target/classes/lib-->
+                    <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

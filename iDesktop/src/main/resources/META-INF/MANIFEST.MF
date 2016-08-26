@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1472191565486
+Build-Jdk: 1.7.0_80
+Built-By: highsad
+Bundle-ClassPath: .,lib/org.apache.felix.framework-5.4.0.jar,lib/org.apa
+ che.felix.main-5.4.0.jar
+Bundle-ManifestVersion: 2
+Bundle-Name: iDesktop
+Bundle-SymbolicName: com.supermap.idesktop.cross.iDesktop
+Bundle-Version: 1.0.0.qualifier
+Class-Path: lib/org.apache.felix.framework-5.4.0.jar lib/org.apache.feli
+ x.main-5.4.0.jar
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: *;scope=compile|system
+Embed-Directory: lib
+Embedded-Artifacts: lib/org.apache.felix.framework-5.4.0.jar;g="org.apac
+ he.felix";a="org.apache.felix.framework";v="5.4.0",lib/org.apache.felix
+ .main-5.4.0.jar;g="org.apache.felix";a="org.apache.felix.main";v="5.4.0
+ "
+Import-Package: org.osgi.framework;version="[1.8,1.9)",org.osgi.util.tra
+ cker;version="[1.5,2)"
+Main-Class: com.supermap.desktop.iDesktop.Startup
+Originally-Created-By: Apache Maven Bundle Plugin
+Tool: Bnd-3.2.0.201605172007

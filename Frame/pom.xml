@@ -46,6 +46,15 @@
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <!--jar 生成到指定的路径-->
+                    <outputDirectory>${project.basedir}/../bundles/require_bundles/</outputDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
