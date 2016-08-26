@@ -46,11 +46,15 @@ public class DataCell extends JPanel {
 	 */
 	public void initDatasourceType(Datasource datasource) {
 		if (datasource != null) {
-			setData(datasource);
-			this.dataName = datasource.getAlias();
-			String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-			URL url = ControlsResources.getResourceURL(datasouceImagepath);
-			init(url, this.dataName);
+			try {
+				this.dataName = datasource.getAlias();
+				setData(datasource);
+				String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
+				URL url = ControlsResources.getResourceURL(datasouceImagepath);
+				init(url, this.dataName);
+			} catch (Exception e) {
+				// ignore
+			}
 		}
 
 	}
@@ -85,6 +89,9 @@ public class DataCell extends JPanel {
 	}
 
 	public void initLayer(Layer layer) {
+		if (layer.isDisposed()) {
+			return;
+		}
 		Dataset dataset = layer.getDataset();
 		String datasetImagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
 		URL url = ControlsResources.getResourceURL(datasetImagePath);
