@@ -74,7 +74,6 @@ public class TextStyleEditor extends AbstractEditor {
                     dockbarTextStyleContainer.active();
                     textStyleContainer = (TextStyleContainer) dockbarTextStyleContainer.getComponent();
                     if (null != getActiveRecordset(environment.getMap())) {
-                        textStyleContainer.setEnvironment(environment);
                         textStyleContainer.showDialog(getActiveRecordset(environment.getMap()));
                     }
                 }
