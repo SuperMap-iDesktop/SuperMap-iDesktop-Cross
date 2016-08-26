@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.spatialQuery;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.Application;
@@ -38,21 +39,15 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		super();
 		rowDatas = new ArrayList<>();
 		supportDatasetTypes = new ArrayList<>();
-//		supportDatasetTypes.add(DatasetType.POINT);
-//		supportDatasetTypes.add(DatasetType.LINE);
-//		supportDatasetTypes.add(DatasetType.REGION);
-//		supportDatasetTypes.add(DatasetType.NETWORK);
-//		supportDatasetTypes.add(DatasetType.CAD);
-//		supportDatasetTypes.add(DatasetType.TEXT);
 		supportDatasetTypes.add(DatasetType.POINT);
-		supportDatasetTypes.add(DatasetType.POINT3D);
+//		supportDatasetTypes.add(DatasetType.POINT3D);
 		supportDatasetTypes.add(DatasetType.LINE);
-		supportDatasetTypes.add(DatasetType.LINE3D);
+//		supportDatasetTypes.add(DatasetType.LINE3D);
 		supportDatasetTypes.add(DatasetType.LINEM);
 		supportDatasetTypes.add(DatasetType.NETWORK);
-		supportDatasetTypes.add(DatasetType.NETWORK3D);
+//		supportDatasetTypes.add(DatasetType.NETWORK3D);
 		supportDatasetTypes.add(DatasetType.REGION);
-		supportDatasetTypes.add(DatasetType.REGION3D);
+//		supportDatasetTypes.add(DatasetType.REGION3D);
 		supportDatasetTypes.add(DatasetType.CAD);
 		supportDatasetTypes.add(DatasetType.TEXT);
 	}
@@ -129,15 +124,29 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			rowDatas.clear();
 		}
 		if (layers != null && layers.size() > 0) {
-			Datasource defaultDatasource;
+			Datasource defaultDatasource = null;
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			if (activeDatasources != null && activeDatasources.length > 0) {
-				defaultDatasource = activeDatasources[0];
-			} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
-				defaultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-			} else {
+			if (activeDatasources.length > 0) {
+				for (Datasource activeDatasource : activeDatasources) {
+					if (activeDatasource.isOpened() && !activeDatasource.isReadOnly()) {
+						defaultDatasource = activeDatasource;
+						break;
+					}
+				}
+			}
+			if (defaultDatasource == null) {
+				Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+				for (int i = 0; i < datasources.getCount(); i++) {
+					if (datasources.get(i).isOpened() && !datasources.get(i).isReadOnly()) {
+						defaultDatasource = datasources.get(i);
+						break;
+					}
+				}
+			}
+			if (defaultDatasource == null) {
 				return;
 			}
+
 			int i = 0;
 			for (Layer layer : layers) {
 				if (layer.getDataset() != null && supportDatasetTypes.contains(layer.getDataset().getType())) {

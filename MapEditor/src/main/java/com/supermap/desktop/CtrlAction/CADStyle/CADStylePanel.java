@@ -9,7 +9,6 @@ import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CursorUtilities;
@@ -23,8 +22,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 
 /**
@@ -37,7 +34,7 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     private JLabel labelArraw;
     //    private JPanel panelColorDisplay;
     private int cadType;
-    private int alignment;
+//    private int alignment;
 
     private final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
     private Color COLOR_SYSTEM_DEFAULT;
@@ -49,8 +46,8 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     public static final int MARKER_TYPE = 1;
     public static final int LINE_TYPE = 2;
     public static final int FILL_TYPE = 3;
-    public static final int HORIZONTAL = 4;
-    public static final int VERTICAL = 5;
+    //    public static final int HORIZONTAL = 4;
+//    public static final int VERTICAL = 5;
     private Recordset recordset;
     private JPanelSymbols panelSymbols;
     private JPopupMenu popupMenuVertical;
@@ -70,10 +67,9 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     };
 
 
-    public CADStylePanel(int cadType, int alignment) {
+    public CADStylePanel(int cadType) {
         super();
         this.cadType = cadType;
-        this.alignment = alignment;
         initComponents();
         COLOR_SYSTEM_DEFAULT = this.getBackground();
         initResources();
@@ -95,67 +91,68 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-                    switch (alignment) {
-                        case HORIZONTAL:
-                            setHorizontalPopupmenu(e);
-                            break;
-                        case VERTICAL:
-                            resetRecordsetSymbol(e);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                resetRecordsetSymbol(e);
+//                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+//                    switch (alignment) {
+//                        case HORIZONTAL:
+//                            setHorizontalPopupmenu(e);
+//                            break;
+//                        case VERTICAL:
+//                            resetRecordsetSymbol(e);
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                }
             }
 
         });
     }
 
-    private void setHorizontalPopupmenu(MouseEvent e) {
-        final JPopupMenu popupMenu = new JPopupMenu();
-        ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-        popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-        colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-        popupMenu.show(e.getComponent(), 0, (int) (e.getComponent().getBounds().getHeight()));
-        colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                selectedColor = (Color) evt.getNewValue();
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = tempGeometry.getStyle();
-                    if (null == geoStyle) {
-                        geoStyle = new GeoStyle();
-                    }
-                    if (cadType == MARKER_TYPE) {
-                        // 修改点符号
-                        geoStyle.setLineColor(selectedColor);
-                    } else if (cadType == LINE_TYPE) {
-                        // 修改线符号
-                        geoStyle.setLineColor(selectedColor);
-                    } else if (cadType == FILL_TYPE) {
-                        // 修改面符号
-                        geoStyle.setFillForeColor(selectedColor);
-                    }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
-                }
-                editHistory.batchEnd();
-                popupMenu.setVisible(false);
-                MapUtilities.getActiveMap().refresh();
-                if (null != getImage(defulatPath)) {
-                    labelImage.setIcon(new ImageIcon(getImage(defulatPath)));
-                }
-            }
-        });
-    }
+//    private void setHorizontalPopupmenu(MouseEvent e) {
+//        final JPopupMenu popupMenu = new JPopupMenu();
+//        ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
+//        popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
+//        colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+//        popupMenu.show(e.getComponent(), 0, (int) (e.getComponent().getBounds().getHeight()));
+//        colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                selectedColor = (Color) evt.getNewValue();
+//                recordset.moveFirst();
+//                while (!recordset.isEOF()) {
+//                    editHistory.add(EditType.MODIFY, recordset, true);
+//                    recordset.edit();
+//                    Geometry tempGeometry = recordset.getGeometry();
+//                    GeoStyle geoStyle = tempGeometry.getStyle();
+//                    if (null == geoStyle) {
+//                        geoStyle = new GeoStyle();
+//                    }
+//                    if (cadType == MARKER_TYPE) {
+//                        // 修改点符号
+//                        geoStyle.setLineColor(selectedColor);
+//                    } else if (cadType == LINE_TYPE) {
+//                        // 修改线符号
+//                        geoStyle.setLineColor(selectedColor);
+//                    } else if (cadType == FILL_TYPE) {
+//                        // 修改面符号
+//                        geoStyle.setFillForeColor(selectedColor);
+//                    }
+//                    tempGeometry.setStyle(geoStyle);
+//                    recordset.setGeometry(tempGeometry);
+//                    tempGeometry.dispose();
+//                    recordset.update();
+//                    recordset.moveNext();
+//                }
+//                editHistory.batchEnd();
+//                popupMenu.setVisible(false);
+//                MapUtilities.getActiveMap().refresh();
+//                if (null != getImage(defulatPath)) {
+//                    labelImage.setIcon(new ImageIcon(getImage(defulatPath)));
+//                }
+//            }
+//        });
+//    }
 
     private JPanel getPanelSymbols(JPanel panelSymbols) {
         JPanel panelSymbol = new JPanel();
@@ -318,28 +315,28 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     private void initResources() {
         switch (cadType) {
             case MARKER_TYPE:
-                if (alignment == HORIZONTAL) {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/PointStyle/MarkerColor.png", false)));
-                } else {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/PointStyle/MarkerSymbol.png", false)));
-                    this.labelName.setText(MapEditorProperties.getString("String_Point"));
-                }
+//                if (alignment == HORIZONTAL) {
+//                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/PointStyle/MarkerColor.png", false)));
+//                } else {
+                this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/PointStyle/MarkerSymbol.png", false)));
+                this.labelName.setText(MapEditorProperties.getString("String_Point"));
+//                }
                 break;
             case LINE_TYPE:
-                if (alignment == HORIZONTAL) {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/LineStyle/LineColor.png", false)));
-                } else {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/LineStyle/LineSymbol.png", false)));
-                    this.labelName.setText(MapEditorProperties.getString("String_Line"));
-                }
+//                if (alignment == HORIZONTAL) {
+//                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/LineStyle/LineColor.png", false)));
+//                } else {
+                this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/LineStyle/LineSymbol.png", false)));
+                this.labelName.setText(MapEditorProperties.getString("String_Line"));
+//                }
                 break;
             case FILL_TYPE:
-                if (alignment == HORIZONTAL) {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/FillStyle/ForeColor.png", false)));
-                } else {
-                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/FillStyle/FillSymbol.png", false)));
-                    this.labelName.setText(MapEditorProperties.getString("String_Fill"));
-                }
+//                if (alignment == HORIZONTAL) {
+//                    this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/FillStyle/ForeColor.png", false)));
+//                } else {
+                this.labelImage.setIcon(new ImageIcon(PathUtilities.getFullPathName("../Resources/MapView/Toolbar/LayerStyle/FillStyle/FillSymbol.png", false)));
+                this.labelName.setText(MapEditorProperties.getString("String_Fill"));
+//                }
                 break;
             default:
                 break;
@@ -356,15 +353,16 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
         this.labelArraw = new JLabel();
         this.labelArraw.setIcon(new MetalComboBoxIcon());
         this.setLayout(new GridBagLayout());
-        switch (alignment) {
-            case HORIZONTAL:
-                initHorizaltalLayout();
-                break;
-            case VERTICAL:
-                initVerticalLayout();
-            default:
-                break;
-        }
+        initVerticalLayout();
+//        switch (alignment) {
+//            case HORIZONTAL:
+//                initHorizaltalLayout();
+//                break;
+//            case VERTICAL:
+//                initVerticalLayout();
+//            default:
+//                break;
+//        }
 
     }
 
@@ -419,9 +417,9 @@ public class CADStylePanel extends JPanel implements ICADStylePanel {
     public void setEnable(boolean enabled) {
         this.labelImage.setEnabled(enabled);
         this.labelArraw.setEnabled(enabled);
-        if (alignment == VERTICAL) {
-            this.labelName.setEnabled(enabled);
-        }
+//        if (alignment == VERTICAL) {
+        this.labelName.setEnabled(enabled);
+//        }
     }
 
     @Override

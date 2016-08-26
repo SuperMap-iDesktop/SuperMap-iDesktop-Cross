@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction.TextStyle;
 
 import com.supermap.data.*;
 import com.supermap.desktop.enums.TextStyleType;
-import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
 import com.supermap.desktop.ui.controls.textStyle.ResetTextStyleUtil;
@@ -35,18 +34,18 @@ public class TextStyleContainer extends JPanel {
     private ActionListener buttonCloseListener;
     private boolean isModify;
     private EditHistory editHistory;
-    private EditEnvironment environment;
-    private JScrollPane scrollPane = new JScrollPane();
-    public static JPanel panelTextInfo = new JPanel();
+    private JScrollPane scrollPane;
+    public static JPanel panelTextInfo;
 
     public TextStyleContainer() {
+        super();
         isModify = false;
         this.setLayout(new GridBagLayout());
-        // @formatter:off
+        this.scrollPane = new JScrollPane();
+        this.panelTextInfo = new JPanel();
         this.scrollPane.setBorder(new LineBorder(Color.lightGray));
         this.add(this.scrollPane, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
         this.scrollPane.setViewportView(this.panelTextInfo);
-        // @formatter:on
     }
 
     /**
@@ -184,10 +183,6 @@ public class TextStyleContainer extends JPanel {
 
     private void removeEvents() {
         this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
-    }
-
-    public void setEnvironment(EditEnvironment environment) {
-        this.environment = environment;
     }
 
     public void setModify(boolean modify) {
