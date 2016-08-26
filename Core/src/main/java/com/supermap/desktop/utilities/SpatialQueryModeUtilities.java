@@ -67,15 +67,15 @@ public class SpatialQueryModeUtilities {
 	}
 
 	public static SpatialQueryMode[] getSupportSpatialQueryModes(DatasetType searchLayerType, DatasetType currentLayerType) {
-		int srcDim = getDatasetTypeValue(searchLayerType);
+		int queryDim = getDatasetTypeValue(searchLayerType);
 		if (currentLayerType == DatasetType.CAD) {
-			if (srcDim == 0) {
+			if (queryDim == 0) {
 				return new SpatialQueryMode[]{CONTAIN, DISJOINT, IDENTITY, INTERSECT, TOUCH, WITHIN};
-			} else if (srcDim == 1) {
+			} else if (queryDim == 1) {
 				return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
-			} else if (srcDim == 2) {
+			} else if (queryDim == 2) {
 				return new SpatialQueryMode[]{CONTAIN, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
-			} else if (srcDim == -1) {
+			} else if (queryDim == -1) {
 				return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
 			}
 		}
@@ -83,7 +83,8 @@ public class SpatialQueryModeUtilities {
 			// CAD图层只能查询CAD图层
 			return new SpatialQueryMode[0];
 		}
-		int queryDim = getDatasetTypeValue(currentLayerType);
+		//region 组件的判断方法
+		int srcDim = getDatasetTypeValue(currentLayerType);
 		if (srcDim == -1 || queryDim == -1) {
 			return new SpatialQueryMode[0];
 		}
@@ -109,31 +110,23 @@ public class SpatialQueryModeUtilities {
 			spatialQueryModes.add(WITHIN);
 		}
 		return spatialQueryModes.toArray(new SpatialQueryMode[spatialQueryModes.size()]);
-	}
+		//endregion
 
-	// 组件不提供接口，按照.net表现出来的选项不正确
-//	public static SpatialQueryMode[] getSupportSpatialQueryModes(DatasetType searchLayerType, DatasetType currentLayerType) {
-//		SpatialQueryMode[] result = null;
-//		if (currentLayerType == DatasetType.CAD && searchLayerType == DatasetType.CAD) {
-//			return new SpatialQueryMode[]{CONTAIN, CROSS, DISJOINT, IDENTITY, INTERSECT, OVERLAP, TOUCH, WITHIN};
-//		}
-//		if (searchLayerType == DatasetType.CAD) {
-//			return new SpatialQueryMode[0];
-//		}
-//
+		//region 桌面判断方法
+//		SpatialQueryMode[] result = new SpatialQueryMode[0];
 //		int typeValue = getDatasetTypeValue(currentLayerType);
 //		int datasetTypeValue = getDatasetTypeValue(searchLayerType);
 //		int i = (datasetTypeValue << 4) + typeValue;
 //		switch (i) {
-//			case  0x11:
+//			case  0x00:
 //				// 点点
 //				result = new SpatialQueryMode[]{CONTAIN, DISJOINT, IDENTITY, INTERSECT, WITHIN};
 //				break;
-//			case 0x12:
+//			case 0x01:
 //				// 点线
 //				result = new SpatialQueryMode[]{DISJOINT, INTERSECT, TOUCH, WITHIN};
 //				break;
-//			case 0x13:
+//			case 0x02:
 //				// 点面
 //				result = new SpatialQueryMode[]{DISJOINT, INTERSECT, TOUCH, WITHIN};
 //				break;
@@ -177,7 +170,7 @@ public class SpatialQueryModeUtilities {
 //				// 文本点
 //				result = new SpatialQueryMode[]{CONTAIN, INTERSECT};
 //				break;
-//				// 文本
+//			// 文本
 //			case 0x42:
 //				// 文本 线
 //				result = new SpatialQueryMode[]{CONTAIN, INTERSECT};
@@ -188,11 +181,13 @@ public class SpatialQueryModeUtilities {
 //				break;
 //			case 0x44:
 //				// 你不该来的！
-////				result = new SpatialQueryMode[]{};
+//				result = new SpatialQueryMode[]{};
 //				break;
 //		}
 //		return result;
-//	}
+		//endregion
+	}
+
 
 	public static int getDatasetTypeValue(DatasetType datasetType) {
 		if (datasetType == DatasetType.POINT || datasetType == DatasetType.POINT3D) {
