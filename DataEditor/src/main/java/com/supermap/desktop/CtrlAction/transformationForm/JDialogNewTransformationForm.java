@@ -1,11 +1,11 @@
-package com.supermap.desktop.CtrlAction;
+package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.assistant.AssistantProperties;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -96,8 +96,8 @@ public class JDialogNewTransformationForm extends SmDialog {
 		comboBoxResultDatasource = new DatasourceComboBox(datasourcesArray);
 
 		panelResultDatasetMain = new CompTitledPane(checkBoxSaveAsDataset, panelResultDataset);
-		panelTransformationLayer.setBorder(new TitledBorder(AssistantProperties.getString("String_Transfernation_TargetLayer")));
-		panelReferenceLayer.setBorder(new TitledBorder(AssistantProperties.getString("String_Transfernation_ReferLayer")));
+		panelTransformationLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_TargetLayer")));
+		panelReferenceLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_ReferLayer")));
 		this.setSize(new Dimension(300, 450));
 		this.setLocationRelativeTo(null);
 	}
@@ -133,14 +133,14 @@ public class JDialogNewTransformationForm extends SmDialog {
 	}
 
 	private void initResources() {
-		this.setTitle(AssistantProperties.getString("String_TransfernationPreSetTitle"));
+		this.setTitle(DataEditorProperties.getString("String_TransfernationPreSetTitle"));
 		labelTransformationDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelReferenceDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelResultDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelTransformationDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 		labelReferenceDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 		labelResultDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
-		checkBoxSaveAsDataset.setText(AssistantProperties.getString("String_Transfernation_Resave"));
+		checkBoxSaveAsDataset.setText(DataEditorProperties.getString("String_Transfernation_Resave"));
 		smButtonOK.setText(CommonProperties.getString(CommonProperties.OK));
 		smButtonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
@@ -224,14 +224,25 @@ public class JDialogNewTransformationForm extends SmDialog {
 		super.dispose();
 	}
 
+	/**
+	 * @return 配准数据集
+	 */
 	public Dataset getTransformationDataset() {
 		return comboBoxTransformationDataset.getSelectedDataset();
 	}
 
+	/**
+	 * @return 参考数据集
+	 */
 	public Dataset getReferenceDataset() {
 		return comboBoxReferenceDataset.getSelectedDataset();
 	}
 
+
+	/**
+	 * 结果数据集名称
+	 * @return
+	 */
 	public String getResultDatasetName() {
 		if (checkBoxSaveAsDataset.isSelected()) {
 			return textFieldResultDatasetName.getText();

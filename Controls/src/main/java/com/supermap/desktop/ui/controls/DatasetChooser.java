@@ -1,6 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
@@ -14,14 +19,33 @@ import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-import java.awt.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +110,7 @@ public class DatasetChooser extends SmDialog {
 
 		setTitle(CoreProperties.getString("String_FormDatasetBrowse_FormText"));
 		setSize(677, 456);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		initComponent();
 		initResources();
@@ -358,6 +383,7 @@ public class DatasetChooser extends SmDialog {
 	 */
 	private void initializeTableInfo() {
 		if (this.workspaceTree.getLastSelectedPathComponent() != null) {
+			// TODO: 2016/8/29
 			TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) this.workspaceTree.getLastSelectedPathComponent()).getUserObject();
 			if (userObject != null && userObject.getData() instanceof Datasource) {
 				Datasource datasource = (Datasource) userObject.getData();
@@ -420,9 +446,14 @@ public class DatasetChooser extends SmDialog {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
 				if (null != selectedNode) {
 					TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
-					if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
+					if (null == selectedNodeData) {
+						return;
+					}
+					if (selectedNodeData.getData() instanceof Datasource) {
 						DatasetChooser.this.datasource = (Datasource) selectedNodeData.getData();
 						DatasetChooser.this.textFieldPath.setText(DatasetChooser.this.datasource.getConnectionInfo().getServer());
+					} else if (selectedNodeData.getData() instanceof Map) {
+						mapNodeSelected();
 					}
 				}
 			}
@@ -454,6 +485,10 @@ public class DatasetChooser extends SmDialog {
 		compositeSearch();
 	}
 
+	private void clearDatasetSelected() {
+
+	}
+	
 	private class CommonButtonAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -578,4 +613,49 @@ public class DatasetChooser extends SmDialog {
 		setDialogResult(DialogResult.CANCEL);
 		dispose();
 	}
+
+
+	//region 地图相关
+	public void setMapVisible(boolean visible) {
+		workspaceTree.setMapsNodeVisible(visible);
+	}
+
+	private void mapNodeSelected() {
+		clearDatasetSelected();
+	}
+
+
+	private void clearMapSelected() {
+
+	}
+
+	//endregion
+	//region 场景
+	public void setSceneVisible() {
+
+	}
+
+	private void sceneNodeSelected() {
+
+	}
+
+	private void clearSceneSelected() {
+
+	}
+
+	//endregion
+	//region 布局
+	public void setLayoutVisible() {
+
+	}
+
+	private void layoutNodeSelected() {
+
+	}
+
+	private void clearLayoutSelected() {
+
+	}
+	//endregion
+
 }

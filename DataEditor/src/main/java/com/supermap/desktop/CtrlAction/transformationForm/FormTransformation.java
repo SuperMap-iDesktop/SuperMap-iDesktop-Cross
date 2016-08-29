@@ -1,11 +1,11 @@
-package com.supermap.desktop;
+package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.transformation.FormTransformationTableModel;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -73,7 +73,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		this.add(this.splitPaneMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		// FIXME: 2016/7/8 状态栏为空
 
-		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+//		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 	}
 
 	private void initListener() {
