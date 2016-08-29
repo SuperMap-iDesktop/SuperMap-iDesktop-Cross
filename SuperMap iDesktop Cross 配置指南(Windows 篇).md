@@ -2,12 +2,23 @@
 
 SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。
 
-# Eclipse #
+# 开发工具 #
 
-SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议使用 **Eclipse for RCP and RAP Developers** 进行开发。请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse，然后解压至任意目录。
+SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，产品源代码使用 **Maven** 进行项目管理，同时支持 **IntelliJ IDEA**、**elcipse** 等多种主流 Java 开发平台。 
+
+## IntelliJ IDEA（推荐） ##
+
+IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **Maven** 项目管理工具，推荐使用 IntelliJ IDEA 作为项目开发工具。请前往 [IntelliJ IDEA 官方网站](https://www.jetbrains.com/idea/ "IntelliJ IDEA 官方网站") 获取 **IntelliJ IDEA**，然后安装至任意目录。
 > 注意：
 > 
->     最新版本 Eclipse 也许需要 JDK 1.8 及以上版本支持。如果需要最新版本 Eclipse，请同时安装 JDK 1.8 及以上版本。
+>     最新版本 IntelliJ IDEA 需要 JDK 1.8 及以上版本支持。如果需要最新版本 IntelliJ IDEA，请同时安装 JDK 1.8 及以上版本。
+
+## Eclipse ##
+
+请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse，然后解压至任意目录。建议使用 **Eclipse for RCP and RAP Developers** 进行开发。
+> 注意：
+> 
+>     最新版本 Eclipse 需要 JDK 1.8 及以上版本支持。如果需要最新版本 Eclipse，请同时安装 JDK 1.8 及以上版本。
 
 # SuperMap iObjects Java #
 
@@ -61,6 +72,15 @@ SuperMap iDesktop Cross 分支说明：
 	后文以 **CROSS_HOME** 代指项目根目录。
 
 # 运行程序 #
+
+## IntelliJ IDEA ##
+
+1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 没有这个目录，自行新建。
+2. 进入 `CROSS_HOME` 目录，双击 **SuperMap iDesktop Cross.ipr** 启动 IntelliJ IDEA，并加载项目；
+3. 打开 Maven Projects 管理面板，展开 **iDesktop.cross - Lifecycle**，双击 **install** 安装依赖，等待完成；
+4. 点击工具条 Debug/Run 运行程序。
+
+## Eclipse ##
 
 1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 没有这个目录，自行新建。
 2. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有 jar 文件至 `CROSS_HOME/Core/lib/` 目录下。
