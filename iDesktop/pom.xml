@@ -33,36 +33,26 @@
                     <outputDirectory>${project.build.directory}</outputDirectory>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.supermap.desktop.iDesktop.Startup</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
-            <!--依赖处理-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.10</version>
                 <executions>
                     <execution>
-                        <phase>process-sources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-
-                    <!--provided 的依赖不打包-->
-                    <includeScope>runtime</includeScope>
-
-                    <!--默认输出到 target/classes/lib-->
-                    <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
-                    <overWriteIfNewer>true</overWriteIfNewer>
-                    <overWriteReleases>false</overWriteReleases>
-                    <overWriteSnapshots>false</overWriteSnapshots>
+                    <!--默认输出到 target/classes-->
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
