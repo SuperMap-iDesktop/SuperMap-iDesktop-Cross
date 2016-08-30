@@ -30,6 +30,8 @@
         <module>RealspaceView</module>
         <module>SpatialAnalyst</module>
         <module>TabularView</module>
+        <module>Test</module>
+        <module>JUnitPlugin</module>
     </modules>
 
     <properties>
