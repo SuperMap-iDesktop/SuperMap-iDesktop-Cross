@@ -143,25 +143,25 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 					}
 				}
 			}
-			if (defaultDatasource == null) {
-				return;
-			}
+
 
 			int i = 0;
 			for (Layer layer : layers) {
 				if (layer.getDataset() != null && supportDatasetTypes.contains(layer.getDataset().getType())) {
 					TableRowData rowData = new TableRowData(layer);
-					rowData.setResultDatasource(defaultDatasource);
-
-					for (; true; i++) {
-						String tempDatasetName = i == 0 ? defaultDatasetName : defaultDatasetName + "_" + i;
-						String resultName = defaultDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
-						if (tempDatasetName.equalsIgnoreCase(resultName)) {
-							rowData.setResultDataset(resultName);
-							i++;
-							break;
+					if (defaultDatasource != null) {
+						rowData.setResultDatasource(defaultDatasource);
+						for (; true; i++) {
+							String tempDatasetName = i == 0 ? defaultDatasetName : defaultDatasetName + "_" + i;
+							String resultName = defaultDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
+							if (tempDatasetName.equalsIgnoreCase(resultName)) {
+								rowData.setResultDataset(resultName);
+								i++;
+								break;
+							}
 						}
 					}
+
 					rowDatas.add(rowData);
 				}
 			}
@@ -206,7 +206,11 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 			if (datasource != rowDatas.get(selectedRow).getResultDatasource()) {
 				rowDatas.get(selectedRow).setResultDatasource(datasource);
 				if (datasource != null) {
-					rowDatas.get(selectedRow).setResultDataset(datasource.getDatasets().getAvailableDatasetName(rowDatas.get(selectedRow).getResultDataset()));
+					String resultDataset = rowDatas.get(selectedRow).getResultDataset();
+					if (StringUtilities.isNullOrEmpty(resultDataset)) {
+						resultDataset = defaultDatasetName;
+					}
+					rowDatas.get(selectedRow).setResultDataset(datasource.getDatasets().getAvailableDatasetName(resultDataset));
 				}
 			}
 		}
@@ -389,14 +393,29 @@ public class TableModelSpatialQuery extends DefaultTableModel {
 		if (layer != null && layer.getDataset() != null && supportDatasetTypes.contains(layer.getDataset().getType())) {
 			TableRowData tableRowData = new TableRowData(layer);
 			rowDatas.add(tableRowData);
-			Datasource defaultDatasource = layer.getDataset().getDatasource();
-			tableRowData.setResultDatasource(defaultDatasource);
-			for (int i = 0; true; i++) {
-				String tempDatasetName = i == 0 ? defaultDatasetName : defaultDatasetName + "_" + i;
-				String resultName = defaultDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
-				if (tempDatasetName.equalsIgnoreCase(resultName)) {
-					tableRowData.setResultDataset(resultName);
-					break;
+			Datasource defaultDatasource = null;
+			if (layer.getDataset().getDatasource().isOpened() && !layer.getDataset().getDatasource().isReadOnly()) {
+				defaultDatasource = layer.getDataset().getDatasource();
+			}
+			if (defaultDatasource == null) {
+				Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+				for (int i = 0; i < datasources.getCount(); i++) {
+					if (datasources.get(i).isOpened() && !datasources.get(i).isReadOnly()) {
+						defaultDatasource = datasources.get(i);
+						break;
+					}
+				}
+			}
+			if (defaultDatasource != null) {
+
+				tableRowData.setResultDatasource(defaultDatasource);
+				for (int i = 0; true; i++) {
+					String tempDatasetName = i == 0 ? defaultDatasetName : defaultDatasetName + "_" + i;
+					String resultName = defaultDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
+					if (tempDatasetName.equalsIgnoreCase(resultName)) {
+						tableRowData.setResultDataset(resultName);
+						break;
+					}
 				}
 			}
 			fireTableRowsInserted(rowDatas.size() - 1, rowDatas.size() - 1);

@@ -16,6 +16,8 @@ import com.supermap.data.DatasourceOpenedListener;
 import com.supermap.data.Datasources;
 import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
+import com.supermap.data.WorkspaceClosedEvent;
+import com.supermap.data.WorkspaceClosedListener;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
@@ -136,11 +138,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			removeDatasourcesListeners();
 			comboBoxDatasource.removeAllItems();
-			int[] rows = new int[tableLayers.getRowCount()];
-			for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
-				rows[i] = i;
-			}
-			tableModelSpatialQuery.setDatasource(rows, null);
 		}
 	};
 	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
@@ -195,9 +192,10 @@ public class JDialogSpatialQuery extends SmDialog {
 	private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
 		@Override
 		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-//					lastSelectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
+			Layer lastSelectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
 			if (geometrySelectChangedEvent.getCount() == 0) {
 				comboBoxSearchLayer.removeAllItems();
+				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
 				// 触发不了选中事件
 				for (int i = 0; i < tableLayers.getRowCount(); i++) {
 					tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
@@ -206,19 +204,20 @@ public class JDialogSpatialQuery extends SmDialog {
 				isIgnore = true;
 				initComboBoxSearchLayerState();
 				// 如果刚好相同
+				comboBoxSearchLayer.setSelectedItem(null);
 				isIgnore = false;
-				if (lastSelectedLayerDatasetType == null && comboBoxSearchLayer.getItemCount() > 0) {
-					comboBoxSearchLayer.setSelectedIndex(0);
+				if (JComboBoxUIUtilities.getItemIndex(comboBoxSearchLayer, lastSelectedLayer) != -1) {
+					comboBoxSearchLayer.setSelectedItem(lastSelectedLayer);
 				} else {
-					comboBoxSearchLayer.setSelectedItem(lastSelectedLayerDatasetType);
+					comboBoxSearchLayer.setSelectedIndex(0);
 				}
 			}
-			lastSelectedLayerDatasetType = comboBoxSearchLayer.getSelectedItem() == null ? null : ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType();
-			if (lastSelectedLayerDatasetType != null) {
-				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection().getCount()));
-			} else {
-				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
-			}
+//			lastSelectedLayerDatasetType = comboBoxSearchLayer.getSelectedItem() == null ? null : ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType();
+//			if (lastSelectedLayerDatasetType != null) {
+//				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection().getCount()));
+//			} else {
+//				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
+//			}
 		}
 	};
 	private MapOpenedListener mapOpenedListener = new MapOpenedListener() {
@@ -241,6 +240,10 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 		if (comboBoxDatasource.getItemCount() == 1) {
 			tableModelSpatialQuery.setDatasource(rows, datasource);
+			smTextFieldLegitDataset.setEditable(tableLayers.getSelectedRowCount() == 1 && checkBoxSaveResult.isSelected());
+			isIgnore = true;
+			smTextFieldLegitDataset.setText(tableModelSpatialQuery.getDatasetName(tableLayers.getSelectedRows()));
+			isIgnore = false;
 		}
 	}
 
@@ -643,7 +646,23 @@ public class JDialogSpatialQuery extends SmDialog {
 					// 新选择的图层类型不同或者为空重置查询方式
 					if (isResetQueryMode) {
 						for (int i = 0; i < tableLayers.getRowCount(); i++) {
-							tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+							SpatialQueryMode mode = (SpatialQueryMode) tableLayers.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+							if (mode != null) {
+								boolean reset = true;
+								if (selectedItem != null) {
+									SpatialQueryMode[] supportSpatialQueryModes = SpatialQueryModeUtilities.getSupportSpatialQueryModes(selectedItem.getDataset().getType(),
+											(DatasetType) tableLayers.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+									for (SpatialQueryMode supportSpatialQueryMode : supportSpatialQueryModes) {
+										if (supportSpatialQueryMode == mode) {
+											reset = false;
+											break;
+										}
+									}
+								}
+								if (reset) {
+									tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+								}
+							}
 						}
 					}
 					tableLayers.repaint();
@@ -734,11 +753,13 @@ public class JDialogSpatialQuery extends SmDialog {
 				boolean query = false;
 				try {
 					CursorUtilities.setWaitCursor();
+					CursorUtilities.setWaitCursor(JDialogSpatialQuery.this);
 					query = query();
 				} catch (Exception e1) {
 					Application.getActiveApplication().getOutput().output(e1);
 				} finally {
 					CursorUtilities.setDefaultCursor();
+					CursorUtilities.setDefaultCursor(JDialogSpatialQuery.this);
 				}
 				if (query && checkBoxAutoClose.isSelected()) {
 					dispose();
@@ -759,8 +780,14 @@ public class JDialogSpatialQuery extends SmDialog {
 		});
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(activeFormChangedListener);
 		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
+		Application.getActiveApplication().getWorkspace().addClosedListener(new WorkspaceClosedListener() {
+			@Override
+			public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
+//
+				initDatasourcesListeners();
+			}
+		});
 		Application.getActiveApplication().getWorkspace().addOpenedListener(workspaceOpenedListener);
-
 		initDatasourcesListeners();
 		initFormListener();
 	}
@@ -1178,9 +1205,13 @@ public class JDialogSpatialQuery extends SmDialog {
 			isIgnore = false;
 		}
 		int selectedRow = tableLayers.getSelectedRow();
-		if (selectedRow != -1 && tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null) {
-			setDescribe((SpatialQueryMode) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE), ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType()
-					, (DatasetType) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+		if (comboBoxSearchLayer.getSelectedItem() != null && selectedRow != -1 && tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null) {
+			try {
+				setDescribe((SpatialQueryMode) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE), ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType()
+						, (DatasetType) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+			} catch (Exception e) {
+				// ignore
+			}
 		}
 
 	}
@@ -1294,7 +1325,7 @@ public class JDialogSpatialQuery extends SmDialog {
 			}
 		}
 		if (comboBoxSearchLayer.getItemCount() > 0) {
-			labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), ((Layer) comboBoxSearchLayer.getItemAt(0)).getSelection().getCount()));
+			labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), comboBoxSearchLayer.getItemAt(0).getSelection().getCount()));
 		} else {
 			labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
 		}

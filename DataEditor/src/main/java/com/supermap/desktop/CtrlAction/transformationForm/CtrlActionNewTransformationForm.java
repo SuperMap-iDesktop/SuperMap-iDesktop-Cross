@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction;
+package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;

@@ -142,7 +142,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
 			if (GlobalParameters.isAutoCloseEmptyWindow() && mapControl.getMap().getLayers().getCount() == 0) {
-				FormMap.this.close();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						FormMap.this.close();
+					}
+				});
 			}
 		}
 	};
