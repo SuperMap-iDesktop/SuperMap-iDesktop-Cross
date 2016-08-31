@@ -46,4 +46,6 @@ public interface IFormMap extends IForm {
 	void openMap(String mapName);
 
 	int getSelectedCount();
+
+	void removeLayers(Layer[] activeLayers);
 }

@@ -2,12 +2,12 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.ui.FormBaseChild;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.mapping.Layer;
@@ -142,12 +142,13 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void actived() {
-		UICommonToolkit.getLayersManager().getLayersTree().setMap(currentForceWindow.getMapControl().getMap());
+		currentForceWindow.actived();
+		Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 	}
 
 	@Override
 	public void deactived() {
-
+		currentForceWindow.deactived();
 	}
 
 	@Override
@@ -255,6 +256,11 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public int getSelectedCount() {
 		return 0;
+	}
+
+	@Override
+	public void removeLayers(Layer[] activeLayers) {
+		currentForceWindow.removeLayers(activeLayers);
 	}
 
 	@Override

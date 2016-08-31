@@ -5,8 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.event.ActiveLayersChangedListener;
-import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -73,26 +71,6 @@ public class TransformationReference extends TransformationBase implements ITran
 		return mapControl;
 	}
 
-
-	@Override
-	public Layer[] getActiveLayers() {
-		return new Layer[0];
-	}
-
-	@Override
-	public void setActiveLayers(Layer... activeLayers) {
-
-	}
-
-	@Override
-	public void addActiveLayersChangedListener(ActiveLayersChangedListener listener) {
-
-	}
-
-	@Override
-	public void removeActiveLayersChangedListener(ActiveLayersChangedListener listener) {
-
-	}
 
 	@Override
 	public void removeActiveLayersByDatasets(Dataset... datasets) {
