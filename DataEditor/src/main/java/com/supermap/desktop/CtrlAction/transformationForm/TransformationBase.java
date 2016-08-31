@@ -16,52 +16,13 @@ public class TransformationBase implements IFormMap {
 
 	@Override
 	public String getText() {
-		return null;
+		return getMapControl().getMap().getName();
 	}
 
-	@Override
-	public void setText(String text) {
-
-	}
 
 	@Override
 	public WindowType getWindowType() {
 		return WindowType.TRANSFORMATION;
-	}
-
-	@Override
-	public boolean save() {
-		return false;
-	}
-
-	@Override
-	public boolean save(boolean notify, boolean isNewWindow) {
-		return false;
-	}
-
-	@Override
-	public boolean saveFormInfos() {
-		return false;
-	}
-
-	@Override
-	public boolean saveAs(boolean isNewWindow) {
-		return false;
-	}
-
-	@Override
-	public boolean isNeedSave() {
-		return false;
-	}
-
-	@Override
-	public void setNeedSave(boolean needSave) {
-
-	}
-
-	@Override
-	public boolean isActivated() {
-		return false;
 	}
 
 	@Override
@@ -77,6 +38,12 @@ public class TransformationBase implements IFormMap {
 
 	@Override
 	public void deactived() {
+		removeListeners();
+		LayersComponentManager layersComponentManager = UICommonToolkit.getLayersManager();
+		layersComponentManager.setMap(null);
+	}
+
+	private void removeListeners() {
 
 	}
 
@@ -165,4 +132,43 @@ public class TransformationBase implements IFormMap {
 		return 0;
 	}
 
+	@Override
+	public boolean save() {
+		return false;
+	}
+
+	@Override
+	public void setText(String text) {
+
+	}
+
+	@Override
+	public boolean save(boolean notify, boolean isNewWindow) {
+		return false;
+	}
+
+	@Override
+	public boolean saveFormInfos() {
+		return false;
+	}
+
+	@Override
+	public boolean saveAs(boolean isNewWindow) {
+		return false;
+	}
+
+	@Override
+	public boolean isNeedSave() {
+		return false;
+	}
+
+	@Override
+	public void setNeedSave(boolean needSave) {
+
+	}
+
+	@Override
+	public boolean isActivated() {
+		return false;
+	}
 }

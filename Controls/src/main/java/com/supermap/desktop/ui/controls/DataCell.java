@@ -257,46 +257,48 @@ public class DataCell extends JPanel {
 		for (Object object : objects) {
 			if (object instanceof Datasource) {
 				this.initDatasourceType(((Datasource) object));
-				break;
+				return;
 			} else if (object instanceof Dataset) {
 				this.initDatasetType(((Dataset) object));
-				break;
+				return;
 			} else if (object instanceof EngineType) {
 				if (name != null) {
 					this.initDatasourceType(((EngineType) object), name);
-					break;
+					return;
 				} else {
 					engineType = ((EngineType) object);
 				}
 			} else if (object instanceof DatasetType) {
 				if (name != null) {
 					this.initDatasetType(((DatasetType) object), name);
-					break;
+					return;
 				} else {
 					datasetType = ((DatasetType) object);
 				}
 			} else if (object instanceof ImageIcon) {
 				if (name != null) {
 					this.initDataImage(((ImageIcon) object), name);
-					break;
+					return;
 				} else {
 					icon = ((ImageIcon) object);
 				}
 			} else if (object instanceof Layer) {
 				initLayer(((Layer) object));
+				return;
 			} else if (object instanceof Map) {
 				initMap((Map) object);
+				return;
 			} else if (object instanceof String) {
 				String str = (String) object;
 				if (engineType != null) {
 					this.initDatasourceType(engineType, str);
-					break;
+					return;
 				} else if (datasetType != null) {
 					this.initDatasetType(datasetType, str);
-					break;
+					return;
 				} else if (icon != null) {
 					this.initDataImage(icon, str);
-					break;
+					return;
 				} else {
 					name = str;
 				}

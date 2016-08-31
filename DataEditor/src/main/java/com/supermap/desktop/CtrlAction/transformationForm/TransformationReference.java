@@ -57,42 +57,6 @@ public class TransformationReference extends TransformationBase implements ITran
 		}
 	}
 
-	@Override
-	public String getText() {
-		return null;
-	}
-
-
-	@Override
-	public boolean save() {
-		return false;
-	}
-
-	@Override
-	public boolean save(boolean notify, boolean isNewWindow) {
-		return false;
-	}
-
-	@Override
-	public boolean saveFormInfos() {
-		return false;
-	}
-
-	@Override
-	public boolean saveAs(boolean isNewWindow) {
-		return false;
-	}
-
-	@Override
-	public boolean isNeedSave() {
-		return false;
-	}
-
-	@Override
-	public void setNeedSave(boolean needSave) {
-
-	}
-
 
 	@Override
 	public void clean() {
