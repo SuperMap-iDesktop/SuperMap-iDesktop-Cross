@@ -14,7 +14,7 @@
     <!--Packaging = jar 会定义默认的 goal 来打包（maven-jar-plugin），本程序需要自定义打包过程，
     方法一：设置 Packaging = bundle，本程序采用这种方式。
     方法二：使用 maven-bundle-plugin 的 manifest goal，配合 maven-dependency-plugin、maven-resources-plugin 等实现。-->
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <!--<repositories>-->
     <!--<repository>-->
@@ -212,7 +212,6 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
-                    <buildDirectory>${project.basedir}/../bundles/require_bundles/</buildDirectory>
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.core.CoreActivator</Bundle-Activator>
                         <Export-Package>
@@ -223,6 +222,41 @@
                             org.jdesktop.*
                         </Export-Package>
                     </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <!--jar 生成到指定的路径-->
+                    <outputDirectory>${project.basedir}/../bundles/require_bundles/</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!--依赖处理-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <!--provided 的依赖不打包-->
+                    <excludeScope>provided</excludeScope>
+
+                    <!--默认输出到 target/classes/lib-->
+                    <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
                 </configuration>
             </plugin>
         </plugins>

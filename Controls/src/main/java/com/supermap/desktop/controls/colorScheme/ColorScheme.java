@@ -9,7 +9,11 @@ import com.supermap.desktop.dialog.ColorSchemeDialogs.ColorSchemeTreeNode;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -52,6 +56,10 @@ public class ColorScheme implements ICloneable {
 	 */
 	private int keyColorCount;
 
+	/**
+	 * 渐变色间隔数，只在生成预览时使用；
+	 * 制作专题图时会根据专题图子项个数重新生成色带
+	 */
 	private int intervalColorCount;
 
 	private String colorSchemePath;
@@ -127,14 +135,16 @@ public class ColorScheme implements ICloneable {
 //	}
 
 	public Colors getColors() {
+		return getColors((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1);
+	}
+
+	public Colors getColors(int count) {
 		Colors colors = null;
 		Color[] gradientColors = new Color[this.colors.size()];
 		this.colors.toArray(gradientColors);
-		int intervalColorCount = this.getIntervalColorCount();
-		ColorScheme.IntervalColorBuildMethod method = this.getIntervalColorBuildMethod();
-		if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT)) {
-			colors = Colors.makeGradient((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
-		} else if (method.equals(ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM)) {
+		if (this.getIntervalColorBuildMethod() == ColorScheme.IntervalColorBuildMethod.ICBM_GRADIENT) {
+			colors = Colors.makeGradient(count, gradientColors);
+		} else if (this.getIntervalColorBuildMethod().equals(ColorScheme.IntervalColorBuildMethod.ICBM_RANDOM)){
 			colors = ColorsUIUtilities.buildRandom((this.getKeyColorCount() - 1) * (intervalColorCount + 1) + 1, gradientColors);
 		}
 		return colors;

@@ -17,13 +17,7 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.RangeMode;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -34,12 +28,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -112,7 +101,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	/**
 	 * 初始化单值专题图
 	 *
-	 * @param dataset
+	 * @param datasetGrid
 	 * @return
 	 */
 	private Map initCurrentTheme(DatasetGrid datasetGrid) {
@@ -134,10 +123,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
-		if (isNewTheme) {
-			refreshColor();
-			refreshAtOnce();
-		}
 	}
 
 	/**
@@ -164,6 +149,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,5).setWeight(100, 0));
 		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
 		

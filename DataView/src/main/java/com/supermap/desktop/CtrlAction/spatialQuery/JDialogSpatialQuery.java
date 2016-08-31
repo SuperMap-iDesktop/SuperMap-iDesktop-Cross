@@ -16,6 +16,8 @@ import com.supermap.data.DatasourceOpenedListener;
 import com.supermap.data.Datasources;
 import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
+import com.supermap.data.WorkspaceClosedEvent;
+import com.supermap.data.WorkspaceClosedListener;
 import com.supermap.data.WorkspaceClosingEvent;
 import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
@@ -45,6 +47,7 @@ import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.SpatialQueryModeUtilities;
@@ -80,8 +83,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ import java.util.List;
 public class JDialogSpatialQuery extends SmDialog {
 
 
-	private Layer lastSelectedLayer;
+	private DatasetType lastSelectedLayerDatasetType;
 
 	private JToolBar toolBar = new JToolBar();
 	private SmButton buttonSelectAll = new SmButton();
@@ -137,11 +138,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			removeDatasourcesListeners();
 			comboBoxDatasource.removeAllItems();
-			int[] rows = new int[tableLayers.getRowCount()];
-			for (int i = 0; i < tableModelSpatialQuery.getRowCount(); i++) {
-				rows[i] = i;
-			}
-			tableModelSpatialQuery.setDatasource(rows, null);
 		}
 	};
 	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
@@ -166,6 +162,25 @@ public class JDialogSpatialQuery extends SmDialog {
 		@Override
 		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
 			tableModelSpatialQuery.removeLayer(layerRemovedEvent.getLayer());
+			if (comboBoxSearchLayer.getSelectedItem() == layerRemovedEvent.getLayer()) {
+				isIgnore = comboBoxSearchLayer.getItemCount() != 1;
+				comboBoxSearchLayer.removeItem(layerRemovedEvent.getLayer());
+				if (comboBoxSearchLayer.getItemCount() > 0) {
+					Layer item = (Layer) comboBoxSearchLayer.getSelectedItem();
+					comboBoxSearchLayer.setSelectedItem(null);
+					isIgnore = false;
+					comboBoxSearchLayer.setSelectedItem(item);
+				} else {
+					lastSelectedLayerDatasetType = null;
+				}
+				if (lastSelectedLayerDatasetType != null) {
+					labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection().getCount()));
+				} else {
+					labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
+				}
+				isIgnore = false;
+			}
+//			comboBoxSearchLayer.removeItem(layerRemovedEvent.getLayer());
 		}
 	};
 	private LayerAddedListener layerAddedListener = new LayerAddedListener() {
@@ -177,9 +192,10 @@ public class JDialogSpatialQuery extends SmDialog {
 	private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
 		@Override
 		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-//					lastSelectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
+			Layer lastSelectedLayer = (Layer) comboBoxSearchLayer.getSelectedItem();
 			if (geometrySelectChangedEvent.getCount() == 0) {
 				comboBoxSearchLayer.removeAllItems();
+				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
 				// 触发不了选中事件
 				for (int i = 0; i < tableLayers.getRowCount(); i++) {
 					tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
@@ -188,19 +204,20 @@ public class JDialogSpatialQuery extends SmDialog {
 				isIgnore = true;
 				initComboBoxSearchLayerState();
 				// 如果刚好相同
+				comboBoxSearchLayer.setSelectedItem(null);
 				isIgnore = false;
-				if (lastSelectedLayer == null && comboBoxSearchLayer.getItemCount() > 0) {
-					comboBoxSearchLayer.setSelectedIndex(0);
-				} else {
+				if (JComboBoxUIUtilities.getItemIndex(comboBoxSearchLayer, lastSelectedLayer) != -1) {
 					comboBoxSearchLayer.setSelectedItem(lastSelectedLayer);
+				} else {
+					comboBoxSearchLayer.setSelectedIndex(0);
 				}
 			}
-			lastSelectedLayer = ((Layer) comboBoxSearchLayer.getSelectedItem());
-			if (lastSelectedLayer != null) {
-				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), lastSelectedLayer.getSelection().getCount()));
-			} else {
-				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
-			}
+//			lastSelectedLayerDatasetType = comboBoxSearchLayer.getSelectedItem() == null ? null : ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType();
+//			if (lastSelectedLayerDatasetType != null) {
+//				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), ((Layer) comboBoxSearchLayer.getSelectedItem()).getSelection().getCount()));
+//			} else {
+//				labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
+//			}
 		}
 	};
 	private MapOpenedListener mapOpenedListener = new MapOpenedListener() {
@@ -223,6 +240,10 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 		if (comboBoxDatasource.getItemCount() == 1) {
 			tableModelSpatialQuery.setDatasource(rows, datasource);
+			smTextFieldLegitDataset.setEditable(tableLayers.getSelectedRowCount() == 1 && checkBoxSaveResult.isSelected());
+			isIgnore = true;
+			smTextFieldLegitDataset.setText(tableModelSpatialQuery.getDatasetName(tableLayers.getSelectedRows()));
+			isIgnore = false;
 		}
 	}
 
@@ -293,23 +314,17 @@ public class JDialogSpatialQuery extends SmDialog {
 
 	private void init() {
 		supportSearchDatasetTypes.add(DatasetType.POINT);
-		supportSearchDatasetTypes.add(DatasetType.POINT3D);
+//		supportSearchDatasetTypes.add(DatasetType.POINT3D);
 		supportSearchDatasetTypes.add(DatasetType.LINE);
-		supportSearchDatasetTypes.add(DatasetType.LINE3D);
+//		supportSearchDatasetTypes.add(DatasetType.LINE3D);
 		supportSearchDatasetTypes.add(DatasetType.LINEM);
 		supportSearchDatasetTypes.add(DatasetType.NETWORK);
-		supportSearchDatasetTypes.add(DatasetType.NETWORK3D);
+//		supportSearchDatasetTypes.add(DatasetType.NETWORK3D);
 		supportSearchDatasetTypes.add(DatasetType.REGION);
-		supportSearchDatasetTypes.add(DatasetType.REGION3D);
+//		supportSearchDatasetTypes.add(DatasetType.REGION3D);
 		supportSearchDatasetTypes.add(DatasetType.CAD);
 		supportSearchDatasetTypes.add(DatasetType.TEXT);
-
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(WindowEvent e) {
-				dispose();
-			}
-		});
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		initComponent();
 		initLayout();
 		initListener();
@@ -381,20 +396,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		}
 		checkBoxSelectedAll.setSelected(false);
 		panelDescribe.setMinimumSize(new Dimension(20, 120));
-//		comboBoxSearchLayer.setRenderer(new ListCellRenderer<Layer>() {
-//			@Override
-//			public Component getListCellRendererComponent(JList<? extends Layer> list, Layer value, int index, boolean isSelected, boolean cellHasFocus) {
-//				JLabel jLabel = new JLabel();
-//				if (value != null) {
-//					jLabel.setText(value.getCaption());
-//				}
-//				if (isSelected) {
-//					jLabel.setOpaque(true);
-//					jLabel.setBackground(list.getSelectionBackground());
-//				}
-//				return jLabel;
-//			}
-//		});
 		compTitledPaneSearchResult = new CompTitledPane(checkBoxSaveResult, panelSearchResult);
 		textAreaDescribe.setLineWrap(true);
 		this.setSize(new Dimension(800, 600));
@@ -408,7 +409,6 @@ public class JDialogSpatialQuery extends SmDialog {
 		picName = mode.name().substring(0, 1) + mode.name().toLowerCase().substring(1) + "_" + getDatasetTypeDescribe(searchLayerDatasetType) + getDatasetTypeDescribe(currentDatasetType);
 		labelDescribeIcon.setIcon(DataViewResources.getIcon("/dataviewresources/SpatialQuery/" + picName + ".png"));
 		textAreaDescribe.setText(DataViewProperties.getString("String_SpatialQuery_" + mode.name()));
-
 	}
 
 	private String getDatasetTypeDescribe(DatasetType datasetType) {
@@ -437,6 +437,7 @@ public class JDialogSpatialQuery extends SmDialog {
 						tableLayers.setValueAt(checkBoxSelectedAll.isSelectedEx(), i, 0);
 					}
 					tableLayers.getTableHeader().repaint();
+					checkSmButtonOkState();
 					checkBoxSelectAllLock = false;
 				}
 			}
@@ -629,13 +630,15 @@ public class JDialogSpatialQuery extends SmDialog {
 					return;
 				}
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					Object selectedItem = comboBoxSearchLayer.getSelectedItem();
+					Layer selectedItem = (Layer) comboBoxSearchLayer.getSelectedItem();
 					boolean isResetQueryMode = true;
-					if (selectedItem != null) {
-						Layer layer = (Layer) selectedItem;
-						labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), layer.getSelection().getCount()));
-						if (lastSelectedLayer != null && layer.getDataset().getType() == lastSelectedLayer.getDataset().getType()) {
-							isResetQueryMode = false;
+					if (selectedItem != null && !selectedItem.isDisposed()) {
+						labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), selectedItem.getSelection().getCount()));
+						if (lastSelectedLayerDatasetType != null && getDatasetTypeDescribe(selectedItem.getDataset().getType()).equals(getDatasetTypeDescribe(lastSelectedLayerDatasetType))) {
+							if (selectedItem.getDataset().getType() == lastSelectedLayerDatasetType
+									|| (selectedItem.getDataset().getType() != DatasetType.CAD && lastSelectedLayerDatasetType != DatasetType.CAD)) {
+								isResetQueryMode = false;
+							}
 						}
 					} else {
 						labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
@@ -643,10 +646,27 @@ public class JDialogSpatialQuery extends SmDialog {
 					// 新选择的图层类型不同或者为空重置查询方式
 					if (isResetQueryMode) {
 						for (int i = 0; i < tableLayers.getRowCount(); i++) {
-							tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+							SpatialQueryMode mode = (SpatialQueryMode) tableLayers.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+							if (mode != null) {
+								boolean reset = true;
+								if (selectedItem != null) {
+									SpatialQueryMode[] supportSpatialQueryModes = SpatialQueryModeUtilities.getSupportSpatialQueryModes(selectedItem.getDataset().getType(),
+											(DatasetType) tableLayers.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+									for (SpatialQueryMode supportSpatialQueryMode : supportSpatialQueryModes) {
+										if (supportSpatialQueryMode == mode) {
+											reset = false;
+											break;
+										}
+									}
+								}
+								if (reset) {
+									tableLayers.setValueAt(null, i, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE);
+								}
+							}
 						}
 					}
-					lastSelectedLayer = ((Layer) selectedItem);
+					tableLayers.repaint();
+					lastSelectedLayerDatasetType = selectedItem == null || selectedItem.isDisposed() ? null : selectedItem.getDataset().getType();
 				}
 			}
 		});
@@ -660,6 +680,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (!isIgnore) {
 					tableModelSpatialQuery.setIsSave(tableLayers.getSelectedRows(), selected);
 				}
+				checkSmButtonOkState();
 			}
 		});
 		comboBoxDatasource.addItemListener(new ItemListener() {
@@ -729,7 +750,18 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (tableLayers.getCellEditor() != null) {
 					tableLayers.getCellEditor().stopCellEditing();
 				}
-				if (query() && checkBoxAutoClose.isSelected()) {
+				boolean query = false;
+				try {
+					CursorUtilities.setWaitCursor();
+					CursorUtilities.setWaitCursor(JDialogSpatialQuery.this);
+					query = query();
+				} catch (Exception e1) {
+					Application.getActiveApplication().getOutput().output(e1);
+				} finally {
+					CursorUtilities.setDefaultCursor();
+					CursorUtilities.setDefaultCursor(JDialogSpatialQuery.this);
+				}
+				if (query && checkBoxAutoClose.isSelected()) {
 					dispose();
 				}
 			}
@@ -748,8 +780,14 @@ public class JDialogSpatialQuery extends SmDialog {
 		});
 		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(activeFormChangedListener);
 		Application.getActiveApplication().getWorkspace().addClosingListener(workspaceClosingListener);
+		Application.getActiveApplication().getWorkspace().addClosedListener(new WorkspaceClosedListener() {
+			@Override
+			public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
+//
+				initDatasourcesListeners();
+			}
+		});
 		Application.getActiveApplication().getWorkspace().addOpenedListener(workspaceOpenedListener);
-
 		initDatasourcesListeners();
 		initFormListener();
 	}
@@ -1103,6 +1141,7 @@ public class JDialogSpatialQuery extends SmDialog {
 	}
 
 	private void saveAsDataset(int i, Recordset recordset) {
+		Boolean bAppend;
 		Datasource datasource = tableModelSpatialQuery.getResultDatasource(i);
 		if (datasource != null) {
 			String datasetName = tableModelSpatialQuery.getDatasetName(i);
@@ -1117,16 +1156,18 @@ public class JDialogSpatialQuery extends SmDialog {
 				DatasetVector dtv = datasource.getDatasets().create(info);
 				dtv.setCharset(datasetVector.getCharset());
 				dtv.setPrjCoordSys(datasetVector.getPrjCoordSys());
-				Boolean bAppend = dtv.append(recordset);
+				bAppend = dtv.append(recordset);
 
-				if (!bAppend) {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
-				}
+
 			} else {
 				DatasetVector dtv = (DatasetVector) datasource.getDatasets().createFromTemplate(datasetName, datasetVector);
-				if (!dtv.append(recordset)) {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName));
-				}
+				bAppend = dtv.append(recordset);
+			}
+			if (!bAppend) {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetFailedMessage"), datasetName + "@" + datasource.getAlias()));
+			} else {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_SaveDatasetSuccessMessage")
+						, tableModelSpatialQuery.getValueAt(i, TableModelSpatialQuery.COLUMN_INDEX_LAYER_NAME), datasetName + "@" + datasource.getAlias()));
 			}
 		}
 	}
@@ -1163,6 +1204,15 @@ public class JDialogSpatialQuery extends SmDialog {
 			checkPropertiesButtonState();
 			isIgnore = false;
 		}
+		int selectedRow = tableLayers.getSelectedRow();
+		if (comboBoxSearchLayer.getSelectedItem() != null && selectedRow != -1 && tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE) != null) {
+			try {
+				setDescribe((SpatialQueryMode) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_SPATIAL_QUERY_MODE), ((Layer) comboBoxSearchLayer.getSelectedItem()).getDataset().getType()
+						, (DatasetType) tableModelSpatialQuery.getValueAt(selectedRow, TableModelSpatialQuery.COLUMN_INDEX_DATASET_TYPE));
+			} catch (Exception e) {
+				// ignore
+			}
+		}
 
 	}
 
@@ -1190,6 +1240,7 @@ public class JDialogSpatialQuery extends SmDialog {
 			checkBoxShowInTabular.setEnabled(enabled);
 			checkBoxShowInMap.setEnabled(enabled);
 		}
+//		comboBoxDatasource.setEnabled(enabled && );
 		smTextFieldLegitDataset.setEditable(enabled && comboBoxDatasource.getSelectedItem() != null && tableLayers.getSelectedRowCount() == 1 && checkBoxSaveResult.isSelected());
 	}
 
@@ -1268,12 +1319,16 @@ public class JDialogSpatialQuery extends SmDialog {
 
 			ArrayList<Layer> layers = MapUtilities.getLayers(((IFormMap) currentForm).getMapControl().getMap());
 			for (Layer layer : layers) {
-				if (layer.getDataset() != null && layer.getSelection().getCount() > 0 && supportSearchDatasetTypes.contains(layer.getDataset().getType())) {
+				if (layer.getDataset() != null && supportSearchDatasetTypes.contains(layer.getDataset().getType()) && layer.getSelection().getCount() > 0) {
 					comboBoxSearchLayer.addItem(layer);
 				}
 			}
 		}
-
+		if (comboBoxSearchLayer.getItemCount() > 0) {
+			labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), comboBoxSearchLayer.getItemAt(0).getSelection().getCount()));
+		} else {
+			labelSelectedCount.setText(MessageFormat.format(DataViewProperties.getString("String_CountofFeaturesSelecte"), 0));
+		}
 	}
 
 	@Override

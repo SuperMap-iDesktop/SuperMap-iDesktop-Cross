@@ -1,6 +1,10 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.*;
+import com.supermap.data.ColorGradientType;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.enums.UnitValue;
@@ -16,7 +20,13 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +36,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -317,19 +332,18 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
 	 */
 	private void refreshColor() {
 		if (comboBoxColorStyle != null) {
-			int colorCount = ((Colors) comboBoxColorStyle.getSelectedItem()).getCount();
-			Colors colors = (Colors) comboBoxColorStyle.getSelectedItem();
-			int themeLabelCount = themeLabel.getCount();
-			if (themeLabelCount > 0) {
-				float ratio = (1f * colorCount) / (1f * themeLabelCount);
-				setTextStyleColor(themeLabel.getItem(0).getStyle(), colors.get(0));
-				setTextStyleColor(themeLabel.getItem(themeLabelCount - 1).getStyle(), colors.get(colorCount - 1));
-				for (int i = 1; i < themeLabelCount - 1; i++) {
-					int colorIndex = Math.round(i * ratio);
-					if (colorIndex == colorCount) {
-						colorIndex--;
-					}
-					setTextStyleColor(themeLabel.getItem(i).getStyle(), colors.get(colorIndex));
+			Colors colors = comboBoxColorStyle.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
+			int rangeCount = themeLabel.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
+			if (rangeCount > 0) {
+				for (int i = 0; i < rangeCount; i++) {
+					setTextStyleColor(themeLabel.getItem(i).getStyle(), colors.get(i));
 				}
 			}
 		}
