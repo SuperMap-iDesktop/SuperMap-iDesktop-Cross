@@ -6,14 +6,20 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Enum;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.layout.MapLayout;
+import com.supermap.mapping.Map;
+import com.supermap.realspace.Scene;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * @author XiaJt
  */
 public class SortUIUtilities {
+	private static Comparator comparator;
+
 	private SortUIUtilities() {
 
 	}
@@ -72,6 +78,9 @@ public class SortUIUtilities {
 		} else if (o2 == null) {
 			return 1;
 		} else {
+			if (o1.getClass() != o2.getClass()) {
+				return compareClass(o1, o2);
+			}
 			if (o1 instanceof Number) {
 				return compare((Number) o1, (Number) o2);
 			} else if (o1 instanceof String) {
@@ -95,6 +104,25 @@ public class SortUIUtilities {
 			}
 
 		}
+	}
+
+	private static int compareClass(Object o1, Object o2) {
+		return getClassValue(o1) - getClassValue(o2);
+	}
+
+	private static int getClassValue(Object o) {
+		if (o instanceof Dataset) {
+			return 0;
+		} else if (o instanceof Datasource) {
+			return 1;
+		} else if (o instanceof Map) {
+			return 2;
+		} else if (o instanceof Scene) {
+			return 3;
+		} else if (o instanceof MapLayout) {
+			return 4;
+		}
+		return -1;
 	}
 
 	private static int compare(String o1, String o2) {
@@ -136,9 +164,22 @@ public class SortUIUtilities {
 		if (o1.getData() == null) {
 			return String.valueOf(o1).compareTo(String.valueOf(o2));
 		} else if (o1.getData() instanceof Datasource) {
+			if (o2.getData() instanceof Dataset) {
+				return -1;
+			} else if (o2.getData() instanceof Map) {
+				return 1;
+			}
 			return compare(((Datasource) o1.getData()), ((Datasource) o2.getData()));
 		} else if (o1.getData() instanceof Dataset) {
+			if (!(o2.getData() instanceof Dataset)) {
+				return 1;
+			}
 			return compare(((Dataset) o1.getData()), ((Dataset) o2.getData()));
+		} else if (o1.getData() instanceof Map) {
+			if (!(o2.getData() instanceof Map)) {
+				return -1;
+			}
+			return compare(((Map) o1.getData()).getName(), ((Map) o2.getData()).getName());
 		}
 		return 0;
 	}
@@ -195,5 +236,17 @@ public class SortUIUtilities {
 
 	private static int compare(Enum b1, Enum b2) {
 		return compare(b1.name(), b2.name());
+	}
+
+	public static Comparator getComparatorInstance() {
+		if (comparator == null) {
+			comparator = new Comparator() {
+				@Override
+				public int compare(Object o1, Object o2) {
+					return SortUIUtilities.compareObject(o1, o2);
+				}
+			};
+		}
+		return comparator;
 	}
 }

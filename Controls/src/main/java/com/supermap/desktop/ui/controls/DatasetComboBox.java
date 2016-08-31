@@ -14,6 +14,7 @@ import javax.swing.*;
  * 带有图标的数据集下拉选择框
  * 太乱，需要重构 by wuxb
  *
+ * 需要改成直接存放数据集，然后设置Render渲染成DataCell by xiaJT
  * @author xie
  *
  */

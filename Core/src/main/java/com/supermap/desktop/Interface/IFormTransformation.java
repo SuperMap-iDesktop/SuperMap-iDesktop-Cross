@@ -2,16 +2,17 @@ package com.supermap.desktop.Interface;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.mapping.Map;
+
+import java.util.List;
 
 /**
  * @author XiaJT
  */
 public interface IFormTransformation extends IForm {
-	void setTransformationDataset(Dataset transformationDataset);
+	void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName);
 
-	void addReferenceDataset(Dataset referenceDataset);
+	void addTransformationMap(Map map);
 
-	void setResultDataSource(Datasource resultDatasource);
-
-	void setResultDatasetName(String resultDatasetName);
+	void addReferenceObjects(List<Object> listObjects);
 }

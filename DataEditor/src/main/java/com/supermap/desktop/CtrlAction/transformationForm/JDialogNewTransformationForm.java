@@ -1,30 +1,43 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooseMode;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 新建配准
@@ -37,13 +50,14 @@ public class JDialogNewTransformationForm extends SmDialog {
 	private JLabel labelTransformationDatasource = new JLabel();
 	private DatasourceComboBox comboBoxTransformationDatasource;
 	private JLabel labelTransformationDataset = new JLabel();
-	private DatasetComboBox comboBoxTransformationDataset = new DatasetComboBox();
+	private DatasetComboBox comboBoxTransformationDataset = new DatasetComboBox(new Dataset[0]);
 
 	private JPanel panelReferenceLayer = new JPanel();
-	private JLabel labelReferenceDatasource = new JLabel();
-	private DatasourceComboBox comboBoxReferenceDatasource;
-	private JLabel labelReferenceDataset = new JLabel();
-	private DatasetComboBox comboBoxReferenceDataset = new DatasetComboBox();
+	private SmSortTable tableReferenceLayers = new SmSortTable();
+//	private JLabel labelReferenceDatasource = new JLabel();
+//	private DatasourceComboBox comboBoxReferenceDatasource;
+//	private JLabel labelReferenceDataset = new JLabel();
+//	private DatasetComboBox comboBoxReferenceDataset = new DatasetComboBox();
 
 	private CompTitledPane panelResultDatasetMain;
 	private JPanel panelResultDataset = new JPanel();
@@ -56,6 +70,15 @@ public class JDialogNewTransformationForm extends SmDialog {
 	private JPanel panelButton = new JPanel();
 	private SmButton smButtonOK = new SmButton();
 	private SmButton smButtonCancel = new SmButton();
+
+	private static final DatasetType[] datasetTypes = new DatasetType[]{
+			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD, DatasetType.NETWORK,
+			DatasetType.LINEM, DatasetType.GRID, DatasetType.IMAGE, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D,
+			DatasetType.GRIDCOLLECTION, DatasetType.IMAGECOLLECTION, DatasetType.PARAMETRICLINE, DatasetType.PARAMETRICREGION,
+			DatasetType.NETWORK3D
+	};
+	private ReferenceLayersTableModel referenceLayersTableModel;
+	private JScrollPane scrollPane;
 
 
 	public JDialogNewTransformationForm() {
@@ -71,6 +94,47 @@ public class JDialogNewTransformationForm extends SmDialog {
 	}
 
 	private void initComponents() {
+		referenceLayersTableModel = new ReferenceLayersTableModel();
+		tableReferenceLayers.setModel(referenceLayersTableModel);
+		tableReferenceLayers.setIsSortLastRow(false);
+		tableReferenceLayers.getColumnModel().getColumn(0).setCellRenderer(new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				DataCell dataCell = new DataCell(value);
+				if (isSelected) {
+					dataCell.setBackground(table.getSelectionBackground());
+				} else {
+					dataCell.setBackground(table.getBackground());
+				}
+				return dataCell;
+			}
+		});
+		tableReferenceLayers.getColumnModel().getColumn(2).setMaxWidth(30);
+		tableReferenceLayers.getColumnModel().getColumn(1).setCellRenderer(new TableDatasourceCellRender());
+		tableReferenceLayers.getColumnModel().getColumn(2).setCellRenderer(new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel x = new JLabel();
+				if (row != tableReferenceLayers.getRowCount() - 1) {
+					x.setText("X");
+				}
+				x.setHorizontalAlignment(SwingConstants.CENTER);
+				x.setOpaque(true);
+				x.setForeground(Color.red);
+				if (isSelected) {
+					x.setBackground(table.getSelectionBackground());
+				} else {
+					x.setBackground(table.getBackground());
+				}
+				return x;
+			}
+		});
+//		((DefaultRowSorter) tableReferenceLayers.getRowSorter()).setRowFilter(new RowFilter() {
+//			@Override
+//			public boolean include(Entry entry) {
+//				return entry.getValue(0) != tableReferenceLayers.getValueAt(tableReferenceLayers.getRowCount() - 1, 0);
+//			}
+//		});
 		textFieldResultDatasetName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -85,20 +149,27 @@ public class JDialogNewTransformationForm extends SmDialog {
 		ArrayList<Datasource> datasourcesList = new ArrayList<>();
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
-			Datasource datasource = datasources.get(i);
-			if (datasource.getDatasets().getCount() > 0 && !datasource.isReadOnly()) {
-				datasourcesList.add(datasource);
+			if (datasources.get(i).isOpened()) {
+				datasourcesList.add(datasources.get(i));
 			}
 		}
 		Datasource[] datasourcesArray = datasourcesList.toArray(new Datasource[datasourcesList.size()]);
 		comboBoxTransformationDatasource = new DatasourceComboBox(datasourcesArray);
-		comboBoxReferenceDatasource = new DatasourceComboBox(datasourcesArray);
+
+		datasourcesList.clear();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			if (datasources.get(i).isOpened() && !datasources.get(i).isReadOnly()) {
+				datasourcesList.add(datasources.get(i));
+			}
+		}
+		datasourcesArray = datasourcesList.toArray(new Datasource[datasourcesList.size()]);
 		comboBoxResultDatasource = new DatasourceComboBox(datasourcesArray);
 
 		panelResultDatasetMain = new CompTitledPane(checkBoxSaveAsDataset, panelResultDataset);
 		panelTransformationLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_TargetLayer")));
 		panelReferenceLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_ReferLayer")));
-		this.setSize(new Dimension(300, 450));
+		scrollPane = new JScrollPane(tableReferenceLayers);
+		this.setSize(new Dimension(400, 550));
 		this.setLocationRelativeTo(null);
 	}
 
@@ -110,10 +181,12 @@ public class JDialogNewTransformationForm extends SmDialog {
 		panelTransformationLayer.add(comboBoxTransformationDataset, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
 
 		panelReferenceLayer.setLayout(new GridBagLayout());
-		panelReferenceLayer.add(labelReferenceDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 0, 0));
-		panelReferenceLayer.add(comboBoxReferenceDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
-		panelReferenceLayer.add(labelReferenceDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(5, 10, 10, 0));
-		panelReferenceLayer.add(comboBoxReferenceDataset, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
+//		panelReferenceLayer.add(buttonAddReferenceLayers, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(10, 10, 0, 10));
+		panelReferenceLayer.add(scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 10, 10));
+//		panelReferenceLayer.add(labelReferenceDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 0, 0));
+//		panelReferenceLayer.add(comboBoxReferenceDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+//		panelReferenceLayer.add(labelReferenceDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(5, 10, 10, 0));
+//		panelReferenceLayer.add(comboBoxReferenceDataset, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
 
 		panelResultDataset.setLayout(new GridBagLayout());
 		panelResultDataset.add(labelResultDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 0, 0));
@@ -126,19 +199,18 @@ public class JDialogNewTransformationForm extends SmDialog {
 		panelButton.add(smButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 5, 0, 0));
 
 		this.setLayout(new GridBagLayout());
-		this.add(panelTransformationLayer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10, 10, 0, 10));
+		this.add(panelTransformationLayer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(10, 10, 0, 10));
 		this.add(panelReferenceLayer, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 0, 10));
-		this.add(panelResultDatasetMain, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 0, 10));
+		this.add(panelResultDatasetMain, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 0, 10));
 		this.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 10, 10));
 	}
 
 	private void initResources() {
 		this.setTitle(DataEditorProperties.getString("String_TransfernationPreSetTitle"));
 		labelTransformationDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
-		labelReferenceDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelResultDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelTransformationDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
-		labelReferenceDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
+//		labelReferenceDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 		labelResultDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 		checkBoxSaveAsDataset.setText(DataEditorProperties.getString("String_Transfernation_Resave"));
 		smButtonOK.setText(CommonProperties.getString(CommonProperties.OK));
@@ -151,16 +223,6 @@ public class JDialogNewTransformationForm extends SmDialog {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxTransformationDatasource.getSelectedItem() != null) {
 					comboBoxTransformationDataset.setDatasets(comboBoxTransformationDatasource.getSelectedDatasource().getDatasets());
-				}
-			}
-		});
-		comboBoxReferenceDatasource.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED && comboBoxReferenceDatasource.getSelectedItem() != null) {
-					comboBoxReferenceDataset.setDatasets(comboBoxReferenceDatasource.getSelectedDatasource().getDatasets());
-					comboBoxReferenceDataset.addItemAt(0, null);
-					comboBoxReferenceDataset.setSelectedIndex(0);
 				}
 			}
 		});
@@ -198,18 +260,71 @@ public class JDialogNewTransformationForm extends SmDialog {
 				textFieldResultDatasetName.setEditable(selected);
 			}
 		});
+		tableReferenceLayers.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					Point point = e.getPoint();
+					int row = tableReferenceLayers.rowAtPoint(point);
+					int column = tableReferenceLayers.columnAtPoint(point);
+
+					if (row != tableReferenceLayers.getRowCount() - 1 && column == 2) {
+						referenceLayersTableModel.removeDataAt(tableReferenceLayers.convertRowIndexToModel(row));
+						return;
+					}
+					if (e.getClickCount() == 2) {
+						addButtonClicked();
+					}
+				}
+			}
+		});
+		scrollPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+					addButtonClicked();
+				}
+			}
+		});
+	}
+
+	private void addButtonClicked() {
+		DatasetChooser datasetChooser = new DatasetChooser(DatasetChooseMode.DATASET, DatasetChooseMode.MAP);
+		datasetChooser.setSupportDatasetTypes(datasetTypes);
+		if (datasetChooser.showDialog() == DialogResult.OK) {
+			List<Object> selectedObjects = datasetChooser.getSelectedObjects();
+			for (Object selectedObject : selectedObjects) {
+				referenceLayersTableModel.addData(selectedObject);
+			}
+		}
 	}
 
 	private void initComponentState() {
+		Dataset currentDataset = null;
+		Datasource currentDatasource = null;
+		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+		if (activeDatasets.length > 0) {
+			currentDataset = activeDatasets[0];
+			currentDatasource = currentDataset.getDatasource();
+		} else {
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if (activeDatasources.length > 0) {
+				currentDatasource = activeDatasources[0];
+			}
+		}
 		comboBoxTransformationDatasource.setSelectedIndex(-1);
-		if (comboBoxTransformationDatasource.getItemCount() > 0) {
-			comboBoxTransformationDatasource.setSelectedIndex(0);
+		if (JComboBoxUIUtilities.getItemIndex(comboBoxTransformationDatasource, currentDatasource) != -1) {
+			comboBoxTransformationDatasource.setSelectedDatasource(currentDatasource);
+			comboBoxResultDatasource.setSelectedDatasource(currentDatasource);
+			if (currentDataset != null) {
+				comboBoxTransformationDataset.setSelectedDataset(currentDataset);
+			}
+		} else {
+			if (comboBoxTransformationDatasource.getItemCount() > 0) {
+				comboBoxTransformationDatasource.setSelectedIndex(0);
+			}
 		}
 
-		comboBoxReferenceDatasource.setSelectedIndex(-1);
-		if (comboBoxReferenceDatasource.getItemCount() > 0) {
-			comboBoxReferenceDatasource.setSelectedIndex(0);
-		}
 		checkBoxSaveAsDataset.setSelected(true);
 		textFieldResultDatasetName.setText(getUniqueDatasetName("Result_adjust"));
 	}
@@ -231,16 +346,10 @@ public class JDialogNewTransformationForm extends SmDialog {
 		return comboBoxTransformationDataset.getSelectedDataset();
 	}
 
-	/**
-	 * @return 参考数据集
-	 */
-	public Dataset getReferenceDataset() {
-		return comboBoxReferenceDataset.getSelectedDataset();
-	}
-
 
 	/**
 	 * 结果数据集名称
+	 *
 	 * @return
 	 */
 	public String getResultDatasetName() {
@@ -255,5 +364,90 @@ public class JDialogNewTransformationForm extends SmDialog {
 			return comboBoxResultDatasource.getSelectedDatasource();
 		}
 		return null;
+	}
+
+	public List<Object> getReferenceObjects() {
+		return referenceLayersTableModel.getDataList();
+	}
+
+	private class ReferenceLayersTableModel extends DefaultTableModel {
+		private ArrayList<Object> dataList = new ArrayList<>();
+		private String[] columnNames = new String[]{
+				CommonProperties.getString(CommonProperties.stringDataset),
+				CommonProperties.getString(CommonProperties.stringDatasource),
+				""
+		};
+
+		@Override
+		public int getRowCount() {
+			if (dataList == null) {
+				return 0;
+			}
+			return dataList.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return 3;
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+
+		@Override
+		public Object getValueAt(int row, int column) {
+			if (row >= dataList.size()) {
+				if (column == 0) {
+					return ControlsProperties.getString("String_AddMore");
+				}
+				return "";
+			}
+			if (column == 0) {
+				return dataList.get(row);
+			} else if (column == 1) {
+				Object data = dataList.get(row);
+				if (data instanceof Dataset) {
+					return ((Dataset) data).getDatasource();
+				}
+			}
+			return "";
+		}
+
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex == 0) {
+				return Object.class;
+			}
+			return String.class;
+		}
+
+		public java.util.List<Object> getDataList() {
+			return dataList;
+		}
+
+		public void addData(Object selectedObject) {
+			dataList.add(selectedObject);
+			fireTableRowsInserted(dataList.size() - 1, dataList.size() - 1);
+		}
+
+		public void removeDataAt(int row) {
+			if (row >= getRowCount()) {
+				throw new UnsupportedOperationException(String.valueOf(row + "_" + getRowCount()));
+			}
+			Object o = dataList.get(row);
+			if (o instanceof com.supermap.mapping.Map) {
+				((Map) o).close();
+			}
+			dataList.remove(o);
+			fireTableRowsDeleted(row, row);
+		}
 	}
 }

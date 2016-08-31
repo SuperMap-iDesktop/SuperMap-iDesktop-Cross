@@ -9,12 +9,12 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
-import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.TableUtilities;
 
@@ -24,7 +24,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 

@@ -6,8 +6,10 @@ import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.ui.controls.toolTip.MapToolTip;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -99,6 +101,35 @@ public class DataCell extends JPanel {
 		init(url, dataName);
 	}
 
+	private void initMap(Map map) {
+		data = map;
+		dataName = map.getName();
+		URL url = ControlsResources.getResourceURL("/controlsresources/controlsImage/Image_Map_Normal.png");
+		setToolTipText("");
+		init(url, dataName);
+	}
+
+	@Override
+	public JToolTip createToolTip() {
+		if (data == null) {
+			return super.createToolTip();
+		}
+		if (data instanceof Map) {
+			MapToolTip mapToolTip = new MapToolTip((Map) data);
+			mapToolTip.setComponent(this);
+			return mapToolTip;
+		}
+		return super.createToolTip();
+	}
+
+	@Override
+	public String getToolTipText() {
+		if (data != null && data instanceof Map) {
+			return ((Map) data).getName();
+		}
+		return super.getToolTipText();
+	}
+
 	/**
 	 * 根据数据集类型和数据集名称创建
 	 *
@@ -136,6 +167,11 @@ public class DataCell extends JPanel {
 		init(icon, name);
 	}
 
+	private void initString(String name) {
+		this.dataName = name;
+		init(((URL) null), dataName);
+	}
+
 	private void init(ImageIcon icon, String name) {
 		this.dataName = name;
 		this.imageLabel = new JLabel(dataName, icon, JLabel.LEADING);
@@ -148,7 +184,7 @@ public class DataCell extends JPanel {
 			tempIcon = new ImageIcon(url);
 			this.imageLabel = new JLabel(dataName, tempIcon, JLabel.LEADING);
 		} else {
-			this.imageLabel = new JLabel();
+			this.imageLabel = new JLabel(dataName);
 		}
 		initComponents();
 	}
@@ -157,6 +193,9 @@ public class DataCell extends JPanel {
 		this.setSize(300, 15);
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		this.add(this.imageLabel);
+		if (data != null && data instanceof Map) {
+			imageLabel.setToolTipText("");
+		}
 	}
 
 	/**
@@ -245,6 +284,8 @@ public class DataCell extends JPanel {
 				}
 			} else if (object instanceof Layer) {
 				initLayer(((Layer) object));
+			} else if (object instanceof Map) {
+				initMap((Map) object);
 			} else if (object instanceof String) {
 				String str = (String) object;
 				if (engineType != null) {
@@ -265,7 +306,11 @@ public class DataCell extends JPanel {
 		}
 		if (datasetType != null && name == null) {
 			initDatasetType(datasetType, DatasetTypeUtilities.toString(datasetType));
+		} else if (datasetType == null && name != null) {
+			initString(name);
 		}
 	}
+
+
 	// endregion
 }

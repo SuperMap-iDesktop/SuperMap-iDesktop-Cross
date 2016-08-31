@@ -48,14 +48,15 @@ public class WorkspaceTempSave {
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
-	private int symbolSaveCount = 3;
-	private int currentCount = 0;
+	private int symbolSaveCount = 30;// 30min
+	private long nextSaveSymbolTime = 0;
 	// 手动保存(另存)的时候会保存一次;
 	// 工作空间关闭的时候会重置符号库计数，下次保存的时候会保存符号库
 	// 工作空间打开会保存一次
 	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
 		@Override
 		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+			nextSaveSymbolTime = 0;
 			autoSave(true);
 		}
 	};
@@ -64,7 +65,7 @@ public class WorkspaceTempSave {
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			// 工作空间关闭可能是要打开当前保存的工作空间，所以先关闭一次
 			closeTempWorkspace();
-			currentCount = 0;
+			nextSaveSymbolTime = 0;
 		}
 	};
 
@@ -225,13 +226,8 @@ public class WorkspaceTempSave {
 					saveSuccess = workspace.save();
 				}
 				//GlobalParameters.isSaveSymbol() &&
-				if ((currentCount == 0 || currentCount >= symbolSaveCount)) {
-					currentCount = 1;
+				if (System.currentTimeMillis() >= nextSaveSymbolTime) {
 					saveSymbolLibrary(activeWorkspace);
-				} else {
-					if (!isIgnoreModified) {
-						currentCount++;
-					}
 				}
 				if (saveSuccess) {
 					if (!saveToFile(activeWorkspace, workspace)) {
@@ -382,6 +378,7 @@ public class WorkspaceTempSave {
 
 		String fillSymbolFilePath = tempFolder + ".bru";
 		currentWorkspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
+		nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
 	}
 
 

@@ -161,8 +161,8 @@ public class LayersTree extends JTree {
 		if (currentMap != null && !currentMap.equals(map)) {
 			unRegisterListeners();
 		}
-
 		if (currentMap == null || !currentMap.equals(map)) {
+
 			currentMap = map;
 			if (currentMap == null) {
 				TreeNodeData data = new TreeNodeData("", NodeDataType.UNKNOWN);
