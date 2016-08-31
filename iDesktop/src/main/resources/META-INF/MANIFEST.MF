@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472191565486
+Bnd-LastModified: 1472612131772
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-ClassPath: .,lib/org.apache.felix.framework-5.4.0.jar,lib/org.apa
@@ -13,6 +13,7 @@ Class-Path: lib/org.apache.felix.framework-5.4.0.jar lib/org.apache.feli
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: *;scope=compile|system
 Embed-Directory: lib
+Embed-Transitive: true
 Embedded-Artifacts: lib/org.apache.felix.framework-5.4.0.jar;g="org.apac
  he.felix";a="org.apache.felix.framework";v="5.4.0",lib/org.apache.felix
  .main-5.4.0.jar;g="org.apache.felix";a="org.apache.felix.main";v="5.4.0

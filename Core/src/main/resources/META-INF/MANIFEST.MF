@@ -1,25 +1,26 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472191570544
+Bnd-LastModified: 1472612136877
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
 Bundle-ClassPath: .,lib/fastjson-1.2.15.jar,lib/httpclient-4.5.2.jar,lib
- /httpcore-4.4.5.jar,lib/httpmime-4.5.2.jar,lib/log4j-1.2.17.jar,lib/swi
- ngx-1.6.1.jar,lib/commons-compress-1.12.jar,lib/commons-logging-1.2.jar
- ,lib/com.supermap.analyst.addressmatching-8.0.2-13911.jar,lib/com.super
- map.analyst.navigation-8.0.2-13911.jar,lib/com.supermap.analyst.network
- analyst-8.0.2-13911.jar,lib/com.supermap.analyst.spatialanalyst-8.0.2-1
- 3911.jar,lib/com.supermap.analyst.spatialstatistics-8.0.2-13911.jar,lib
- /com.supermap.analyst.terrainanalyst-8.0.2-13911.jar,lib/com.supermap.a
- nalyst.trafficanalyst-8.0.2-13911.jar,lib/com.supermap.data.conversion-
- 8.0.2-13911.jar,lib/com.supermap.data-8.0.2-13911.jar,lib/com.supermap.
- data.processing-8.0.2-13911.jar,lib/com.supermap.data.topology-8.0.2-13
- 911.jar,lib/com.supermap.layout-8.0.2-13911.jar,lib/com.supermap.licens
- e-8.0.2-13911.jar,lib/com.supermap.mapping-8.0.2-13911.jar,lib/com.supe
- rmap.realspace-8.0.2-13911.jar,lib/com.supermap.realspace.networkanalys
- t-8.0.2-13911.jar,lib/com.supermap.realspace.spatialanalyst-8.0.2-13911
- .jar,lib/com.supermap.tilestorage-8.0.2-13911.jar,lib/com.supermap.ui.c
- ontrols-8.0.2-13911.jar
+ /commons-codec-1.9.jar,lib/httpcore-4.4.5.jar,lib/httpmime-4.5.2.jar,li
+ b/log4j-1.2.17.jar,lib/swingx-1.6.1.jar,lib/filters-2.0.235.jar,lib/swi
+ ng-worker-1.1.jar,lib/commons-compress-1.12.jar,lib/commons-logging-1.2
+ .jar,lib/com.supermap.analyst.addressmatching-8.0.2-13911.jar,lib/com.s
+ upermap.analyst.navigation-8.0.2-13911.jar,lib/com.supermap.analyst.net
+ workanalyst-8.0.2-13911.jar,lib/com.supermap.analyst.spatialanalyst-8.0
+ .2-13911.jar,lib/com.supermap.analyst.spatialstatistics-8.0.2-13911.jar
+ ,lib/com.supermap.analyst.terrainanalyst-8.0.2-13911.jar,lib/com.superm
+ ap.analyst.trafficanalyst-8.0.2-13911.jar,lib/com.supermap.data.convers
+ ion-8.0.2-13911.jar,lib/com.supermap.data-8.0.2-13911.jar,lib/com.super
+ map.data.processing-8.0.2-13911.jar,lib/com.supermap.data.topology-8.0.
+ 2-13911.jar,lib/com.supermap.layout-8.0.2-13911.jar,lib/com.supermap.li
+ cense-8.0.2-13911.jar,lib/com.supermap.mapping-8.0.2-13911.jar,lib/com.
+ supermap.realspace-8.0.2-13911.jar,lib/com.supermap.realspace.networkan
+ alyst-8.0.2-13911.jar,lib/com.supermap.realspace.spatialanalyst-8.0.2-1
+ 3911.jar,lib/com.supermap.tilestorage-8.0.2-13911.jar,lib/com.supermap.
+ ui.controls-8.0.2-13911.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: com.supermap.idesktop.cross.Core
@@ -27,75 +28,79 @@ Bundle-Version: 1.0.0.qualifier
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: *;scope=compile|system
 Embed-Directory: lib
+Embed-Transitive: true
 Embedded-Artifacts: lib/fastjson-1.2.15.jar;g="com.alibaba";a="fastjson"
  ;v="1.2.15",lib/httpclient-4.5.2.jar;g="org.apache.httpcomponents";a="h
- ttpclient";v="4.5.2",lib/httpcore-4.4.5.jar;g="org.apache.httpcomponent
- s";a="httpcore";v="4.4.5",lib/httpmime-4.5.2.jar;g="org.apache.httpcomp
- onents";a="httpmime";v="4.5.2",lib/log4j-1.2.17.jar;g="log4j";a="log4j"
- ;v="1.2.17",lib/swingx-1.6.1.jar;g="org.swinglabs";a="swingx";v="1.6.1"
- ,lib/commons-compress-1.12.jar;g="org.apache.commons";a="commons-compre
- ss";v="1.12",lib/commons-logging-1.2.jar;g="commons-logging";a="commons
- -logging";v="1.2",lib/com.supermap.analyst.addressmatching-8.0.2-13911.
- jar;g="com.supermap";a="com.supermap.analyst.addressmatching";v="8.0.2-
- 13911",lib/com.supermap.analyst.navigation-8.0.2-13911.jar;g="com.super
- map";a="com.supermap.analyst.navigation";v="8.0.2-13911",lib/com.superm
- ap.analyst.networkanalyst-8.0.2-13911.jar;g="com.supermap";a="com.super
- map.analyst.networkanalyst";v="8.0.2-13911",lib/com.supermap.analyst.sp
- atialanalyst-8.0.2-13911.jar;g="com.supermap";a="com.supermap.analyst.s
- patialanalyst";v="8.0.2-13911",lib/com.supermap.analyst.spatialstatisti
- cs-8.0.2-13911.jar;g="com.supermap";a="com.supermap.analyst.spatialstat
- istics";v="8.0.2-13911",lib/com.supermap.analyst.terrainanalyst-8.0.2-1
- 3911.jar;g="com.supermap";a="com.supermap.analyst.terrainanalyst";v="8.
- 0.2-13911",lib/com.supermap.analyst.trafficanalyst-8.0.2-13911.jar;g="c
- om.supermap";a="com.supermap.analyst.trafficanalyst";v="8.0.2-13911",li
- b/com.supermap.data.conversion-8.0.2-13911.jar;g="com.supermap";a="com.
- supermap.data.conversion";v="8.0.2-13911",lib/com.supermap.data-8.0.2-1
- 3911.jar;g="com.supermap";a="com.supermap.data";v="8.0.2-13911",lib/com
- .supermap.data.processing-8.0.2-13911.jar;g="com.supermap";a="com.super
- map.data.processing";v="8.0.2-13911",lib/com.supermap.data.topology-8.0
- .2-13911.jar;g="com.supermap";a="com.supermap.data.topology";v="8.0.2-1
- 3911",lib/com.supermap.layout-8.0.2-13911.jar;g="com.supermap";a="com.s
- upermap.layout";v="8.0.2-13911",lib/com.supermap.license-8.0.2-13911.ja
- r;g="com.supermap";a="com.supermap.license";v="8.0.2-13911",lib/com.sup
- ermap.mapping-8.0.2-13911.jar;g="com.supermap";a="com.supermap.mapping"
- ;v="8.0.2-13911",lib/com.supermap.realspace-8.0.2-13911.jar;g="com.supe
- rmap";a="com.supermap.realspace";v="8.0.2-13911",lib/com.supermap.reals
- pace.networkanalyst-8.0.2-13911.jar;g="com.supermap";a="com.supermap.re
- alspace.networkanalyst";v="8.0.2-13911",lib/com.supermap.realspace.spat
- ialanalyst-8.0.2-13911.jar;g="com.supermap";a="com.supermap.realspace.s
- patialanalyst";v="8.0.2-13911",lib/com.supermap.tilestorage-8.0.2-13911
- .jar;g="com.supermap";a="com.supermap.tilestorage";v="8.0.2-13911",lib/
- com.supermap.ui.controls-8.0.2-13911.jar;g="com.supermap";a="com.superm
- ap.ui.controls";v="8.0.2-13911"
-Export-Package: com.supermap.desktop;uses:="com.supermap.data,com.superm
- ap.desktop.Interface,com.supermap.desktop.enums,com.supermap.desktop.ev
- ent,com.supermap.desktop.exception,com.supermap.desktop.ui,org.osgi.fra
- mework";version="1.0.0",com.supermap.desktop.core.compress;uses:="com.s
- upermap.desktop.core";version="1.0.0",com.supermap.desktop.core;uses:="
- org.apache.log4j,org.apache.log4j.spi,org.osgi.framework,org.osgi.util.
- tracker";version="1.0.0",com.supermap.desktop.core.http;uses:="com.supe
- rmap.desktop.core";version="1.0.0",com.supermap.desktop.core.recordset;
- uses:="com.supermap.data";version="1.0.0",com.supermap.desktop.enums;us
- es:="com.supermap.data";version="1.0.0",com.supermap.desktop.event;uses
- :="com.supermap.data,com.supermap.desktop.Interface,com.supermap.deskto
- p.enums,com.supermap.mapping,com.supermap.realspace";version="1.0.0",co
+ ttpclient";v="4.5.2",lib/commons-codec-1.9.jar;g="commons-codec";a="com
+ mons-codec";v="1.9",lib/httpcore-4.4.5.jar;g="org.apache.httpcomponents
+ ";a="httpcore";v="4.4.5",lib/httpmime-4.5.2.jar;g="org.apache.httpcompo
+ nents";a="httpmime";v="4.5.2",lib/log4j-1.2.17.jar;g="log4j";a="log4j";
+ v="1.2.17",lib/swingx-1.6.1.jar;g="org.swinglabs";a="swingx";v="1.6.1",
+ lib/filters-2.0.235.jar;g="com.jhlabs";a="filters";v="2.0.235",lib/swin
+ g-worker-1.1.jar;g="org.swinglabs";a="swing-worker";v="1.1",lib/commons
+ -compress-1.12.jar;g="org.apache.commons";a="commons-compress";v="1.12"
+ ,lib/commons-logging-1.2.jar;g="commons-logging";a="commons-logging";v=
+ "1.2",lib/com.supermap.analyst.addressmatching-8.0.2-13911.jar;g="com.s
+ upermap";a="com.supermap.analyst.addressmatching";v="8.0.2-13911",lib/c
+ om.supermap.analyst.navigation-8.0.2-13911.jar;g="com.supermap";a="com.
+ supermap.analyst.navigation";v="8.0.2-13911",lib/com.supermap.analyst.n
+ etworkanalyst-8.0.2-13911.jar;g="com.supermap";a="com.supermap.analyst.
+ networkanalyst";v="8.0.2-13911",lib/com.supermap.analyst.spatialanalyst
+ -8.0.2-13911.jar;g="com.supermap";a="com.supermap.analyst.spatialanalys
+ t";v="8.0.2-13911",lib/com.supermap.analyst.spatialstatistics-8.0.2-139
+ 11.jar;g="com.supermap";a="com.supermap.analyst.spatialstatistics";v="8
+ .0.2-13911",lib/com.supermap.analyst.terrainanalyst-8.0.2-13911.jar;g="
+ com.supermap";a="com.supermap.analyst.terrainanalyst";v="8.0.2-13911",l
+ ib/com.supermap.analyst.trafficanalyst-8.0.2-13911.jar;g="com.supermap"
+ ;a="com.supermap.analyst.trafficanalyst";v="8.0.2-13911",lib/com.superm
+ ap.data.conversion-8.0.2-13911.jar;g="com.supermap";a="com.supermap.dat
+ a.conversion";v="8.0.2-13911",lib/com.supermap.data-8.0.2-13911.jar;g="
+ com.supermap";a="com.supermap.data";v="8.0.2-13911",lib/com.supermap.da
+ ta.processing-8.0.2-13911.jar;g="com.supermap";a="com.supermap.data.pro
+ cessing";v="8.0.2-13911",lib/com.supermap.data.topology-8.0.2-13911.jar
+ ;g="com.supermap";a="com.supermap.data.topology";v="8.0.2-13911",lib/co
+ m.supermap.layout-8.0.2-13911.jar;g="com.supermap";a="com.supermap.layo
+ ut";v="8.0.2-13911",lib/com.supermap.license-8.0.2-13911.jar;g="com.sup
+ ermap";a="com.supermap.license";v="8.0.2-13911",lib/com.supermap.mappin
+ g-8.0.2-13911.jar;g="com.supermap";a="com.supermap.mapping";v="8.0.2-13
+ 911",lib/com.supermap.realspace-8.0.2-13911.jar;g="com.supermap";a="com
+ .supermap.realspace";v="8.0.2-13911",lib/com.supermap.realspace.network
+ analyst-8.0.2-13911.jar;g="com.supermap";a="com.supermap.realspace.netw
+ orkanalyst";v="8.0.2-13911",lib/com.supermap.realspace.spatialanalyst-8
+ .0.2-13911.jar;g="com.supermap";a="com.supermap.realspace.spatialanalys
+ t";v="8.0.2-13911",lib/com.supermap.tilestorage-8.0.2-13911.jar;g="com.
+ supermap";a="com.supermap.tilestorage";v="8.0.2-13911",lib/com.supermap
+ .ui.controls-8.0.2-13911.jar;g="com.supermap";a="com.supermap.ui.contro
+ ls";v="8.0.2-13911"
+Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
+ .data,com.supermap.desktop.Interface,com.supermap.desktop.enums,com.sup
+ ermap.desktop.event,com.supermap.desktop.exception,com.supermap.desktop
+ .ui,org.osgi.framework",com.supermap.desktop.core.compress;version="1.0
+ .0";uses:="com.supermap.desktop.core",com.supermap.desktop.core;version
+ ="1.0.0";uses:="org.apache.log4j,org.apache.log4j.spi,org.osgi.framewor
+ k,org.osgi.util.tracker",com.supermap.desktop.core.http;version="1.0.0"
+ ;uses:="com.supermap.desktop.core",com.supermap.desktop.core.recordset;
+ version="1.0.0";uses:="com.supermap.data",com.supermap.desktop.enums;ve
+ rsion="1.0.0";uses:="com.supermap.data",com.supermap.desktop.event;vers
+ ion="1.0.0";uses:="com.supermap.data,com.supermap.desktop.Interface,com
+ .supermap.desktop.enums,com.supermap.mapping,com.supermap.realspace",co
  m.supermap.desktop.exception;version="1.0.0",com.supermap.desktop.geome
- try.Abstract;uses:="com.supermap.data";version="1.0.0",com.supermap.des
- ktop.geometry.Implements;uses:="com.supermap.data,com.supermap.desktop.
- geometry.Abstract";version="1.0.0",com.supermap.desktop.Interface;uses:
- ="com.supermap.data,com.supermap.desktop,com.supermap.desktop.enums,com
- .supermap.desktop.event,com.supermap.desktop.ui,com.supermap.mapping,co
- m.supermap.realspace,com.supermap.ui";version="1.0.0",com.supermap.desk
- top.progress.callable;uses:="com.supermap.data,com.supermap.desktop.pro
- gress.Interface";version="1.0.0",com.supermap.desktop.progress.Interfac
+ try.Abstract;version="1.0.0";uses:="com.supermap.data",com.supermap.des
+ ktop.geometry.Implements;version="1.0.0";uses:="com.supermap.data,com.s
+ upermap.desktop.geometry.Abstract",com.supermap.desktop.Interface;versi
+ on="1.0.0";uses:="com.supermap.data,com.supermap.desktop,com.supermap.d
+ esktop.enums,com.supermap.desktop.event,com.supermap.desktop.ui,com.sup
+ ermap.mapping,com.supermap.realspace,com.supermap.ui",com.supermap.desk
+ top.progress.callable;version="1.0.0";uses:="com.supermap.data,com.supe
+ rmap.desktop.progress.Interface",com.supermap.desktop.progress.Interfac
  e;version="1.0.0",com.supermap.desktop.properties;version="1.0.0",com.s
- upermap.desktop.ui.controls;version="1.0.0",com.supermap.desktop.ui;use
- s:="com.supermap.desktop,com.supermap.desktop.Interface,com.supermap.de
- sktop.enums";version="1.0.0",com.supermap.desktop.utilities;uses:="com.
- supermap.data,com.supermap.desktop,com.supermap.desktop.Interface,com.s
- upermap.desktop.enums,com.supermap.desktop.event,com.supermap.desktop.g
- eometry.Abstract,com.supermap.desktop.implement,com.supermap.desktop.ui
- ,com.supermap.mapping,com.supermap.ui";version="1.0.0",Aladdin;version=
+ upermap.desktop.ui.controls;version="1.0.0",com.supermap.desktop.ui;ver
+ sion="1.0.0";uses:="com.supermap.desktop,com.supermap.desktop.Interface
+ ,com.supermap.desktop.enums",com.supermap.desktop.utilities;version="1.
+ 0.0";uses:="com.supermap.data,com.supermap.desktop,com.supermap.desktop
+ .Interface,com.supermap.desktop.enums,com.supermap.desktop.event,com.su
+ permap.desktop.geometry.Abstract,com.supermap.desktop.implement,com.sup
+ ermap.desktop.ui,com.supermap.mapping,com.supermap.ui",Aladdin;version=
  "1.0.0",com.alibaba.fastjson;version="1.0.0";uses:="com.alibaba.fastjso
  n.parser,com.alibaba.fastjson.parser.deserializer,com.alibaba.fastjson.
  serializer",com.alibaba.fastjson.annotation;version="1.0.0";uses:="com.
@@ -131,8 +136,8 @@ Export-Package: com.supermap.desktop;uses:="com.supermap.data,com.superm
  om.supermap.mapping,com.supermap.realspace,com.supermap.tilestorage",co
  m.supermap.data.topology;version="1.0.0";uses:="com.supermap.data",com.
  supermap.desktop.iDesktop;version="1.0.0",com.supermap.desktop.implemen
- t;uses:="com.supermap.desktop.Interface,com.supermap.desktop.enums,com.
- supermap.desktop.ui";version="1.0.0",com.supermap.layout;version="1.0.0
+ t;version="1.0.0";uses:="com.supermap.desktop.Interface,com.supermap.de
+ sktop.enums,com.supermap.desktop.ui",com.supermap.layout;version="1.0.0
  ";uses:="com.supermap.data,com.supermap.mapping,com.supermap.ui",com.su
  permap.mapping;version="1.0.0";uses:="com.supermap.data,com.supermap.ui
  ",com.supermap.realspace;version="1.0.0";uses:="com.supermap.data,com.s
@@ -187,21 +192,21 @@ Export-Package: com.supermap.desktop;uses:="com.supermap.data,com.superm
  rsion="1.12";uses:="org.apache.commons.compress.archivers",org.apache.c
  ommons.logging;version="1.2",org.apache.commons.logging.impl;version="1
  .2";uses:="org.apache.commons.logging,org.apache.log4j",org.apache.feli
- x.framework;uses:="org.apache.felix.framework.cache,org.apache.felix.fr
- amework.capabilityset,org.apache.felix.framework.util,org.apache.felix.
- framework.util.manifestparser,org.apache.felix.resolver,org.osgi.framew
- ork";version="1.0.0",org.apache.felix.framework.cache;uses:="org.apache
- .felix.framework,org.apache.felix.framework.util";version="1.0.0",org.a
+ x.framework;version="1.0.0";uses:="org.apache.felix.framework.cache,org
+ .apache.felix.framework.capabilityset,org.apache.felix.framework.util,o
+ rg.apache.felix.framework.util.manifestparser,org.apache.felix.resolver
+ ,org.osgi.framework",org.apache.felix.framework.cache;version="1.0.0";u
+ ses:="org.apache.felix.framework,org.apache.felix.framework.util",org.a
  pache.felix.framework.capabilityset;version="1.0.0",org.apache.felix.fr
- amework.ext;uses:="org.osgi.framework";version="1.0.0",org.apache.felix
- .framework.resolver;version="1.0.0",org.apache.felix.framework.util;use
- s:="org.apache.felix.framework,org.osgi.framework";version="1.0.0",org.
- apache.felix.framework.util.manifestparser;uses:="org.apache.felix.fram
- ework,org.osgi.framework";version="1.0.0",org.apache.felix.framework.wi
- ring;uses:="org.apache.felix.framework.capabilityset";version="1.0.0",o
- rg.apache.felix.main;uses:="org.osgi.framework";version="1.0.0",org.apa
- che.felix.resolver;uses:="org.apache.felix.resolver.util,org.osgi.frame
- work";version="1.0.0",org.apache.felix.resolver.util;version="1.0.0",or
+ amework.ext;version="1.0.0";uses:="org.osgi.framework",org.apache.felix
+ .framework.resolver;version="1.0.0",org.apache.felix.framework.util;ver
+ sion="1.0.0";uses:="org.apache.felix.framework,org.osgi.framework",org.
+ apache.felix.framework.util.manifestparser;version="1.0.0";uses:="org.a
+ pache.felix.framework,org.osgi.framework",org.apache.felix.framework.wi
+ ring;version="1.0.0";uses:="org.apache.felix.framework.capabilityset",o
+ rg.apache.felix.main;version="1.0.0";uses:="org.osgi.framework",org.apa
+ che.felix.resolver;version="1.0.0";uses:="org.apache.felix.resolver.uti
+ l,org.osgi.framework",org.apache.felix.resolver.util;version="1.0.0",or
  g.apache.http;version="1.0.0";uses:="org.apache.http.params,org.apache.
  http.protocol,org.apache.http.util",org.apache.http.annotation;version=
  "1.0.0",org.apache.http.auth;version="1.0.0";uses:="org.apache.http,org
