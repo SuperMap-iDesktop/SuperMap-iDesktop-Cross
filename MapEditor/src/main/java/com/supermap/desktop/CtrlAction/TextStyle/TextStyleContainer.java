@@ -104,6 +104,10 @@ public class TextStyleContainer extends JPanel {
         this.tempTextStyle = null;
         removePanels();
         this.scrollPane.setViewportView(panelTextInfo);
+        if (null != recordset) {
+            recordset.close();
+            recordset.dispose();
+        }
     }
 
     private void initMainPanel() {

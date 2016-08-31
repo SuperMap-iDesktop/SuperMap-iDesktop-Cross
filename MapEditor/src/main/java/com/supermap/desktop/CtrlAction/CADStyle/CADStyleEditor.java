@@ -6,10 +6,17 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
+import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.ui.docking.OperationAbortedException;
+import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 
@@ -21,11 +28,24 @@ import java.util.ArrayList;
 public class CADStyleEditor extends AbstractEditor {
 
     private final String CADSTYLECONTAINER = "com.supermap.desktop.CtrlAction.CADStyle.CADStyleContainer";
-//    private CADStyleDialog dialog;
 
-    //    private CADStyleContainer dialog;
     private CADStyleContainer cadStyleContainer;
     private IDockbar dockbarCADStyleContainer;
+    private MapClosedListener mapClosedListener = new MapClosedListener() {
+        @Override
+        public void mapClosed(MapClosedEvent mapClosedEvent) {
+            if (null != cadStyleContainer) {
+                cadStyleContainer.setNullPanel();
+            }
+        }
+    };
+    private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
+        @Override
+        public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
+            cadStyleContainer.setModify(false);
+        }
+    };
+
 
     @Override
     public void activate(final EditEnvironment environment) {
@@ -39,24 +59,40 @@ public class CADStyleEditor extends AbstractEditor {
                     cadStyleContainer.showDialog(getActiveRecordset(environment.getMap()));
                 }
             }
-            environment.getMapControl().addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
+            ((Dockbar) dockbarCADStyleContainer).addListener(new DockingWindowAdapter() {
+
                 @Override
-                public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-//                    textStyleContainer.setModify(false);
+                public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
+                    // 关闭dockbar时，关闭编辑
+                    environment.stopEditor();
                 }
+
+                @Override
+                public void windowClosed(DockingWindow window) {
+                    environment.stopEditor();
+                }
+
             });
+            registEvents(environment);
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
-//        dialog = CADStyleDialog.getInstance(environment);
-//        if (null != getActiveRecordset(environment.getMap())) {
-//            dialog.showDialog(getActiveRecordset(environment.getMap()));
-//        }
+    }
+
+    private void registEvents(EditEnvironment environment) {
+        removeEvents(environment);
+        environment.getMap().addMapClosedListener(this.mapClosedListener);
+        environment.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
+    }
+
+    private void removeEvents(EditEnvironment environment) {
+        environment.getMap().removeMapClosedListener(this.mapClosedListener);
+        environment.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
     }
 
     @Override
     public void deactivate(EditEnvironment environment) {
-
+        removeEvents(environment);
     }
 
 
@@ -105,7 +141,7 @@ public class CADStyleEditor extends AbstractEditor {
     private Recordset getActiveRecordset(Map map) {
         Recordset recordset = null;
         if (map.findSelection(true).length > 0) {
-            recordset = map.findSelection(true)[0].toRecordset();
+            recordset = MapUtilities.getActiveMap().findSelection(true)[0].toRecordset();
         }
         return recordset;
     }

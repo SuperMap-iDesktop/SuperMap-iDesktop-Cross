@@ -6,11 +6,14 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
+import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.ui.docking.OperationAbortedException;
+import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Selection;
+import com.supermap.mapping.*;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 
@@ -21,6 +24,20 @@ public class TextStyleEditor extends AbstractEditor {
     private TextStyleContainer textStyleContainer;
     private static IDockbar dockbarTextStyleContainer;
     private final String TEXTSTYLECONTAINER = "com.supermap.desktop.CtrlAction.TextStyle.TextStyleContainer";
+    private MapClosedListener mapClosedListener = new MapClosedListener() {
+        @Override
+        public void mapClosed(MapClosedEvent mapClosedEvent) {
+            if (null != textStyleContainer) {
+                textStyleContainer.setNullPanel();
+            }
+        }
+    };
+    private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
+        @Override
+        public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
+            textStyleContainer.setModify(false);
+        }
+    };
 
     @Override
     public boolean enble(EditEnvironment environment) {
@@ -65,7 +82,7 @@ public class TextStyleEditor extends AbstractEditor {
     }
 
     @Override
-    public void activate(EditEnvironment environment) {
+    public void activate(final EditEnvironment environment) {
         if (ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOTEXT, GeometryType.GEOTEXT3D)) {
             try {
                 dockbarTextStyleContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(TEXTSTYLECONTAINER));
@@ -77,18 +94,37 @@ public class TextStyleEditor extends AbstractEditor {
                         textStyleContainer.showDialog(getActiveRecordset(environment.getMap()));
                     }
                 }
-                environment.getMapControl().addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
+                ((Dockbar) dockbarTextStyleContainer).addListener(new DockingWindowAdapter() {
+
                     @Override
-                    public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-                        textStyleContainer.setModify(false);
+                    public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
+                        // 关闭dockbar时，关闭编辑
+                        environment.stopEditor();
                     }
+
+                    @Override
+                    public void windowClosed(DockingWindow window) {
+                        environment.stopEditor();
+                    }
+
                 });
+                registEvents(environment);
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
     }
 
+    private void registEvents(EditEnvironment environment) {
+        removeEvents(environment);
+        environment.getMap().addMapClosedListener(this.mapClosedListener);
+        environment.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
+    }
+
+    private void removeEvents(EditEnvironment environment) {
+        environment.getMap().removeMapClosedListener(this.mapClosedListener);
+        environment.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
+    }
 
     private Recordset getActiveRecordset(Map map) {
         Recordset recordset = null;
