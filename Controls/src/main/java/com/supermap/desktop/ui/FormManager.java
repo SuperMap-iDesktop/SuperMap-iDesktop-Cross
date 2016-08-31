@@ -381,7 +381,7 @@ public class FormManager implements IFormManager {
 				ArrayList<IForm> canSaveForms = new ArrayList<IForm>();
 				for (IForm child : forms) {
 					boolean canSaved = false;
-					if (child instanceof IFormMap) {
+					if (child.getWindowType() == WindowType.MAP) {
 						canSaved = ((IFormMap) child).getMapControl().getMap().isModified();
 					} else if (child instanceof IFormScene) {
 						// 场景没有实现，始终需要保存

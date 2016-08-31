@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472612154077
+Bnd-LastModified: 1472635817777
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.realspaceview.RealspaceViewActiva
  tor
 Bundle-ManifestVersion: 2

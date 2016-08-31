@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472612147043
+Bnd-LastModified: 1472635805493
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.layoutview.LayoutViewActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: LayoutView

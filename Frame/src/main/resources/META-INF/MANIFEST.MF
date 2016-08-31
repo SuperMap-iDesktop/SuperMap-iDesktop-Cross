@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472612146512
+Bnd-LastModified: 1472635804691
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.frame.FrameActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: Frame

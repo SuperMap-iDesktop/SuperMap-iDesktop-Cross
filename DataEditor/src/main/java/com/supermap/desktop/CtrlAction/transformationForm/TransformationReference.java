@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
@@ -63,10 +62,6 @@ public class TransformationReference extends TransformationBase implements ITran
 		return null;
 	}
 
-	@Override
-	public WindowType getWindowType() {
-		return null;
-	}
 
 	@Override
 	public boolean save() {

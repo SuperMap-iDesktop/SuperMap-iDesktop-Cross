@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472612145670
+Bnd-LastModified: 1472635803293
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.datatopology.DataTopologyActivato
  r
 Bundle-ManifestVersion: 2
