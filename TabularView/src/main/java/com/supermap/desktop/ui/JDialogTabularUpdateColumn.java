@@ -700,7 +700,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         comboBoxMethod.setEnabled(false);
         textFieldSecondField.setEnabled(true);
         labelOperationEQ.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelExpression"));
-        updateEQ(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType(), textFieldSecondField.getText());
         labelSecondFieldType.setText("");
         labelEQTip.setText("");
         labelSecondField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelSecondField"));
@@ -803,7 +802,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
                 // 设置统一运算界面
                 setUnityEvaluationInfo();
-                buttonApply.setEnabled(true);
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
@@ -872,7 +870,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
                 // 单字段运算
                 resetTextFieldOperationEQ();
-                buttonApply.setEnabled(true);
                 return;
             }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
@@ -1024,7 +1021,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void updateEQ(FieldType fieldType, String info) {
-        if ("0".equals(textAreaOperationEQ.getText())) {
+        if ("0".equals(textFieldSecondField.getText()) && "0".equals(info)) {
             info = "";
         }
         if (FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
@@ -1441,8 +1438,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                     beyoundMaxLength = true;
                     newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
                 }
-                if (operationFieldType.equals(FieldType.BOOLEAN)) {
+                if (operationFieldType.equals(FieldType.BOOLEAN) && fieldType.equals(FieldType.CHAR)) {
                     newValue = newValue.toUpperCase();
+                } else if (operationFieldType.equals(FieldType.BOOLEAN) && !fieldType.equals(FieldType.CHAR)) {
+                    newValue = newValue.substring(0, 1).toUpperCase() + newValue.substring(1, newValue.length());
                 }
                 recordset.setFieldValue(updateField, newValue);
             } else {
