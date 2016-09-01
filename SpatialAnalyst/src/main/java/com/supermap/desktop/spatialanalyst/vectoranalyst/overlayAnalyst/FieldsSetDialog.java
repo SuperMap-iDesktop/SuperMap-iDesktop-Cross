@@ -33,6 +33,8 @@ public class FieldsSetDialog extends SmDialog {
     private JButton buttonOverlayAnalystSelectReverse;
     private JButton buttonOK;
     private JButton buttonCancel;
+    private final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
+    private final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
     private final String[] tableTitle = {ControlsProperties.getString("String_ColumnHeader_FieldIndexes"), CommonProperties.getString("String_FieldName")};
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
@@ -54,57 +56,41 @@ public class FieldsSetDialog extends SmDialog {
         return dialogResult;
     }
 
-    private void removeSelection(JTable table) {
-        for (int i = 0; i < table.getRowCount(); i++) {
-            table.removeColumnSelectionInterval(i, i);
-        }
-    }
-
     private void selectAll(JTable table) {
-        removeSelection(table);
         for (int i = 0; i < table.getRowCount(); i++) {
             table.setValueAt(new Boolean(true), i, 0);
         }
     }
 
     private void selectReverse(JTable table) {
-
+        for (int i = 0; i < table.getRowCount(); i++) {
+            table.setValueAt(!((Boolean) table.getValueAt(i, 0)), i, 0);
+        }
     }
 
     private void registEvents() {
         this.buttonSourceFieldsSelectAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                selectAll(tableSourceFields);
             }
         });
         this.buttonSourceFieldsSelectReverse.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                removeSelection(tableSourceFields);
-                for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
-                    tableSourceFields.setValueAt(!((Boolean) tableSourceFields.getValueAt(i, 0)), i, 0);
-                }
+                selectReverse(tableSourceFields);
             }
         });
         this.buttonOverlayAnalystSelectAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                removeSelection(tableOverlayAnalystFields);
-                for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                    tableOverlayAnalystFields.setValueAt(new Boolean(true), i, 0);
-                    tableOverlayAnalystFields.updateUI();
-                }
+                selectAll(tableOverlayAnalystFields);
             }
         });
         this.buttonOverlayAnalystSelectReverse.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                removeSelection(tableOverlayAnalystFields);
-                for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                    tableOverlayAnalystFields.setValueAt(!((Boolean) tableOverlayAnalystFields.getValueAt(i, 0)), i, 0);
-                    tableOverlayAnalystFields.updateUI();
-                }
+                selectReverse(tableOverlayAnalystFields);
             }
         });
     }
@@ -163,14 +149,28 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initTable(JTable table, DatasetVector dataset) {
-        DefaultTableModel defaultTableModel = (DefaultTableModel) table.getModel();
-        defaultTableModel.setColumnIdentifiers(tableTitle);
+        int count = 0;
+        for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
+            if (!dataset.getFieldInfos().get(i).isSystemField()) {
+                count++;
+            }
+        }
+
+        DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[count][2], tableTitle) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+
+        };
+
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
                 Object[] sourceTableInfo = {new Boolean(false), dataset.getFieldInfos().get(i).getName()};
                 defaultTableModel.addRow(sourceTableInfo);
             }
         }
+        table.setModel(defaultTableModel);
         table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellEditor(new CheckBoxCellEditor(dataset));
         table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellRenderer(new CheckBoxRenderer(dataset));
         table.getColumn(CommonProperties.getString("String_FieldName")).setCellRenderer(new TooltipRender());
@@ -194,11 +194,15 @@ public class FieldsSetDialog extends SmDialog {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             checkBox.setSelected(((Boolean) value).booleanValue());
-            checkBox.updateUI();
             for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
                 if (this.datasetVector.getFieldInfos().get(i).getName().equals(table.getValueAt(row, 1).toString())) {
                     checkBox.setText(String.valueOf(i + 1));
                 }
+            }
+            if (isSelected) {
+                setForeground(COLOR_SYSTEM_SELECTED);
+            } else {
+                setForeground(COLOR_SYSTEM_NOT_SELECTED);
             }
             return checkBox;
         }
@@ -210,6 +214,11 @@ public class FieldsSetDialog extends SmDialog {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             setText(value.toString());
             setToolTipText(value.toString());
+            if (isSelected) {
+                setForeground(COLOR_SYSTEM_SELECTED);
+            } else {
+                setForeground(COLOR_SYSTEM_NOT_SELECTED);
+            }
             return this;
         }
     }
@@ -231,14 +240,16 @@ public class FieldsSetDialog extends SmDialog {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value instanceof Boolean) {
                 setSelected(((Boolean) value).booleanValue());
-                this.updateUI();
                 for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
                     if (this.datasetVector.getFieldInfos().get(i).getName().equals(table.getValueAt(row, 1).toString())) {
                         setText(String.valueOf(i + 1));
                     }
                 }
-                setForeground(table.getForeground());
-                setBackground(table.getBackground());
+            }
+            if (isSelected) {
+                setForeground(COLOR_SYSTEM_SELECTED);
+            } else {
+                setForeground(COLOR_SYSTEM_NOT_SELECTED);
             }
             return this;
         }
