@@ -334,8 +334,9 @@ public class OverlayAnalystDialog extends SmDialog {
     }
 
     private void initTextFieldTargetDataset(String targetDatasetName) {
-        Datasource targetDatasource = comboboxTargetDatasource.getSelectedDatasource();
-        textFieldTargetDataset.setText(targetDatasource.getDatasets().getAvailableDatasetName(targetDatasetName));
+        if (null != comboboxTargetDatasource.getSelectedDatasource()) {
+            textFieldTargetDataset.setText(comboboxTargetDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(targetDatasetName));
+        }
         if (null != comboboxSourceDataset.getSelectedDataset()) {
             resetTextFieldToleranceInfo(comboboxSourceDataset.getSelectedDataset());
         }

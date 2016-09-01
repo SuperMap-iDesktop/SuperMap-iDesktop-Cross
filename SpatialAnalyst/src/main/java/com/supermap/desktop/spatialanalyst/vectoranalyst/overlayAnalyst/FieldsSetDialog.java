@@ -18,6 +18,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Created by xie on 2016/8/31.
@@ -33,9 +35,11 @@ public class FieldsSetDialog extends SmDialog {
     private JButton buttonOverlayAnalystSelectReverse;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
-    private final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
+    private JScrollPane scrollpaneSourceFields;
+    private JScrollPane scrollpaneOverlayAnalystFields;
     private final String[] tableTitle = {ControlsProperties.getString("String_ColumnHeader_FieldIndexes"), CommonProperties.getString("String_FieldName")};
+    private String[] sourceFields;
+    private String[] overlayAnalystFields;
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
 
@@ -69,6 +73,7 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void registEvents() {
+        removeEvents();
         this.buttonSourceFieldsSelectAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,13 +98,45 @@ public class FieldsSetDialog extends SmDialog {
                 selectReverse(tableOverlayAnalystFields);
             }
         });
+        this.buttonOK.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
+                    if ((Boolean) tableSourceFields.getValueAt(i, 0)) {
+                        sourceFields[i] = (String) tableSourceFields.getValueAt(i, 1);
+                    }
+                }
+                for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
+                    if ((Boolean) tableOverlayAnalystFields.getValueAt(i, 0)) {
+                        overlayAnalystFields[i] = (String) tableOverlayAnalystFields.getValueAt(i, 1);
+                    }
+                }
+            }
+        });
+        this.buttonCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeEvents();
+                FieldsSetDialog.this.dispose();
+            }
+        });
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                removeEvents();
+                FieldsSetDialog.this.dispose();
+            }
+        });
+    }
+
+    private void removeEvents() {
     }
 
     private void initLayout() {
         JPanel panelSourceFields = new JPanel();
-        JScrollPane scrollpaneSourceFields = new JScrollPane();
         JPanel panelOverlayAnalystFields = new JPanel();
-        JScrollPane scrollpaneOverlayAnalystFields = new JScrollPane();
+        scrollpaneSourceFields = new JScrollPane();
+        scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
         panelSourceFields.add(this.labelSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -149,21 +186,8 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initTable(JTable table, DatasetVector dataset) {
-        int count = 0;
-        for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
-            if (!dataset.getFieldInfos().get(i).isSystemField()) {
-                count++;
-            }
-        }
-
-        DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[count][2], tableTitle) {
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-
-        };
-
+        DefaultTableModel defaultTableModel = (DefaultTableModel) table.getModel();
+        defaultTableModel.setColumnIdentifiers(tableTitle);
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
                 Object[] sourceTableInfo = {new Boolean(false), dataset.getFieldInfos().get(i).getName()};
@@ -174,6 +198,7 @@ public class FieldsSetDialog extends SmDialog {
         table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellEditor(new CheckBoxCellEditor(dataset));
         table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellRenderer(new CheckBoxRenderer(dataset));
         table.getColumn(CommonProperties.getString("String_FieldName")).setCellRenderer(new TooltipRender());
+        table.getColumn(CommonProperties.getString("String_FieldName")).setCellEditor(new ToolTipEditor());
     }
 
     class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor {
@@ -199,14 +224,33 @@ public class FieldsSetDialog extends SmDialog {
                     checkBox.setText(String.valueOf(i + 1));
                 }
             }
-            if (isSelected) {
-                setForeground(COLOR_SYSTEM_SELECTED);
-            } else {
-                setForeground(COLOR_SYSTEM_NOT_SELECTED);
-            }
+            setForeground(table.getForeground());
+            setBackground(table.getBackground());
             return checkBox;
         }
     }
+
+    class ToolTipEditor extends AbstractCellEditor implements TableCellEditor {
+        private JLabel label;
+
+        public ToolTipEditor() {
+            label = new JLabel();
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return label.getText();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            label.setText(value.toString());
+            setForeground(table.getForeground());
+            setBackground(table.getBackground());
+            return label;
+        }
+    }
+
 
     class TooltipRender extends JLabel implements TableCellRenderer {
 
@@ -214,11 +258,8 @@ public class FieldsSetDialog extends SmDialog {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             setText(value.toString());
             setToolTipText(value.toString());
-            if (isSelected) {
-                setForeground(COLOR_SYSTEM_SELECTED);
-            } else {
-                setForeground(COLOR_SYSTEM_NOT_SELECTED);
-            }
+            setForeground(table.getForeground());
+            setBackground(table.getBackground());
             return this;
         }
     }
@@ -246,12 +287,17 @@ public class FieldsSetDialog extends SmDialog {
                     }
                 }
             }
-            if (isSelected) {
-                setForeground(COLOR_SYSTEM_SELECTED);
-            } else {
-                setForeground(COLOR_SYSTEM_NOT_SELECTED);
-            }
+            setForeground(table.getForeground());
+            setBackground(table.getBackground());
             return this;
         }
+    }
+
+    public String[] getSourceFields() {
+        return sourceFields;
+    }
+
+    public String[] getOverlayAnalystFields() {
+        return overlayAnalystFields;
     }
 }

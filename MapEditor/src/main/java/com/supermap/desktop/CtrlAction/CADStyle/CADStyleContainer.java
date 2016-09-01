@@ -108,7 +108,7 @@ public class CADStyleContainer extends JPanel {
     private JTextField textFieldLineWidth;
     private SymbolMarkerSizeController symbolMarkerSizeController;
     private boolean isSizeListenersEnable = true;
-    private boolean isDisposed = false;
+    private boolean isDisposed;
 
     private final String[] stringPointSizes = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2.1", "2.3", "1.5", "3", "4", "5", "6", "7", "8", "9", "10", "15", "10"};
     private final String[] stringLineWidths = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -954,5 +954,6 @@ public class CADStyleContainer extends JPanel {
             this.recordset.dispose();
         }
         this.recordset = recordset;
+        isDisposed = false;
     }
 }
