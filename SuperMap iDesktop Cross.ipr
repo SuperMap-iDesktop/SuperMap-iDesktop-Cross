@@ -260,7 +260,6 @@
         <module name="DataView" />
         <module name="Frame" />
         <module name="iDesktop" />
-        <module name="JUnitPlugin" />
         <module name="LayoutEditor" />
         <module name="LayoutView" />
         <module name="LBSClient" />
@@ -272,7 +271,6 @@
         <module name="RealspaceView" />
         <module name="SpatialAnalyst" />
         <module name="TabularView" />
-        <module name="Test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -286,12 +284,12 @@
       <module name="DataView" target="1.7" />
       <module name="Frame" target="1.7" />
       <module name="iDesktop" target="1.7" />
-      <module name="JUnitPlugin" target="1.7" />
       <module name="LayoutEditor" target="1.7" />
       <module name="LayoutView" target="1.7" />
       <module name="LBSClient" target="1.7" />
       <module name="MapEditor" target="1.7" />
       <module name="MapView" target="1.7" />
+      <module name="MyPlugin" target="1.7" />
       <module name="NetServices" target="1.7" />
       <module name="RealspaceEditor" target="1.7" />
       <module name="RealspaceEffect" target="1.7" />
@@ -299,8 +297,6 @@
       <module name="SpatialAnalyst" target="1.7" />
       <module name="SuperMap iDesktop Cross" target="1.5" />
       <module name="TabularView" target="1.7" />
-      <module name="Test" target="1.7" />
-      <module name="Test1" target="1.7" />
     </bytecodeTargetLevel>
   </component>
   <component name="CopyrightManager" default="" />
@@ -322,13 +318,11 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/Test/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
-        <option value="$PROJECT_DIR$/JUnitPlugin/pom.xml" />
-        <option value="$PROJECT_DIR$/Test1/pom.xml" />
+        <option value="$PROJECT_DIR$/MyPlugin/pom.xml" />
       </set>
     </option>
   </component>
@@ -474,7 +468,6 @@
       <module fileurl="file://$PROJECT_DIR$/DataTopology/DataTopology.iml" filepath="$PROJECT_DIR$/DataTopology/DataTopology.iml" />
       <module fileurl="file://$PROJECT_DIR$/DataView/DataView.iml" filepath="$PROJECT_DIR$/DataView/DataView.iml" />
       <module fileurl="file://$PROJECT_DIR$/Frame/Frame.iml" filepath="$PROJECT_DIR$/Frame/Frame.iml" />
-      <module fileurl="file://$PROJECT_DIR$/JUnitPlugin/JUnitPlugin.iml" filepath="$PROJECT_DIR$/JUnitPlugin/JUnitPlugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/LBSClient/LBSClient.iml" filepath="$PROJECT_DIR$/LBSClient/LBSClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/LayoutEditor/LayoutEditor.iml" filepath="$PROJECT_DIR$/LayoutEditor/LayoutEditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/LayoutView/LayoutView.iml" filepath="$PROJECT_DIR$/LayoutView/LayoutView.iml" />
@@ -487,7 +480,6 @@
       <module fileurl="file://$PROJECT_DIR$/SpatialAnalyst/SpatialAnalyst.iml" filepath="$PROJECT_DIR$/SpatialAnalyst/SpatialAnalyst.iml" />
       <module fileurl="file://$PROJECT_DIR$/SuperMap iDesktop Cross.iml" filepath="$PROJECT_DIR$/SuperMap iDesktop Cross.iml" />
       <module fileurl="file://$PROJECT_DIR$/TabularView/TabularView.iml" filepath="$PROJECT_DIR$/TabularView/TabularView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Test/Test.iml" filepath="$PROJECT_DIR$/Test/Test.iml" />
       <module fileurl="file://$PROJECT_DIR$/iDesktop/iDesktop.iml" filepath="$PROJECT_DIR$/iDesktop/iDesktop.iml" />
     </modules>
   </component>
@@ -633,17 +625,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Maven: abbot:abbot:1.4.0">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/abbot/abbot/1.4.0/abbot-1.4.0.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/abbot/abbot/1.4.0/abbot-1.4.0-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/abbot/abbot/1.4.0/abbot-1.4.0-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: aopalliance:aopalliance:1.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
@@ -785,17 +766,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/xml/bind/jaxb-api/2.2.12/jaxb-api-2.2.12-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: junit:junit:4.12">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: log4j:log4j:1.2.17">
@@ -983,17 +953,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/mqtt-client/mqtt-client/1.3/mqtt-client-1.3-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.hamcrest:hamcrest-core:1.3">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.jasypt:jasypt:1.9.0">
