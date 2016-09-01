@@ -14,8 +14,9 @@ import javax.swing.*;
 /**
  * 带有图标的数据集下拉选择框
  * 太乱，需要重构 by wuxb
- *
+ * <p>
  * 需要改成直接存放数据集，然后设置Render渲染成DataCell by xiaJT
+ *
  * @author xie
  */
 // @formatter:on
@@ -276,6 +277,15 @@ public class DatasetComboBox extends JComboBox<Object> {
             dataset = (Dataset) ((DataCell) this.getItemAt(index)).getData();
         }
         return dataset;
+    }
+
+    public boolean hasDataset(String datasetName) {
+        for (int i = 0; i < this.getItemCount(); i++) {
+            if (this.getDatasetAt(i).getName().equals(datasetName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setSelectedDataset(String datasetName) {
