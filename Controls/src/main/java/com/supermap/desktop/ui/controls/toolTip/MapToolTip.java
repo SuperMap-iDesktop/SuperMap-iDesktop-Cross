@@ -16,15 +16,18 @@ public class MapToolTip extends SmToolTip {
 
 	public MapToolTip(Map map) {
 		this.map = map;
-//		this.setPreferredSize(new Dimension(200,200));
+		this.setPreferredSize(new Dimension(200, 200));
 		initComponent();
 		initLayout();
 	}
 
 	private void initComponent() {
+		labelMapName = new JLabel();
 		labelMapImage = new JLabel();
+		map.setImageSize(new Dimension(200, 180));
+		map.viewEntire();
 		this.labelMapImage.setIcon(new ImageIcon(map.outputMapToBitmap()));
-		labelMapImage = new JLabel();
+		labelMapName.setText(map.getName());
 	}
 
 	private void initLayout() {
@@ -33,5 +36,8 @@ public class MapToolTip extends SmToolTip {
 		this.add(labelMapImage, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 	}
 
+	@Override
+	public void setTipText(String tipText) {
 
+	}
 }

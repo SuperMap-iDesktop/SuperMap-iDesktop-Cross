@@ -1,28 +1,25 @@
 package com.supermap.desktop.ui.controls.CellRenders;
 
-import com.supermap.data.Datasource;
 import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * Table对应的getValueAt()得到的对象为数据源时可使用
- * <P>得到带图片的数据源
- *
  * @author XiaJT
  */
-public class TableDatasourceCellRender extends DefaultTableCellRenderer {
+public class TableMapCellRender extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		Component result;
 		if (value == null) {
 			result = new JLabel();
-		} else if (!(value instanceof Datasource)) {
-			result = new DataCell(String.valueOf(value));
+		} else if (value instanceof Map) {
+			result = new DataCell(value);
 		} else {
-			result = new DataCell(((Datasource) value));
+			result = new JLabel(String.valueOf(value));
 		}
 		if (isSelected) {
 			result.setBackground(table.getSelectionBackground());

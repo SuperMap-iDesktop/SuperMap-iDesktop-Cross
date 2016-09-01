@@ -5,8 +5,8 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
-import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.ui.Action;
 
 import javax.swing.*;

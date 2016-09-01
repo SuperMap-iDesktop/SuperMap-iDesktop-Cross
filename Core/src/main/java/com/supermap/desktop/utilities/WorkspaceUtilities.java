@@ -19,6 +19,7 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.SmMenu;
@@ -595,13 +596,15 @@ public class WorkspaceUtilities {
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
 			IForm iForm = formManager.get(i);
-			if (iForm instanceof IFormMap) {
+			WindowType windowType = iForm.getWindowType();
+			if (windowType == WindowType.MAP) {
 				copyWorkspace.getMaps().add(iForm.getText(), ((IFormMap) iForm).getMapControl().getMap().toXML());
-			} else if (iForm instanceof IFormScene) {
+			} else if (windowType == WindowType.SCENE) {
 				copyWorkspace.getScenes().add(iForm.getText(), ((IFormScene) iForm).getSceneControl().getScene().toXML());
-			} else if (iForm instanceof IFormLayout) {
+			} else if (windowType == WindowType.LAYOUT) {
 				copyWorkspace.getLayouts().add(iForm.getText(), ((IFormLayout) iForm).getMapLayoutControl().getMapLayout().toXML());
 			}
+
 		}
 
 		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
@@ -626,7 +629,6 @@ public class WorkspaceUtilities {
 				copyWorkspace.getLayouts().add(layoutName, workspace.getLayouts().getLayoutXML(i));
 			}
 		}
-
 
 
 		return copyWorkspace;

@@ -1,12 +1,28 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
+import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSettingVector;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -474,7 +490,7 @@ public class MapUtilities {
 		int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
 		for (int index = 0; index < formManagerCount; index++) {
 			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
-			if (form instanceof IFormMap) {
+			if (form.getWindowType() == WindowType.MAP) {
 				// 对于新窗口，不能用地图名字作为窗口标题，地图名和窗口标题可能会不一样，直接使用窗口标题
 				if (isNewWindow) {
 					allMapNames.add(form.getText().toLowerCase());
@@ -577,4 +593,6 @@ public class MapUtilities {
 		}
 		return geometry;
 	}
+
+
 }

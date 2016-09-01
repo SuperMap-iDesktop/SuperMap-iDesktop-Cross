@@ -3,8 +3,10 @@ package com.supermap.desktop.utilties;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -52,11 +54,16 @@ public class TabularStatisticUtilties {
 	 */
 	public static boolean updataStatisticsResult(String result) {
 		try {
-			JTextField jTextFieldStatisticResult = (JTextField) ((FormBaseChild) Application.getActiveApplication().getActiveForm()).getStatusbar()
+			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			if (activeForm.getWindowType() != WindowType.TABULAR) {
+				return true;
+			}
+			JTextField jTextFieldStatisticResult = (JTextField) ((FormBaseChild) activeForm).getStatusbar()
 					.getComponent(STATISTIC_RESULT_INDEX);
 			jTextFieldStatisticResult.setText(result);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+			return false;
 		}
 		return true;
 	}
