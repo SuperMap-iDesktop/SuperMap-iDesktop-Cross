@@ -267,7 +267,7 @@ public class WorkspaceRecovery {
 	private OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo workspaceConnectionInfo) {
 		CursorUtilities.setWaitCursor();
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		workspace.open(workspaceConnectionInfo);
+//		workspace.open(workspaceConnectionInfo);
 		OpenWorkspaceResult openWorkspaceResult = WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
 		if (openWorkspaceResult == OpenWorkspaceResult.SUCCESSED && workspaceConnectionInfo.getServer().endsWith("smwu")) {// sxwu会自动读取符号库
 			String server = workspaceConnectionInfo.getServer().substring(0, workspaceConnectionInfo.getServer().length() - 5);

@@ -456,7 +456,7 @@ public class MapUtilities {
 			int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
 			for (int index = 0; index < formManagerCount; index++) {
 				IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
-				if (form instanceof IFormMap && !form.getText().equalsIgnoreCase(oldAvailableMapName)) {
+				if (form.getWindowType() == WindowType.MAP && !form.getText().equalsIgnoreCase(oldAvailableMapName)) {
 					allMapNames.add(form.getText().toLowerCase());
 				}
 			}

@@ -111,10 +111,8 @@ public class DataCell extends JPanel {
 
 	@Override
 	public JToolTip createToolTip() {
-		if (data == null) {
-			return super.createToolTip();
-		}
-		if (data instanceof Map) {
+		// 性能太差，后期优化后再使用
+		if (data != null && data instanceof Map) {
 			MapToolTip mapToolTip = new MapToolTip((Map) data);
 			mapToolTip.setComponent(this);
 			return mapToolTip;
@@ -122,13 +120,6 @@ public class DataCell extends JPanel {
 		return super.createToolTip();
 	}
 
-	@Override
-	public String getToolTipText() {
-		if (data != null && data instanceof Map) {
-			return ((Map) data).getName();
-		}
-		return super.getToolTipText();
-	}
 
 	/**
 	 * 根据数据集类型和数据集名称创建
@@ -193,9 +184,6 @@ public class DataCell extends JPanel {
 		this.setSize(300, 15);
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		this.add(this.imageLabel);
-		if (data != null && data instanceof Map) {
-			imageLabel.setToolTipText("");
-		}
 	}
 
 	/**

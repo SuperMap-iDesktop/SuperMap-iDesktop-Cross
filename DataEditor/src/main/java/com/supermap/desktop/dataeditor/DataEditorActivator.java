@@ -2,7 +2,7 @@ package com.supermap.desktop.dataeditor;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.CtrlAction.transformationForm.FormTransformation;
+import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormTransformation;

@@ -487,7 +487,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="iDesktop Startup Linux" type="Application" factoryName="Application">
+    <configuration default="false" name="iDesktop Startup Linux" type="Application" factoryName="Application" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="com.supermap.desktop.iDesktop.Startup" />
       <option name="VM_PARAMETERS" value="-Dfelix.config.properties=file:Configuration/configDevelop.properties -splash:Resources/Frame/iDesktop_Cross_Startup.gif" />
@@ -508,7 +508,7 @@
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
       </method>
     </configuration>
-    <configuration default="false" name="iDesktop Startup" type="Application" factoryName="Application">
+    <configuration default="false" name="iDesktop Startup" type="Application" factoryName="Application" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="com.supermap.desktop.iDesktop.Startup" />
       <option name="VM_PARAMETERS" value="-Dfelix.config.properties=file:Configuration/configDevelop.properties -splash:Resources/Frame/iDesktop_Cross_Startup.gif" />

@@ -42,7 +42,7 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private final int period = 60000; // 10 min
+	private final int period = 600000; // 10 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
@@ -124,7 +124,7 @@ public class WorkspaceTempSave {
 		}
 		timer = new Timer("WorkspaceTempSave", true);
 		addListeners();
-		timer.schedule(task, period / 6, period);
+		timer.schedule(task, 60000, period);
 	}
 
 	private void addListeners() {
