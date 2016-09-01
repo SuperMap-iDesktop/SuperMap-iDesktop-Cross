@@ -5,7 +5,10 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
@@ -141,7 +144,6 @@ public class ThemeGuidDialog extends SmDialog {
         }
         this.listContent.setModel(listModel);
         this.listContent.setSelectedIndex(0);
-        this.listContent.setCellRenderer(new CommonListCellRenderer());
     }
 
     /**

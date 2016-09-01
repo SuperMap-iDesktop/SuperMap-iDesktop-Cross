@@ -108,6 +108,7 @@ public class CADStyleContainer extends JPanel {
     private JTextField textFieldLineWidth;
     private SymbolMarkerSizeController symbolMarkerSizeController;
     private boolean isSizeListenersEnable = true;
+    private boolean isDisposed = false;
 
     private final String[] stringPointSizes = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2.1", "2.3", "1.5", "3", "4", "5", "6", "7", "8", "9", "10", "15", "10"};
     private final String[] stringLineWidths = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -118,40 +119,42 @@ public class CADStyleContainer extends JPanel {
         public void propertyChange(PropertyChangeEvent evt) {
             Color currentColor = ((ColorSelectButton) evt.getSource()).getColor();
             try {
-                Object newSize = null;
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
+                if (!isDisposed) {
+                    Object newSize = null;
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        if (evt.getSource().equals(buttonPointColor)) {
+                            // 修改点颜色
+                            geoStyle.setLineColor(currentColor);
+                        } else if (evt.getSource().equals(buttonLineColor)) {
+                            // 修改线颜色
+                            geoStyle.setLineColor(currentColor);
+                        } else if (evt.getSource().equals(buttonFillForeColor)) {
+                            // 修改面的前景色
+                            geoStyle.setFillForeColor(currentColor);
+                        } else if (evt.getSource().equals(buttonFillBackColor)) {
+                            // 修改面的背景色
+                            geoStyle.setFillBackColor(currentColor);
+                        } else {
+                            break;
+                        }
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
                     }
-                    if (evt.getSource().equals(buttonPointColor)) {
-                        // 修改点颜色
-                        geoStyle.setLineColor(currentColor);
-                    } else if (evt.getSource().equals(buttonLineColor)) {
-                        // 修改线颜色
-                        geoStyle.setLineColor(currentColor);
-                    } else if (evt.getSource().equals(buttonFillForeColor)) {
-                        // 修改面的前景色
-                        geoStyle.setFillForeColor(currentColor);
-                    } else if (evt.getSource().equals(buttonFillBackColor)) {
-                        // 修改面的背景色
-                        geoStyle.setFillBackColor(currentColor);
-                    } else {
-                        break;
-                    }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception e2) {
                 Application.getActiveApplication().getOutput().output(e2);
             }
@@ -164,27 +167,29 @@ public class CADStyleContainer extends JPanel {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 int index = comboBoxFillGradientModel.getSelectedIndex();
                 try {
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        } else {
-                            break;
+                    if (!isDisposed) {
+                        recordset.moveFirst();
+                        while (!recordset.isEOF()) {
+                            editHistory.add(EditType.MODIFY, recordset, true);
+                            recordset.edit();
+                            Geometry tempGeometry = recordset.getGeometry();
+                            GeoStyle geoStyle = new GeoStyle();
+                            if (null != geoStyle) {
+                                geoStyle = tempGeometry.getStyle();
+                            } else {
+                                break;
+                            }
+                            resetFillModel(index, geoStyle);
+                            tempGeometry.setStyle(geoStyle);
+                            recordset.setGeometry(tempGeometry);
+                            tempGeometry.dispose();
+                            recordset.update();
+                            recordset.moveNext();
                         }
-                        resetFillModel(index, geoStyle);
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
+                        editHistory.batchEnd();
+                        MapUtilities.getActiveMap().refresh();
+                        modify = true;
                     }
-                    editHistory.batchEnd();
-                    MapUtilities.getActiveMap().refresh();
-                    modify = true;
                 } catch (Exception ex) {
                     Application.getActiveApplication().getOutput().output(ex);
                 }
@@ -195,38 +200,40 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                String text = textFieldPointRotation.getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
-                    textFieldPointRotation.setForeground(wrongColor);
-                    return;
-                } else {
-                    textFieldPointRotation.setForeground(defaultColor);
-                }
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    double rotation = Double.valueOf(text);
-                    if (!DoubleUtilities.equals(rotation, geoStyle.getMarkerAngle(), pow)) {
-                        //设置点旋转角度
-                        geoStyle.setMarkerAngle(rotation);
+                if (!isDisposed) {
+                    String text = textFieldPointRotation.getText();
+                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+                        textFieldPointRotation.setForeground(wrongColor);
+                        return;
                     } else {
-                        break;
+                        textFieldPointRotation.setForeground(defaultColor);
                     }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        double rotation = Double.valueOf(text);
+                        if (!DoubleUtilities.equals(rotation, geoStyle.getMarkerAngle(), pow)) {
+                            //设置点旋转角度
+                            geoStyle.setMarkerAngle(rotation);
+                        } else {
+                            break;
+                        }
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
+                    }
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -236,38 +243,40 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                String text = ((JFormattedTextField) e.getSource()).getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(0, 100, text)) {
-                    ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                    return;
-                } else {
-                    ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                }
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    int opaque = Integer.valueOf(text);
-                    if (geoStyle.getFillOpaqueRate() != opaque) {
-                        //设置点/面透明度
-                        geoStyle.setFillOpaqueRate(opaque);
+                if (!isDisposed) {
+                    String text = ((JFormattedTextField) e.getSource()).getText();
+                    if (!SymbolSpinnerUtilties.isLegitNumber(0, 100, text)) {
+                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
+                        return;
                     } else {
-                        break;
+                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
                     }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        int opaque = Integer.valueOf(text);
+                        if (geoStyle.getFillOpaqueRate() != opaque) {
+                            //设置点/面透明度
+                            geoStyle.setFillOpaqueRate(opaque);
+                        } else {
+                            break;
+                        }
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
+                    }
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -277,8 +286,8 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                if (isSizeListenersEnable && e.getSource() instanceof JFormattedTextField) {
-                    // 重新设置sym
+                if (isSizeListenersEnable && e.getSource() instanceof JFormattedTextField && !isDisposed) {
+                    // 重新设置
                     String text = ((JFormattedTextField) e.getSource()).getText();
                     if (!SymbolSpinnerUtilties.isLegitNumber(-500d, 500d, text)) {
                         ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
@@ -326,41 +335,43 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                String text = ((JFormattedTextField) e.getSource()).getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(-100d, 100d, text)) {
-                    ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                    return;
-                } else {
-                    ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                }
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    double newOffset = Double.valueOf(text);
-                    if (e.getSource().equals(textFieldFillGradientOffsetX) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
-                        // 修改水平渐变偏移量
-                        geoStyle.setFillGradientOffsetRatioX(newOffset);
-                    } else if (e.getSource().equals(textFieldFillGradientOffsetY) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
-                        // 修改垂直渐变偏移量
-                        geoStyle.setFillGradientOffsetRatioY(newOffset);
+                if (!isDisposed) {
+                    String text = ((JFormattedTextField) e.getSource()).getText();
+                    if (!SymbolSpinnerUtilties.isLegitNumber(-100d, 100d, text)) {
+                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
+                        return;
                     } else {
-                        break;
+                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
                     }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        double newOffset = Double.valueOf(text);
+                        if (e.getSource().equals(textFieldFillGradientOffsetX) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
+                            // 修改水平渐变偏移量
+                            geoStyle.setFillGradientOffsetRatioX(newOffset);
+                        } else if (e.getSource().equals(textFieldFillGradientOffsetY) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
+                            // 修改垂直渐变偏移量
+                            geoStyle.setFillGradientOffsetRatioY(newOffset);
+                        } else {
+                            break;
+                        }
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
+                    }
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -370,38 +381,40 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                String text = ((JFormattedTextField) e.getSource()).getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
-                    ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                    return;
-                } else {
-                    ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                }
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    double newAngel = Double.valueOf(text);
-                    if (!DoubleUtilities.equals(newAngel, geoStyle.getFillGradientAngle(), pow)) {
-                        geoStyle.setFillGradientAngle(newAngel);
+                if (!isDisposed) {
+                    String text = ((JFormattedTextField) e.getSource()).getText();
+                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
+                        return;
                     } else {
-                        break;
+                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
                     }
-                    double newOffset = Double.valueOf(text);
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        double newAngel = Double.valueOf(text);
+                        if (!DoubleUtilities.equals(newAngel, geoStyle.getFillGradientAngle(), pow)) {
+                            geoStyle.setFillGradientAngle(newAngel);
+                        } else {
+                            break;
+                        }
+                        double newOffset = Double.valueOf(text);
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
+                    }
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -411,38 +424,40 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void caretUpdate(CaretEvent e) {
             try {
-                String text = ((JTextField) e.getSource()).getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(0d, 20d, text)) {
-                    ((JTextField) e.getSource()).setForeground(wrongColor);
-                    return;
-                } else {
-                    ((JTextField) e.getSource()).setForeground(defaultColor);
-                }
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    double newLineWidth = Double.valueOf(text);
-                    if (!DoubleUtilities.equals(newLineWidth, geoStyle.getLineWidth(), pow)) {
-                        geoStyle.setLineWidth(newLineWidth);
+                if (!isDisposed) {
+                    String text = ((JTextField) e.getSource()).getText();
+                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 20d, text)) {
+                        ((JTextField) e.getSource()).setForeground(wrongColor);
+                        return;
                     } else {
-                        break;
+                        ((JTextField) e.getSource()).setForeground(defaultColor);
                     }
-                    double newOffset = Double.valueOf(text);
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
+                        }
+                        double newLineWidth = Double.valueOf(text);
+                        if (!DoubleUtilities.equals(newLineWidth, geoStyle.getLineWidth(), pow)) {
+                            geoStyle.setLineWidth(newLineWidth);
+                        } else {
+                            break;
+                        }
+                        double newOffset = Double.valueOf(text);
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
+                    }
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -475,39 +490,41 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                recordset.moveFirst();
-                while (!recordset.isEOF()) {
-                    editHistory.add(EditType.MODIFY, recordset, true);
-                    recordset.edit();
-                    Geometry tempGeometry = recordset.getGeometry();
-                    GeoStyle geoStyle = new GeoStyle();
-                    if (null != geoStyle) {
-                        geoStyle = tempGeometry.getStyle();
-                    }
-                    if (e.getSource().equals(checkboxBackOpaque)) {
-                        boolean isOpaque = checkboxBackOpaque.isSelected();
-                        buttonFillBackColor.setEnabled(!isOpaque);
-                        geoStyle.setFillBackOpaque(!isOpaque);
-                    } else if (e.getSource().equals(checkboxFillGradient)) {
-                        setFillGradientEnabled(checkboxFillGradient.isSelected());
-                        if (checkboxFillGradient.isSelected()) {
-                            int modelIndex = comboBoxFillGradientModel.getSelectedIndex();
-                            resetFillModel(modelIndex, geoStyle);
-                        } else {
-                            geoStyle.setFillGradientMode(FillGradientMode.NONE);
+                if (!isDisposed) {
+                    recordset.moveFirst();
+                    while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+                        if (null != geoStyle) {
+                            geoStyle = tempGeometry.getStyle();
                         }
-                    } else {
-                        break;
+                        if (e.getSource().equals(checkboxBackOpaque)) {
+                            boolean isOpaque = checkboxBackOpaque.isSelected();
+                            buttonFillBackColor.setEnabled(!isOpaque);
+                            geoStyle.setFillBackOpaque(!isOpaque);
+                        } else if (e.getSource().equals(checkboxFillGradient)) {
+                            setFillGradientEnabled(checkboxFillGradient.isSelected());
+                            if (checkboxFillGradient.isSelected()) {
+                                int modelIndex = comboBoxFillGradientModel.getSelectedIndex();
+                                resetFillModel(modelIndex, geoStyle);
+                            } else {
+                                geoStyle.setFillGradientMode(FillGradientMode.NONE);
+                            }
+                        } else {
+                            break;
+                        }
+                        tempGeometry.setStyle(geoStyle);
+                        recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
                     }
-                    tempGeometry.setStyle(geoStyle);
-                    recordset.setGeometry(tempGeometry);
-                    tempGeometry.dispose();
-                    recordset.update();
-                    recordset.moveNext();
+                    editHistory.batchEnd();
+                    MapUtilities.getActiveMap().refresh();
+                    modify = true;
                 }
-                editHistory.batchEnd();
-                MapUtilities.getActiveMap().refresh();
-                modify = true;
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -738,6 +755,7 @@ public class CADStyleContainer extends JPanel {
         if (null != recordset) {
             recordset.close();
             recordset.dispose();
+            isDisposed = true;
         }
     }
 
