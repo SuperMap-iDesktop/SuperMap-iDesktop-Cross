@@ -4,15 +4,13 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.event.ActiveDatasetsChangeEvent;
-import com.supermap.desktop.event.ActiveDatasetsChangeListener;
-import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
-import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.Output;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
 
 /**
@@ -30,6 +28,7 @@ public class Application {
 	private ArrayList<Dataset> activeDatasets = new ArrayList<Dataset>();
 
 	private EventListenerList eventListenerList = new EventListenerList();
+	public ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
 
 	/**
 	 * classVar1 documentation comment
@@ -56,7 +55,15 @@ public class Application {
 	 * Set the MainFrame
 	 */
 	public void setMainFrame(IFormMain formMain) {
+		final IFormMain formMainCopy = formMain;
 		this.formMain = formMain;
+		formMain.addFormLoadedListener(new FormLoadedListener() {
+			@Override
+			public void loadFinish(EventObject object) {
+				fireFormActivatedEvent(new EventObject(formMainCopy));
+				formMainCopy.removeFormLoadedListener(this);
+			}
+		});
 	}
 
 	/**
@@ -256,4 +263,19 @@ public class Application {
 			}
 		}
 	}
+
+	public void addFormActivatedListener(FormActivatedListener listener){
+		formActivatedListeners.add(listener);
+	}
+
+	public void removeFormActivatedListener(FormActivatedListener listener) {
+		formActivatedListeners.remove(listener);
+	}
+
+	private void fireFormActivatedEvent(EventObject event){
+		for (int i = formActivatedListeners.size() - 1; i >= 0; i--) {
+			formActivatedListeners.get(i).handleEvent(event);
+		}
+	}
+
 }

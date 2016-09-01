@@ -577,7 +577,7 @@ public class FormManager implements IFormManager {
 					boolean isNeedSave = false;
 					String message = "";
 
-					if (form instanceof IFormMap) {
+					if (form.getWindowType() == WindowType.MAP) {
 						// 地图 修改过才提示
 						if (((IFormMap) form).getMapControl().getMap().isModified()) {
 							isNeedSave = true;

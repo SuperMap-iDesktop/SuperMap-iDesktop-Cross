@@ -14,6 +14,7 @@ import com.supermap.data.WorkspaceSavedEvent;
 import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -42,7 +43,7 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private final int period = 60000; // 10 min
+	private final int period = 600000; // 10 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
@@ -124,7 +125,7 @@ public class WorkspaceTempSave {
 		}
 		timer = new Timer("WorkspaceTempSave", true);
 		addListeners();
-		timer.schedule(task, period / 6, period);
+		timer.schedule(task, 60000, period);
 	}
 
 	private void addListeners() {
@@ -283,7 +284,7 @@ public class WorkspaceTempSave {
 		Element datasourcesNode = document.createElement("Datasources");
 		Datasources datasources = activeWorkspace.getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
-			if (datasources.get(i).getEngineType() == EngineType.UDB && !datasources.get(i).isReadOnly() && datasources.get(i).isOpened()) {
+			if (datasources.get(i).getEngineType() == EngineType.UDB && datasources.get(i).isOpened() && !DatasourceUtilities.isMemoryDatasource(datasources.get(i))) {
 				Element datasource = document.createElement("Datasource");
 				byte[] bytes;
 				try {

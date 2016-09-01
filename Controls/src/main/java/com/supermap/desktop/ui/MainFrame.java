@@ -2,6 +2,7 @@ package com.supermap.desktop.ui;
 
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.SystemUIUtilities;
+import com.supermap.desktop.event.FormActivatedListener;
 import com.supermap.desktop.utilities.PathUtilities;
 
 import java.awt.*;
@@ -51,6 +52,7 @@ public class MainFrame extends FormBase implements WindowListener {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
 
+
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// nothing
@@ -81,7 +83,6 @@ public class MainFrame extends FormBase implements WindowListener {
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// nothing
-
 	}
 
 	@Override
@@ -89,5 +90,4 @@ public class MainFrame extends FormBase implements WindowListener {
 		// nothing
 
 	}
-
 }

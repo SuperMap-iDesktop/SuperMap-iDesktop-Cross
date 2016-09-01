@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.event.FormLoadedListener;
+
 public interface IFormMain {
 
 	/**
@@ -55,4 +57,8 @@ public interface IFormMain {
 	 * Method doSomething documentation comment…
 	 */
 	void loadUI();
+
+    void addFormLoadedListener(FormLoadedListener formLoadedListener);
+
+	void removeFormLoadedListener(FormLoadedListener formLoadedListener);
 }
