@@ -10,12 +10,9 @@ import javax.swing.*;
 public class Startup {
 	public static void main(String[] args) {
 		try {
-			System.out.println(1);
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			System.out.println(2);
 			Main.main(args);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}

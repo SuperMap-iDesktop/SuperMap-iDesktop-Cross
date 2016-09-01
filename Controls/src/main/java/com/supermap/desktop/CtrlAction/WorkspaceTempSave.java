@@ -14,6 +14,7 @@ import com.supermap.data.WorkspaceSavedEvent;
 import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -283,7 +284,7 @@ public class WorkspaceTempSave {
 		Element datasourcesNode = document.createElement("Datasources");
 		Datasources datasources = activeWorkspace.getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
-			if (datasources.get(i).getEngineType() == EngineType.UDB && !datasources.get(i).isReadOnly() && datasources.get(i).isOpened()) {
+			if (datasources.get(i).getEngineType() == EngineType.UDB && datasources.get(i).isOpened() && !DatasourceUtilities.isMemoryDatasource(datasources.get(i))) {
 				Element datasource = document.createElement("Datasource");
 				byte[] bytes;
 				try {
