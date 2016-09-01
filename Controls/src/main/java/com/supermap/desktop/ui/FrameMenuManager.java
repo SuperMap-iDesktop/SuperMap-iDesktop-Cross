@@ -166,6 +166,8 @@ public class FrameMenuManager implements IFrameMenuManager {
 			windowType = WindowType.LAYOUT;
 		} else if ("SuperMap.Desktop.FormTabular".equalsIgnoreCase(controlCalss)) {
 			windowType = WindowType.TABULAR;
+		} else if ("SuperMap.Desktop.FormTransformation".equalsIgnoreCase(controlCalss)) {
+			windowType = WindowType.TRANSFORMATION;
 		}
 
 		return windowType;

@@ -18,12 +18,16 @@ public class SmSortTable extends JTable {
 
 	public SmSortTable() {
 		super();
+		init();
+	}
+
+	private void init() {
 		this.setAutoCreateRowSorter(true);
+		this.getTableHeader().setReorderingAllowed(false);
 	}
 
 	public SmSortTable(TableModel tableModel) {
 		super(tableModel);
-		this.setAutoCreateRowSorter(true);
 	}
 
 	@Override

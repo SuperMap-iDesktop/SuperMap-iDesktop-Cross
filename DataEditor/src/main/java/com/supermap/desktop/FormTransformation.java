@@ -1,8 +1,12 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
-import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationBean;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationMain;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
+import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.enums.WindowType;
@@ -18,6 +22,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,14 +31,44 @@ import java.util.List;
  * @author XiaJT
  */
 public class FormTransformation extends FormBaseChild implements IFormTransformation, IFormMap {
+	private JPopupMenu tableContextMenu;
+	private JPopupMenu formTransformationContextMenu;
 	private JTable tablePoints;
 	private JSplitPane splitPaneMapControls;
 	private JSplitPane splitPaneMain;
 	private FormTransformationTableModel formTransformationTableModel;
-	private int rightHeight;
 	private TransformationMain transformationMain;
 	private TransformationReference transformationReference;
 	private IFormMap currentForceWindow;
+	private ArrayList<Object> transformationObjects = new ArrayList<>();
+	private ArrayList<Object> transformationReferenceObjects = new ArrayList<>();
+	private MouseAdapter mapControlMouseAdapter = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			Object source = e.getSource();
+			if (source != currentForceWindow.getMapControl()) {
+				currentForceWindow.deactived();
+				currentForceWindow = currentForceWindow == transformationMain ? transformationReference : transformationMain;
+				currentForceWindow.actived();
+				Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
+			}
+			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+				getFormTransformationContextMenu().show(getMapControl(), e.getX(), e.getY());
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO: 2016/9/1 投影信息修改
+		}
+
+
+	};
 
 	public FormTransformation() {
 		this(null);
@@ -48,9 +84,15 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		transformationMain = new TransformationMain(this);
 		transformationReference = new TransformationReference(this);
 		currentForceWindow = transformationMain;
+		currentForceWindow.actived();
 		formTransformationTableModel = new FormTransformationTableModel();
 		tablePoints = new SmSortTable();
 		tablePoints.setModel(formTransformationTableModel);
+		if (Application.getActiveApplication().getMainFrame() != null) {
+			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
+			this.formTransformationContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormTransformation.TransformationMapsContextMenu");
+			this.tableContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormTransformation.TransformationItemsContextMenu");
+		}
 		initLayout();
 		initListener();
 	}
@@ -70,34 +112,45 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		splitPaneMain.setResizeWeight(1);
 
 		this.add(this.splitPaneMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		// FIXME: 2016/7/8 状态栏为空
 
-//		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 	}
 
 	private void initListener() {
+		//region 一次性事件
 		splitPaneMain.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				splitPaneMain.setDividerLocation(0.8);
-				splitPaneMain.addComponentListener(new ComponentAdapter() {
-
+				SwingUtilities.invokeLater(new Runnable() {
 					@Override
-					public void componentResized(ComponentEvent e) {
-						splitPaneMain.setDividerLocation(splitPaneMain.getHeight() - rightHeight);
+					public void run() {
+						if (transformationReferenceObjects.size() > 0) {
+							transformationReference.addDatas(transformationReferenceObjects);
+							transformationReferenceObjects.clear();
+						}
+						if (transformationObjects.size() > 0) {
+							transformationMain.addDatas(transformationObjects);
+							transformationObjects.clear();
+						}
 					}
 				});
-				rightHeight = splitPaneMain.getHeight() - splitPaneMain.getDividerLocation();
 				splitPaneMain.removeComponentListener(this);
 			}
 		});
+		//endregion
+		addMapControlListener();
+	}
+
+	private void addMapControlListener() {
+		transformationMain.getMapControl().addMouseListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().addMouseListener(mapControlMouseAdapter);
 	}
 
 	@Override
 	public String getText() {
 		return null;
 	}
-
 
 
 	@Override
@@ -174,7 +227,12 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		TransformationBean transformationBean = new TransformationBean(transformationDataset, resultDatasource, resultDatasetName);
 		ArrayList<Object> datas = new ArrayList<>();
 		datas.add(transformationBean);
-		transformationMain.addDatas(datas);
+		if (getWidth() != 0) {
+			transformationMain.addDatas(datas);
+		} else {
+			transformationObjects = new ArrayList<>();
+			transformationObjects.add(transformationBean);
+		}
 	}
 
 	@Override
@@ -182,12 +240,23 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		TransformationBean transformationBean = new TransformationBean(map);
 		ArrayList<Object> datas = new ArrayList<>();
 		datas.add(transformationBean);
-		transformationMain.addDatas(datas);
+		if (getWidth() != 0) {
+			transformationMain.addDatas(datas);
+		} else {
+			transformationObjects = new ArrayList<>();
+			transformationObjects.add(transformationBean);
+		}
 	}
 
 	@Override
 	public void addReferenceObjects(List<Object> listObjects) {
-		transformationReference.addDatas(listObjects);
+		if (getWidth() == 0) {
+			for (Object listObject : listObjects) {
+				transformationReferenceObjects.add(listObject);
+			}
+		} else {
+			transformationReference.addDatas(listObjects);
+		}
 	}
 
 
@@ -220,6 +289,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	public void removeActiveLayersByDatasets(Dataset... datasets) {
 		transformationMain.removeActiveLayersByDatasets(datasets);
 		transformationReference.removeActiveLayersByDatasets(datasets);
+	}
+
+	private JPopupMenu getFormTransformationContextMenu() {
+		return formTransformationContextMenu;
+	}
+
+	private JPopupMenu getTableContextMenu() {
+		return tableContextMenu;
 	}
 
 	//region 不需要的方法
