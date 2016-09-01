@@ -201,13 +201,13 @@ public class CADStyleTitlePanel extends JPanel {
                 }
                 if (symbol instanceof SymbolMarker) {
                     // 修改点符号
-                    geoStyle.setSymbolMarker((SymbolMarker) symbol);
+                    geoStyle.setMarkerSymbolID(((SymbolMarker) symbol).getID());
                 } else if (symbol instanceof SymbolLine) {
                     // 修改线符号
-                    geoStyle.setSymbolLine((SymbolLine) symbol);
+                    geoStyle.setLineSymbolID(((SymbolLine) symbol).getID());
                 } else if (symbol instanceof SymbolFill) {
                     // 修改面符号
-                    geoStyle.setSymbolFill((SymbolFill) symbol);
+                    geoStyle.setFillSymbolID(((SymbolFill) symbol).getID());
                 }
                 tempGeometry.setStyle(geoStyle);
                 recordset.setGeometry(tempGeometry);

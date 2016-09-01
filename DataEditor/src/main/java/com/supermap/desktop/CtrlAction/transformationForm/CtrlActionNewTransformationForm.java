@@ -24,10 +24,9 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 		JDialogNewTransformationForm jDialogNewTransformationForm = new JDialogNewTransformationForm();
 		if (jDialogNewTransformationForm.showDialog() == DialogResult.OK) {
 			IFormTransformation iFormTransformation = (IFormTransformation) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TRANSFORMATION, "");
-			iFormTransformation.setTransformationDataset(jDialogNewTransformationForm.getTransformationDataset());
-			iFormTransformation.addReferenceDataset(jDialogNewTransformationForm.getReferenceDataset());
-			iFormTransformation.setResultDataSource(jDialogNewTransformationForm.getResultDatasource());
-			iFormTransformation.setResultDatasetName(jDialogNewTransformationForm.getResultDatasetName());
+
+			iFormTransformation.addTransformationDataset(jDialogNewTransformationForm.getTransformationDataset(), jDialogNewTransformationForm.getResultDatasource(), jDialogNewTransformationForm.getResultDatasetName());
+			iFormTransformation.addReferenceObjects(jDialogNewTransformationForm.getReferenceObjects());
 			// FIXME: 2016/7/8 临时使用这个方法移除layersTree
 			iFormTransformation.actived();
 		}

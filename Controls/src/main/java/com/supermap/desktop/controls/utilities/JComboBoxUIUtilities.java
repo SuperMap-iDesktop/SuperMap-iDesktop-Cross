@@ -1,5 +1,7 @@
 package com.supermap.desktop.controls.utilities;
 
+import com.supermap.desktop.ui.controls.DataCell;
+
 import javax.swing.*;
 
 /**
@@ -20,6 +22,8 @@ public class JComboBoxUIUtilities {
 		} else {
 			for (int i = 0; i < comboBox.getItemCount(); i++) {
 				if (item == comboBox.getItemAt(i)) {
+					return i;
+				} else if (comboBox.getItemAt(i) instanceof DataCell && ((DataCell) comboBox.getItemAt(i)).getData() == item) {
 					return i;
 				}
 			}

@@ -823,7 +823,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-	 * @param e
 	 */
 	protected void scaleBox_ItemChange() {
 		String scaleString = (String) scaleBox.getSelectedItem();

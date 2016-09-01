@@ -1,25 +1,26 @@
-package com.supermap.desktop.ui.controls;
+package com.supermap.desktop.ui.controls.datasetChoose;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
+import com.supermap.data.Layouts;
+import com.supermap.data.Maps;
+import com.supermap.data.Scenes;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
-import com.supermap.desktop.ui.controls.SortTable.SortTable;
-import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
+import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
+import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
-import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -44,9 +45,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -57,8 +57,7 @@ import java.util.List;
  */
 public class DatasetChooser extends SmDialog {
 	private static final long serialVersionUID = 1L;
-	protected SortTable table;
-	protected MySortableTableModel tableModel;
+	protected SmSortTable table;
 	protected SmButton buttonOk = new SmButton("string_button_sure");
 	private JButton buttonSelectAll = new JButton();
 	private JButton buttonInvertSelect = new JButton();
@@ -87,26 +86,37 @@ public class DatasetChooser extends SmDialog {
 
 	protected transient Datasource datasource;
 
-	private List<Dataset> selectedDatasets = new ArrayList<>();
+	private List<Object> selectedDatasets = new ArrayList<>();
 
-	private WindowAdapter windowAdapter = new WindowAdapter() {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			dispose();
-			removeWindowListener(this);
-		}
-	};
+	private HashMap<DatasetChooseMode, IDatasetChoose> datasetChooses = new HashMap<>();
 
-	public DatasetChooser() {
-		init();
+	private IDatasetChoose currentDatasetChoose;
+
+	public DatasetChooser(DatasetChooseMode... chooseModes) {
+		init(chooseModes);
 	}
 
-	public DatasetChooser(JDialog owner) {
+	public DatasetChooser(JDialog owner, DatasetChooseMode... chooseModes) {
 		super(owner, true);
-		init();
+		init(chooseModes);
 	}
 
-	private void init() {
+
+	private void init(DatasetChooseMode... chooseModes) {
+		if (chooseModes == null || chooseModes.length == 0) {
+			chooseModes = new DatasetChooseMode[]{DatasetChooseMode.DATASET};
+		}
+		for (DatasetChooseMode chooseMode : chooseModes) {
+			if (chooseMode == DatasetChooseMode.DATASET) {
+				datasetChooses.put(DatasetChooseMode.DATASET, new DatasetChooserDataset(this));
+			} else if (chooseMode == DatasetChooseMode.MAP) {
+				datasetChooses.put(DatasetChooseMode.MAP, new DatasetChooserMap(this));
+			} else if (chooseMode == DatasetChooseMode.SCENE) {
+				datasetChooses.put(DatasetChooseMode.SCENE, new DatasetChooserScene(this));
+			} else if (chooseMode == DatasetChooseMode.LAYOUT) {
+				datasetChooses.put(DatasetChooseMode.LAYOUT, new DatasetChooserLayout(this));
+			}
+		}
 
 		setTitle(CoreProperties.getString("String_FormDatasetBrowse_FormText"));
 		setSize(677, 456);
@@ -125,7 +135,6 @@ public class DatasetChooser extends SmDialog {
 		this.getRootPane().setDefaultButton(buttonOk);
 		setResizable(false);
 		initWorkspaceTree();
-
 
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -234,23 +243,21 @@ public class DatasetChooser extends SmDialog {
 			gl_panelTable.createParallelGroup(Alignment.LEADING)
 				.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
 		);
+		//@formatter:on
 		this.buttonOk.addActionListener(new CommonButtonAction());
 		this.buttonOk.setActionCommand("OK");
 		this.buttonCancel.addActionListener(new CommonButtonAction());
 
-		this.table = new SortTable();
-		this.tableModel = new MySortableTableModel();
-		this.table.setModel(tableModel);
+		this.table = new SmSortTable();
+		table.setAutoCreateRowSorter(true);
+
 		this.table.setShowHorizontalLines(false);
 		this.table.setShowVerticalLines(false);
-		this.table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASET_NAME).setCellRenderer(new TableDatasetCellRender());
-		this.table.getColumnModel().getColumn(MySortableTableModel.COLUMN_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
 		scrollPaneTable.setViewportView(this.table);
 		this.panelTable.setLayout(gl_panelTable);
 
 		contentPane.setLayout(gl_contentPane);
-		//@formatter:on
-		// table监听选中行数改变事件
+
 		this.buttonOk.setEnabled(false);
 		this.table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -272,27 +279,44 @@ public class DatasetChooser extends SmDialog {
 	private void initWorkspaceTree() {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		this.workspaceTree = new WorkspaceTree(workspace);
-		this.workspaceTree.setMapsNodeVisible(false);
-		this.workspaceTree.setResourcesNodeVisible(false);
-		this.workspaceTree.setScenesNodeVisible(false);
-		this.workspaceTree.setLayoutsNodeVisible(false);
-		this.workspaceTree.addTreeSelectionListener(this.selectChangeListener);
-		// 删除不用显示的数据集节点
-		DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
-		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
-		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
-		this.workspaceTree.expandRow(1);
-		for (int i = datasourceTreeNode.getChildCount() - 1; i >= 0; i--) {
-			DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
-			for (int j = 0; j < childDatasourceTreeNode.getChildCount(); j++) {
-				childDatasourceTreeNode.removeAllChildren();
-			}
+		if (datasetChooses.get(DatasetChooseMode.DATASET) == null) {
+			this.workspaceTree.setDatasourcesNodeVisible(false);
+		} else {
+			// 删除不用显示的数据集节点
+			DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
+			MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+			MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+			this.workspaceTree.expandRow(1);
+			for (int i = datasourceTreeNode.getChildCount() - 1; i >= 0; i--) {
+				DefaultMutableTreeNode childDatasourceTreeNode = (DefaultMutableTreeNode) datasourceTreeNode.getChildAt(i);
+				for (int j = 0; j < childDatasourceTreeNode.getChildCount(); j++) {
+					childDatasourceTreeNode.removeAllChildren();
+				}
 
-			Datasource datasource = (Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData();
-			if (!isSupportDatasource(datasource)) {
-				datasourceTreeNode.remove(childDatasourceTreeNode);
+				Datasource datasource = (Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData();
+				if (!isSupportDatasource(datasource)) {
+					datasourceTreeNode.remove(childDatasourceTreeNode);
+				}
 			}
 		}
+		if (datasetChooses.get(DatasetChooseMode.MAP) == null) {
+			this.workspaceTree.setMapsNodeVisible(false);
+		} else {
+			// 删除不用显示的地图节点
+			DefaultTreeModel treeModel = (DefaultTreeModel) this.workspaceTree.getModel();
+			MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+			MutableTreeNode mapNode = (MutableTreeNode) treeNode.getChildAt(1);
+			((DefaultMutableTreeNode) mapNode).removeAllChildren();
+		}
+		if (datasetChooses.get(DatasetChooseMode.SCENE) == null) {
+			this.workspaceTree.setScenesNodeVisible(false);
+		}
+		if (datasetChooses.get(DatasetChooseMode.LAYOUT) == null) {
+			this.workspaceTree.setLayoutsNodeVisible(false);
+		}
+		this.workspaceTree.setResourcesNodeVisible(false);
+		this.workspaceTree.addTreeSelectionListener(this.selectChangeListener);
+
 		// 不可编辑
 		this.workspaceTree.setEditable(false);
 
@@ -322,14 +346,23 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	private void initComponentStates() {
-		this.datasetTypeComboBox.setSelectedIndex(0);
-
 		DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
 		MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
-		MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
-		if (datasourceTreeNode.getChildCount() > 0) {
-			this.workspaceTree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) datasourceTreeNode.getChildAt(0)).getPath()));
+		if (datasetChooses.get(DatasetChooseMode.DATASET) != null) {
+			this.datasetTypeComboBox.setSelectedIndex(0);
+			MutableTreeNode datasourceTreeNode = (MutableTreeNode) treeNode.getChildAt(0);
+			if (datasourceTreeNode.getChildCount() > 0) {
+				this.workspaceTree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) datasourceTreeNode.getChildAt(0)).getPath()));
+			}
+		} else {
+			datasetTypeComboBox.removeAllItems();
+			datasetTypeComboBox.setEnabled(false);
+			if (datasetChooses.get(DatasetChooseMode.MAP) != null) {
+				MutableTreeNode mapTreeNode = (MutableTreeNode) treeNode.getChildAt(1);
+				this.workspaceTree.setSelectionPath(new TreePath(mapTreeNode));
+			}
 		}
+
 
 	}
 
@@ -340,6 +373,7 @@ public class DatasetChooser extends SmDialog {
 	 * @return true 显示 / false 不显示
 	 */
 	protected boolean isSupportDatasource(Datasource datasource) {
+		// 为了方便不放入DatasetChooserDataset中
 		return true;
 	}
 
@@ -347,6 +381,9 @@ public class DatasetChooser extends SmDialog {
 	public void dispose() {
 		this.workspaceTree.removeTreeSelectionListener(this.selectChangeListener);
 		this.workspaceTree.dispose();
+		for (IDatasetChoose iDatasetChoose : datasetChooses.values()) {
+			iDatasetChoose.dispose();
+		}
 		super.dispose();
 	}
 
@@ -356,11 +393,30 @@ public class DatasetChooser extends SmDialog {
 		this.workspaceTree.addTreeSelectionListener(this.selectChangeListener);
 		this.table.clearSelection();
 		this.selectedDatasets.clear();
-		this.addWindowListener(this.windowAdapter);
 		return super.showDialog();
 	}
 
+	/**
+	 * 默认的数据集选择器可使用此方法获取选中数据集
+	 *
+	 * @return
+	 */
 	public List<Dataset> getSelectedDatasets() {
+		ArrayList<Dataset> result = new ArrayList<>();
+		for (Object selectedDataset : selectedDatasets) {
+			if (selectedDataset instanceof Dataset) {
+				result.add((Dataset) selectedDataset);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 可选择地图/场景/布局的选择器请使用此方法自行判断对象类型
+	 *
+	 * @return
+	 */
+	public List<Object> getSelectedObjects() {
 		return this.selectedDatasets;
 	}
 
@@ -369,43 +425,24 @@ public class DatasetChooser extends SmDialog {
 	 */
 	private void compositeSearch() {
 		try {
+			selectedDatasets.clear();
 			this.table.clearSelection();
-			this.tableModel.removeAll();
-			initializeTableInfo();
+			if (this.workspaceTree.getLastSelectedPathComponent() != null) {
+				TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) this.workspaceTree.getLastSelectedPathComponent()).getUserObject();
+				if (userObject == null) {
+					return;
+				}
+				currentDatasetChoose.initializeTableInfo(userObject.getData());
+			}
 			checkButtonOkState();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
 
-	/**
-	 * 初始化表格信息
-	 */
-	private void initializeTableInfo() {
-		if (this.workspaceTree.getLastSelectedPathComponent() != null) {
-			// TODO: 2016/8/29
-			TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) this.workspaceTree.getLastSelectedPathComponent()).getUserObject();
-			if (userObject != null && userObject.getData() instanceof Datasource) {
-				Datasource datasource = (Datasource) userObject.getData();
-				Datasets datasets = datasource.getDatasets();
-				for (int i = 0; i < datasets.getCount(); i++) {
-					Dataset dataset = datasets.get(i);
-					if (isAllowedDataset(dataset)) {
-						this.tableModel.addDataset(dataset);
-					}
-					if (dataset instanceof DatasetVector && ((DatasetVector) dataset).getChildDataset() != null) {
-						DatasetVector childDataset = ((DatasetVector) dataset).getChildDataset();
-						if (isAllowedDataset(childDataset)) {
-							this.tableModel.addDataset(childDataset);
-						}
-					}
-				}
-			}
-		}
-	}
 
-	private boolean isAllowedDataset(Dataset dataset) {
-		return isAllowedDatasetType(dataset.getType()) && isAllowedDatasetName(dataset.getName()) && isAllowedDatasetShown(dataset);
+	protected boolean isAllowedDataset(Dataset dataset) {
+		return isAllowedDatasetType(dataset.getType()) && isAllowedSearchName(dataset.getName()) && isAllowedDatasetShown(dataset);
 	}
 
 	private boolean isAllowedDatasetType(DatasetType type) {
@@ -418,7 +455,7 @@ public class DatasetChooser extends SmDialog {
 		return false;
 	}
 
-	private boolean isAllowedDatasetName(String name) {
+	protected boolean isAllowedSearchName(String name) {
 		String text = this.textFieldSearch.getText().toLowerCase();
 		return StringUtilities.isNullOrEmpty(text) || name.toLowerCase().contains(text);
 	}
@@ -437,11 +474,14 @@ public class DatasetChooser extends SmDialog {
 		this.workspaceTree.setSelectedDatasource(datasource);
 	}
 
+	protected JTable getTable() {
+		return table;
+	}
+
 	class WorkspaceSelectChangeListener implements TreeSelectionListener {
 
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
-			compositeSearch();
 			if (null != e.getNewLeadSelectionPath()) {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
 				if (null != selectedNode) {
@@ -450,16 +490,35 @@ public class DatasetChooser extends SmDialog {
 						return;
 					}
 					if (selectedNodeData.getData() instanceof Datasource) {
+						setCurrentDatasetChoose(datasetChooses.get(DatasetChooseMode.DATASET));
 						DatasetChooser.this.datasource = (Datasource) selectedNodeData.getData();
 						DatasetChooser.this.textFieldPath.setText(DatasetChooser.this.datasource.getConnectionInfo().getServer());
-					} else if (selectedNodeData.getData() instanceof Map) {
-						mapNodeSelected();
+					} else if (selectedNodeData.getData() instanceof Maps) {
+						setCurrentDatasetChoose(datasetChooses.get(DatasetChooseMode.MAP));
+						DatasetChooser.this.datasource = null;
+						DatasetChooser.this.textFieldPath.setText("");
+					} else if (selectedNodeData.getData() instanceof Scenes) {
+						setCurrentDatasetChoose(datasetChooses.get(DatasetChooseMode.SCENE));
+						DatasetChooser.this.datasource = null;
+						DatasetChooser.this.textFieldPath.setText("");
+					} else if (selectedNodeData.getData() instanceof Layouts) {
+						setCurrentDatasetChoose(datasetChooses.get(DatasetChooseMode.LAYOUT));
+						DatasetChooser.this.datasource = null;
+						DatasetChooser.this.textFieldPath.setText("");
 					}
 				}
 			}
 		}
 	}
 
+	private void setCurrentDatasetChoose(IDatasetChoose currentDatasetChoose) {
+		if (currentDatasetChoose != this.currentDatasetChoose) {
+			this.currentDatasetChoose = currentDatasetChoose;
+			currentDatasetChoose.initTable();
+			selectedDatasets.clear();
+		}
+		compositeSearch();
+	}
 
 	private void buttonOkClicked() {
 		setDialogResult(DialogResult.OK);
@@ -468,9 +527,9 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	private void resetSelectDataset() {
-		int[] selectedRows = this.table.getSelectedRows();
+		int[] selectedRows = this.table.getSelectedModelRows();
 		this.selectedDatasets.clear();
-		this.selectedDatasets = this.tableModel.getSelectedDatasets(selectedRows);
+		this.selectedDatasets = this.currentDatasetChoose.getSelectedValues(selectedRows);
 	}
 
 	public void checkButtonOkState() {
@@ -485,10 +544,7 @@ public class DatasetChooser extends SmDialog {
 		compositeSearch();
 	}
 
-	private void clearDatasetSelected() {
 
-	}
-	
 	private class CommonButtonAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -513,97 +569,6 @@ public class DatasetChooser extends SmDialog {
 		}
 	}
 
-	private class MySortableTableModel extends SortableTableModel {
-		private List<Dataset> datasetList = new ArrayList<>();
-		public static final int COLUMN_DATASET_NAME = 0;
-		public static final int COLUMN_DATASOURCE = 1;
-		public static final int COLUMN_DATASET_TYPE = 2;
-
-		private final String[] columnNames = {
-				CommonProperties.getString(CommonProperties.stringDataset),
-				CommonProperties.getString(CommonProperties.stringDatasource),
-				CommonProperties.getString(CommonProperties.STRING_DATASET_TYPE)
-		};
-
-		@Override
-		public Object getValueAt(int row, int col) {
-			if (this.datasetList == null || this.datasetList.size() <= 0) {
-				return null;
-			}
-			row = getIndexRow(row)[0];
-			Dataset dataset = this.datasetList.get(row);
-			switch (col) {
-				case COLUMN_DATASET_NAME:
-					return dataset;
-				case COLUMN_DATASOURCE:
-					return dataset.getDatasource();
-				case COLUMN_DATASET_TYPE:
-					return DatasetTypeUtilities.toString(dataset.getType());
-				default:
-					return null;
-			}
-		}
-
-		@Override
-		public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-
-		@Override
-		public int getRowCount() {
-			if (this.datasetList == null) {
-				return 0;
-			}
-			return this.datasetList.size();
-		}
-
-		@Override
-		public int getColumnCount() {
-			return this.columnNames.length;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return this.columnNames[column];
-		}
-
-		@Override
-		public Class<?> getColumnClass(int columnIndex) {
-			if (columnIndex == COLUMN_DATASET_NAME || columnIndex == COLUMN_DATASOURCE) {
-				return DataCell.class;
-			} else {
-				return String.class;
-			}
-		}
-
-		public void removeAll() {
-			int[] deleteRows = new int[this.datasetList.size()];
-			for (int i = 0; i < this.datasetList.size(); i++) {
-				deleteRows[i] = i;
-			}
-			super.removeRows(deleteRows);
-			this.datasetList.clear();
-			fireTableDataChanged();
-		}
-
-		public void addDataset(Dataset dataset) {
-			if (this.datasetList == null) {
-				this.datasetList = new ArrayList<>();
-			}
-			this.datasetList.add(dataset);
-			super.addIndexRow(getRowCount() - 1);
-			fireTableDataChanged();
-		}
-
-		public List<Dataset> getSelectedDatasets(int[] selectedRows) {
-			selectedRows = getIndexRow(selectedRows);
-			List<Dataset> resultDataset = new ArrayList<>();
-			for (int selectedRow : selectedRows) {
-				resultDataset.add(this.datasetList.get(selectedRow));
-			}
-			return resultDataset;
-		}
-	}
 
 	public WorkspaceTree getWorkspaceTree() {
 		return workspaceTree;
@@ -614,48 +579,5 @@ public class DatasetChooser extends SmDialog {
 		dispose();
 	}
 
-
-	//region 地图相关
-	public void setMapVisible(boolean visible) {
-		workspaceTree.setMapsNodeVisible(visible);
-	}
-
-	private void mapNodeSelected() {
-		clearDatasetSelected();
-	}
-
-
-	private void clearMapSelected() {
-
-	}
-
-	//endregion
-	//region 场景
-	public void setSceneVisible() {
-
-	}
-
-	private void sceneNodeSelected() {
-
-	}
-
-	private void clearSceneSelected() {
-
-	}
-
-	//endregion
-	//region 布局
-	public void setLayoutVisible() {
-
-	}
-
-	private void layoutNodeSelected() {
-
-	}
-
-	private void clearLayoutSelected() {
-
-	}
-	//endregion
 
 }

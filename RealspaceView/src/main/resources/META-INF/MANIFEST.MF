@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1472191587341
+Bnd-LastModified: 1472635817777
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.realspaceview.RealspaceViewActiva
  tor
 Bundle-ManifestVersion: 2
@@ -11,6 +11,7 @@ Bundle-Version: 1.0.0.qualifier
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: *;scope=compile|system
 Embed-Directory: lib
+Embed-Transitive: true
 Import-Package: org.osgi.framework;version="[1.8,2)",org.osgi.util.track
  er;version="[1.5,2)"
 Originally-Created-By: Apache Maven Bundle Plugin
