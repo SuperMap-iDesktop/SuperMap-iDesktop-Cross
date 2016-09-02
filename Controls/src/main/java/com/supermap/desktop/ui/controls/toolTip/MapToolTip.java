@@ -36,21 +36,6 @@ public class MapToolTip extends SmToolTip {
 	}
 
 	private void getMapImage() {
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				BufferedImage image = map.outputMapToBitmap();
-//				if (image != null) {
-//					labelMapImage.setText("");
-//					labelMapImage.setIcon(new ImageIcon(image));
-//				} else {
-//					labelMapImage.setText("loadingFailed");
-//				}
-//				if (isShowing()) {
-//					repaint();
-//				}
-//			}
-//		}).start();
 		ThreadUtilties.execute(new Runnable() {
 			@Override
 			public void run() {

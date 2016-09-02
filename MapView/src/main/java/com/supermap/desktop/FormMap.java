@@ -328,7 +328,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			mapControl_mouseMove(e);
+			updatePrjCoorSysPlace(e);
 		}
 
 		@Override
@@ -737,7 +737,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 *
 	 * @param e
 	 */
-	protected void mapControl_mouseMove(MouseEvent e) {
+	protected void updatePrjCoorSysPlace(MouseEvent e) {
 		try {
 			final DecimalFormat format = new DecimalFormat("######0.000000");
 			PrjCoordSysType coordSysType = this.getMapControl().getMap().getPrjCoordSys().getType();
@@ -805,7 +805,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private String getFormatCoordinates(double point) {
 		// 度
-
 		double pointTemp = point;
 		int angles = (int) pointTemp;
 		pointTemp = Math.abs(pointTemp);
