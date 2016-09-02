@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 public class SmSortTable extends JTable {
 	private Point point;
 	private boolean isSortLastRow = true;
-	private RowSorter<? extends TableModel> noLastRowSorter;
 
 	public SmSortTable() {
 		super();
@@ -78,7 +77,7 @@ public class SmSortTable extends JTable {
 		setModel(this.getModel());
 	}
 
-	public RowSorter<? extends TableModel> getNoLastRowSorter() {
+	private RowSorter<? extends TableModel> getNoLastRowSorter() {
 		return new NoLastRowSorter(this.getModel());
 	}
 

@@ -24,6 +24,7 @@ public class DataCell extends JPanel {
 	private String dataName;
 	private Object data;
 	private final Color selectColor = new Color(185, 214, 255);
+	private MapToolTip toolTip;
 
 	public DataCell() {
 		// 公共类型
@@ -105,17 +106,18 @@ public class DataCell extends JPanel {
 		data = map;
 		dataName = map.getName();
 		URL url = ControlsResources.getResourceURL("/controlsresources/controlsImage/Image_Map_Normal.png");
-		setToolTipText("");
+//		setToolTipText(dataName);
 		init(url, dataName);
 	}
 
 	@Override
 	public JToolTip createToolTip() {
-		// 性能太差，后期优化后再使用
 		if (data != null && data instanceof Map) {
-			MapToolTip mapToolTip = new MapToolTip((Map) data);
-			mapToolTip.setComponent(this);
-			return mapToolTip;
+			if (toolTip == null) {
+				toolTip = new MapToolTip((Map) data);
+				toolTip.setComponent(this);
+			}
+			return toolTip;
 		}
 		return super.createToolTip();
 	}
@@ -183,6 +185,7 @@ public class DataCell extends JPanel {
 	private void initComponents() {
 		this.setSize(300, 15);
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+		setToolTipText(dataName);
 		this.add(this.imageLabel);
 	}
 
