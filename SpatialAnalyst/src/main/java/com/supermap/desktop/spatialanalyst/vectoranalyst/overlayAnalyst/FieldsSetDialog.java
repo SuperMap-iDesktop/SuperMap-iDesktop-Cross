@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/8/31.
@@ -42,6 +43,57 @@ public class FieldsSetDialog extends SmDialog {
     private String[] overlayAnalystFields;
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
+    private ActionListener buttonSourceFieldsSelectAllListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectAll(tableSourceFields);
+        }
+    };
+    private ActionListener buttonSourceFieldsSelectReverseListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectReverse(tableSourceFields);
+        }
+    };
+    private ActionListener buttonOverlayAnalystSelectAllListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectAll(tableOverlayAnalystFields);
+        }
+    };
+    private ActionListener buttonOverlayAnalystSelectReverseListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectReverse(tableOverlayAnalystFields);
+        }
+    };
+    private ActionListener buttonOKListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ArrayList<String> sourceFieldList = new ArrayList<String>();
+            ArrayList<String> overlayAnaylstList = new ArrayList<String>();
+            for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
+                if ((Boolean) tableSourceFields.getValueAt(i, 0)) {
+                    sourceFieldList.add((String) tableSourceFields.getValueAt(i, 1));
+                }
+            }
+            for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
+                if ((Boolean) tableOverlayAnalystFields.getValueAt(i, 0)) {
+                    overlayAnaylstList.add((String) tableOverlayAnalystFields.getValueAt(i, 1));
+                }
+            }
+            sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
+            overlayAnalystFields = overlayAnaylstList.toArray(new String[overlayAnaylstList.size()]);
+            dialogResult = DialogResult.OK;
+            FieldsSetDialog.this.dispose();
+        }
+    };
+    private ActionListener buttonCancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            disposeInfo();
+        }
+    };
 
     public FieldsSetDialog(DatasetVector sourceDataset, DatasetVector overlayAnalystDataset) {
         super();
@@ -74,62 +126,31 @@ public class FieldsSetDialog extends SmDialog {
 
     private void registEvents() {
         removeEvents();
-        this.buttonSourceFieldsSelectAll.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectAll(tableSourceFields);
-            }
-        });
-        this.buttonSourceFieldsSelectReverse.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectReverse(tableSourceFields);
-            }
-        });
-        this.buttonOverlayAnalystSelectAll.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectAll(tableOverlayAnalystFields);
-            }
-        });
-        this.buttonOverlayAnalystSelectReverse.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectReverse(tableOverlayAnalystFields);
-            }
-        });
-        this.buttonOK.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
-                    if ((Boolean) tableSourceFields.getValueAt(i, 0)) {
-                        sourceFields[i] = (String) tableSourceFields.getValueAt(i, 1);
-                    }
-                }
-                for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                    if ((Boolean) tableOverlayAnalystFields.getValueAt(i, 0)) {
-                        overlayAnalystFields[i] = (String) tableOverlayAnalystFields.getValueAt(i, 1);
-                    }
-                }
-            }
-        });
-        this.buttonCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeEvents();
-                FieldsSetDialog.this.dispose();
-            }
-        });
+        this.buttonSourceFieldsSelectAll.addActionListener(this.buttonSourceFieldsSelectAllListener);
+        this.buttonSourceFieldsSelectReverse.addActionListener(this.buttonSourceFieldsSelectReverseListener);
+        this.buttonOverlayAnalystSelectAll.addActionListener(this.buttonOverlayAnalystSelectAllListener);
+        this.buttonOverlayAnalystSelectReverse.addActionListener(this.buttonOverlayAnalystSelectReverseListener);
+        this.buttonOK.addActionListener(this.buttonOKListener);
+        this.buttonCancel.addActionListener(this.buttonCancelListener);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                removeEvents();
-                FieldsSetDialog.this.dispose();
+                disposeInfo();
             }
         });
     }
 
+    private void disposeInfo() {
+        removeEvents();
+        FieldsSetDialog.this.dispose();
+    }
     private void removeEvents() {
+        this.buttonSourceFieldsSelectAll.removeActionListener(this.buttonSourceFieldsSelectAllListener);
+        this.buttonSourceFieldsSelectReverse.removeActionListener(this.buttonSourceFieldsSelectReverseListener);
+        this.buttonOverlayAnalystSelectAll.removeActionListener(this.buttonOverlayAnalystSelectAllListener);
+        this.buttonOverlayAnalystSelectReverse.removeActionListener(this.buttonOverlayAnalystSelectReverseListener);
+        this.buttonOK.removeActionListener(this.buttonOKListener);
+        this.buttonCancel.removeActionListener(this.buttonCancelListener);
     }
 
     private void initLayout() {
