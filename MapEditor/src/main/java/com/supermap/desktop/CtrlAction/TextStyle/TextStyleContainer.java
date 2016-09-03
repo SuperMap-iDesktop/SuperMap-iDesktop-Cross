@@ -25,8 +25,7 @@ public class TextStyleContainer extends JPanel {
 
     private transient ITextStyle textBasicPanel;
 
-    private Geometry geometry;
-    private String text;
+    //    private Geometry geometry;
     private TextStyle tempTextStyle;// 用于预览的TextStyle
     private Double rotation;
     private Recordset recordset;
@@ -64,14 +63,10 @@ public class TextStyleContainer extends JPanel {
                 Geometry tempGeoMetry = recordset.getGeometry();
                 if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
                     if (tempGeoMetry instanceof GeoText) {
-                        text = ((GeoText) tempGeoMetry).getText();
                         tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
                         rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
-                        this.geometry = tempGeoMetry;
                     } else if (tempGeoMetry instanceof GeoText3D) {
-                        text = ((GeoText3D) tempGeoMetry).getText();
                         tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
-                        this.geometry = tempGeoMetry;
                     }
                     hasGeoText = true;
                     break;
@@ -117,6 +112,7 @@ public class TextStyleContainer extends JPanel {
         this.textBasicPanel.initTextBasicPanel();
         this.textBasicPanel.initCheckBoxState();
         this.textBasicPanel.enabled(true);
+        this.textBasicPanel.getSpinnerRotationAngl().setValue(rotation);
         removePanels();
         JPanel panelText = new JPanel();
         panelText.setLayout(new GridBagLayout());
@@ -152,19 +148,34 @@ public class TextStyleContainer extends JPanel {
             editHistory.add(EditType.MODIFY, recordset, true);
             recordset.edit();
             Geometry tempGeometry = recordset.getGeometry();
+            Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
             if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
-                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+                if (newValue.equals(TextStyleType.ROTATION)) {
+                    for (int i = 0; i < ((GeoText) tempGeometry).getPartCount(); i++) {
+                        ((GeoText) tempGeometry).getPart(i).setRotation((Double) newGeoStyleProperty);
+                    }
+                } else {
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                }
             }
             if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
-                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                 ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
                         textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
             }
             if (tempGeometry instanceof GeoText3D && !newValue.equals(TextStyleType.FIXEDSIZE)) {
-                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+                if (newValue.equals(TextStyleType.ROTATION)) {
+                    for (int i = 0; i < ((GeoText3D) tempGeometry).getPartCount(); i++) {
+                        ((GeoText3D) tempGeometry).getPart(i).setX((Double) newGeoStyleProperty);
+                        ((GeoText3D) tempGeometry).getPart(i).setY((Double) newGeoStyleProperty);
+                        ((GeoText3D) tempGeometry).getPart(i).setZ((Double) newGeoStyleProperty);
+                    }
+                } else {
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                }
             }
             if (tempGeometry instanceof GeoText3D && newValue.equals(TextStyleType.FIXEDSIZE)) {
-                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), textBasicPanel.getResultMap().get(newValue));
+                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), newGeoStyleProperty);
                 ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText3D) tempGeometry).getTextStyle(),
                         textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
             }

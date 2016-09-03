@@ -83,4 +83,6 @@ public interface ITextStyle extends IGeoTextStyle {
 	JPanel getEffectPanel();
 
 	void initCheckBoxState();
+
+    JSpinner getSpinnerRotationAngl();
 }

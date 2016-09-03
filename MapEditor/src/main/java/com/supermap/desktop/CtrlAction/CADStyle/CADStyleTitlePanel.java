@@ -187,7 +187,18 @@ public class CADStyleTitlePanel extends JPanel {
 
     private void resetSymbol(Symbol symbol) {
         if (null == symbol) {
+            if (styleType == GEOREGIONTYPE) {
+                parent.setSpinnerFillOpaqueEnable(true);
+            } else if (styleType == GEOPOINTTYPE) {
+                parent.setSymstemPointEnable(false);
+            }
             return;
+        } else {
+            if (styleType == GEOREGIONTYPE) {
+                parent.setSpinnerFillOpaqueEnable(false);
+            } else if (styleType == GEOPOINTTYPE) {
+                parent.setSymstemPointEnable(true);
+            }
         }
         recordset.moveFirst();
         while (!recordset.isEOF()) {
