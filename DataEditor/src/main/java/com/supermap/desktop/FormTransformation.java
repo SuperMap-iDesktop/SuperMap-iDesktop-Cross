@@ -58,7 +58,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private static final int STATE_BAR_PRJCOORSYS = 2;
 	private static final int STATE_BAR_CENTER_X = 4;
 	private static final int STATE_BAR_CENTER_Y = 5;
-	public static final int STATE_BAR_SCALE = 7;
+	private static final int STATE_BAR_SCALE = 7;
 
 	private MouseAdapter mapControlMouseAdapter = new MouseAdapter() {
 		@Override
@@ -68,17 +68,21 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			initCenter();
-			initScale();
+			initCenter(getMapControl());
+			initScale(getMapControl());
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			Object source = e.getSource();
+			boolean isChangeForceWindow = false;
 			if (source != currentForceWindow.getMapControl()) {
 				currentForceWindow.deactived();
 				currentForceWindow = currentForceWindow == transformationMain ? transformationReference : transformationMain;
 				currentForceWindow.actived();
+				isChangeForceWindow = true;
+			}
+			if (Application.getActiveApplication().getActiveForm() != FormTransformation.this || isChangeForceWindow) {
 				Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 			}
 			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
@@ -89,13 +93,16 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			if (e.getSource() instanceof MapControl) {
-				initPrjCoorSys((MapControl) e.getSource());
+				MapControl mapControl = (MapControl) e.getSource();
+				initPrjCoorSys(mapControl);
+				initScale(mapControl);
+				initCenter(mapControl);
 			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			initCenter();
+			initCenter(getMapControl());
 		}
 
 		@Override
@@ -105,8 +112,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			initCenter();
-			initScale();
+			initCenter(getMapControl());
+			initScale(getMapControl());
 		}
 	};
 
@@ -141,8 +148,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 		initLayout();
 		initListener();
-		initCenter();
-		initScale();
+		initCenter(getMapControl());
+		initScale(getMapControl());
 	}
 
 	private void initLayout() {
@@ -183,8 +190,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 							transformationMain.getMapControl().getMap().viewEntire();
 							transformationObjects.clear();
 						}
-						initCenter();
-						initScale();
+						initCenter(getMapControl());
+						initScale(getMapControl());
 						initPrjCoorSys(getMapControl());
 					}
 				});
@@ -217,7 +224,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			Point pointMouse = e.getPoint();
 			Point2D point = mapControl.getMap().pixelToMap(pointMouse);
 
-			String x = "";
+			String x;
 			if (Double.isInfinite(point.getX())) {
 				x = DataEditorProperties.getString("String_Infinite");
 			} else if (Double.isNaN(point.getX())) {
@@ -225,7 +232,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			} else {
 				x = format.format(point.getX());
 			}
-			String y = "";
+			String y;
 			if (Double.isInfinite(point.getY())) {
 				y = DataEditorProperties.getString("String_Infinite");
 			} else if (Double.isNaN(point.getY())) {
@@ -290,8 +297,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return MessageFormat.format(DataEditorProperties.getString("String_LongitudeLatitude"), angles, min, format.format(pointTemp));
 	}
 
-	private void initCenter() {
-		MapControl mapControl = currentForceWindow.getMapControl();
+	private void initCenter(MapControl mapControl) {
 
 		DecimalFormat format = new DecimalFormat("######0.####");
 		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? DataEditorProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
@@ -305,8 +311,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	}
 
-	private void initScale() {
-		MapControl mapControl = currentForceWindow.getMapControl();
+	private void initScale(MapControl mapControl) {
 		String scale = null;
 		try {
 			scale = new ScaleModel(mapControl.getMap().getScale()).toString();
@@ -480,7 +485,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	public SmStatusbar getStatusbar() {
 
 		SmStatusbar statusbar = super.getStatusbar();
-		java.util.List<Component> list = new ArrayList<Component>();
+		java.util.List<Component> list = new ArrayList<>();
 		for (int i = 0; i < statusbar.getCount(); i++) {
 			list.add(((Component) statusbar.get(i)));
 		}
