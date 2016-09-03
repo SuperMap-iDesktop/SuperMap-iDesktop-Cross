@@ -4,7 +4,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IPopupMenu;
-import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.ui.XMLMenu;
+import com.supermap.desktop.ui.XMLMenuButton;
+import com.supermap.desktop.ui.XMLMenuButtonDropdown;
+import com.supermap.desktop.ui.XMLMenuGroup;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +18,7 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 	private static final long serialVersionUID = 1L;
 	private boolean buildFinished = false;
 	private transient XMLMenu xmlMenu;
+	private boolean smVisible;
 
 	public SmPopupMenu() {
 		// do nothing
@@ -33,7 +38,8 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 
 			setText(this.xmlMenu.getLabel());
 			this.index = this.xmlMenu.getIndex();
-			setVisible(this.xmlMenu.getVisible());
+			// 右键菜单不能这样设置
+			smVisible = this.xmlMenu.getVisible();
 			this.loadMenu();
 
 			result = true;
@@ -87,6 +93,12 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		if (!visible) {
+			Toolkit.getDefaultToolkit().removeAWTEventListener(PopupMenuMousePressEventListener.getInstance());
+		} else {
+			Toolkit.getDefaultToolkit().removeAWTEventListener(PopupMenuMousePressEventListener.getInstance());
+			Toolkit.getDefaultToolkit().addAWTEventListener(PopupMenuMousePressEventListener.getInstance(), AWTEvent.MOUSE_EVENT_MASK);
+		}
 	}
 
 	private int index = -1;
@@ -286,7 +298,6 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 
 	@Override
 	public void show(Component invoker, int x, int y) {
-		// TODO Auto-generated method stub
 		super.show(invoker, x, y);
 	}
 }

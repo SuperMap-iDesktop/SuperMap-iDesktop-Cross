@@ -1,7 +1,11 @@
 package com.supermap.desktop;
 
+import com.supermap.data.CoordSysTranslator;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationBean;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationMain;
@@ -9,8 +13,11 @@ import com.supermap.desktop.CtrlAction.transformationForm.TransformationReferenc
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
+import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
+import com.supermap.desktop.exception.InvalidScaleException;
+import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
@@ -24,6 +31,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +52,13 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private IFormMap currentForceWindow;
 	private ArrayList<Object> transformationObjects = new ArrayList<>();
 	private ArrayList<Object> transformationReferenceObjects = new ArrayList<>();
+
+	private static final int STATE_BAR_MOUSE_PLACE = 1;
+	private static final int STATE_BAR_PRJCOORSYS = 2;
+	private static final int STATE_BAR_CENTER_X = 4;
+	private static final int STATE_BAR_CENTER_Y = 5;
+	public static final int STATE_BAR_SCALE = 7;
+
 	private MouseAdapter mapControlMouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -64,10 +81,28 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO: 2016/9/1 投影信息修改
+			if (e.getSource() instanceof MapControl) {
+				SmTextField statusbarPrjCoorSys = (SmTextField) getStatusbar(STATE_BAR_PRJCOORSYS);
+				statusbarPrjCoorSys.setText(((MapControl) e.getSource()).getMap().getPrjCoordSys().getName());
+				statusbarPrjCoorSys.setCaretPosition(0);
+			}
 		}
 
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			initCenter();
+		}
 
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			updatePrjCoorSysPlace(e);
+		}
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			initCenter();
+			initScale();
+		}
 	};
 
 	public FormTransformation() {
@@ -135,6 +170,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						}
 					}
 				});
+				initCenter();
+				initScale();
 				splitPaneMain.removeComponentListener(this);
 			}
 		});
@@ -145,6 +182,125 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private void addMapControlListener() {
 		transformationMain.getMapControl().addMouseListener(mapControlMouseAdapter);
 		transformationReference.getMapControl().addMouseListener(mapControlMouseAdapter);
+
+		transformationMain.getMapControl().addMouseMotionListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().addMouseMotionListener(mapControlMouseAdapter);
+
+		transformationMain.getMapControl().addMouseWheelListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().addMouseWheelListener(mapControlMouseAdapter);
+	}
+
+	private void updatePrjCoorSysPlace(MouseEvent e) {
+		try {
+			if (!(e.getSource() instanceof MapControl)) {
+				return;
+			}
+			MapControl mapControl = (MapControl) e.getSource();
+			final DecimalFormat format = new DecimalFormat("######0.000000");
+			PrjCoordSysType coordSysType = this.getMapControl().getMap().getPrjCoordSys().getType();
+			Point pointMouse = e.getPoint();
+			Point2D point = mapControl.getMap().pixelToMap(pointMouse);
+
+			String x = "";
+			if (Double.isInfinite(point.getX())) {
+				x = DataEditorProperties.getString("String_Infinite");
+			} else if (Double.isNaN(point.getX())) {
+				x = DataEditorProperties.getString("String_NotANumber");
+			} else {
+				x = format.format(point.getX());
+			}
+			String y = "";
+			if (Double.isInfinite(point.getY())) {
+				y = DataEditorProperties.getString("String_Infinite");
+			} else if (Double.isNaN(point.getY())) {
+				y = DataEditorProperties.getString("String_NotANumber");
+			} else {
+				y = format.format(point.getY());
+			}
+
+			// XY坐标信息
+
+			String XYInfo = MessageFormat.format(DataEditorProperties.getString("String_String_PrjCoordSys_XYInfo"), x, y);
+
+			// 经纬度信息
+
+			String latitudeInfo = MessageFormat.format(DataEditorProperties.getString("String_PrjCoordSys_LongitudeLatitude"), getFormatCoordinates(point.getX()),
+					getFormatCoordinates(point.getY()));
+
+			if (coordSysType == PrjCoordSysType.PCS_NON_EARTH) {
+				// 平面
+				SmTextField statusbar = (SmTextField) getStatusbar(STATE_BAR_MOUSE_PLACE);
+				statusbar.setText(XYInfo);
+			} else if (coordSysType == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
+				// 地理
+				SmTextField statusbar = (SmTextField) getStatusbar(STATE_BAR_MOUSE_PLACE);
+				statusbar.setText(latitudeInfo);
+			} else {
+				// 投影
+
+				Point2Ds point2Ds = new Point2Ds();
+				point2Ds.add(point);
+
+				CoordSysTranslator.inverse(point2Ds, this.getMapControl().getMap().getPrjCoordSys());
+				latitudeInfo = MessageFormat.format(DataEditorProperties.getString("String_PrjCoordSys_LongitudeLatitude"),
+						getFormatCoordinates(point2Ds.getItem(0).getX()), getFormatCoordinates(point2Ds.getItem(0).getY()));
+				SmTextField statusbar = (SmTextField) getStatusbar(STATE_BAR_MOUSE_PLACE);
+				statusbar.setText(XYInfo + latitudeInfo);
+			}
+			// 设置光标位置
+
+			((SmTextField) getStatusbar(STATE_BAR_MOUSE_PLACE)).setCaretPosition(0);
+
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private String getFormatCoordinates(double point) {
+		// 度
+		double pointTemp = point;
+		int angles = (int) pointTemp;
+		pointTemp = Math.abs(pointTemp);
+
+		pointTemp = (pointTemp - Math.abs(angles)) * 60;
+		// 分
+
+		int min = (int) pointTemp;
+		// 秒
+
+		pointTemp = (pointTemp - min) * 60;
+		DecimalFormat format = new DecimalFormat("######0.00");
+
+		return MessageFormat.format(DataEditorProperties.getString("String_LongitudeLatitude"), angles, min, format.format(pointTemp));
+	}
+
+	private void initCenter() {
+		MapControl mapControl = currentForceWindow.getMapControl();
+
+		DecimalFormat format = new DecimalFormat("######0.####");
+		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? DataEditorProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+				.getCenter().getX());
+		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? DataEditorProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+				.getCenter().getY());
+		((SmTextField) getStatusbar(STATE_BAR_CENTER_X)).setText(x);
+		((SmTextField) getStatusbar(STATE_BAR_CENTER_X)).setCaretPosition(0);
+		((SmTextField) getStatusbar(STATE_BAR_CENTER_Y)).setText(y);
+		((SmTextField) getStatusbar(STATE_BAR_CENTER_Y)).setCaretPosition(0);
+
+	}
+
+	private void initScale() {
+		MapControl mapControl = currentForceWindow.getMapControl();
+		String scale = null;
+		try {
+			scale = new ScaleModel(mapControl.getMap().getScale()).toString();
+		} catch (InvalidScaleException e) {
+			e.printStackTrace();
+		}
+		if ("NONE".equals(scale)) {
+			scale = String.valueOf(mapControl.getMap().getScale());
+		}
+		((SmTextField) getStatusbar(STATE_BAR_SCALE)).setText(scale);
 	}
 
 	@Override
@@ -299,7 +455,11 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return tableContextMenu;
 	}
 
-	//region 不需要的方法
+	private JComponent getStatusbar(int i) {
+		return ((JComponent) getStatusbar().get(i));
+	}
+
+	//region 不支持的方法
 	@Override
 	public void dontShowPopupMenu() {
 

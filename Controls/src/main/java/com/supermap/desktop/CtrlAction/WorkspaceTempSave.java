@@ -250,7 +250,6 @@ public class WorkspaceTempSave {
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
-
 		}
 	}
 
