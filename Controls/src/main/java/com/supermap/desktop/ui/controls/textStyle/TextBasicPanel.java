@@ -6,11 +6,13 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -19,10 +21,7 @@ import com.supermap.mapping.Map;
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -93,9 +92,10 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private boolean unityVisible;
     private boolean showOutLineWidth;
     private boolean isTextStyleSet;
-    private boolean isResetFontSize;
-    private String fontSize;
+    private boolean isSetFontSize;
+    private boolean isSetFontHeight;
     protected double UNIT_CONVERSION = 10;
+    private final double pow = 2;
 
     private JTextField textFieldFontSize;
     private JFormattedTextField textFieldFontHeight;
@@ -126,69 +126,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             }
         }
     };
-    private ItemListener fontsizeItemListener = new ItemListener() {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            setFontSize();
-        }
-    };
-    private ChangeListener fontHeightListener = new ChangeListener() {
-
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            double logicalHeight = 0.0;
-            logicalHeight = Double.parseDouble(textFieldFontHeight.getText());
-            Double size = logicalHeight * EXPERIENCE;
-            DecimalFormat decimalFormat = new DecimalFormat("0.0");
-            if (Double.compare(size, size.intValue()) > 0) {
-                textFieldFontSize.setText(decimalFormat.format(size));
-            } else {
-                decimalFormat = new DecimalFormat("0");
-                textFieldFontSize.setText(decimalFormat.format(size));
-            }
-            double fontHeight = logicalHeight;
-            fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
-            if (fontHeight > 0) {
-                textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight);
-                fireTextStyleChanged(TextStyleType.FONTHEIGHT);
-            }
-        }
-    };
-    private ChangeListener fontWidthListener = new ChangeListener() {
-
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            if (null != spinnerFontWidth.getValue()) {
-                double logicalWidth = Double.parseDouble(spinnerFontWidth.getValue().toString());
-                double fontWidth = FontUtilities.mapWidthToFontWidth(logicalWidth, MapUtilities.getActiveMap(), textStyle.isSizeFixed()) * 10;
-                textStyleTypeMap.put(TextStyleType.FONTWIDTH, fontWidth);
-                fireTextStyleChanged(TextStyleType.FONTWIDTH);
-            }
-        }
-    };
-    private ChangeListener rotationAnglListener = new ChangeListener() {
-
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            if (null != spinnerRotationAngl.getValue()) {
-                double rotationAngl = (double) spinnerRotationAngl.getValue();
-                textStyleTypeMap.put(TextStyleType.ROTATION, rotationAngl);
-                fireTextStyleChanged(TextStyleType.ROTATION);
-            }
-        }
-    };
-    private ChangeListener italicAnglListener = new ChangeListener() {
-
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            if (null != spinnerInclinationAngl.getValue()) {
-                double italicAngl = (double) spinnerInclinationAngl.getValue();
-                textStyleTypeMap.put(TextStyleType.ITALICANGLE, italicAngl);
-                fireTextStyleChanged(TextStyleType.ITALICANGLE);
-            }
-        }
-    };
     private PropertyChangeListener fontColorProperty = new PropertyChangeListener() {
 
         @Override
@@ -284,7 +222,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             }
         }
     };
-    private KeyListener localKeyListener = new LocalKeyListener();
     private ChangeListener outLineWidthChangeListener = new OutLineChangeListener();
     private ItemListener comboboxListener = new ItemListener() {
 
@@ -312,22 +249,113 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             }
         }
     };
-    private FocusListener fontSizeFocusListener = new FocusListener() {
 
+    private JFormattedTextField textfieldOutLineWidth;
+    private CaretListener textFieldFontSizeListener = new CaretListener() {
         @Override
-        public void focusLost(FocusEvent e) {
-            if (StringUtilities.isNullOrEmptyString(textFieldFontSize.getText()) || !StringUtilities.isNumber(textFieldFontSize.getText())) {
-                comboBoxFontSize.setSelectedItem(fontSize);
-                isResetFontSize = true;
+        public void caretUpdate(CaretEvent e) {
+            if (isSetFontSize) {
+                String text = textFieldFontSize.getText();
+                if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 72.17, text)) {
+                    textFieldFontSize.setForeground(Color.red);
+                    return;
+                } else {
+                    textFieldFontSize.setForeground(Color.black);
+                }
+                double size = Double.valueOf(text);
+                isSetFontHeight = false;
+                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+                double fontHeight = size / EXPERIENCE;
+                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+                if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
+                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
+                    fireTextStyleChanged(TextStyleType.FONTSIZE);
+                }
             }
         }
-
+    };
+    private CaretListener textfieldFontHeightListener = new CaretListener() {
         @Override
-        public void focusGained(FocusEvent e) {
-            isResetFontSize = false;
+        public void caretUpdate(CaretEvent e) {
+            if (isSetFontHeight) {
+                String text = textFieldFontHeight.getText();
+                if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 255d, text)) {
+                    textFieldFontHeight.setForeground(Color.red);
+                    return;
+                } else {
+                    textFieldFontHeight.setForeground(Color.black);
+                }
+                double logicalHeight = Double.parseDouble(text);
+                Double size = logicalHeight * EXPERIENCE;
+                isSetFontSize = false;
+                comboBoxFontSize.setSelectedItem(new DecimalFormat("0.0").format(size));
+                double fontHeight = logicalHeight;
+                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+                if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
+                    textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight);
+                    fireTextStyleChanged(TextStyleType.FONTHEIGHT);
+                }
+            }
         }
     };
-    private JFormattedTextField textfieldOutLineWidth;
+    private CaretListener textfieldFontRotationAnglListener = new CaretListener() {
+        @Override
+        public void caretUpdate(CaretEvent e) {
+            String text = textFieldFontRotationAngl.getText();
+            if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+                textFieldFontRotationAngl.setForeground(Color.red);
+                return;
+            } else {
+                textFieldFontRotationAngl.setForeground(Color.black);
+            }
+            double rotationAngl = Double.parseDouble(text);
+            textStyleTypeMap.put(TextStyleType.ROTATION, rotationAngl);
+            fireTextStyleChanged(TextStyleType.ROTATION);
+        }
+    };
+    private CaretListener textFieldFontItalicAnglListener = new CaretListener() {
+        @Override
+        public void caretUpdate(CaretEvent e) {
+            String text = textFieldFontItalicAngl.getText();
+            if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+                textFieldFontItalicAngl.setForeground(Color.red);
+                return;
+            } else {
+                textFieldFontItalicAngl.setForeground(Color.black);
+            }
+            double italicAngl = Double.parseDouble(text);
+            textStyleTypeMap.put(TextStyleType.ITALICANGLE, italicAngl);
+            fireTextStyleChanged(TextStyleType.ITALICANGLE);
+        }
+    };
+    private CaretListener textfieldOutLineWidthListener = new CaretListener() {
+        @Override
+        public void caretUpdate(CaretEvent e) {
+            String text = textfieldOutLineWidth.getText();
+            if (!SymbolSpinnerUtilties.isLegitNumber(1, 5, text)) {
+                textfieldOutLineWidth.setForeground(Color.red);
+                return;
+            } else {
+                textfieldOutLineWidth.setForeground(Color.black);
+            }
+            textStyleTypeMap.put(TextStyleType.OUTLINEWIDTH, spinnerOutLineWidth.getValue());
+            fireTextStyleChanged(TextStyleType.OUTLINEWIDTH);
+        }
+    };
+    private FocusListener textFieldFontSizeFocusListener = new FocusAdapter() {
+        @Override
+        public void focusGained(FocusEvent e) {
+            super.focusGained(e);
+            isSetFontSize = true;
+        }
+    };
+    private FocusListener textfieldFontHeightFocusListener = new FocusAdapter() {
+        @Override
+        public void focusGained(FocusEvent e) {
+            super.focusGained(e);
+            isSetFontHeight = true;
+        }
+    };
 
     public TextBasicPanel() {
         // Do nothing
@@ -337,20 +365,15 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         removeEvents();
         this.comboBoxFontName.addItemListener(this.fontNameItemListener);
         this.comboBoxAlign.addItemListener(this.alignItemListener);
-        this.comboBoxFontSize.addItemListener(this.fontsizeItemListener);
-        this.spinnerFontHeight.addChangeListener(this.fontHeightListener);
-        this.spinnerFontWidth.addChangeListener(this.fontWidthListener);
-        this.spinnerRotationAngl.addChangeListener(this.rotationAnglListener);
-        this.spinnerInclinationAngl.addChangeListener(this.italicAnglListener);
+        this.textFieldFontSize.addFocusListener(this.textFieldFontSizeFocusListener);
+        this.textFieldFontHeight.addFocusListener(this.textfieldFontHeightFocusListener);
+        this.textFieldFontSize.addCaretListener(this.textFieldFontSizeListener);
+        this.textFieldFontHeight.addCaretListener(this.textfieldFontHeightListener);
+        this.textFieldFontRotationAngl.addCaretListener(this.textfieldFontRotationAnglListener);
+        this.textFieldFontItalicAngl.addCaretListener(this.textFieldFontItalicAnglListener);
+        this.textfieldOutLineWidth.addCaretListener(this.textfieldOutLineWidthListener);
         this.buttonFontColorSelect.addPropertyChangeListener("m_selectionColors", this.fontColorProperty);
         this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.backColorListener);
-        this.textFieldFontSize.addKeyListener(this.localKeyListener);
-        this.textFieldFontSize.addFocusListener(this.fontSizeFocusListener);
-        this.textFieldFontHeight.addKeyListener(this.localKeyListener);
-        this.textFieldFontWidth.addKeyListener(this.localKeyListener);
-        this.textFieldFontItalicAngl.addKeyListener(this.localKeyListener);
-        this.textFieldFontRotationAngl.addKeyListener(this.localKeyListener);
-        this.comboBoxFontSize.getEditor().getEditorComponent().addKeyListener(this.localKeyListener);
         this.checkBoxBGOpaque.addActionListener(this.checkboxListener);
         this.checkBoxBorder.addActionListener(this.checkboxListener);
         this.checkBoxFixedSize.addActionListener(this.checkboxListener);
@@ -360,28 +383,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.checkBoxStrickout.addActionListener(this.checkboxListener);
         this.checkBoxUnderline.addActionListener(this.checkboxListener);
         this.comboBoxStringAlignment.addItemListener(this.comboboxListener);
-        // this.spinnerOutLineWidth.addChangeListener(this.outLineWidthChangeListener);
-
-    }
-
-    class LocalKeyListener extends KeyAdapter {
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            if (e.getSource() == textFieldFontSize && !isResetFontSize) {
-                setFontSize();
-            }
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-            // 输入限制
-            int keyChar = e.getKeyChar();
-            if (keyChar != '.' && (keyChar < '0' || keyChar > '9')) {
-                e.consume();
-            }
-        }
-
     }
 
     private void initResources() {
@@ -452,9 +453,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             jPanel.add(this.checkBoxOutline, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(20, 1).setInsets(0, 0, 0, 0));
             jPanel.add(this.spinnerOutLineWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(78, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2, 10, 0, 0));
             jPanel.add(new JLabel(CommonProperties.getString("String_Label_Pixel")), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2, 10, 0, 0));
-
             this.panelEffect.add(jPanel, new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-//			this.spinnerOutLineWidth.setEnabled(this.checkBoxOutline.isSelected());
         } else {
             this.panelEffect.add(this.checkBoxOutline, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(2, 10, 0, 10));
         }
@@ -755,7 +754,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxFontSize.setEditable(true);
         this.comboBoxFontSize.setSelectedItem(this.textStyle.getFontHeight() * EXPERIENCE);
         this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
-        this.spinnerFontHeight.setModel(new SpinnerNumberModel(new Double(0.0), new Double(0.0), null, new Double(1.0)));
+        this.spinnerFontHeight.setModel(new SpinnerNumberModel(0.0, 0.0, null, 1.0));
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
         this.textFieldFontHeight = numberEditor.getTextField();
         if (null != this.textStyle) {
@@ -774,7 +773,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 textFieldString = decimalFormat.format(size);
                 this.textFieldFontSize.setText(textFieldString);
             }
-            fontSize = textFieldString;
             double height = Double.parseDouble(textFieldString);
             this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height / EXPERIENCE));
         }
@@ -784,7 +782,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
      * 初始化字宽左侧textField值
      */
     private void initTextFieldFontWidth() {
-        this.spinnerFontWidth.setModel(new SpinnerNumberModel(new Double(0.0), new Double(0.0), null, new Double(1.0)));
+        this.spinnerFontWidth.setModel(new SpinnerNumberModel(0.0, 0.0, null, 1.0));
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontWidth.getEditor();
         this.textFieldFontWidth = numberEditor.getTextField();
         if (null != this.textStyle) {
@@ -797,7 +795,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
      * 初始化旋转角度左侧textField值
      */
     private void initTextFieldFontItalicAngl() {
-        this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(new Double(0), new Double(0), new Double(360), new Double(1)));
+        this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(0, 0, 360, 1));
         this.spinnerInclinationAngl.setEnabled(false);
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerInclinationAngl.getEditor();
         this.textFieldFontItalicAngl = numberEditor.getTextField();
@@ -810,7 +808,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
      * 初始化倾斜角度左侧textField值
      */
     private void initTextFieldFontRotation() {
-        this.spinnerRotationAngl.setModel(new SpinnerNumberModel(new Double(0), new Double(0), new Double(360), new Double(1)));
+        this.spinnerRotationAngl.setModel(new SpinnerNumberModel(0.0, 0.0, 360.0, 1.0));
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerRotationAngl.getEditor();
         this.textFieldFontRotationAngl = numberEditor.getTextField();
         if (null != this.textStyle) {
@@ -870,20 +868,15 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     public void removeEvents() {
         this.comboBoxFontName.removeItemListener(this.fontNameItemListener);
         this.comboBoxAlign.removeItemListener(this.alignItemListener);
-        this.comboBoxFontSize.removeItemListener(this.fontsizeItemListener);
-        this.spinnerFontHeight.removeChangeListener(this.fontHeightListener);
-        this.spinnerFontWidth.removeChangeListener(this.fontWidthListener);
-        this.spinnerRotationAngl.removeChangeListener(this.rotationAnglListener);
-        this.spinnerInclinationAngl.removeChangeListener(this.italicAnglListener);
+        this.textFieldFontSize.removeFocusListener(this.textFieldFontSizeFocusListener);
+        this.textFieldFontHeight.removeFocusListener(this.textfieldFontHeightFocusListener);
+        this.textFieldFontSize.removeCaretListener(this.textFieldFontSizeListener);
+        this.textFieldFontHeight.removeCaretListener(this.textfieldFontHeightListener);
+        this.textFieldFontRotationAngl.removeCaretListener(this.textfieldFontRotationAnglListener);
+        this.textFieldFontItalicAngl.removeCaretListener(this.textFieldFontItalicAnglListener);
+        this.textfieldOutLineWidth.removeCaretListener(this.textfieldOutLineWidthListener);
         this.buttonFontColorSelect.removePropertyChangeListener("m_selectionColors", this.fontColorProperty);
         this.buttonBGColorSelect.removePropertyChangeListener("m_selectionColors", this.backColorListener);
-        this.textFieldFontSize.removeKeyListener(this.localKeyListener);
-        this.textFieldFontSize.removeFocusListener(this.fontSizeFocusListener);
-        this.textFieldFontHeight.removeKeyListener(this.localKeyListener);
-        this.textFieldFontWidth.removeKeyListener(this.localKeyListener);
-        this.textFieldFontItalicAngl.removeKeyListener(this.localKeyListener);
-        this.textFieldFontRotationAngl.removeKeyListener(this.localKeyListener);
-        this.comboBoxFontSize.getEditor().getEditorComponent().removeKeyListener(this.localKeyListener);
         this.checkBoxBGOpaque.removeActionListener(this.checkboxListener);
         this.checkBoxBorder.removeActionListener(this.checkboxListener);
         this.checkBoxFixedSize.removeActionListener(this.checkboxListener);
@@ -893,22 +886,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.checkBoxStrickout.removeActionListener(this.checkboxListener);
         this.checkBoxUnderline.removeActionListener(this.checkboxListener);
         this.comboBoxStringAlignment.removeItemListener(this.comboboxListener);
-        this.spinnerOutLineWidth.removeChangeListener(this.outLineWidthChangeListener);
-    }
-
-    private void setFontSize() {
-        // 保证字高控件的值正确
-        if (!StringUtilities.isNullOrEmpty(textFieldFontSize.getText()) && StringUtilities.isNumber(textFieldFontSize.getText())) {
-            double size = Double.valueOf(textFieldFontSize.getText());
-            fontSize = textFieldFontSize.getText();
-            double fontHeight = size / EXPERIENCE;
-            fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
-            if (fontHeight > 0) {
-                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
-                textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
-                fireTextStyleChanged(TextStyleType.FONTSIZE);
-            }
-        }
     }
 
     @Override
@@ -986,4 +963,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         registEvents();
     }
 
+    public JSpinner getSpinnerRotationAngl() {
+        return spinnerRotationAngl;
+    }
 }

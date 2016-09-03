@@ -263,7 +263,7 @@ public class CADStyleContainer extends JPanel {
                         int opaque = Integer.valueOf(text);
                         if (geoStyle.getFillOpaqueRate() != opaque) {
                             //设置点/面透明度
-                            geoStyle.setFillOpaqueRate(opaque);
+                            geoStyle.setFillOpaqueRate(100 - opaque);
                         } else {
                             break;
                         }
@@ -640,19 +640,36 @@ public class CADStyleContainer extends JPanel {
 
     public void setEnabled() {
         recordset.moveFirst();
+        boolean containsPoint = false;
+        boolean containsLine = false;
+        boolean containsRegion = false;
         while (!recordset.isEOF()) {
             if (GeometryUtilities.isPointGeometry(recordset.getGeometry())) {
                 setPanelPointEnabled(true);
+                containsPoint = true;
             } else if (GeometryUtilities.isLineGeometry(recordset.getGeometry())) {
                 setPanelLineEnabled(true);
+                containsLine = true;
             } else if (GeometryUtilities.isRegionGeometry(recordset.getGeometry())) {
                 setPanelLineEnabled(true);
                 setPanelFillEnabled(true);
+                containsLine = true;
+                containsRegion = true;
             } else {
                 // 设置为空界面
                 this.scrollPane.setViewportView(panelCADInfo);
             }
             recordset.moveNext();
+        }
+        if (!containsPoint) {
+            this.buttonPointColor.setColor(Color.gray);
+        }
+        if (!containsLine) {
+            this.buttonLineColor.setColor(Color.gray);
+        }
+        if (!containsRegion) {
+            this.buttonFillForeColor.setColor(Color.gray);
+            this.buttonFillBackColor.setColor(Color.gray);
         }
     }
 
@@ -810,7 +827,7 @@ public class CADStyleContainer extends JPanel {
         if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
             this.buttonFillBackColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillBackColor());
             this.buttonFillForeColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillForeColor());
-            this.spinnerFillOpaque.setValue(recordset.getGeometry().getStyle().getFillOpaqueRate());
+            this.spinnerFillOpaque.setValue(100 - recordset.getGeometry().getStyle().getFillOpaqueRate());
             this.checkboxBackOpaque.setSelected(!recordset.getGeometry().getStyle().getFillBackOpaque());
             if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.NONE)) {
                 this.checkboxFillGradient.setSelected(false);
@@ -890,6 +907,16 @@ public class CADStyleContainer extends JPanel {
         setPanelLineEnabled(false);
     }
 
+    public void setSpinnerFillOpaqueEnable(boolean enable) {
+        this.spinnerFillOpaque.setEnabled(enable);
+    }
+
+    public void setSymstemPointEnable(boolean enable) {
+        this.checkboxWAndH.setEnabled(enable);
+        this.spinnerPointRotation.setEnabled(enable);
+        this.spinnerPointOpaque.setEnabled(enable);
+    }
+
     private void initPanelPointComponents() {
         // 初始化点风格设置界面
         this.panelPointStyle = new CADStyleTitlePanel(this, CADStyleTitlePanel.GEOPOINTTYPE);
@@ -915,7 +942,7 @@ public class CADStyleContainer extends JPanel {
         if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
             this.buttonPointColor = new ColorSelectButton(recordset.getGeometry().getStyle().getLineColor());
             this.spinnerPointRotation.setValue(recordset.getGeometry().getStyle().getMarkerAngle());
-            this.spinnerPointOpaque.setValue(recordset.getGeometry().getStyle().getFillOpaqueRate());
+            this.spinnerPointOpaque.setValue(100 - recordset.getGeometry().getStyle().getFillOpaqueRate());
             this.spinnerPointWidth.setValue(recordset.getGeometry().getStyle().getMarkerSize().getWidth());
             this.spinnerPointHeight.setValue(recordset.getGeometry().getStyle().getMarkerSize().getHeight());
         }

@@ -8,4 +8,6 @@ public interface IPreview extends IGeoTextStyle{
 	 */
 	public void refresh(String text, TextStyle tempTextStyle,double rotation);
 
+    public double getFontHeight();
+
 }
