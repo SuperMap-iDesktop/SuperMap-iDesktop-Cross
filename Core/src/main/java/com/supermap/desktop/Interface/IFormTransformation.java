@@ -15,4 +15,8 @@ public interface IFormTransformation extends IForm {
 	void addTransformationMap(Map map);
 
 	void addReferenceObjects(List<Object> listObjects);
+
+	void startAddPoint();
+
+	boolean isAddPointing();
 }

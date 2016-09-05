@@ -21,7 +21,7 @@ public class TransformationMain extends TransformationBase implements ITransform
 
 	private FormTransformation formTransformation;
 	private MapControl mapControl;
-	private ArrayList<TransformationBean> transformationBeens;
+	private ArrayList<TransformationAddObjectBean> transformationBeens;
 
 	public TransformationMain(FormTransformation formTransformation) {
 		transformationBeens = new ArrayList<>();
@@ -36,12 +36,12 @@ public class TransformationMain extends TransformationBase implements ITransform
 		int size = transformationBeens.size();
 		ArrayList<Dataset> datasets = new ArrayList<>();
 		for (Object data : datas) {
-			if (data instanceof TransformationBean) {
-				transformationBeens.add((TransformationBean) data);
-				if (((TransformationBean) data).getDataset() != null) {
-					datasets.add(((TransformationBean) data).getDataset());
-				} else if (((TransformationBean) data).getMap() != null) {
-					Map map = ((TransformationBean) data).getMap();
+			if (data instanceof TransformationAddObjectBean) {
+				transformationBeens.add((TransformationAddObjectBean) data);
+				if (((TransformationAddObjectBean) data).getDataset() != null) {
+					datasets.add(((TransformationAddObjectBean) data).getDataset());
+				} else if (((TransformationAddObjectBean) data).getMap() != null) {
+					Map map = ((TransformationAddObjectBean) data).getMap();
 					Layers layers = mapControl.getMap().getLayers();
 					LayerGroup layerGroup = layers.addGroup(map.getName());
 					for (int i = 0; i < map.getLayers().getCount(); i++) {

@@ -3,11 +3,13 @@ package com.supermap.desktop;
 import com.supermap.data.CoordSysTranslator;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
-import com.supermap.desktop.CtrlAction.transformationForm.TransformationBean;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationAddObjectBean;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationMain;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
 import com.supermap.desktop.Interface.IContextMenuManager;
@@ -24,7 +26,11 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,6 +122,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			initScale(getMapControl());
 		}
 	};
+	private boolean isAddPointing;
 
 	private void initPrjCoorSys(MapControl mapControl) {
 		SmTextField statusbarPrjCoorSys = (SmTextField) getStatusbar(STATE_BAR_PRJCOORSYS);
@@ -402,27 +409,27 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
-		TransformationBean transformationBean = new TransformationBean(transformationDataset, resultDatasource, resultDatasetName);
+		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
 		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationBean);
+		datas.add(transformationAddObjectBean);
 		if (getWidth() != 0) {
 			transformationMain.addDatas(datas);
 		} else {
 			transformationObjects = new ArrayList<>();
-			transformationObjects.add(transformationBean);
+			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
 
 	@Override
 	public void addTransformationMap(Map map) {
-		TransformationBean transformationBean = new TransformationBean(map);
+		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
 		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationBean);
+		datas.add(transformationAddObjectBean);
 		if (getWidth() != 0) {
 			transformationMain.addDatas(datas);
 		} else {
 			transformationObjects = new ArrayList<>();
-			transformationObjects.add(transformationBean);
+			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
 
@@ -437,6 +444,47 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 	}
 
+	@Override
+	public void startAddPoint() {
+		if (!isAddPointing()) {
+			isAddPointing = true;
+			transformationMain.getMapControl().setAction(Action.CREATEPOINT);
+			transformationReference.getMapControl().setAction(Action.CREATEPOINT);
+
+			transformationMain.getMapControl().setTrackMode(TrackMode.TRACK);
+			transformationReference.getMapControl().setTrackMode(TrackMode.TRACK);
+
+			initAddPointListeners();
+		}
+	}
+
+	private void initAddPointListeners() {
+		transformationMain.getMapControl().addTrackedListener(new TrackedListener() {
+			@Override
+			public void tracked(TrackedEvent trackedEvent) {
+				if (trackedEvent.getSource() != null && trackedEvent.getSource() instanceof MapControl) {
+					MapControl source = (MapControl) trackedEvent.getSource();
+					TransformationBase form = getFormByMapControl(source);
+					addPoint(form, trackedEvent.getGeometry());
+
+				}
+			}
+		});
+	}
+
+	private TransformationBase getFormByMapControl(MapControl mapControl) {
+		return transformationMain.getMapControl() == mapControl ? transformationMain : transformationReference;
+	}
+
+	private void addPoint(TransformationBase form, Geometry geometry) {
+		Point2D innerPoint = geometry.getInnerPoint();
+
+	}
+
+	@Override
+	public boolean isAddPointing() {
+		return isAddPointing;
+	}
 
 	@Override
 	public MapControl getMapControl() {
