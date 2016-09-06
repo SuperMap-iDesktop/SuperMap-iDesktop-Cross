@@ -180,6 +180,9 @@ public abstract class JPanelSymbols extends JPanel {
 
 	protected abstract void initDefaultPanel();
 
+	public GeoStyle getCurrentGeoStyle() {
+		return geoStyle;
+	}
 	/**
 	 * 初始化的时候使用
 	 */
@@ -205,7 +208,7 @@ public abstract class JPanelSymbols extends JPanel {
 		}
 	}
 
-	protected abstract int getCurrentSymbolId();
+	public abstract int getCurrentSymbolId();
 
 	public void setGeoStyle(GeoStyle geoStyle) {
 		this.geoStyle = geoStyle;
