@@ -26,7 +26,6 @@ public class TransformationReference extends TransformationBase implements ITran
 	public TransformationReference(FormTransformation formTransformation) {
 		this.formTransformation = formTransformation;
 		this.mapControl = new MapControl();
-		mapControl.getMap().setDynamicProjection(true);
 		mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 		this.addedMaps = new ArrayList<>();
@@ -36,18 +35,25 @@ public class TransformationReference extends TransformationBase implements ITran
 	@Override
 	public void addDatas(List<Object> datas) {
 		boolean isViewEntire = mapControl.getMap().getLayers().getCount() == 0;
-		Layers layers = mapControl.getMap().getLayers();
 		ArrayList<Dataset> datasets = new ArrayList<>();
+		ArrayList<Map> maps = new ArrayList<>();
 		for (Object listObject : datas) {
 			if (listObject instanceof Map) {
 				Map map = (Map) listObject;
+				maps.add(map);
+			} else if (listObject instanceof Dataset) {
+				datasets.add((Dataset) listObject);
+			}
+		}
+		if (maps.size() == 1) {
+			mapControl.getMap().open(maps.get(0).getName());
+		} else if (maps.size() > 1) {
+			Layers layers = mapControl.getMap().getLayers();
+			for (Map map : maps) {
 				LayerGroup layerGroup = layers.addGroup(map.getName());
 				for (int j = 0; j < map.getLayers().getCount(); j++) {
 					layerGroup.add(map.getLayers().get(j));
 				}
-//				map.close();
-			} else if (listObject instanceof Dataset) {
-				datasets.add((Dataset) listObject);
 			}
 		}
 		MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);

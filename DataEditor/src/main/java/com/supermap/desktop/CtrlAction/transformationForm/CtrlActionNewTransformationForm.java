@@ -24,10 +24,10 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 		JDialogNewTransformationForm jDialogNewTransformationForm = new JDialogNewTransformationForm();
 		if (jDialogNewTransformationForm.showDialog() == DialogResult.OK) {
 			IFormTransformation iFormTransformation = (IFormTransformation) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TRANSFORMATION, "");
-
 			iFormTransformation.addReferenceObjects(jDialogNewTransformationForm.getReferenceObjects());
 			iFormTransformation.addTransformationDataset(jDialogNewTransformationForm.getTransformationDataset(), jDialogNewTransformationForm.getResultDatasource(), jDialogNewTransformationForm.getResultDatasetName());
 		}
+		jDialogNewTransformationForm.dispose();
 	}
 
 	@Override

@@ -75,6 +75,8 @@ public class EraseEditor extends AbstractEditor {
 					// 判断如果只按下了 Ctrl 键，则进行擦除模式的切换
 					if (editModel.pressedKey == KeyEvent.VK_CONTROL) {
 						setIsEraseExternal(!editModel.isEraseExternal, editModel);
+
+						// 设置完 MapControlTip 上的 Tip 文本之后，需要刷新 MapControl 以解决 MapControlTip 的标签文本会有第三者遮盖的问题
 						environment.getMapControl().repaint();
 					}
 				} finally {

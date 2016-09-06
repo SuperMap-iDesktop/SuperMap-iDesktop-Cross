@@ -63,6 +63,8 @@ public class DatasetTypeUtilities {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.WMS);
 			} else if (datasetType == DatasetType.VOLUME) {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.VOLUME);
+			} else {
+				result = datasetType.toString();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

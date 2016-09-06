@@ -38,6 +38,21 @@
         <bundle.version>1.0.0.qualifier</bundle.version>
     </properties>
 
+    <!--配置远程仓库地址-->
+    <repositories>
+        <repository>
+            <id>ispeco</id>
+            <url>http://maven.supermapol.com/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ispeco</id>
+            <url>http://maven.supermapol.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
 
         <!--统一配置子模块的资源打包，不使用 maven-bundle-plugin 的 <Include_Resource> 标签-->

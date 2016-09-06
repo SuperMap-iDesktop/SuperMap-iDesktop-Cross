@@ -7,6 +7,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Comparator;
 
 /**
  * @author XiaJT
@@ -14,7 +15,12 @@ import java.awt.event.MouseEvent;
 public class SmSortTable extends JTable {
 	private Point point;
 	private boolean isSortLastRow = true;
-
+	private static final Comparator<Object> unSortComparator = new Comparator<Object>() {
+		@Override
+		public int compare(Object o1, Object o2) {
+			return 0;
+		}
+	};
 	public SmSortTable() {
 		super();
 		init();
@@ -75,6 +81,13 @@ public class SmSortTable extends JTable {
 	public void setIsSortLastRow(boolean isSortLastRow) {
 		this.isSortLastRow = isSortLastRow;
 		setModel(this.getModel());
+	}
+
+	public void setUnSortColumn(int... columns) {
+		for (int column : columns) {
+			((TableRowSorter) this.getRowSorter()).setComparator(column, unSortComparator);
+		}
+
 	}
 
 	private RowSorter<? extends TableModel> getNoLastRowSorter() {

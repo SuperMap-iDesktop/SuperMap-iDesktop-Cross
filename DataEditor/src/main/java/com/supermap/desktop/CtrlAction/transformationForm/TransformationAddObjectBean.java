@@ -7,20 +7,20 @@ import com.supermap.mapping.Map;
 /**
  * @author XiaJT
  */
-public class TransformationBean {
+public class TransformationAddObjectBean {
 	private Dataset dataset;
 	private Map map;
 	private Datasource resultDatasource;
 	private String resultDatasetName;
 
-	public TransformationBean() {
+	public TransformationAddObjectBean() {
 	}
 
-	public TransformationBean(Map map) {
+	public TransformationAddObjectBean(Map map) {
 		this.map = map;
 	}
 
-	public TransformationBean(Dataset dataset, Datasource resultDatasource, String resultDatasetName) {
+	public TransformationAddObjectBean(Dataset dataset, Datasource resultDatasource, String resultDatasetName) {
 		this.dataset = dataset;
 		this.resultDatasource = resultDatasource;
 		this.resultDatasetName = resultDatasetName;

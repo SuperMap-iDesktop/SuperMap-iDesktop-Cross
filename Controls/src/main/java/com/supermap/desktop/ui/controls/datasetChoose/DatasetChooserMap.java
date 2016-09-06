@@ -9,6 +9,7 @@ import com.supermap.mapping.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ import java.util.List;
 public class DatasetChooserMap implements IDatasetChoose {
 	private DatasetChooser datasetChooser;
 	private MapTableModel tableModel;
+	private TableMapCellRender tableMapCellRender;
+
 
 	public DatasetChooserMap(DatasetChooser datasetChooser) {
 		this.datasetChooser = datasetChooser;
@@ -29,7 +32,14 @@ public class DatasetChooserMap implements IDatasetChoose {
 	public void initTable() {
 		JTable table = datasetChooser.getTable();
 		table.setModel(tableModel);
-		table.getColumnModel().getColumn(0).setCellRenderer(new TableMapCellRender());
+		table.getColumnModel().getColumn(0).setCellRenderer(getTableMapCellRenderer());
+	}
+
+	private TableMapCellRender getTableMapCellRenderer() {
+		if (tableMapCellRender == null) {
+			tableMapCellRender = new TableMapCellRender();
+		}
+		return tableMapCellRender;
 	}
 
 	@Override
@@ -62,11 +72,15 @@ public class DatasetChooserMap implements IDatasetChoose {
 	private class MapTableModel extends DefaultTableModel {
 
 		List<Map> dataList = new ArrayList<>();
+		private HashMap<String, Map> cache = new HashMap<>();
 
-
-		public void addMap(String s) {
-			Map map = new Map(Application.getActiveApplication().getWorkspace());
-			map.open(s);
+		private void addMap(String s) {
+			Map map = cache.get(s);
+			if (map == null) {
+				map = new Map(Application.getActiveApplication().getWorkspace());
+				map.open(s);
+				cache.put(s, map);
+			}
 			dataList.add(map);
 			fireTableRowsInserted(dataList.size() - 1, dataList.size() - 1);
 		}
@@ -107,9 +121,7 @@ public class DatasetChooserMap implements IDatasetChoose {
 		public void removeAll() {
 			int size = dataList.size();
 			if (size > 0) {
-				for (int i = size - 1; i >= 0; i--) {
-					dataList.get(i).close();
-				}
+
 				dataList.clear();
 				fireTableRowsDeleted(0, size - 1);
 			}
@@ -127,6 +139,9 @@ public class DatasetChooserMap implements IDatasetChoose {
 		}
 
 		public void dispose() {
+			for (int i = dataList.size() - 1; i >= 0; i--) {
+				dataList.get(i).close();
+			}
 			removeAll();
 		}
 	}

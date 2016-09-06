@@ -3,11 +3,13 @@ package com.supermap.desktop;
 import com.supermap.data.CoordSysTranslator;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.Geometry;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
-import com.supermap.desktop.CtrlAction.transformationForm.TransformationBean;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationAddObjectBean;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationMain;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
 import com.supermap.desktop.Interface.IContextMenuManager;
@@ -17,13 +19,18 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.exception.InvalidScaleException;
+import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +64,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private static final int STATE_BAR_PRJCOORSYS = 2;
 	private static final int STATE_BAR_CENTER_X = 4;
 	private static final int STATE_BAR_CENTER_Y = 5;
-	public static final int STATE_BAR_SCALE = 7;
+	private static final int STATE_BAR_SCALE = 7;
 
 	private MouseAdapter mapControlMouseAdapter = new MouseAdapter() {
 		@Override
@@ -66,12 +73,22 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 
 		@Override
+		public void mouseReleased(MouseEvent e) {
+			initCenter(getMapControl());
+			initScale(getMapControl());
+		}
+
+		@Override
 		public void mousePressed(MouseEvent e) {
 			Object source = e.getSource();
+			boolean isChangeForceWindow = false;
 			if (source != currentForceWindow.getMapControl()) {
 				currentForceWindow.deactived();
 				currentForceWindow = currentForceWindow == transformationMain ? transformationReference : transformationMain;
 				currentForceWindow.actived();
+				isChangeForceWindow = true;
+			}
+			if (Application.getActiveApplication().getActiveForm() != FormTransformation.this || isChangeForceWindow) {
 				Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 			}
 			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
@@ -82,15 +99,16 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			if (e.getSource() instanceof MapControl) {
-				SmTextField statusbarPrjCoorSys = (SmTextField) getStatusbar(STATE_BAR_PRJCOORSYS);
-				statusbarPrjCoorSys.setText(((MapControl) e.getSource()).getMap().getPrjCoordSys().getName());
-				statusbarPrjCoorSys.setCaretPosition(0);
+				MapControl mapControl = (MapControl) e.getSource();
+				initPrjCoorSys(mapControl);
+				initScale(mapControl);
+				initCenter(mapControl);
 			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			initCenter();
+			initCenter(getMapControl());
 		}
 
 		@Override
@@ -100,10 +118,17 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			initCenter();
-			initScale();
+			initCenter(getMapControl());
+			initScale(getMapControl());
 		}
 	};
+	private boolean isAddPointing;
+
+	private void initPrjCoorSys(MapControl mapControl) {
+		SmTextField statusbarPrjCoorSys = (SmTextField) getStatusbar(STATE_BAR_PRJCOORSYS);
+		statusbarPrjCoorSys.setText(mapControl.getMap().getPrjCoordSys().getName());
+		statusbarPrjCoorSys.setCaretPosition(0);
+	}
 
 	public FormTransformation() {
 		this(null);
@@ -130,6 +155,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 		initLayout();
 		initListener();
+		initCenter(getMapControl());
+		initScale(getMapControl());
 	}
 
 	private void initLayout() {
@@ -163,15 +190,18 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						if (transformationReferenceObjects.size() > 0) {
 							transformationReference.addDatas(transformationReferenceObjects);
 							transformationReferenceObjects.clear();
+							transformationReference.getMapControl().getMap().viewEntire();
 						}
 						if (transformationObjects.size() > 0) {
 							transformationMain.addDatas(transformationObjects);
+							transformationMain.getMapControl().getMap().viewEntire();
 							transformationObjects.clear();
 						}
+						initCenter(getMapControl());
+						initScale(getMapControl());
+						initPrjCoorSys(getMapControl());
 					}
 				});
-				initCenter();
-				initScale();
 				splitPaneMain.removeComponentListener(this);
 			}
 		});
@@ -201,7 +231,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			Point pointMouse = e.getPoint();
 			Point2D point = mapControl.getMap().pixelToMap(pointMouse);
 
-			String x = "";
+			String x;
 			if (Double.isInfinite(point.getX())) {
 				x = DataEditorProperties.getString("String_Infinite");
 			} else if (Double.isNaN(point.getX())) {
@@ -209,7 +239,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			} else {
 				x = format.format(point.getX());
 			}
-			String y = "";
+			String y;
 			if (Double.isInfinite(point.getY())) {
 				y = DataEditorProperties.getString("String_Infinite");
 			} else if (Double.isNaN(point.getY())) {
@@ -274,8 +304,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return MessageFormat.format(DataEditorProperties.getString("String_LongitudeLatitude"), angles, min, format.format(pointTemp));
 	}
 
-	private void initCenter() {
-		MapControl mapControl = currentForceWindow.getMapControl();
+	private void initCenter(MapControl mapControl) {
 
 		DecimalFormat format = new DecimalFormat("######0.####");
 		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? DataEditorProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
@@ -289,8 +318,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	}
 
-	private void initScale() {
-		MapControl mapControl = currentForceWindow.getMapControl();
+	private void initScale(MapControl mapControl) {
 		String scale = null;
 		try {
 			scale = new ScaleModel(mapControl.getMap().getScale()).toString();
@@ -301,6 +329,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			scale = String.valueOf(mapControl.getMap().getScale());
 		}
 		((SmTextField) getStatusbar(STATE_BAR_SCALE)).setText(scale);
+		((SmTextField) getStatusbar(STATE_BAR_SCALE)).setCaretPosition(0);
 	}
 
 	@Override
@@ -380,27 +409,27 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
-		TransformationBean transformationBean = new TransformationBean(transformationDataset, resultDatasource, resultDatasetName);
+		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
 		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationBean);
+		datas.add(transformationAddObjectBean);
 		if (getWidth() != 0) {
 			transformationMain.addDatas(datas);
 		} else {
 			transformationObjects = new ArrayList<>();
-			transformationObjects.add(transformationBean);
+			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
 
 	@Override
 	public void addTransformationMap(Map map) {
-		TransformationBean transformationBean = new TransformationBean(map);
+		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
 		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationBean);
+		datas.add(transformationAddObjectBean);
 		if (getWidth() != 0) {
 			transformationMain.addDatas(datas);
 		} else {
 			transformationObjects = new ArrayList<>();
-			transformationObjects.add(transformationBean);
+			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
 
@@ -415,6 +444,47 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 	}
 
+	@Override
+	public void startAddPoint() {
+		if (!isAddPointing()) {
+			isAddPointing = true;
+			transformationMain.getMapControl().setAction(Action.CREATEPOINT);
+			transformationReference.getMapControl().setAction(Action.CREATEPOINT);
+
+			transformationMain.getMapControl().setTrackMode(TrackMode.TRACK);
+			transformationReference.getMapControl().setTrackMode(TrackMode.TRACK);
+
+			initAddPointListeners();
+		}
+	}
+
+	private void initAddPointListeners() {
+		transformationMain.getMapControl().addTrackedListener(new TrackedListener() {
+			@Override
+			public void tracked(TrackedEvent trackedEvent) {
+				if (trackedEvent.getSource() != null && trackedEvent.getSource() instanceof MapControl) {
+					MapControl source = (MapControl) trackedEvent.getSource();
+					TransformationBase form = getFormByMapControl(source);
+					addPoint(form, trackedEvent.getGeometry());
+
+				}
+			}
+		});
+	}
+
+	private TransformationBase getFormByMapControl(MapControl mapControl) {
+		return transformationMain.getMapControl() == mapControl ? transformationMain : transformationReference;
+	}
+
+	private void addPoint(TransformationBase form, Geometry geometry) {
+		Point2D innerPoint = geometry.getInnerPoint();
+
+	}
+
+	@Override
+	public boolean isAddPointing() {
+		return isAddPointing;
+	}
 
 	@Override
 	public MapControl getMapControl() {
@@ -456,7 +526,59 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	private JComponent getStatusbar(int i) {
-		return ((JComponent) getStatusbar().get(i));
+		return ((JComponent) super.getStatusbar().get(i));
+	}
+
+	@Override
+	public SmStatusbar getStatusbar() {
+
+		SmStatusbar statusbar = super.getStatusbar();
+		java.util.List<Component> list = new ArrayList<>();
+		for (int i = 0; i < statusbar.getCount(); i++) {
+			list.add(((Component) statusbar.get(i)));
+		}
+		((JTextField) list.get(1)).setEditable(false);
+		((JTextField) list.get(2)).setEditable(false);
+		((JTextField) list.get(4)).setEditable(false);
+		((JTextField) list.get(5)).setEditable(false);
+		((JTextField) list.get(7)).setEditable(false);
+		statusbar.removeAll();
+		statusbar.setLayout(new GridBagLayout());
+		// label鼠标位置:
+		statusbar.add(list.get(0), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		// textfield 鼠标位置
+		statusbar.add(list.get(1), new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(1, 1));
+		// textfield 投影系统名称
+		statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(1, 1));
+		// label 中心点:
+		statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		// textfield 中心点X
+		Dimension preferredSize = new Dimension(80, list.get(4).getHeight());
+		list.get(4).setMinimumSize(preferredSize);
+		list.get(4).setPreferredSize(preferredSize);
+		list.get(4).setMaximumSize(preferredSize);
+		statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		// textfield 中心点Y
+		list.get(5).setMinimumSize(preferredSize);
+		list.get(5).setPreferredSize(preferredSize);
+		list.get(5).setMaximumSize(preferredSize);
+		statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		// label 比例尺:
+		statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		// textfield 比例尺
+		list.get(7).setMaximumSize(preferredSize);
+		list.get(7).setPreferredSize(preferredSize);
+		list.get(7).setMinimumSize(preferredSize);
+		statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
+				.setWeight(0, 1));
+		return statusbar;
 	}
 
 	//region 不支持的方法
