@@ -8,6 +8,7 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -65,13 +66,13 @@ public class OverlayAnalystCallable extends UpdateProgressCallable implements IO
             }
             long endLong = System.currentTimeMillis();
             Application.getActiveApplication().getOutput().output(MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_EndTime"), new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date(endLong))));
-            String overlayAnalystInfo = "";
             if (overlayAnalystResult) {
-                overlayAnalystInfo = SpatialAnalystProperties.getString("String_OverlayAnalyst_SuccessTip");
+                Application.getActiveApplication().getOutput().output(MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_SuccessTip"), type.toString()));
             } else {
-                overlayAnalystInfo = SpatialAnalystProperties.getString("String_OverlayAnalyst_FailingTip");
+                Application.getActiveApplication().getOutput().output(MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_Failed"), sourceDataset.getName() + "@" + sourceDataset.getDatasource().getAlias(),
+                        overlayAnalystDataset.getName() + "@" + overlayAnalystDataset.getDatasource().getAlias(), type.toString()));
+                return false;
             }
-            Application.getActiveApplication().getOutput().output(overlayAnalystInfo);
             Application.getActiveApplication().getOutput().output(MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_Cost"), String.valueOf((endLong - startLong) / 1000.0)));
         } catch (Exception e) {
             result = false;

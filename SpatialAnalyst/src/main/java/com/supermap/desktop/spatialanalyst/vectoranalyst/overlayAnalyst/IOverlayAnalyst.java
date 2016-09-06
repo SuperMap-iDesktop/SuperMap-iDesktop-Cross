@@ -2,6 +2,7 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst.overlayAnalyst;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
 import com.supermap.data.DatasetVector;
+import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 /**
  * Created by xie on 2016/8/30.

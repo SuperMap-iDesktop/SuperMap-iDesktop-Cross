@@ -34,7 +34,7 @@ public class CtrlActionOverlayAnalyst extends CtrlAction {
             Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
             for (int i = 0; i < datasources.getCount(); i++) {
                 Datasource tempDatasource = datasources.get(i);
-                if (null != tempDatasource.getDatasets() && tempDatasource.getDatasets().getCount() > 0) {
+                if (!tempDatasource.isReadOnly() && null != tempDatasource.getDatasets() && tempDatasource.getDatasets().getCount() > 0) {
                     for (int j = 0; j < tempDatasource.getDatasets().getCount(); j++) {
                         if (tempDatasource.getDatasets().get(j) instanceof DatasetVector) {
                             enable = true;
