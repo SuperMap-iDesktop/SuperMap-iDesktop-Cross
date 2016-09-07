@@ -47,6 +47,7 @@ public class TransformationReference extends TransformationBase implements ITran
 		}
 		if (maps.size() == 1) {
 			mapControl.getMap().open(maps.get(0).getName());
+			mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 		} else if (maps.size() > 1) {
 			Layers layers = mapControl.getMap().getLayers();
 			for (Map map : maps) {

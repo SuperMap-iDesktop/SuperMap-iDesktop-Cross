@@ -318,8 +318,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 					panelSelectTargetInfo.setVisible(false);
 					abstractActiveMapcontrol(activeMapControl);
 					exitEdit();
-					((IFormMap) activeForm).getMapControl().removeMouseListener(this);
-					((FormMap) Application.getActiveApplication().getActiveForm()).clearSelection();
+					activeForm.getMapControl().removeMouseListener(this);
+					if (activeForm instanceof FormMap) {
+						((FormMap) Application.getActiveApplication().getActiveForm()).clearSelection();
+					}
 				}
 			}
 		});
