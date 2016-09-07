@@ -41,7 +41,7 @@ public class OffsetEditor extends AbstractEditor {
         public void mouseClicked(EditEnvironment environment, MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
                 environment.stopEditor();
-                environment.getMap().refresh();
+                environment.getMap().refreshTrackingLayer();
             }
         }
     };

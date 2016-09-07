@@ -62,7 +62,6 @@ public class GeometryCopyEditor extends AbstractEditor {
 			environment.setEditModel(editModel);
 		}
 		environment.setEditController(this.geometryCopyController);
-
 		editModel.oldAction = environment.getMapControl().getAction();
 		editModel.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(MAPCONTROL_ACTION);
