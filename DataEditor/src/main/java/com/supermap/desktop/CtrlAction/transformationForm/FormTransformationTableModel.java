@@ -175,8 +175,8 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		}
 	}
 
-	public void addPoint(boolean isOriginal, Point point) {
-		if (isOriginal) {
+	public void addPoint(FormTransformationSubFormType subFormType, Point point) {
+		if (subFormType == FormTransformationSubFormType.Target) {
 			for (int i = 0; i < dataBeanList.size(); i++) {
 				TransformationTableDataBean bean = dataBeanList.get(i);
 				if (bean.getPointOriginal() == null) {

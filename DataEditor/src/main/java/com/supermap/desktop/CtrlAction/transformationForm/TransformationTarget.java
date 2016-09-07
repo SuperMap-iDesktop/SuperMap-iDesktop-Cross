@@ -17,13 +17,13 @@ import java.util.List;
 /**
  * @author XiaJT
  */
-public class TransformationMain extends TransformationBase implements ITransformation, IFormMap {
+public class TransformationTarget extends TransformationBase implements ITransformation, IFormMap {
 
 	private FormTransformation formTransformation;
 	private MapControl mapControl;
 	private ArrayList<TransformationAddObjectBean> transformationBeens;
 
-	public TransformationMain(FormTransformation formTransformation) {
+	public TransformationTarget(FormTransformation formTransformation) {
 		transformationBeens = new ArrayList<>();
 		this.formTransformation = formTransformation;
 		this.mapControl = new MapControl();

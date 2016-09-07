@@ -36,6 +36,7 @@ public class TransformationBase implements IFormMap {
 	private transient LayersTreeSelectionListener layersTreeSelectionListener = new LayersTreeSelectionListener();
 	private transient EventListenerList eventListenerList = new EventListenerList();
 	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
+	private int isShowPopupMenu = 0;
 
 	@Override
 	public String getText() {
@@ -118,17 +119,17 @@ public class TransformationBase implements IFormMap {
 
 	@Override
 	public void dontShowPopupMenu() {
-
+		isShowPopupMenu++;
 	}
 
 	@Override
 	public void showPopupMenu() {
-
+		isShowPopupMenu--;
 	}
 
 	@Override
 	public int getIsShowPopupMenu() {
-		return 0;
+		return isShowPopupMenu;
 	}
 
 	@Override

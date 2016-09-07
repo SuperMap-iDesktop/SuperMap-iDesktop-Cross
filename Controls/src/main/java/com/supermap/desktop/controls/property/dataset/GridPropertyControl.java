@@ -38,7 +38,7 @@ import java.text.ParseException;
 public class GridPropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_LABEL_WIDTH = 80;
@@ -403,7 +403,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void setComponentsEnabled() {
-		this.buttonClearClipRegion.setEnabled(!this.datasetGrid.isReadOnly());
+		this.textFieldNoValue.setEnabled(!this.datasetGrid.isReadOnly());
+		this.comboBoxColors.setEnabled(!this.datasetGrid.isReadOnly());
+		this.buttonSetClipRegion.setEnabled(!this.datasetGrid.isReadOnly());
 		this.buttonClearClipRegion.setEnabled(!this.datasetGrid.isReadOnly() && this.datasetGrid.getClipRegion() != null);
 		this.buttonReset.setEnabled(verifyChange());
 		this.buttonApply.setEnabled(verifyChange());

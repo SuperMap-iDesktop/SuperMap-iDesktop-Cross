@@ -293,7 +293,7 @@ public class GlobalParameters {
 	//endregion
 
 	//region logFolder
-	private static String logFolder = "./Log/Desktop";
+	private static String logFolder = "./log/Desktop";
 
 	/**
 	 * 获取日志输出路径，默认路径为jar包所在位置/bin/Log/Desktop
