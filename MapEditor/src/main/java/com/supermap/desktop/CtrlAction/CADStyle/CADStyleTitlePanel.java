@@ -216,27 +216,40 @@ public class CADStyleTitlePanel extends JPanel {
             if (!recordset.isReadOnly()) {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry().clone();
-//                GeoStyle geoStyle = tempGeometry.getStyle().clone();
-//                if (null == tempGeometry.getStyle()) {
-//                    geoStyle = new GeoStyle();
-//                }
-//                if (symbol instanceof SymbolMarker) {
-//                    // 修改点符号
-//                    geoStyle.setMarkerSymbolID(panelSymbols.getCurrentSymbolId());
-//                } else if (symbol instanceof SymbolLine) {
-//                    // 修改线符号
-//                    geoStyle.setLineSymbolID(panelSymbols.getCurrentSymbolId());
-//                } else if (symbol instanceof SymbolFill) {
-//                    // 修改面符号
-//                    geoStyle.setFillSymbolID(panelSymbols.getCurrentSymbolId());
-//                }
-                tempGeometry.setStyle(panelSymbols.getCurrentGeoStyle());
+                GeoStyle geoStyle = tempGeometry.getStyle().clone();
+                if (null == tempGeometry.getStyle()) {
+                    geoStyle = new GeoStyle();
+                }
+                if (tempGeometry instanceof GeoPoint && styleType == GEOPOINTTYPE) {
+                    // 修改点符号
+                    geoStyle.setMarkerSymbolID(panelSymbols.getCurrentGeoStyle().getMarkerSymbolID());
+                    geoStyle.setMarkerAngle(panelSymbols.getCurrentGeoStyle().getMarkerAngle());
+                    geoStyle.setMarkerSize(panelSymbols.getCurrentGeoStyle().getMarkerSize());
+                }
+                if ((tempGeometry instanceof GeoLine || tempGeometry instanceof GeoRegion) && styleType == GEOLINETYPE) {
+                    geoStyle.setLineSymbolID(panelSymbols.getCurrentGeoStyle().getLineSymbolID());
+                    geoStyle.setLineColor(panelSymbols.getCurrentGeoStyle().getLineColor());
+                    geoStyle.setLineWidth(panelSymbols.getCurrentGeoStyle().getLineWidth());
+                }
+                if (tempGeometry instanceof GeoRegion && styleType == GEOREGIONTYPE) {
+                    geoStyle.setFillSymbolID(panelSymbols.getCurrentGeoStyle().getFillSymbolID());
+                    geoStyle.setFillForeColor(panelSymbols.getCurrentGeoStyle().getFillForeColor());
+                    geoStyle.setFillGradientMode(panelSymbols.getCurrentGeoStyle().getFillGradientMode());
+                    geoStyle.setFillGradientOffsetRatioX(panelSymbols.getCurrentGeoStyle().getFillGradientOffsetRatioX());
+                    geoStyle.setFillGradientAngle(panelSymbols.getCurrentGeoStyle().getFillGradientAngle());
+                    geoStyle.setFillGradientOffsetRatioY(panelSymbols.getCurrentGeoStyle().getFillGradientOffsetRatioY());
+                    geoStyle.setFillOpaqueRate(panelSymbols.getCurrentGeoStyle().getFillOpaqueRate());
+                    geoStyle.setFillBackOpaque(panelSymbols.getCurrentGeoStyle().getFillBackOpaque());
+                }
+                tempGeometry.setStyle(geoStyle);
                 recordset.setGeometry(tempGeometry);
                 tempGeometry.dispose();
                 recordset.update();
                 recordset.moveNext();
             }
         }
+        recordset.close();
+        recordset.dispose();
         editHistory.batchEnd();
         MapUtilities.getActiveMap().refresh();
     }
@@ -256,6 +269,8 @@ public class CADStyleTitlePanel extends JPanel {
             }
         }
         editHistory.batchEnd();
+        tempRecordset.close();
+        tempRecordset.dispose();
         MapUtilities.getActiveMap().refresh();
     }
 

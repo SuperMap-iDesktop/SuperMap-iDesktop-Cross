@@ -43,8 +43,8 @@ public class ResiezeEditor extends AbstractEditor {
 
         public void mouseClicked(EditEnvironment environment, MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
-                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
                 environment.stopEditor();
+                environment.getMap().refresh();
             }
         }
     };
