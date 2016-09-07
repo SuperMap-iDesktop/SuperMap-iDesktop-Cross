@@ -106,27 +106,52 @@ public class CADStyleTitlePanel extends JPanel {
         if (styleType == GEOPOINTTYPE) {
             panelSymbols = new JPanelSymbolsPoint();
             panelSymbols.setSymbolGroup(resources, resources.getMarkerLibrary().getRootGroup());
-            this.setPreferredSize(new Dimension(290, 220));
+            setLayout(panelSymbols);
+            this.setPreferredSize(new Dimension(160, 220));
         } else if (styleType == GEOLINETYPE) {
             panelSymbols = new JPanelSymbolsLine();
             panelSymbols.setSymbolGroup(resources, resources.getLineLibrary().getRootGroup());
-            this.setPreferredSize(new Dimension(290, 220));
+            setLayout(panelSymbols);
+            this.setPreferredSize(new Dimension(160, 220));
         } else {
             panelSymbols = new JPanelSymbolsFill();
             panelSymbols.setSymbolGroup(resources, resources.getFillLibrary().getRootGroup());
-            this.setPreferredSize(new Dimension(290, 300));
+            setLayout(panelSymbols);
+            this.setPreferredSize(new Dimension(160, 300));
         }
-        panelSymbols.setGeoStyle(new GeoStyle());
-        setLayout(panelSymbols);
     }
 
-    private void resetRecordsetGeoStyle() {
+
+    private GeoStyle getGeoStyle() {
+        GeoStyle geoStyle = new GeoStyle();
         if (null != recordset) {
             recordset.dispose();
         }
         recordset = MapUtilities.getActiveMap().findSelection(true)[0].toRecordset();
+        if (null == recordset.getGeometry().getStyle()) {
+            return geoStyle;
+        }
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            if (styleType == GEOPOINTTYPE) {
+                geoStyle = recordset.getGeometry().getStyle().clone();
+                break;
+            } else if (styleType == GEOLINETYPE) {
+                geoStyle = recordset.getGeometry().getStyle().clone();
+                break;
+            } else if (styleType == GEOREGIONTYPE) {
+                geoStyle = recordset.getGeometry().getStyle().clone();
+                break;
+            } else {
+                recordset.moveNext();
+            }
+        }
+        return geoStyle;
+    }
+
+    private void resetRecordsetGeoStyle() {
+        GeoStyle beforeGeoStyle = getGeoStyle();
         SymbolType symbolType = null;
-        GeoStyle beforeGeoStyle = new GeoStyle();
         if (styleType == GEOPOINTTYPE) {
             symbolType = SymbolType.MARKER;
         } else if (styleType == GEOLINETYPE) {
@@ -134,21 +159,7 @@ public class CADStyleTitlePanel extends JPanel {
         } else {
             symbolType = SymbolType.FILL;
         }
-        recordset.moveFirst();
-        while (!recordset.isEOF()) {
-            if (styleType == GEOPOINTTYPE) {
-                beforeGeoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOLINETYPE) {
-                beforeGeoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOREGIONTYPE) {
-                beforeGeoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else {
-                recordset.moveNext();
-            }
-        }
+
         GeoStyle geostyle = changeGeoStyle(beforeGeoStyle, symbolType, new ISymbolApply() {
             @Override
             public void apply(GeoStyle geoStyle) {
@@ -192,7 +203,6 @@ public class CADStyleTitlePanel extends JPanel {
             } else if (styleType == GEOPOINTTYPE) {
                 parent.setSymstemPointEnable(false);
             }
-            return;
         } else {
             if (styleType == GEOREGIONTYPE) {
                 parent.setSpinnerFillOpaqueEnable(false);
@@ -206,21 +216,21 @@ public class CADStyleTitlePanel extends JPanel {
             if (!recordset.isReadOnly()) {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry().clone();
-                GeoStyle geoStyle = tempGeometry.getStyle().clone();
-                if (null == tempGeometry.getStyle()) {
-                    geoStyle = new GeoStyle();
-                }
-                if (symbol instanceof SymbolMarker) {
-                    // 修改点符号
-                    geoStyle.setMarkerSymbolID(((SymbolMarker) symbol).getID());
-                } else if (symbol instanceof SymbolLine) {
-                    // 修改线符号
-                    geoStyle.setLineSymbolID(((SymbolLine) symbol).getID());
-                } else if (symbol instanceof SymbolFill) {
-                    // 修改面符号
-                    geoStyle.setFillSymbolID(((SymbolFill) symbol).getID());
-                }
-                tempGeometry.setStyle(geoStyle);
+//                GeoStyle geoStyle = tempGeometry.getStyle().clone();
+//                if (null == tempGeometry.getStyle()) {
+//                    geoStyle = new GeoStyle();
+//                }
+//                if (symbol instanceof SymbolMarker) {
+//                    // 修改点符号
+//                    geoStyle.setMarkerSymbolID(panelSymbols.getCurrentSymbolId());
+//                } else if (symbol instanceof SymbolLine) {
+//                    // 修改线符号
+//                    geoStyle.setLineSymbolID(panelSymbols.getCurrentSymbolId());
+//                } else if (symbol instanceof SymbolFill) {
+//                    // 修改面符号
+//                    geoStyle.setFillSymbolID(panelSymbols.getCurrentSymbolId());
+//                }
+                tempGeometry.setStyle(panelSymbols.getCurrentGeoStyle());
                 recordset.setGeometry(tempGeometry);
                 tempGeometry.dispose();
                 recordset.update();
@@ -249,7 +259,7 @@ public class CADStyleTitlePanel extends JPanel {
         MapUtilities.getActiveMap().refresh();
     }
 
-    private void setLayout(JPanel panelSymbols) {
+    private void setLayout(JPanelSymbols panelSymbols) {
         panelMore = new JPanel();
         buttonMoreImage = new JLabel(ControlsResources.getIcon("/controlsresources/Image_SymbolDictionary.png"));
         labelTitle = new JLabel(ControlsProperties.getString("String_SymbolLibraryManager"));
@@ -262,6 +272,8 @@ public class CADStyleTitlePanel extends JPanel {
         this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 2));
         this.add(panelMore, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
         jScrollPane.setViewportView(panelSymbols);
+        GeoStyle geoStyle = getGeoStyle();
+        panelSymbols.setGeoStyle(geoStyle);
         panelMore.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

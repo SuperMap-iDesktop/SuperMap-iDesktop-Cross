@@ -27,7 +27,7 @@ import java.text.NumberFormat;
 public class VectorPropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_LABEL_WIDTH = 100;
@@ -163,6 +163,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsReadOnly = new JCheckBox("IsReadOnly");
 		this.checkBoxIsFileCache = new JCheckBox("IsFileCache");
 		this.buttonClearCache = new JButton("ClearCache");
+		this.buttonClearCache.setVisible(false); // 暂未实现的功能，暂时关闭之
 
 		JPanel panelVectorParam = new JPanel();
 		panelVectorParam.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString(CommonProperties.DatasetVector)));

@@ -254,7 +254,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 	private void setComponentsEnabled() {
 		this.buttonAdd.setEnabled(!this.datasetVector.isReadOnly());
-		this.buttonDelete.setEnabled(!this.datasetVector.isReadOnly() && this.isCellValueChange);
+		this.buttonDelete.setEnabled(canRemove());
 		this.checkBoxShowWarning.setEnabled(!this.datasetVector.isReadOnly());
 		this.buttonReset.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
 		this.buttonApply.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
@@ -399,10 +399,16 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 
 	private void tableSelectionChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
-			RecordsetPropertyTableModel tableModel = (RecordsetPropertyTableModel) this.tableRecordset.getModel();
+			setComponentsEnabled();
+		}
+	}
 
-			boolean canRemove = true;
-			int[] selectedRows = this.tableRecordset.getSelectedRows();
+	private boolean canRemove() {
+		RecordsetPropertyTableModel tableModel = (RecordsetPropertyTableModel) this.tableRecordset.getModel();
+		int[] selectedRows = this.tableRecordset.getSelectedRows();
+		boolean canRemove = !this.datasetVector.isReadOnly() && selectedRows.length > 0;
+
+		if (canRemove) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				FieldData field = tableModel.getRowData(selectedRows[i]);
 
@@ -411,9 +417,8 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					break;
 				}
 			}
-
-			this.buttonDelete.setEnabled(canRemove);
 		}
+		return canRemove;
 	}
 
 	private void checkBoxShowWarningClicked() {
@@ -531,20 +536,24 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		/**
 		 * Returns true regardless of parameter values.
 		 *
-		 * @param row
-		 *            the row whose value is to be queried
-		 * @param column
-		 *            the column whose value is to be queried
+		 * @param row    the row whose value is to be queried
+		 * @param column the column whose value is to be queried
 		 * @return true
 		 * @see #setValueAt
 		 */
 		@Override
 		public boolean isCellEditable(int row, int column) {
+			boolean isEditable = false;
+
+			if (datasetVector.isReadOnly()) {
+				return false;
+			}
+
 			if (column == INDEX) {
 				return false;
 			}
 
-			if (column == FIELD_CAPTION && !datasetVector.isReadOnly()) {
+			if (column == FIELD_CAPTION) {
 				return true;
 			}
 
@@ -611,12 +620,18 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			}
 
 			try {
+				boolean currentCellValueChanged = false;
 				if (columnIndex == INDEX) {
 					return;
 				} else if (columnIndex == FIELD_NAME) {
 					// String newName = getAvailableFieldName(String.valueOf(aValue));
+					String oldName = this.fieldInfos.get(rowIndex).getName();
 					String newName = datasetVector.getAvailableFieldName(String.valueOf(aValue));
-					this.fieldInfos.get(rowIndex).setName(newName);
+
+					if (!StringUtilities.stringEquals(oldName, newName)) {
+						this.fieldInfos.get(rowIndex).setName(newName);
+						currentCellValueChanged = true;
+					}
 
 					// 如果 caption 的主动修改记录列表不包含当前修改记录，那么联动更新 caption
 					if (!this.captionModifiedRows.contains(rowIndex)) {
@@ -626,18 +641,21 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					}
 				} else if (columnIndex == FIELD_CAPTION) {
 					String oldCaption = this.fieldInfos.get(rowIndex).getCaption();
-					if (!oldCaption.equals(String.valueOf(aValue))) {
+					String newCaption = String.valueOf(aValue);
+					if (!StringUtilities.stringEquals(oldCaption, newCaption)) {
 						this.fieldInfos.get(rowIndex).setCaption(String.valueOf(aValue));
 
 						// 添加到主动修改列表
 						if (!this.captionModifiedRows.contains(rowIndex)) {
 							this.captionModifiedRows.add(rowIndex);
 						}
+						currentCellValueChanged = true;
 					}
 				} else if (columnIndex == FIELD_TYPE) {
 					this.fieldInfos.get(rowIndex).setType(FieldTypeUtilities.getFieldType((String) aValue));
 					this.fieldInfos.get(rowIndex).setMaxLength(FieldTypeUtilities.getFieldTypeMaxLength(FieldTypeUtilities.getFieldType((String) aValue)));
 					this.fireTableDataChanged();
+					currentCellValueChanged = true;
 				} else if (columnIndex == MAX_LENGTH) {
 					try {
 						Integer.valueOf(aValue.toString());
@@ -645,6 +663,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 						return;
 					}
 					this.fieldInfos.get(rowIndex).setMaxLength(Integer.valueOf(aValue.toString()));
+					currentCellValueChanged = true;
 				} else if (columnIndex == DEFAULT_VALUE) {
 					FieldData fieldInfo = this.fieldInfos.get(rowIndex);
 					if (aValue == null) {
@@ -658,6 +677,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 					} else {
 						fieldInfo.setDefaultValue(aValue.toString());
 					}
+					currentCellValueChanged = true;
 				} else if (columnIndex == IS_REQUIRED) {
 					Boolean isRequired = Boolean.valueOf(aValue.toString());
 					this.fieldInfos.get(rowIndex).setRequired(isRequired);
@@ -666,9 +686,12 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 						fireTableCellUpdated(rowIndex, DEFAULT_VALUE);
 						fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, DEFAULT_VALUE));
 					}
+					currentCellValueChanged = true;
 				}
-				fireTableCellUpdated(rowIndex, columnIndex);
-				fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, columnIndex));
+
+				if (currentCellValueChanged) {
+					fireTableCellValueChange(new TableCellValueChangeEvent(this, rowIndex, columnIndex));
+				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

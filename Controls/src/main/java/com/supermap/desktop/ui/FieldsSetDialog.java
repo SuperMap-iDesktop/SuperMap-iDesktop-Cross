@@ -1,20 +1,16 @@
-package com.supermap.desktop.spatialanalyst.vectoranalyst.overlayAnalyst;
+package com.supermap.desktop.ui;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,11 +20,12 @@ import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/8/31.
+ * 字段选择器
  */
 public class FieldsSetDialog extends SmDialog {
-    private JLabel labelSourceFields;//数据源的字段
+    //    private JLabel labelSourceFields;//数据源的字段
     private JTable tableSourceFields;
-    private JLabel labelOverlayAnalystFields;//叠加分析的字段
+    //    private JLabel labelOverlayAnalystFields;//叠加分析的字段
     private JTable tableOverlayAnalystFields;
     private JButton buttonSourceFieldsSelectAll;//全选
     private JButton buttonSourceFieldsSelectReverse;//反选
@@ -38,9 +35,13 @@ public class FieldsSetDialog extends SmDialog {
     private JButton buttonCancel;
     private JScrollPane scrollpaneSourceFields;
     private JScrollPane scrollpaneOverlayAnalystFields;
-    private final String[] tableTitle = {ControlsProperties.getString("String_ColumnHeader_FieldIndexes"), CommonProperties.getString("String_FieldName")};
+    private final Object[] tableTitle = {"", CommonProperties.getString("String_Field_Caption")};
     private String[] sourceFields;
     private String[] overlayAnalystFields;
+    private static final int TABLE_COLUMN_CHECKABLE = 0;
+    private static final int TABLE_COLUMN_CAPTION = 1;
+    private static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
+    private static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
     private ActionListener buttonSourceFieldsSelectAllListener = new ActionListener() {
@@ -73,13 +74,13 @@ public class FieldsSetDialog extends SmDialog {
             ArrayList<String> sourceFieldList = new ArrayList<String>();
             ArrayList<String> overlayAnaylstList = new ArrayList<String>();
             for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
-                if ((Boolean) tableSourceFields.getValueAt(i, 0)) {
-                    sourceFieldList.add((String) tableSourceFields.getValueAt(i, 1));
+                if ((Boolean) tableSourceFields.getValueAt(i, TABLE_COLUMN_CHECKABLE)) {
+                    sourceFieldList.add((String) tableSourceFields.getValueAt(i, TABLE_COLUMN_CAPTION));
                 }
             }
             for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                if ((Boolean) tableOverlayAnalystFields.getValueAt(i, 0)) {
-                    overlayAnaylstList.add((String) tableOverlayAnalystFields.getValueAt(i, 1));
+                if ((Boolean) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CHECKABLE)) {
+                    overlayAnaylstList.add((String) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CAPTION));
                 }
             }
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
@@ -106,7 +107,8 @@ public class FieldsSetDialog extends SmDialog {
         initLayout();
         initResources();
         registEvents();
-        setSize(380, 340);
+        setSize(500, 340);
+        setMinimumSize(new Dimension(500, 340));
         setLocationRelativeTo(null);
         setVisible(true);
         return dialogResult;
@@ -114,13 +116,13 @@ public class FieldsSetDialog extends SmDialog {
 
     private void selectAll(JTable table) {
         for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(new Boolean(true), i, 0);
+            table.setValueAt(new Boolean(true), i, TABLE_COLUMN_CHECKABLE);
         }
     }
 
     private void selectReverse(JTable table) {
         for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(!((Boolean) table.getValueAt(i, 0)), i, 0);
+            table.setValueAt(!((Boolean) table.getValueAt(i, TABLE_COLUMN_CHECKABLE)), i, TABLE_COLUMN_CHECKABLE);
         }
     }
 
@@ -144,6 +146,7 @@ public class FieldsSetDialog extends SmDialog {
         removeEvents();
         FieldsSetDialog.this.dispose();
     }
+
     private void removeEvents() {
         this.buttonSourceFieldsSelectAll.removeActionListener(this.buttonSourceFieldsSelectAllListener);
         this.buttonSourceFieldsSelectReverse.removeActionListener(this.buttonSourceFieldsSelectReverseListener);
@@ -159,18 +162,18 @@ public class FieldsSetDialog extends SmDialog {
         scrollpaneSourceFields = new JScrollPane();
         scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
-        panelSourceFields.add(this.labelSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        panelSourceFields.add(this.buttonSourceFieldsSelectAll, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
-        panelSourceFields.add(this.buttonSourceFieldsSelectReverse, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+        panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        panelSourceFields.add(this.buttonSourceFieldsSelectAll, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+        panelSourceFields.add(this.buttonSourceFieldsSelectReverse, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
         scrollpaneSourceFields.setViewportView(tableSourceFields);
         panelOverlayAnalystFields.setLayout(new GridBagLayout());
-        panelOverlayAnalystFields.add(this.labelOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectAll, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
-        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectReverse, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+        panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectAll, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectReverse, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
         scrollpaneOverlayAnalystFields.setViewportView(tableOverlayAnalystFields);
 
+        panelSourceFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_SourceDatasetFields")));
+        panelOverlayAnalystFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_OverlayDatasetFields")));
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
         panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
@@ -182,20 +185,16 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initResources() {
-        this.labelSourceFields.setText(SpatialAnalystProperties.getString("String_Label_SourceDatasetFields"));
-        this.labelOverlayAnalystFields.setText(SpatialAnalystProperties.getString("String_Label_OverlayDatasetFields"));
         this.buttonSourceFieldsSelectAll.setText(ControlsProperties.getString("String_SelectAll"));
         this.buttonSourceFieldsSelectReverse.setText(ControlsProperties.getString("String_SelectReverse"));
         this.buttonOverlayAnalystSelectAll.setText(ControlsProperties.getString("String_SelectAll"));
         this.buttonOverlayAnalystSelectReverse.setText(ControlsProperties.getString("String_SelectReverse"));
-        this.setTitle(SpatialAnalystProperties.getString("String_Form_FieldsSetting"));
+        this.setTitle(ControlsProperties.getString("String_Form_FieldsSetting"));
     }
 
     private void initComponents() {
-        this.labelSourceFields = new JLabel();
         this.tableSourceFields = new JTable();
         initTable(tableSourceFields, sourceDataset);
-        this.labelOverlayAnalystFields = new JLabel();
         this.tableOverlayAnalystFields = new JTable();
         initTable(tableOverlayAnalystFields, overlayAnalystDataset);
         this.buttonSourceFieldsSelectAll = new JButton();
@@ -207,111 +206,40 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initTable(JTable table, DatasetVector dataset) {
-        DefaultTableModel defaultTableModel = (DefaultTableModel) table.getModel();
-        defaultTableModel.setColumnIdentifiers(tableTitle);
+        int count = 0;
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
-                Object[] sourceTableInfo = {new Boolean(false), dataset.getFieldInfos().get(i).getName()};
-                defaultTableModel.addRow(sourceTableInfo);
+                count++;
             }
         }
+        DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[count][2], tableTitle) {
+
+
+            public Class getColumnClass(int column) {
+                if (TABLE_COLUMN_CHECKABLE == column) {
+                    return Boolean.class;
+                }
+                return tableTitle[column].getClass();
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if (TABLE_COLUMN_CHECKABLE == columnIndex) {
+                    return true;
+                }
+                return false;
+            }
+        };
         table.setModel(defaultTableModel);
-        table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellEditor(new CheckBoxCellEditor(dataset));
-        table.getColumn(ControlsProperties.getString("String_ColumnHeader_FieldIndexes")).setCellRenderer(new CheckBoxRenderer(dataset));
-        table.getColumn(CommonProperties.getString("String_FieldName")).setCellRenderer(new TooltipRender());
-        table.getColumn(CommonProperties.getString("String_FieldName")).setCellEditor(new ToolTipEditor());
-    }
-
-    class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor {
-        private JCheckBox checkBox;
-        private DatasetVector datasetVector;
-
-        public CheckBoxCellEditor(DatasetVector datasetVector) {
-            checkBox = new JCheckBox();
-            this.datasetVector = datasetVector;
-            checkBox.setHorizontalAlignment(SwingConstants.LEFT);
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return Boolean.valueOf(checkBox.isSelected());
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            checkBox.setSelected(((Boolean) value).booleanValue());
-            for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
-                if (this.datasetVector.getFieldInfos().get(i).getName().equals(table.getValueAt(row, 1).toString())) {
-                    checkBox.setText(String.valueOf(i + 1));
-                }
+        int length = 0;
+        for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
+            if (!dataset.getFieldInfos().get(i).isSystemField()) {
+                table.setValueAt(false, length, TABLE_COLUMN_CHECKABLE);
+                table.setValueAt(dataset.getFieldInfos().get(i).getCaption(), length, TABLE_COLUMN_CAPTION);
+                length++;
             }
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-            return checkBox;
         }
-    }
-
-    class ToolTipEditor extends AbstractCellEditor implements TableCellEditor {
-        private JLabel label;
-
-        public ToolTipEditor() {
-            label = new JLabel();
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return label.getText();
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            label.setText(value.toString());
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-            return label;
-        }
-    }
-
-
-    class TooltipRender extends JLabel implements TableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText(value.toString());
-            setToolTipText(value.toString());
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-            return this;
-        }
-    }
-
-    class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
-
-        private static final long serialVersionUID = 1L;
-        Border border = new EmptyBorder(1, 2, 1, 2);
-        private DatasetVector datasetVector;
-
-        public CheckBoxRenderer(DatasetVector datasetVector) {
-            super();
-            setOpaque(true);
-            this.datasetVector = datasetVector;
-            setHorizontalAlignment(SwingConstants.LEFT);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (value instanceof Boolean) {
-                setSelected(((Boolean) value).booleanValue());
-                for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
-                    if (this.datasetVector.getFieldInfos().get(i).getName().equals(table.getValueAt(row, 1).toString())) {
-                        setText(String.valueOf(i + 1));
-                    }
-                }
-            }
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-            return this;
-        }
+        table.getColumn(table.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(40);
     }
 
     public String[] getSourceFields() {
