@@ -630,7 +630,7 @@ public class DatasourceUtilities {
 	 * @param datasourcePath
 	 * @return
 	 */
-	private static boolean isDatasourceOccupied(String datasourcePath) {
+	public static boolean isDatasourceOccupied(String datasourcePath) {
 		File file = new File(datasourcePath);
 		return !file.renameTo(file);
 	}
