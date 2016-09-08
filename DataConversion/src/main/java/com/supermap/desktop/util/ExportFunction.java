@@ -27,7 +27,6 @@ public class ExportFunction {
 	 * @param frame
 	 * @param table
 	 * @param exportTable
-	 * @param selected
 	 */
 	public static void updateMainTable(DataExportFrame frame, JTable table, JTable exportTable) {
 		int[] count = table.getSelectedRows();
@@ -152,14 +151,12 @@ public class ExportFunction {
 				if (!worldFile.isEmpty()) {
 					frame.getFileChooser().getEditor().setText(worldFile);
 				}
-			}
-			// 导出类型为tif
-			if (null != exportSetting && (exportSetting instanceof ExportSettingTIF)) {
+			} else if (null != exportSetting && (exportSetting instanceof ExportSettingTIF)) {
+				// 导出类型为tif
 				boolean isExportingGeo = ((ExportSettingTIF) exportSetting).isExportingGeoTransformFile();
 				frame.getCheckboxTFW().setSelected(isExportingGeo);
-			}
-			// 导出类型为dwg/dxf
-			if (null != exportSetting && ((exportSetting instanceof ExportSettingDWG) || (exportSetting instanceof ExportSettingDXF))) {
+			} else if (null != exportSetting && ((exportSetting instanceof ExportSettingDWG) || (exportSetting instanceof ExportSettingDXF))) {
+				// 导出类型为dwg/dxf
 				if (exportSetting instanceof ExportSettingDWG) {
 					boolean isExportingExtDwg = ((ExportSettingDWG) exportSetting).isExportingExternalData();
 					CADVersion cadVersion = ((ExportSettingDWG) exportSetting).getVersion();
@@ -172,10 +169,8 @@ public class ExportFunction {
 					frame.getCheckboxExtends().setSelected(isExportingExtDxf);
 					frame.getComboBoxCAD().setSelectedItem(getCadVersionString(cadVersion));
 				}
-			}
-			// 导出类型为bmp，gif，png
-			if (null != exportSetting
-					&& ((exportSetting instanceof ExportSettingBMP) || (exportSetting instanceof ExportSettingGIF) || (exportSetting instanceof ExportSettingPNG))) {
+			} else if (null != exportSetting && ((exportSetting instanceof ExportSettingBMP) || (exportSetting instanceof ExportSettingGIF) || (exportSetting instanceof ExportSettingPNG))) {
+				// 导出类型为bmp，gif，png
 				if (exportSetting instanceof ExportSettingBMP) {
 					String worldFile = ((ExportSettingBMP) exportSetting).getWorldFilePath();
 					frame.getFileChooser().getEditor().setText(worldFile);
@@ -286,7 +281,6 @@ public class ExportFunction {
 	/**
 	 * 得到右边界面的选中状态
 	 * 
-	 * @param frame
 	 * @param fileType
 	 */
 	public static Map<String, Boolean> getRightPanelState(String fileType) {
@@ -345,7 +339,6 @@ public class ExportFunction {
 	/**
 	 * 根据可导出的文件类型设置初始的ExportSetting
 	 * 
-	 * @param exportSetting
 	 * @param fileType
 	 */
 	public static void initExportSetting(ExportFileInfo fileInfo, String fileType) {

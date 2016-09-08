@@ -41,7 +41,6 @@ public class OffsetEditor extends AbstractEditor {
         public void mouseClicked(EditEnvironment environment, MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
                 environment.stopEditor();
-                environment.getMap().refreshTrackingLayer();
             }
         }
     };
@@ -301,6 +300,10 @@ public class OffsetEditor extends AbstractEditor {
         OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
         editModel.clear();
         MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+        TrackMode trackMode = environment.getMapControl().getTrackMode();
+        environment.getMapControl().setTrackMode(TrackMode.TRACK);
+        environment.getMap().refreshTrackingLayer();
+        environment.getMapControl().setTrackMode(trackMode);
     }
 
     private class OffsetEditModel implements IEditModel {
