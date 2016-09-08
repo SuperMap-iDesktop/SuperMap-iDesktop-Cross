@@ -3,9 +3,11 @@ package com.supermap.desktop.ui.controls.SortTable;
 import com.supermap.desktop.controls.utilities.SortUIUtilities;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Comparator;
 
@@ -21,14 +23,29 @@ public class SmSortTable extends JTable {
 			return 0;
 		}
 	};
+
 	public SmSortTable() {
 		super();
 		init();
 	}
 
 	private void init() {
+		((DefaultTableCellRenderer) this.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 		this.setAutoCreateRowSorter(true);
 		this.getTableHeader().setReorderingAllowed(false);
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					int rowAtPoint = rowAtPoint(e.getPoint());
+					if (rowAtPoint != -1) {
+						if (!isRowSelected(rowAtPoint)) {
+							setRowSelectionInterval(rowAtPoint, rowAtPoint);
+						}
+					}
+				}
+			}
+		});
 	}
 
 	public SmSortTable(TableModel tableModel) {

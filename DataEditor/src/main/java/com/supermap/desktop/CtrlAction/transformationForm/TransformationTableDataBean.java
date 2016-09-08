@@ -1,36 +1,36 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
-import java.awt.*;
+import com.supermap.data.Point2D;
 
 /**
  * @author XiaJT
  */
 public class TransformationTableDataBean {
 
-	private Point pointOriginal;
-	private Point pointRefer;
+	private Point2D pointOriginal;
+	private Point2D pointRefer;
 	private Double ResidualX;
 	private Double ResidualY;
 	private Double ResidualTotal;
 	private boolean isSelected;
 
-	public Point getPointOriginal() {
+	public Point2D getPointOriginal() {
 		return pointOriginal;
 	}
 
-	public void setPointOriginal(Point pointOriginal) {
+	public void setPointOriginal(Point2D pointOriginal) {
 		this.pointOriginal = pointOriginal;
 	}
 
-	public Point getPointRefer() {
+	public Point2D getPointRefer() {
 		return pointRefer;
 	}
 
-	public void setPointRefer(Point pointRefer) {
+	public void setPointRefer(Point2D pointRefer) {
 		this.pointRefer = pointRefer;
 	}
 
-	public double getResidualX() {
+	public Double getResidualX() {
 		return ResidualX;
 	}
 
@@ -38,7 +38,7 @@ public class TransformationTableDataBean {
 		ResidualX = residualX;
 	}
 
-	public double getResidualY() {
+	public Double getResidualY() {
 		return ResidualY;
 	}
 

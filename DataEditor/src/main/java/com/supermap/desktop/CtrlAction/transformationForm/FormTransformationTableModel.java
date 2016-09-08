@@ -1,10 +1,10 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
+import com.supermap.data.Point2D;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.List;
 public class FormTransformationTableModel extends DefaultTableModel {
 
 	private static final String[] columnNames = new String[]{
+			"",
 			CommonProperties.getString(CommonProperties.Index),
 			DataEditorProperties.getString("String_TransformItem_OriginalX"),
 			DataEditorProperties.getString("String_TransformItem_OriginalY"),
@@ -58,12 +59,12 @@ public class FormTransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public Object getValueAt(int row, int column) {
-		Point point;
+		Point2D point;
 		switch (column) {
 			case COLUMN_IS_SELECTED:
 				return dataBeanList.get(row).getIsSelected();
 			case COLUMN_INDEX:
-				return row;
+				return row + 1;
 			case COLUMN_OriginalX:
 				point = dataBeanList.get(row).getPointOriginal();
 				if (point != null) {
@@ -85,7 +86,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			case COLUMN_ReferY:
 				point = dataBeanList.get(row).getPointRefer();
 				if (point != null) {
-					return point.getX();
+					return point.getY();
 				}
 				return null;
 			case COLUMN_ResidualX:
@@ -100,7 +101,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
-		Point point;
+		Point2D point;
 		if (aValue == null || row == -1) {
 			return;
 		}
@@ -118,40 +119,40 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			case COLUMN_OriginalX:
 				point = dataBeanList.get(row).getPointOriginal();
 				if (point != null) {
-					point.setLocation(doubleValue, point.getY());
+					point.setX(doubleValue);
 				} else {
-					Point pointOriginal = new Point();
-					pointOriginal.setLocation(doubleValue, 0);
+					Point2D pointOriginal = new Point2D(0, 0);
+					pointOriginal.setX(doubleValue);
 					dataBeanList.get(row).setPointOriginal(pointOriginal);
 				}
 				break;
 			case COLUMN_OriginalY:
 				point = dataBeanList.get(row).getPointOriginal();
 				if (point != null) {
-					point.setLocation(point.getX(), doubleValue);
+					point.setY(doubleValue);
 				} else {
-					Point pointOriginal = new Point();
-					pointOriginal.setLocation(0, doubleValue);
+					Point2D pointOriginal = new Point2D(0, 0);
+					pointOriginal.setY(doubleValue);
 					dataBeanList.get(row).setPointOriginal(pointOriginal);
 				}
 				break;
 			case COLUMN_ReferX:
 				point = dataBeanList.get(row).getPointRefer();
 				if (point != null) {
-					point.setLocation(doubleValue, point.getY());
+					point.setX(doubleValue);
 				} else {
-					Point pointOriginal = new Point();
-					pointOriginal.setLocation(doubleValue, 0);
+					Point2D pointOriginal = new Point2D(0, 0);
+					pointOriginal.setX(doubleValue);
 					dataBeanList.get(row).setPointRefer(pointOriginal);
 				}
 				break;
 			case COLUMN_ReferY:
 				point = dataBeanList.get(row).getPointRefer();
 				if (point != null) {
-					point.setLocation(point.getX(), doubleValue);
+					point.setY(doubleValue);
 				} else {
-					Point pointOriginal = new Point();
-					pointOriginal.setLocation(0, doubleValue);
+					Point2D pointOriginal = new Point2D(0, 0);
+					pointOriginal.setY(doubleValue);
 					dataBeanList.get(row).setPointRefer(pointOriginal);
 				}
 				break;
@@ -175,7 +176,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		}
 	}
 
-	public void addPoint(FormTransformationSubFormType subFormType, Point point) {
+	public void addPoint(FormTransformationSubFormType subFormType, Point2D point) {
 		if (subFormType == FormTransformationSubFormType.Target) {
 			for (int i = 0; i < dataBeanList.size(); i++) {
 				TransformationTableDataBean bean = dataBeanList.get(i);
@@ -187,6 +188,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			}
 			TransformationTableDataBean bean = new TransformationTableDataBean();
 			bean.setPointOriginal(point);
+			dataBeanList.add(bean);
 		} else {
 			for (int i = 0; i < dataBeanList.size(); i++) {
 				TransformationTableDataBean bean = dataBeanList.get(i);
@@ -198,7 +200,44 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			}
 			TransformationTableDataBean bean = new TransformationTableDataBean();
 			bean.setPointRefer(point);
+			dataBeanList.add(bean);
 		}
 		fireTableRowsInserted(dataBeanList.size() - 1, dataBeanList.size() - 1);
+	}
+
+	public int getPointCount(FormTransformationSubFormType subFormTypeByForm) {
+		int count = 0;
+		if (subFormTypeByForm == FormTransformationSubFormType.Target) {
+			for (TransformationTableDataBean bean : dataBeanList) {
+				if (bean.getPointOriginal() != null) {
+					count++;
+				}
+			}
+		} else {
+			for (TransformationTableDataBean bean : dataBeanList) {
+				if (bean.getPointRefer() != null) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		if (columnIndex == COLUMN_IS_SELECTED) {
+			return Boolean.class;
+		} else if (columnIndex == COLUMN_INDEX) {
+			return Integer.class;
+		}
+		return Double.class;
+	}
+
+	public Point2D getOriginalPoint(int row) {
+		return dataBeanList.get(row).getPointOriginal();
+	}
+
+	public Point2D getReferPoint(int row) {
+		return dataBeanList.get(row).getPointRefer();
 	}
 }
