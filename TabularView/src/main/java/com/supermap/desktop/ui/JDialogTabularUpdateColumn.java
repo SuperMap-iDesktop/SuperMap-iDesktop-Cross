@@ -1526,10 +1526,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             }
         } else if (fieldType.equals(FieldType.BOOLEAN)) {
             // 布尔型
-            if (expression.equalsIgnoreCase("True")) {
-                newValue = true;
+            if (expression.equalsIgnoreCase("True") || expression.equalsIgnoreCase("False")) {
+                if (expression.equalsIgnoreCase("True")) {
+                    newValue = true;
+                } else {
+                    newValue = false;
+                }
             } else {
-                newValue = false;
+                updateModeQuery();
             }
             updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
         } else if (fieldType.equals(FieldType.LONGBINARY)) {

@@ -313,6 +313,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		public BooleanTableCellRenderer() {
 			super();
+			// 必须设置背景透明才能正常显示选中状态
+			this.setOpaque(true);
 		}
 
 		@Override
@@ -394,6 +396,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		public DataTabelCellRender() {
 			super();
+			// 必须设置背景透明才能正常显示选中状态
+			this.setOpaque(true);
 			this.setHorizontalAlignment(JLabel.CENTER);
 		}
 
