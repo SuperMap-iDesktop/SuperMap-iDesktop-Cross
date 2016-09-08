@@ -192,7 +192,9 @@ SuperMap iDesktop Cross 分支说明：
 - 打开文件 `module-pom-template.xml`，这是扩展开发插件的 pom 配置模板文件，其中由 `**` 包围的配置项为必填自定义配置；
 - 展开 `MyPlugin` 工程，打开 `pom.xml` 文件，参照模板文件进行配置；
 - 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，依次展开 **MyPlugin - Plugins - bundle**，双击 **bundle:manifest** 生成 manifest 文件，等待完成。
+
 >注意：
+>
 >模板提供 pom 配置信息只是最小核心配置，为必备配置。其余更为详细丰富的 pom 工程配置按需求自行完成。
 >
 >manifest 文件内有 OSGI 插件运行所需的元数据信息，如有 OSGI 依赖的变动，需在运行前执行最后一步重新生成。
